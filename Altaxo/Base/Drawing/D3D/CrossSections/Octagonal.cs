@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,45 +29,61 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.CrossSections
 {
-	public class Ellipsoidal : ICrossSectionOfLine
-	{
-		private double _radius1;
-		private double _radius2;
+	using Geometry;
 
-		private const int _numberOfVertices = 16;
+	public class Octagonal : ICrossSectionOfLine
+	{
+		private double _size1By2, _size2By2;
+
+		private static PointD2D[] _verticesRaw;
+		private static VectorD2D[] _normalsRaw;
 
 		#region Serialization
 
 		/// <summary>
-		/// 2016-04-30 initial version.
+		/// 2015-05-03 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Ellipsoidal), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Octagonal), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (Ellipsoidal)obj;
+				var s = (Octagonal)obj;
 
-				info.AddValue("Size1", 2 * s._radius1);
-				info.AddValue("Size2", 2 * s._radius2);
+				info.AddValue("Size1", 2 * s._size1By2);
+				info.AddValue("Size2", 2 * s._size2By2);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				double size1 = info.GetDouble("Radius1");
-				double size2 = info.GetDouble("Radius2");
-				return new Ellipsoidal(size1, size2);
+				double size1 = info.GetDouble("Size1");
+				double size2 = info.GetDouble("Size2");
+				return new Octagonal(size1, size2);
 			}
 		}
 
 		#endregion Serialization
 
-		public Ellipsoidal()
+		static Octagonal()
+		{
+			_verticesRaw = new PointD2D[8];
+			_normalsRaw = new VectorD2D[16];
+			double f = 1 / Math.Cos(0.5 * Math.PI / (4));
+			for (int i = 0; i < 8; ++i)
+			{
+				var phiV = (0.5 + i) * Math.PI / (4);
+				_verticesRaw[i] = new PointD2D(f * Math.Cos(phiV), f * Math.Sin(phiV));
+				var phiN = (i) * Math.PI / (4);
+				_normalsRaw[2 * i] = _normalsRaw[(2 * i + 15) % 16] = new VectorD2D(Math.Cos(phiN), Math.Sin(phiN));
+			}
+		}
+
+		public Octagonal()
 			: this(1, 1)
 		{
 		}
 
-		public Ellipsoidal(double size1, double size2)
+		public Octagonal(double size1, double size2)
 		{
 			if (!(size1 >= 0))
 				throw new ArgumentOutOfRangeException(nameof(size1), "must be >= 0");
@@ -77,31 +92,15 @@ namespace Altaxo.Drawing.D3D.CrossSections
 			if (0 == size1 && 0 == size2)
 				throw new ArgumentOutOfRangeException(nameof(size2), "both size values are zero");
 
-			_radius1 = size1 / 2;
-			_radius2 = size2 / 2;
-		}
-
-		public int NumberOfNormals
-		{
-			get
-			{
-				return _numberOfVertices;
-			}
-		}
-
-		public int NumberOfVertices
-		{
-			get
-			{
-				return _numberOfVertices;
-			}
+			_size1By2 = size1 / 2;
+			_size2By2 = size2 / 2;
 		}
 
 		public double Size1
 		{
 			get
 			{
-				return _radius1 * 2;
+				return _size1By2 * 2;
 			}
 		}
 
@@ -112,14 +111,14 @@ namespace Altaxo.Drawing.D3D.CrossSections
 
 			var r = size1 / 2;
 
-			if (r == _radius1)
+			if (r == _size1By2)
 			{
 				return this;
 			}
 			else
 			{
-				var result = (Ellipsoidal)MemberwiseClone();
-				result._radius1 = r;
+				var result = (Octagonal)MemberwiseClone();
+				result._size1By2 = r;
 				return result;
 			}
 		}
@@ -128,7 +127,7 @@ namespace Altaxo.Drawing.D3D.CrossSections
 		{
 			get
 			{
-				return _radius2 * 2;
+				return _size2By2 * 2;
 			}
 		}
 
@@ -139,14 +138,14 @@ namespace Altaxo.Drawing.D3D.CrossSections
 
 			var r = size2 / 2;
 
-			if (r == _radius2)
+			if (r == _size2By2)
 			{
 				return this;
 			}
 			else
 			{
-				var result = (Ellipsoidal)MemberwiseClone();
-				result._radius2 = r;
+				var result = (Octagonal)MemberwiseClone();
+				result._size2By2 = r;
 				return result;
 			}
 		}
@@ -161,39 +160,55 @@ namespace Altaxo.Drawing.D3D.CrossSections
 			var r1 = size1 / 2;
 			var r2 = size2 / 2;
 
-			if (r1 == _radius1 && r2 == _radius2)
+			if (r1 == _size1By2 && r2 == _size2By2)
 			{
 				return this;
 			}
 			else
 			{
-				var result = (Ellipsoidal)MemberwiseClone();
-				result._radius1 = r1;
-				result._radius2 = r2;
+				var result = (Octagonal)MemberwiseClone();
+				result._size1By2 = r1;
+				result._size2By2 = r2;
 				return result;
 			}
 		}
 
 		public double GetMaximalDistanceFromCenter()
 		{
-			return Math.Max(_radius1, _radius2);
+			return Math.Sqrt(_size1By2 * _size1By2 + _size2By2 * _size2By2);
 		}
 
 		public bool IsVertexSharp(int idx)
 		{
-			return false;
+			return true;
+		}
+
+		public int NumberOfNormals
+		{
+			get
+			{
+				return 16;
+			}
 		}
 
 		public VectorD2D Normals(int i)
 		{
-			double phi = i * (2 * Math.PI / _numberOfVertices);
-			return VectorD2D.CreateNormalized(_radius2 * Math.Cos(phi), _radius1 * Math.Sin(phi));
+			var rawN = _normalsRaw[i];
+			return new VectorD2D(rawN.X * _size2By2, rawN.Y * _size1By2).Normalized;
+		}
+
+		public int NumberOfVertices
+		{
+			get
+			{
+				return 8;
+			}
 		}
 
 		public PointD2D Vertices(int i)
 		{
-			double phi = i * (2 * Math.PI / _numberOfVertices);
-			return new PointD2D(_radius1 * Math.Cos(phi), _radius2 * Math.Sin(phi));
+			var rawP = _verticesRaw[i];
+			return new PointD2D(rawP.X * _size1By2, rawP.Y * _size2By2);
 		}
 	}
 }

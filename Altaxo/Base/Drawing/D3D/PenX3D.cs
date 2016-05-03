@@ -46,7 +46,15 @@ namespace Altaxo.Drawing.D3D
 
 		private ILineCap _dashStartCap;
 
+		private bool _dashStartCapSuppressionIfSpaceInsufficient;
+
 		private ILineCap _dashEndCap;
+
+		private bool _dashEndCapSuppressionIfSpaceInsufficient;
+
+		private PenLineJoin _lineJoin = PenLineJoin.Miter;
+
+		private double _miterLimit = 10;
 
 		#endregion Member variables
 
@@ -65,6 +73,9 @@ namespace Altaxo.Drawing.D3D
 				info.AddValue("Material", s._material);
 				info.AddValue("CrossSection", s._crossSection);
 
+				info.AddEnum("LineJoin", s._lineJoin);
+				info.AddValue("MiterLimit", s._miterLimit);
+
 				if (null != s._lineStartCap)
 					info.AddValue("LineStartCap", s._lineStartCap);
 
@@ -72,13 +83,19 @@ namespace Altaxo.Drawing.D3D
 					info.AddValue("LineEndCap", s._lineEndCap);
 
 				if (null != s._dashPattern)
-					info.AddValue("DashPattern", s._dashPattern);
-				if (null != s._dashPattern)
 				{
+					info.AddValue("DashPattern", s._dashPattern);
+
 					if (null != s._dashStartCap)
+					{
 						info.AddValue("DashStartCap", s._dashStartCap);
+						info.AddValue("DashStartCapSuppression", s._dashStartCapSuppressionIfSpaceInsufficient);
+					}
 					if (null != s._dashEndCap)
+					{
 						info.AddValue("DashEndCap", s._dashEndCap);
+						info.AddValue("DashEndCapSuppression", s._dashEndCapSuppressionIfSpaceInsufficient);
+					}
 				}
 			}
 
@@ -87,17 +104,30 @@ namespace Altaxo.Drawing.D3D
 				var material = (IMaterial)info.GetValue("Material", null);
 				var crossSection = (ICrossSectionOfLine)info.GetValue("CrossSection", null);
 
+				var lineJoin = (PenLineJoin)info.GetEnum("LineJoin", typeof(PenLineJoin));
+				double miterLimit = info.GetDouble("MiterLimit");
+
 				var lineStartCap = ("LineStartCap" == info.CurrentElementName) ? (ILineCap)info.GetValue("LineStartCap", null) : null;
 				var lineEndCap = ("LineEndCap" == info.CurrentElementName) ? (ILineCap)info.GetValue("LineEndCap", null) : null;
 				var dashPattern = ("DashPattern" == info.CurrentElementName) ? (IDashPattern)info.GetValue("DashPattern", null) : null;
 				ILineCap dashStartCap = null, dashEndCap = null;
+				bool dashStartCapSuppression = false, dashEndCapSuppression = false;
 				if (null != dashPattern)
 				{
-					dashStartCap = ("DashStartCap" == info.CurrentElementName) ? (ILineCap)info.GetValue("DashStartCap", null) : null;
-					dashEndCap = ("DashEndCap" == info.CurrentElementName) ? (ILineCap)info.GetValue("DashEndCap", null) : null;
+					if ("DashStartCap" == info.CurrentElementName)
+					{
+						dashStartCap = (ILineCap)info.GetValue("DashStartCap", null);
+						dashStartCapSuppression = info.GetBoolean("DashStartCapSuppression");
+					}
+
+					if ("DashEndCap" == info.CurrentElementName)
+					{
+						dashEndCap = (ILineCap)info.GetValue("DashEndCap", null);
+						dashEndCapSuppression = info.GetBoolean("DashEndCapSuppression");
+					}
 				}
 
-				return new PenX3D(material, crossSection, lineStartCap, lineEndCap, dashPattern, dashStartCap, dashEndCap);
+				return new PenX3D(material, crossSection, lineJoin, miterLimit, lineStartCap, lineEndCap, dashPattern, dashStartCap, dashStartCapSuppression, dashEndCap, dashEndCapSuppression);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -121,15 +151,27 @@ namespace Altaxo.Drawing.D3D
 			_crossSection = crossSection;
 		}
 
-		public PenX3D(IMaterial material, ICrossSectionOfLine crossSection, ILineCap lineStartCap, ILineCap lineEndCap, IDashPattern dashPattern, ILineCap dashStartCap, ILineCap dashEndCap)
+		public PenX3D(
+			IMaterial material,
+			ICrossSectionOfLine crossSection,
+			PenLineJoin lineJoin,
+			double miterLimit,
+			ILineCap lineStartCap, ILineCap lineEndCap, IDashPattern dashPattern, ILineCap dashStartCap, bool dashStartCapSuppressionIfSpaceInsufficient, ILineCap dashEndCap, bool dashEndCapSuppressionIfSpaceInsufficient)
 		{
+			if (!(miterLimit >= 1))
+				throw new ArgumentOutOfRangeException(nameof(miterLimit), "must be >= 1");
+
 			_material = material;
 			_crossSection = crossSection;
+			_lineJoin = lineJoin;
+			_miterLimit = miterLimit;
 			_lineStartCap = lineStartCap;
 			_lineEndCap = lineEndCap;
 			_dashPattern = dashPattern;
 			_dashStartCap = dashStartCap;
+			_dashStartCapSuppressionIfSpaceInsufficient = dashStartCapSuppressionIfSpaceInsufficient;
 			_dashEndCap = dashEndCap;
+			_dashEndCapSuppressionIfSpaceInsufficient = dashEndCapSuppressionIfSpaceInsufficient;
 		}
 
 		public double Thickness1

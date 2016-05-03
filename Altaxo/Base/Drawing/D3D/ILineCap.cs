@@ -32,6 +32,7 @@ namespace Altaxo.Drawing.D3D
 {
 	public interface ILineCap
 	{
+		/*
 		/// <summary>
 		/// Gets or sets the distance between the cap and the line.
 		/// </summary>
@@ -41,6 +42,7 @@ namespace Altaxo.Drawing.D3D
 		/// the cap is also drawn from the end of the line. In this case the cap itself is reponsible for taking the offset into account.
 		/// </value>
 		double BaseInset { get; }
+		*/
 
 		/// <summary>
 		/// Gets the absolute base inset using the thickness1 and thickness2 of the pen.

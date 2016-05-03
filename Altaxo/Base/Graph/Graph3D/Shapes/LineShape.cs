@@ -247,7 +247,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			if ((GripKind.Move & gripKind) != 0)
 			{
 				var bounds = this.Bounds;
-				var wn = Math3D.GetEastNorthVectorAtStart(new PointD3D[] { bounds.Location, bounds.LocationPlusSize });
+				var wn = Math3D.GetWestNorthVectorAtStart(new PointD3D[] { bounds.Location, bounds.LocationPlusSize });
 				var transformation = Matrix4x3.NewFromBasisVectorsAndLocation(wn.Item1, wn.Item2, bounds.Size.Normalized, PointD3D.Empty);
 
 				transformation.AppendTransform(_transformation);

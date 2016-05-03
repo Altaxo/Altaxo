@@ -84,6 +84,28 @@ namespace Altaxo.Drawing.D3D.LineCaps
 			}
 		}
 
+		private static RoundContour _contour = new RoundContour();
+
+		#region Serialization
+
+		/// <summary>
+		/// 2016-05-02 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Round), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				return new Round();
+			}
+		}
+
+		#endregion Serialization
+
 		public override double BaseInset
 		{
 			get
@@ -107,7 +129,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
 				baseCrossSectionPositions,
 				baseCrossSectionNormals,
 				ref temporaryStorageSpace,
-				new RoundContour());
+				_contour);
 		}
 	}
 }

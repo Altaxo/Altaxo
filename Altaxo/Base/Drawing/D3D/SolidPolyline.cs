@@ -43,11 +43,11 @@ namespace Altaxo.Drawing.D3D
 		private ICrossSectionOfLine _crossSection;
 		private IList<PointD3D> _linePoints;
 
-		private VectorD3D _endEastVector;
+		private VectorD3D _endWestVector;
 		private VectorD3D _endNorthVector;
 		private VectorD3D _endAdvanceVector;
 
-		public VectorD3D EndEastVector { get { return _endEastVector; } }
+		public VectorD3D EndWestVector { get { return _endWestVector; } }
 		public VectorD3D EndNorthVector { get { return _endNorthVector; } }
 		public VectorD3D EndAdvanceVector { get { return _endAdvanceVector; } }
 
@@ -58,34 +58,6 @@ namespace Altaxo.Drawing.D3D
 			this._linePoints = linePoints;
 		}
 
-		private VectorD3D FindStartEastVector()
-		{
-			const double minAngle = 1E-4;
-			const double maxAngle = Math.PI - minAngle;
-
-			VectorD3D v = _linePoints[1] - _linePoints[0];
-
-			double angle;
-			angle = VectorD3D.AngleBetweenInRadians(v, _xVector);
-			if (angle > minAngle && angle < maxAngle)
-				return _xVector;
-			angle = VectorD3D.AngleBetweenInRadians(v, _yVector);
-			if (angle > minAngle && angle < maxAngle)
-				return _yVector;
-			angle = VectorD3D.AngleBetweenInRadians(v, _yVector);
-			if (angle > minAngle && angle < maxAngle)
-				return _zVector;
-
-			// if this was still not successfull then use y if x.y is not null, or x if
-
-			if (VectorD3D.DotProduct(v, _yVector) != 0)
-				return _yVector;
-			else if (VectorD3D.DotProduct(v, _xVector) != 0)
-				return _xVector;
-			else
-				return _zVector;
-		}
-
 		public void Add(Action<PointD3D> AddPosition, Action<int, int, int> AddIndices, int startIndex)
 		{
 			if (_linePoints.Count < 2)
@@ -93,14 +65,16 @@ namespace Altaxo.Drawing.D3D
 
 			VectorD3D currSeg = (_linePoints[1] - _linePoints[0]).Normalized;
 
-			VectorD3D e = FindStartEastVector();
-			VectorD3D n = VectorD3D.CrossProduct(e, currSeg);
+			var westNorth = Math3D.GetWestNorthVectors(currSeg);
+
+			VectorD3D w = westNorth.Item1;
+			VectorD3D n = westNorth.Item2;
 
 			int currIndex = startIndex;
 			int crossSectionCount = _crossSection.NumberOfVertices;
 
 			// Get the matrix for the start plane
-			var matrix = Math3D.Get2DProjectionToPlane(e, n, _linePoints[0]);
+			var matrix = Math3D.Get2DProjectionToPlane(w, n, _linePoints[0]);
 
 			var tp = matrix.Transform(new PointD3D(0, 0, 0));
 			AddPosition(tp);
@@ -128,7 +102,7 @@ namespace Altaxo.Drawing.D3D
 				VectorD3D midPlaneNormal = 0.5 * (currSeg + nextSeg);
 
 				// now get the matrix
-				matrix = Math3D.Get2DProjectionToPlaneToPlane(e, n, currSeg, _linePoints[mSeg], midPlaneNormal);
+				matrix = Math3D.Get2DProjectionToPlaneToPlane(w, n, currSeg, _linePoints[mSeg], midPlaneNormal);
 
 				for (int i = 0; i < crossSectionCount; ++i)
 				{
@@ -151,13 +125,13 @@ namespace Altaxo.Drawing.D3D
 
 				// mirror the north vector on the midPlane
 				currSeg = nextSeg;
-				e = Math3D.GetMirroredVectorAtPlane(e, midPlaneNormal);
-				e = Math3D.GetOrthonormalVectorToVector(e, currSeg); // make the north vector orthogonal (it should be already, but this corrects small deviations)
-				n = VectorD3D.CrossProduct(e, currSeg);
+				w = Math3D.GetMirroredVectorAtPlane(w, midPlaneNormal);
+				w = Math3D.GetOrthonormalVectorToVector(w, currSeg); // make the north vector orthogonal (it should be already, but this corrects small deviations)
+				n = VectorD3D.CrossProduct(w, currSeg);
 			}
 
 			// now add the last segment
-			matrix = Math3D.Get2DProjectionToPlane(e, n, _linePoints[_linePoints.Count - 1]);
+			matrix = Math3D.Get2DProjectionToPlane(w, n, _linePoints[_linePoints.Count - 1]);
 			for (int i = 0; i < crossSectionCount; ++i)
 			{
 				tp = matrix.Transform(_crossSection.Vertices(i));
@@ -188,7 +162,7 @@ namespace Altaxo.Drawing.D3D
 				currIndex - crossSectionCount + (1 + i) % crossSectionCount);
 			}
 
-			_endEastVector = e;
+			_endWestVector = w;
 			_endNorthVector = n;
 		}
 
@@ -202,8 +176,8 @@ namespace Altaxo.Drawing.D3D
 
 			if (null == dashPattern) // Solid line
 			{
-				var eastnorth = Math3D.GetEastNorthVectorAtStart(polylinePoints);
-				AddWithNormals(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, pen.CrossSection, polylinePoints, eastnorth.Item1, eastnorth.Item2);
+				var westNorth = Math3D.GetWestNorthVectorAtStart(polylinePoints);
+				AddWithNormals(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, pen.CrossSection, polylinePoints, westNorth.Item1, westNorth.Item2);
 			}
 			else // line with dash
 			{
@@ -219,7 +193,7 @@ namespace Altaxo.Drawing.D3D
 			Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int vertexIndexOffset,
 			ICrossSectionOfLine _crossSection,
 			IList<PointD3D> polylinePoints,
-			VectorD3D startEastVector,
+			VectorD3D startWestVector,
 			VectorD3D startNorthVector
 			)
 		{
@@ -236,7 +210,7 @@ namespace Altaxo.Drawing.D3D
 			VectorD3D[] lastNormalsTransformed = new VectorD3D[crossSectionNormalCount];
 
 			VectorD3D currSeg = (polylinePoints[1] - polylinePoints[0]).Normalized;
-			VectorD3D e = startEastVector;
+			VectorD3D e = startWestVector;
 			VectorD3D n = startNorthVector;
 
 			int currIndex = vertexIndexOffset;
@@ -393,9 +367,6 @@ namespace Altaxo.Drawing.D3D
 
 			++currIndex;
 
-			//_endEastVector = e;
-			//_endNorthVector = n;
-			//_endAdvanceVector = currSeg;
 			vertexIndexOffset = currIndex;
 		}
 	}

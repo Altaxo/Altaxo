@@ -139,11 +139,53 @@ namespace Altaxo.Geometry
 			return ((a.X - p.X) * q.X + (a.Y - p.Y) * q.Y + (a.Z - p.Z) * q.Z) / q.Length;
 		}
 
-		private static VectorD3D _xVector = new VectorD3D(1, 0, 0);
-		private static VectorD3D _yVector = new VectorD3D(0, 1, 0);
-		private static VectorD3D _zVector = new VectorD3D(0, 0, 1);
+		#region Get west and north vector for a line
 
-		public static Tuple<VectorD3D, VectorD3D> GetEastNorthVectorAtStart(IEnumerable<PointD3D> linePoints)
+		private static readonly double _northVectorMaxZComponent = Math.Cos(0.9 * Math.PI / 180);
+
+		/// <summary>
+		/// Gets a raw north vector for a straight line. Raw means that the returned vector is neither normalized, nor does it is perpendicular to the forward vector.
+		/// It is only guaranteed that the returned vector is not colinear with the provided forward vector.
+		/// </summary>
+		/// <param name="forward">The line forward vector. Can be unnormalized.</param>
+		/// <returns>The raw north vector.</returns>
+		public static VectorD3D GetRawNorthVectorAtStart(VectorD3D forward)
+		{
+			double vLength = forward.Length;
+			if (!(vLength > 0))
+				throw new ArgumentException("Start vector of the line is invalid or empty", nameof(forward));
+			forward = forward / vLength;
+
+			if (Math.Abs(forward.Z) < _northVectorMaxZComponent)
+				return new VectorD3D(0, 0, 1);
+			else
+				return new VectorD3D(0, -Math.Sign(forward.Z), 0);
+		}
+
+		/// <summary>
+		/// Gets the west and north vector for a single straight line.
+		/// </summary>
+		/// <param name="forward">The line forward vector. Can be unnormalized.</param>
+		/// <returns>The east and the north vector (Item1=east vector, Item2 = north vector).</returns>
+		public static Tuple<VectorD3D, VectorD3D> GetWestNorthVectors(VectorD3D forward)
+		{
+			var n = GetRawNorthVectorAtStart(forward);
+			var w = VectorD3D.CrossProduct(n, forward).Normalized;
+			n = VectorD3D.CrossProduct(forward, w).Normalized;
+			return new Tuple<VectorD3D, VectorD3D>(w, n);
+		}
+
+		/// <summary>
+		/// Gets the west and north vector for a single straight line.
+		/// </summary>
+		/// <param name="line">The line.</param>
+		/// <returns>The east and the north vector (Item1=east vector, Item2 = north vector).</returns>
+		public static Tuple<VectorD3D, VectorD3D> GetWestNorthVectors(LineD3D line)
+		{
+			return GetWestNorthVectors(line.Vector);
+		}
+
+		public static Tuple<VectorD3D, VectorD3D> GetWestNorthVectorAtStart(IEnumerable<PointD3D> linePoints)
 		{
 			VectorD3D v = VectorD3D.Empty;
 			bool isPrevPointValid = false;
@@ -163,54 +205,7 @@ namespace Altaxo.Geometry
 			if (!(v.Length > 0))
 				throw new ArgumentException("Either too less points were given or the all the points fall together, thus no first valid vector could be determined", nameof(linePoints));
 
-			var w = GetWestVectorAtStart(v);
-			var n = VectorD3D.CrossProduct(w, v).Normalized;
-			w = VectorD3D.CrossProduct(v, n).Normalized;
-			return new Tuple<VectorD3D, VectorD3D>(w, n);
-		}
-
-		public static VectorD3D GetWestVectorAtStart(VectorD3D v)
-		{
-			const double minAngle = 1E-4;
-			const double maxAngle = Math.PI - minAngle;
-
-			if (!(v.Length > 0))
-				throw new ArgumentException("Start vector of the line is invalid or empty", nameof(v));
-
-			double angle;
-			angle = VectorD3D.AngleBetweenInRadians(v, _xVector);
-			if (angle > minAngle && angle < maxAngle)
-				return _xVector;
-			angle = VectorD3D.AngleBetweenInRadians(v, _yVector);
-			if (angle > minAngle && angle < maxAngle)
-				return _yVector;
-			angle = VectorD3D.AngleBetweenInRadians(v, _yVector);
-			if (angle > minAngle && angle < maxAngle)
-				return _zVector;
-
-			// if this was still not successfull then use y if x.y is not null, or x if
-
-			if (VectorD3D.DotProduct(v, _yVector) != 0)
-				return _yVector;
-			else if (VectorD3D.DotProduct(v, _xVector) != 0)
-				return _xVector;
-			else
-				return _zVector;
-		}
-
-		/// <summary>
-		/// Gets the east and north vector for a single straight line.
-		/// </summary>
-		/// <param name="line">The line.</param>
-		/// <returns>The east and the north vector (Item1=east vector, Item2 = north vector).</returns>
-		public static Tuple<VectorD3D, VectorD3D> GetWestNorthVectors(LineD3D line)
-		{
-			var v = line.P1 - line.P0;
-			var w = GetWestVectorAtStart(v);
-			var n = VectorD3D.CrossProduct(v, w).Normalized;
-			w = VectorD3D.CrossProduct(n, v).Normalized;
-
-			return new Tuple<VectorD3D, VectorD3D>(w, n);
+			return GetWestNorthVectors(v);
 		}
 
 		/// <summary>
@@ -219,7 +214,7 @@ namespace Altaxo.Geometry
 		/// <param name="linePoints">The line points.</param>
 		/// <returns>The polyline points, amended with east and north vector (Item1: polyline point, Item2: east vector, Item3: north vector).
 		/// The number of points may be smaller than the original number of points, because empty line segments are not returned.
-		/// The east and north vectors are valid for the segment going from the previous point to the current point (thus for the first and the second point the returned east and north vectors are equal).</returns>
+		/// The west and north vectors are valid for the segment going from the previous point to the current point (thus for the first and the second point the returned east and north vectors are equal).</returns>
 		public static IEnumerable<Tuple<PointD3D, VectorD3D, VectorD3D>> GetPolylinePointsWithWestAndNorth(IEnumerable<PointD3D> linePoints)
 		{
 			bool prevPointIsValid = false;
@@ -242,9 +237,9 @@ namespace Altaxo.Geometry
 
 					if (previousSegment.IsEmpty)
 					{
-						var startEastVector = GetWestVectorAtStart(currentSegment);
-						n = VectorD3D.CrossProduct(startEastVector, currentSegment);
-						w = VectorD3D.CrossProduct(currentSegment, n);
+						var entry = GetWestNorthVectors(currentSegment);
+						w = entry.Item1;
+						n = entry.Item2;
 					}
 
 					yield return new Tuple<PointD3D, VectorD3D, VectorD3D>(prevPoint, w, n);
@@ -260,18 +255,18 @@ namespace Altaxo.Geometry
 						{
 							n = GetSymmetricallyMirroredVectorAtPlane(n, midPlaneNormal);
 							n = GetOrthonormalVectorToVector(n, currentSegment); // make the north vector orthogonal (it should be already, but this corrects small deviations)
-							w = VectorD3D.CrossProduct(currentSegment, n);
+							w = VectorD3D.CrossProduct(n, currentSegment);
 						}
 						else if (Math.Abs(dot_e) > float.Epsilon) //
 						{
 							w = GetSymmetricallyMirroredVectorAtPlane(w, midPlaneNormal);
 							w = GetOrthonormalVectorToVector(w, currentSegment); // make the north vector orthogonal (it should be already, but this corrects small deviations)
-							n = VectorD3D.CrossProduct(w, currentSegment);
+							n = VectorD3D.CrossProduct(currentSegment, w);
 						}
 						else // previous segment and current segment are either colinear or a perfect reflection. Keep the north vector, and calculate only the new east vector
 						{
 							n = GetOrthonormalVectorToVector(n, currentSegment); // make the north vector orthogonal (it should be already, but this corrects small deviations)
-							w = VectorD3D.CrossProduct(currentSegment, n);
+							w = VectorD3D.CrossProduct(n, currentSegment);
 						}
 					}
 
@@ -285,6 +280,8 @@ namespace Altaxo.Geometry
 			if (previousSegment.Length > 0)
 				yield return new Tuple<PointD3D, VectorD3D, VectorD3D>(prevPoint, w, n);
 		}
+
+		#endregion Get west and north vector for a line
 
 		/// <summary>
 		/// Dissects a straight line into individual line segments, using a dash pattern.
