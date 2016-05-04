@@ -77,9 +77,16 @@ namespace Altaxo.Drawing.D3D.LineCaps
 		/// </summary>
 		private enum CrossSectionCases
 		{
+			/// <summary>Only one vertex in the middle point of the line, with only one normal, pointing in line direction. Example: tip of a round cap.</summary>
 			MiddlePointSmooth,
+
+			/// <summary>Only one vertex in the middle point of the line, but with as many normals as number of cross section vertices. Example: tip of a arrow or triangle cap.</summary>
 			MiddlePointSharp,
+
+			/// <summary>NumberOfVertices vertices, but only NumberOfVertices normals. This is possible only if all normals are oriented in the same direction. Example: Flat side of a cap, where all the normals point in line direction.</summary>
 			VerticesOnly,
+
+			/// <summary>Regular case. NumberOfVertices vertices, and NumberOfNormals normals.</summary>
 			Regular
 		}
 
@@ -357,8 +364,9 @@ namespace Altaxo.Drawing.D3D.LineCaps
 
 									case CrossSectionCases.Regular: // VerticesOnly to regular
 										{
+											throw new NotImplementedException();
 										}
-										break;
+									//break;
 
 									default:
 										throw new NotImplementedException();
