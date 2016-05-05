@@ -29,25 +29,29 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/// Changes from the Java version
-///   Removed BST code, but not all artifacts of it
-/// Future possibilities
-///   Eliminate Add/RemoveNode ?
-///   Comments comments and more comments!
+// Changes from the Java version
+//   Removed BST code, but not all artifacts of it
+// Future possibilities
+//   Eliminate Add/RemoveNode ?
+//   Comments comments and more comments!
 
-using System.Text;
 using System;
+using System.Text;
 
-namespace Poly2Tri {
+namespace Poly2Tri
+{
 	/**
 	 * @author Thomas Åhlen (thahlen@gmail.com)
 	 */
-	public class AdvancingFront {
+
+	public class AdvancingFront
+	{
 		public AdvancingFrontNode Head;
 		public AdvancingFrontNode Tail;
 		protected AdvancingFrontNode Search;
 
-		public AdvancingFront( AdvancingFrontNode head, AdvancingFrontNode tail ) {
+		public AdvancingFront(AdvancingFrontNode head, AdvancingFrontNode tail)
+		{
 			this.Head = head;
 			this.Tail = tail;
 			this.Search = head;
@@ -55,13 +59,20 @@ namespace Poly2Tri {
 			AddNode(tail);
 		}
 
-		public void AddNode( AdvancingFrontNode node ) { }
-		public void RemoveNode( AdvancingFrontNode node ) { }
+		public void AddNode(AdvancingFrontNode node)
+		{
+		}
 
-		public override string ToString() {
+		public void RemoveNode(AdvancingFrontNode node)
+		{
+		}
+
+		public override string ToString()
+		{
 			StringBuilder sb = new StringBuilder();
 			AdvancingFrontNode node = Head;
-			while (node != Tail) {
+			while (node != Tail)
+			{
 				sb.Append(node.Point.X).Append("->");
 				node = node.Next;
 			}
@@ -73,28 +84,36 @@ namespace Poly2Tri {
 		/// MM:  This seems to be used by LocateNode to guess a position in the implicit linked list of AdvancingFrontNodes near x
 		///      Removed an overload that depended on this being exact
 		/// </summary>
-		private AdvancingFrontNode FindSearchNode( double x ) {
+		private AdvancingFrontNode FindSearchNode(double x)
+		{
 			return Search;
 		}
 
 		/// <summary>
 		/// We use a balancing tree to locate a node smaller or equal to given key value (in theory)
 		/// </summary>
-		public AdvancingFrontNode LocateNode( TriangulationPoint point ) {
+		public AdvancingFrontNode LocateNode(TriangulationPoint point)
+		{
 			return LocateNode(point.X);
 		}
 
-		private AdvancingFrontNode LocateNode( double x ) {
+		private AdvancingFrontNode LocateNode(double x)
+		{
 			AdvancingFrontNode node = FindSearchNode(x);
-			if (x < node.Value) {
+			if (x < node.Value)
+			{
 				while ((node = node.Prev) != null)
-					if (x >= node.Value) {
+					if (x >= node.Value)
+					{
 						Search = node;
 						return node;
 					}
-			} else {
+			}
+			else
+			{
 				while ((node = node.Next) != null)
-					if (x < node.Value) {
+					if (x < node.Value)
+					{
 						Search = node.Prev;
 						return node.Prev;
 					}
@@ -105,25 +124,37 @@ namespace Poly2Tri {
 		/// <summary>
 		/// This implementation will use simple node traversal algorithm to find a point on the front
 		/// </summary>
-		public AdvancingFrontNode LocatePoint( TriangulationPoint point ) {
+		public AdvancingFrontNode LocatePoint(TriangulationPoint point)
+		{
 			double px = point.X;
 			AdvancingFrontNode node = FindSearchNode(px);
 			double nx = node.Point.X;
 
-			if (px == nx) {
-				if (point != node.Point) {
+			if (px == nx)
+			{
+				if (point != node.Point)
+				{
 					// We might have two nodes with same x value for a short time
-					if (point == node.Prev.Point) {
+					if (point == node.Prev.Point)
+					{
 						node = node.Prev;
-					} else if (point == node.Next.Point) {
+					}
+					else if (point == node.Next.Point)
+					{
 						node = node.Next;
-					} else {
+					}
+					else
+					{
 						throw new Exception("Failed to find Node for given afront point");
 					}
 				}
-			} else if (px < nx) {
+			}
+			else if (px < nx)
+			{
 				while ((node = node.Prev) != null) if (point == node.Point) break;
-			} else {
+			}
+			else
+			{
 				while ((node = node.Next) != null) if (point == node.Point) break;
 			}
 			Search = node;

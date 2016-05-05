@@ -125,7 +125,6 @@ namespace Altaxo.Main.PegParser
 				case FileEncoding.uniCodeBOM: return null;
 				default:
 					throw new InvalidProgramException();
-					return null;
 			}
 		}
 

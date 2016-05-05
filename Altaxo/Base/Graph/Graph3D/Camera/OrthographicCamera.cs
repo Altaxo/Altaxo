@@ -170,6 +170,8 @@ namespace Altaxo.Graph.Graph3D.Camera
 		/// <param name="aspectRatio">The aspect ratio of the screen (or whatever the 2D output medium is).</param>
 		/// <param name="zNearPlane">The z near plane, i.e. the z camera coordinate of the near end of the view volume.</param>
 		/// <param name="zFarPlane">The z far plane, i.e. the z camera coordinate of the far end of the view volume.</param>
+		/// <param name="screenOffsetX">The screen offsets x component.</param>
+		/// <param name="screenOffsetY">The screen offsets y component.</param>
 		/// <returns>The LookAtRH matrix multiplied with the OrthoRH matrix.</returns>
 		public Matrix4x4 GetViewProjectionMatrix(double aspectRatio, double zNearPlane, double zFarPlane, double screenOffsetX, double screenOffsetY)
 		{

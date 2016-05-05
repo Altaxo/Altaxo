@@ -303,7 +303,7 @@ namespace Altaxo.Graph.Graph3D.Background
 
 		/// <summary>
 		/// Infrastructure: Gets all child nodes of this instance along with its name, and optionally, a method to set the member variable which holds that child node to <c>null</c>.
-		/// The returned enumeration is used to (i) provide default implementations for <see cref="GetChildObjectNamed" /> and <see cref="GetNameOfChildObject" /> and (ii) to dispose all
+		/// The returned enumeration is used to (i) provide default implementations for <see cref="Altaxo.Main.INamedObjectCollection.GetChildObjectNamed" /> and <see cref="Altaxo.Main.INamedObjectCollection.GetNameOfChildObject" /> and (ii) to dispose all
 		/// child objects when this instance (the parent) is disposed.
 		/// </summary>
 		/// <returns>

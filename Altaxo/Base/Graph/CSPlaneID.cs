@@ -151,8 +151,10 @@ namespace Altaxo.Graph
 
 		public static CSPlaneID FromPhysicalVariant(int perpendicularAxisNumber, AltaxoVariant physicalValue)
 		{
+#pragma warning disable CS1718 // Comparison made to same variable
 			if (!(physicalValue == physicalValue))
 				throw new ArgumentException("You can not set physical values that return false when compared to itself, value is: " + physicalValue.ToString());
+#pragma warning restore CS1718 // Comparison made to same variable
 
 			CSPlaneID id = new CSPlaneID();
 			id._perpendicularAxisNumber = perpendicularAxisNumber;

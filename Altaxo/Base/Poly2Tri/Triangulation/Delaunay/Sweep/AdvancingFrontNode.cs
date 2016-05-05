@@ -29,21 +29,24 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/// Changes from the Java version
-///   Removed getters
-///   Has* turned into attributes
-/// Future possibilities
-///   Comments!
+// Changes from the Java version
+//   Removed getters
+//   Has* turned into attributes
+// Future possibilities
+//   Comments!
 
-namespace Poly2Tri {
-	public class AdvancingFrontNode {
+namespace Poly2Tri
+{
+	public class AdvancingFrontNode
+	{
 		public AdvancingFrontNode Next;
 		public AdvancingFrontNode Prev;
-		public double             Value;
+		public double Value;
 		public TriangulationPoint Point;
-		public DelaunayTriangle   Triangle;
+		public DelaunayTriangle Triangle;
 
-		public AdvancingFrontNode(TriangulationPoint point) {
+		public AdvancingFrontNode(TriangulationPoint point)
+		{
 			this.Point = point;
 			Value = point.X;
 		}

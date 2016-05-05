@@ -976,7 +976,6 @@ namespace Altaxo.Graph.Plot.Data
 		/// Looks whether one of data data columns have changed their data. If this is the case, we must recalculate the boundaries,
 		/// and trigger the boundary changed event if one of the boundaries have changed.
 		/// </summary>
-		/// <param name="sender">The sender of the event args, usually a child of this object.</param>
 		/// <param name="e">The <see cref="EventArgs" /> instance containing the event data. On return, you can provided transformed event args by this parameter.</param>
 		/// <returns>
 		/// The return value of the base handling function

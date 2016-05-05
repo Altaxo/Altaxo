@@ -329,6 +329,8 @@ namespace Altaxo.Geometry
 		/// <summary>Inflates the rectangle by the specified values <paramref name="x"/> and <paramref name="y"/>.</summary>
 		/// <param name="x">The value used to inflate the rectangle in x-direction.</param>
 		/// <param name="y">The value used to inflate the rectangle in y-direction.</param>
+		/// <param name="z">The value used to inflate the rectangle in z-direction.</param>
+		/// <returns>A new rectangle, inflated by the specified values <paramref name="x"/>, <paramref name="y"/> and <paramref name="z"/>.</returns>
 		public RectangleD3D WithPadding(double x, double y, double z)
 		{
 			return new RectangleD3D(_x - x, _y - y, _z - z, _sizeX + x + x, _sizeY + y + y, _sizeZ + z + z);
@@ -337,6 +339,8 @@ namespace Altaxo.Geometry
 		/// <summary>Changes the location of the rectangle by the specified values for <paramref name="x"/> and <paramref name="y"/>.</summary>
 		/// <param name="x">The x offset.</param>
 		/// <param name="y">The y offset.</param>
+		/// <param name="z">The z offset.</param>
+		/// <returns>A new rectangle with an position that is offset with regard to the original position.</returns>
 		public RectangleD3D WithOffset(double x, double y, double z)
 		{
 			return new RectangleD3D(_x + x, _y + y, _z + z, _sizeX, _sizeY, _sizeZ);

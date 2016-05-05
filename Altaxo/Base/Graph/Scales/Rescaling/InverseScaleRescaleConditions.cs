@@ -119,7 +119,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 			}
 		}
 
-		public virtual void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
+		public override void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
 		{
 			orgValue = 1 / orgValue;
 			endValue = 1 / endValue;

@@ -336,6 +336,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// it must be ensured that the axes are scaled correctly before the plots are painted.
 		/// </summary>
 		/// <param name="layer">The plot layer.</param>
+		/// <param name="plotData">The plot data which are here used to determine the bounds of the independent data column.</param>
 		public void PrepareScales(IPlotArea layer, XYZMeshedColumnPlotData plotData)
 		{
 			NumericalBoundaries pb = _scale.DataBounds;

@@ -179,7 +179,9 @@ typeof(GraphDocument),
 				s._name = info.GetString("Name");
 				var pageBounds = (RectangleF)info.GetValue("PageBounds", s);
 				var printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
+#pragma warning disable CS0618 // Type or member is obsolete
 				var layers = (XYPlotLayer.XYPlotLayerCollection)info.GetValue("LayerList", s);
+#pragma warning restore CS0618 // Type or member is obsolete
 				s._rootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(printableBounds.Size.Width), SizeY = RADouble.NewAbs(printableBounds.Size.Height) };
 				foreach (var l in layers)
 					s._rootLayer.Layers.Add(l);
@@ -236,7 +238,9 @@ typeof(GraphDocument),
 				s._name = info.GetString("Name");
 				var pageBounds = (RectangleF)info.GetValue("PageBounds", s);
 				var printableBounds = (RectangleF)info.GetValue("PrintableBounds", s);
+#pragma warning disable CS0618 // Type or member is obsolete
 				var layers = (XYPlotLayer.XYPlotLayerCollection)info.GetValue("LayerList", s);
+#pragma warning restore CS0618 // Type or member is obsolete
 				if (layers.GraphSize.IsEmpty)
 					s._rootLayer.Location = new ItemLocationDirect { SizeX = RADouble.NewAbs(printableBounds.Size.Width), SizeY = RADouble.NewAbs(printableBounds.Size.Height) };
 				else

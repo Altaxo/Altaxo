@@ -276,7 +276,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 
 			if (zoomOrg == zoomEnd)
 			{
-				if (null == zoomOrg)
+				if (0 == zoomOrg)
 				{
 					zoomOrg = -1;
 					zoomEnd = 1;

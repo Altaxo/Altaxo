@@ -70,16 +70,6 @@ namespace Altaxo.Graph.Graph3D
 		[NonSerialized]
 		private VectorD3D _cachedRootLayerSize;
 
-		/// <summary>
-		/// Occurs when the geometry has changed. This includes events that are able to change the geometry implicitly, for instance changing the properties of the graph.
-		/// </summary>
-		public event EventHandler GeometryChanged;
-
-		/// <summary>
-		/// Occurs when only the camera has changed. This does not require a new buildup of the geometry.
-		/// </summary>
-		public event EventHandler CameraChanged;
-
 		private const int MaxFixupRetries = 10;
 
 		#endregion Member variables

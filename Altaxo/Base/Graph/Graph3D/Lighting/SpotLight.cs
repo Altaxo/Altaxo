@@ -353,7 +353,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		/// Gets a new instance of <see cref="SpotLight"/> with the provided value for <see cref="Range"/>.
 		/// </summary>
 		/// <param name="range">The new value for <see cref="Range"/>.</param>
-		/// <returns>New instance of <see cref="SpotLight"/> with the provided value for <see cref=Range"/></returns>
+		/// <returns>New instance of <see cref="SpotLight"/> with the provided value for <see cref="Range"/></returns>
 		public SpotLight WithRange(double range)
 		{
 			if (!(range == _range))
@@ -398,7 +398,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		/// Gets a new instance of <see cref="SpotLight"/> with the provided value for <see cref="OuterConeAngle"/>.
 		/// </summary>
 		/// <param name="outerAngle">The new value for <see cref="OuterConeAngle"/> in radians.</param>
-		/// <returns>New instance of <see cref="SpotLight"/> with the provided value for <see cref=OuterConeAngle"/></returns>
+		/// <returns>New instance of <see cref="SpotLight"/> with the provided value for <see cref="OuterConeAngle"/></returns>
 		public SpotLight WithOuterConeAngle(double outerAngle)
 		{
 			if (!(outerAngle == _outerConeAngle))
@@ -443,7 +443,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		/// Gets a new instance of <see cref="SpotLight"/> with the provided value for <see cref="InnerConeAngle"/>.
 		/// </summary>
 		/// <param name="innerAngle">The new value for <see cref="InnerConeAngle"/> in radians.</param>
-		/// <returns>New instance of <see cref="SpotLight"/> with the provided value for <see cref=InnerConeAngle"/></returns>
+		/// <returns>New instance of <see cref="SpotLight"/> with the provided value for <see cref="InnerConeAngle"/></returns>
 		public SpotLight WithInnerConeAngle(double innerAngle)
 		{
 			if (!(innerAngle == _innerConeAngle))

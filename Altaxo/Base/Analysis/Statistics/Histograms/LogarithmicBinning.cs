@@ -220,7 +220,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
 		}
 
 		/// <summary>
-		/// Gets the binning count (and <see cref="BinLowerFactor"/> from the minimum and maximum of the values. Presumes that <see cref="BinOffset"/> and <see cref="BinWidth"/> are already set.
+		/// Gets the binning count (and <see cref="_binLowerIndex"/> from the minimum and maximum of the values. Presumes that <see cref="BinOffset"/> and <see cref="BinWidthInDecades"/> are already set.
 		/// </summary>
 		/// <param name="minValue">The minimum value.</param>
 		/// <param name="maxValue">The maximum value.</param>

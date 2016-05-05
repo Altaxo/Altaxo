@@ -274,21 +274,21 @@ namespace Altaxo.Graph.Gdi.CS
 
 			_axisStyleInformation.Add(info);
 
-		// RightBack
-		info: new CSAxisInformation(
-		Identifier: new CSLineID(vertAx, 1, 1),
-		NameOfAxisStyle: "RightBack",
-		NameOfFirstDownSide: "Left",
-		NameOfFirstUpSide: "Right",
-		NameOfSecondDownSide: "Before",
-		NameOfSecondUpSide: "Behind",
-		PreferredLabelSide: CSAxisSide.FirstUp,
-		PreferredTickSide: CSAxisSide.FirstUp,
-		IsShownByDefault: true,
-	 		HasTicksByDefault: true,
-		HasLabelsByDefault: true,
-		HasTitleByDefault: false
-		);
+			// RightBack
+			info = new CSAxisInformation(
+			Identifier: new CSLineID(vertAx, 1, 1),
+			NameOfAxisStyle: "RightBack",
+			NameOfFirstDownSide: "Left",
+			NameOfFirstUpSide: "Right",
+			NameOfSecondDownSide: "Before",
+			NameOfSecondUpSide: "Behind",
+			PreferredLabelSide: CSAxisSide.FirstUp,
+			PreferredTickSide: CSAxisSide.FirstUp,
+			IsShownByDefault: true,
+				 HasTicksByDefault: true,
+			HasLabelsByDefault: true,
+			HasTitleByDefault: false
+			);
 
 			_axisStyleInformation.Add(info);
 

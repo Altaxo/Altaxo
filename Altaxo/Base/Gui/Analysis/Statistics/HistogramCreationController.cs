@@ -273,7 +273,6 @@ namespace Altaxo.Gui.Analysis.Statistics
 
 				default:
 					throw new NotImplementedException("userInteractionLevel");
-					break;
 			}
 			return showDialog;
 		}

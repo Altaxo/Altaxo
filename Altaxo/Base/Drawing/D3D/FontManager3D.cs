@@ -40,7 +40,7 @@ namespace Altaxo.Drawing.D3D
 		private static FontManager3D _instance;
 
 		/// <summary>
-		/// The _cached character outlines. Key is the invariant Gdi typeface name (without size information, as obtained with <see cref="Altaxo.Graph.FontX.InvariantDescriptionStringWithoutSizeInformation"/>). Value is a dictionary with text character as key and the polygonal shape of this character as value.
+		/// The _cached character outlines. Key is the invariant Gdi typeface name (without size information, as obtained with <see cref="Altaxo.Drawing.FontX.InvariantDescriptionStringWithoutSizeInformation"/>). Value is a dictionary with text character as key and the polygonal shape of this character as value.
 		/// </summary>
 		protected Dictionary<string, Dictionary<char, CharacterGeometry>> _cachedCharacterOutlines = new Dictionary<string, Dictionary<char, CharacterGeometry>>();
 
@@ -153,7 +153,7 @@ namespace Altaxo.Drawing.D3D
 		/// Triangulates the specified polygons. The result are indexed triangles.
 		/// </summary>
 		/// <param name="polygons">The polygons to triangulate.</param>
-		/// <returns>Instance of the <see cref="Primitives.IndexedTriangles"/> class, which holds the triangle vertices as well as the indices.</returns>
+		/// <returns>Instance of the <see cref="IndexedTriangles"/> class, which holds the triangle vertices as well as the indices.</returns>
 		private static IndexedTriangles Triangulate(IList<PolygonClosedD2D> polygons)
 		{
 			var triangles = GetTriangles(polygons);

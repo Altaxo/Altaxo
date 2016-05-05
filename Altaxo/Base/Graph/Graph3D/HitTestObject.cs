@@ -250,8 +250,9 @@ namespace Altaxo.Graph.Graph3D
 		/// <summary>
 		/// Shifts the position of the object by x and y. Used to arrange objects.
 		/// </summary>
-		/// <param name="dx">Shift value of x in page coordinates.</param>
-		/// <param name="dy">Shift value of y in page coordinates.</param>
+		/// <param name="dx">Shift value of x in root layer coordinates.</param>
+		/// <param name="dy">Shift value of y in root layer coordinates.</param>
+		/// <param name="dz">Shift value of z in root layer coordinates.</param>
 		public override void ShiftPosition(double dx, double dy, double dz)
 		{
 			// per default: do nothing

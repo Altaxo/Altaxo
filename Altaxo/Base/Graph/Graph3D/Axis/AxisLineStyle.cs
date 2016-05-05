@@ -94,7 +94,6 @@ namespace Altaxo.Graph.Graph3D.Axis
 		/// The line points that make out the main axis line (in parent layer coordinates). Used for hit testing
 		/// </summary>
 		[NonSerialized]
-		/// <summary>The main axis line cached for hit testing</summary>
 		protected PointD3D[] _cachedMainLinePointsUsedForHitTesting;
 
 		/// <summary>The major tick lines cached for hit testing</summary>

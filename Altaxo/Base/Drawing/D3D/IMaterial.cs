@@ -36,7 +36,7 @@ namespace Altaxo.Drawing.D3D
 	/// Interface for material used in 3D geometry.
 	/// </summary>
 	/// <seealso cref="Altaxo.Main.IImmutable" />
-	/// <seealso cref="System.IEquatable{Altaxo.Drawing.D3D.IMaterial}" />
+	/// <seealso cref="System.IEquatable{T}" />
 	public interface IMaterial : Altaxo.Main.IImmutable, IEquatable<IMaterial>
 	{
 		/// <summary>

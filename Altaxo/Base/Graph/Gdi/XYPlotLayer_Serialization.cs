@@ -70,7 +70,9 @@ namespace Altaxo.Graph.Gdi
 
 			if (isLinked)
 			{
+#pragma warning disable CS0618 // Type or member is obsolete
 				LinkedScale ls = new LinkedScale(transScale, idx);
+#pragma warning restore CS0618 // Type or member is obsolete
 				ls.SetLinkParameter(orgA, orgB, endA, endB);
 				transScale = ls;
 			}
@@ -761,7 +763,9 @@ namespace Altaxo.Graph.Gdi
 				int layerNum = System.Xml.XmlConvert.ToInt32(pathend.Substring(1));
 				foreach (var scaleAndTick in s.Scales)
 					if (scaleAndTick is LinkedScale)
+#pragma warning disable CS0612 // Type or member is obsolete
 						((LinkedScale)scaleAndTick).SetLinkedLayerIndex(layerNum, info);
+#pragma warning restore CS0612 // Type or member is obsolete
 			}
 		}
 
@@ -774,7 +778,9 @@ namespace Altaxo.Graph.Gdi
 				int layerNum = System.Xml.XmlConvert.ToInt32(pathend.Substring(1));
 				foreach (var scaleAndTick in s.Scales)
 					if (scaleAndTick is LinkedScale)
+#pragma warning disable CS0612 // Type or member is obsolete
 						((LinkedScale)scaleAndTick).SetLinkedLayerIndex(layerNum, info);
+#pragma warning restore CS0612 // Type or member is obsolete
 			}
 		}
 

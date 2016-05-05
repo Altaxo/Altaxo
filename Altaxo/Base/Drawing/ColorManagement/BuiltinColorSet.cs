@@ -268,7 +268,7 @@ namespace Altaxo.Drawing.ColorManagement
 		}
 
 		/// <summary>
-		/// Gets the <see cref="Altaxo.Graph.NamedColor"/> at the specified index. The set operation is not allowed for a builtin color set and will throw an <see cref="InvalidOperationException"/>.
+		/// Gets the <see cref="NamedColor"/> at the specified index. The set operation is not allowed for a builtin color set and will throw an <see cref="InvalidOperationException"/>.
 		/// </summary>
 		public NamedColor this[int index]
 		{

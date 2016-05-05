@@ -109,7 +109,9 @@ namespace Altaxo.Graph.Scales
 				s._linkParameters = (LinkedScaleParameters)info.GetValue("LinkParameters", s);
 				if (null != s._linkParameters) s._linkParameters.ParentObject = s;
 
+#pragma warning disable CS0612 // Type or member is obsolete
 				s._linkedScaleIndex = info.GetInt32("LinkedScaleIndex");
+#pragma warning restore CS0612 // Type or member is obsolete
 				return s;
 			}
 		}

@@ -29,25 +29,31 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/// Changes from the Java version
-///   Replaced getPolygons with attribute
-/// Future possibilities
-///   Replace Add(Polygon) with exposed container?
-///   Replace entire class with HashSet<Polygon> ?
+// Changes from the Java version
+//   Replaced getPolygons with attribute
+// Future possibilities
+//   Replace Add(Polygon) with exposed container?
+//   Replace entire class with HashSet<Polygon> ?
 
 using System.Collections.Generic;
 
-namespace Poly2Tri {
-	public class PolygonSet {
+namespace Poly2Tri
+{
+	public class PolygonSet
+	{
 		protected List<Polygon> _polygons = new List<Polygon>();
 
-		public PolygonSet() {}
+		public PolygonSet()
+		{
+		}
 
-		public PolygonSet(Polygon poly) {
+		public PolygonSet(Polygon poly)
+		{
 			_polygons.Add(poly);
 		}
 
-		public void Add(Polygon p) {
+		public void Add(Polygon p)
+		{
 			_polygons.Add(p);
 		}
 

@@ -68,13 +68,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// </summary>
 		private NumericalScale _colorScale;
 
-		[NonSerialized]
-		private CachedImageType _imageType;
-
 		/// <summary>
 		/// The material used to show the surface. Here only the specular properties of the material are used, because the color is provided by the color provider
 		/// </summary>
 		private IMaterial _material;
+
+		[NonSerialized]
+		private CachedImageType _imageType;
 
 		#region Serialization
 

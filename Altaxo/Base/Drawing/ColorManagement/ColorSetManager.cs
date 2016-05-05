@@ -120,7 +120,7 @@ namespace Altaxo.Drawing.ColorManagement
 		}
 
 		/// <summary>
-		/// Gets the <see cref="Altaxo.Graph.ColorManagement.IColorSet"/> with the specified level and name.
+		/// Gets the <see cref="IColorSet"/> with the specified level and name.
 		/// </summary>
 		public IColorSet this[ColorSetLevel level, string name]
 		{
@@ -131,7 +131,7 @@ namespace Altaxo.Drawing.ColorManagement
 		}
 
 		/// <summary>
-		/// Tries to get the <see cref="Altaxo.Graph.ColorManagement.IColorSet"/> with the specified level and name.
+		/// Tries to get the <see cref="IColorSet"/> with the specified level and name.
 		/// </summary>
 		/// <param name="level">The color set level.</param>
 		/// <param name="name">The color set name.</param>

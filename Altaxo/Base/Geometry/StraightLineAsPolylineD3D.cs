@@ -54,7 +54,6 @@ namespace Altaxo.Geometry
 			{
 				case 0:
 					return _p0;
-					break;
 
 				case 1:
 					return _p1;

@@ -365,7 +365,7 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
-		/// Prepends a transformation matrix <paramref name="f"/> to this matrix.
+		/// Prepends a transformation matrix <paramref name="a"/> to this matrix.
 		/// </summary>
 		/// <param name="a">The matrix to prepend.</param>
 		public void PrependTransform(Matrix3x3 a)

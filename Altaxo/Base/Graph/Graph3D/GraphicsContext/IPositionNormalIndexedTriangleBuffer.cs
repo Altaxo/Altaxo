@@ -36,7 +36,6 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 	public interface IPositionNormalIndexedTriangleBuffer : IIndexedTriangleBuffer
 	{
 		/// <summary>
-		/// <summary>
 		/// Adds the specified vertex.
 		/// </summary>
 		/// <param name="x">The x position.</param>

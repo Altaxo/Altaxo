@@ -56,7 +56,7 @@ namespace Altaxo.Gui
 		public event Action<IMVCANDController> MadeDirty;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MVCANControllerEditCopyOfDocInstanceCanChangeBase{TModel, TView}"/> class.
+		/// Initializes a new instance of the <see cref="MVCANDControllerEditOriginalDocInstanceCanChangeBase{TModel, TView}"/> class.
 		/// </summary>
 		/// <param name="SetInstanceInParentNode">Action that sets the instance that this controller is editing in the parent node. This action is typically called when
 		/// the user chooses a new type of model in the Gui.</param>

@@ -33,7 +33,7 @@ namespace Altaxo.Drawing.D3D
 	/// <summary>
 	/// Contains code to generate triangle geometry for solid straight dash segments.
 	/// This structure needs to be initialized only once per line with <see cref="Initialize(PenX3D, VectorD3D, VectorD3D, LineD3D)"/>.
-	/// It then can be used for each individual dash segment by calling <see cref="AddGeometry(Action{PointD3D, VectorD3D}, Action{int, int, int}, ref int, LineD3D, ILineCap, ILineCap)"/>.
+	/// It then can be used for each individual dash segment by calling <see cref="AddGeometry(Action{PointD3D, VectorD3D}, Action{int, int, int, bool}, ref int, LineD3D, ILineCap, ILineCap)"/>.
 	/// </summary>
 	public struct SolidStraightLineDashSegment
 	{

@@ -968,13 +968,13 @@ namespace Altaxo.Gui.Graph3D.Viewing
 		}
 
 		/// <summary>
-		/// Looks for a graph object at pixel position <paramref name="pixelPos"/> and returns true if one is found.
+		/// Looks for a graph object at the position given by <paramref name="hitData"/> and returns true if one is found.
 		/// </summary>
 		/// <param name="hitData">The position of the mouse, expressed as transformation, that when applied, transformes the mouse coordinate to the point x=0, y=0, z=-Infinity....+Infinity.</param>
 		/// <param name="plotItemsOnly">If true, only the plot items where hit tested.</param>
 		/// <param name="foundObject">Found object if there is one found, else null</param>
 		/// <param name="foundInLayerNumber">The layer the found object belongs to, otherwise 0</param>
-		/// <returns>True if a object was found at the pixel coordinates <paramref name="pixelPos"/>, else false.</returns>
+		/// <returns>True if a object was found at the position given by <paramref name="hitData"/>, else false.</returns>
 		public bool FindGraphObjectAtPixelPosition(HitTestPointData hitData, bool plotItemsOnly, out IHitTestObject foundObject, out int[] foundInLayerNumber)
 		{
 			foundObject = Doc.RootLayer.HitTest(hitData, plotItemsOnly);

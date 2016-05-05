@@ -324,7 +324,6 @@ namespace Altaxo.Analysis.Statistics.Histograms
 
 				default:
 					throw new NotImplementedException("userInteractionLevel");
-					break;
 			}
 			return showDialog;
 		}

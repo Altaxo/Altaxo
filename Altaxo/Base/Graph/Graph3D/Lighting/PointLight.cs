@@ -130,7 +130,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		public bool IsAffixedToCamera { get { return _isAffixedToCamera; } }
 
 		/// <summary>
-		/// Gets a new instance of <see cref=PointLight"/> with the provided value for <see cref="IsAffixedToCamera"/>.
+		/// Gets a new instance of <see cref="PointLight"/> with the provided value for <see cref="IsAffixedToCamera"/>.
 		/// </summary>
 		/// <param name="isAffixedToCamera">The new value for <see cref="IsAffixedToCamera"/>.</param>
 		/// <returns>New instance of <see cref="PointLight"/> with the provided value for <see cref="IsAffixedToCamera"/></returns>
@@ -280,7 +280,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		/// Gets a new instance of <see cref="PointLight"/> with the provided value for <see cref="Range"/>.
 		/// </summary>
 		/// <param name="range">The new value for <see cref="Range"/>.</param>
-		/// <returns>New instance of <see cref="PointLight"/> with the provided value for <see cref=Range"/></returns>
+		/// <returns>New instance of <see cref="PointLight"/> with the provided value for <see cref="Range"/></returns>
 		public PointLight WithRange(double range)
 		{
 			if (!(range == _range))

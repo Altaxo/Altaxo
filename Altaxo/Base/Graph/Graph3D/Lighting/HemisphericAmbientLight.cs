@@ -134,7 +134,7 @@ namespace Altaxo.Graph.Graph3D.Lighting
 		public bool IsAffixedToCamera { get { return _isAffixedToCamera; } }
 
 		/// <summary>
-		/// Gets a new instance of <see cref=HemisphericAmbientLight"/> with the provided value for <see cref="IsAffixedToCamera"/>.
+		/// Gets a new instance of <see cref="HemisphericAmbientLight"/> with the provided value for <see cref="IsAffixedToCamera"/>.
 		/// </summary>
 		/// <param name="isAffixedToCamera">The new value for <see cref="IsAffixedToCamera"/>.</param>
 		/// <returns>New instance of <see cref="HemisphericAmbientLight"/> with the provided value for <see cref="IsAffixedToCamera"/></returns>

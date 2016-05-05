@@ -507,10 +507,10 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
-		/// Prepends a transformation matrix <paramref name="f"/> to this matrix, and returns a new matrix with the result. The original matrix is unchanged.
+		/// Prepends a transformation matrix <paramref name="l"/> to this matrix, and returns a new matrix with the result. The original matrix is unchanged.
 		/// </summary>
-		/// <param name="f">The matrix to append.</param>
-		/// <returns>A new matrix based on the existing one, but with matrix <paramref name="f"/> prepended.</returns>
+		/// <param name="l">The matrix to prepend.</param>
+		/// <returns>A new matrix based on the existing one, but with matrix <paramref name="l"/> prepended.</returns>
 		public Matrix4x3 WithPrependedTransformation(Matrix4x3 l)
 		{
 			return new Matrix4x3(
@@ -659,7 +659,7 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
-		/// Prepends a transformation matrix <paramref name="f"/> to this matrix.
+		/// Prepends a transformation matrix <paramref name="a"/> to this matrix.
 		/// </summary>
 		/// <param name="a">The matrix to prepend.</param>
 		public void PrependTransform(Matrix4x3 a)
