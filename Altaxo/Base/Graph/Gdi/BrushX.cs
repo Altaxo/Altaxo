@@ -629,6 +629,11 @@ namespace Altaxo.Graph.Gdi
 				return false;
 		}
 
+		public override int GetHashCode()
+		{
+			return _brushType.GetHashCode() + 13 * _foreColor.GetHashCode();
+		}
+
 		public BrushX(BrushX from)
 		{
 			_brushType = from._brushType; // Type of the brush

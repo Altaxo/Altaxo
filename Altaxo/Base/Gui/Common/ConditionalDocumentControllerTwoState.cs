@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Common
 			Func<TModel> DocumentCreationActionForEnabledState,
 			Func<TModel> DocumentCreationActionForDisabledState
 			)
-			: this(DocumentCreationActionForEnabledState, DocumentCreationActionForEnabledState, InternalCreateController)
+			: this(DocumentCreationActionForEnabledState, DocumentCreationActionForDisabledState, InternalCreateController)
 		{
 		}
 
@@ -68,6 +68,7 @@ namespace Altaxo.Gui.Common
 				throw new ArgumentNullException("ControllerCreationAction");
 
 			_documentCreationActionForEnabledState = DocumentCreationActionForEnabledState;
+			_documentCreationActionForDisabledState = DocumentCreationActionForDisabledState;
 			_controllerCreationAction = ControllerCreationAction;
 		}
 

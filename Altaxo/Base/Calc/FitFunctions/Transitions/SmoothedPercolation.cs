@@ -255,6 +255,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 		/// </summary>
 		public event EventHandler Changed;
 
+		protected virtual void OnChanged()
+		{
+			Changed?.Invoke(this, EventArgs.Empty);
+		}
+
 		#endregion IFitFunction Members
 	}
 }

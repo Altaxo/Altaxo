@@ -487,6 +487,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						this.ytype == from.ytype &&
 						this.cstype == from.cstype;
 			}
+
+			public override int GetHashCode()
+			{
+				return base.GetHashCode() + 13 * xtype.GetHashCode() + 31 * ytype.GetHashCode();
+			}
 		}
 
 		private class ImageTypeOtherMemento
@@ -539,6 +544,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						this.y01 == from.y01 &&
 						this.y11 == from.y11 &&
 						this.y32 == from.y32;
+			}
+
+			public override int GetHashCode()
+			{
+				return base.GetHashCode() + 13 * xtype.GetHashCode() + 31 * ytype.GetHashCode();
 			}
 		}
 

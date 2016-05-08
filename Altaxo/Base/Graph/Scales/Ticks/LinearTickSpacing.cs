@@ -321,6 +321,11 @@ namespace Altaxo.Graph.Scales.Ticks
 			return true;
 		}
 
+		public override int GetHashCode()
+		{
+			return base.GetHashCode() + 13 * _targetNumberOfMajorTicks + 31 * _targetNumberOfMinorTicks;
+		}
+
 		#region User parameters
 
 		/// <summary>

@@ -62,6 +62,11 @@ namespace Altaxo.Main
 				throw new InvalidOperationException("This is a static instance of DocumentNode, intended for infrastructural purposes only.");
 			}
 
+			protected void OnChanged()
+			{
+				Changed?.Invoke(this, EventArgs.Empty);
+			}
+
 			public void EhChildChanged(object child, EventArgs e)
 			{
 			}
@@ -99,6 +104,11 @@ namespace Altaxo.Main
 			}
 
 			public event Action<object, object, TunnelingEventArgs> TunneledEvent;
+
+			protected void OnTunneledEvent(object origin, TunnelingEventArgs e)
+			{
+				TunneledEvent?.Invoke(this, origin, e);
+			}
 
 			public bool IsDisposed
 			{

@@ -147,6 +147,11 @@ namespace Altaxo.Graph.Scales.Ticks
 			return true;
 		}
 
+		public override int GetHashCode()
+		{
+			return base.GetHashCode() + 17 * _suppressedTicksByNumber.Count + 31 * _suppressedTickValues.Count;
+		}
+
 		public bool IsEmpty
 		{
 			get

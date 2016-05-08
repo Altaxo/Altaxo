@@ -292,7 +292,7 @@ namespace Poly2Tri
 
 				EdgeEvent(tcx, edge.P, edge.Q, node.Triangle, edge.Q);
 			}
-			catch (PointOnEdgeException e)
+			catch (PointOnEdgeException)
 			{
 				//Debug.WriteLine( String.Format( "Warning: Skipping Edge: {0}", e.Message ) );
 				throw;

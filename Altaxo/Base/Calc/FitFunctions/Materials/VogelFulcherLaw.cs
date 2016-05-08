@@ -203,6 +203,11 @@ namespace Altaxo.Calc.FitFunctions.Materials
 		/// </summary>
 		public event EventHandler Changed;
 
+		protected virtual void OnChanged()
+		{
+			Changed?.Invoke(this, EventArgs.Empty);
+		}
+
 		#endregion IFitFunction Members
 	}
 }

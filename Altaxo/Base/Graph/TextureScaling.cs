@@ -208,6 +208,14 @@ namespace Altaxo.Graph
 			return this._scalingMode == other._scalingMode && this._aspectPreserving == other._aspectPreserving && this._x == other._x && this._y == other._y;
 		}
 
+		public override bool Equals(object obj)
+		{
+			if (obj is TextureScaling)
+				return Equals((TextureScaling)obj);
+			else
+				return false;
+		}
+
 		public override int GetHashCode()
 		{
 			return 17 * _scalingMode.GetHashCode() + 31 * _aspectPreserving.GetHashCode() + 61 * _x.GetHashCode() + 127 * _y.GetHashCode();

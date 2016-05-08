@@ -164,6 +164,7 @@ namespace Altaxo.Drawing.D3D
 
 			_endWestVector = w;
 			_endNorthVector = n;
+			_endAdvanceVector = currSeg.Normalized;
 		}
 
 		public static void AddWithNormals(
