@@ -354,7 +354,6 @@ namespace Altaxo.Calc
 			if (!(start >= 0)) throw new ArgumentOutOfRangeException(nameof(start) + " should be >= 0");
 			if (!(start < end)) throw new ArgumentOutOfRangeException(nameof(start) + " should be < than " + nameof(end));
 			if (!(alpha.Length == beta.Length)) throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " are different");
-			if (!(alpha.Length == beta.Length)) throw new ArgumentException("Length of " + nameof(alpha) + " and " + nameof(beta) + " are different");
 
 			if ((end - start) <= 1000)
 			{

@@ -591,8 +591,6 @@ namespace Altaxo.Main
 				return;
 
 			if (!(_docNodeRef == null)) throw new InvalidProgramException();
-
-			if (!(_docNodeRef == null)) throw new InvalidProgramException();
 			var senderAsDocNode = sender as IDocumentLeafNode;
 			var sourceAsDocNode = source as IDocumentLeafNode;
 

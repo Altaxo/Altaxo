@@ -206,7 +206,7 @@ namespace Altaxo.Collections
 
 			public void Insert(int index, M item)
 			{
-				if (index < 0 && index > _itemIndex.Count)
+				if (index < 0 || index > _itemIndex.Count)
 					throw new ArgumentOutOfRangeException("index");
 				if (!_selectionCriterium(item))
 					throw new ArgumentException("item to insert does not fulfill the selection criterion");

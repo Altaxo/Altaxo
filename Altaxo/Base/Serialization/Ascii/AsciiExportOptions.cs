@@ -193,7 +193,7 @@ namespace Altaxo.Serialization.Ascii
 		/// <returns></returns>
 		public string ConvertToSaveString(string s)
 		{
-			s.Replace(SeparatorChar, SubstituteForSeparatorChar);
+			s = s.Replace(SeparatorChar, SubstituteForSeparatorChar);
 			s = s.Replace('\r', ' ');
 			s = s.Replace('\n', ' ');
 			return s;

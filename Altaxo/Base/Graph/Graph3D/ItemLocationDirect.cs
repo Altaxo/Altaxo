@@ -738,7 +738,7 @@ namespace Altaxo.Graph.Graph3D
 			Matrix4x3 m = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
 				ScaleX, ScaleY, ScaleZ,
 				ShearX, ShearY, ShearZ,
-				-RotationX, -RotationY, -RotationZ,
+				RotationX, RotationY, RotationZ,
 				AbsolutePivotPositionX, AbsolutePivotPositionY, AbsolutePivotPositionZ);
 
 			m.TranslatePrepend(AbsoluteVectorPivotToLeftUpper.X, AbsoluteVectorPivotToLeftUpper.Y, AbsoluteVectorPivotToLeftUpper.Z);

@@ -546,7 +546,7 @@ int FFT (complex<FLOAT> c[], int isign)
 		{
 			if (ndim == 0)
 				throw new ArithmeticException("Pfa235FFT: no dimensions have been specified");
-			if (ndim == 0)
+			if (ndim > 1)
 				throw new ArithmeticException("Pfa235FFT: Sorry, RealFFT is implemented only for one dimension!");
 
 			double re1, im1, re2, im2;

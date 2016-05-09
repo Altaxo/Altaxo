@@ -1001,7 +1001,7 @@ namespace Altaxo.Graph.Graph3D
 				_transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
 					locD.ScaleX, locD.ScaleY, locD.ScaleZ,
 					locD.ShearX, locD.ShearY, locD.ShearZ,
-					-locD.RotationX, -locD.RotationY, -locD.RotationZ,
+					locD.RotationX, locD.RotationY, locD.RotationZ,
 					locD.AbsolutePivotPositionX, locD.AbsolutePivotPositionY, locD.AbsolutePivotPositionZ);
 				_transformation.TranslatePrepend(locD.AbsoluteVectorPivotToLeftUpper.X, locD.AbsoluteVectorPivotToLeftUpper.Y, locD.AbsoluteVectorPivotToLeftUpper.Z);
 			}
@@ -1010,7 +1010,7 @@ namespace Altaxo.Graph.Graph3D
 				_transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
 					_location.ScaleX, _location.ScaleY, _location.ScaleZ,
 					_location.ShearX, _location.ShearY, _location.ShearZ,
-					-_location.RotationX, -_location.RotationY, -_location.RotationZ,
+					_location.RotationX, _location.RotationY, _location.RotationZ,
 					_cachedLayerPosition.X, _cachedLayerPosition.Y, _cachedLayerPosition.Z);
 			}
 		}

@@ -1197,7 +1197,7 @@ namespace Altaxo.Calc.Fourier
 			}
 
 			float c1 = 0.5f, c2;
-			float theta = (float)Math.PI / (length / 2);
+			float theta = (float)(Math.PI / (length / 2));
 
 			if (direction == FourierDirection.Forward)
 			{

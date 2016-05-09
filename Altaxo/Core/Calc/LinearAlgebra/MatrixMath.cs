@@ -1507,7 +1507,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (a.Columns != numil)
 				throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.Rows, a.Columns, b.Rows, b.Columns));
 			if (c.Rows != crows || c.Columns != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})", c.Rows, c.Columns, crows, ccols));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", c.Rows, c.Columns, crows, ccols));
 
 			for (int i = 0; i < crows; i++)
 			{
@@ -1709,7 +1709,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
 			if (bcols != acols)
 				throw new ArithmeticException(string.Format("Matrix b[{0},{1}] has not the same number of columns than matrix a[{2},{3}]!", brows, bcols, arows, acols));
 			if (object.ReferenceEquals(b, c))
@@ -1739,7 +1739,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
 			if (bcols != acols)
 				throw new ArithmeticException(string.Format("Vector b[{0}] has not the same number of columns than matrix a[{1},{2}]!", brows, arows, acols));
 			if (object.ReferenceEquals(b, c))
@@ -1763,7 +1763,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (a.Columns != b.Columns || a.Rows != b.Rows)
 				throw new ArithmeticException(string.Format("Try to add a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.Rows, a.Columns, b.Rows, b.Columns));
 			if (c.Rows != a.Rows || c.Columns != a.Columns)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the proper dimension ({2},{3})", c.Rows, c.Columns, a.Rows, a.Columns));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the proper dimension ({2},{3})", c.Rows, c.Columns, a.Rows, a.Columns));
 
 			for (int i = 0; i < c.Rows; i++)
 				for (int j = 0; j < c.Columns; j++)
@@ -1783,7 +1783,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (a.Columns != b.Columns || a.Rows != b.Rows)
 				throw new ArithmeticException(string.Format("Try to subtract a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.Rows, a.Columns, b.Rows, b.Columns));
 			if (c.Rows != a.Rows || c.Columns != a.Columns)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the proper dimension ({2},{3})", c.Rows, c.Columns, a.Rows, a.Columns));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the proper dimension ({2},{3})", c.Rows, c.Columns, a.Rows, a.Columns));
 
 			for (int i = 0; i < c.Rows; i++)
 				for (int j = 0; j < c.Columns; j++)
@@ -1807,7 +1807,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (a.Columns != numil)
 				throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.Rows, a.Columns, b.Rows, b.Columns));
 			if (c.Rows != crows || c.Columns != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})", c.Rows, c.Columns, crows, ccols));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", c.Rows, c.Columns, crows, ccols));
 
 			for (int i = 0; i < crows; i++)
 			{
@@ -1835,7 +1835,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// Presumtion:
 			if (c.Rows != crows || c.Columns != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})", c.Rows, c.Columns, crows, ccols));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", c.Rows, c.Columns, crows, ccols));
 
 			for (int i = 0; i < crows; i++)
 			{
@@ -1864,7 +1864,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
 			if (bcols != acols)
 				throw new ArithmeticException(string.Format("Vector b[{0}] has not the same length than rows of matrix a[{1},{2}]!", bcols, arows, acols));
 			if (object.ReferenceEquals(b, c))
@@ -1895,7 +1895,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
 			if (bcols != acols)
 				throw new ArithmeticException(string.Format("Matrix b[{0},{1}] has not the same number of columns than matrix a[{2},{3}]!", brows, bcols, arows, acols));
 			if (object.ReferenceEquals(b, c))
@@ -1926,7 +1926,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
 			if (bcols != acols)
 				throw new ArithmeticException(string.Format("Matrix b[{0},{1}] has not the same number of columns than matrix a[{2},{3}]!", brows, bcols, arows, acols));
 			if (object.ReferenceEquals(b, c))
@@ -1955,7 +1955,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
 			if (bcols != acols)
 				throw new ArithmeticException(string.Format("Vector b[{0}] has not the same length than rows of matrix a[{1},{2}]!", bcols, arows, acols));
 			if (object.ReferenceEquals(b, c))
@@ -1986,7 +1986,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
 			if (brows != arows)
 				throw new ArithmeticException(string.Format("Matrix b[{0},{1}] has not the same number of rows than matrix a[{2},{3}]!", brows, bcols, arows, acols));
 			if (object.ReferenceEquals(b, c))
@@ -2018,7 +2018,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", crows, ccols, arows, acols));
 			if (bcols != acols)
 				throw new ArithmeticException(string.Format("Matrix b[{0},{1}] has not the same number of columns than matrix a[{2},{3}]!", brows, bcols, arows, acols));
 			if (object.ReferenceEquals(b, c))
@@ -2410,8 +2410,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>The sum of the squared differences of each element in a to the corresponding element in b, i.e. Sum[(a[i,j]-b[i,j])²].</returns>
 		public static double SumOfSquaredDifferences(IROMatrix a, IROMatrix b)
 		{
-			if (a.Rows != b.Rows || a.Columns != a.Columns)
-				throw new ArithmeticException(string.Format("The two provided matrices (a({0},{1])) and b({2},{3})) have not the same dimensions.", a.Rows, a.Columns, b.Rows, b.Columns));
+			if (a.Rows != b.Rows || a.Columns != b.Columns)
+				throw new ArithmeticException(string.Format("The two provided matrices (a({0},{1})) and b({2},{3})) have not the same dimensions.", a.Rows, a.Columns, b.Rows, b.Columns));
 
 			double sum = 0;
 			for (int i = 0; i < a.Rows; i++)
@@ -2516,7 +2516,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		public static void Copy(IROMatrix src, IMatrix dest)
 		{
 			if (dest.Rows != src.Rows || dest.Columns != src.Columns)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the dimension of the source matrix ({2},{3})", dest.Rows, dest.Columns, src.Rows, src.Columns));
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the dimension of the source matrix ({2},{3})", dest.Rows, dest.Columns, src.Rows, src.Columns));
 
 			int rows = src.Rows;
 			int cols = src.Columns;
@@ -2556,7 +2556,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (srccol >= src.Columns)
 				throw new ArithmeticException(string.Format("Parameter srccol out of range ({0}>={1})!", srccol, src.Columns));
 			if (dest.Rows != src.Rows)
-				throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({3})!", destcol, dest.Rows, src.Rows));
+				throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({2})!", destcol, dest.Rows, src.Rows));
 
 			for (int i = 0; i < dest.Rows; i++)
 				dest[i, destcol] = src[i, srccol];
@@ -2575,7 +2575,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (src.Columns != 1)
 				throw new ArithmeticException(string.Format("Try to set column {0} with a matrix of more than one, namely {1} columns, is not allowed!", col, src.Columns));
 			if (dest.Rows != src.Rows)
-				throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({3})!", col, dest.Rows, src.Rows));
+				throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({2})!", col, dest.Rows, src.Rows));
 
 			for (int i = 0; i < dest.Rows; i++)
 				dest[i, col] = src[i, 0];

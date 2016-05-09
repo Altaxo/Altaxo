@@ -190,7 +190,7 @@ namespace Altaxo.Serialization.Galactic
 				if (!(table[i] is Altaxo.Data.INumericColumn))
 					return string.Format("Table column[{0}] ({1}) is not a numeric column!", i, table[i].FullName);
 
-				if (((Altaxo.Data.INumericColumn)table[i])[rownumber] == Double.NaN)
+				if (double.IsNaN(((Altaxo.Data.INumericColumn)table[i])[rownumber]))
 					return string.Format("Table cell [{0},{1}] (column {2}) has no numeric value!", i, rownumber, table[i].FullName);
 			}
 
@@ -238,7 +238,7 @@ namespace Altaxo.Serialization.Galactic
 			{
 				i = bUseSel ? selectedRows[j] : j;
 
-				if (xcolumn[i] == Double.NaN)
+				if (double.IsNaN(xcolumn[i]))
 					return string.Format("X column at index {i} has no numeric value!", i);
 
 				if (((Altaxo.Data.INumericColumn)table.DataColumns[columnnumber])[i] == Double.NaN)

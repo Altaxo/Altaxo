@@ -82,9 +82,9 @@ namespace Altaxo.Graph.Scales.Rescaling
 		public override void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
 		{
 			if (orgRelativeTo != BoundariesRelativeTo.Absolute)
-				throw new ArgumentException(string.Format("{0} does only support orgRelativeTo={1]", this.GetType().Name, Enum.GetName(typeof(BoundariesRelativeTo), BoundariesRelativeTo.Absolute)));
+				throw new ArgumentException(string.Format("{0} does only support orgRelativeTo={1}", this.GetType().Name, Enum.GetName(typeof(BoundariesRelativeTo), BoundariesRelativeTo.Absolute)));
 			if (endRelativeTo != BoundariesRelativeTo.Absolute)
-				throw new ArgumentException(string.Format("{0} does only support endRelativeTo={1]", this.GetType().Name, Enum.GetName(typeof(BoundariesRelativeTo), BoundariesRelativeTo.Absolute)));
+				throw new ArgumentException(string.Format("{0} does only support endRelativeTo={1}", this.GetType().Name, Enum.GetName(typeof(BoundariesRelativeTo), BoundariesRelativeTo.Absolute)));
 
 			if (double.IsNaN(orgValue) || !(0 < orgValue && orgValue < 1))
 			{

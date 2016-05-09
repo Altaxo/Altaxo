@@ -271,7 +271,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (b.Columns != 1)
 				throw new ArithmeticException(string.Format("Try to set column {0} with a matrix of more than one, namely {1} columns, is not allowed!", col, b.Columns));
 			if (this.Rows != b.Rows)
-				throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({3})!", col, this.Rows, b.Rows));
+				throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({2})!", col, this.Rows, b.Rows));
 
 			for (int i = 0; i < this.Rows; i++)
 				this[i, col] = b[i, 0];
@@ -284,7 +284,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (b.Rows != 1)
 				throw new ArithmeticException(string.Format("Try to set row {0} with a matrix of more than one, namely {1} rows, is not allowed!", row, b.Rows));
 			if (this.Columns != b.Columns)
-				throw new ArithmeticException(string.Format("Try to set row {0}, but number of columns of the matrix ({1}) not match number of colums of the vector ({3})!", row, this.Columns, b.Columns));
+				throw new ArithmeticException(string.Format("Try to set row {0}, but number of columns of the matrix ({1}) not match number of colums of the vector ({2})!", row, this.Columns, b.Columns));
 
 			for (int j = 0; j < this.Columns; j++)
 				this[row, j] = b[0, row];
