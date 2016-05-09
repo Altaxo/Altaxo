@@ -156,6 +156,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				if (!diff.IsEmpty)
 					_hasMoved = true;
 
+				diff = _parent.Transformation.InverseTransform(diff);
+
 				objectToMove.SilentSetPosition(_initialObjectPosition + diff);
 			}
 
