@@ -356,6 +356,7 @@
     <Compile Include="Geometry\PolylineD3D.cs" />
     <Compile Include="Drawing\D3D\SolidText.cs" />
     <Compile Include="Geometry\RectangleD3D.cs" />
+    <Compile Include="Graph\Graph3D\Shapes\GraphicBase.PathNodeGripHandle.cs" />
     <Compile Include="Graph\Graph3D\Shapes\LineShape.cs" />
     <Compile Include="Graph\Graph3D\Shapes\OpenPathShapeBase.cs" />
     <Compile Include="Graph\Graph3D\Shapes\SolidBodyShapeBase.cs" />

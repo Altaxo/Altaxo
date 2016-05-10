@@ -284,7 +284,7 @@ namespace Altaxo.Graph.Graph3D
 				info.AddValue("Properties", s._graphProperties);
 				info.AddValue("Lighting", s._lighting);
 				info.AddValue("Camera", s._camera);
-				info.AddValue("DefaultCamera", s._defaultCamera);
+				//info.AddValue("DefaultCamera", s._defaultCamera);
 			}
 
 			public void Deserialize(GraphDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -298,7 +298,7 @@ namespace Altaxo.Graph.Graph3D
 				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
 				s.Lighting = (LightSettings)info.GetValue("Lighting", s);
 				s.Camera = (CameraBase)info.GetValue("Camera", s);
-				s._defaultCamera = (CameraBase)info.GetValue("DefaultCamera", s);
+				//s._defaultCamera = (CameraBase)info.GetValue("DefaultCamera", s);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)

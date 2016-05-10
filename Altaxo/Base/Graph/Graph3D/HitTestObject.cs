@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Graph3D
 				}
 			}
 
-			public bool IsGripHitted(HitTestPointData point)
+			public bool IsGripHit(HitTestPointData point)
 			{
 				return false;
 			}

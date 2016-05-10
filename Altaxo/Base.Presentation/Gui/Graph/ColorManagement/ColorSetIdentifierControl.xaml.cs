@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 		#region Inner classes
 
 		/// <summary>
-		/// Selects the data template for the TreeView: either for a <see cref="T:Altaxo.Graph.NamedColor"/>, for a <see cref="Altaxo.Graph.ColorManagement.IColorSet"/> or for another node.
+		/// Selects the data template for the TreeView: either for a <see cref="T:Altaxo.Graph.NamedColor"/>, for a <see cref="IColorSet"/> or for another node.
 		/// </summary>
 		public class TreeViewDataTemplateSelector : DataTemplateSelector
 		{

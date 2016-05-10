@@ -112,10 +112,10 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 					ele.Show(g);
 			}
 
-			public bool IsGripHitted(HitTestPointData point)
+			public bool IsGripHit(HitTestPointData point)
 			{
 				foreach (var ele in GripList)
-					if (ele.IsGripHitted(point))
+					if (ele.IsGripHit(point))
 						return true;
 				return false;
 			}
@@ -124,7 +124,7 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 			{
 				for (int i = GripList.Count - 1; i >= 0; i--)
 				{
-					if (GripList[i].IsGripHitted(point))
+					if (GripList[i].IsGripHit(point))
 					{
 						gripHandle = GripList[i];
 						hitObject = HittedList[i];
@@ -453,7 +453,7 @@ namespace Altaxo.Gui.Graph3D.Viewing.GraphControllerMouseHandlers
 
 			for (int i = 0; i < DisplayedGrips.Length; i++)
 			{
-				if (DisplayedGrips[i].IsGripHitted(pt))
+				if (DisplayedGrips[i].IsGripHit(pt))
 					return DisplayedGrips[i];
 			}
 			return null;

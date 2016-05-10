@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		/// <param name="hitData">Hit point in world coordinates.</param>
 		/// <returns>True if the grip is hitted; otherwise false.</returns>
-		bool IsGripHitted(HitTestPointData hitData);
+		bool IsGripHit(HitTestPointData hitData);
 
 		/// <summary>
 		/// Activates this grip, providing the initial position of the mouse.

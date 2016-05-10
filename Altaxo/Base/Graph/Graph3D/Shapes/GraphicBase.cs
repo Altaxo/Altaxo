@@ -703,6 +703,68 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 		#endregion HitTesting
 
+		#region Hitting Helper functions
+
+		/// <summary>
+		/// Converts relative positions of the object (0..1, 0..1, 0..1) to coordinates in the parent's (layer) coordinate system.
+		/// </summary>
+		/// <param name="relativeObjectCoordinates">Relative coordinates of the rectangle (0,0 is the upper left corner, 1,1 is the lower right corner).</param>
+		/// <returns>The absolute parent coordinates of this point (i.e. normally layer coordinates).</returns>
+		public PointD3D RelativeLocalToAbsoluteParentCoordinates(VectorD3D relativeObjectCoordinates)
+		{
+			var bounds = this.Bounds;
+			return _transformation.Transform(bounds.Location + VectorD3D.MultiplicationElementwise(relativeObjectCoordinates, bounds.Size));
+		}
+
+		public VectorD3D ToUnrotatedDifference(PointD3D pivot, PointD3D point)
+		{
+			var v = _transformation.InverseTransform(point - pivot);
+			return v;
+		}
+
+		/// <summary>
+		/// Sets the bounds from.
+		/// </summary>
+		/// <param name="fixPointRelativePosition">The relative position of the object's edge or vertex, which is held fixed during the operation.</param>
+		/// <param name="fixPointAbsolutePosition">The paramter <paramref name="fixPointRelativePosition"/>, converted to parent's (layer) coordinates.</param>
+		/// <param name="movePointRelativePosition">The relative position of the draw grip (0..1, 0..1).</param>
+		/// <param name="diff">The movement vector of the grip handle.</param>
+		/// <param name="initialObjectSize">The initial size of the object.</param>
+		/// <param name="eventFiring">Designates whether or not the change event should be fired if the value has changed.</param>
+		public void SetBoundsFrom(VectorD3D fixPointRelativePosition, PointD3D fixPointAbsolutePosition, VectorD3D movePointRelativePosition, VectorD3D diff, VectorD3D initialObjectSize, Main.EventFiring eventFiring)
+		{
+			using (var suspendToken = SuspendGetToken())
+			{
+				var dx = movePointRelativePosition.X - fixPointRelativePosition.X;
+				var dy = movePointRelativePosition.Y - fixPointRelativePosition.Y;
+				var dz = movePointRelativePosition.Z - fixPointRelativePosition.Z;
+
+				var newSizeX = initialObjectSize.X + diff.X / (dx);
+				var newSizeY = initialObjectSize.Y + diff.Y / (dy);
+				var newSizeZ = initialObjectSize.Z + diff.Z / (dz);
+
+				var size = this.Size;
+				if (Math.Abs(dx) == 1 && (newSizeX > 0 || AllowNegativeSize))
+					size = size.WithX(newSizeX);
+				if (Math.Abs(dy) == 1 && (newSizeY > 0 || AllowNegativeSize))
+					size = size.WithY(newSizeY);
+				if (Math.Abs(dz) == 1 && (newSizeZ > 0 || AllowNegativeSize))
+					size = size.WithZ(newSizeZ);
+
+				this.SetSize(size.X, size.Y, size.Z, Main.EventFiring.Suppressed);
+
+				var currFixaPos = RelativeLocalToAbsoluteParentCoordinates(fixPointRelativePosition);
+
+				var currPos = GetPosition();
+				this.SetPosition(new PointD3D(currPos.X + fixPointAbsolutePosition.X - currFixaPos.X, currPos.Y + fixPointAbsolutePosition.Y - currFixaPos.Y, currPos.Z + fixPointAbsolutePosition.Z - currFixaPos.Z), Main.EventFiring.Suppressed);
+				UpdateTransformationMatrix();
+
+				suspendToken.Resume(eventFiring);
+			}
+		}
+
+		#endregion Hitting Helper functions
+
 		#region IGrippableObject
 
 		[Flags]

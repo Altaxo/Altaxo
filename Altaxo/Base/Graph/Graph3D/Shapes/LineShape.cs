@@ -274,7 +274,47 @@ const double gripNominalSize = 10; // 10 Points nominal size on the screen
 
 			public override IGripManipulationHandle[] GetGrips(int gripLevel)
 			{
-				return base.GetGrips(gripLevel);
+				if (gripLevel <= 1)
+				{
+					LineShape ls = (LineShape)_hitobject;
+					PointD3D[] pts = new PointD3D[] { PointD3D.Empty, (PointD3D)ls.Size };
+					for (int i = 0; i < pts.Length; i++)
+					{
+						var pt = ls._transformation.Transform(pts[i]);
+						pt = this.Transformation.Transform(pt);
+						pts[i] = pt;
+					}
+
+					IGripManipulationHandle[] grips = new IGripManipulationHandle[gripLevel == 0 ? 1 : 3];
+
+					// Translation grips
+					var bounds = ls.Bounds;
+					var wn = Math3D.GetWestNorthVectorAtStart(new PointD3D[] { bounds.Location, bounds.LocationPlusSize });
+					var transformation = Matrix4x3.NewFromBasisVectorsAndLocation(wn.Item1, wn.Item2, bounds.Size.Normalized, PointD3D.Empty);
+
+					transformation.AppendTransform(ls._transformation);
+					transformation.AppendTransform(this.Transformation);
+
+					double t1 = 0.55 * ls._linePen.Thickness1;
+					double t2 = 0.55 * ls._linePen.Thickness2;
+					var rect = new RectangleD3D(-t1, -t2, 0, 2 * t1, 2 * t2, bounds.Size.Length);
+					var objectOutline = new RectangularObjectOutline(rect, transformation);
+					grips[0] = new MovementGripHandle(this, objectOutline, null);
+
+					// PathNode grips
+					if (gripLevel == 1)
+					{
+						grips[2] = grips[0]; // put the movement grip to the background, the two NodeGrips need more priority
+						var gripRadius = Math.Max(t1, t2);
+						grips[0] = new PathNodeGripHandle(this, new VectorD3D(0, 0, 0), pts[0], gripRadius);
+						grips[1] = new PathNodeGripHandle(this, new VectorD3D(1, 1, 1), pts[1], gripRadius);
+					}
+					return grips;
+				}
+				else
+				{
+					return base.GetGrips(gripLevel);
+				}
 			}
 		}
 	} // End Class

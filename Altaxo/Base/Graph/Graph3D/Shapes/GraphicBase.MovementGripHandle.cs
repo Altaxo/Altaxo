@@ -105,12 +105,32 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			{
 				var objectToMove = ((GraphicBase)_parent.HittedObject);
 
-				var m = _initialMousePosition.HitTransformation; // initial ray position
-				var n = newPosition.HitTransformation;           // current ray position
+				VectorD3D diff = GetMoveVectorInWorldCoordinates(_initialMousePosition, newPosition, _initialObjectPosition);
 
-				double x = _initialObjectPosition.X;
-				double y = _initialObjectPosition.Y;
-				double z = _initialObjectPosition.Z;
+				if (!diff.IsEmpty)
+					_hasMoved = true;
+
+				diff = _parent.Transformation.InverseTransform(diff); // Transform from world to local coordinates
+
+				objectToMove.SilentSetPosition(_initialObjectPosition + diff);
+			}
+
+			/// <summary>
+			/// Calculates a difference vector for moving a handle or an object.
+			/// </summary>
+			/// <param name="initialMousePosition">The initial mouse position at begin of the move operation.</param>
+			/// <param name="currentMousePosition">The current mouse position.</param>
+			/// <param name="initialObjectHitPositionLocalCoordinates">The initial position in local coordinates where the object or the handle was hit.</param>
+			/// <returns>A difference vector (in world coordinates) that can be used to move the object or handle around.</returns>
+			/// <exception cref="System.ArgumentOutOfRangeException"></exception>
+			public static VectorD3D GetMoveVectorInWorldCoordinates(HitTestPointData initialMousePosition, HitTestPointData currentMousePosition, PointD3D initialObjectHitPositionLocalCoordinates)
+			{
+				var m = initialMousePosition.HitTransformation; // initial ray position
+				var n = currentMousePosition.HitTransformation;           // current ray position
+
+				double x = initialObjectHitPositionLocalCoordinates.X;
+				double y = initialObjectHitPositionLocalCoordinates.Y;
+				double z = initialObjectHitPositionLocalCoordinates.Z;
 
 				// For the mathematics behind the following, see internal document "3D_MoveObjectByMovingRay"
 
@@ -152,13 +172,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				 n.M32 * z));
 
 				var diff = new VectorD3D(dx / denom, dy / denom, dz / denom);
-
-				if (!diff.IsEmpty)
-					_hasMoved = true;
-
-				diff = _parent.Transformation.InverseTransform(diff);
-
-				objectToMove.SilentSetPosition(_initialObjectPosition + diff);
+				return diff;
 			}
 
 			/// <summary>Draws the grip in the graphics context.</summary>
@@ -172,7 +186,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				}
 			}
 
-			public bool IsGripHitted(HitTestPointData point)
+			public bool IsGripHit(HitTestPointData point)
 			{
 				return _gripPath.IsHittedBy(point);
 			}
