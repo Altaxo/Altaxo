@@ -429,6 +429,14 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
+	public class DecomposeByColumnContent : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+		{
+			ctrl.DataTable.ShowDecomposeByColumnContentDialog(ctrl.SelectedDataRows, ctrl.SelectedDataColumns);
+		}
+	}
+
 	public class OpenExtractTableDataScriptDialog : AbstractWorksheetControllerCommand
 	{
 		private const string ExtractTableDataScriptPropertyName = "Scripts/ExtractTableData";

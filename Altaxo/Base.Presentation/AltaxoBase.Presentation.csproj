@@ -213,6 +213,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Data\DecomposeByColumnContentOptionsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Data\DecomposeByColumnContentDataControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Drawing\D3D\DashStyleComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1088,6 +1096,12 @@
       <DependentUpon>LinearBinningControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Gui\Data\DecomposeByColumnContentOptionsControl.xaml.cs">
+      <DependentUpon>DecomposeByColumnContentOptionsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\DecomposeByColumnContentDataControl.xaml.cs">
+      <DependentUpon>DecomposeByColumnContentDataControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Drawing\D3D\DashStyleComboBox.xaml.cs">
       <DependentUpon>DashStyleComboBox.xaml</DependentUpon>
     </Compile>

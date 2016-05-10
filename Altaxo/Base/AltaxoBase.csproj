@@ -217,6 +217,8 @@
     <Compile Include="Data\DataTableMatrixProxy.cs" />
     <Compile Include="Data\Extensions\DatabaseCommands.cs" />
     <Compile Include="Data\Extensions\DataTableToMatrixConverter.cs" />
+    <Compile Include="Data\Extensions\DecomposeByColumnContent.cs" />
+    <Compile Include="Data\Extensions\DecomposeByColumnContentDataSource.cs" />
     <Compile Include="Data\Extensions\ExpandCyclingVariableColumnDataSource.cs" />
     <Compile Include="Data\Extensions\MatrixToDataTableConverter.cs" />
     <Compile Include="Data\IAltaxoTableDataSource.cs" />
@@ -463,8 +465,12 @@
     <Compile Include="Gui\DataConnection\QueryPropertiesController.cs" />
     <Compile Include="Gui\Data\DataSourceImportOptionsController.cs" />
     <Compile Include="Gui\Data\DataTableProxyController.cs" />
+    <Compile Include="Gui\Data\DecomposeByColumnContentDataController.cs" />
+    <Compile Include="Gui\Data\DecomposeByColumnContentController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableDataController.cs" />
     <Compile Include="Gui\Data\DataTableTransposeDataSourceController.cs" />
+    <Compile Include="Gui\Data\DecomposeByColumnContentOptionsController.cs" />
+    <Compile Include="Gui\Data\DecomposeByColumnContentDataSourceController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableOptionsController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceController.cs" />
     <Compile Include="Gui\Drawing\D3D\MaterialController.cs" />

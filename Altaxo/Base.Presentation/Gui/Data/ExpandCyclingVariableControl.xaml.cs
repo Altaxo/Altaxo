@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Data
 	/// <summary>
 	/// Interaction logic for ExpandCyclingVariableControl.xaml
 	/// </summary>
-	public partial class ExpandCyclingVariableControl : UserControl, IExpandCyclingVariableView
+	public partial class ExpandCyclingVariableControl : UserControl, IExpandCyclingVariableView, IDecomposeByColumnContentView
 	{
 		public ExpandCyclingVariableControl()
 		{
