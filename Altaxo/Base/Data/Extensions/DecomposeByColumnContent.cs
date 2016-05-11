@@ -364,6 +364,7 @@ namespace Altaxo.Data
 				foreach (var prop in decomposedValues)
 				{
 					++nCreatedProp;
+					++nCreatedCol;
 
 					foreach (var srcCol in srcColumnsToProcess)
 					{

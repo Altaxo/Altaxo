@@ -34,6 +34,8 @@ namespace Altaxo.Drawing.D3D.LineCaps
 	{
 		private class TriangleContour : ILineCapContour
 		{
+			private readonly static VectorD2D _vectorSqrt1_2 = new VectorD2D(Math.Sqrt(0.5), Math.Sqrt(0.5));
+
 			public int NumberOfNormals
 			{
 				get
@@ -57,7 +59,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
 
 			public VectorD2D Normals(int idx)
 			{
-				return VectorD2D.CreateNormalized(1, 0.5);
+				return _vectorSqrt1_2;
 			}
 
 			public PointD2D Vertices(int idx)
@@ -68,7 +70,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
 						return new PointD2D(0, 1);
 
 					case 1:
-						return new PointD2D(0.5, 0);
+						return new PointD2D(1, 0);
 
 					default:
 						throw new IndexOutOfRangeException();
@@ -100,7 +102,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
 		{
 			get
 			{
-				return -0.5;
+				return -1;
 			}
 		}
 
