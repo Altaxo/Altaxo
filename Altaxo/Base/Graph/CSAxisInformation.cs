@@ -274,7 +274,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		public string NameOfSecondDownSide
 		{
-			get { return _nameOfFirstDownSide; }
+			get { return _nameOfSecondDownSide; }
 		}
 
 		/// <summary>
@@ -282,7 +282,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		public string NameOfSecondUpSide
 		{
-			get { return _nameOfFirstUpSide; }
+			get { return _nameOfSecondUpSide; }
 		}
 
 		public CSAxisInformation WithNamesForSecondUpAndDownSides(string NameOfSecondUpSide, string NameOfSecondDownSide)

@@ -84,6 +84,8 @@ namespace Altaxo.Gui.Graph3D.Axis
 				{
 					list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstDownSide, 0, _doc.FirstDownMajorTicks));
 					list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstUpSide, 1, _doc.FirstUpMajorTicks));
+					list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfSecondDownSide, 2, _doc.SecondDownMajorTicks));
+					list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfSecondUpSide, 3, _doc.SecondUpMajorTicks));
 				}
 				list.Sort((x, y) => string.Compare(x.Text, y.Text));
 				_view.MajorPenTicks = new SelectableListNodeList(list);
@@ -93,6 +95,8 @@ namespace Altaxo.Gui.Graph3D.Axis
 				{
 					list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstDownSide, 0, _doc.FirstDownMinorTicks));
 					list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfFirstUpSide, 1, _doc.FirstUpMinorTicks));
+					list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfSecondDownSide, 2, _doc.SecondDownMinorTicks));
+					list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfSecondUpSide, 3, _doc.SecondUpMinorTicks));
 				}
 				list.Sort((x, y) => string.Compare(x.Text, y.Text));
 				_view.MinorPenTicks = new SelectableListNodeList(list);
@@ -120,6 +124,15 @@ namespace Altaxo.Gui.Graph3D.Axis
 					case 1:
 						_doc.FirstUpMajorTicks = item.IsSelected;
 						break;
+
+					case 2:
+						_doc.SecondDownMajorTicks = item.IsSelected;
+						break;
+
+					case 3:
+						_doc.SecondUpMajorTicks = item.IsSelected;
+						break;
+
 				}
 			}
 
@@ -134,6 +147,14 @@ namespace Altaxo.Gui.Graph3D.Axis
 
 					case 1:
 						_doc.FirstUpMinorTicks = item.IsSelected;
+						break;
+
+					case 2:
+						_doc.SecondDownMinorTicks = item.IsSelected;
+						break;
+
+					case 3:
+						_doc.SecondUpMinorTicks = item.IsSelected;
 						break;
 				}
 			}
