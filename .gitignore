@@ -17,3 +17,4 @@ TestResults/
 *.shfbproj_*
 /packages
 d3dcompiler_*.dll
+*.log

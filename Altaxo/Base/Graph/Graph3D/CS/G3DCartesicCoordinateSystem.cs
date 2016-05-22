@@ -679,7 +679,7 @@ namespace Altaxo.Graph.Graph3D.CS
 			var u_axisVector = GetUntransformedAxisLineVector(id);
 			var t_axisVector = VectorTransformation.Transform(u_axisVector);
 			var t_labelSide = GetPreferredLabelSide(t_axisVector);
-			var u_labelSide = VectorTransformation.InverseTransformVector(t_labelSide);
+			var u_labelSide = VectorTransformation.InverseTransform(t_labelSide);
 			return GetAxisSide(id, u_labelSide);
 		}
 
@@ -781,7 +781,7 @@ namespace Altaxo.Graph.Graph3D.CS
 		public static CSAxisSide? FindCorrespondingAxisSideWhenChangingCoordinateSystem(G3DCartesicCoordinateSystem oldCoordinateSystem, CSLineID oldLineID, CSAxisSide oldAxisSide, G3DCartesicCoordinateSystem newCoordinateSystem, CSLineID newLineID)
 		{
 			var t_oldAxisSide = oldCoordinateSystem.GetTransformedAxisSideVector(oldLineID, oldAxisSide);
-			var u_newAxisSide = newCoordinateSystem.VectorTransformation.InverseTransformVector(t_oldAxisSide);
+			var u_newAxisSide = newCoordinateSystem.VectorTransformation.InverseTransform(t_oldAxisSide);
 			try
 			{
 				return GetAxisSide(newLineID, u_newAxisSide);

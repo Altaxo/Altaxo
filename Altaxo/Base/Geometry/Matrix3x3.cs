@@ -399,7 +399,7 @@ namespace Altaxo.Geometry
 		/// </summary>
 		/// <param name="p">The point p to inverse transform.</param>
 		/// <returns>The inverse transformation of point <paramref name="p"/>.</returns>
-		public VectorD3D InverseTransformVector(VectorD3D p)
+		public VectorD3D InverseTransform(VectorD3D p)
 		{
 			return new VectorD3D(
 					(-(M23 * M32 * p.X) + M22 * M33 * p.X + M23 * M31 * p.Y - M21 * M33 * p.Y - M22 * M31 * p.Z + M21 * M32 * p.Z) / Determinant,

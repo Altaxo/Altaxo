@@ -92,6 +92,35 @@
 				class="Altaxo.Graph.Graph3D.Commands.EllipseDrawingTool" />
 			<ToolbarItem id="SingleLineDrawingTool" type="CheckBox" icon="Icons.16x16.LineTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.SingleLine.Description}"
 				class="Altaxo.Graph.Graph3D.Commands.SingleLineDrawingTool" />
+			<!-- Arrange commands -->
+			<ToolbarItem id="ArrangeTop" icon="Icons.16x16.ArrangeTop" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeTop.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeTop" />
+			<ToolbarItem id="ArrangeBottom" icon="Icons.16x16.ArrangeBottom" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeBottom.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeBottom" />
+			<ToolbarItem id="ArrangeTopToBottom" icon="Icons.16x16.ArrangeTopToBottom" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeTopToBottom.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeTopToBottom" />
+			<ToolbarItem id="ArrangeBottomToTop" icon="Icons.16x16.ArrangeBottomToTop" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeBottomToTop.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeBottomToTop" />
+			<ToolbarItem id="ArrangeLeft" icon="Icons.16x16.ArrangeLeft" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeLeft.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeLeft" />
+			<ToolbarItem id="ArrangeRight" icon="Icons.16x16.ArrangeRight" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeRight.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeRight" />
+			<ToolbarItem id="ArrangeLeftToRight" icon="Icons.16x16.ArrangeLeftToRight" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeLeftToRight.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeLeftToRight" />
+			<ToolbarItem id="ArrangeRightToLeft" icon="Icons.16x16.ArrangeRightToLeft" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeRightToLeft.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeRightToLeft" />
+			<ToolbarItem id="ArrangeHorizontal" icon="Icons.16x16.ArrangeHorizontal" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeHorizontal.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeHorizontal" />
+			<ToolbarItem id="ArrangeVertical" icon="Icons.16x16.ArrangeVertical" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeVertical.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeVertical" />
+			<ToolbarItem id="ArrangeHorizontalTable" icon="Icons.16x16.ArrangeHorizontalTable" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeHorizontalTable.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeHorizontalTable" />
+			<ToolbarItem id="ArrangeVerticalTable" icon="Icons.16x16.ArrangeVerticalTable" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeVerticalTable.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeVerticalTable" />
+			<ToolbarItem id="ArrangeSameHorzSize" icon="Icons.16x16.ArrangeSameHorizontalSize" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeSameHorizontalSize.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeSameHorizontalSize" />
+			<ToolbarItem id="ArrangeSameVerticalSize" icon="Icons.16x16.ArrangeSameVerticalSize" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeSameVerticalSize.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.ArrangeSameVerticalSize" />
 		</Condition>
 	</Path>
 

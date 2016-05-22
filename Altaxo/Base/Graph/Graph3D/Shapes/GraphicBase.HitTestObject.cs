@@ -94,7 +94,8 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				{
 					var ho = (GraphicBase)_hitobject;
 
-					var result = new RectangularObjectOutline(ho.Bounds, ho._transformation);
+					// the result has to be in root layer coordinates, but we must also take into account the object's own transformation
+					var result = new RectangularObjectOutline(ho.Bounds, _matrix.WithPrependedTransformation(ho._transformation));
 					return result;
 				}
 			}

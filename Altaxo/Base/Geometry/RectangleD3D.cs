@@ -208,6 +208,11 @@ namespace Altaxo.Geometry
 			get { return _x + _sizeX; }
 		}
 
+		public double XCenter
+		{
+			get { return _x + 0.5 * _sizeX; }
+		}
+
 		public double Y
 		{
 			get { return _y; }
@@ -218,6 +223,11 @@ namespace Altaxo.Geometry
 			get { return _y + _sizeY; }
 		}
 
+		public double YCenter
+		{
+			get { return _y + 0.5 * _sizeY; }
+		}
+
 		public double Z
 		{
 			get { return _z; }
@@ -226,6 +236,11 @@ namespace Altaxo.Geometry
 		public double ZPlusSizeZ
 		{
 			get { return _z + _sizeZ; }
+		}
+
+		public double ZCenter
+		{
+			get { return _z + 0.5 * _sizeZ; }
 		}
 
 		public double SizeX

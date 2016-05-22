@@ -1295,7 +1295,396 @@ namespace Altaxo.Gui.Graph3D.Viewing
 
 		#region Object arrangement
 
-		public delegate void ArrangeElement(IHitTestObject obj, IObjectOutline bounds, IObjectOutline masterbounds);
+		/// <summary>
+		/// Determines the parent layer of the selected objects, as far as all selected objects belong to the same layer.
+		/// </summary>
+		/// <returns>The layer all selected objects belong to. If the selected objects belong to different layers, the return value is null.</returns>
+		public HostLayer GetParentLayerOfSelectedObjects()
+		{
+			HostLayer layer4all = null;
+			foreach (IHitTestObject o in SelectedObjects)
+			{
+				var layer = AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>((IDocumentLeafNode)o.HittedObject);
+				if (layer == null)
+					continue;
+
+				if (layer4all == null)
+					layer4all = layer;
+				else if (!object.ReferenceEquals(layer, layer4all))
+					return null;
+			}
+
+			return layer4all;
+		}
+
+		/// <summary>
+		/// Gets the principal coordinate system that results of the camera facing a layer. The plane of the layer that best faced the camera is used for the calculations.
+		/// The normal of that layer is returned as z-axis, the vector that best matches the up-vector of the camera is becoming the y-axis,
+		/// and the x-axis results from the z-axis and the y-axis.
+		/// </summary>
+		/// <param name="camera">The camera.</param>
+		/// <param name="activeLayer">The active layer of the graph document.</param>
+		/// <param name="transformation">Matrix that contains the principal axes as described above. The axes coordinates are in the coordinates of the layer provided in the argument <paramref name="activeLayer"/>.</param>
+		/// <exception cref="InvalidProgramException">There should always be a plane of a rectangle that can be hit!</exception>
+		public static void GetCoordinateSystemBasedOnLayerPlaneFacingTheCamera(CameraBase camera, HostLayer activeLayer, out Matrix3x3 transformation)
+		{
+			PointD3D hitposition = new PointD3D(0.5, 0.5, 1); // this hit position is arbitrary, every other position should work similarly
+
+			var activeLayerTransformation = activeLayer.TransformationFromRootToHere();
+
+			var hitData = new HitTestPointData(camera.GetHitRayMatrix(hitposition));
+
+			hitData = hitData.NewFromAdditionalTransformation(activeLayerTransformation); // now hitdata are in layer cos
+
+			var targetToEye = hitData.WorldTransformation.Transform(camera.TargetToEyeVectorNormalized); // targetToEye in layer coordinates
+			var upEye = hitData.WorldTransformation.Transform(camera.UpVectorPerpendicularToEyeVectorNormalized); // camera up vector in layer coordinates
+
+			// get the face which has the best dot product between the eye vector of the camera and the plane's normal
+			var layerRect = new RectangleD3D(PointD3D.Empty, activeLayer.Size);
+			double maxval = double.MinValue;
+			PlaneD3D maxPlane = PlaneD3D.Empty;
+			foreach (var plane in layerRect.Planes)
+			{
+				double val = VectorD3D.DotProduct(plane.Normal, targetToEye);
+				if (val > maxval)
+				{
+					maxval = val;
+					maxPlane = plane;
+				}
+			}
+
+			//	bool isHit = hitData.IsPlaneHitByRay(maxPlane, out hitPointOnPlaneInActiveLayerCoordinates); // hitPointOnPlane is in layer coordinates too
+
+			//	if (!isHit)
+			//	throw new InvalidProgramException("There should always be a plane of a rectangle that can be hit!");
+
+			VectorD3D zaxis = maxPlane.Normal;
+			VectorD3D yaxis = upEye;
+
+			// Find y axis perpendicular to zaxis
+			maxval = double.MinValue;
+			foreach (var plane in layerRect.Planes)
+			{
+				double val = VectorD3D.DotProduct(plane.Normal, upEye);
+				if (val > maxval && 0 == VectorD3D.DotProduct(plane.Normal, zaxis))
+				{
+					maxval = val;
+					yaxis = plane.Normal;
+				}
+			}
+			var xaxis = VectorD3D.CrossProduct(yaxis, zaxis);
+
+			// now we have all information about the spatial position and orientation of the text:
+			// hitPointOnPlane is the position of the text
+			// maxPlane.Normal is the face orientation of the text
+			// maxUpVector is the up orientation of the text
+
+			transformation = new Matrix3x3(
+				xaxis.X, yaxis.X, zaxis.X,
+				xaxis.Y, yaxis.Y, zaxis.Y,
+				xaxis.Z, yaxis.Z, zaxis.Z
+				);
+		}
+
+		/// <summary>
+		/// Gets the principal coordinate system that results of the camera facing a layer.
+		/// The layer is determined from the base layer of all currently selected objects.
+		/// The plane of the layer that best faced the camera is used for the calculations.
+		/// The normal of that layer is returned as z-axis, the vector that best matches the up-vector of the camera is becoming the y-axis,
+		/// and the x-axis results from the z-axis and the y-axis. These vectors are then transformed to root layer coordinates,
+		/// and packed into a matrix with M11, M21, M31 being the x-axis, M12, M22, M32 being the y-axis and M31, M32, M33 being the z-axis.
+		/// </summary>
+		/// <returns>Matrix with the 3 principal vectors, see above for explanation.</returns>
+		public Matrix3x3 GetCoordinateSystemRlcBasedOnLayerPlaneFacingTheCameraForSelectedObjects()
+		{
+			var layer = GetParentLayerOfSelectedObjects() ?? _doc.RootLayer;
+			Matrix3x3 principalMoveVectorsInLayerCoordinates;
+			GetCoordinateSystemBasedOnLayerPlaneFacingTheCamera(_doc.Camera, layer, out principalMoveVectorsInLayerCoordinates); // transformation is in layer coordinates
+			var transformation = layer.TransformationFromHereToRoot();
+			var principalVector1_RLC = transformation.Transform(new VectorD3D(principalMoveVectorsInLayerCoordinates.M11, principalMoveVectorsInLayerCoordinates.M21, principalMoveVectorsInLayerCoordinates.M31));
+			var principalVector2_RLC = transformation.Transform(new VectorD3D(principalMoveVectorsInLayerCoordinates.M12, principalMoveVectorsInLayerCoordinates.M22, principalMoveVectorsInLayerCoordinates.M32));
+			var principalVector3_RLC = transformation.Transform(new VectorD3D(principalMoveVectorsInLayerCoordinates.M13, principalMoveVectorsInLayerCoordinates.M23, principalMoveVectorsInLayerCoordinates.M33));
+			return new Matrix3x3(
+				principalVector1_RLC.X, principalVector2_RLC.X, principalVector3_RLC.X,
+				principalVector1_RLC.Y, principalVector2_RLC.Y, principalVector3_RLC.Y,
+				principalVector1_RLC.Z, principalVector2_RLC.Z, principalVector3_RLC.Z);
+		}
+
+		/// <summary>
+		/// Arranges the objects so they share the top boundary with the top boundary of the master element.
+		/// </summary>
+		public void ArrangeTopToTop()
+		{
+			Arrange(delegate (IHitTestObject obj, RectangleD3D tbounds, RectangleD3D tmasterbounds, Matrix3x3 principalMoveVectorsInRootLayerCoordinates)
+			{
+				var vu = new VectorD3D(0, tmasterbounds.YPlusSizeY - tbounds.YPlusSizeY, 0);
+				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+				obj.ShiftPosition(u.X, u.Y, u.Z);
+			}
+			);
+		}
+
+		/// <summary>
+		/// Arranges the objects so they share the bottom boundary with the top boundary of the master element.
+		/// </summary>
+		public void ArrangeBottomToTop()
+		{
+			Arrange(delegate (IHitTestObject obj, RectangleD3D tbounds, RectangleD3D tmasterbounds, Matrix3x3 principalMoveVectorsInRootLayerCoordinates)
+			{
+				var vu = new VectorD3D(0, tmasterbounds.YPlusSizeY - tbounds.Y, 0);
+				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+				obj.ShiftPosition(u.X, u.Y, u.Z);
+			}
+			);
+		}
+
+		/// <summary>
+		/// Arranges the objects so they share the top boundary with the bottom boundary of the master element.
+		/// </summary>
+		public void ArrangeTopToBottom()
+		{
+			Arrange(delegate (IHitTestObject obj, RectangleD3D tbounds, RectangleD3D tmasterbounds, Matrix3x3 principalMoveVectorsInRootLayerCoordinates)
+			{
+				var vu = new VectorD3D(0, tmasterbounds.Y - tbounds.YPlusSizeY, 0);
+				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+				obj.ShiftPosition(u.X, u.Y, u.Z);
+			}
+			);
+		}
+
+		/// <summary>
+		/// Arranges the objects so they share the bottom boundary with the bottom boundary of the master element.
+		/// </summary>
+		public void ArrangeBottomToBottom()
+		{
+			Arrange(delegate (IHitTestObject obj, RectangleD3D tbounds, RectangleD3D tmasterbounds, Matrix3x3 principalMoveVectorsInRootLayerCoordinates)
+			{
+				var vu = new VectorD3D(0, tmasterbounds.Y - tbounds.Y, 0);
+				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+				obj.ShiftPosition(u.X, u.Y, u.Z);
+			}
+			);
+		}
+
+		/// <summary>
+		/// Arranges the objects so they share the left boundary with the left boundary of the master element.
+		/// </summary>
+		public void ArrangeLeftToLeft()
+		{
+			Arrange(delegate (IHitTestObject obj, RectangleD3D tbounds, RectangleD3D tmasterbounds, Matrix3x3 principalMoveVectorsInRootLayerCoordinates)
+			{
+				var vu = new VectorD3D(tmasterbounds.X - tbounds.X, 0, 0);
+				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+				obj.ShiftPosition(u.X, u.Y, u.Z);
+			}
+			);
+		}
+
+		/// <summary>
+		/// Arranges the objects so they share the left boundary with the right boundary of the master element.
+		/// </summary>
+		public void ArrangeLeftToRight()
+		{
+			Arrange(delegate (IHitTestObject obj, RectangleD3D tbounds, RectangleD3D tmasterbounds, Matrix3x3 principalMoveVectorsInRootLayerCoordinates)
+			{
+				var vu = new VectorD3D(tmasterbounds.XPlusSizeX - tbounds.X, 0, 0);
+				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+				obj.ShiftPosition(u.X, u.Y, u.Z);
+			}
+			);
+		}
+
+		/// <summary>
+		/// Arranges the objects so they share the right boundary with the left boundary of the master element.
+		/// </summary>
+		public void ArrangeRightToLeft()
+		{
+			Arrange(delegate (IHitTestObject obj, RectangleD3D tbounds, RectangleD3D tmasterbounds, Matrix3x3 principalMoveVectorsInRootLayerCoordinates)
+			{
+				var vu = new VectorD3D(tmasterbounds.X - tbounds.XPlusSizeX, 0, 0);
+				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+				obj.ShiftPosition(u.X, u.Y, u.Z);
+			}
+			);
+		}
+
+		/// <summary>
+		/// Arranges the objects so they share the right boundary with the right boundary of the master element.
+		/// </summary>
+		public void ArrangeRightToRight()
+		{
+			Arrange(delegate (IHitTestObject obj, RectangleD3D tbounds, RectangleD3D tmasterbounds, Matrix3x3 principalMoveVectorsInRootLayerCoordinates)
+			{
+				var vu = new VectorD3D(tmasterbounds.XPlusSizeX - tbounds.XPlusSizeX, 0, 0);
+				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+				obj.ShiftPosition(u.X, u.Y, u.Z);
+			}
+			);
+		}
+
+		/// <summary>
+		/// Arranges the objects so they share the horizontal middle line of the last selected object.
+		/// </summary>
+		public void ArrangeVertical()
+		{
+			Arrange(delegate (IHitTestObject obj, RectangleD3D tbounds, RectangleD3D tmasterbounds, Matrix3x3 principalMoveVectorsInRootLayerCoordinates)
+			{
+				var vu = new VectorD3D(0, tmasterbounds.YCenter - tbounds.YCenter, 0);
+				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+				obj.ShiftPosition(u.X, u.Y, u.Z);
+			}
+		);
+		}
+
+		/// <summary>
+		/// Arranges the objects so they share the vertical middle line of the last selected object.
+		/// </summary>
+		public void ArrangeHorizontal()
+		{
+			Arrange(delegate (IHitTestObject obj, RectangleD3D tbounds, RectangleD3D tmasterbounds, Matrix3x3 principalMoveVectorsInRootLayerCoordinates)
+			{
+				var vu = new VectorD3D(tmasterbounds.XCenter - tbounds.XCenter, 0, 0);
+				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+				obj.ShiftPosition(u.X, u.Y, u.Z);
+			}
+			);
+		}
+
+		/// <summary>
+		/// Arranges the objects so they their vertical middle line is uniform spaced between the first and the last selected object.
+		/// </summary>
+		public void ArrangeHorizontalTable()
+		{
+			if (SelectedObjects.Count < 3)
+				return;
+
+			var principalMoveVectorsInRootLayerCoordinates = GetCoordinateSystemRlcBasedOnLayerPlaneFacingTheCameraForSelectedObjects();
+
+			var firstbound = SelectedObjects[0].ObjectOutlineForArrangements;
+			var tfirstbound = GetBounds(firstbound, principalMoveVectorsInRootLayerCoordinates);
+
+			var lastbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements;
+			var tlastbound = GetBounds(lastbound, principalMoveVectorsInRootLayerCoordinates);
+
+			var step = (tlastbound.XCenter) - (tfirstbound.XCenter);
+			step /= (SelectedObjects.Count - 1);
+
+			// now move each object to the new position, which is the difference in the position of the bounds.X
+			for (int i = SelectedObjects.Count - 2; i > 0; i--)
+			{
+				IHitTestObject obj = SelectedObjects[i];
+				var bounds = obj.ObjectOutlineForArrangements;
+				var tbounds = GetBounds(bounds, principalMoveVectorsInRootLayerCoordinates);
+
+				var vu = new VectorD3D(tfirstbound.XCenter + i * step - tbounds.XCenter, 0, 0);
+				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+				obj.ShiftPosition(u.X, u.Y, u.Z);
+			}
+		}
+
+		/// <summary>
+		/// Arranges the objects so they their horizontal middle line is uniform spaced between the first and the last selected object.
+		/// </summary>
+		public void ArrangeVerticalTable()
+		{
+			if (SelectedObjects.Count < 3)
+				return;
+
+			var principalMoveVectorsInRootLayerCoordinates = GetCoordinateSystemRlcBasedOnLayerPlaneFacingTheCameraForSelectedObjects();
+
+			var firstbound = SelectedObjects[0].ObjectOutlineForArrangements;
+			var tfirstbound = GetBounds(firstbound, principalMoveVectorsInRootLayerCoordinates);
+
+			var lastbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements;
+			var tlastbound = GetBounds(lastbound, principalMoveVectorsInRootLayerCoordinates);
+
+			var step = (tlastbound.YCenter) - (tfirstbound.YCenter);
+			step /= (SelectedObjects.Count - 1);
+
+			// now move each object to the new position, which is the difference in the position of the bounds.X
+			for (int i = SelectedObjects.Count - 2; i > 0; i--)
+			{
+				IHitTestObject obj = SelectedObjects[i];
+				var bounds = obj.ObjectOutlineForArrangements;
+				var tbounds = GetBounds(bounds, principalMoveVectorsInRootLayerCoordinates);
+
+				var vu = new VectorD3D(0, tfirstbound.YCenter + i * step - tbounds.YCenter, 0);
+				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+				obj.ShiftPosition(u.X, u.Y, u.Z);
+			}
+		}
+
+		/// <summary>
+		/// Arranges the same size base.
+		/// </summary>
+		/// <param name="ArrangeAction">The arrange action.</param>
+		public void ArrangeSameSizeBase(Action<IHitTestObject, RectangleD3D, RectangleD3D, Matrix3x3> ArrangeAction)
+		{
+			if (SelectedObjects.Count < 2)
+				return;
+
+			var principalMoveVectorsInRootLayerCoordinates = GetCoordinateSystemRlcBasedOnLayerPlaneFacingTheCameraForSelectedObjects();
+
+			var masterbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements;
+			var tmasterbound = GetBounds(masterbound, principalMoveVectorsInRootLayerCoordinates);
+
+			// now move each object to the new position, which is the difference in the position of the bounds.X
+			for (int i = SelectedObjects.Count - 2; i >= 0; i--)
+			{
+				IHitTestObject obj = SelectedObjects[i];
+				var bounds = obj.ObjectOutlineForArrangements;
+				var tbounds = GetBounds(bounds, principalMoveVectorsInRootLayerCoordinates);
+
+				ArrangeAction(obj, tbounds, tmasterbound, principalMoveVectorsInRootLayerCoordinates);
+			}
+		}
+
+		public void ArrangeSameHorizontalSize()
+		{
+			ArrangeSameSizeBase(
+				(obj, tbounds, tmasterbounds, principalMoveVectorsInRootLayerCoordinates) =>
+				{
+					var vu = new VectorD3D(tmasterbounds.SizeX, 0, 0);
+					var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+					obj.ChangeSize(u.X, null, null);
+				}
+				);
+		}
+
+		public void ArrangeSameVerticalSize()
+		{
+			ArrangeSameSizeBase(
+				(obj, tbounds, tmasterbounds, principalMoveVectorsInRootLayerCoordinates) =>
+				{
+					var vu = new VectorD3D(0, tmasterbounds.SizeY, 0);
+					var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
+					obj.ChangeSize(null, u.Y, null);
+				}
+				);
+		}
+
+		private static IEnumerable<PointD3D> AsPoints(IObjectOutline outline)
+		{
+			foreach (var line in outline.AsLines)
+			{
+				yield return line.P0;
+				yield return line.P1;
+			}
+		}
+
+		private RectangleD3D GetBounds(IObjectOutline outline, Matrix3x3 transformation)
+		{
+			return RectangleD3D.NewRectangleIncludingAllPoints(AsPoints(outline).Select(p => transformation.Transform(p)));
+		}
+
+		/// <summary>
+		/// Delegate used to move a selected object to a now position in the arrange process.
+		/// </summary>
+		/// <param name="obj">The object to move.</param>
+		/// <param name="transformedBounds">The transformed bounds of the object. These are the bounds of the object in root layer coordinates, transformed further with the principal move vectors.</param>
+		/// <param name="transformedMasterbounds">The transformed bounds of the master object (the object to arrange with). These are the bounds of the master object in root layer coordinates, transformed further with the principal move vectors.</param>
+		/// <param name="principalMoveVectorsInRootLayerCoordinates">The principal move vectors in root layer coordinates. Will be used to back-transform the move vector to root layer coordinates.</param>
+		public delegate void ArrangeElement(IHitTestObject obj, RectangleD3D transformedBounds, RectangleD3D transformedMasterbounds, Matrix3x3 principalMoveVectorsInRootLayerCoordinates);
 
 		/// <summary>
 		/// Arranges the objects so they share a common boundary.
@@ -1306,15 +1695,19 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			if (SelectedObjects.Count < 2)
 				return;
 
-			var masterbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements;
+			var principalMoveVectorsInRootLayerCoordinates = GetCoordinateSystemRlcBasedOnLayerPlaneFacingTheCameraForSelectedObjects();
+
+			var masterbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements; // is in root layer coordinates
+			var tmasterbound = GetBounds(masterbound, principalMoveVectorsInRootLayerCoordinates); // Rectangle with transformation in principal move vectors
 
 			// now move each object to the new position, which is the difference in the position of the bounds.X
 			for (int i = SelectedObjects.Count - 2; i >= 0; i--)
 			{
 				IHitTestObject o = SelectedObjects[i];
-				var bounds = o.ObjectOutlineForArrangements;
+				var bounds = o.ObjectOutlineForArrangements; // in Root layer coordinates
+				var tbounds = GetBounds(bounds, principalMoveVectorsInRootLayerCoordinates); // Rectangle with transformation in principal coordinates
 
-				arrange(o, bounds, masterbound);
+				arrange(o, tbounds, tmasterbound, principalMoveVectorsInRootLayerCoordinates);
 			}
 		}
 

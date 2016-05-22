@@ -63,8 +63,124 @@ namespace Altaxo.Graph.Graph3D.Commands
 		/// the worksheet controller in the parameter.
 		/// </summary>
 		/// <param name="ctrl">The worksheet controller this command is applied to.</param>
-		public abstract void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl);
+		public abstract void Run(Graph3DController ctrl);
 	}
+
+	#region Arrange commands
+
+	public class ArrangeTop : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeTopToTop();
+		}
+	}
+
+	public class ArrangeBottom : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeBottomToBottom();
+		}
+	}
+
+	public class ArrangeTopToBottom : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeTopToBottom();
+		}
+	}
+
+	public class ArrangeBottomToTop : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeBottomToTop();
+		}
+	}
+
+	public class ArrangeLeft : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeLeftToLeft();
+		}
+	}
+
+	public class ArrangeRight : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeRightToRight();
+		}
+	}
+
+	public class ArrangeLeftToRight : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeLeftToRight();
+		}
+	}
+
+	public class ArrangeRightToLeft : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeRightToLeft();
+		}
+	}
+
+	public class ArrangeHorizontal : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeHorizontal();
+		}
+	}
+
+	public class ArrangeVertical : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeVertical();
+		}
+	}
+
+	public class ArrangeHorizontalTable : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeHorizontalTable();
+		}
+	}
+
+	public class ArrangeVerticalTable : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeVerticalTable();
+		}
+	}
+
+	public class ArrangeSameHorizontalSize : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeSameHorizontalSize();
+		}
+	}
+
+	public class ArrangeSameVerticalSize : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.ArrangeSameVerticalSize();
+		}
+	}
+
+	#endregion Arrange commands
 
 	public class ViewFront : AbstractGraph3DControllerCommand
 	{

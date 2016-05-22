@@ -53,6 +53,58 @@ namespace Altaxo.Graph.Graph3D
 		bool IsHittedBy(HitTestPointData hitData);
 	}
 
+	/// <summary>
+	/// Designates the outline of a 3D graphical object in order to arrange it horizontally, vertically, or in depth direction.
+	/// </summary>
+	public interface IObjectOutlineForArrangements
+	{
+		/// <summary>
+		/// Gets the bounds of the object in root layer coordinates.
+		/// </summary>
+		/// <returns>The bounds of the graphical object.</returns>
+		RectangleD3D GetBounds();
+
+		/// <summary>
+		/// Gets the bounds of the object in root layer coordinates, but then with an additional transformation.
+		/// </summary>
+		/// <returns>The bounds of the object, with an additional transformation.</returns>
+		RectangleD3D GetBounds(Matrix3x3 additionalTransformation);
+	}
+
+	/// <summary>
+	/// Provides a simple wrapper that converts from an <see cref="IObjectOutline"/> to an <see cref="IObjectOutlineForArrangements"/>.
+	/// This wrapper should be used sparse, since <see cref="IObjectOutline"/> is in most cases a little bit larger than <see cref="IObjectOutlineForArrangements"/>.
+	/// </summary>
+	/// <seealso cref="Altaxo.Graph.Graph3D.IObjectOutlineForArrangements" />
+	public class ObjectOutlineForArrangementsWrapper : IObjectOutlineForArrangements
+	{
+		private IObjectOutline _outline;
+
+		public ObjectOutlineForArrangementsWrapper(IObjectOutline outline)
+		{
+			_outline = outline;
+		}
+
+		private IEnumerable<PointD3D> AsPoints()
+		{
+			foreach (var line in _outline.AsLines)
+			{
+				yield return line.P0;
+				yield return line.P1;
+			}
+		}
+
+		public RectangleD3D GetBounds(Matrix3x3 transformation)
+		{
+			return RectangleD3D.NewRectangleIncludingAllPoints(AsPoints().Select(p => transformation.Transform(p)));
+		}
+
+		public RectangleD3D GetBounds()
+		{
+			return RectangleD3D.NewRectangleIncludingAllPoints(AsPoints());
+		}
+	}
+
 	public class RectangularObjectOutline : IObjectOutline
 	{
 		private Matrix4x3 _transformation;

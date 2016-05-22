@@ -93,7 +93,7 @@ namespace Altaxo.Graph.Graph3D
 
 		/// <summary>
 		/// Transformation matrix which transforms the coordinates of the parent of the hitted object (i.e. the parent layer)
-		/// into page coordinates.
+		/// into root layer coordinates.
 		/// </summary>
 		protected Matrix4x3 _matrix;
 

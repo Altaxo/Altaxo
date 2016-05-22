@@ -507,6 +507,34 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
+		/// Appends a transformation matrix <paramref name="f"/> to this matrix, and returns a new matrix with the result. The original matrix is unchanged.
+		/// </summary>
+		/// <param name="f">The matrix to append.</param>
+		/// <returns>A new matrix based on the existing one, but with matrix <paramref name="f"/> appended.</returns>
+		public Matrix4x3 WithAppendedTransformation(Matrix3x3 f)
+		{
+			return new Matrix4x3(
+			 M11 * f.M11 + M12 * f.M21 + M13 * f.M31,
+			 M11 * f.M12 + M12 * f.M22 + M13 * f.M32,
+			 M11 * f.M13 + M12 * f.M23 + M13 * f.M33,
+
+			M21 * f.M11 + M22 * f.M21 + M23 * f.M31,
+			M21 * f.M12 + M22 * f.M22 + M23 * f.M32,
+			M21 * f.M13 + M22 * f.M23 + M23 * f.M33,
+
+			M31 * f.M11 + M32 * f.M21 + M33 * f.M31,
+			M31 * f.M12 + M32 * f.M22 + M33 * f.M32,
+			M31 * f.M13 + M32 * f.M23 + M33 * f.M33,
+
+			M41 * f.M11 + M42 * f.M21 + M43 * f.M31,
+			M41 * f.M12 + M42 * f.M22 + M43 * f.M32,
+			M41 * f.M13 + M42 * f.M23 + M43 * f.M33,
+
+			Determinant * f.Determinant
+			);
+		}
+
+		/// <summary>
 		/// Prepends a transformation matrix <paramref name="l"/> to this matrix, and returns a new matrix with the result. The original matrix is unchanged.
 		/// </summary>
 		/// <param name="l">The matrix to prepend.</param>
@@ -683,6 +711,32 @@ namespace Altaxo.Geometry
 			h3 = M13 * a.M31 + M23 * a.M32 + M33 * a.M33;
 			h4 = M13 * a.M41 + M23 * a.M42 + M33 * a.M43;
 			M13 = h1; M23 = h2; M33 = h3; M43 += h4;
+
+			Determinant *= a.Determinant;
+		}
+
+		/// <summary>
+		/// Prepends a transformation matrix <paramref name="a"/> to this matrix.
+		/// </summary>
+		/// <param name="a">The matrix to prepend.</param>
+		public void PrependTransform(Matrix3x3 a)
+		{
+			double h1, h2, h3;
+
+			h1 = M11 * a.M11 + M21 * a.M12 + M31 * a.M13;
+			h2 = M11 * a.M21 + M21 * a.M22 + M31 * a.M23;
+			h3 = M11 * a.M31 + M21 * a.M32 + M31 * a.M33;
+			M11 = h1; M21 = h2; M31 = h3;
+
+			h1 = M12 * a.M11 + M22 * a.M12 + M32 * a.M13;
+			h2 = M12 * a.M21 + M22 * a.M22 + M32 * a.M23;
+			h3 = M12 * a.M31 + M22 * a.M32 + M32 * a.M33;
+			M12 = h1; M22 = h2; M32 = h3;
+
+			h1 = M13 * a.M11 + M23 * a.M12 + M33 * a.M13;
+			h2 = M13 * a.M21 + M23 * a.M22 + M33 * a.M23;
+			h3 = M13 * a.M31 + M23 * a.M32 + M33 * a.M33;
+			M13 = h1; M23 = h2; M33 = h3;
 
 			Determinant *= a.Determinant;
 		}
