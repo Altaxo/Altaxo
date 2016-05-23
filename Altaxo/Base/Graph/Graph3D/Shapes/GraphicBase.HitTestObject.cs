@@ -62,33 +62,38 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 			public override void ChangeSize(double? x, double? y, double? z)
 			{
-				throw new NotImplementedException();
-
-				/*
 				var hit = _hitobject as GraphicBase;
 
-				PointD2D currentSizeRootCoord = this.ObjectOutlineForArrangements.GetBounds().Size;
-				PointD2D destinationSizeRootCoord = currentSizeRootCoord;
+				if(null!=hit)
+				{
+					var deltaSize = _matrix.InverseTransform(new VectorD3D(x ?? 0, y ?? 0, z ?? 0)); // Transform to the object's parent coordinates
+					hit.Size += deltaSize;
+				}
+
+				/*
+				var currentSizeRootCoord = this.ObjectOutlineForArrangements.GetBounds().Size;
+				var destinationSizeRootCoord = currentSizeRootCoord;
 				if (x.HasValue)
-					destinationSizeRootCoord.X = x.Value;
+					destinationSizeRootCoord = destinationSizeRootCoord.WithX(x.Value);
 				if (y.HasValue)
-					destinationSizeRootCoord.Y = y.Value;
+					destinationSizeRootCoord = destinationSizeRootCoord.WithY(y.Value);
+				if (z.HasValue)
+					destinationSizeRootCoord = destinationSizeRootCoord.WithZ(z.Value);
 
 				if (null != hit)
 				{
 					if (!hit.AutoSize)
 					{
-						var t = _matrix.Clone();
-						t.AppendTransform(hit._transformation);
-						var innerRect = RectangleD2DExtensions.GetIncludedTransformedRectangle(new RectangleD2D(PointD2D.Empty, destinationSizeRootCoord), t.SX, t.RX, t.RY, t.SY);
-						hit.Width = innerRect.Width;
-						hit.Height = innerRect.Height;
+						var t = _matrix.WithAppendedTransformation(hit._transformation);
+						// this is the original to be implemented : var innerRect = RectangleD3DExtensions.GetIncludedTransformedRectangle(new RectangleD3D(PointD3D.Empty, destinationSizeRootCoord), t.SX, t.RX, t.RY, t.SY);
+						var innerRect = new RectangleD3D(PointD3D.Empty, destinationSizeRootCoord);
+						hit.Size = innerRect.Size;
 					}
 				}
 				*/
 			}
 
-			public override IObjectOutline ObjectOutlineForArrangements
+			public override IObjectOutlineForArrangements ObjectOutlineForArrangements
 			{
 				get
 				{
@@ -96,7 +101,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 					// the result has to be in root layer coordinates, but we must also take into account the object's own transformation
 					var result = new RectangularObjectOutline(ho.Bounds, _matrix.WithPrependedTransformation(ho._transformation));
-					return result;
+					return new ObjectOutlineForArrangementsWrapper(result);
 				}
 			}
 

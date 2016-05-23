@@ -1379,6 +1379,10 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			// maxPlane.Normal is the face orientation of the text
 			// maxUpVector is the up orientation of the text
 
+			xaxis = xaxis.Normalized;
+			yaxis = yaxis.Normalized;
+			zaxis = zaxis.Normalized;
+
 			transformation = new Matrix3x3(
 				xaxis.X, yaxis.X, zaxis.X,
 				xaxis.Y, yaxis.Y, zaxis.Y,
@@ -1401,9 +1405,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			Matrix3x3 principalMoveVectorsInLayerCoordinates;
 			GetCoordinateSystemBasedOnLayerPlaneFacingTheCamera(_doc.Camera, layer, out principalMoveVectorsInLayerCoordinates); // transformation is in layer coordinates
 			var transformation = layer.TransformationFromHereToRoot();
-			var principalVector1_RLC = transformation.Transform(new VectorD3D(principalMoveVectorsInLayerCoordinates.M11, principalMoveVectorsInLayerCoordinates.M21, principalMoveVectorsInLayerCoordinates.M31));
-			var principalVector2_RLC = transformation.Transform(new VectorD3D(principalMoveVectorsInLayerCoordinates.M12, principalMoveVectorsInLayerCoordinates.M22, principalMoveVectorsInLayerCoordinates.M32));
-			var principalVector3_RLC = transformation.Transform(new VectorD3D(principalMoveVectorsInLayerCoordinates.M13, principalMoveVectorsInLayerCoordinates.M23, principalMoveVectorsInLayerCoordinates.M33));
+			var principalVector1_RLC = transformation.Transform(new VectorD3D(principalMoveVectorsInLayerCoordinates.M11, principalMoveVectorsInLayerCoordinates.M21, principalMoveVectorsInLayerCoordinates.M31)).Normalized;
+			var principalVector2_RLC = transformation.Transform(new VectorD3D(principalMoveVectorsInLayerCoordinates.M12, principalMoveVectorsInLayerCoordinates.M22, principalMoveVectorsInLayerCoordinates.M32)).Normalized;
+			var principalVector3_RLC = transformation.Transform(new VectorD3D(principalMoveVectorsInLayerCoordinates.M13, principalMoveVectorsInLayerCoordinates.M23, principalMoveVectorsInLayerCoordinates.M33)).Normalized;
 			return new Matrix3x3(
 				principalVector1_RLC.X, principalVector2_RLC.X, principalVector3_RLC.X,
 				principalVector1_RLC.Y, principalVector2_RLC.Y, principalVector3_RLC.Y,
@@ -1561,10 +1565,10 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			var principalMoveVectorsInRootLayerCoordinates = GetCoordinateSystemRlcBasedOnLayerPlaneFacingTheCameraForSelectedObjects();
 
 			var firstbound = SelectedObjects[0].ObjectOutlineForArrangements;
-			var tfirstbound = GetBounds(firstbound, principalMoveVectorsInRootLayerCoordinates);
+			var tfirstbound = firstbound.GetBounds(principalMoveVectorsInRootLayerCoordinates);
 
 			var lastbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements;
-			var tlastbound = GetBounds(lastbound, principalMoveVectorsInRootLayerCoordinates);
+			var tlastbound = lastbound.GetBounds(principalMoveVectorsInRootLayerCoordinates);
 
 			var step = (tlastbound.XCenter) - (tfirstbound.XCenter);
 			step /= (SelectedObjects.Count - 1);
@@ -1574,7 +1578,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				IHitTestObject obj = SelectedObjects[i];
 				var bounds = obj.ObjectOutlineForArrangements;
-				var tbounds = GetBounds(bounds, principalMoveVectorsInRootLayerCoordinates);
+				var tbounds = bounds.GetBounds(principalMoveVectorsInRootLayerCoordinates);
 
 				var vu = new VectorD3D(tfirstbound.XCenter + i * step - tbounds.XCenter, 0, 0);
 				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
@@ -1593,10 +1597,10 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			var principalMoveVectorsInRootLayerCoordinates = GetCoordinateSystemRlcBasedOnLayerPlaneFacingTheCameraForSelectedObjects();
 
 			var firstbound = SelectedObjects[0].ObjectOutlineForArrangements;
-			var tfirstbound = GetBounds(firstbound, principalMoveVectorsInRootLayerCoordinates);
+			var tfirstbound = firstbound.GetBounds(principalMoveVectorsInRootLayerCoordinates);
 
 			var lastbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements;
-			var tlastbound = GetBounds(lastbound, principalMoveVectorsInRootLayerCoordinates);
+			var tlastbound = lastbound.GetBounds(principalMoveVectorsInRootLayerCoordinates);
 
 			var step = (tlastbound.YCenter) - (tfirstbound.YCenter);
 			step /= (SelectedObjects.Count - 1);
@@ -1606,7 +1610,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			{
 				IHitTestObject obj = SelectedObjects[i];
 				var bounds = obj.ObjectOutlineForArrangements;
-				var tbounds = GetBounds(bounds, principalMoveVectorsInRootLayerCoordinates);
+				var tbounds = bounds.GetBounds(principalMoveVectorsInRootLayerCoordinates);
 
 				var vu = new VectorD3D(0, tfirstbound.YCenter + i * step - tbounds.YCenter, 0);
 				var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
@@ -1626,14 +1630,14 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			var principalMoveVectorsInRootLayerCoordinates = GetCoordinateSystemRlcBasedOnLayerPlaneFacingTheCameraForSelectedObjects();
 
 			var masterbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements;
-			var tmasterbound = GetBounds(masterbound, principalMoveVectorsInRootLayerCoordinates);
+			var tmasterbound = masterbound.GetBounds(principalMoveVectorsInRootLayerCoordinates); // master bounds in principal move vector coordinates
 
 			// now move each object to the new position, which is the difference in the position of the bounds.X
 			for (int i = SelectedObjects.Count - 2; i >= 0; i--)
 			{
 				IHitTestObject obj = SelectedObjects[i];
 				var bounds = obj.ObjectOutlineForArrangements;
-				var tbounds = GetBounds(bounds, principalMoveVectorsInRootLayerCoordinates);
+				var tbounds = bounds.GetBounds(principalMoveVectorsInRootLayerCoordinates); // bounds of the object in principal move vector coordinates
 
 				ArrangeAction(obj, tbounds, tmasterbound, principalMoveVectorsInRootLayerCoordinates);
 			}
@@ -1644,9 +1648,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			ArrangeSameSizeBase(
 				(obj, tbounds, tmasterbounds, principalMoveVectorsInRootLayerCoordinates) =>
 				{
-					var vu = new VectorD3D(tmasterbounds.SizeX, 0, 0);
+					var vu = new VectorD3D(tmasterbounds.SizeX - tbounds.SizeX, 0, 0);
 					var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
-					obj.ChangeSize(u.X, null, null);
+					obj.ChangeSize(u.X, u.Y, u.Z);
 				}
 				);
 		}
@@ -1656,9 +1660,9 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			ArrangeSameSizeBase(
 				(obj, tbounds, tmasterbounds, principalMoveVectorsInRootLayerCoordinates) =>
 				{
-					var vu = new VectorD3D(0, tmasterbounds.SizeY, 0);
+					var vu = new VectorD3D(0, tmasterbounds.SizeY - tbounds.SizeY, 0);
 					var u = principalMoveVectorsInRootLayerCoordinates.InverseTransform(vu);
-					obj.ChangeSize(null, u.Y, null);
+					obj.ChangeSize(u.X, u.Y, u.Z);
 				}
 				);
 		}
@@ -1698,14 +1702,14 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			var principalMoveVectorsInRootLayerCoordinates = GetCoordinateSystemRlcBasedOnLayerPlaneFacingTheCameraForSelectedObjects();
 
 			var masterbound = SelectedObjects[SelectedObjects.Count - 1].ObjectOutlineForArrangements; // is in root layer coordinates
-			var tmasterbound = GetBounds(masterbound, principalMoveVectorsInRootLayerCoordinates); // Rectangle with transformation in principal move vectors
+			var tmasterbound = masterbound.GetBounds(principalMoveVectorsInRootLayerCoordinates); // Rectangle with transformation in principal move vectors
 
 			// now move each object to the new position, which is the difference in the position of the bounds.X
 			for (int i = SelectedObjects.Count - 2; i >= 0; i--)
 			{
 				IHitTestObject o = SelectedObjects[i];
 				var bounds = o.ObjectOutlineForArrangements; // in Root layer coordinates
-				var tbounds = GetBounds(bounds, principalMoveVectorsInRootLayerCoordinates); // Rectangle with transformation in principal coordinates
+				var tbounds = bounds.GetBounds(principalMoveVectorsInRootLayerCoordinates); // Rectangle with transformation in principal coordinates
 
 				arrange(o, tbounds, tmasterbound, principalMoveVectorsInRootLayerCoordinates);
 			}

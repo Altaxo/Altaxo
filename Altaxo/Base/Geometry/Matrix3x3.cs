@@ -67,23 +67,14 @@ namespace Altaxo.Geometry
 
 		private static Matrix3x3 _identityMatrix;
 
+		#region Constructors
+
 		static Matrix3x3()
 		{
 			_identityMatrix = new Matrix3x3(
 					1, 0, 0,
 					0, 1, 0,
 					0, 0, 1);
-		}
-
-		/// <summary>
-		/// Gets the identity matrix.
-		/// </summary>
-		public static Matrix3x3 Identity
-		{
-			get
-			{
-				return _identityMatrix;
-			}
 		}
 
 		/// <summary>
@@ -108,6 +99,35 @@ namespace Altaxo.Geometry
 			M31 = m31; M32 = m32; M33 = m33;
 
 			Determinant = -(m13 * m22 * m31) + m12 * m23 * m31 + m13 * m21 * m32 - m11 * m23 * m32 - m12 * m21 * m33 + m11 * m22 * m33;
+		}
+
+		/// <summary>
+		/// Creates a transformation matrix that uses three basis vectors to construct the matrix that transform points expressed in the three basis vectors to points in
+		/// the coordinate system.
+		/// </summary>
+		/// <param name="xBasis">Basis vector for the x-direction.</param>
+		/// <param name="yBasis">Basis vector for the y-direction.</param>
+		/// <param name="zBasis">Basis vector for the z-direction.</param>
+		/// <returns>A transformation matrix that uses the three basis vectors, and a location</returns>
+		public static Matrix3x3 NewFromBasisVectors(VectorD3D xBasis, VectorD3D yBasis, VectorD3D zBasis)
+		{
+			return new Matrix3x3(
+				xBasis.X, xBasis.Y, xBasis.Z,
+				yBasis.X, yBasis.Y, yBasis.Z,
+				zBasis.X, zBasis.Y, zBasis.Z);
+		}
+
+		#endregion Constructors
+
+		/// <summary>
+		/// Gets the identity matrix.
+		/// </summary>
+		public static Matrix3x3 Identity
+		{
+			get
+			{
+				return _identityMatrix;
+			}
 		}
 
 		/// <summary>

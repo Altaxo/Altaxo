@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Graph3D
 			set { _hitobject = value; }
 		}
 
-		public abstract IObjectOutline ObjectOutlineForArrangements { get; }
+		public abstract IObjectOutlineForArrangements ObjectOutlineForArrangements { get; }
 
 		/// <summary>
 		/// Shows the grips, i.e. the special areas for manipulation of the object.
@@ -229,11 +229,11 @@ namespace Altaxo.Graph.Graph3D
 		/// <summary>
 		/// Returns the object path in page coordinates. This path is used for the arrangement of multiple selected objects.
 		/// </summary>
-		public override IObjectOutline ObjectOutlineForArrangements
+		public override IObjectOutlineForArrangements ObjectOutlineForArrangements
 		{
 			get
 			{
-				return _objectPath;
+				return new ObjectOutlineForArrangementsWrapper(_objectPath);
 			}
 		}
 
