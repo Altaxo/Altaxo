@@ -180,7 +180,7 @@ namespace Altaxo.Worksheet
 
 			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 			{
-				if (this._pathToTable != null)
+				if (this._pathToTable != null && this._worksheetLayout.DataTable == null)
 				{
 					object table = Main.AbsoluteDocumentPath.GetObject(this._pathToTable, this._worksheetLayout, documentRoot);
 					if (table is Altaxo.Data.DataTable)

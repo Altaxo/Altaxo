@@ -114,14 +114,14 @@ namespace Altaxo.Main.Commands
 				Altaxo.Worksheet.TablePlusLayout tableAndLayout = deserObject as Altaxo.Worksheet.TablePlusLayout;
 				var table = tableAndLayout.Table;
 
-				Current.Project.AddItemWithThisOrModifiedName((IProjectItem)deserObject);
+				Current.Project.AddItemWithThisOrModifiedName(table);
 
 				if (tableAndLayout.Layout != null)
 					Current.Project.TableLayouts.Add(tableAndLayout.Layout);
 
-				info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
-
 				tableAndLayout.Layout.DataTable = table; // this is the table for the layout now
+
+				info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
 
 				Current.ProjectService.CreateNewWorksheet(table, tableAndLayout.Layout);
 			}
