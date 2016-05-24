@@ -52,7 +52,11 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
 		protected Dictionary<MaterialPlusClippingPlusColorProviderKey, PositionNormalUIndexedTriangleBuffer> _positionNormalUIndexedTriangleBuffers = new Dictionary<MaterialPlusClippingPlusColorProviderKey, PositionNormalUIndexedTriangleBuffer>();
 
-		private GraphicState _transformation = new GraphicState() { Transformation = Matrix4x3.Identity };
+		/// <summary>Transformation of positions from local coordinates to global coordinates.</summary>
+		private Matrix4x3 _transformation = Matrix4x3.Identity;
+
+		/// <summary>Transformation of normal vectors from local coordinates to global coordinates.</summary>
+		private Matrix3x3 _transposedInverseTransformation = Matrix3x3.Identity;
 
 		public void Dispose()
 		{
@@ -175,32 +179,45 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 		{
 			get
 			{
-				return _transformation.Transformation;
+				return _transformation;
+			}
+		}
+
+		public override Matrix3x3 TransposedInverseTransformation
+		{
+			get
+			{
+				return _transposedInverseTransformation;
 			}
 		}
 
 		public override object SaveGraphicsState()
 		{
-			return new GraphicState { Transformation = _transformation.Transformation };
+			return new GraphicState(_transformation, _transposedInverseTransformation);
 		}
 
 		public override void RestoreGraphicsState(object graphicsState)
 		{
 			var gs = graphicsState as GraphicState;
 			if (null != gs)
-				_transformation.Transformation = gs.Transformation;
+			{
+				_transformation = gs.Transformation;
+				_transposedInverseTransformation = gs.TransposedInverseTransformation;
+			}
 			else
 				throw new ArgumentException(nameof(graphicsState) + " is not a valid graphic state!");
 		}
 
 		public override void PrependTransform(Matrix4x3 m)
 		{
-			_transformation.Transformation.PrependTransform(m);
+			_transformation.PrependTransform(m);
+			_transposedInverseTransformation = _transformation.GetTransposedInverseMatrix3x3();
 		}
 
 		public override void TranslateTransform(double x, double y, double z)
 		{
-			_transformation.Transformation.TranslatePrepend(x, y, z);
+			_transformation.TranslatePrepend(x, y, z);
+			// no change to the inverse transform
 		}
 
 		public override PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material)
@@ -331,7 +348,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 		{
 			// Transform the clip planes to our coordinate system
 
-			var clipPlanesTransformed = clipPlanes.Select(plane => _transformation.Transformation.Transform(plane)).ToArray();
+			var clipPlanesTransformed = clipPlanes.Select(plane => _transformation.Transform(plane)).ToArray();
 
 			PositionNormalColorIndexedTriangleBuffer result;
 			var key = new MaterialPlusClippingKey(material, clipPlanesTransformed);
@@ -362,7 +379,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 		{
 			// Transform the clip planes to our coordinate system
 
-			var clipPlanesTransformed = clipPlanes.Select(plane => _transformation.Transformation.Transform(plane)).ToArray();
+			var clipPlanesTransformed = clipPlanes.Select(plane => _transformation.Transform(plane)).ToArray();
 
 			PositionNormalUIndexedTriangleBuffer result;
 			var key = new MaterialPlusClippingPlusColorProviderKey(material, clipPlanesTransformed, colorProvider);
@@ -377,7 +394,14 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
 		internal class GraphicState
 		{
-			public Matrix4x3 Transformation;
+			internal GraphicState(Matrix4x3 transformation, Matrix3x3 transposedInverseTransformation)
+			{
+				Transformation = transformation;
+				TransposedInverseTransformation = transposedInverseTransformation;
+			}
+
+			internal Matrix4x3 Transformation { get; private set; }
+			internal Matrix3x3 TransposedInverseTransformation { get; private set; }
 		}
 
 		#endregion Transformation

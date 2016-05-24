@@ -36,6 +36,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 	public interface ITransformationContext
 	{
 		Matrix4x3 Transformation { get; }
+		Matrix3x3 TransposedInverseTransformation { get; }
 	}
 
 	public interface IGraphicsContext3D : ITransformationContext

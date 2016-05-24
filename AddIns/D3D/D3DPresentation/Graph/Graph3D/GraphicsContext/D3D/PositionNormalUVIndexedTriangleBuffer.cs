@@ -43,7 +43,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 		public void AddTriangleVertex(double x, double y, double z, double nx, double ny, double nz, double u, double v)
 		{
 			var pt = _parent.Transformation.Transform(new PointD3D(x, y, z));
-			var no = _parent.Transformation.Transform(new VectorD3D(nx, ny, nz));
+			var no = _parent.TransposedInverseTransformation.Transform(new VectorD3D(nx, ny, nz));
 
 			int offs = _numberOfVertices * 10;
 

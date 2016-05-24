@@ -79,6 +79,14 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 			}
 		}
 
+		public Matrix3x3 TransposedInverseTransformation
+		{
+			get
+			{
+				throw new NotImplementedException("TransposedInverseTransformation should not be needed in this overlay context, because we don't use normals here");
+			}
+		}
+
 		public object SaveGraphicsState()
 		{
 			return new GraphicState { Transformation = _transformation };
@@ -88,7 +96,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 		{
 			var gs = graphicsState as GraphicState;
 			if (null != gs)
+			{
 				_transformation = gs.Transformation;
+			}
 			else
 				throw new ArgumentException(nameof(graphicsState) + " is not a valid graphic state!");
 		}
@@ -105,7 +115,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 
 		private class GraphicState
 		{
-			public Matrix4x3 Transformation;
+			internal Matrix4x3 Transformation;
 		}
 
 		#endregion Transformation

@@ -134,6 +134,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		public abstract Matrix4x3 Transformation { get; }
 
+		public abstract Matrix3x3 TransposedInverseTransformation { get; }
+
 		#region Primitives rendering
 
 		public void DrawTriangle(IMaterial material, PointD3D p0, PointD3D p1, PointD3D p2)
