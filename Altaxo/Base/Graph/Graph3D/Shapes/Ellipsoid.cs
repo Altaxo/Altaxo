@@ -127,5 +127,69 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				}
 			}
 		}
+
+		/// <summary>
+		/// Gets the object outline for arrangements.
+		/// </summary>
+		/// <param name="localToWorldTransformation">The local to world transformation.</param>
+		/// <returns></returns>
+		public override IObjectOutlineForArrangements GetObjectOutlineForArrangements(Matrix4x3 localToWorldTransformation)
+		{
+			var bounds = this.Bounds;
+
+			double sx = this.Bounds.SizeX / 2;
+			double sy = this.Bounds.SizeY / 2;
+			double sz = this.Bounds.SizeZ / 2;
+
+			var dx = this.Bounds.X + sx;
+			var dy = this.Bounds.Y + sy;
+			var dz = this.Bounds.Z + sz;
+
+			var transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(sx, sy, sz, 0, 0, 0, 0, 0, 0, dx, dy, dz); // represents a transformation from a unit sphere to the real sphere
+
+			transformation.AppendTransform(_transformation); // additional transformations of the ellipsoid
+			transformation.AppendTransform(localToWorldTransformation); // local to global transformation
+
+			return new SphericalObjectOutline(transformation);
+		}
+
+		#region ObjectOutline
+
+		/// <summary>
+		/// Represents the outline of an ellipsoid.
+		/// </summary>
+		/// <seealso cref="Altaxo.Graph.Graph3D.IObjectOutlineForArrangements" />
+		/// <remarks>For calculation, see internal document "Eingeschlossenes beliebig transformiertes Ellipsoid"</remarks>
+		private class SphericalObjectOutline : IObjectOutlineForArrangements
+		{
+			private Matrix4x3 _transformation;
+
+			internal SphericalObjectOutline(Matrix4x3 transformation)
+			{
+				_transformation = transformation;
+			}
+
+			public RectangleD3D GetBounds()
+			{
+				var lx = new VectorD3D(_transformation.M11, _transformation.M21, _transformation.M31).Length;
+				var ly = new VectorD3D(_transformation.M12, _transformation.M22, _transformation.M32).Length;
+				var lz = new VectorD3D(_transformation.M13, _transformation.M23, _transformation.M33).Length;
+
+				return new RectangleD3D(new PointD3D(_transformation.M41 - lx, _transformation.M42 - ly, _transformation.M43 - lz), new VectorD3D(2 * lx, 2 * ly, 2 * lz));
+			}
+
+			public RectangleD3D GetBounds(Matrix3x3 additionalTransformation)
+			{
+				var t = _transformation.WithAppendedTransformation(additionalTransformation);
+
+				var lx = new VectorD3D(t.M11, t.M21, t.M31).Length;
+				var ly = new VectorD3D(t.M12, t.M22, t.M32).Length;
+				var lz = new VectorD3D(t.M13, t.M23, t.M33).Length;
+
+				return new RectangleD3D(new PointD3D(t.M41 - lx, t.M42 - ly, t.M43 - lz), new VectorD3D(2 * lx, 2 * ly, 2 * lz));
+			}
+		}
+
+		#endregion ObjectOutline
 	}
 }

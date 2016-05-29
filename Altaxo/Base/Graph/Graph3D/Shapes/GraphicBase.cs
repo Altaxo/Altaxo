@@ -663,10 +663,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// <summary>
 		/// Get the object outline for arrangements in coordinates of the parent object (i.e. in most cases the parent layer).
 		/// </summary>
+		/// <param name="localToWorldTransformation">Transformation from local (i.e. parent layer) coordinates to global coordinates.</param>
 		/// <returns>Object outline for arrangements in parent coordinates</returns>
-		public virtual IObjectOutline GetObjectOutlineForArrangements()
+		public virtual IObjectOutlineForArrangements GetObjectOutlineForArrangements(Matrix4x3 localToWorldTransformation)
 		{
-			return new RectangularObjectOutline(Bounds, _transformation);
+			return null; // it is not required that the object provides a outline, in this case the outline will be calculated by the HitObject
 		}
 
 		/// <summary>

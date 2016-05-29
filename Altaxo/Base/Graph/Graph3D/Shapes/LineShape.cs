@@ -27,6 +27,7 @@ using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
@@ -120,13 +121,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
 		/// Gets the path of the object in object world coordinates.
 		/// </summary>
 		/// <returns></returns>
-		public override IObjectOutline GetObjectOutlineForArrangements()
+		public override IObjectOutlineForArrangements GetObjectOutlineForArrangements(Matrix4x3 localToWorldTransformation)
 		{
-			return new PolylineObjectOutline(
-				_linePen.Thickness1,
-				_linePen.Thickness2,
-				new PointD3D[] { Bounds.Location, Bounds.LocationPlusSize },
-				_transformation);
+			return new LineShapeObjectOutline(_transformation.WithAppendedTransformation(localToWorldTransformation), Bounds);
 		}
 
 		public override IHitTestObject HitTest(HitTestPointData parentHitData)
@@ -315,6 +312,37 @@ const double gripNominalSize = 10; // 10 Points nominal size on the screen
 				{
 					return base.GetGrips(gripLevel);
 				}
+			}
+		}
+
+		private class LineShapeObjectOutline : IObjectOutlineForArrangements
+		{
+			private Matrix4x3 _transformation;
+			private RectangleD3D _bounds;
+
+			internal LineShapeObjectOutline(Matrix4x3 transformation, RectangleD3D bounds)
+			{
+				_transformation = transformation;
+				_bounds = bounds;
+			}
+
+			private IEnumerable<PointD3D> Points
+			{
+				get
+				{
+					yield return _bounds.Location;
+					yield return _bounds.LocationPlusSize;
+				}
+			}
+
+			public RectangleD3D GetBounds()
+			{
+				return RectangleD3D.NewRectangleIncludingAllPoints(Points.Select(p => _transformation.Transform(p)));
+			}
+
+			public RectangleD3D GetBounds(Matrix3x3 additionalTransformation)
+			{
+				return RectangleD3D.NewRectangleIncludingAllPoints(Points.Select(p => additionalTransformation.Transform(_transformation.Transform(p))));
 			}
 		}
 	} // End Class
