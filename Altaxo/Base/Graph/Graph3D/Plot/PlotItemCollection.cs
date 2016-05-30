@@ -25,7 +25,6 @@
 using Altaxo.Collections;
 using Altaxo.Geometry;
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi.Plot.Groups;
 using Altaxo.Graph.Plot;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Plot.Groups;
@@ -34,14 +33,12 @@ using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Main;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot
 {
 	using Altaxo.Graph.Plot.Groups;
-	using Graph.Gdi;
 	using GraphicsContext;
 	using Groups;
 	using System.Collections;
@@ -346,12 +343,12 @@ namespace Altaxo.Graph.Graph3D.Plot
 				item.VisitDocumentReferences(Report);
 		}
 
-		public void CopyFrom(PlotItemCollection from, GraphCopyOptions options)
+		public void CopyFrom(PlotItemCollection from, Gdi.GraphCopyOptions options)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			if (GraphCopyOptions.CopyLayerPlotStyles == (GraphCopyOptions.CopyLayerPlotStyles & options))
+			if (Gdi.GraphCopyOptions.CopyLayerPlotStyles == (Gdi.GraphCopyOptions.CopyLayerPlotStyles & options))
 			{
 				var thisFlat = this.Flattened;
 				var fromFlat = from.Flattened;
@@ -381,7 +378,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 			var from = obj as PlotItemCollection;
 			if (null != from)
 			{
-				CopyFrom(from, GraphCopyOptions.All);
+				CopyFrom(from, Gdi.GraphCopyOptions.All);
 			}
 			return false;
 		}
@@ -431,7 +428,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 				pi.PaintPostprocessing();
 		}
 
-		public Graph3D.IHitTestObject HitTest(Graph3D.IPlotArea layer, Ray3D hitpoint)
+		public IHitTestObject HitTest(IPlotArea layer, HitTestPointData hitpoint)
 		{
 			throw new NotImplementedException();
 		}

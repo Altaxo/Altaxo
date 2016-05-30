@@ -142,7 +142,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// <param name="layer">The layer in which this plot item is drawn into.</param>
 		/// <param name="hitpoint">The point where the mouse is pressed.</param>
 		/// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
-		IHitTestObject HitTest(IPlotArea layer, Ray3D hitpoint);
+		IHitTestObject HitTest(IPlotArea layer, HitTestPointData hitpoint);
 
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible

@@ -1154,7 +1154,7 @@ namespace Altaxo.Gui.Graph3D
 				throw new NotImplementedException();
 			}
 
-			public IHitTestObject HitTest(IPlotArea layer, PointD2D hitpoint)
+			public IHitTestObject HitTest(IPlotArea layer, HitTestPointData hitpoint)
 			{
 				throw new NotImplementedException();
 			}

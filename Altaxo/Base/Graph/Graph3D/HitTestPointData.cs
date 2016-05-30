@@ -41,7 +41,7 @@ namespace Altaxo.Graph.Graph3D
 
 		/// <summary>
 		/// Transformation that transforms the coordinates under test to world coordinates (i.e. to the graph's root layer coordinates).
-		/// Upon construction this is the identity matrix. As this object is distributed to leaf elements, the transformation is updates,
+		/// Upon construction this is the identity matrix. As this object is distributed to leaf elements, the transformation is updated,
 		/// for instance by the local transformations of the layers.
 		/// </summary>
 		private Matrix4x3 _worldTransformation;

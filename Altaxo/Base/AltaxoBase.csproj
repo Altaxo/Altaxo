@@ -335,6 +335,8 @@
     <Compile Include="Graph\Graph3D\Lighting\DirectionalLight.cs" />
     <Compile Include="Graph\Graph3D\Lighting\HemisphericAmbientLight.cs" />
     <Compile Include="Graph\Graph3D\LightSettings.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Data\Processed3DPlotData.cs" />
+    <Compile Include="Graph\Graph3D\Plot\G3DPlotItem.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\CoordinateTransformingStyleBase.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\ICoordinateTransformingGroupStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\PlotGroupStyleCollection.cs" />
@@ -343,6 +345,8 @@
     <Compile Include="Graph\Graph3D\Plot\PlotItemCollection.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\DataMeshPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\DataMeshPlotItem.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Styles\G3DPlotStyleCollection.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Styles\IG3DPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\XYColumnPlotItem.cs" />
     <Compile Include="Geometry\PointD3D.cs" />
     <Compile Include="Geometry\Math3D.cs" />
@@ -426,6 +430,7 @@
     <Compile Include="Graph\Gdi\IItemLocation.cs" />
     <Compile Include="Graph\Gdi\ItemLocationDirect.cs" />
     <Compile Include="Graph\Gdi\ItemLocationDirectAutoSize.cs" />
+    <Compile Include="Graph\Plot\Data\XYZScatterPointInformation.cs" />
     <Compile Include="Graph\Plot\Groups\ColorLinkage.cs" />
     <Compile Include="Drawing\NamedColor.cs" />
     <Compile Include="Drawing\NamedColors.cs" />
