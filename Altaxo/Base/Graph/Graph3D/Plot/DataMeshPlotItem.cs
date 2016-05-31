@@ -182,11 +182,6 @@ namespace Altaxo.Graph.Graph3D.Plot
 			return _plotData.ToString();
 		}
 
-		public override string GetName(string style)
-		{
-			return GetName(0);
-		}
-
 		public override string ToString()
 		{
 			return GetName(int.MaxValue);

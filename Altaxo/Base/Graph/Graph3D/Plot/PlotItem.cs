@@ -75,14 +75,6 @@ namespace Altaxo.Graph.Graph3D.Plot
 		public abstract string GetName(int level);
 
 		/// <summary>
-		/// The name of the plot. The style how to find the name is determined by the style argument. The possible
-		/// styles depend on the type of plot item.
-		/// </summary>
-		/// <param name="style">The style determines the "verbosity" of the plot name.</param>
-		/// <returns>The name of the plot.</returns>
-		public abstract string GetName(string style);
-
-		/// <summary>
 		/// Called before painting takes place.
 		/// </summary>
 		/// <param name="context">The painting context.</param>

@@ -681,17 +681,17 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				{
 					result = pa.GetName(0);
 
-					if (_plotLabelStyle != null && !_plotLabelStyleIsPropColName && pa is XYColumnPlotItem)
+					if (_plotLabelStyle != null && !_plotLabelStyleIsPropColName && pa is XYZColumnPlotItem)
 					{
 						var style = Altaxo.Graph.Gdi.Plot.XYColumnPlotItemLabelTextStyle.YS;
 						try { style = (Altaxo.Graph.Gdi.Plot.XYColumnPlotItemLabelTextStyle)Enum.Parse(typeof(Altaxo.Graph.Gdi.Plot.XYColumnPlotItemLabelTextStyle), _plotLabelStyle, true); }
 						catch (Exception) { }
-						result = ((XYColumnPlotItem)pa).GetName((int)style);
+						result = ((XYZColumnPlotItem)pa).GetName((int)style);
 					}
 
-					if (_plotLabelStyleIsPropColName && _plotLabelStyle != null && pa is XYColumnPlotItem)
+					if (_plotLabelStyleIsPropColName && _plotLabelStyle != null && pa is XYZColumnPlotItem)
 					{
-						XYColumnPlotData pb = ((XYColumnPlotItem)pa).Data;
+						var pb = ((XYZColumnPlotItem)pa).Data;
 						Data.DataTable tbl = null;
 						if (pb.YColumn is Data.DataColumn)
 							tbl = Data.DataTable.GetParentDataTableOf((Data.DataColumn)pb.YColumn);

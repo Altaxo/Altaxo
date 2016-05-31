@@ -301,9 +301,9 @@ namespace Altaxo.Gui.Graph3D
 			else if (item != null && item is PlotItem)
 			{
 				string name = item.GetName(2);
-				if (_showRange && item is XYColumnPlotItem)
+				if (_showRange && item is XYZColumnPlotItem)
 				{
-					var pi1 = item as XYColumnPlotItem;
+					var pi1 = item as XYZColumnPlotItem;
 					return string.Format("{0} ({1}-{2})", name, pi1.Data.PlotRangeStart, pi1.Data.PlotRangeEnd);
 				}
 				else
@@ -354,7 +354,7 @@ namespace Altaxo.Gui.Graph3D
 			return picoll;
 		}
 
-		private static XYColumnPlotItem FindFirstXYColumnPlotItem(PlotItemCollection coll)
+		private static XYZColumnPlotItem FindFirstXYColumnPlotItem(PlotItemCollection coll)
 		{
 			// search in our document for the first plot item that is XYColumnPlotItem,
 			// we need this as template style
@@ -362,13 +362,13 @@ namespace Altaxo.Gui.Graph3D
 			{
 				if (pi is PlotItemCollection)
 				{
-					XYColumnPlotItem result = FindFirstXYColumnPlotItem(pi as PlotItemCollection);
+					XYZColumnPlotItem result = FindFirstXYColumnPlotItem(pi as PlotItemCollection);
 					if (result != null)
 						return result;
 				}
-				else if (pi is XYColumnPlotItem)
+				else if (pi is XYZColumnPlotItem)
 				{
-					return pi as XYColumnPlotItem;
+					return pi as XYZColumnPlotItem;
 				}
 			}
 			return null;
@@ -791,7 +791,7 @@ namespace Altaxo.Gui.Graph3D
 
 			foreach (NGTreeNode node in selNodes)
 			{
-				var pi = node.Tag as XYColumnPlotItem;
+				var pi = node.Tag as XYZColumnPlotItem;
 				if (pi == null)
 					continue;
 				pi.Data.PlotRangeStart = range.Start;
@@ -807,7 +807,7 @@ namespace Altaxo.Gui.Graph3D
 
 			foreach (NGTreeNode node in selNodes)
 			{
-				var pi = node.Tag as XYColumnPlotItem;
+				var pi = node.Tag as XYZColumnPlotItem;
 				if (pi == null)
 					continue;
 				minRange = Math.Min(minRange, pi.Data.PlotRangeStart);

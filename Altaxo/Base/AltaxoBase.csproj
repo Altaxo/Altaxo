@@ -347,7 +347,7 @@
     <Compile Include="Graph\Graph3D\Plot\DataMeshPlotItem.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\G3DPlotStyleCollection.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\IG3DPlotStyle.cs" />
-    <Compile Include="Graph\Graph3D\Plot\XYColumnPlotItem.cs" />
+    <Compile Include="Graph\Graph3D\Plot\XYZColumnPlotItem.cs" />
     <Compile Include="Geometry\PointD3D.cs" />
     <Compile Include="Geometry\Math3D.cs" />
     <Compile Include="Geometry\BezierCurveFlattener.cs" />
@@ -430,6 +430,7 @@
     <Compile Include="Graph\Gdi\IItemLocation.cs" />
     <Compile Include="Graph\Gdi\ItemLocationDirect.cs" />
     <Compile Include="Graph\Gdi\ItemLocationDirectAutoSize.cs" />
+    <Compile Include="Graph\Plot\Data\XYZColumnPlotData.cs" />
     <Compile Include="Graph\Plot\Data\XYZScatterPointInformation.cs" />
     <Compile Include="Graph\Plot\Groups\ColorLinkage.cs" />
     <Compile Include="Drawing\NamedColor.cs" />
