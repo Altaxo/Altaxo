@@ -340,6 +340,7 @@
     <Compile Include="Graph\Graph3D\Plot\Groups\CoordinateTransformingStyleBase.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\ICoordinateTransformingGroupStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\PlotGroupStyleCollection.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Groups\SymbolShapeStyleGroupStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\IGPlotItem.cs" />
     <Compile Include="Graph\Graph3D\Plot\PlotItem.cs" />
     <Compile Include="Graph\Graph3D\Plot\PlotItemCollection.cs" />
@@ -347,6 +348,9 @@
     <Compile Include="Graph\Graph3D\Plot\DataMeshPlotItem.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\G3DPlotStyleCollection.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\IG3DPlotStyle.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Styles\IScatterSymbolShape.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Styles\ScatterPlotStyle.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Styles\ScatterSymbolShapes\NoSymbol.cs" />
     <Compile Include="Graph\Graph3D\Plot\XYZColumnPlotItem.cs" />
     <Compile Include="Geometry\PointD3D.cs" />
     <Compile Include="Geometry\Math3D.cs" />

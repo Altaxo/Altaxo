@@ -84,6 +84,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 		void PrependTransform(Matrix4x3 m);
 
 		void TranslateTransform(double x, double y, double z);
+
+		void TranslateTransform(VectorD3D diff);
 	}
 
 	public interface IOverlayContext3D : ITransformationContext

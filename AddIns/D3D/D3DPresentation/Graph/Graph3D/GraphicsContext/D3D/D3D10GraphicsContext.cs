@@ -220,6 +220,12 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 			// no change to the inverse transform
 		}
 
+		public override void TranslateTransform(VectorD3D translation)
+		{
+			_transformation.TranslatePrepend(translation.X, translation.Y, translation.Z);
+			// no change to the inverse transform
+		}
+
 		public override PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material)
 		{
 			var result = new PositionNormalIndexedTriangleBuffers();

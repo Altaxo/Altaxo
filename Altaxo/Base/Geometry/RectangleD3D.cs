@@ -323,6 +323,20 @@ namespace Altaxo.Geometry
 			}
 		}
 
+		/// <summary>
+		/// Gets the center of this rectangle.
+		/// </summary>
+		/// <value>
+		/// The center of this rectangle.
+		/// </value>
+		public PointD3D Center
+		{
+			get
+			{
+				return new PointD3D(_x + 0.5 * _sizeX, _y + 0.5 * _sizeY, _z + 0.5 * _sizeZ);
+			}
+		}
+
 		public RectangleD3D WithLocation(PointD3D newLocation)
 		{
 			return new RectangleD3D(newLocation.X, newLocation.Y, newLocation.Z, SizeX, SizeY, SizeZ);
