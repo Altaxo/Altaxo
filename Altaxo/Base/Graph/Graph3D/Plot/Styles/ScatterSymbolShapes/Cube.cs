@@ -36,16 +36,23 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbolShapes
 	/// Represents the null symbol in a scatter plot, i.e. this symbol is not visible.
 	/// </summary>
 	/// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbolShape" />
-	public sealed class NoSymbol : IScatterSymbolShape
+	public sealed class Cube : IScatterSymbolShape
 	{
-		public static NoSymbol Instance { get; private set; } = new NoSymbol();
-
-		private NoSymbol()
-		{
-		}
-
 		public void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize)
 		{
+			var symbolSizeBy2 = symbolSize / 2;
+			var buffers = g.GetPositionNormalIndexedTriangleBuffer(material);
+			if (null != buffers.PositionNormalIndexedTriangleBuffer)
+			{
+				var buf = buffers.PositionNormalIndexedTriangleBuffer;
+				var voffs = buffers.PositionNormalIndexedTriangleBuffer.VertexCount;
+				SolidCube.Add(
+					centerLocation.X - symbolSizeBy2, centerLocation.Y - symbolSizeBy2, centerLocation.Z - symbolSizeBy2,
+					symbolSize, symbolSize, symbolSize,
+					(point, normal) => buf.AddTriangleVertex(point.X, point.Y, point.Z, normal.X, normal.Y, normal.Z),
+					(i1, i2, i3) => buf.AddTriangleIndices(i1 + voffs, i2 + voffs, i3 + voffs),
+					ref voffs);
+			}
 		}
 	}
 }

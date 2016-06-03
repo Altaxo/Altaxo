@@ -24,6 +24,7 @@
 
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
+using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
@@ -43,7 +44,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// </summary>
 		/// <param name="g">The graphics context.</param>
 		/// <param name="material">The material used to draw the symbol.</param>
+		/// <param name="centerLocation">The location of the center of the symbol.</param>
 		/// <param name="symbolSize">Size of the symbol.</param>
-		void Paint(IGraphicsContext3D g, IMaterial material, double symbolSize);
+		void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize);
 	}
 }

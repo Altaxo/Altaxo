@@ -359,18 +359,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 				if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size
 				{
-					// save the graphics state since we have to translate the origin
-					var gs = g.SaveGraphicsState();
-
 					for (int j = 0; j < ptArray.Length; j += _skipFreq)
 					{
-						diff = ptArray[j] - pos;
-						pos = ptArray[j];
-						g.TranslateTransform(diff);
-						_symbolShape.Paint(g, _material, _symbolSize);
+						_symbolShape.Paint(g, _material, ptArray[j], _symbolSize);
 					} // end for
-
-					g.RestoreGraphicsState(gs); // Restore the graphics state
 				}
 				else // using a variable symbol size or variable symbol color
 				{
@@ -381,20 +373,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 						int offset = rangeList[r].OffsetToOriginal;
 						for (int j = lower; j < upper; j += _skipFreq)
 						{
-							diff = ptArray[j] - pos;
-							pos = ptArray[j];
-							g.TranslateTransform(diff);
-
 							if (null == _cachedColorForIndexFunction)
 							{
 								double customSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
-								_symbolShape.Paint(g, _material, customSymbolSize);
+								_symbolShape.Paint(g, _material, ptArray[j], customSymbolSize);
 							}
 							else
 							{
 								double customSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
 								var customSymbolColor = _cachedColorForIndexFunction(j + offset);
-								_symbolShape.Paint(g, _material.WithColor(NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B)), customSymbolSize);
+								_symbolShape.Paint(g, _material.WithColor(NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B)), ptArray[j], customSymbolSize);
 							}
 						}
 					}
@@ -406,11 +394,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			if (!object.ReferenceEquals(_symbolShape, ScatterSymbolShapes.NoSymbol.Instance))
 			{
-				var gs = g.SaveGraphicsState();
-				g.TranslateTransform((VectorD3D)bounds.Center);
-				_symbolShape.Paint(g, _material, _symbolSize);
-				g.RestoreGraphicsState(gs);
-
+				_symbolShape.Paint(g, _material, bounds.Center, _symbolSize);
 				bounds = bounds.WithPadding(0, Math.Max(0, this.SymbolSize - bounds.SizeY), Math.Max(0, this.SymbolSize - bounds.SizeZ));
 			}
 

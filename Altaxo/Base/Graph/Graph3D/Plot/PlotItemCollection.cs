@@ -316,6 +316,21 @@ namespace Altaxo.Graph.Graph3D.Plot
 				pi.PrepareScales(layer);
 		}
 
+		public PlotGroupStyleCollection GroupStyles
+		{
+			get
+			{
+				return this._plotGroupStyles;
+			}
+			set
+			{
+				if (value == null)
+					throw new ArgumentNullException();
+
+				ChildSetMember(ref _plotGroupStyles, value);
+			}
+		}
+
 		public void PrepareGroupStyles(PlotGroupStyleCollection parentPlotGroupStyles, Graph3D.IPlotArea layer)
 		{
 			PrepareGroupStylesForward_HierarchyUpOnly(parentPlotGroupStyles, layer);
@@ -325,142 +340,6 @@ namespace Altaxo.Graph.Graph3D.Plot
 		{
 			ApplyGroupStylesForward_HierarchyUpOnly(parentPlotGroupStyles);
 		}
-
-		public void PaintPostprocessing()
-		{
-			foreach (var pi in _plotItems)
-				pi.PaintPostprocessing();
-		}
-
-		/// <summary>
-		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
-		/// to change a plot so that the plot items refer to another table.
-		/// </summary>
-		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
-		public virtual void VisitDocumentReferences(DocNodeProxyReporter Report)
-		{
-			foreach (var item in this)
-				item.VisitDocumentReferences(Report);
-		}
-
-		public void CopyFrom(PlotItemCollection from, Gdi.GraphCopyOptions options)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			if (Gdi.GraphCopyOptions.CopyLayerPlotStyles == (Gdi.GraphCopyOptions.CopyLayerPlotStyles & options))
-			{
-				var thisFlat = this.Flattened;
-				var fromFlat = from.Flattened;
-				int len = Math.Min(thisFlat.Length, fromFlat.Length);
-				for (int i = 0; i < len; i++)
-				{
-					thisFlat[i].SetPlotStyleFromTemplate(fromFlat[i], PlotGroupStrictness.Strict);
-				}
-			}
-		}
-
-		public string GetName(int level)
-		{
-			return string.Format("<Collection of {0} plot items>", this._plotItems.Count);
-		}
-
-		public string GetName(string style)
-		{
-			return string.Format("<Collection of {0} plot items>", this._plotItems.Count);
-		}
-
-		public bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-
-			var from = obj as PlotItemCollection;
-			if (null != from)
-			{
-				CopyFrom(from, Gdi.GraphCopyOptions.All);
-			}
-			return false;
-		}
-
-		object ICloneable.Clone()
-		{
-			return new PlotItemCollection(this);
-		}
-
-		public PlotItemCollection Clone()
-		{
-			return new PlotItemCollection(this);
-		}
-
-		/// <summary>
-		/// Collects all possible group styles that can be applied to this plot item in
-		/// styles.
-		/// </summary>
-		/// <param name="styles">The collection of group styles.</param>
-		public void CollectStyles(PlotGroupStyleCollection styles)
-		{
-			foreach (IGPlotItem pi in _plotItems)
-				pi.CollectStyles(styles);
-		}
-
-		public void SetPlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
-		{
-		}
-
-		public void PaintPreprocessing(IPaintContext context)
-		{
-			foreach (var pi in _plotItems)
-				pi.PaintPreprocessing(context);
-		}
-
-		public void Paint(IGraphicsContext3D g, IPaintContext context, Graph3D.IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
-		{
-			for (int i = 0; i < _plotItems.Count; ++i)
-			{
-				_plotItems[i].Paint(g, context, layer, i == 0 ? null : _plotItems[i - 1], i == _plotItems.Count - 1 ? null : _plotItems[i + 1]);
-			}
-		}
-
-		void IGPlotItem.PaintPostprocessing()
-		{
-			foreach (var pi in _plotItems)
-				pi.PaintPostprocessing();
-		}
-
-		public IHitTestObject HitTest(IPlotArea layer, HitTestPointData hitpoint)
-		{
-			throw new NotImplementedException();
-		}
-
-		#region Collection methods
-
-		public void Add(IGPlotItem item)
-		{
-			if (item == null)
-				throw new ArgumentNullException();
-
-			item.ParentObject = this;
-			_plotItems.Add(item);
-		}
-
-		#endregion Collection methods
-
-		#region Change handling
-
-		private void EhPlotItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			OnCollectionChanged();
-		}
-
-		protected virtual void OnCollectionChanged()
-		{
-			_cachedPlotItemsFlattened = null; // invalidate _cachedPlotItemsFlattened
-			EhSelfChanged(new SimpleCollectionChangedEventArgs(this)); // notify items down in the hierarchy to invalidate _cachedPlotItemsFlattened
-			EhSelfChanged(new BoundariesChangedEventArgs(BoundariesChangedData.ComplexChange)); // notify that possibly the boundaries have been changed
-		}
-
-		#endregion Change handling
 
 		/// <summary>
 		/// Prepare group styles forward, from the first to the last item.
@@ -583,5 +462,352 @@ namespace Altaxo.Graph.Graph3D.Plot
 				parentGroupStyles.SetAllToApplied(); // to indicate that we have applied this styles and so to enable stepping
 			}
 		}
+
+		/// <summary>
+		/// Distribute the changes made to the plotitem 'pivotitem' to all other items in the collection and if neccessary, also up and down the plot item tree.
+		/// </summary>
+		/// <param name="pivotitem">The plot item where changes to the plot item's styles were made.</param>
+		public void DistributeChanges(IGPlotItem pivotitem)
+		{
+			int pivotidx = _plotItems.IndexOf(pivotitem);
+			if (pivotidx < 0)
+				return;
+
+			// Distribute the changes backward to the first item
+			PrepareStylesIterativeBackward(pivotidx, this.ParentLayer);
+			PlotItemCollection rootCollection = ApplyStylesIterativeBackward(pivotidx);
+
+			// now prepare and apply the styles forward normally beginning from the root collection
+			// we can set the parent styles to null since rootCollection is the lowest collection that don't inherit from a lower group.
+			rootCollection.PrepareGroupStylesForward_HierarchyUpOnly(null, this.ParentLayer);
+			rootCollection.ApplyGroupStylesForward_HierarchyUpOnly(null);
+		}
+
+		/// <summary>
+		/// Prepare styles, beginning at item 'pivotidx' in this collection, iterative backwards up and down the hierarchy.
+		/// It stops at the first item of a collection here or down the hierarchy that do not inherit from it's parent collection.
+		/// </summary>
+		/// <param name="pivotidx">The index of the item where the application process starts.</param>
+		/// <param name="layer">The plot layer.</param>
+		protected void PrepareStylesIterativeBackward(int pivotidx, IPlotArea layer)
+		{
+			// if the pivot is lower than 0, we first distibute all changes to the first item and
+			// then from the first item again down the line
+			if (pivotidx > 0)
+			{
+				_plotGroupStyles.BeginPrepare();
+				for (int i = pivotidx; i >= 0; i--)
+				{
+					IGPlotItem pi = _plotItems[i];
+					if (pi is PlotItemCollection)
+					{
+						_plotGroupStyles.PrepareStep();
+						PlotItemCollection pic = (PlotItemCollection)pi;
+						pic.PrepareStylesBackward_HierarchyUpOnly(_plotGroupStyles, layer);
+					}
+					else
+					{
+						pi.PrepareGroupStyles(_plotGroupStyles, layer);
+						if (i > 0) _plotGroupStyles.PrepareStep();
+					}
+				}
+				_plotGroupStyles.EndPrepare();
+			}
+
+			// now use this styles to copy to the parent
+			bool transferToParentStyles =
+			ParentCollection != null &&
+			ParentCollection._plotGroupStyles.Count != 0 &&
+			ParentCollection._plotGroupStyles.DistributeToChildGroups &&
+			this._plotGroupStyles.InheritFromParentGroups;
+
+			if (transferToParentStyles)
+			{
+				PlotGroupStyleCollection.TransferFromTo(_plotGroupStyles, ParentCollection._plotGroupStyles);
+				ParentCollection.ApplyStylesIterativeBackward(ParentCollection._plotGroupStyles.Count - 1);
+			}
+		}
+
+		/// <summary>
+		/// Apply styles, beginning at item 'pivotidx' in this collection, iterative backwards up and down the hierarchy.
+		/// It stops at the first item of a collection here or down the hierarchy that do not inherit from it's parent collection.
+		/// </summary>
+		/// <param name="pivotidx">The index of the item where the application process starts.</param>
+		/// <returns>The plot item collection where the process stops.</returns>
+		protected PlotItemCollection ApplyStylesIterativeBackward(int pivotidx)
+		{
+			// if the pivot is lower than 0, we first distibute all changes to the first item and
+			// then from the first item again down the line
+			if (pivotidx > 0)
+			{
+				_plotGroupStyles.BeginApply();
+				for (int i = pivotidx; i >= 0; i--)
+				{
+					IGPlotItem pi = _plotItems[i];
+					if (pi is PlotItemCollection)
+					{
+						_plotGroupStyles.Step(-1);
+						PlotItemCollection pic = (PlotItemCollection)pi;
+						pic.ApplyStylesBackward_HierarchyUpOnly(_plotGroupStyles);
+					}
+					else
+					{
+						pi.ApplyGroupStyles(_plotGroupStyles);
+						if (i > 0) _plotGroupStyles.Step(-1);
+					}
+				}
+				_plotGroupStyles.EndApply();
+			}
+
+			// now use this styles to copy to the parent
+			bool transferToParentStyles =
+			ParentCollection != null &&
+			ParentCollection._plotGroupStyles.Count != 0 &&
+			ParentCollection._plotGroupStyles.DistributeToChildGroups &&
+			this._plotGroupStyles.InheritFromParentGroups;
+
+			PlotItemCollection rootCollection = this;
+			if (transferToParentStyles)
+			{
+				PlotGroupStyleCollection.TransferFromTo(_plotGroupStyles, ParentCollection._plotGroupStyles);
+				rootCollection = ParentCollection.ApplyStylesIterativeBackward(ParentCollection._plotGroupStyles.Count - 1);
+			}
+
+			return rootCollection;
+		}
+
+		/// <summary>
+		/// Apply styles backward from the last item to the first, but only upwards in the hierarchy.
+		/// </summary>
+		/// <param name="styles"></param>
+		/// <param name="layer">The plot layer.</param>
+		protected void PrepareStylesBackward_HierarchyUpOnly(PlotGroupStyleCollection styles, IPlotArea layer)
+		{
+			bool transferToLocalStyles =
+				styles != null &&
+				styles.Count != 0 &&
+				styles.DistributeToChildGroups &&
+				this._plotGroupStyles.InheritFromParentGroups;
+
+			if (!transferToLocalStyles)
+				return;
+
+			PlotGroupStyleCollection.TransferFromTo(styles, _plotGroupStyles);
+
+			_plotGroupStyles.BeginApply();
+			// now distibute the styles from the first item down to the last item
+			int last = _plotItems.Count - 1;
+			for (int i = last; i >= 0; i--)
+			{
+				IGPlotItem pi = _plotItems[i];
+				if (pi is PlotItemCollection)
+				{
+					_plotGroupStyles.PrepareStep();
+					((PlotItemCollection)pi).PrepareStylesBackward_HierarchyUpOnly(_plotGroupStyles, layer);
+				}
+				else
+				{
+					pi.PrepareGroupStyles(_plotGroupStyles, layer);
+					_plotGroupStyles.PrepareStep();
+				}
+			}
+			_plotGroupStyles.EndPrepare();
+
+			PlotGroupStyleCollection.TransferFromToIfBothSteppingEnabled(_plotGroupStyles, styles);
+		}
+
+		/// <summary>
+		/// Apply styles backward from the last item to the first, but only upwards in the hierarchy.
+		/// </summary>
+		/// <param name="styles"></param>
+		protected void ApplyStylesBackward_HierarchyUpOnly(PlotGroupStyleCollection styles)
+		{
+			bool transferToLocalStyles =
+				styles != null &&
+				styles.Count != 0 &&
+				styles.DistributeToChildGroups &&
+				this._plotGroupStyles.InheritFromParentGroups;
+
+			if (!transferToLocalStyles)
+				return;
+
+			PlotGroupStyleCollection.TransferFromTo(styles, _plotGroupStyles);
+
+			_plotGroupStyles.BeginApply();
+			// now distibute the styles from the first item down to the last item
+			int last = _plotItems.Count - 1;
+			for (int i = last; i >= 0; i--)
+			{
+				IGPlotItem pi = _plotItems[i];
+				if (pi is PlotItemCollection)
+				{
+					_plotGroupStyles.Step(-1);
+					((PlotItemCollection)pi).ApplyStylesBackward_HierarchyUpOnly(_plotGroupStyles);
+				}
+				else
+				{
+					pi.ApplyGroupStyles(_plotGroupStyles);
+					_plotGroupStyles.Step(-1);
+				}
+			}
+			_plotGroupStyles.EndApply();
+
+			PlotGroupStyleCollection.TransferFromToIfBothSteppingEnabled(_plotGroupStyles, styles);
+		}
+
+		public void PaintPostprocessing()
+		{
+			foreach (var pi in _plotItems)
+				pi.PaintPostprocessing();
+		}
+
+		/// <summary>
+		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+		/// to change a plot so that the plot items refer to another table.
+		/// </summary>
+		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+		public virtual void VisitDocumentReferences(DocNodeProxyReporter Report)
+		{
+			foreach (var item in this)
+				item.VisitDocumentReferences(Report);
+		}
+
+		public void CopyFrom(PlotItemCollection from, Gdi.GraphCopyOptions options)
+		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
+			if (Gdi.GraphCopyOptions.CopyLayerPlotStyles == (Gdi.GraphCopyOptions.CopyLayerPlotStyles & options))
+			{
+				var thisFlat = this.Flattened;
+				var fromFlat = from.Flattened;
+				int len = Math.Min(thisFlat.Length, fromFlat.Length);
+				for (int i = 0; i < len; i++)
+				{
+					thisFlat[i].SetPlotStyleFromTemplate(fromFlat[i], PlotGroupStrictness.Strict);
+				}
+			}
+		}
+
+		public string GetName(int level)
+		{
+			return string.Format("<Collection of {0} plot items>", this._plotItems.Count);
+		}
+
+		public string GetName(string style)
+		{
+			return string.Format("<Collection of {0} plot items>", this._plotItems.Count);
+		}
+
+		public bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+
+			var from = obj as PlotItemCollection;
+			if (null != from)
+			{
+				CopyFrom(from, Gdi.GraphCopyOptions.All);
+			}
+			return false;
+		}
+
+		object ICloneable.Clone()
+		{
+			return new PlotItemCollection(this);
+		}
+
+		public PlotItemCollection Clone()
+		{
+			return new PlotItemCollection(this);
+		}
+
+		/// <summary>
+		/// Collects all possible group styles that can be applied to this plot item in
+		/// styles.
+		/// </summary>
+		/// <param name="styles">The collection of group styles.</param>
+		public void CollectStyles(PlotGroupStyleCollection styles)
+		{
+			foreach (IGPlotItem pi in _plotItems)
+				pi.CollectStyles(styles);
+		}
+
+		/// <summary>
+		/// Does nothing because a plot item collection doesn't distibute item styles from members of the outer group into it's own members.
+		/// </summary>
+		/// <param name="template">Ignored.</param>
+		/// <param name="strictness">Ignored.</param>
+		public void SetPlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
+		{
+		}
+
+		/// <summary>
+		/// Sets the plot style (or sub plot styles) of all plot items in this collection according to a template provided by the plot item in the template argument.
+		/// </summary>
+		/// <param name="template">The template item to copy the plot styles from.</param>
+		/// <param name="strictness">Denotes the strictness the styles are copied from the template. See <see cref="PlotGroupStrictness" /> for more information.</param>
+		public void DistributePlotStyleFromTemplate(IGPlotItem template, PlotGroupStrictness strictness)
+		{
+			foreach (IGPlotItem pi in this._plotItems)
+			{
+				if (!object.ReferenceEquals(pi, template))
+					pi.SetPlotStyleFromTemplate(template, strictness);
+			}
+		}
+
+		public void PaintPreprocessing(IPaintContext context)
+		{
+			foreach (var pi in _plotItems)
+				pi.PaintPreprocessing(context);
+		}
+
+		public void Paint(IGraphicsContext3D g, IPaintContext context, Graph3D.IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
+		{
+			for (int i = 0; i < _plotItems.Count; ++i)
+			{
+				_plotItems[i].Paint(g, context, layer, i == 0 ? null : _plotItems[i - 1], i == _plotItems.Count - 1 ? null : _plotItems[i + 1]);
+			}
+		}
+
+		void IGPlotItem.PaintPostprocessing()
+		{
+			foreach (var pi in _plotItems)
+				pi.PaintPostprocessing();
+		}
+
+		public IHitTestObject HitTest(IPlotArea layer, HitTestPointData hitpoint)
+		{
+			throw new NotImplementedException();
+		}
+
+		#region Collection methods
+
+		public void Add(IGPlotItem item)
+		{
+			if (item == null)
+				throw new ArgumentNullException();
+
+			item.ParentObject = this;
+			_plotItems.Add(item);
+		}
+
+		#endregion Collection methods
+
+		#region Change handling
+
+		private void EhPlotItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			OnCollectionChanged();
+		}
+
+		protected virtual void OnCollectionChanged()
+		{
+			_cachedPlotItemsFlattened = null; // invalidate _cachedPlotItemsFlattened
+			EhSelfChanged(new SimpleCollectionChangedEventArgs(this)); // notify items down in the hierarchy to invalidate _cachedPlotItemsFlattened
+			EhSelfChanged(new BoundariesChangedEventArgs(BoundariesChangedData.ComplexChange)); // notify that possibly the boundaries have been changed
+		}
+
+		#endregion Change handling
 	}
 }
