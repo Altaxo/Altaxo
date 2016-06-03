@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for XYPlotGroupControl.xaml
 	/// </summary>
-	public partial class PlotGroupCollectionControlSimple : UserControl, IPlotGroupCollectionViewSimple
+	public partial class PlotGroupCollectionControlSimple : UserControl, IPlotGroupCollectionViewSimple, Altaxo.Gui.Graph3D.Plot.Groups.IPlotGroupCollectionViewSimple
 	{
 		public PlotGroupCollectionControlSimple()
 		{

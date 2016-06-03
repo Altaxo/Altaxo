@@ -34,8 +34,24 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for PlotGroupCollectionControl.xaml
 	/// </summary>
-	public partial class PlotGroupCollectionControlAdvanced : UserControl, IPlotGroupCollectionViewAdvanced
+	public partial class PlotGroupCollectionControlAdvanced : UserControl, IPlotGroupCollectionViewAdvanced, Altaxo.Gui.Graph3D.Plot.Groups.IPlotGroupCollectionViewAdvanced
 	{
+		public event Action CoordinateTransformingGroupStyleChanged;
+
+		public event Action RequestCoordinateTransformingGroupStyleEdit;
+
+		public event Action RequestAddNormalGroupStyle;
+
+		public event Action RequestRemoveNormalGroupStyle;
+
+		public event Action RequestIndentGroupStyle;
+
+		public event Action RequestUnindentGroupStyle;
+
+		public event Action RequestMoveUpGroupStyle;
+
+		public event Action RequestMoveDownGroupStyle;
+
 		public PlotGroupCollectionControlAdvanced()
 		{
 			InitializeComponent();
@@ -43,81 +59,55 @@ namespace Altaxo.Gui.Graph
 
 		private void _cbCoordTransfoStyle_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
 		{
-			if (null != _controller)
+			if (null != CoordinateTransformingGroupStyleChanged)
 			{
 				GuiHelper.SynchronizeSelectionFromGui(_cbCoordTransfoStyle);
-				_controller.EhView_CoordinateTransformingGroupStyleChanged();
+				CoordinateTransformingGroupStyleChanged?.Invoke();
 			}
 		}
 
 		private void _btEditCSTransfoStyle_Click(object sender, RoutedEventArgs e)
 		{
-			if (null != _controller)
-				_controller.EhView_CoordinateTransformingGroupStyleEdit();
+			RequestCoordinateTransformingGroupStyleEdit?.Invoke();
 		}
 
 		private void _btAddNormalGroupStyle_Click(object sender, RoutedEventArgs e)
 		{
-			if (null != _controller)
-			{
-				// SynchronizeListBoxWithSelectableListNodes(_lbGroupStylesAvailable);
-				_controller.EhView_AddNormalGroupStyle();
-			}
+			// SynchronizeListBoxWithSelectableListNodes(_lbGroupStylesAvailable);
+			RequestAddNormalGroupStyle?.Invoke();
 		}
 
 		private void _btRemoveNormalGroupStyle_Click(object sender, RoutedEventArgs e)
 		{
-			if (null != _controller)
-			{
-				// SynchronizeListBoxWithCheckableSelectableListNodes(_lbGroupStyles);
-				_controller.EhView_RemoveNormalGroupStyle();
-			}
+			// SynchronizeListBoxWithCheckableSelectableListNodes(_lbGroupStyles);
+			RequestRemoveNormalGroupStyle?.Invoke();
 		}
 
 		private void _btUnindent_Click(object sender, RoutedEventArgs e)
 		{
-			if (null != _controller)
-			{
-				// SynchronizeListBoxWithCheckableSelectableListNodes(_lbGroupStyles);
-				_controller.EhView_UnindentGroupStyle();
-			}
+			// SynchronizeListBoxWithCheckableSelectableListNodes(_lbGroupStyles);
+			RequestUnindentGroupStyle?.Invoke();
 		}
 
 		private void _btIndent_Click(object sender, RoutedEventArgs e)
 		{
-			if (null != _controller)
-			{
-				// SynchronizeListBoxWithCheckableSelectableListNodes(_lbGroupStyles);
-				_controller.EhView_IndentGroupStyle();
-			}
+			// SynchronizeListBoxWithCheckableSelectableListNodes(_lbGroupStyles);
+			RequestIndentGroupStyle?.Invoke();
 		}
 
 		private void _btUp_Click(object sender, RoutedEventArgs e)
 		{
-			if (null != _controller)
-			{
-				// SynchronizeListBoxWithCheckableSelectableListNodes(_lbGroupStyles);
-				_controller.EhView_MoveUpGroupStyle();
-			}
+			// SynchronizeListBoxWithCheckableSelectableListNodes(_lbGroupStyles);
+			RequestMoveUpGroupStyle?.Invoke();
 		}
 
 		private void _btDown_Click(object sender, RoutedEventArgs e)
 		{
-			if (null != _controller)
-			{
-				// SynchronizeListBoxWithCheckableSelectableListNodes(_lbGroupStyles);
-				_controller.EhView_MoveDownGroupStyle();
-			}
+			// SynchronizeListBoxWithCheckableSelectableListNodes(_lbGroupStyles);
+			RequestMoveDownGroupStyle?.Invoke();
 		}
 
 		#region IPlotGroupCollectionView
-
-		private IPlotGroupCollectionViewAdvancedEventSink _controller;
-
-		public IPlotGroupCollectionViewAdvancedEventSink Controller
-		{
-			set { _controller = value; }
-		}
 
 		public void InitializeAvailableCoordinateTransformingGroupStyles(Collections.SelectableListNodeList list)
 		{

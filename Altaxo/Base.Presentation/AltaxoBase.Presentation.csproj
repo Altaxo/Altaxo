@@ -581,6 +581,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph3D\Plot\G3DPlotItemControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1494,6 +1498,9 @@
       <DependentUpon>PenAllPropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\PenControlsGlue.cs" />
+    <Compile Include="Gui\Graph3D\Plot\G3DPlotItemControl.xaml.cs">
+      <DependentUpon>G3DPlotItemControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleControl.xaml.cs">
       <DependentUpon>DataMeshPlotStyleControl.xaml</DependentUpon>
     </Compile>

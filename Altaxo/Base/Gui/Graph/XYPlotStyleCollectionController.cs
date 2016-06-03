@@ -41,31 +41,23 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public interface IXYPlotStyleCollectionView
 	{
-		IXYPlotStyleCollectionViewEventSink Controller { get; set; }
-
 		void InitializePredefinedStyles(SelectableListNodeList list);
 
 		void InitializeStyleList(SelectableListNodeList list);
 
 		void InitializeAvailableStyleList(SelectableListNodeList list);
-	}
 
-	/// <summary>
-	/// Summary description for XYPlotStyleCollectionController.
-	/// </summary>
-	public interface IXYPlotStyleCollectionViewEventSink
-	{
-		void EhView_AddStyle();
+		event Action RequestAddStyle;
 
-		void EhView_StyleUp();
+		event Action RequestStyleUp;
 
-		void EhView_StyleDown();
+		event Action RequestStyleDown;
 
-		void EhView_StyleEdit();
+		event Action RequestStyleEdit;
 
-		void EhView_StyleRemove();
+		event Action RequestStyleRemove;
 
-		void EhView_PredefinedStyleSelected();
+		event Action PredefinedStyleSelected;
 	}
 
 	/// <summary>
@@ -86,7 +78,7 @@ namespace Altaxo.Gui.Graph
 	public class XYPlotStyleCollectionController
 		:
 		MVCANControllerEditOriginalDocBase<G2DPlotStyleCollection, IXYPlotStyleCollectionView>,
-		IXYPlotStyleCollectionViewEventSink, IXYPlotStyleCollectionController
+		IXYPlotStyleCollectionController
 	{
 		private SelectableListNodeList _predefinedStyleSetsAvailable;
 		private SelectableListNodeList _singleStylesAvailable;
@@ -152,12 +144,24 @@ namespace Altaxo.Gui.Graph
 		protected override void AttachView()
 		{
 			base.AttachView();
-			_view.Controller = this;
+
+			_view.RequestAddStyle += EhView_AddStyle;
+			_view.RequestStyleUp += EhView_StyleUp;
+			_view.RequestStyleDown += EhView_StyleDown;
+			_view.RequestStyleEdit += EhView_StyleEdit;
+			_view.RequestStyleRemove += EhView_StyleRemove;
+			_view.PredefinedStyleSelected += EhView_PredefinedStyleSelected;
 		}
 
 		protected override void DetachView()
 		{
-			_view.Controller = null;
+			_view.RequestAddStyle -= EhView_AddStyle;
+			_view.RequestStyleUp -= EhView_StyleUp;
+			_view.RequestStyleDown -= EhView_StyleDown;
+			_view.RequestStyleEdit -= EhView_StyleEdit;
+			_view.RequestStyleRemove -= EhView_StyleRemove;
+			_view.PredefinedStyleSelected -= EhView_PredefinedStyleSelected;
+
 			base.DetachView();
 		}
 

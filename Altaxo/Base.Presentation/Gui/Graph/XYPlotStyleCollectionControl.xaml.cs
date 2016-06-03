@@ -36,9 +36,20 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for XYPlotStyleCollectionControl.xaml
 	/// </summary>
-	[UserControlForController(typeof(IXYPlotStyleCollectionViewEventSink))]
-	public partial class XYPlotStyleCollectionControl : UserControl, IXYPlotStyleCollectionView
+	public partial class XYPlotStyleCollectionControl : UserControl, IXYPlotStyleCollectionView, Altaxo.Gui.Graph3D.Plot.Styles.IXYZPlotStyleCollectionView
 	{
+		public event Action RequestAddStyle;
+
+		public event Action RequestStyleUp;
+
+		public event Action RequestStyleDown;
+
+		public event Action RequestStyleEdit;
+
+		public event Action RequestStyleRemove;
+
+		public event Action PredefinedStyleSelected;
+
 		public XYPlotStyleCollectionControl()
 		{
 			InitializeComponent();
@@ -46,69 +57,43 @@ namespace Altaxo.Gui.Graph
 
 		private void EhPredefinedSets_DoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			if (_controller != null && null != _predefinedSetsAvailable.SelectedItem)
+			if (PredefinedStyleSelected != null && null != _predefinedSetsAvailable.SelectedItem)
 			{
 				GuiHelper.SynchronizeSelectionFromGui(_predefinedSetsAvailable);
-				_controller.EhView_PredefinedStyleSelected();
+				PredefinedStyleSelected?.Invoke();
 			}
 		}
 
 		private void EhSingleStylesAvailable_DoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			if (_controller != null && _singleStylesAvailable.SelectedItem != null)
+			if (RequestAddStyle != null && _singleStylesAvailable.SelectedItem != null)
 			{
 				GuiHelper.SynchronizeSelectionFromGui(_singleStylesAvailable);
-				_controller.EhView_AddStyle();
+				RequestAddStyle?.Invoke();
 			}
 		}
 
 		private void EhCurrentStyles_DoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			if (_controller != null)
-			{
-				_controller.EhView_StyleEdit();
-			}
+			RequestStyleEdit?.Invoke();
 		}
 
 		private void EhStyleUp_Click(object sender, RoutedEventArgs e)
 		{
-			if (_controller != null)
-			{
-				_controller.EhView_StyleUp();
-			}
+			RequestStyleUp?.Invoke();
 		}
 
 		private void EhStyleDown_Click(object sender, RoutedEventArgs e)
 		{
-			if (_controller != null)
-			{
-				_controller.EhView_StyleDown();
-			}
+			RequestStyleDown?.Invoke();
 		}
 
 		private void EhStyleRemove_Click(object sender, RoutedEventArgs e)
 		{
-			if (_controller != null)
-			{
-				_controller.EhView_StyleRemove();
-			}
+			RequestStyleRemove?.Invoke();
 		}
 
 		#region IXYPlotStyleCollectionView
-
-		private IXYPlotStyleCollectionViewEventSink _controller;
-
-		public IXYPlotStyleCollectionViewEventSink Controller
-		{
-			get
-			{
-				return _controller;
-			}
-			set
-			{
-				_controller = value;
-			}
-		}
 
 		public void InitializePredefinedStyles(SelectableListNodeList list)
 		{

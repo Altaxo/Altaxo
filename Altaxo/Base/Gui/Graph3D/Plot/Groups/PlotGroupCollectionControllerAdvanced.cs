@@ -37,8 +37,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 	public interface IPlotGroupCollectionViewAdvanced
 	{
-		IPlotGroupCollectionViewAdvancedEventSink Controller { set; }
-
 		void InitializeAvailableCoordinateTransformingGroupStyles(SelectableListNodeList list);
 
 		void InitializeAvailableNormalGroupStyles(SelectableListNodeList list);
@@ -50,25 +48,22 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 		void SynchronizeCurrentNormalGroupStyles();
 
 		void QueryUpdateMode(out bool inheritFromParent, out bool distributeToChilds);
-	}
 
-	public interface IPlotGroupCollectionViewAdvancedEventSink
-	{
-		void EhView_CoordinateTransformingGroupStyleChanged();
+		event Action CoordinateTransformingGroupStyleChanged;
 
-		void EhView_CoordinateTransformingGroupStyleEdit();
+		event Action RequestCoordinateTransformingGroupStyleEdit;
 
-		void EhView_AddNormalGroupStyle();
+		event Action RequestAddNormalGroupStyle;
 
-		void EhView_RemoveNormalGroupStyle();
+		event Action RequestRemoveNormalGroupStyle;
 
-		void EhView_IndentGroupStyle();
+		event Action RequestIndentGroupStyle;
 
-		void EhView_UnindentGroupStyle();
+		event Action RequestUnindentGroupStyle;
 
-		void EhView_MoveUpGroupStyle();
+		event Action RequestMoveUpGroupStyle;
 
-		void EhView_MoveDownGroupStyle();
+		event Action RequestMoveDownGroupStyle;
 	}
 
 	#endregion Interfaces
@@ -77,8 +72,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 	[ExpectedTypeOfView(typeof(IPlotGroupCollectionViewAdvanced))]
 	public class PlotGroupCollectionControllerAdvanced
 		:
-		MVCANControllerEditOriginalDocBase<PlotGroupStyleCollection, IPlotGroupCollectionViewAdvanced>,
-		IPlotGroupCollectionViewAdvancedEventSink
+		MVCANControllerEditOriginalDocBase<PlotGroupStyleCollection, IPlotGroupCollectionViewAdvanced>
 	{
 		#region Inner classes
 
@@ -246,12 +240,42 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 		protected override void AttachView()
 		{
 			base.AttachView();
-			_view.Controller = this;
+
+			_view.CoordinateTransformingGroupStyleChanged += EhView_CoordinateTransformingGroupStyleChanged;
+
+			_view.RequestCoordinateTransformingGroupStyleEdit += EhView_CoordinateTransformingGroupStyleEdit;
+
+			_view.RequestAddNormalGroupStyle += EhView_AddNormalGroupStyle;
+
+			_view.RequestRemoveNormalGroupStyle += EhView_RemoveNormalGroupStyle;
+
+			_view.RequestIndentGroupStyle += EhView_IndentGroupStyle;
+
+			_view.RequestUnindentGroupStyle += EhView_UnindentGroupStyle;
+
+			_view.RequestMoveUpGroupStyle += EhView_MoveUpGroupStyle;
+
+			_view.RequestMoveDownGroupStyle += EhView_MoveDownGroupStyle;
 		}
 
 		protected override void DetachView()
 		{
-			_view.Controller = null;
+			_view.CoordinateTransformingGroupStyleChanged -= EhView_CoordinateTransformingGroupStyleChanged;
+
+			_view.RequestCoordinateTransformingGroupStyleEdit -= EhView_CoordinateTransformingGroupStyleEdit;
+
+			_view.RequestAddNormalGroupStyle -= EhView_AddNormalGroupStyle;
+
+			_view.RequestRemoveNormalGroupStyle -= EhView_RemoveNormalGroupStyle;
+
+			_view.RequestIndentGroupStyle -= EhView_IndentGroupStyle;
+
+			_view.RequestUnindentGroupStyle -= EhView_UnindentGroupStyle;
+
+			_view.RequestMoveUpGroupStyle -= EhView_MoveUpGroupStyle;
+
+			_view.RequestMoveDownGroupStyle -= EhView_MoveDownGroupStyle;
+
 			base.DetachView();
 		}
 
