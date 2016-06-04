@@ -162,6 +162,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public ScatterPlotStyle(IScatterSymbolShape symbol, double size, double penWidth, NamedColor penColor)
 		{
+			if (null == symbol)
+				throw new ArgumentNullException(nameof(symbol));
+
 			_symbolShape = symbol;
 			_material = new MaterialWithUniformColor(penColor);
 			_symbolSize = size;
@@ -178,6 +181,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			double symbolSize = GraphDocument.GetDefaultSymbolSize(context);
 			var color = GraphDocument.GetDefaultPlotColor(context);
 
+			this._symbolShape = new ScatterSymbolShapes.Cube();
 			this._material = new MaterialWithUniformColor(color);
 			this._independentColor = false;
 

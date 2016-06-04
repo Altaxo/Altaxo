@@ -32,6 +32,8 @@ using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 using Altaxo.Graph.Graph3D.Plot;
 using Altaxo.Graph.Graph3D.Plot.Groups;
+using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Graph.Plot.Data;
 using Altaxo.Serialization.Clipboard;
 using System;
 using System.Collections;
@@ -430,52 +432,51 @@ namespace Altaxo.Gui.Graph3D
 	*/
 		}
 
-		private IGPlotItem CreatePlotItem(Altaxo.Data.DataColumn ycol)
+		private IGPlotItem CreatePlotItem(Altaxo.Data.DataColumn zcol)
 		{
-			throw new NotImplementedException();
-			/*
-
-			if (null == ycol)
+			if (null == zcol)
 				return null;
 
-			DataTable tab = DataTable.GetParentDataTableOf(ycol);
+			DataTable tab = DataTable.GetParentDataTableOf(zcol);
 			if (null == tab)
 				return null;
 
-			DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
+			DataColumn xcol = tab.DataColumns.FindXColumnOf(zcol);
+			DataColumn ycol = tab.DataColumns.FindYColumnOf(zcol);
 
 			// search in our document for the first plot item that is an XYColumnPlotItem,
 			// we need this as template style
-			XYColumnPlotItem templatePlotItem = FindFirstXYColumnPlotItem(_doc);
-			G2DPlotStyleCollection templatePlotStyle;
+			XYZColumnPlotItem templatePlotItem = FindFirstXYColumnPlotItem(_doc);
+			G3DPlotStyleCollection templatePlotStyle;
 			if (null != templatePlotItem)
 			{
 				templatePlotStyle = templatePlotItem.Style.Clone();
 			}
 			else // there is no item that can be used as template
 			{
-				int numRows = ycol.Count;
+				int numRows = zcol.Count;
 				if (null != xcol)
 					numRows = Math.Min(numRows, xcol.Count);
 				if (numRows < 100)
 				{
-					templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter, _doc.GetPropertyContext());
+					// line and scatter
+					templatePlotStyle = new G3DPlotStyleCollection();
+					templatePlotStyle.Add(new ScatterPlotStyle(_doc.GetPropertyContext()));
 				}
 				else
 				{
-					templatePlotStyle = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, _doc.GetPropertyContext());
+					// only line
+					templatePlotStyle = new G3DPlotStyleCollection();
+					templatePlotStyle.Add(new ScatterPlotStyle(_doc.GetPropertyContext())); // TODO change this to line style if it is implemented
 				}
 			}
 
-			XYColumnPlotItem result;
-			if (null == xcol)
-				result = new XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(), ycol), templatePlotStyle);
-			else
-				result = new XYColumnPlotItem(new XYColumnPlotData(xcol, ycol), templatePlotStyle);
+			var xyzPlotData = new XYZColumnPlotData(
+				(IReadableColumn)xcol ?? new IndexerColumn(),
+				(IReadableColumn)ycol ?? new ConstantDoubleColumn(0),
+				zcol);
 
-			return result;
-
-	*/
+			return new XYZColumnPlotItem(xyzPlotData, templatePlotStyle);
 		}
 
 		#region ILineScatterLayerContentsController Members

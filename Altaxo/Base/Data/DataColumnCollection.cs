@@ -1565,6 +1565,36 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
+		/// Using a given column, find the related Y column of this.
+		/// </summary>
+		/// <param name="datac">The column for which to find the related Y column.</param>
+		/// <returns>The related Y column, or null if it is not found.</returns>
+		public Altaxo.Data.DataColumn FindYColumnOf(DataColumn datac)
+		{
+			return FindYColumnOfGroup(GetColumnGroup(datac));
+		}
+
+		/// <summary>
+		/// Returns the Y column of the column group <code>nGroup</code>.
+		/// </summary>
+		/// <param name="nGroup">The column group number.</param>
+		/// <returns>The Y column of the provided group, or null if it is not found.</returns>
+		public Altaxo.Data.DataColumn FindYColumnOfGroup(int nGroup)
+		{
+			int len = this.ColumnCount;
+			for (int i = len - 1; i >= 0; i--)
+			{
+				DataColumn dc = (DataColumn)_columnsByNumber[i];
+				DataColumnInfo info = (DataColumnInfo)this._columnInfoByColumn[dc];
+				if (info.Group == nGroup && info.Kind == ColumnKind.Y)
+				{
+					return dc;
+				}
+			}
+			return null;
+		}
+
+		/// <summary>
 		/// Get the column info for the column <code>datac</code>.
 		/// </summary>
 		/// <param name="datac">The column for which the column information is returned.</param>

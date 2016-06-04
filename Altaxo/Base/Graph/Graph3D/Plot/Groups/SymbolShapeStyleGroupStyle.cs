@@ -72,6 +72,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		public SymbolShapeStyleGroupStyle()
 		{
+			_shapeAndStyle = new Styles.ScatterSymbolShapes.Cube();
 		}
 
 		public SymbolShapeStyleGroupStyle(SymbolShapeStyleGroupStyle from)
@@ -166,6 +167,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 					destIdx += listcount;
 				}
 			}
+
+			_shapeAndStyle = list[destIdx];
 			return wraps;
 		}
 
@@ -198,6 +201,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		public void Initialize(IScatterSymbolShape s)
 		{
+			if (null == s)
+				throw new ArgumentNullException(nameof(s));
+
 			_isInitialized = true;
 			_shapeAndStyle = s;
 		}

@@ -559,7 +559,7 @@ namespace Altaxo.Graph.Plot.Data
 
 					for (int i = _plotRangeStart; i < _pointCount; i++)
 					{
-						if (!xColumn.IsElementEmpty(i) && !yColumn.IsElementEmpty(i))
+						if (!xColumn.IsElementEmpty(i) && !yColumn.IsElementEmpty(i) && !zColumn.IsElementEmpty(i))
 						{
 							_xBoundaries?.Add(xColumn, i);
 							_yBoundaries?.Add(yColumn, i);

@@ -210,6 +210,7 @@
     <Compile Include="DataConnection\QueryField.cs" />
     <Compile Include="DataConnection\TableType.cs" />
     <Compile Include="Data\ColumnScriptCollection.cs" />
+    <Compile Include="Data\ConstantDoubleColumn.cs" />
     <Compile Include="Data\DataColumnChangedEventArgs.cs" />
     <Compile Include="Data\DataColumnCollectionChangedEventArgs.cs" />
     <Compile Include="Data\DataSourceImportOptions.cs" />
@@ -519,6 +520,7 @@
     <Compile Include="Gui\Graph3D\Plot\Groups\PlotGroupCollectionControllerAdvanced.cs" />
     <Compile Include="Gui\Graph3D\Plot\Groups\PlotGroupCollectionControllerSimple.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleController.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotScatterStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotStyleCollectionController.cs" />
     <Compile Include="Gui\Graph3D\Shapes\OpenPathShapeController.cs" />
     <Compile Include="Gui\Graph3D\Shapes\SolidShapeController.cs" />

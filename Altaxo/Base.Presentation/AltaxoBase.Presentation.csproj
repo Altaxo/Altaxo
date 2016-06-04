@@ -593,6 +593,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph3D\Plot\Styles\XYZPlotScatterStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph3D\Shapes\AnchoringControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1510,6 +1514,9 @@
     </Compile>
     <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleControl.xaml.cs">
       <DependentUpon>DataMeshPlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotScatterStyleControl.xaml.cs">
+      <DependentUpon>XYZPlotScatterStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Shapes\AnchoringControl.xaml.cs">
       <DependentUpon>AnchoringControl.xaml</DependentUpon>
