@@ -290,6 +290,24 @@ namespace Altaxo.Drawing.D3D
 			}
 		}
 
+		#region Line Join
+
+		public PenX3D WithLineJoin(PenLineJoin lineJoin)
+		{
+			if (!(lineJoin == _lineJoin))
+			{
+				var result = (PenX3D)this.MemberwiseClone();
+				result._lineJoin = lineJoin;
+				return result;
+			}
+			else
+			{
+				return this;
+			}
+		}
+
+		#endregion Line Join
+
 		#region Dash Pattern
 
 		/// <summary>

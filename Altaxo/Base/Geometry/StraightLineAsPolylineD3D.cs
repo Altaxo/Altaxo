@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +31,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Geometry
 {
-	public class StraightLineAsPolylineD3D : IPolylineD3D
+	public class StraightLineAsPolylineD3D : IPolylineD3D, IList<PointD3D>
 	{
 		private PointD3D _p0, _p1;
 
@@ -63,12 +64,11 @@ namespace Altaxo.Geometry
 			}
 		}
 
-		public IEnumerable<PointD3D> Points
+		public IList<PointD3D> Points
 		{
 			get
 			{
-				yield return _p0;
-				yield return _p1;
+				return this;
 			}
 		}
 
@@ -76,5 +76,98 @@ namespace Altaxo.Geometry
 		{
 			return true;
 		}
+
+		#region IList<PointD3D>
+
+		public bool IsReadOnly
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+		public PointD3D this[int index]
+		{
+			get
+			{
+				switch (index)
+				{
+					case 0:
+						return _p0;
+
+					case 1:
+						return _p1;
+
+					default:
+						throw new IndexOutOfRangeException();
+				}
+			}
+
+			set
+			{
+				throw new InvalidOperationException("This list is readonly!");
+			}
+		}
+
+		public int IndexOf(PointD3D item)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Insert(int index, PointD3D item)
+		{
+			throw new InvalidOperationException("This list is readonly!");
+		}
+
+		public void RemoveAt(int index)
+		{
+			throw new InvalidOperationException("This list is readonly!");
+		}
+
+		public void Add(PointD3D item)
+		{
+			throw new InvalidOperationException("This list is readonly!");
+		}
+
+		public void Clear()
+		{
+			throw new InvalidOperationException("This list is readonly!");
+		}
+
+		public bool Contains(PointD3D item)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to an <see cref="T:System.Array" />, starting at a particular <see cref="T:System.Array" /> index.
+		/// </summary>
+		/// <param name="array">The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from <see cref="T:System.Collections.Generic.ICollection`1" />. The <see cref="T:System.Array" /> must have zero-based indexing.</param>
+		/// <param name="arrayIndex">The zero-based index in <paramref name="array" /> at which copying begins.</param>
+		public void CopyTo(PointD3D[] array, int arrayIndex)
+		{
+			array[0 + arrayIndex] = _p0;
+			array[1 + arrayIndex] = _p1;
+		}
+
+		public bool Remove(PointD3D item)
+		{
+			throw new InvalidOperationException("This list is readonly!");
+		}
+
+		public IEnumerator<PointD3D> GetEnumerator()
+		{
+			yield return _p0;
+			yield return _p1;
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			yield return _p0;
+			yield return _p1;
+		}
+
+		#endregion IList<PointD3D>
 	}
 }

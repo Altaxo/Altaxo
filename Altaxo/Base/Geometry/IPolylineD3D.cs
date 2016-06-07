@@ -53,7 +53,7 @@ namespace Altaxo.Geometry
 		/// <value>
 		/// The points that make out the polyline.
 		/// </value>
-		IEnumerable<PointD3D> Points { get; }
+		IList<PointD3D> Points { get; } // TODO change this to IReadonlyList
 
 		bool IsTransitionFromIdxToNextIdxSharp(int idx);
 	}

@@ -22,56 +22,51 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Altaxo.Drawing.D3D.DashPatterns
+namespace Altaxo.Geometry
 {
-	public class Solid : DashPatternBase
+	/// <summary>
+	/// Represents a polyline, i.e. a line consisting of multiple line segments, described by their points. All joints are assumed to be sharp joints.
+	/// </summary>
+	public class SharpPolylineD3D : IPolylineD3D
 	{
-		public static Solid Instance { get; private set; } = new Solid();
+		private PointD3D[] _points;
 
-		public override double this[int index]
+		public SharpPolylineD3D(PointD3D[] points)
 		{
-			get
-			{
-				switch (index)
-				{
-					case 0:
-						return double.PositiveInfinity;
-
-					case 1:
-
-						return 0;
-
-					default:
-						throw new IndexOutOfRangeException(nameof(index));
-				}
-			}
-			set
-			{
-				throw new InvalidOperationException("Sorry, this class is read-only");
-			}
+			_points = points;
 		}
 
-		public override int Count
+		public PointD3D GetPoint(int idx)
 		{
-			get
-			{
-				return 2;
-			}
+			return _points[idx];
 		}
 
-		public override bool Equals(object obj)
-		{
-			return obj is Solid;
-		}
+		/// <summary>
+		/// Gets the number of points.
+		/// </summary>
+		/// <value>
+		/// Number of points.
+		/// </value>
+		public int Count { get { return _points.Length; } }
 
-		public override int GetHashCode()
+		/// <summary>
+		/// Gets the points of this polyline. No information is contained here whether the joints are sharp or soft.
+		/// </summary>
+		/// <value>
+		/// The points that make out the polyline.
+		/// </value>
+		public IList<PointD3D> Points { get { return _points; } }
+
+		public bool IsTransitionFromIdxToNextIdxSharp(int idx)
 		{
-			return 0x41C477CC;
+			return true;
 		}
 	}
 }

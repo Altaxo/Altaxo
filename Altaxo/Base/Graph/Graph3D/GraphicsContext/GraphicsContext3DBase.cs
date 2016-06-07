@@ -188,52 +188,46 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 				return;
 			}
 
-			var asSweepPath = path as SweepPath3D;
-			if (null != asSweepPath)
+			//var line = new SolidPolyline(pen.CrossSection, asSweepPath.Points);
+			var buffers = GetPositionNormalIndexedTriangleBuffer(pen.Material);
+			var offset = buffers.IndexedTriangleBuffer.VertexCount;
+
+			if (null != buffers.PositionNormalIndexedTriangleBuffer)
 			{
-				//var line = new SolidPolyline(pen.CrossSection, asSweepPath.Points);
-				var buffers = GetPositionNormalIndexedTriangleBuffer(pen.Material);
-				var offset = buffers.IndexedTriangleBuffer.VertexCount;
+				var buf = buffers.PositionNormalIndexedTriangleBuffer;
+				SolidPolyline.AddWithNormals(
+				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z),
+				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
+				ref offset,
+				pen,
+				path.Points);
+			}
+			else if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
+			{
+				var buf = buffers.PositionNormalColorIndexedTriangleBuffer;
+				var color = pen.Color.Color;
+				var r = color.ScR;
+				var g = color.ScG;
+				var b = color.ScB;
+				var a = color.ScA;
 
-				if (null != buffers.PositionNormalIndexedTriangleBuffer)
-				{
-					var buf = buffers.PositionNormalIndexedTriangleBuffer;
-					SolidPolyline.AddWithNormals(
-					(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z),
-					(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
-					ref offset,
-					pen,
-					asSweepPath.Points);
-				}
-				else if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
-				{
-					var buf = buffers.PositionNormalColorIndexedTriangleBuffer;
-					var color = pen.Color.Color;
-					var r = color.ScR;
-					var g = color.ScG;
-					var b = color.ScB;
-					var a = color.ScA;
-
-					SolidPolyline.AddWithNormals(
-					(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z, r, g, b, a),
-					(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
-					ref offset,
-					pen,
-					asSweepPath.Points);
-				}
-				else if (null != buffers.PositionNormalUVIndexedTriangleBuffer)
-				{
-					throw new NotImplementedException("Texture on a line is not supported yet");
-				}
-				else
-				{
-					throw new NotImplementedException("Unexpected type of buffer: " + buffers.IndexedTriangleBuffer.GetType().ToString());
-				}
-
-				return;
+				SolidPolyline.AddWithNormals(
+				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z, r, g, b, a),
+				(i0, i1, i2) => buf.AddTriangleIndices(i0, i1, i2),
+				ref offset,
+				pen,
+				path.Points);
+			}
+			else if (null != buffers.PositionNormalUVIndexedTriangleBuffer)
+			{
+				throw new NotImplementedException("Texture on a line is not supported yet");
+			}
+			else
+			{
+				throw new NotImplementedException("Unexpected type of buffer: " + buffers.IndexedTriangleBuffer.GetType().ToString());
 			}
 
-			throw new NotImplementedException();
+			return;
 		}
 
 		public virtual VectorD3D MeasureString(string text, FontX3D font, PointD3D pointD3D, System.Drawing.StringFormat strfmt)

@@ -253,6 +253,7 @@
     <Compile Include="Drawing\D3D\DashPatterns\DashPatternBase.cs" />
     <Compile Include="Drawing\D3D\SolidStraightLineDashSegment.cs" />
     <Compile Include="Geometry\IPolygonD2D.cs" />
+    <Compile Include="Geometry\SharpPolylineD3D.cs" />
     <Compile Include="Geometry\Matrix3x3.cs" />
     <Compile Include="Geometry\Matrix4x4.cs" />
     <Compile Include="Geometry\PlaneD3D.cs" />
@@ -351,7 +352,11 @@
     <Compile Include="Graph\Graph3D\Plot\Styles\G3DPlotStyleCollectionTemplates.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\G3DPlotStyleCollection.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\IG3DPlotStyle.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Styles\ILineConnectionStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\IScatterSymbolShape.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Styles\LineConnectionStyles\StraightConnection.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Styles\LineConnectionStyles\NoConnection.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Styles\LinePlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ScatterPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ScatterSymbolShapes\Cube.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ScatterSymbolShapes\NoSymbol.cs" />
@@ -367,7 +372,7 @@
     <Compile Include="Geometry\IPolylineD3D.cs" />
     <Compile Include="Drawing\D3D\LineCapContour.cs" />
     <Compile Include="Geometry\StraightLineAsPolylineD3D.cs" />
-    <Compile Include="Geometry\PolylineD3D.cs" />
+    <Compile Include="Geometry\SweepPath3D.cs" />
     <Compile Include="Drawing\D3D\SolidText.cs" />
     <Compile Include="Geometry\RectangleD3D.cs" />
     <Compile Include="Graph\Graph3D\Shapes\GraphicBase.PathNodeGripHandle.cs" />
@@ -520,6 +525,7 @@
     <Compile Include="Gui\Graph3D\Plot\Groups\PlotGroupCollectionControllerAdvanced.cs" />
     <Compile Include="Gui\Graph3D\Plot\Groups\PlotGroupCollectionControllerSimple.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleController.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotLineStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotScatterStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotStyleCollectionController.cs" />
     <Compile Include="Gui\Graph3D\Shapes\OpenPathShapeController.cs" />

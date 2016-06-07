@@ -462,12 +462,13 @@ namespace Altaxo.Gui.Graph3D
 					// line and scatter
 					templatePlotStyle = new G3DPlotStyleCollection();
 					templatePlotStyle.Add(new ScatterPlotStyle(_doc.GetPropertyContext()));
+					templatePlotStyle.Add(new LinePlotStyle(_doc.GetPropertyContext()));
 				}
 				else
 				{
 					// only line
 					templatePlotStyle = new G3DPlotStyleCollection();
-					templatePlotStyle.Add(new ScatterPlotStyle(_doc.GetPropertyContext())); // TODO change this to line style if it is implemented
+					templatePlotStyle.Add(new LinePlotStyle(_doc.GetPropertyContext())); // TODO change this to line style if it is implemented
 				}
 			}
 
