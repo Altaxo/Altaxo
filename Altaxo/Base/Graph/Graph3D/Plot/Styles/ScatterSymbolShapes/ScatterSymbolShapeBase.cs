@@ -36,36 +36,25 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbolShapes
 	/// Represents the null symbol in a scatter plot, i.e. this symbol is not visible.
 	/// </summary>
 	/// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbolShape" />
-	public sealed class NoSymbol : ScatterSymbolShapeBase
+	public abstract class ScatterSymbolShapeBase : IScatterSymbolShape
 	{
-		public static NoSymbol Instance { get; private set; } = new NoSymbol();
-
-		private NoSymbol()
-		{
-		}
-
-		#region Serialization
-
 		/// <summary>
-		/// 2016-05-09 initial version.
+		/// Paints the symbol with the specified size at the origin of the coordinate system.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NoSymbol), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
+		/// <param name="g">The graphics context.</param>
+		/// <param name="material">The material used to draw the symbol.</param>
+		/// <param name="centerLocation">The location of the center of the symbol.</param>
+		/// <param name="symbolSize">Size of the symbol.</param>
+		public abstract void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize);
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return Instance;
-			}
+		public override int GetHashCode()
+		{
+			return this.GetType().GetHashCode();
 		}
 
-		#endregion Serialization
-
-		public override void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize)
+		public override bool Equals(object obj)
 		{
+			return this.GetType() == obj?.GetType();
 		}
 	}
 }

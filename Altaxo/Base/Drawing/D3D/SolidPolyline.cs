@@ -168,7 +168,9 @@ namespace Altaxo.Drawing.D3D
 		}
 
 		public static void AddWithNormals(
-			Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int vertexIndexOffset,
+			Action<PointD3D, VectorD3D> AddPositionAndNormal,
+			Action<int, int, int, bool> AddIndices,
+			ref int vertexIndexOffset,
 			PenX3D pen,
 			IList<PointD3D> polylinePoints
 			)
@@ -191,7 +193,9 @@ namespace Altaxo.Drawing.D3D
 		}
 
 		public static void AddWithNormals(
-			Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int> AddIndices, ref int vertexIndexOffset,
+			Action<PointD3D, VectorD3D> AddPositionAndNormal,
+			Action<int, int, int, bool> AddIndices,
+			ref int vertexIndexOffset,
 			ICrossSectionOfLine _crossSection,
 			IList<PointD3D> polylinePoints,
 			VectorD3D startWestVector,
@@ -211,13 +215,13 @@ namespace Altaxo.Drawing.D3D
 			VectorD3D[] lastNormalsTransformed = new VectorD3D[crossSectionNormalCount];
 
 			VectorD3D currSeg = (polylinePoints[1] - polylinePoints[0]).Normalized;
-			VectorD3D e = startWestVector;
-			VectorD3D n = startNorthVector;
+			VectorD3D westVector = startWestVector;
+			VectorD3D northVector = startNorthVector;
 
 			int currIndex = vertexIndexOffset;
 
 			// Get the matrix for the start plane
-			var matrix = Math3D.Get2DProjectionToPlane(e, n, polylinePoints[0]);
+			var matrix = Math3D.Get2DProjectionToPlane(westVector, northVector, polylinePoints[0]);
 
 			// add the middle point of the start plane
 			AddPositionAndNormal(polylinePoints[0], -currSeg);
@@ -226,24 +230,19 @@ namespace Altaxo.Drawing.D3D
 			// add the points of the cross section for the start cap
 			// note: normally it is not necessary here to use the normals-count, since in the moment the cap is flat
 			// but if the cap is pointy, then we need as many positions as normals
-			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
+			for (int i = 0; i < crossSectionVertexCount; ++i)
 			{
 				lastPositionsTransformed[i] = tp = matrix.Transform(_crossSection.Vertices(i));
 				AddPositionAndNormal(tp, -currSeg);
 
-				if (_crossSection.IsVertexSharp(i))
-				{
-					++j;
-					AddPositionAndNormal(tp, -currSeg);
-				}
-
 				AddIndices(
 				vertexIndexOffset,
-				vertexIndexOffset + 1 + j,
-				vertexIndexOffset + 1 + (1 + j) % crossSectionNormalCount);
+				vertexIndexOffset + 1 + i,
+				vertexIndexOffset + 1 + (1 + i) % crossSectionVertexCount,
+				true);
 			}
-
-			currIndex += crossSectionNormalCount;
+			currIndex += crossSectionVertexCount;
+			// Start cap is done.
 
 			// now the positions and normals for the start of the first segment
 			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
@@ -258,17 +257,15 @@ namespace Altaxo.Drawing.D3D
 					AddPositionAndNormal(lastPositionsTransformed[i], tn);
 				}
 			}
-
 			currIndex += crossSectionNormalCount;
 
 			for (int mSeg = 1; mSeg < polylinePoints.Count - 1; ++mSeg)
 			{
 				VectorD3D nextSeg = (polylinePoints[mSeg + 1] - polylinePoints[mSeg]).Normalized;
-
-				VectorD3D midPlaneNormal = 0.5 * (currSeg + nextSeg);
+				VectorD3D midPlaneNormal = (0.5 * (currSeg + nextSeg)).Normalized;
 
 				// now get the matrix for transforming the cross sections positions
-				matrix = Math3D.Get2DProjectionToPlaneToPlane(e, n, currSeg, polylinePoints[mSeg], midPlaneNormal);
+				matrix = Math3D.Get2DProjectionToPlaneToPlane(westVector, northVector, currSeg, polylinePoints[mSeg], midPlaneNormal);
 
 				// add positions and normals of the join and make the triangles from the last line join to this line join
 				for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
@@ -285,23 +282,25 @@ namespace Altaxo.Drawing.D3D
 					AddIndices(
 					currIndex - crossSectionNormalCount + j,
 					currIndex + j,
-					currIndex + (1 + j) % crossSectionNormalCount);
+					currIndex + (1 + j) % crossSectionNormalCount,
+					false);
 
 					AddIndices(
 					currIndex - crossSectionNormalCount + j,
 					currIndex + (1 + j) % crossSectionNormalCount,
-					currIndex - crossSectionNormalCount + (1 + j) % crossSectionNormalCount);
+					currIndex - crossSectionNormalCount + (1 + j) % crossSectionNormalCount,
+					false);
 				}
 				currIndex += crossSectionNormalCount;
 
 				// mirror the north vector on the midPlane
 				currSeg = nextSeg;
-				e = Math3D.GetMirroredVectorAtPlane(e, midPlaneNormal);
-				e = Math3D.GetOrthonormalVectorToVector(e, currSeg); // make the north vector orthogonal (it should be already, but this corrects small deviations)
-				n = VectorD3D.CrossProduct(e, currSeg);
+				westVector = Math3D.GetMirroredVectorAtPlane(westVector, midPlaneNormal);
+				westVector = Math3D.GetOrthonormalVectorToVector(westVector, currSeg); // make the north vector orthogonal (it should be already, but this corrects small deviations)
+				northVector = VectorD3D.CrossProduct(westVector, currSeg);
 
 				// now add the positions and the normals for start of the next segment
-				var normalTransformation = Math3D.Get2DProjectionToPlane(e, n, polylinePoints[mSeg]);
+				var normalTransformation = Math3D.Get2DProjectionToPlane(westVector, northVector, polylinePoints[mSeg]);
 				for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 				{
 					lastNormalsTransformed[j] = tn = normalTransformation.Transform(_crossSection.Normals(j));
@@ -318,7 +317,7 @@ namespace Altaxo.Drawing.D3D
 			}
 
 			// now add the positions and normals for the end of the last segment and the triangles of the last segment
-			matrix = Math3D.Get2DProjectionToPlane(e, n, polylinePoints[polylinePoints.Count - 1]);
+			matrix = Math3D.Get2DProjectionToPlane(westVector, northVector, polylinePoints[polylinePoints.Count - 1]);
 			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 			{
 				lastPositionsTransformed[i] = tp = matrix.Transform(_crossSection.Vertices(i));
@@ -334,12 +333,14 @@ namespace Altaxo.Drawing.D3D
 				AddIndices(
 				currIndex - crossSectionNormalCount + j,
 				currIndex + j,
-				currIndex + (1 + j) % crossSectionNormalCount);
+				currIndex + (1 + j) % crossSectionNormalCount,
+				false);
 
 				AddIndices(
 				currIndex - crossSectionNormalCount + j,
 				currIndex + (1 + j) % crossSectionNormalCount,
-				currIndex - crossSectionNormalCount + (1 + j) % crossSectionNormalCount);
+				currIndex - crossSectionNormalCount + (1 + j) % crossSectionNormalCount,
+				false);
 			}
 			currIndex += crossSectionNormalCount;
 
@@ -354,11 +355,12 @@ namespace Altaxo.Drawing.D3D
 					AddPositionAndNormal(lastPositionsTransformed[i], currSeg);
 				}
 
-				// note that the triange index of the midpoint refers to the midpoint that is added only after this loop and thus it not existing now
+				// note that the triangle index of the midpoint refers to the midpoint that is added only after this loop and thus it not existing now
 				AddIndices(
 				currIndex + j,
 				currIndex + crossSectionNormalCount, // mid point of the end cap
-				currIndex + (1 + j) % crossSectionNormalCount);
+				currIndex + (1 + j) % crossSectionNormalCount,
+				false);
 			}
 
 			currIndex += crossSectionNormalCount;

@@ -39,9 +39,29 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 	/// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable.
 	/// </summary>
 	/// <seealso cref="Altaxo.Main.IImmutable" />
-	public class StraightConnection : ILineConnectionStyle
+	public class StraightConnection : LineConnectionStyleBase
 	{
 		public static StraightConnection Instance { get; private set; } = new StraightConnection();
+
+		#region Serialization
+
+		/// <summary>
+		/// 2016-05-09 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(StraightConnection), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				return Instance;
+			}
+		}
+
+		#endregion Serialization
 
 		/// <summary>
 		/// Template to make a line draw.
@@ -53,7 +73,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 		/// <param name="pen">The pen to draw the line.</param>
 		/// <param name="symbolGap">The size of the symbol gap. This parameter is zero if no symbol gap is required.</param>
 		/// <param name="connectCircular">If true, the end of the line is connected with the start of the line.</param>
-		public void Paint(
+		public override void Paint(
 			IGraphicsContext3D g,
 			Processed3DPlotData pdata,
 			PlotRange range,

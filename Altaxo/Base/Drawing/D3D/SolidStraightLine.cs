@@ -45,20 +45,20 @@ namespace Altaxo.Drawing.D3D
 		LineD3D line
 		)
 		{
-			var eastnorth = Math3D.GetWestNorthVectors(line);
-			var eastVector = eastnorth.Item1;
-			var northVector = eastnorth.Item2;
+			var westnorth = Math3D.GetWestNorthVectors(line);
+			var westVector = westnorth.Item1;
+			var northVector = westnorth.Item2;
 
 			if (pen.DashPattern == null)
 			{
 				// draw without a dash pattern - we consider the whole line as one dash segment, but instead of dash caps, with line caps
-				_dashSegment.Initialize(pen.CrossSection, pen.Thickness1, pen.Thickness2, pen.LineStartCap, pen.LineEndCap, eastVector, northVector, line);
+				_dashSegment.Initialize(pen.CrossSection, pen.Thickness1, pen.Thickness2, pen.LineStartCap, pen.LineEndCap, westVector, northVector, line);
 				_dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, line, null, null);
 			}
 			else
 			{
 				// draw with a dash pattern
-				_dashSegment.Initialize(pen, eastVector, northVector, line);
+				_dashSegment.Initialize(pen, westVector, northVector, line);
 
 				double dashOffset = 0;
 				PointD3D lineStart = line.P0;
@@ -128,7 +128,7 @@ namespace Altaxo.Drawing.D3D
 						ref vertexIndexOffset,
 						true,
 						lineStart,
-						eastVector,
+						westVector,
 						northVector,
 						lineVectorNormalized,
 						pen.CrossSection,
@@ -146,7 +146,7 @@ namespace Altaxo.Drawing.D3D
 						ref vertexIndexOffset,
 						false,
 						lineEnd,
-						eastVector,
+						westVector,
 						northVector,
 						lineVectorNormalized,
 						pen.CrossSection,
