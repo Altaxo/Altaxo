@@ -197,13 +197,12 @@ namespace Altaxo.Drawing.D3D
 			Action<int, int, int, bool> AddIndices,
 			ref int vertexIndexOffset,
 			ICrossSectionOfLine _crossSection,
-			IList<PointD3D> polylinePoints,
+			IEnumerable<PointD3D> polylinePoints,
 			VectorD3D startWestVector,
 			VectorD3D startNorthVector
 			)
 		{
-			if (polylinePoints.Count < 2)
-				throw new ArgumentOutOfRangeException("linePoints.Count<2");
+			double maxThickness = 10;
 
 			var crossSectionVertexCount = _crossSection.NumberOfVertices;
 			var crossSectionNormalCount = _crossSection.NumberOfNormals;
@@ -212,19 +211,34 @@ namespace Altaxo.Drawing.D3D
 			VectorD3D tn; // transformed normal
 
 			PointD3D[] lastPositionsTransformed = new PointD3D[crossSectionVertexCount];
+			PointD3D[] lastPositionsTransformedEnd = new PointD3D[crossSectionVertexCount];
+			PointD3D[] lastPositionsTransformedNext = new PointD3D[crossSectionVertexCount];
+			bool[] isPositionOnBevel = new bool[crossSectionVertexCount];
 			VectorD3D[] lastNormalsTransformed = new VectorD3D[crossSectionNormalCount];
-
-			VectorD3D currSeg = (polylinePoints[1] - polylinePoints[0]).Normalized;
-			VectorD3D westVector = startWestVector;
-			VectorD3D northVector = startNorthVector;
+			VectorD3D[] lastNormalsTransformedNext = new VectorD3D[crossSectionNormalCount];
 
 			int currIndex = vertexIndexOffset;
 
+			var polylineEnumerator = Math3D.GetPolylinePointsWithWestAndNorth(polylinePoints, startWestVector, startNorthVector).GetEnumerator();
+			if (!polylineEnumerator.MoveNext())
+				return; // there is nothing to draw here, because no points are in this line
+
+			var pitem = polylineEnumerator.Current;
+			var previousPolylinePoint = pitem.Item1;
+			var westVector = pitem.Item2;
+			var northVector = pitem.Item3;
+
+			if (!polylineEnumerator.MoveNext())
+				return; // there is nothing to draw here, because there is only one point in this line
+
+			var currentItem = polylineEnumerator.Current;
+			VectorD3D currSeg = (currentItem.Item1 - previousPolylinePoint).Normalized;
+
 			// Get the matrix for the start plane
-			var matrix = Math3D.Get2DProjectionToPlane(westVector, northVector, polylinePoints[0]);
+			var matrix = Math3D.Get2DProjectionToPlane(westVector, northVector, previousPolylinePoint);
 
 			// add the middle point of the start plane
-			AddPositionAndNormal(polylinePoints[0], -currSeg);
+			AddPositionAndNormal(previousPolylinePoint, -currSeg);
 			currIndex += 1;
 
 			// add the points of the cross section for the start cap
@@ -244,105 +258,223 @@ namespace Altaxo.Drawing.D3D
 			currIndex += crossSectionVertexCount;
 			// Start cap is done.
 
+			// ************************** Position and normals for the very first segment ********************************
+
 			// now the positions and normals for the start of the first segment
 			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 			{
-				lastNormalsTransformed[j] = tn = matrix.Transform(_crossSection.Normals(j));
-				AddPositionAndNormal(lastPositionsTransformed[i], tn);
+				lastNormalsTransformed[j] = matrix.Transform(_crossSection.Normals(j));
 
 				if (_crossSection.IsVertexSharp(i))
 				{
 					++j;
-					lastNormalsTransformed[j] = tn = matrix.Transform(_crossSection.Normals(j));
-					AddPositionAndNormal(lastPositionsTransformed[i], tn);
+					lastNormalsTransformed[j] = matrix.Transform(_crossSection.Normals(j));
 				}
 			}
-			currIndex += crossSectionNormalCount;
 
-			for (int mSeg = 1; mSeg < polylinePoints.Count - 1; ++mSeg)
+			// ************************** For all polyline segments ****************************************************
+			while (polylineEnumerator.MoveNext())
 			{
-				VectorD3D nextSeg = (polylinePoints[mSeg + 1] - polylinePoints[mSeg]).Normalized;
-				VectorD3D midPlaneNormal = (0.5 * (currSeg + nextSeg)).Normalized;
+				var nextItem = polylineEnumerator.Current; // this is already the item for the end of the next segment
+				VectorD3D nextSeg = (nextItem.Item1 - currentItem.Item1).Normalized;
 
+				// ******************** calculate normals for the start of the next segment ********************************
+				matrix = Math3D.Get2DProjectionToPlane(nextItem.Item2, nextItem.Item3, currentItem.Item1);
+				for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
+				{
+					lastNormalsTransformedNext[j] = matrix.Transform(_crossSection.Normals(j));
+
+					if (_crossSection.IsVertexSharp(i))
+					{
+						++j;
+						lastNormalsTransformedNext[j] = matrix.Transform(_crossSection.Normals(j));
+					}
+				}
+
+				VectorD3D midPlaneNormal = (currSeg + nextSeg).Normalized;
 				// now get the matrix for transforming the cross sections positions
-				matrix = Math3D.Get2DProjectionToPlaneToPlane(westVector, northVector, currSeg, polylinePoints[mSeg], midPlaneNormal);
+				matrix = Math3D.Get2DProjectionToPlaneToPlane(currentItem.Item2, currentItem.Item3, currSeg, currentItem.Item1, midPlaneNormal);
 
-				// add positions and normals of the join and make the triangles from the last line join to this line join
+				if (true) // Bevel
+				{
+					// Calculate bevel plane
+					VectorD3D reflectionPlaneNormal = (currSeg - nextSeg).Normalized;
+					var dot = VectorD3D.DotProduct(currSeg, nextSeg);
+					var height = 0.5 * maxThickness * Math.Sin(Math.Acos(dot));
+					var pointAtBevelPlane = currentItem.Item1 + height * reflectionPlaneNormal;
+					Matrix4x3 bevelMatrix1 = Math3D.GetProjectionToPlane(currSeg, pointAtBevelPlane, reflectionPlaneNormal);
+					Matrix4x3 bevelMatrix2 = Math3D.GetProjectionToPlane(nextSeg, pointAtBevelPlane, reflectionPlaneNormal);
+
+					int firstBevelIndex = int.MinValue;
+					int lastBevelIndex = int.MinValue;
+					// Calculate the positions of the end of the current segment
+					for (int i = 0; i < crossSectionVertexCount; ++i)
+					{
+						tp = matrix.Transform(_crossSection.Vertices(i));
+						// decide whether the transformed point is above or below the bevel plane
+						if (Math3D.GetDistancePointToPlane(tp, pointAtBevelPlane, reflectionPlaneNormal) > 0)
+						{
+							// then the point is above the bevel plane; we need to project it to the bevel plane
+							lastPositionsTransformedEnd[i] = bevelMatrix1.Transform(tp);
+							lastPositionsTransformedNext[i] = bevelMatrix2.Transform(tp);
+							isPositionOnBevel[i] = true;
+							if (firstBevelIndex == int.MinValue)
+								firstBevelIndex = i;
+							lastBevelIndex = i;
+						}
+						else
+						{
+							lastPositionsTransformedEnd[i] = lastPositionsTransformedNext[i] = tp;
+							isPositionOnBevel[i] = false;
+						}
+					}
+
+					// mesh the bevel plane now
+					{
+						AddPositionAndNormal(pointAtBevelPlane, reflectionPlaneNormal);
+						int indexOfMidPoint = currIndex;
+						++currIndex;
+						int i;
+						// i is now the first point that is located on the bevel plane
+						AddPositionAndNormal(lastPositionsTransformedEnd[firstBevelIndex], reflectionPlaneNormal);
+						++currIndex;
+						for (i = firstBevelIndex + 1; i <= lastBevelIndex; ++i)
+						{
+							if (isPositionOnBevel[i])
+							{
+								AddPositionAndNormal(lastPositionsTransformedEnd[i], reflectionPlaneNormal);
+								AddIndices(currIndex, currIndex - 1, indexOfMidPoint, true);
+								++currIndex;
+							}
+							else
+							{
+							}
+						}
+
+						AddPositionAndNormal(lastPositionsTransformedNext[lastBevelIndex], reflectionPlaneNormal);  // For bevel plane: Point on the other side of the symmetry plane
+						++currIndex;
+						AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true); // bevel - midpoint - bevel (other side)
+
+						AddPositionAndNormal(lastPositionsTransformedEnd[lastBevelIndex], lastNormalsTransformed[lastBevelIndex]);  // last Point on the bevel plane, but with the normal of the line
+						++currIndex;
+						AddPositionAndNormal(lastPositionsTransformedEnd[lastBevelIndex + 1], lastNormalsTransformed[lastBevelIndex + 1]); // Point that is not on the bevel plane
+						++currIndex;
+						AddPositionAndNormal(lastPositionsTransformedNext[lastBevelIndex], lastNormalsTransformedNext[lastBevelIndex]);  // TODO normals should be from next line Point on the other side of the symmetry plane
+						++currIndex;
+						AddIndices(currIndex - 1, currIndex - 2, currIndex - 3, true); // bevel - crotch -bevel (other side)
+
+						// now back to the original index
+						AddPositionAndNormal(lastPositionsTransformedNext[lastBevelIndex], reflectionPlaneNormal);  // Point on the other side of the symmetry plane. Note this point was added 3 points before, but is included here again to simplify code
+						++currIndex;
+						for (i = lastBevelIndex - 1; i >= firstBevelIndex; --i)
+						{
+							if (isPositionOnBevel[i])
+							{
+								AddPositionAndNormal(lastPositionsTransformedNext[i], reflectionPlaneNormal);
+								++currIndex;
+								AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
+							}
+						}
+
+						AddPositionAndNormal(lastPositionsTransformedEnd[firstBevelIndex], reflectionPlaneNormal);  // Point on the other side of the symmetry plane
+						++currIndex;
+						AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true); // bevel - midpoint - bevel (other side)
+
+						AddPositionAndNormal(lastPositionsTransformedNext[firstBevelIndex], lastNormalsTransformedNext[firstBevelIndex]);  // last Point on the bevel plane, but with the normal of the line
+						++currIndex;
+						AddPositionAndNormal(lastPositionsTransformedNext[i], lastNormalsTransformed[i]); // Point that is not on the bevel plane
+						++currIndex;
+						AddPositionAndNormal(lastPositionsTransformedEnd[firstBevelIndex], lastNormalsTransformed[firstBevelIndex]);  // TODO normals should be from next line Point on the other side of the symmetry plane
+						++currIndex;
+						AddIndices(currIndex - 1, currIndex - 2, currIndex - 3, true); // bevel - crotch -bevel (other side)
+					}
+				}
+				else // without bevel or miter
+				{
+					// Calculate the positions of the end of the current segment
+					for (int i = 0; i < crossSectionVertexCount; ++i)
+					{
+						lastPositionsTransformedEnd[i] = lastPositionsTransformedNext[i] = matrix.Transform(_crossSection.Vertices(i));
+					}
+				}
+
+				// draw the segment from the previous point to the current point
 				for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 				{
-					lastPositionsTransformed[i] = tp = matrix.Transform(_crossSection.Vertices(i));
-					AddPositionAndNormal(tp, lastNormalsTransformed[j]);
+					if (j == 0)
+					{
+						AddIndices(currIndex, currIndex + 1, currIndex + 2 * crossSectionNormalCount - 2, false);
+						AddIndices(currIndex + 2 * crossSectionNormalCount - 2, currIndex + 1, currIndex + 2 * crossSectionNormalCount - 1, false);
+					}
+					else
+					{
+						AddIndices(currIndex, currIndex + 1, currIndex - 2, false);
+						AddIndices(currIndex - 2, currIndex + 1, currIndex - 1, false);
+					}
+
+					AddPositionAndNormal(lastPositionsTransformed[i], lastNormalsTransformed[j]);
+					AddPositionAndNormal(lastPositionsTransformedEnd[i], lastNormalsTransformed[j]);
+					currIndex += 2;
 
 					if (_crossSection.IsVertexSharp(i))
 					{
 						++j;
-						AddPositionAndNormal(tp, lastNormalsTransformed[j]);
+						AddPositionAndNormal(lastPositionsTransformed[i], lastNormalsTransformed[j]);
+						AddPositionAndNormal(lastPositionsTransformedEnd[i], lastNormalsTransformed[j]);
+						currIndex += 2;
 					}
-
-					AddIndices(
-					currIndex - crossSectionNormalCount + j,
-					currIndex + j,
-					currIndex + (1 + j) % crossSectionNormalCount,
-					false);
-
-					AddIndices(
-					currIndex - crossSectionNormalCount + j,
-					currIndex + (1 + j) % crossSectionNormalCount,
-					currIndex - crossSectionNormalCount + (1 + j) % crossSectionNormalCount,
-					false);
 				}
-				currIndex += crossSectionNormalCount;
+				// previous segment is done now
 
-				// mirror the north vector on the midPlane
+				// switch lastPositionsTransformed - the positions of the end of the previous segment are then the positions of the start of the new segment
+				var h = lastPositionsTransformed;
+				lastPositionsTransformed = lastPositionsTransformedNext;
+				lastPositionsTransformedEnd = h;
+				// switch normals
+				var v = lastNormalsTransformed;
+				lastNormalsTransformed = lastNormalsTransformedNext;
+				lastNormalsTransformedNext = v;
+
+				currentItem = nextItem;
 				currSeg = nextSeg;
-				westVector = Math3D.GetMirroredVectorAtPlane(westVector, midPlaneNormal);
-				westVector = Math3D.GetOrthonormalVectorToVector(westVector, currSeg); // make the north vector orthogonal (it should be already, but this corrects small deviations)
-				northVector = VectorD3D.CrossProduct(westVector, currSeg);
+			} // for all segments - except the last one
 
-				// now add the positions and the normals for start of the next segment
-				var normalTransformation = Math3D.Get2DProjectionToPlane(westVector, northVector, polylinePoints[mSeg]);
-				for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
-				{
-					lastNormalsTransformed[j] = tn = normalTransformation.Transform(_crossSection.Normals(j));
-					AddPositionAndNormal(lastPositionsTransformed[i], tn);
-
-					if (_crossSection.IsVertexSharp(i))
-					{
-						++j;
-						lastNormalsTransformed[j] = tn = matrix.Transform(_crossSection.Normals(j));
-						AddPositionAndNormal(lastPositionsTransformed[i], tn);
-					}
-				}
-				currIndex += crossSectionNormalCount;
-			}
+			// *************************** very last segment ***********************************************
 
 			// now add the positions and normals for the end of the last segment and the triangles of the last segment
-			matrix = Math3D.Get2DProjectionToPlane(westVector, northVector, polylinePoints[polylinePoints.Count - 1]);
+			matrix = Math3D.Get2DProjectionToPlane(currentItem.Item2, currentItem.Item3, currentItem.Item1);
 			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 			{
-				lastPositionsTransformed[i] = tp = matrix.Transform(_crossSection.Vertices(i));
-				AddPositionAndNormal(tp, lastNormalsTransformed[j]);
+				lastPositionsTransformedEnd[i] = tp = matrix.Transform(_crossSection.Vertices(i));
+			}
+
+			// draw the end line segment now
+			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
+			{
+				if (j == 0)
+				{
+					AddIndices(currIndex, currIndex + 1, currIndex + 2 * crossSectionNormalCount - 2, false);
+					AddIndices(currIndex + 2 * crossSectionNormalCount - 2, currIndex + 1, currIndex + 2 * crossSectionNormalCount - 1, false);
+				}
+				else
+				{
+					AddIndices(currIndex, currIndex + 1, currIndex - 2, false);
+					AddIndices(currIndex - 2, currIndex + 1, currIndex - 1, false);
+				}
+
+				AddPositionAndNormal(lastPositionsTransformed[i], lastNormalsTransformed[j]);
+				AddPositionAndNormal(lastPositionsTransformedEnd[i], lastNormalsTransformed[j]);
+				currIndex += 2;
 
 				if (_crossSection.IsVertexSharp(i))
 				{
 					++j;
-					lastNormalsTransformed[j] = tn = matrix.Transform(_crossSection.Normals(j));
-					AddPositionAndNormal(tp, tn);
+					AddPositionAndNormal(lastPositionsTransformed[i], lastNormalsTransformed[j]);
+					AddPositionAndNormal(lastPositionsTransformedEnd[i], lastNormalsTransformed[j]);
+					currIndex += 2;
 				}
-
-				AddIndices(
-				currIndex - crossSectionNormalCount + j,
-				currIndex + j,
-				currIndex + (1 + j) % crossSectionNormalCount,
-				false);
-
-				AddIndices(
-				currIndex - crossSectionNormalCount + j,
-				currIndex + (1 + j) % crossSectionNormalCount,
-				currIndex - crossSectionNormalCount + (1 + j) % crossSectionNormalCount,
-				false);
 			}
-			currIndex += crossSectionNormalCount;
+			// end line segment is done now
 
 			// and now the end cap
 
@@ -366,7 +498,7 @@ namespace Altaxo.Drawing.D3D
 			currIndex += crossSectionNormalCount;
 
 			// add the middle point of the end cap and the normal of the end cap
-			AddPositionAndNormal(polylinePoints[polylinePoints.Count - 1], currSeg);
+			AddPositionAndNormal(currentItem.Item1, currSeg);
 
 			++currIndex;
 

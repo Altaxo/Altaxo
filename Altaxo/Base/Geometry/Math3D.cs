@@ -84,13 +84,33 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
-		/// Creates a transformation matrix that projects a 2D point to a 3D-plane spanned by <paramref name="e"/> and <paramref name="n"/>. Then the thus created 3D point is projected
-		/// in the direction of <paramref name="v"/> to a plane that is defined by a point <paramref name="p"/> on the plane and the plane's normal <paramref name="q"/>.
+		/// Gets a projection matrix that projects a point in the direction given by <paramref name="v"/> onto a plane with is given by an arbitrary point on the plane <paramref name="p"/> and the plane's normal <paramref name="q"/>.
+		/// </summary>
+		/// <param name="v">The projection direction. Not required to be normalized.</param>
+		/// <param name="p">An arbitrary point onto the projection plane.</param>
+		/// <param name="q">The projection plane's normal. Not required to be normalized.</param>
+		/// <returns>The projection matrix that projects a point in the direction given by <paramref name="v"/> onto a plane with is given by an arbitrary point on the plane <paramref name="p"/> and the plane's normal <paramref name="q"/>.</returns>
+		public static Matrix4x3 GetProjectionToPlane(VectorD3D v, PointD3D p, VectorD3D q)
+		{
+			double OneByQV = 1 / VectorD3D.DotProduct(q, v);
+			double DotPQ = p.X * q.X + p.Y * q.Y + p.Z * q.Z;
+
+			return new Matrix4x3(
+				1 - q.X * v.X * OneByQV, -q.X * v.Y * OneByQV, -q.X * v.Z * OneByQV,
+				-q.Y * v.X * OneByQV, 1 - q.Y * v.Y * OneByQV, -q.Y * v.Z * OneByQV,
+				-q.Z * v.X * OneByQV, -q.Z * v.Y * OneByQV, 1 - q.Z * v.Z * OneByQV,
+				DotPQ * v.X * OneByQV, DotPQ * v.Y * OneByQV, DotPQ * v.Z * OneByQV
+				);
+		}
+
+		/// <summary>
+		/// Creates a transformation matrix that does the following: First, it converts a 2D point into a 3D coordinate system with the origin given by <paramref name="p"/>, and the unit vectors <paramref name="e"/> and <paramref name="n"/>.
+		/// Then the thus created 3D point is projected in the direction of <paramref name="v"/> onto a plane that is defined by the same point <paramref name="p"/> on the plane and the plane's normal <paramref name="q"/>.
 		/// </summary>
 		/// <param name="e">East vector: Spans one dimension of the projection of the 2D points to a 3D plane.</param>
 		/// <param name="n">North vector: Spans the other dimension of the projection of the 2D input points to a 3D plane.</param>
 		/// <param name="v">Direction of the projection of the 3D points to a plane.</param>
-		/// <param name="p">Point on the projection plane.</param>
+		/// <param name="p">Origin of the coordinate system, and point on the projection plane, too.</param>
 		/// <param name="q">Normal of the projection plane.</param>
 		/// <returns>Matrix that transforms 2D points to a plane. (The 2D points are in fact 3D points with a z-coordinate that is ignored.</returns>
 		public static Matrix4x3 Get2DProjectionToPlaneToPlane(VectorD3D e, VectorD3D n, VectorD3D v, PointD3D p, VectorD3D q)
@@ -128,7 +148,7 @@ namespace Altaxo.Geometry
 
 		/// <summary>
 		/// Gets the distance of a point <paramref name="a"/> to a plane defined by a point <paramref name="p"/> and a normal vector <paramref name="q"/>. The distance is considered to be positive
-		/// if the point <paramref name="a"/> is located in the half space where the vector <paramref name="q"/> is pointing into.
+		/// if the point <paramref name="a"/> is located in the half space into which the vector <paramref name="q"/> is pointing.
 		/// </summary>
 		/// <param name="a">The point a.</param>
 		/// <param name="p">A point on a plane.</param>
@@ -166,7 +186,7 @@ namespace Altaxo.Geometry
 		/// Gets the west and north vector for a single straight line.
 		/// </summary>
 		/// <param name="forward">The line forward vector. Can be unnormalized.</param>
-		/// <returns>The east and the north vector (Item1=east vector, Item2 = north vector).</returns>
+		/// <returns>The west and the north vector (Item1=west vector, Item2 = north vector).</returns>
 		public static Tuple<VectorD3D, VectorD3D> GetWestNorthVectors(VectorD3D forward)
 		{
 			var n = GetRawNorthVectorAtStart(forward);
@@ -179,7 +199,7 @@ namespace Altaxo.Geometry
 		/// Gets the west and north vector for a single straight line.
 		/// </summary>
 		/// <param name="line">The line.</param>
-		/// <returns>The east and the north vector (Item1=east vector, Item2 = north vector).</returns>
+		/// <returns>The west and the north vector (Item1=west vector, Item2 = north vector).</returns>
 		public static Tuple<VectorD3D, VectorD3D> GetWestNorthVectors(LineD3D line)
 		{
 			return GetWestNorthVectors(line.Vector);
@@ -209,13 +229,42 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
-		/// Amends a polyline, given by its polyline points, with an east and a north vector for each polyline point.
+		/// Amends a polyline, given by its polyline points, with an west and a north vector for each polyline point.
 		/// </summary>
 		/// <param name="linePoints">The line points.</param>
-		/// <returns>The polyline points, amended with east and north vector (Item1: polyline point, Item2: east vector, Item3: north vector).
+		/// <returns>The polyline points, amended with west and north vector (Item1: polyline point, Item2: west vector, Item3: north vector).
 		/// The number of points may be smaller than the original number of points, because empty line segments are not returned.
-		/// The west and north vectors are valid for the segment going from the previous point to the current point (thus for the first and the second point the returned east and north vectors are equal).</returns>
+		/// The west and north vectors are valid for the segment going from the previous point to the current point (thus for the first and the second point the returned west and north vectors are equal).</returns>
 		public static IEnumerable<Tuple<PointD3D, VectorD3D, VectorD3D>> GetPolylinePointsWithWestAndNorth(IEnumerable<PointD3D> linePoints)
+		{
+			return GetPolylinePointsWithWestAndNorth(linePoints, false, VectorD3D.Empty, VectorD3D.Empty);
+		}
+
+		/// <summary>
+		/// Amends a polyline, given by its polyline points, with an west and a north vector for each polyline point.
+		/// </summary>
+		/// <param name="linePoints">The line points.</param>
+		/// <param name="startWestVector">The start west vector. Has to be normalized. This is not checked!</param>
+		/// <param name="startNorthVector">The start north vector. Has to be normalized. This is not checked!</param>
+		/// <returns>The polyline points, amended with west and north vector (Item1: polyline point, Item2: west vector, Item3: north vector).
+		/// The number of points may be smaller than the original number of points, because empty line segments are not returned.
+		/// The west and north vectors are valid for the segment going from the previous point to the current point (thus for the first and the second point the returned west and north vectors are equal).</returns>
+		public static IEnumerable<Tuple<PointD3D, VectorD3D, VectorD3D>> GetPolylinePointsWithWestAndNorth(IEnumerable<PointD3D> linePoints, VectorD3D startWestVector, VectorD3D startNorthVector)
+		{
+			return GetPolylinePointsWithWestAndNorth(linePoints, true, startWestVector, startNorthVector);
+		}
+
+		/// <summary>
+		/// Amends a polyline, given by its polyline points, with an west and a north vector for each polyline point.
+		/// </summary>
+		/// <param name="linePoints">The line points.</param>
+		/// <param name="startVectorsProvided">If true, the start west vector and start north vectors are provided in the following arguments.</param>
+		/// <param name="startWestVector">The start west vector if provided (otherwise it may be VectorD3D.Empty).</param>
+		/// <param name="startNorthVector">The start north vector if provided (otherwise it may be VectorD3D.Empty).</param>
+		/// <returns>The polyline points, amended with west and north vector (Item1: polyline point, Item2: west vector, Item3: north vector).
+		/// The number of points may be smaller than the original number of points, because empty line segments are not returned.
+		/// The west and north vectors are valid for the segment going from the previous point to the current point (thus for the first and the second point the returned west and north vectors are equal).</returns>
+		private static IEnumerable<Tuple<PointD3D, VectorD3D, VectorD3D>> GetPolylinePointsWithWestAndNorth(IEnumerable<PointD3D> linePoints, bool startVectorsProvided, VectorD3D startWestVector, VectorD3D startNorthVector)
 		{
 			bool prevPointIsValid = false;
 			PointD3D prevPoint = PointD3D.Empty;
@@ -237,16 +286,24 @@ namespace Altaxo.Geometry
 
 					if (previousSegment.IsEmpty)
 					{
-						var entry = GetWestNorthVectors(currentSegment);
-						w = entry.Item1;
-						n = entry.Item2;
+						if (startVectorsProvided)
+						{
+							w = startWestVector;
+							n = startNorthVector;
+						}
+						else
+						{
+							var entry = GetWestNorthVectors(currentSegment);
+							w = entry.Item1;
+							n = entry.Item2;
+						}
 					}
 
 					yield return new Tuple<PointD3D, VectorD3D, VectorD3D>(prevPoint, w, n);
 
 					if (!previousSegment.IsEmpty)
 					{
-						// if there was a previous segment, then calculate the new east and north vectors
+						// if there was a previous segment, then calculate the new west and north vectors
 						VectorD3D midPlaneNormal = 0.5 * (currentSegment - previousSegment);
 						double dot_e = midPlaneNormal.X * w.X + midPlaneNormal.Y * w.Y + midPlaneNormal.Z * w.Z;
 						double dot_n = midPlaneNormal.X * n.X + midPlaneNormal.Y * n.Y + midPlaneNormal.Z * n.Z;
@@ -263,7 +320,7 @@ namespace Altaxo.Geometry
 							w = GetOrthonormalVectorToVector(w, currentSegment); // make the north vector orthogonal (it should be already, but this corrects small deviations)
 							n = VectorD3D.CrossProduct(currentSegment, w);
 						}
-						else // previous segment and current segment are either colinear or a perfect reflection. Keep the north vector, and calculate only the new east vector
+						else // previous segment and current segment are either colinear or a perfect reflection. Keep the north vector, and calculate only the new west vector
 						{
 							n = GetOrthonormalVectorToVector(n, currentSegment); // make the north vector orthogonal (it should be already, but this corrects small deviations)
 							w = VectorD3D.CrossProduct(n, currentSegment);
@@ -369,7 +426,7 @@ namespace Altaxo.Geometry
 		/// <param name="linePoints">The line points of the polyline that is dissected.</param>
 		/// <param name="dashPattern">The dash pattern used to dissect the polyline.</param>
 		/// <param name="unitLength">Length of one unit of the dash pattern..</param>
-		/// <returns>Enumeration of polylines. The first item of the returned tuples is the list with the polyline points, the second item is the east vector for the first polyline point, and the third item is the north vector for the first polyline point.</returns>
+		/// <returns>Enumeration of polylines. The first item of the returned tuples is the list with the polyline points, the second item is the west vector for the first polyline point, and the third item is the north vector for the first polyline point.</returns>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// </exception>
 		/// <exception cref="System.ArgumentException"></exception>
@@ -394,7 +451,7 @@ namespace Altaxo.Geometry
 
 			var outputPoints = new List<PointD3D>();
 			outputPoints.Add(prev.Item1);
-			VectorD3D outputEastVector = prev.Item2;
+			VectorD3D outputWestVector = prev.Item2;
 			VectorD3D outputNorthVector = prev.Item3;
 
 			while (true == en.MoveNext())
@@ -423,7 +480,7 @@ namespace Altaxo.Geometry
 						// now output the list
 						if (outputPoints.Count >= 2)
 						{
-							yield return new Tuple<List<PointD3D>, VectorD3D, VectorD3D>(outputPoints, outputEastVector, outputNorthVector);
+							yield return new Tuple<List<PointD3D>, VectorD3D, VectorD3D>(outputPoints, outputWestVector, outputNorthVector);
 							outputPoints = new List<PointD3D>(); // don't recycle the list
 						}
 
@@ -444,11 +501,11 @@ namespace Altaxo.Geometry
 						}
 						patternRemainingDistance = dashPattern[patternPointer] * unitLength;
 
-						// if now the pattern is the start of a dash, store the starting east and north vector
+						// if now the pattern is the start of a dash, store the starting west and north vector
 						if (patternIsCurrentlyDash)
 						{
 							outputPoints.Add(curr.Item1);
-							outputEastVector = curr.Item2;
+							outputWestVector = curr.Item2;
 							outputNorthVector = curr.Item3;
 						}
 					}
@@ -459,7 +516,7 @@ namespace Altaxo.Geometry
 
 			if (outputPoints.Count >= 2)
 			{
-				yield return new Tuple<List<PointD3D>, VectorD3D, VectorD3D>(outputPoints, outputEastVector, outputNorthVector);
+				yield return new Tuple<List<PointD3D>, VectorD3D, VectorD3D>(outputPoints, outputWestVector, outputNorthVector);
 			}
 		}
 
