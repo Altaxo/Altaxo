@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
@@ -32,174 +31,394 @@ using System.Text;
 namespace Altaxo.Drawing.D3D
 {
 	/// <summary>
-	/// Represents the solid geometry of a polyline in 3D space.
+	/// Contains code to generate triangle geometry for solid polyline dash segments.
+	/// This structure needs to be initialized only once per line with <see cref="Initialize(PenX3D)"/>.
+	/// It then can be used for each individual dash segment by calling AddGeometry/>.
 	/// </summary>
-	public class SolidPolyline
+	public struct SolidPolylineDashSegment
 	{
-		private static readonly VectorD3D _xVector = new VectorD3D(1, 0, 0);
-		private static readonly VectorD3D _yVector = new VectorD3D(0, 1, 0);
-		private static readonly VectorD3D _zVector = new VectorD3D(0, 0, 1);
-
+		// global Variables, initialized only one per line (not once per dash segment)
 		private ICrossSectionOfLine _crossSection;
-		private IList<PointD3D> _linePoints;
 
-		private VectorD3D _endWestVector;
-		private VectorD3D _endNorthVector;
-		private VectorD3D _endAdvanceVector;
+		private int _crossSectionVertexCount;
+		private int _crossSectionNormalCount;
+		private ILineCap _dashStartCap;
+		private double _dashStartCapBaseInsetAbsolute;
+		private ILineCap _dashEndCap;
+		private double _dashEndCapBaseInsetAbsolute;
+		private PenLineJoin _lineJoin;
+		private double _miterLimit;
 
-		public VectorD3D EndWestVector { get { return _endWestVector; } }
-		public VectorD3D EndNorthVector { get { return _endNorthVector; } }
-		public VectorD3D EndAdvanceVector { get { return _endAdvanceVector; } }
+		private VectorD3D _startWestVector;
+		private VectorD3D _startNorthVector;
 
-		public SolidPolyline(ICrossSectionOfLine cross, IList<PointD3D> linePoints)
+		// operational variables, i.e. variables evaluated during one call to draw
+
+		/// <summary>The real start of the line, taking into account the cap's inset.</summary>
+		private VectorD3D _startCapForwardVector;
+
+		private PointD3D _startCapBase;
+		private VectorD3D _startCapWest;
+		private VectorD3D _startCapNorth;
+
+		/// <summary>The real end of the line, taking into account the cap's inset.</summary>
+		private VectorD3D _endCapForwardVector;
+
+		private PointD3D _endCapBase;
+		private VectorD3D _endCapWest;
+		private VectorD3D _endCapNorth;
+
+		// local variables, i.e. variables that change with every dash segment
+
+		private object _startCapTemporaryStorageSpace;
+
+		private object _endCapTemporaryStorageSpace;
+
+		private PointD3D[] lastPositionsTransformedBegCurr;
+		private PointD3D[] lastPositionsTransformedEndCurr;
+		private PointD3D[] lastPositionsTransformedBegNext;
+		private VectorD3D[] lastNormalsTransformedCurr;
+		private VectorD3D[] lastNormalsTransformedNext;
+		private VectorD2D[] crossSectionRotatedVertices;
+
+		/// <summary>
+		/// Initialization that is needed only once per straigth line (not once per dash).
+		/// </summary>
+		/// <param name="pen">The pen that is used to draw the line.</param>
+		/// <param name="west">The west vector.</param>
+		/// <param name="north">The north vector.</param>
+		/// <param name="polylinePoints">The global line to draw.</param>
+		public void Initialize(
+			PenX3D pen
+			)
 		{
-			_crossSection = cross;
-
-			this._linePoints = linePoints;
+			Initialize(
+				pen.CrossSection,
+				pen.Thickness1,
+				pen.Thickness2,
+				pen.LineJoin,
+				pen.MiterLimit,
+				pen.DashStartCap,
+				pen.DashEndCap
+				);
 		}
 
-		public void Add(Action<PointD3D> AddPosition, Action<int, int, int> AddIndices, int startIndex)
+		public void Initialize(
+		ICrossSectionOfLine crossSection,
+		double thickness1,
+		double thickness2,
+		PenLineJoin lineJoin,
+		double miterLimit,
+		ILineCap startCap,
+		ILineCap endCap)
 		{
-			if (_linePoints.Count < 2)
-				throw new ArgumentOutOfRangeException("linePoints.Count<2");
+			this._crossSection = crossSection;
+			this._crossSectionVertexCount = crossSection.NumberOfVertices;
+			this._crossSectionNormalCount = crossSection.NumberOfNormals;
+			this._lineJoin = lineJoin;
+			this._miterLimit = miterLimit;
+			this._dashStartCap = startCap;
+			this._dashStartCapBaseInsetAbsolute = null == _dashStartCap ? 0 : _dashStartCap.GetAbsoluteBaseInset(thickness1, thickness2);
+			this._dashEndCap = endCap;
+			this._dashEndCapBaseInsetAbsolute = null == _dashEndCap ? 0 : _dashEndCap.GetAbsoluteBaseInset(thickness1, thickness2);
 
-			VectorD3D currSeg = (_linePoints[1] - _linePoints[0]).Normalized;
+			lastPositionsTransformedBegCurr = new PointD3D[_crossSectionVertexCount];
+			lastPositionsTransformedEndCurr = new PointD3D[_crossSectionVertexCount];
+			lastPositionsTransformedBegNext = new PointD3D[_crossSectionVertexCount];
+			lastNormalsTransformedCurr = new VectorD3D[_crossSectionNormalCount];
+			lastNormalsTransformedNext = new VectorD3D[_crossSectionNormalCount];
+			crossSectionRotatedVertices = new VectorD2D[_crossSectionVertexCount];
+		}
 
-			var westNorth = Math3D.GetWestNorthVectors(currSeg);
+		private double FindStartIndexOfPolylineWithCapInsetAbsolute(IList<PointD3D> polylinePoints, double capInsetAbsolute, out PointD3D capBase, out VectorD3D capVector)
+		{
+			var lineStart = polylinePoints[0];
 
-			VectorD3D w = westNorth.Item1;
-			VectorD3D n = westNorth.Item2;
-
-			int currIndex = startIndex;
-			int crossSectionCount = _crossSection.NumberOfVertices;
-
-			// Get the matrix for the start plane
-			var matrix = Math3D.Get2DProjectionToPlane(w, n, _linePoints[0]);
-
-			var tp = matrix.Transform(new PointD3D(0, 0, 0));
-			AddPosition(tp);
-
-			currIndex += 1;
-
-			for (int i = 0; i < crossSectionCount; ++i)
+			for (int i = 1; i < polylinePoints.Count; ++i)
 			{
-				tp = matrix.Transform(_crossSection.Vertices(i));
-				AddPosition(tp);
+				var curr = polylinePoints[i];
+				double diff = (curr - lineStart).Length - capInsetAbsolute;
 
-				AddIndices(
-				startIndex,
-				startIndex + 1 + i,
-				startIndex + 1 + (1 + i) % crossSectionCount
-				);
-			}
-
-			currIndex += crossSectionCount;
-
-			for (int mSeg = 1; mSeg < _linePoints.Count - 1; ++mSeg)
-			{
-				VectorD3D nextSeg = (_linePoints[mSeg + 1] - _linePoints[mSeg]).Normalized;
-
-				VectorD3D midPlaneNormal = 0.5 * (currSeg + nextSeg);
-
-				// now get the matrix
-				matrix = Math3D.Get2DProjectionToPlaneToPlane(w, n, currSeg, _linePoints[mSeg], midPlaneNormal);
-
-				for (int i = 0; i < crossSectionCount; ++i)
+				if (diff == 0) // OK, exactly here
 				{
-					tp = matrix.Transform(_crossSection.Vertices(i));
-					AddPosition(tp);
-
-					AddIndices(
-					currIndex - crossSectionCount + i,
-					currIndex + i,
-					currIndex + (1 + i) % crossSectionCount
-					);
-
-					AddIndices(
-					currIndex - crossSectionCount + i,
-					currIndex + (1 + i) % crossSectionCount,
-					currIndex - crossSectionCount + (1 + i) % crossSectionCount
-					);
+					capBase = curr;
+					capVector = (capBase - lineStart).Normalized;
+					return i;
 				}
-				currIndex += crossSectionCount;
+				else if (diff > 0) // OK, sowewhere between previous point and here.
+				{
+					int baseIndex = i - 1;
+					var prev = polylinePoints[baseIndex];
+					var relIndex = Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(
+						(r) => (PointD3D.Interpolate(prev, curr, r) - lineStart).Length - capInsetAbsolute,
+						0, 1,
+						1e-3, 0);
 
-				// mirror the north vector on the midPlane
-				currSeg = nextSeg;
-				w = Math3D.GetMirroredVectorAtPlane(w, midPlaneNormal);
-				w = Math3D.GetOrthonormalVectorToVector(w, currSeg); // make the north vector orthogonal (it should be already, but this corrects small deviations)
-				n = VectorD3D.CrossProduct(w, currSeg);
+					capBase = PointD3D.Interpolate(prev, curr, relIndex);
+					capVector = (capBase - lineStart).Normalized;
+					return baseIndex + relIndex;
+				}
 			}
 
-			// now add the last segment
-			matrix = Math3D.Get2DProjectionToPlane(w, n, _linePoints[_linePoints.Count - 1]);
-			for (int i = 0; i < crossSectionCount; ++i)
+			// the cap is too big, all the line is inside the cap
+			// now search at least for a point which can serve as cap direction
+			for (int i = polylinePoints.Count - 1; i > 0; --i)
 			{
-				tp = matrix.Transform(_crossSection.Vertices(i));
-				AddPosition(tp);
-
-				AddIndices(
-				currIndex - crossSectionCount + i,
-				currIndex + i,
-				currIndex + (1 + i) % crossSectionCount
-				);
-
-				AddIndices(
-				currIndex - crossSectionCount + i,
-				currIndex + (1 + i) % crossSectionCount,
-				currIndex - crossSectionCount + (1 + i) % crossSectionCount
-				);
-			}
-			currIndex += crossSectionCount;
-
-			// and now the end cap
-			AddPosition(_linePoints[_linePoints.Count - 1]);
-
-			for (int i = 0; i < crossSectionCount; ++i)
-			{
-				AddIndices(
-				currIndex - crossSectionCount + i,
-				currIndex,
-				currIndex - crossSectionCount + (1 + i) % crossSectionCount);
+				if (polylinePoints[i] != lineStart)
+				{
+					capVector = (polylinePoints[i] - lineStart).Normalized;
+					capBase = lineStart + capVector * capInsetAbsolute;
+					return double.NaN;
+				}
 			}
 
-			_endWestVector = w;
-			_endNorthVector = n;
-			_endAdvanceVector = currSeg.Normalized;
+			capVector = VectorD3D.Empty;
+			capBase = lineStart;
+			return double.NaN;
 		}
 
-		public static void AddWithNormals(
+		private double FindEndIndexOfPolylineWithCapInsetAbsolute(IList<PointD3D> polylinePoints, double capInsetAbsolute, out PointD3D capBase, out VectorD3D capVector)
+		{
+			var lineEnd = polylinePoints[polylinePoints.Count - 1];
+			for (int i = polylinePoints.Count - 2; i >= 0; --i)
+			{
+				var curr = polylinePoints[i];
+
+				double diff = (curr - lineEnd).Length - capInsetAbsolute;
+
+				if (diff == 0) // OK, exactely here
+				{
+					capBase = curr;
+					capVector = lineEnd - curr;
+					return i;
+				}
+				else if (diff > 0) // OK, sowewhere between previous point and here.
+				{
+					int baseIndex = i + 1;
+					var prev = polylinePoints[baseIndex];
+					var relIndex = Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(
+						(r) => (PointD3D.Interpolate(prev, curr, r) - lineEnd).Length - capInsetAbsolute,
+						0, 1,
+						1e-3, 0);
+
+					capBase = PointD3D.Interpolate(prev, curr, relIndex);
+					capVector = lineEnd - capBase;
+					return baseIndex - relIndex;
+				}
+			}
+
+			// the cap is too big, all the line is inside the cap
+			// now search at least for a point which can serve as cap direction
+			for (int i = 0; i < polylinePoints.Count; ++i)
+			{
+				if (polylinePoints[i] != lineEnd)
+				{
+					capVector = (lineEnd - polylinePoints[i]).Normalized;
+					capBase = lineEnd + capVector * capInsetAbsolute;
+					return double.NaN;
+				}
+			}
+
+			capVector = VectorD3D.Empty;
+			capBase = lineEnd;
+			return double.NaN;
+		}
+
+		private IEnumerable<Tuple<PointD3D, VectorD3D, VectorD3D>> GetPolylineWithFractionalStartAndEndIndex(IList<PointD3D> originalPolyline, VectorD3D westVector, VectorD3D northVector, double startIndex, double endIndex)
+		{
+			var en = Math3D.GetPolylinePointsWithWestAndNorth(originalPolyline, westVector, northVector).GetEnumerator();
+
+			int startIndexInt = (int)Math.Floor(startIndex);
+			double startIndexFrac = startIndex - startIndexInt;
+			int endIndexInt = (int)Math.Floor(endIndex);
+			double endIndexFrac = endIndex - endIndexInt;
+
+			int i;
+			for (i = -1; i < startIndexInt; ++i)
+				en.MoveNext();
+
+			var currItem = en.Current;
+
+			if (startIndexFrac == 0)
+			{
+				yield return currItem;
+			}
+			else
+			{
+				en.MoveNext();
+				++i;
+				var nextItem = en.Current;
+
+				var newPoint = PointD3D.Interpolate(currItem.Item1, nextItem.Item1, startIndexFrac);
+				yield return new Tuple<PointD3D, VectorD3D, VectorD3D>(newPoint, nextItem.Item2, nextItem.Item3);
+
+				if (startIndexInt == endIndexInt)
+				{
+					newPoint = PointD3D.Interpolate(currItem.Item1, nextItem.Item1, endIndexFrac);
+					yield return new Tuple<PointD3D, VectorD3D, VectorD3D>(newPoint, nextItem.Item2, nextItem.Item3);
+					yield break;
+				}
+			}
+
+			for (; i < endIndexInt; ++i)
+			{
+				yield return en.Current;
+				en.MoveNext();
+			}
+
+			if (endIndexFrac != 0)
+			{
+				var nextItem = en.Current;
+				var newPoint = PointD3D.Interpolate(currItem.Item1, nextItem.Item1, endIndexFrac);
+				yield return new Tuple<PointD3D, VectorD3D, VectorD3D>(newPoint, nextItem.Item2, nextItem.Item3);
+			}
+		}
+
+		public void AddGeometry(
+		Action<PointD3D, VectorD3D> AddPositionAndNormal,
+		Action<int, int, int, bool> AddIndices,
+		ref int vertexIndexOffset,
+		IList<PointD3D> polylinePoints,
+		ILineCap overrideStartCap,
+		ILineCap overrideEndCap)
+		{
+			if (null == lastNormalsTransformedCurr)
+				throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
+
+			double startIndexOfPolyline = 0;
+			double endIndexOfPolyline = polylinePoints.Count - 1;
+
+			if (null != _dashStartCap && null == overrideStartCap)
+			{
+				if (_dashStartCapBaseInsetAbsolute < 0)
+				{
+					startIndexOfPolyline = FindStartIndexOfPolylineWithCapInsetAbsolute(polylinePoints, -_dashStartCapBaseInsetAbsolute, out _startCapBase, out _startCapForwardVector);
+				}
+			}
+
+			if (null != _dashEndCap && null == overrideEndCap)
+			{
+				if (_dashEndCapBaseInsetAbsolute < 0)
+				{
+					endIndexOfPolyline = FindEndIndexOfPolylineWithCapInsetAbsolute(polylinePoints, -_dashEndCapBaseInsetAbsolute, out _endCapBase, out _endCapForwardVector);
+				}
+			}
+
+			AddGeometry(AddPositionAndNormal,
+				AddIndices,
+				ref vertexIndexOffset,
+				GetPolylineWithFractionalStartAndEndIndex(polylinePoints, _startWestVector, _startNorthVector, startIndexOfPolyline, endIndexOfPolyline),
+				!double.IsNaN(startIndexOfPolyline) && !double.IsNaN(endIndexOfPolyline),
+				overrideStartCap,
+				overrideEndCap);
+		}
+
+		/// <summary>
+		/// Adds the triangle geometry. Here, the position of the startcap base and of the endcap base is already calculated and provided in the arguments.
+		/// </summary>
+		/// <param name="AddPositionAndNormal">The procedure to add a vertex position and normal.</param>
+		/// <param name="AddIndices">The procedure to add vertex indices for one triangle.</param>
+		/// <param name="vertexIndexOffset">The vertex index offset.</param>
+		/// <param name="lineStart">The line start. This is the precalculated base of the start line cap.</param>
+		/// <param name="lineEnd">The line end. Here, this is the precalculated base of the end line cap.</param>
+		/// <param name="drawLine">If this parameter is true, the line segment between lineStart and lineEnd is drawn. If false, the line segment itself is not drawn, but the start end end caps are drawn.</param>
+		/// <param name="overrideStartCap">If not null, this parameter override the start cap that is stored in this class.</param>
+		/// <param name="overrideEndCap">If not null, this parameter overrides the end cap that is stored in this class.</param>
+		/// <exception cref="System.InvalidProgramException">The structure is not initialized yet. Call Initialize before using it!</exception>
+		public void AddGeometry(
 			Action<PointD3D, VectorD3D> AddPositionAndNormal,
 			Action<int, int, int, bool> AddIndices,
 			ref int vertexIndexOffset,
-			PenX3D pen,
-			IList<PointD3D> polylinePoints
+			IEnumerable<Tuple<PointD3D, VectorD3D, VectorD3D>> polylinePoints,
+			bool drawLine,
+			ILineCap overrideStartCap,
+			ILineCap overrideEndCap
 			)
 		{
-			var dashPattern = pen.DashPattern;
+			if (null == lastNormalsTransformedCurr)
+				throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
 
-			if (null == dashPattern) // Solid line
+			var resultingStartCap = overrideStartCap ?? _dashStartCap;
+			var resultingEndCap = overrideEndCap ?? _dashEndCap;
+
+			// draw the straight line if the remaining line length is >0
+			if (drawLine)
 			{
-				var westNorth = Math3D.GetWestNorthVectorAtStart(polylinePoints);
-				AddWithNormals(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, pen.CrossSection, polylinePoints, westNorth.Item1, westNorth.Item2);
+				AddGeometryForLineOnly(
+					AddPositionAndNormal,
+			AddIndices,
+			ref vertexIndexOffset,
+			 _crossSection,
+			 polylinePoints
+			);
 			}
-			else // line with dash
+
+			// now the start cap
+			if (null != resultingStartCap)
 			{
-				double unitLength = Math.Max(pen.Thickness1, pen.Thickness2);
-				foreach (var polyline in Math3D.DissectPolylineWithDashPattern(polylinePoints, dashPattern, unitLength))
-				{
-					AddWithNormals(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, pen.CrossSection, polyline.Item1, polyline.Item2, polyline.Item3);
-				}
+				resultingStartCap.AddGeometry(
+					AddPositionAndNormal,
+					AddIndices,
+					ref vertexIndexOffset,
+					true,
+					_startCapBase,
+					_startCapWest,
+					_startCapNorth,
+					_startCapForwardVector,
+					_crossSection,
+					null,
+					null,
+					ref _startCapTemporaryStorageSpace);
+			}
+			else if (drawLine)
+			{
+				LineCaps.Flat.AddGeometry(
+					AddPositionAndNormal,
+					AddIndices,
+					ref vertexIndexOffset,
+					true,
+					_startCapBase,
+					_startCapForwardVector,
+					null
+					);
+			}
+
+			if (null != resultingEndCap)
+			{
+				resultingEndCap.AddGeometry(
+				AddPositionAndNormal,
+					AddIndices,
+					ref vertexIndexOffset,
+					false,
+					_endCapBase,
+					_endCapWest,
+					_endCapNorth,
+					_endCapForwardVector,
+					_crossSection,
+					null,
+					null,
+					ref _endCapTemporaryStorageSpace);
+			}
+			else if (drawLine)
+			{
+				LineCaps.Flat.AddGeometry(
+					AddPositionAndNormal,
+					AddIndices,
+					ref vertexIndexOffset,
+					false,
+					_endCapBase,
+					_endCapForwardVector,
+					null
+					);
 			}
 		}
 
-		public static void AddWithNormals(
+		private void AddGeometryForLineOnly(
 			Action<PointD3D, VectorD3D> AddPositionAndNormal,
 			Action<int, int, int, bool> AddIndices,
 			ref int vertexIndexOffset,
 			ICrossSectionOfLine _crossSection,
-			IEnumerable<PointD3D> polylinePoints,
-			VectorD3D startWestVector,
-			VectorD3D startNorthVector
+			IEnumerable<Tuple<PointD3D, VectorD3D, VectorD3D>> polylinePoints
 			)
 		{
 			var crossSectionVertexCount = _crossSection.NumberOfVertices;
@@ -208,20 +427,26 @@ namespace Altaxo.Drawing.D3D
 			PointD3D tp; // transformed position
 			VectorD3D tn; // transformed normal
 
+			/*
 			PointD3D[] lastPositionsTransformedBegCurr = new PointD3D[crossSectionVertexCount];
 			PointD3D[] lastPositionsTransformedEndCurr = new PointD3D[crossSectionVertexCount];
 			PointD3D[] lastPositionsTransformedBegNext = new PointD3D[crossSectionVertexCount];
 			VectorD3D[] lastNormalsTransformedCurr = new VectorD3D[crossSectionNormalCount];
 			VectorD3D[] lastNormalsTransformedNext = new VectorD3D[crossSectionNormalCount];
 			VectorD2D[] crossSectionRotatedVertices = new VectorD2D[crossSectionVertexCount];
+			*/
 
 			int currIndex = vertexIndexOffset;
 
-			var polylineEnumerator = Math3D.GetPolylinePointsWithWestAndNorth(polylinePoints, startWestVector, startNorthVector).GetEnumerator();
+			var polylineEnumerator = polylinePoints.GetEnumerator();
 			if (!polylineEnumerator.MoveNext())
 				return; // there is nothing to draw here, because no points are in this line
 
 			var pitem = polylineEnumerator.Current;
+			_startCapBase = pitem.Item1;
+			_startCapWest = pitem.Item2;
+			_startNorthVector = pitem.Item3;
+
 			var previousPolylinePoint = pitem.Item1;
 			var westVector = pitem.Item2;
 			var northVector = pitem.Item3;
@@ -537,6 +762,9 @@ namespace Altaxo.Drawing.D3D
 			// *************************** very last segment ***********************************************
 
 			// now add the positions and normals for the end of the last segment and the triangles of the last segment
+			_endCapBase = currentItem.Item1;
+			_endCapWest = currentItem.Item2;
+			_endCapNorth = currentItem.Item3;
 			matrixCurr = Math3D.Get2DProjectionToPlane(currentItem.Item2, currentItem.Item3, currentItem.Item1);
 			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 			{
@@ -570,33 +798,6 @@ namespace Altaxo.Drawing.D3D
 				}
 			}
 			// end line segment is done now
-
-			// and now the end cap
-			/*
-			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
-			{
-				AddPositionAndNormal(lastPositionsTransformed[i], currSeg);
-				if (_crossSection.IsVertexSharp(i))
-				{
-					++j;
-					AddPositionAndNormal(lastPositionsTransformed[i], currSeg);
-				}
-
-				// note that the triangle index of the midpoint refers to the midpoint that is added only after this loop and thus it not existing now
-				AddIndices(
-				currIndex + j,
-				currIndex + crossSectionNormalCount, // mid point of the end cap
-				currIndex + (1 + j) % crossSectionNormalCount,
-				false);
-			}
-
-			currIndex += crossSectionNormalCount;
-
-			// add the middle point of the end cap and the normal of the end cap
-			AddPositionAndNormal(currentItem.Item1, currSeg);
-
-			++currIndex;
-			*/
 
 			vertexIndexOffset = currIndex;
 		}

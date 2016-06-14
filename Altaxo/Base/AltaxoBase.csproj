@@ -228,6 +228,7 @@
     <Compile Include="Data\TableDataSourceBase.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Ellipsoidal.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Octagonal.cs" />
+    <Compile Include="Drawing\D3D\CrossSections\Triangular.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Rectangular.cs" />
     <Compile Include="Drawing\D3D\DashPatterns\Custom.cs" />
     <Compile Include="Drawing\D3D\DashPatterns\DashDotDot.cs" />
@@ -251,8 +252,10 @@
     <Compile Include="Drawing\D3D\SolidStraightLine.cs" />
     <Compile Include="Drawing\D3D\SolidPolyline.cs" />
     <Compile Include="Drawing\D3D\DashPatterns\DashPatternBase.cs" />
+    <Compile Include="Drawing\D3D\SolidPolylineDashSegment.cs" />
     <Compile Include="Drawing\D3D\SolidStraightLineDashSegment.cs" />
     <Compile Include="Geometry\IPolygonD2D.cs" />
+    <Compile Include="Geometry\Matrix2x2.cs" />
     <Compile Include="Geometry\SharpPolylineD3D.cs" />
     <Compile Include="Geometry\Matrix3x3.cs" />
     <Compile Include="Geometry\Matrix4x4.cs" />

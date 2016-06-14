@@ -236,6 +236,23 @@ namespace Altaxo.Geometry
 
 		#endregion Operators
 
+		#region Other calculations
+
+		/// <summary>
+		/// Interpolates between the points <paramref name="p0"/> and <paramref name="p1"/>.
+		/// </summary>
+		/// <param name="p0">The first point.</param>
+		/// <param name="p1">The second point.</param>
+		/// <param name="r">Relative way between <paramref name="p0"/> and <paramref name="p1"/> (0..1).</param>
+		/// <returns>Interpolation between <paramref name="p0"/> and <paramref name="p1"/>. The return value is <paramref name="p0"/> if <paramref name="r"/> is 0. The return value is <paramref name="p1"/>  if <paramref name="r"/> is 1.  </returns>
+		public static PointD3D Interpolate(PointD3D p0, PointD3D p1, double r)
+		{
+			double or = 1 - r;
+			return new PointD3D(or * p0.X + r * p1.X, or * p0.Y + r * p1.Y, or * p0.Z + r * p1.Z);
+		}
+
+		#endregion Other calculations
+
 		public override bool Equals(object obj)
 		{
 			if (obj is PointD3D)

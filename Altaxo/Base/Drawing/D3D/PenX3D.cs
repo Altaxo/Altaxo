@@ -292,6 +292,14 @@ namespace Altaxo.Drawing.D3D
 
 		#region Line Join
 
+		public PenLineJoin LineJoin
+		{
+			get
+			{
+				return _lineJoin;
+			}
+		}
+
 		public PenX3D WithLineJoin(PenLineJoin lineJoin)
 		{
 			if (!(lineJoin == _lineJoin))
@@ -303,6 +311,14 @@ namespace Altaxo.Drawing.D3D
 			else
 			{
 				return this;
+			}
+		}
+
+		public double MiterLimit
+		{
+			get
+			{
+				return _miterLimit;
 			}
 		}
 
