@@ -49,24 +49,21 @@ namespace Altaxo.Drawing.D3D
 		private PenLineJoin _lineJoin;
 		private double _miterLimit;
 
-		private VectorD3D _startWestVector;
-		private VectorD3D _startNorthVector;
-
 		// operational variables, i.e. variables evaluated during one call to draw
 
 		/// <summary>The real start of the line, taking into account the cap's inset.</summary>
-		private VectorD3D _startCapForwardVector;
-
 		private PointD3D _startCapBase;
+
 		private VectorD3D _startCapWest;
 		private VectorD3D _startCapNorth;
+		private VectorD3D _startCapForwardVector;
 
 		/// <summary>The real end of the line, taking into account the cap's inset.</summary>
-		private VectorD3D _endCapForwardVector;
-
 		private PointD3D _endCapBase;
+
 		private VectorD3D _endCapWest;
 		private VectorD3D _endCapNorth;
+		private VectorD3D _endCapForwardVector;
 
 		// local variables, i.e. variables that change with every dash segment
 
@@ -74,12 +71,23 @@ namespace Altaxo.Drawing.D3D
 
 		private object _endCapTemporaryStorageSpace;
 
-		private PointD3D[] lastPositionsTransformedBegCurr;
-		private PointD3D[] lastPositionsTransformedEndCurr;
-		private PointD3D[] lastPositionsTransformedBegNext;
-		private VectorD3D[] lastNormalsTransformedCurr;
-		private VectorD3D[] lastNormalsTransformedNext;
-		private VectorD2D[] crossSectionRotatedVertices;
+		/// <summary>Transformed positions for the start of the current segment.</summary>
+		private PointD3D[] _positionsTransformedStartCurrent;
+
+		/// <summary>Transformed positions for the end of the current segment.</summary>
+		private PointD3D[] _positionsTransformedEndCurrent;
+
+		/// <summary>Transformed positions for the start of the next segment.</summary>
+		private PointD3D[] _positionsTransformedStartNext;
+
+		/// <summary>Transformed normals for the current segment.</summary>
+		private VectorD3D[] _normalsTransformedCurrent;
+
+		/// <summary>Transformed normals for the next segment.</summary>
+		private VectorD3D[] _normalsTransformedNext;
+
+		/// <summary>Cross section positions rotated in such a way that the point of the current joint is in x-direction of the rotated vertices.</summary>
+		private VectorD2D[] _crossSectionRotatedVertices;
 
 		/// <summary>
 		/// Initialization that is needed only once per straigth line (not once per dash).
@@ -122,12 +130,12 @@ namespace Altaxo.Drawing.D3D
 			this._dashEndCap = endCap;
 			this._dashEndCapBaseInsetAbsolute = null == _dashEndCap ? 0 : _dashEndCap.GetAbsoluteBaseInset(thickness1, thickness2);
 
-			lastPositionsTransformedBegCurr = new PointD3D[_crossSectionVertexCount];
-			lastPositionsTransformedEndCurr = new PointD3D[_crossSectionVertexCount];
-			lastPositionsTransformedBegNext = new PointD3D[_crossSectionVertexCount];
-			lastNormalsTransformedCurr = new VectorD3D[_crossSectionNormalCount];
-			lastNormalsTransformedNext = new VectorD3D[_crossSectionNormalCount];
-			crossSectionRotatedVertices = new VectorD2D[_crossSectionVertexCount];
+			_positionsTransformedStartCurrent = new PointD3D[_crossSectionVertexCount];
+			_positionsTransformedEndCurrent = new PointD3D[_crossSectionVertexCount];
+			_positionsTransformedStartNext = new PointD3D[_crossSectionVertexCount];
+			_normalsTransformedCurrent = new VectorD3D[_crossSectionNormalCount];
+			_normalsTransformedNext = new VectorD3D[_crossSectionNormalCount];
+			_crossSectionRotatedVertices = new VectorD2D[_crossSectionVertexCount];
 		}
 
 		private double FindStartIndexOfPolylineWithCapInsetAbsolute(IList<PointD3D> polylinePoints, double capInsetAbsolute, out PointD3D capBase, out VectorD3D capVector)
@@ -258,16 +266,21 @@ namespace Altaxo.Drawing.D3D
 					yield return new Tuple<PointD3D, VectorD3D, VectorD3D>(newPoint, nextItem.Item2, nextItem.Item3);
 					yield break;
 				}
+				else
+				{
+					yield return nextItem;
+				}
 			}
 
 			for (; i < endIndexInt; ++i)
 			{
-				yield return en.Current;
 				en.MoveNext();
+				yield return en.Current;
 			}
 
 			if (endIndexFrac != 0)
 			{
+				en.MoveNext();
 				var nextItem = en.Current;
 				var newPoint = PointD3D.Interpolate(currItem.Item1, nextItem.Item1, endIndexFrac);
 				yield return new Tuple<PointD3D, VectorD3D, VectorD3D>(newPoint, nextItem.Item2, nextItem.Item3);
@@ -279,10 +292,12 @@ namespace Altaxo.Drawing.D3D
 		Action<int, int, int, bool> AddIndices,
 		ref int vertexIndexOffset,
 		IList<PointD3D> polylinePoints,
+		VectorD3D westVector,
+		VectorD3D northVector,
 		ILineCap overrideStartCap,
 		ILineCap overrideEndCap)
 		{
-			if (null == lastNormalsTransformedCurr)
+			if (null == _normalsTransformedCurrent)
 				throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
 
 			double startIndexOfPolyline = 0;
@@ -307,7 +322,7 @@ namespace Altaxo.Drawing.D3D
 			AddGeometry(AddPositionAndNormal,
 				AddIndices,
 				ref vertexIndexOffset,
-				GetPolylineWithFractionalStartAndEndIndex(polylinePoints, _startWestVector, _startNorthVector, startIndexOfPolyline, endIndexOfPolyline),
+				GetPolylineWithFractionalStartAndEndIndex(polylinePoints, westVector, northVector, startIndexOfPolyline, endIndexOfPolyline),
 				!double.IsNaN(startIndexOfPolyline) && !double.IsNaN(endIndexOfPolyline),
 				overrideStartCap,
 				overrideEndCap);
@@ -335,7 +350,7 @@ namespace Altaxo.Drawing.D3D
 			ILineCap overrideEndCap
 			)
 		{
-			if (null == lastNormalsTransformedCurr)
+			if (null == _normalsTransformedCurrent)
 				throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
 
 			var resultingStartCap = overrideStartCap ?? _dashStartCap;
@@ -372,6 +387,7 @@ namespace Altaxo.Drawing.D3D
 			}
 			else if (drawLine)
 			{
+				/*
 				LineCaps.Flat.AddGeometry(
 					AddPositionAndNormal,
 					AddIndices,
@@ -381,6 +397,21 @@ namespace Altaxo.Drawing.D3D
 					_startCapForwardVector,
 					null
 					);
+				*/
+
+				LineCaps.Flat.Instance.AddGeometry(
+				AddPositionAndNormal,
+				AddIndices,
+				ref vertexIndexOffset,
+				true,
+				_startCapBase,
+				_startCapWest,
+				_startCapNorth,
+				_startCapForwardVector,
+				_crossSection,
+				null,
+				null,
+				ref _startCapTemporaryStorageSpace);
 			}
 
 			if (null != resultingEndCap)
@@ -401,6 +432,7 @@ namespace Altaxo.Drawing.D3D
 			}
 			else if (drawLine)
 			{
+				/*
 				LineCaps.Flat.AddGeometry(
 					AddPositionAndNormal,
 					AddIndices,
@@ -410,6 +442,21 @@ namespace Altaxo.Drawing.D3D
 					_endCapForwardVector,
 					null
 					);
+				*/
+
+				LineCaps.Flat.Instance.AddGeometry(
+					AddPositionAndNormal,
+					AddIndices,
+					ref vertexIndexOffset,
+					false,
+					_endCapBase,
+					_endCapWest,
+					_endCapNorth,
+					_endCapForwardVector,
+					_crossSection,
+					null,
+					null,
+					ref _endCapTemporaryStorageSpace);
 			}
 		}
 
@@ -427,41 +474,30 @@ namespace Altaxo.Drawing.D3D
 			PointD3D tp; // transformed position
 			VectorD3D tn; // transformed normal
 
-			/*
-			PointD3D[] lastPositionsTransformedBegCurr = new PointD3D[crossSectionVertexCount];
-			PointD3D[] lastPositionsTransformedEndCurr = new PointD3D[crossSectionVertexCount];
-			PointD3D[] lastPositionsTransformedBegNext = new PointD3D[crossSectionVertexCount];
-			VectorD3D[] lastNormalsTransformedCurr = new VectorD3D[crossSectionNormalCount];
-			VectorD3D[] lastNormalsTransformedNext = new VectorD3D[crossSectionNormalCount];
-			VectorD2D[] crossSectionRotatedVertices = new VectorD2D[crossSectionVertexCount];
-			*/
-
 			int currIndex = vertexIndexOffset;
 
 			var polylineEnumerator = polylinePoints.GetEnumerator();
 			if (!polylineEnumerator.MoveNext())
 				return; // there is nothing to draw here, because no points are in this line
 
-			var pitem = polylineEnumerator.Current;
-			_startCapBase = pitem.Item1;
-			_startCapWest = pitem.Item2;
-			_startNorthVector = pitem.Item3;
-
-			var previousPolylinePoint = pitem.Item1;
-			var westVector = pitem.Item2;
-			var northVector = pitem.Item3;
+			var veryFirstItem = polylineEnumerator.Current;
 
 			if (!polylineEnumerator.MoveNext())
 				return; // there is nothing to draw here, because there is only one point in this line
 
 			var currentItem = polylineEnumerator.Current;
-			VectorD3D currSeg = (currentItem.Item1 - previousPolylinePoint).Normalized;
+			VectorD3D currSeg = (currentItem.Item1 - veryFirstItem.Item1).Normalized;
+
+			_startCapBase = veryFirstItem.Item1;
+			_startCapWest = veryFirstItem.Item2;
+			_startCapNorth = veryFirstItem.Item3;
+			_startCapForwardVector = currSeg;
 
 			// Get the matrix for the start plane
-			var matrixCurr = Math3D.Get2DProjectionToPlane(westVector, northVector, previousPolylinePoint);
+			var matrixCurr = Math3D.Get2DProjectionToPlane(veryFirstItem.Item2, veryFirstItem.Item3, veryFirstItem.Item1);
 
 			// add the middle point of the start plane
-			AddPositionAndNormal(previousPolylinePoint, -currSeg);
+			AddPositionAndNormal(veryFirstItem.Item1, -currSeg);
 			currIndex += 1;
 
 			// add the points of the cross section for the start cap
@@ -469,7 +505,7 @@ namespace Altaxo.Drawing.D3D
 			// but if the cap is pointy, then we need as many positions as normals
 			for (int i = 0; i < crossSectionVertexCount; ++i)
 			{
-				lastPositionsTransformedBegCurr[i] = tp = matrixCurr.Transform(_crossSection.Vertices(i));
+				_positionsTransformedStartCurrent[i] = tp = matrixCurr.Transform(_crossSection.Vertices(i));
 				AddPositionAndNormal(tp, -currSeg);
 
 				AddIndices(
@@ -486,12 +522,12 @@ namespace Altaxo.Drawing.D3D
 			// now the positions and normals for the start of the first segment
 			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 			{
-				lastNormalsTransformedCurr[j] = matrixCurr.Transform(_crossSection.Normals(j));
+				_normalsTransformedCurrent[j] = matrixCurr.Transform(_crossSection.Normals(j));
 
 				if (_crossSection.IsVertexSharp(i))
 				{
 					++j;
-					lastNormalsTransformedCurr[j] = matrixCurr.Transform(_crossSection.Normals(j));
+					_normalsTransformedCurrent[j] = matrixCurr.Transform(_crossSection.Normals(j));
 				}
 			}
 
@@ -505,12 +541,12 @@ namespace Altaxo.Drawing.D3D
 				var matrixNext = Math3D.Get2DProjectionToPlane(nextItem.Item2, nextItem.Item3, currentItem.Item1);
 				for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 				{
-					lastNormalsTransformedNext[j] = matrixNext.Transform(_crossSection.Normals(j));
+					_normalsTransformedNext[j] = matrixNext.Transform(_crossSection.Normals(j));
 
 					if (_crossSection.IsVertexSharp(i))
 					{
 						++j;
-						lastNormalsTransformedNext[j] = matrixNext.Transform(_crossSection.Normals(j));
+						_normalsTransformedNext[j] = matrixNext.Transform(_crossSection.Normals(j));
 					}
 				}
 
@@ -525,12 +561,12 @@ namespace Altaxo.Drawing.D3D
 				// now get the matrix for transforming the cross sections positions
 				var matrixSymmetryPlane = Math3D.Get2DProjectionToPlaneToPlane(currentItem.Item2, currentItem.Item3, currSeg, currentItem.Item1, symmetryPlaneNormal);
 
-				if (true) // Bevel
+				if (false) // Bevel
 				{
 					// Calculate bevel plane
 					VectorD3D reflectionPlaneNormal = (currSeg - nextSeg).Normalized;
-					var dot_w = VectorD3D.DotProduct(westVector, reflectionPlaneNormal);
-					var dot_n = VectorD3D.DotProduct(northVector, reflectionPlaneNormal);
+					var dot_w = VectorD3D.DotProduct(currentItem.Item2, reflectionPlaneNormal);
+					var dot_n = VectorD3D.DotProduct(currentItem.Item3, reflectionPlaneNormal);
 					var det = Calc.RMath.Hypot(dot_w, dot_n);
 					dot_w /= det;
 					dot_n /= det;
@@ -538,18 +574,18 @@ namespace Altaxo.Drawing.D3D
 					double maxheight = 0;
 					for (int i = 0; i < crossSectionVertexCount; ++i)
 					{
-						crossSectionRotatedVertices[i] = crossSectionRotationMatrix.Transform((VectorD2D)_crossSection.Vertices(i));
-						maxheight = Math.Max(maxheight, crossSectionRotatedVertices[i].X);
+						_crossSectionRotatedVertices[i] = crossSectionRotationMatrix.Transform((VectorD2D)_crossSection.Vertices(i));
+						maxheight = Math.Max(maxheight, _crossSectionRotatedVertices[i].X);
 					}
 					var alphaBy2 = 0.5 * (Math.PI - Math.Acos(dot_curr_next)); // half of the angle between current segment and next segment
 					var heightOfBevelPlane = maxheight * Math.Sin(alphaBy2); // height of the bevel plane above the segment middle lines
 					var height = heightOfBevelPlane * Math.Sin(alphaBy2); // height as x-coordinate of the rotated cross section
 
-					bool previousPointIsAboveHeight = crossSectionRotatedVertices[crossSectionVertexCount - 1].X > height;
+					bool previousPointIsAboveHeight = _crossSectionRotatedVertices[crossSectionVertexCount - 1].X > height;
 					int firstIndexOfBevelVertex = -1;
 					for (int i = 0; i < crossSectionVertexCount; ++i)
 					{
-						bool currentPointIsAboveHeight = crossSectionRotatedVertices[i].X > height;
+						bool currentPointIsAboveHeight = _crossSectionRotatedVertices[i].X > height;
 						if (currentPointIsAboveHeight && !previousPointIsAboveHeight)
 						{
 							firstIndexOfBevelVertex = i;
@@ -569,15 +605,15 @@ namespace Altaxo.Drawing.D3D
 					{
 						tp = matrixSymmetryPlane.Transform(_crossSection.Vertices(i));
 						// decide whether the transformed point is above or below the bevel plane
-						if (crossSectionRotatedVertices[i].X >= height)
+						if (_crossSectionRotatedVertices[i].X >= height)
 						{
 							// then the point is above the bevel plane; we need to project it to the bevel plane
-							lastPositionsTransformedEndCurr[i] = bevelMatrix1.Transform(tp);
-							lastPositionsTransformedBegNext[i] = bevelMatrix2.Transform(tp);
+							_positionsTransformedEndCurrent[i] = bevelMatrix1.Transform(tp);
+							_positionsTransformedStartNext[i] = bevelMatrix2.Transform(tp);
 						}
 						else
 						{
-							lastPositionsTransformedEndCurr[i] = lastPositionsTransformedBegNext[i] = tp;
+							_positionsTransformedEndCurrent[i] = _positionsTransformedStartNext[i] = tp;
 						}
 					}
 
@@ -597,9 +633,9 @@ namespace Altaxo.Drawing.D3D
 							for (i = currentFirstIndexOfBevelVertex; i < currentFirstIndexOfBevelVertex + crossSectionVertexCount; ++i)
 							{
 								icurr = (i) % crossSectionVertexCount;
-								if (crossSectionRotatedVertices[icurr].X > height)
+								if (_crossSectionRotatedVertices[icurr].X > height)
 								{
-									AddPositionAndNormal(lastPositionsTransformedEndCurr[icurr], reflectionPlaneNormal);
+									AddPositionAndNormal(_positionsTransformedEndCurrent[icurr], reflectionPlaneNormal);
 									++currIndex;
 									++pointsInThisMesh;
 									if (pointsInThisMesh >= 2)
@@ -613,7 +649,7 @@ namespace Altaxo.Drawing.D3D
 							startSearchForNextBevelVertex = icurr;
 
 							int iprev = (i - 1 + crossSectionVertexCount) % crossSectionVertexCount;
-							double r = (height - crossSectionRotatedVertices[iprev].X) / (crossSectionRotatedVertices[icurr].X - crossSectionRotatedVertices[iprev].X);
+							double r = (height - _crossSectionRotatedVertices[iprev].X) / (_crossSectionRotatedVertices[icurr].X - _crossSectionRotatedVertices[iprev].X);
 							if (!(0 <= r && r <= 1))
 								throw new InvalidProgramException("r should always be >=0 and <=1, so what's going wrong here?");
 
@@ -628,20 +664,19 @@ namespace Altaxo.Drawing.D3D
 							for (i = i - 1; i >= currentFirstIndexOfBevelVertex; --i)
 							{
 								icurr = (i) % crossSectionVertexCount;
-								AddPositionAndNormal(lastPositionsTransformedBegNext[icurr], reflectionPlaneNormal);
+								AddPositionAndNormal(_positionsTransformedStartNext[icurr], reflectionPlaneNormal);
 								++currIndex;
 								AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
 							}
 
 							iprev = icurr;
 							icurr = (i + crossSectionVertexCount) % crossSectionVertexCount;
-							r = (height - crossSectionRotatedVertices[iprev].X) / (crossSectionRotatedVertices[icurr].X - crossSectionRotatedVertices[iprev].X);
+							r = (height - _crossSectionRotatedVertices[iprev].X) / (_crossSectionRotatedVertices[icurr].X - _crossSectionRotatedVertices[iprev].X);
 							if (!(0 <= r && r <= 1))
 								throw new InvalidProgramException("r should always be >=0 and <=1, so what's going wrong here?");
 
 							additionalCrossSectionVertex = (1 - r) * _crossSection.Vertices(iprev) + r * _crossSection.Vertices(icurr);
 							tp = matrixSymmetryPlane.Transform(additionalCrossSectionVertex);
-							//tp = bevelMatrix1.Transform(tp);
 							AddPositionAndNormal(tp, reflectionPlaneNormal);
 							++currIndex;
 							AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
@@ -654,7 +689,7 @@ namespace Altaxo.Drawing.D3D
 							for (i = startSearchForNextBevelVertex; i < startSearchForNextBevelVertex + crossSectionVertexCount; ++i)
 							{
 								icurr = i % crossSectionVertexCount;
-								bool currentPointIsAboveHeight = crossSectionRotatedVertices[icurr].X > height;
+								bool currentPointIsAboveHeight = _crossSectionRotatedVertices[icurr].X > height;
 								if (currentPointIsAboveHeight && !previousPointIsAboveHeight)
 								{
 									currentFirstIndexOfBevelVertex = icurr;
@@ -675,10 +710,10 @@ namespace Altaxo.Drawing.D3D
 						int inext = (i + 1) % crossSectionVertexCount;
 						int jnext = (j + 1) % crossSectionNormalCount;
 
-						if ((crossSectionRotatedVertices[i].X > height && crossSectionRotatedVertices[inext].X <= height) ||
-							(crossSectionRotatedVertices[i].X <= height && crossSectionRotatedVertices[inext].X > height))
+						if ((_crossSectionRotatedVertices[i].X > height && _crossSectionRotatedVertices[inext].X <= height) ||
+							(_crossSectionRotatedVertices[i].X <= height && _crossSectionRotatedVertices[inext].X > height))
 						{
-							double r = (height - crossSectionRotatedVertices[i].X) / (crossSectionRotatedVertices[inext].X - crossSectionRotatedVertices[i].X);
+							double r = (height - _crossSectionRotatedVertices[i].X) / (_crossSectionRotatedVertices[inext].X - _crossSectionRotatedVertices[i].X);
 							if (!(0 <= r && r <= 1))
 								throw new InvalidProgramException("r should always be >=0 and <=1, so what's going wrong here?");
 
@@ -690,18 +725,18 @@ namespace Altaxo.Drawing.D3D
 
 							AddPositionAndNormal(tp, tn);
 							++currIndex;
-							AddPositionAndNormal(lastPositionsTransformedEndCurr[i], lastNormalsTransformedCurr[j]);
+							AddPositionAndNormal(_positionsTransformedEndCurrent[i], _normalsTransformedCurrent[j]);
 							++currIndex;
-							AddPositionAndNormal(lastPositionsTransformedEndCurr[inext], lastNormalsTransformedCurr[jnext]);
+							AddPositionAndNormal(_positionsTransformedEndCurrent[inext], _normalsTransformedCurrent[jnext]);
 							++currIndex;
 							AddIndices(currIndex - 1, currIndex - 2, currIndex - 3, true);
 
 							tn = matrixNext.Transform(additionalCrossSectionNormal);
 							AddPositionAndNormal(tp, tn);
 							++currIndex;
-							AddPositionAndNormal(lastPositionsTransformedBegNext[i], lastNormalsTransformedNext[j]);
+							AddPositionAndNormal(_positionsTransformedStartNext[i], _normalsTransformedNext[j]);
 							++currIndex;
-							AddPositionAndNormal(lastPositionsTransformedBegNext[inext], lastNormalsTransformedNext[jnext]);
+							AddPositionAndNormal(_positionsTransformedStartNext[inext], _normalsTransformedNext[jnext]);
 							++currIndex;
 							AddIndices(currIndex - 1, currIndex - 2, currIndex - 3, false);
 						}
@@ -712,7 +747,7 @@ namespace Altaxo.Drawing.D3D
 					// Calculate the positions of the end of the current segment
 					for (int i = 0; i < crossSectionVertexCount; ++i)
 					{
-						lastPositionsTransformedEndCurr[i] = lastPositionsTransformedBegNext[i] = matrixSymmetryPlane.Transform(_crossSection.Vertices(i));
+						_positionsTransformedEndCurrent[i] = _positionsTransformedStartNext[i] = matrixSymmetryPlane.Transform(_crossSection.Vertices(i));
 					}
 				}
 
@@ -730,29 +765,29 @@ namespace Altaxo.Drawing.D3D
 						AddIndices(currIndex - 2, currIndex + 1, currIndex - 1, false);
 					}
 
-					AddPositionAndNormal(lastPositionsTransformedBegCurr[i], lastNormalsTransformedCurr[j]);
-					AddPositionAndNormal(lastPositionsTransformedEndCurr[i], lastNormalsTransformedCurr[j]);
+					AddPositionAndNormal(_positionsTransformedStartCurrent[i], _normalsTransformedCurrent[j]);
+					AddPositionAndNormal(_positionsTransformedEndCurrent[i], _normalsTransformedCurrent[j]);
 					currIndex += 2;
 
 					if (_crossSection.IsVertexSharp(i))
 					{
 						++j;
-						AddPositionAndNormal(lastPositionsTransformedBegCurr[i], lastNormalsTransformedCurr[j]);
-						AddPositionAndNormal(lastPositionsTransformedEndCurr[i], lastNormalsTransformedCurr[j]);
+						AddPositionAndNormal(_positionsTransformedStartCurrent[i], _normalsTransformedCurrent[j]);
+						AddPositionAndNormal(_positionsTransformedEndCurrent[i], _normalsTransformedCurrent[j]);
 						currIndex += 2;
 					}
 				}
 				// previous segment is done now
 
 				// switch lastPositionsTransformed - the positions of the end of the previous segment are then the positions of the start of the new segment
-				var h = lastPositionsTransformedBegCurr;
-				lastPositionsTransformedBegCurr = lastPositionsTransformedBegNext;
-				lastPositionsTransformedBegNext = h;
+				var h = _positionsTransformedStartCurrent;
+				_positionsTransformedStartCurrent = _positionsTransformedStartNext;
+				_positionsTransformedStartNext = h;
 
 				// switch normals
-				var v = lastNormalsTransformedCurr;
-				lastNormalsTransformedCurr = lastNormalsTransformedNext;
-				lastNormalsTransformedNext = v;
+				var v = _normalsTransformedCurrent;
+				_normalsTransformedCurrent = _normalsTransformedNext;
+				_normalsTransformedNext = v;
 
 				currentItem = nextItem;
 				currSeg = nextSeg;
@@ -765,10 +800,12 @@ namespace Altaxo.Drawing.D3D
 			_endCapBase = currentItem.Item1;
 			_endCapWest = currentItem.Item2;
 			_endCapNorth = currentItem.Item3;
+			_endCapForwardVector = currSeg;
+
 			matrixCurr = Math3D.Get2DProjectionToPlane(currentItem.Item2, currentItem.Item3, currentItem.Item1);
 			for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
 			{
-				lastPositionsTransformedEndCurr[i] = tp = matrixCurr.Transform(_crossSection.Vertices(i));
+				_positionsTransformedEndCurrent[i] = tp = matrixCurr.Transform(_crossSection.Vertices(i));
 			}
 
 			// draw the end line segment now
@@ -785,15 +822,15 @@ namespace Altaxo.Drawing.D3D
 					AddIndices(currIndex - 2, currIndex + 1, currIndex - 1, false);
 				}
 
-				AddPositionAndNormal(lastPositionsTransformedBegCurr[i], lastNormalsTransformedCurr[j]);
-				AddPositionAndNormal(lastPositionsTransformedEndCurr[i], lastNormalsTransformedCurr[j]);
+				AddPositionAndNormal(_positionsTransformedStartCurrent[i], _normalsTransformedCurrent[j]);
+				AddPositionAndNormal(_positionsTransformedEndCurrent[i], _normalsTransformedCurrent[j]);
 				currIndex += 2;
 
 				if (_crossSection.IsVertexSharp(i))
 				{
 					++j;
-					AddPositionAndNormal(lastPositionsTransformedBegCurr[i], lastNormalsTransformedCurr[j]);
-					AddPositionAndNormal(lastPositionsTransformedEndCurr[i], lastNormalsTransformedCurr[j]);
+					AddPositionAndNormal(_positionsTransformedStartCurrent[i], _normalsTransformedCurrent[j]);
+					AddPositionAndNormal(_positionsTransformedEndCurrent[i], _normalsTransformedCurrent[j]);
 					currIndex += 2;
 				}
 			}

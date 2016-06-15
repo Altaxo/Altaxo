@@ -80,7 +80,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 				var b = color.ScB;
 				var a = color.ScA;
 
-				SolidPolyline.AddWithNormals(
+				var solidPolyline = new SolidPolyline();
+				solidPolyline.AddWithNormals(
 				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z, r, g, b, a),
 				(i0, i1, i2, isLeftCOS) => buf.AddTriangleIndices(i0, i1, i2, isLeftCOS),
 				ref vertexIndexOffset,
@@ -195,7 +196,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 			if (null != buffers.PositionNormalIndexedTriangleBuffer)
 			{
 				var buf = buffers.PositionNormalIndexedTriangleBuffer;
-				SolidPolyline.AddWithNormals(
+				var solidPolyline = new SolidPolyline();
+				solidPolyline.AddWithNormals(
 				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z),
 				(i0, i1, i2, isLeftCos) => buf.AddTriangleIndices(i0, i1, i2, isLeftCos),
 				ref offset,
@@ -211,7 +213,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 				var b = color.ScB;
 				var a = color.ScA;
 
-				SolidPolyline.AddWithNormals(
+				var solidPolyline = new SolidPolyline();
+				solidPolyline.AddWithNormals(
 				(position, normal) => buf.AddTriangleVertex(position.X, position.Y, position.Z, normal.X, normal.Y, normal.Z, r, g, b, a),
 				(i0, i1, i2, isLeftCos) => buf.AddTriangleIndices(i0, i1, i2, isLeftCos),
 				ref offset,

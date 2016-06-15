@@ -34,7 +34,7 @@ namespace Altaxo.Drawing.D3D
 	/// <summary>
 	/// Represents the solid geometry of a polyline in 3D space.
 	/// </summary>
-	public class SolidPolyline
+	public struct SolidPolyline
 	{
 		private static readonly VectorD3D _xVector = new VectorD3D(1, 0, 0);
 		private static readonly VectorD3D _yVector = new VectorD3D(0, 1, 0);
@@ -51,11 +51,23 @@ namespace Altaxo.Drawing.D3D
 		public VectorD3D EndNorthVector { get { return _endNorthVector; } }
 		public VectorD3D EndAdvanceVector { get { return _endAdvanceVector; } }
 
-		public SolidPolyline(ICrossSectionOfLine cross, IList<PointD3D> linePoints)
-		{
-			_crossSection = cross;
+		private SolidPolylineDashSegment _dashSegment;
 
-			this._linePoints = linePoints;
+		public void AddWithNormals(
+		Action<PointD3D, VectorD3D> AddPositionAndNormal,
+		Action<int, int, int, bool> AddIndices,
+		ref int vertexIndexOffset,
+		PenX3D pen,
+		IList<PointD3D> polylinePoints
+		)
+		{
+			if (pen.DashPattern == null)
+			{
+				// draw without a dash pattern - we consider the whole line as one dash segment, but instead of dash caps, with line caps
+				_dashSegment.Initialize(pen.CrossSection, pen.Thickness1, pen.Thickness2, pen.LineJoin, pen.MiterLimit, pen.LineStartCap, pen.LineEndCap);
+				var westNorth = Math3D.GetWestNorthVectorAtStart(polylinePoints);
+				_dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, polylinePoints, westNorth.Item1, westNorth.Item2, null, null);
+			}
 		}
 
 		public void Add(Action<PointD3D> AddPosition, Action<int, int, int> AddIndices, int startIndex)
@@ -125,8 +137,8 @@ namespace Altaxo.Drawing.D3D
 
 				// mirror the north vector on the midPlane
 				currSeg = nextSeg;
-				w = Math3D.GetMirroredVectorAtPlane(w, midPlaneNormal);
-				w = Math3D.GetOrthonormalVectorToVector(w, currSeg); // make the north vector orthogonal (it should be already, but this corrects small deviations)
+				w = Math3D.GetVectorSymmetricalToVector(w, midPlaneNormal);
+				w = Math3D.GetNormalizedVectorOrthogonalToVector(w, currSeg); // make the north vector orthogonal (it should be already, but this corrects small deviations)
 				n = VectorD3D.CrossProduct(w, currSeg);
 			}
 
@@ -167,7 +179,7 @@ namespace Altaxo.Drawing.D3D
 			_endAdvanceVector = currSeg.Normalized;
 		}
 
-		public static void AddWithNormals(
+		public static void AddWithNormalsOld(
 			Action<PointD3D, VectorD3D> AddPositionAndNormal,
 			Action<int, int, int, bool> AddIndices,
 			ref int vertexIndexOffset,

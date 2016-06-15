@@ -638,7 +638,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 			if ((VectorD3D.CrossProduct(toEyeVector, cameraUpVector).IsEmpty))
 				throw new ArgumentOutOfRangeException(nameof(cameraUpVector) + " is either empty or is parallel to the eyeVector");
 
-			var upVector = Math3D.GetOrthonormalVectorToVector(cameraUpVector, toEyeVector);
+			var upVector = Math3D.GetNormalizedVectorOrthogonalToVector(cameraUpVector, toEyeVector);
 			var targetPosition = (PointD3D)(0.5 * Doc.RootLayer.Size);
 			var cameraDistance = 10 * Doc.RootLayer.Size.Length;
 			var eyePosition = cameraDistance * toEyeVector.Normalized + targetPosition;

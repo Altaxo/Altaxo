@@ -307,7 +307,7 @@ namespace Altaxo.Graph.Graph3D.Camera
 		{
 			get
 			{
-				return Math3D.GetOrthonormalVectorToVector(UpVector, EyePosition - TargetPosition);
+				return Math3D.GetNormalizedVectorOrthogonalToVector(UpVector, EyePosition - TargetPosition);
 			}
 		}
 

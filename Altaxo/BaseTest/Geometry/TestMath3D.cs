@@ -138,6 +138,40 @@ namespace Altaxo.Geometry
 			new TD( new PointD3D(7, 17, 11), new VectorD3D(-1,0,0), new VectorD3D(0,0,1))
 		};
 
+		// Test 07: Straight line in x-direction, then in x-y-z direction, then again straight in x-direction
+		private static PointD3D[] _input07 = new PointD3D[]
+		{
+			new PointD3D(-100, 0, 0),
+			new PointD3D(0, 0, 0),
+			new PointD3D(100, 100, 100),
+			new PointD3D(200, 100, 100)
+		};
+
+		private static TD[] _output07 = new TD[]
+	{
+			new TD( new PointD3D(-100, 0, 0), new VectorD3D(0,1,0), new VectorD3D(0,0,1)),
+			new TD( new PointD3D(0, 0, 0), new VectorD3D(0,1,0), new VectorD3D(0,0,1)),
+			new TD( new PointD3D(100, 100, 100), new VectorD3D(-0.5773502691896258,0.7886751345948129,-0.2113248654051871), new VectorD3D(-0.5773502691896258,-0.2113248654051871,0.7886751345948129)),
+			new TD( new PointD3D(200, 100, 100), new VectorD3D(0,1,0), new VectorD3D(0,0,1))
+	};
+
+		// Test 0^8: Straight line in x-direction, then in reverse x  direction, then again straight in x-direction
+		private static PointD3D[] _input08 = new PointD3D[]
+		{
+			new PointD3D(0, 0, 0),
+			new PointD3D(100, 0, 0),
+			new PointD3D(50, 0, 0),
+			new PointD3D(100, 0, 0)
+		};
+
+		private static TD[] _output08 = new TD[]
+	{
+			new TD( new PointD3D(0, 0, 0), new VectorD3D(0,1,0), new VectorD3D(0,0,1)),
+			new TD( new PointD3D(100, 0, 0), new VectorD3D(0,1,0), new VectorD3D(0,0,1)),
+			new TD( new PointD3D(50, 0, 0), new VectorD3D(0,-1,0), new VectorD3D(0,0,1)),
+			new TD( new PointD3D(100, 0, 0), new VectorD3D(0,1,0), new VectorD3D(0,0,1))
+	};
+
 		private static Tuple<PointD3D[], TD[]>[] _testCases = new Tuple<PointD3D[], TD[]>[]
 		{
 			new Tuple<PointD3D[], TD[]>(_input00, _output00),
@@ -147,6 +181,8 @@ namespace Altaxo.Geometry
 			new Tuple<PointD3D[], TD[]>(_input04, _output04),
 			new Tuple<PointD3D[], TD[]>(_input05, _output05),
 			new Tuple<PointD3D[], TD[]>(_input06, _output06),
+			new Tuple<PointD3D[], TD[]>(_input07, _output07),
+			new Tuple<PointD3D[], TD[]>(_input08, _output08),
 		};
 
 		[Test]
@@ -165,15 +201,17 @@ namespace Altaxo.Geometry
 
 				for (int i = 0; i < expectedOutput.Length; ++i)
 				{
-					Assert.AreEqual(expectedOutput[i].Item1, result[i].Item1);
+					string comment = string.Format("In case no. {0}, i={1}", caseNo, i);
 
-					Assert.AreEqual(expectedOutput[i].Item2.X, result[i].Item2.X, maxDev);
-					Assert.AreEqual(expectedOutput[i].Item2.Y, result[i].Item2.Y, maxDev);
-					Assert.AreEqual(expectedOutput[i].Item2.Z, result[i].Item2.Z, maxDev);
+					Assert.AreEqual(expectedOutput[i].Item1, result[i].Item1, comment);
 
-					Assert.AreEqual(expectedOutput[i].Item3.X, result[i].Item3.X, maxDev);
-					Assert.AreEqual(expectedOutput[i].Item3.Y, result[i].Item3.Y, maxDev);
-					Assert.AreEqual(expectedOutput[i].Item3.Z, result[i].Item3.Z, maxDev);
+					Assert.AreEqual(expectedOutput[i].Item2.X, result[i].Item2.X, maxDev, comment);
+					Assert.AreEqual(expectedOutput[i].Item2.Y, result[i].Item2.Y, maxDev, comment);
+					Assert.AreEqual(expectedOutput[i].Item2.Z, result[i].Item2.Z, maxDev, comment);
+
+					Assert.AreEqual(expectedOutput[i].Item3.X, result[i].Item3.X, maxDev, comment);
+					Assert.AreEqual(expectedOutput[i].Item3.Y, result[i].Item3.Y, maxDev, comment);
+					Assert.AreEqual(expectedOutput[i].Item3.Z, result[i].Item3.Z, maxDev, comment);
 				}
 			}
 		}

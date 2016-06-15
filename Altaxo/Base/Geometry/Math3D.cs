@@ -32,29 +32,31 @@ namespace Altaxo.Geometry
 	public static class Math3D
 	{
 		/// <summary>
-		/// Calculates a vector, that is the result of a given is a vector n, that is mirrored at a plane given by its normal q. Attention:
-		/// The resulting vector is truely mirrored, i.e. an incident vector is mirrored to an outcoming vector!!!
+		/// Calculates the counterpart of the provided vector <paramref name="n"/>, so that this vector <paramref name="n"/> and it's conterpart are symmetrical,
+		/// with the symmetry line provided by vector <paramref name="q"/>.
 		/// </summary>
-		/// <param name="n">The vector to be mirrored. Is not neccessary to be normalized.</param>
-		/// <param name="q">Normal of a plane where the vector n is mirrored. Is not neccessary to be normalized.</param>
-		/// <returns>The vector which is the result of mirroring the vector n at a plane given by its normal q.</returns>
-		public static VectorD3D GetMirroredVectorAtPlane(VectorD3D n, VectorD3D q)
-		{
-			double two_nq_qq = 2 * VectorD3D.DotProduct(n, q) / VectorD3D.DotProduct(q, q);
-			return new VectorD3D(n.X - q.X * two_nq_qq, n.Y - q.Y * two_nq_qq, n.Z - q.Z * two_nq_qq);
-		}
-
-		/// <summary>
-		/// Calculates a vector, that is the result of a given vector n, that is mirrored at a plane given by its normal q. Attention:
-		/// The resulting vector is symmetrically mirrored, i.e. an incident vector is mirrored to an incident vector, and an outcoming vector is mirrored to an outcoming vector.
-		/// </summary>
-		/// <param name="n">The vector to be mirrored. Is not neccessary to be normalized.</param>
-		/// <param name="q">Normal of a plane where the vector n is mirrored. Is not neccessary to be normalized.</param>
-		/// <returns>The vector which is the result of mirroring the vector n at a plane given by its normal q.</returns>
-		public static VectorD3D GetSymmetricallyMirroredVectorAtPlane(VectorD3D n, VectorD3D q)
+		/// <param name="n">The vector for which to find the symmectrical counterpart. Not required to be normalized.</param>
+		/// <param name="q">Symmetry line.</param>
+		/// <returns>The counterpart of the provided vector <paramref name="n"/>, so that this vector <paramref name="n"/> and it's conterpart are symmetrical,
+		/// with the symmetry line given by vector <paramref name="q"/>.</returns>
+		public static VectorD3D GetVectorSymmetricalToVector(VectorD3D n, VectorD3D q)
 		{
 			double two_nq_qq = 2 * VectorD3D.DotProduct(n, q) / VectorD3D.DotProduct(q, q);
 			return new VectorD3D(q.X * two_nq_qq - n.X, q.Y * two_nq_qq - n.Y, q.Z * two_nq_qq - n.Z);
+		}
+
+		/// <summary>
+		/// Calculates a vector which is symmectrical to the provided vector <paramref name="n"/> with respected to the symmetry plane given by the normal normal <paramref name="q"/>.
+		/// The result is the same as if a ray is reflected on a miiror described by the plane, thus
+		/// an incident vector is resulting in an outcoming vector, and an outcoming vector is resulting in an incident vector.
+		/// </summary>
+		/// <param name="n">The vector for which to find the symmectrical counterpart. Not required to be normalized.</param>
+		/// <param name="q">Normal of a plane where the vector n is mirrored. Not required to be normalized.</param>
+		/// <returns>A vector which is symmectrical to the provided vector <paramref name="n"/> with respected to the symmetry plane given by the normal normal <paramref name="q"/>.</returns>
+		public static VectorD3D GetVectorSymmetricalToPlane(VectorD3D n, VectorD3D q)
+		{
+			double two_nq_qq = 2 * VectorD3D.DotProduct(n, q) / VectorD3D.DotProduct(q, q);
+			return new VectorD3D(n.X - q.X * two_nq_qq, n.Y - q.Y * two_nq_qq, n.Z - q.Z * two_nq_qq);
 		}
 
 		/// <summary>
@@ -63,7 +65,7 @@ namespace Altaxo.Geometry
 		/// <param name="n">Given vector.</param>
 		/// <param name="v">A vector, to which the returned vector should be perpendicular.</param>
 		/// <returns>A new vector n+t*v, so that this vector is orthogonal to v (but not neccessarily normalized).</returns>
-		public static VectorD3D GetOrthogonalVectorToVector(VectorD3D n, VectorD3D v)
+		public static VectorD3D GetVectorOrthogonalToVector(VectorD3D n, VectorD3D v)
 		{
 			double nv_vv = VectorD3D.DotProduct(n, v) / VectorD3D.DotProduct(v, v);
 			return new VectorD3D(n.X - v.X * nv_vv, n.Y - v.Y * nv_vv, n.Z - v.Z * nv_vv);
@@ -76,7 +78,7 @@ namespace Altaxo.Geometry
 		/// <param name="n">Given vector.</param>
 		/// <param name="v">A vector, to which the returned vector should be perpendicular.</param>
 		/// <returns>A new vector n+t*v, so that this vector is orthogonal to v and normalized.</returns>
-		public static VectorD3D GetOrthonormalVectorToVector(VectorD3D n, VectorD3D v)
+		public static VectorD3D GetNormalizedVectorOrthogonalToVector(VectorD3D n, VectorD3D v)
 		{
 			double nv_vv = VectorD3D.DotProduct(n, v) / VectorD3D.DotProduct(v, v);
 			var result = VectorD3D.CreateNormalized(n.X - v.X * nv_vv, n.Y - v.Y * nv_vv, n.Z - v.Z * nv_vv);
@@ -304,26 +306,23 @@ namespace Altaxo.Geometry
 					if (!previousSegment.IsEmpty)
 					{
 						// if there was a previous segment, then calculate the new west and north vectors
-						VectorD3D midPlaneNormal = 0.5 * (currentSegment - previousSegment);
-						double dot_e = midPlaneNormal.X * w.X + midPlaneNormal.Y * w.Y + midPlaneNormal.Z * w.Z;
-						double dot_n = midPlaneNormal.X * n.X + midPlaneNormal.Y * n.Y + midPlaneNormal.Z * n.Z;
+						VectorD3D symmetryPlaneNormal = (currentSegment + previousSegment);
+						double symmetryPlaneNormalLengthSqr = symmetryPlaneNormal.SquareOfLength;
 
-						if (Math.Abs(dot_n) > Math.Abs(dot_e))
+						if (symmetryPlaneNormal.SquareOfLength < 1E-16) // current vector almost exactly in the opposite direction than previous vector
 						{
-							n = GetSymmetricallyMirroredVectorAtPlane(n, midPlaneNormal);
-							n = GetOrthonormalVectorToVector(n, currentSegment); // make the north vector orthogonal (it should be already, but this corrects small deviations)
-							w = VectorD3D.CrossProduct(n, currentSegment);
-						}
-						else if (Math.Abs(dot_e) > float.Epsilon) //
-						{
-							w = GetSymmetricallyMirroredVectorAtPlane(w, midPlaneNormal);
-							w = GetOrthonormalVectorToVector(w, currentSegment); // make the north vector orthogonal (it should be already, but this corrects small deviations)
+							// in this case it is better to use the reflection plane
+							VectorD3D reflectionPlaneNormal = (currentSegment - previousSegment);
+							w = GetVectorSymmetricalToPlane(-w, reflectionPlaneNormal); // we use -west as argument by convention, since reflection will reverse it
+							w = GetNormalizedVectorOrthogonalToVector(w, currentSegment); // make the north vector orthogonal (it should be already, but this corrects small deviations)
 							n = VectorD3D.CrossProduct(currentSegment, w);
 						}
-						else // previous segment and current segment are either colinear or a perfect reflection. Keep the north vector, and calculate only the new west vector
+						else
 						{
-							n = GetOrthonormalVectorToVector(n, currentSegment); // make the north vector orthogonal (it should be already, but this corrects small deviations)
-							w = VectorD3D.CrossProduct(n, currentSegment);
+							// normal case, use the symmetry plane
+							w = GetVectorSymmetricalToPlane(w, symmetryPlaneNormal);
+							w = GetNormalizedVectorOrthogonalToVector(w, currentSegment); // make the north vector orthogonal (it should be already, but this corrects small deviations)
+							n = VectorD3D.CrossProduct(currentSegment, w);
 						}
 					}
 
