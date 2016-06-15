@@ -127,7 +127,7 @@ namespace Altaxo.Gui.Common.Drawing
 			if (null != CbEndCapAbsSize) CbEndCapAbsSize.SelectedQuantityAsValueInPoints = _pen.EndCap.MinimumAbsoluteSizePt;
 			if (null != CbEndCapRelSize) CbEndCapRelSize.SelectedQuantityAsValueInSIUnits = _pen.EndCap.MinimumRelativeSize;
 			if (null != CbLineJoin) CbLineJoin.SelectedLineJoin = _pen.LineJoin;
-			if (null != CbMiterLimit) CbMiterLimit.SelectedQuantityAsValueInPoints = _pen.MiterLimit;
+			if (null != CbMiterLimit) CbMiterLimit.SelectedQuantityInSIUnits = _pen.MiterLimit;
 
 			_userChangedAbsStartCapSize = false;
 			_userChangedAbsEndCapSize = false;
@@ -638,7 +638,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 				_cbMiterLimit = value;
 				if (_pen != null && _cbMiterLimit != null)
-					_cbMiterLimit.SelectedQuantityAsValueInPoints = _pen.MiterLimit;
+					_cbMiterLimit.SelectedQuantityInSIUnits = _pen.MiterLimit;
 
 				if (_cbLineJoin != null)
 					_cbMiterLimit.SelectedQuantityChanged += EhMiterLimit_SelectionChangeCommitted;
@@ -651,7 +651,7 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				using (var suspendToken = _pen.SuspendGetToken())
 				{
-					_pen.MiterLimit = (float)_cbMiterLimit.SelectedQuantityAsValueInPoints;
+					_pen.MiterLimit = (float)_cbMiterLimit.SelectedQuantityInSIUnits;
 					suspendToken.ResumeSilently();
 				};
 

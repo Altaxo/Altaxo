@@ -141,10 +141,8 @@ namespace Altaxo.Gui.Graph3D
 			if (null != CbDashEndCapAbsSize) CbDashEndCapAbsSize.SelectedQuantityAsValueInPoints = null != _pen.DashEndCap ? _pen.DashEndCap.MinimumAbsoluteSizePt : 0;
 			if (null != CbDashEndCapRelSize) CbDashEndCapRelSize.SelectedQuantityAsValueInSIUnits = null != _pen.DashEndCap ? _pen.DashEndCap.MinimumRelativeSize : 0;
 
-			/*
-						if (null != CbLineJoin) CbLineJoin.SelectedLineJoin = _pen.LineJoin;
-						if (null != CbMiterLimit) CbMiterLimit.SelectedQuantityAsValueInPoints = _pen.MiterLimit;
-						*/
+			if (null != CbLineJoin) CbLineJoin.SelectedLineJoin = _pen.LineJoin;
+			if (null != CbMiterLimit) CbMiterLimit.SelectedQuantityInSIUnits = _pen.MiterLimit;
 
 			_userChangedAbsLineStartCapSize = false;
 			_userChangedAbsLineEndCapSize = false;
@@ -937,8 +935,6 @@ namespace Altaxo.Gui.Graph3D
 
 		#endregion EndCap
 
-		/*
-
 		#region LineJoin
 
 		private LineJoinComboBox _cbLineJoin;
@@ -966,11 +962,7 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (_pen != null)
 			{
-				using (var suspendToken = _pen.SuspendGetToken())
-				{
-					_pen.LineJoin = _cbLineJoin.SelectedLineJoin;
-					suspendToken.ResumeSilently();
-				};
+				_pen = _pen.WithLineJoin(_cbLineJoin.SelectedLineJoin);
 
 				OnPenChanged();
 			}
@@ -980,9 +972,9 @@ namespace Altaxo.Gui.Graph3D
 
 		#region Miter
 
-		private MiterLimitComboBox _cbMiterLimit;
+		private Common.Drawing.MiterLimitComboBox _cbMiterLimit;
 
-		public MiterLimitComboBox CbMiterLimit
+		public Common.Drawing.MiterLimitComboBox CbMiterLimit
 		{
 			get { return _cbMiterLimit; }
 			set
@@ -992,7 +984,7 @@ namespace Altaxo.Gui.Graph3D
 
 				_cbMiterLimit = value;
 				if (_pen != null && _cbMiterLimit != null)
-					_cbMiterLimit.SelectedQuantityAsValueInPoints = _pen.MiterLimit;
+					_cbMiterLimit.SelectedQuantityInSIUnits = _pen.MiterLimit;
 
 				if (_cbLineJoin != null)
 					_cbMiterLimit.SelectedQuantityChanged += EhMiterLimit_SelectionChangeCommitted;
@@ -1003,19 +995,13 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (_pen != null)
 			{
-				using (var suspendToken = _pen.SuspendGetToken())
-				{
-					_pen.MiterLimit = (float)_cbMiterLimit.SelectedQuantityAsValueInPoints;
-					suspendToken.ResumeSilently();
-				};
+				_pen = _pen.WithMiterLimit(_cbMiterLimit.SelectedQuantityInSIUnits);
 
 				OnPenChanged();
 			}
 		}
 
 		#endregion Miter
-
-		*/
 
 		#region Dialog
 

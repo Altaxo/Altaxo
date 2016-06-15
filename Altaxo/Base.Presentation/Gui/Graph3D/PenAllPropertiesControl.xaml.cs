@@ -67,12 +67,9 @@ namespace Altaxo.Gui.Graph3D
 			_glue.CbDashEndCapAbsSize = _cbDashEndCapSize;
 			_glue.CbDashEndCapRelSize = _edDashEndCapRelSize;
 
-			/*
-			_glue.CbDashCap = _cbDashCap;
 			_glue.CbLineJoin = _cbLineJoin;
 			_glue.CbMiterLimit = _cbMiterLimit;
 
-	*/
 			_glue.PreviewPanel = _previewPanel;
 		}
 

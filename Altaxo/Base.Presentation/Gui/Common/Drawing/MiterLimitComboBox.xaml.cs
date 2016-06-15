@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,22 +35,27 @@ namespace Altaxo.Gui.Common.Drawing
 	/// <summary>
 	/// Interaction logic for MiterLimitComboBox.xaml
 	/// </summary>
-	public partial class MiterLimitComboBox : LengthImageComboBox
+	public partial class MiterLimitComboBox : DimensionfulQuantityImageComboBox
 	{
 		private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
 
-		private static readonly double[] _initialValues = new double[] { 0, 4, 6, 8, 10, 12 };
+		private static readonly double[] _initialValues = new double[] { 1, 2, 4, 6, 8, 10, 12 };
+
+		static MiterLimitComboBox()
+		{
+			SelectedQuantityProperty.OverrideMetadata(typeof(MiterLimitComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(10, Units.Dimensionless.Unity.Instance)));
+		}
 
 		public MiterLimitComboBox()
 		{
-			UnitEnvironment = MiterLimitEnvironment.Instance;
+			UnitEnvironment = RelationEnvironment.Instance;
 
 			InitializeComponent();
 
 			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Length.Point.Instance)));
+				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Dimensionless.Unity.Instance)));
 
-			_img.Source = GetImage(SelectedQuantityAsValueInPoints);
+			_img.Source = GetImage(SelectedQuantityInSIUnits);
 		}
 
 		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
@@ -58,14 +64,14 @@ namespace Altaxo.Gui.Common.Drawing
 
 			if (null != _img)
 			{
-				var val = SelectedQuantityAsValueInPoints;
+				var val = SelectedQuantityInSIUnits;
 				_img.Source = GetImage(val);
 			}
 		}
 
 		public override ImageSource GetItemImage(object item)
 		{
-			double val = ((Units.DimensionfulQuantity)item).AsValueIn(Units.Length.Point.Instance);
+			double val = ((Units.DimensionfulQuantity)item).AsValueIn(Units.Dimensionless.Unity.Instance);
 			ImageSource result;
 			if (!_cachedImages.TryGetValue(val, out result))
 				_cachedImages.Add(val, result = GetImage(val));
@@ -95,9 +101,9 @@ namespace Altaxo.Gui.Common.Drawing
 			var figure = new PathFigure();
 			figure.StartPoint = new Point(width, height * 0.875);
 			figure.Segments.Add(new PolyLineSegment(new Point[]
-      {
-        new Point(width / 2, height / 2),
-        new Point(width, height * 0.175) }, true));
+			{
+				new Point(width / 2, height / 2),
+				new Point(width, height * 0.175) }, true));
 			geometryDrawing.Geometry = new PathGeometry(new PathFigure[] { figure });
 			geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth) { LineJoin = PenLineJoin.Miter, MiterLimit = miterLimit };
 			drawingGroup.Children.Add(geometryDrawing);

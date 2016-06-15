@@ -161,7 +161,7 @@ namespace Altaxo.Geometry
 			new PointD3D(0, 0, 0),
 			new PointD3D(100, 0, 0),
 			new PointD3D(50, 0, 0),
-			new PointD3D(100, 0, 0)
+			new PointD3D(200, 0, 0)
 		};
 
 		private static TD[] _output08 = new TD[]
@@ -169,8 +169,59 @@ namespace Altaxo.Geometry
 			new TD( new PointD3D(0, 0, 0), new VectorD3D(0,1,0), new VectorD3D(0,0,1)),
 			new TD( new PointD3D(100, 0, 0), new VectorD3D(0,1,0), new VectorD3D(0,0,1)),
 			new TD( new PointD3D(50, 0, 0), new VectorD3D(0,-1,0), new VectorD3D(0,0,1)),
-			new TD( new PointD3D(100, 0, 0), new VectorD3D(0,1,0), new VectorD3D(0,0,1))
+			new TD( new PointD3D(200, 0, 0), new VectorD3D(0,1,0), new VectorD3D(0,0,1))
 	};
+
+		// Test 09: Straight line in y-direction, then in reverse y  direction, then again straight in y-direction
+		private static PointD3D[] _input09 = new PointD3D[]
+		{
+			new PointD3D(0, 0, 0),
+			new PointD3D(0, 100, 0),
+			new PointD3D(0, -150, 0),
+			new PointD3D(0, 200, 0)
+		};
+
+		private static TD[] _output09 = new TD[]
+{
+			new TD( new PointD3D(0, 0, 0), new VectorD3D(-1,0,0), new VectorD3D(0,0,1)),
+			new TD( new PointD3D(0, 100, 0), new VectorD3D(-1,0,0), new VectorD3D(0,0,1)),
+			new TD( new PointD3D(0, -150, 0), new VectorD3D(1,0,0), new VectorD3D(0,0,1)),
+			new TD( new PointD3D(0, 200, 0), new VectorD3D(-1,0,0), new VectorD3D(0,0,1))
+};
+
+		// Test 10: Straight line in z-direction, then in reverse z  direction, then again straight in z-direction
+		private static PointD3D[] _input10 = new PointD3D[]
+		{
+			new PointD3D(0, 0, 0),
+			new PointD3D(0, 0, 100),
+			new PointD3D(0, 0, -150),
+			new PointD3D(0, 0, 200)
+		};
+
+		private static TD[] _output10 = new TD[]
+{
+			new TD( new PointD3D(0, 0, 0), new VectorD3D(-1,0,0), new VectorD3D(0,-1,0)),
+			new TD( new PointD3D(0, 0, 100), new VectorD3D(-1,0,0), new VectorD3D(0,-1,0)),
+			new TD( new PointD3D(0, 0, -150), new VectorD3D(1,0,0), new VectorD3D(0,-1,0)),
+			new TD( new PointD3D(0, 0, 200), new VectorD3D(-1,0,0), new VectorD3D(0,-1,0))
+};
+
+		// Test 10: Straight line in x-y-z-direction, then in reverse direction, then again straight in x-y-z-direction
+		private static PointD3D[] _input11 = new PointD3D[]
+		{
+			new PointD3D(0, 0, 0),
+			new PointD3D(100, 100, 100),
+			new PointD3D(-150, -150, -150),
+			new PointD3D(200, 200, 200)
+		};
+
+		private static TD[] _output11 = new TD[]
+{
+			new TD( new PointD3D(0, 0, 0), new VectorD3D(-0.707106781186,0.707106781186,0), new VectorD3D(-0.40824829046,-0.40824829046, 0.8164965809277)),
+			new TD( new PointD3D(100, 100, 100), new VectorD3D(-0.707106781186,0.707106781186,0), new VectorD3D(-0.40824829046,-0.40824829046, 0.8164965809277)),
+			new TD( new PointD3D(-150, -150, -150), new VectorD3D(0.707106781186,-0.707106781186,0), new VectorD3D(-0.40824829046,-0.40824829046, 0.8164965809277)),
+			new TD( new PointD3D(200, 200, 200), new VectorD3D(-0.707106781186,0.707106781186,0), new VectorD3D(-0.40824829046,-0.40824829046, 0.8164965809277)),
+};
 
 		private static Tuple<PointD3D[], TD[]>[] _testCases = new Tuple<PointD3D[], TD[]>[]
 		{
@@ -183,6 +234,9 @@ namespace Altaxo.Geometry
 			new Tuple<PointD3D[], TD[]>(_input06, _output06),
 			new Tuple<PointD3D[], TD[]>(_input07, _output07),
 			new Tuple<PointD3D[], TD[]>(_input08, _output08),
+			new Tuple<PointD3D[], TD[]>(_input09, _output09),
+			new Tuple<PointD3D[], TD[]>(_input10, _output10),
+			new Tuple<PointD3D[], TD[]>(_input11, _output11),
 		};
 
 		[Test]

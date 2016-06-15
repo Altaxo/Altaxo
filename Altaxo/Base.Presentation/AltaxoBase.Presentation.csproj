@@ -469,6 +469,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Drawing\D3D\LineJoinComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Drawing\D3D\MaterialControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1417,6 +1421,9 @@
     </Compile>
     <Compile Include="Gui\Drawing\D3D\LineCaps\LineCapComboBox.xaml.cs">
       <DependentUpon>LineCapComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Drawing\D3D\LineJoinComboBox.xaml.cs">
+      <DependentUpon>LineJoinComboBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\D3D\MaterialControl.xaml.cs">
       <DependentUpon>MaterialControl.xaml</DependentUpon>

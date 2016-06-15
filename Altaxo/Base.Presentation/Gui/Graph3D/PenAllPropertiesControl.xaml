@@ -79,7 +79,7 @@
 		<axogc:QuantityWithUnitTextBox Grid.Column ="5" Grid.Row="10" x:Name="_edLineEndCapRelSize" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
 
 		<Label Grid.Column="0" Grid.Row="12">Join:</Label>
-		<axogcd:LineJoinComboBox Grid.Column="1" Grid.Row="12" x:Name="_cbLineJoin" />
+		<axog3m:LineJoinComboBox Grid.Column="1" Grid.Row="12" x:Name="_cbLineJoin" />
 		<Label Grid.Column="2" Grid.Row="12">Miter:</Label>
 		<axogcd:MiterLimitComboBox Grid.Column="3" Grid.Row="12" x:Name="_cbMiterLimit" />
 

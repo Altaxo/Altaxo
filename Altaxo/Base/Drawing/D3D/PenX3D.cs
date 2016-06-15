@@ -322,6 +322,25 @@ namespace Altaxo.Drawing.D3D
 			}
 		}
 
+		public PenX3D WithMiterLimit(double miterLimit)
+		{
+			if (!(miterLimit >= 1))
+				miterLimit = 1;
+			if (!(miterLimit < 1000))
+				miterLimit = 1000;
+
+			if (!(miterLimit == _miterLimit))
+			{
+				var result = (PenX3D)this.MemberwiseClone();
+				result._miterLimit = miterLimit;
+				return result;
+			}
+			else
+			{
+				return this;
+			}
+		}
+
 		#endregion Line Join
 
 		#region Dash Pattern

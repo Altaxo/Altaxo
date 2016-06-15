@@ -37,6 +37,9 @@ namespace Altaxo.Drawing.D3D
 	/// </summary>
 	public struct SolidPolylineDashSegment
 	{
+		private static readonly double Cos1Degree = Math.Cos(1.0 * Math.PI / 180);
+		private static readonly double Cos01Degree = Math.Cos(0.1 * Math.PI / 180);
+
 		// global Variables, initialized only one per line (not once per dash segment)
 		private ICrossSectionOfLine _crossSection;
 
@@ -47,7 +50,14 @@ namespace Altaxo.Drawing.D3D
 		private ILineCap _dashEndCap;
 		private double _dashEndCapBaseInsetAbsolute;
 		private PenLineJoin _lineJoin;
+
+		/// <summary>The miter limit of the pen. Applies only if lineJoin is Miter.</summary>
 		private double _miterLimit;
+
+		/// <summary>If the line join is miter, and the DotProduct of current and next segment is above this value, there is no need to clip the line join.</summary>
+		private double _miterLimitDotThreshold;
+
+		private double _crossSectionMaximalDistanceFromCenter;
 
 		// operational variables, i.e. variables evaluated during one call to draw
 
@@ -123,8 +133,11 @@ namespace Altaxo.Drawing.D3D
 			this._crossSection = crossSection;
 			this._crossSectionVertexCount = crossSection.NumberOfVertices;
 			this._crossSectionNormalCount = crossSection.NumberOfNormals;
+			this._crossSectionMaximalDistanceFromCenter = _crossSection.GetMaximalDistanceFromCenter();
 			this._lineJoin = lineJoin;
 			this._miterLimit = miterLimit;
+			this._miterLimitDotThreshold = Math.Cos(Math.PI - 2 * Math.Asin(1 / miterLimit));
+
 			this._dashStartCap = startCap;
 			this._dashStartCapBaseInsetAbsolute = null == _dashStartCap ? 0 : _dashStartCap.GetAbsoluteBaseInset(thickness1, thickness2);
 			this._dashEndCap = endCap;
@@ -557,197 +570,258 @@ namespace Altaxo.Drawing.D3D
 				// 2nd) dot_curr_next is very close to -1, the symmetry place can not be evaluated, but the reflection plane can, we can set an end cap here
 				// 3rd) normal case both symmetry plane and reflection plane can be evaluated.
 
-				VectorD3D symmetryPlaneNormal = (currSeg + nextSeg).Normalized;
-				// now get the matrix for transforming the cross sections positions
-				var matrixSymmetryPlane = Math3D.Get2DProjectionToPlaneToPlane(currentItem.Item2, currentItem.Item3, currSeg, currentItem.Item1, symmetryPlaneNormal);
-
-				if (false) // Bevel
+				if (!(-Cos01Degree < dot_curr_next)) // next segment is almost 180° to current segment
 				{
-					// Calculate bevel plane
+					// we can not use the symmetry plane here, because it would be close to 90° to the segment directions
+					// instead we use the reflection plane
 					VectorD3D reflectionPlaneNormal = (currSeg - nextSeg).Normalized;
-					var dot_w = VectorD3D.DotProduct(currentItem.Item2, reflectionPlaneNormal);
-					var dot_n = VectorD3D.DotProduct(currentItem.Item3, reflectionPlaneNormal);
-					var det = Calc.RMath.Hypot(dot_w, dot_n);
-					dot_w /= det;
-					dot_n /= det;
-					var crossSectionRotationMatrix = new Matrix2x2(dot_w, dot_n, dot_n, -dot_w); // Matrix that will transform our cross section points in a way so that the edge between the 3D lines are in x direction of the transformed points
-					double maxheight = 0;
-					for (int i = 0; i < crossSectionVertexCount; ++i)
-					{
-						_crossSectionRotatedVertices[i] = crossSectionRotationMatrix.Transform((VectorD2D)_crossSection.Vertices(i));
-						maxheight = Math.Max(maxheight, _crossSectionRotatedVertices[i].X);
-					}
-					var alphaBy2 = 0.5 * (Math.PI - Math.Acos(dot_curr_next)); // half of the angle between current segment and next segment
-					var heightOfBevelPlane = maxheight * Math.Sin(alphaBy2); // height of the bevel plane above the segment middle lines
-					var height = heightOfBevelPlane * Math.Sin(alphaBy2); // height as x-coordinate of the rotated cross section
 
-					bool previousPointIsAboveHeight = _crossSectionRotatedVertices[crossSectionVertexCount - 1].X > height;
-					int firstIndexOfBevelVertex = -1;
-					for (int i = 0; i < crossSectionVertexCount; ++i)
-					{
-						bool currentPointIsAboveHeight = _crossSectionRotatedVertices[i].X > height;
-						if (currentPointIsAboveHeight && !previousPointIsAboveHeight)
-						{
-							firstIndexOfBevelVertex = i;
-							break;
-						}
-						previousPointIsAboveHeight = currentPointIsAboveHeight;
-					}
+					PointD3D reflectionPoint = currentItem.Item1;
 
-					// we need not to take any bevel stuff if firstIndexOfBevelVertex is < 0
-
-					var pointAtBevelPlane = currentItem.Item1 + heightOfBevelPlane * reflectionPlaneNormal;
-					Matrix4x3 bevelMatrix1 = Math3D.GetProjectionToPlane(currSeg, pointAtBevelPlane, reflectionPlaneNormal); // Projects a point from the current segment onto the bevel plane
-					Matrix4x3 bevelMatrix2 = Math3D.GetProjectionToPlane(nextSeg, pointAtBevelPlane, reflectionPlaneNormal); // projects a point from the next segment onto the bevel plane
-
+					// now get the matrix for transforming the cross sections positions
+					var matrixReflectionPlane = Math3D.Get2DProjectionToPlaneToPlane(currentItem.Item2, currentItem.Item3, currSeg, reflectionPoint, reflectionPlaneNormal);
 					// Calculate the positions of the end of the current segment
 					for (int i = 0; i < crossSectionVertexCount; ++i)
 					{
-						tp = matrixSymmetryPlane.Transform(_crossSection.Vertices(i));
-						// decide whether the transformed point is above or below the bevel plane
-						if (_crossSectionRotatedVertices[i].X >= height)
-						{
-							// then the point is above the bevel plane; we need to project it to the bevel plane
-							_positionsTransformedEndCurrent[i] = bevelMatrix1.Transform(tp);
-							_positionsTransformedStartNext[i] = bevelMatrix2.Transform(tp);
-						}
-						else
-						{
-							_positionsTransformedEndCurrent[i] = _positionsTransformedStartNext[i] = tp;
-						}
+						_positionsTransformedEndCurrent[i] = _positionsTransformedStartNext[i] = matrixReflectionPlane.Transform(_crossSection.Vertices(i));
 					}
+					// we put an end cap hereabove
+					LineCaps.Flat.AddGeometry(
+							AddPositionAndNormal,
+							AddIndices,
+							ref vertexIndexOffset,
+							false,
+							reflectionPoint,
+							reflectionPlaneNormal,
+						_positionsTransformedEndCurrent);
+				}
+				else // not close to 180°, thus the symmetry plane can be evaluated
+				{
+					VectorD3D symmetryPlaneNormal = (currSeg + nextSeg).Normalized;
+					// now get the matrix for transforming the cross sections positions
+					var matrixSymmetryPlane = Math3D.Get2DProjectionToPlaneToPlane(currentItem.Item2, currentItem.Item3, currSeg, currentItem.Item1, symmetryPlaneNormal);
 
-					// mesh the bevel plane now
+					// normal case: consider bevel or miter only if angle > 1 degree, and not close to 180
+					// dot_curr_next<=_miterLimitDotThreshold is a criterion that avoids unneccessary computations
+					if (dot_curr_next < Cos1Degree && (_lineJoin == PenLineJoin.Bevel || dot_curr_next <= _miterLimitDotThreshold))
 					{
-						AddPositionAndNormal(pointAtBevelPlane, reflectionPlaneNormal);
-						int indexOfMidPoint = currIndex;
-						++currIndex;
+						//reflection plane is the plane at which the line seems to be reflected.
+						VectorD3D reflectionPlaneNormal = (currSeg - nextSeg).Normalized;
 
-						int currentFirstIndexOfBevelVertex = firstIndexOfBevelVertex;
+						// For further calculations it is neccessary to rotate the 2D crossection points in such a way
+						// that the reflection direction points in the x-direction in the rotated coordinate system.
+						// By this it is possible which cross section points are "above" the bevel plane
+						// (namely all cross section points with an x-coordinate above a threshold) and which are below.
+						// By this it is even possible to determine the exact location where the cross section crosses the
+						// bevel plane. This is done by interpolation between two cross section points and determining, at which
+						// position the x-coordinate of the line crosses the threshold.
 
-						do
+						// To determine the rotation matrix for the cross section points, we need the direction of the reflectionPlaneNormal
+						// with respect to the west and north vectors, like so:
+						var dot_w = VectorD3D.DotProduct(currentItem.Item2, reflectionPlaneNormal);
+						var dot_n = VectorD3D.DotProduct(currentItem.Item3, reflectionPlaneNormal);
+						var det = Calc.RMath.Hypot(dot_w, dot_n);
+						dot_w /= det;
+						dot_n /= det;
+						var crossSectionRotationMatrix = new Matrix2x2(dot_w, dot_n, dot_n, -dot_w); // Matrix that will transform our cross section points in a way so that the edge between the 3D lines are in x direction of the transformed points
+
+						// determine maxheight as the maximum of the x-coordinate of the rotated cross section vertices
+						double maxheight = 0;
+						for (int i = 0; i < crossSectionVertexCount; ++i)
 						{
-							int startSearchForNextBevelVertex = currentFirstIndexOfBevelVertex;
-							int pointsInThisMesh = 0;
-							int i, icurr = currentFirstIndexOfBevelVertex;
-							for (i = currentFirstIndexOfBevelVertex; i < currentFirstIndexOfBevelVertex + crossSectionVertexCount; ++i)
+							_crossSectionRotatedVertices[i] = crossSectionRotationMatrix.Transform((VectorD2D)_crossSection.Vertices(i));
+							maxheight = Math.Max(maxheight, _crossSectionRotatedVertices[i].X);
+						}
+
+						// alphaBy2 is the half angle between the current segment and the next segment
+						var alphaBy2 = 0.5 * (Math.PI - Math.Acos(dot_curr_next));
+						double heightOfBevelPlane = 0;// height of the bevel plane above the segment middle lines
+
+						switch (_lineJoin)
+						{
+							case PenLineJoin.Bevel:
+								heightOfBevelPlane = maxheight * Math.Sin(alphaBy2); // height of the bevel plane above the segment middle lines
+								break;
+
+							case PenLineJoin.Miter:
+								heightOfBevelPlane = _miterLimit * maxheight; // height of the bevel plane above the segment middle lines
+								break;
+
+							default:
+								throw new NotImplementedException();
+						}
+						// crossSectionDistanceThreshold: if the x-coordinate of the rotated cross section vertices is above this threshold, it needs to be clipped to the bevel plane
+						var crossSectionDistanceThreshold = heightOfBevelPlane * Math.Sin(alphaBy2); // height as x-coordinate of the rotated cross section
+
+						bool previousPointIsAboveHeight = _crossSectionRotatedVertices[crossSectionVertexCount - 1].X > crossSectionDistanceThreshold;
+						int firstIndexOfBevelVertex = -1;
+						for (int i = 0; i < crossSectionVertexCount; ++i)
+						{
+							bool currentPointIsAboveHeight = _crossSectionRotatedVertices[i].X > crossSectionDistanceThreshold;
+							if (currentPointIsAboveHeight && !previousPointIsAboveHeight)
 							{
-								icurr = (i) % crossSectionVertexCount;
-								if (_crossSectionRotatedVertices[icurr].X > height)
-								{
-									AddPositionAndNormal(_positionsTransformedEndCurrent[icurr], reflectionPlaneNormal);
-									++currIndex;
-									++pointsInThisMesh;
-									if (pointsInThisMesh >= 2)
-										AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
-								}
-								else
-								{
-									break;
-								}
+								firstIndexOfBevelVertex = i;
+								break;
 							}
-							startSearchForNextBevelVertex = icurr;
+							previousPointIsAboveHeight = currentPointIsAboveHeight;
+						}
 
-							int iprev = (i - 1 + crossSectionVertexCount) % crossSectionVertexCount;
-							double r = (height - _crossSectionRotatedVertices[iprev].X) / (_crossSectionRotatedVertices[icurr].X - _crossSectionRotatedVertices[iprev].X);
-							if (!(0 <= r && r <= 1))
-								throw new InvalidProgramException("r should always be >=0 and <=1, so what's going wrong here?");
+						// we need not to take any bevel stuff if firstIndexOfBevelVertex is < 0
 
-							var additionalCrossSectionVertex = (1 - r) * _crossSection.Vertices(iprev) + r * _crossSection.Vertices(icurr);
-							tp = matrixSymmetryPlane.Transform(additionalCrossSectionVertex);
-							//tp = bevelMatrix1.Transform(tp);
-							AddPositionAndNormal(tp, reflectionPlaneNormal);
-							++currIndex;
-							AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
+						var pointAtBevelPlane = currentItem.Item1 + heightOfBevelPlane * reflectionPlaneNormal;
+						Matrix4x3 bevelMatrix1 = Math3D.GetProjectionToPlane(currSeg, pointAtBevelPlane, reflectionPlaneNormal); // Projects a point from the current segment onto the bevel plane
+						Matrix4x3 bevelMatrix2 = Math3D.GetProjectionToPlane(nextSeg, pointAtBevelPlane, reflectionPlaneNormal); // projects a point from the next segment onto the bevel plane
 
-							// now back
-							for (i = i - 1; i >= currentFirstIndexOfBevelVertex; --i)
+						// Calculate the positions of the end of the current segment
+						for (int i = 0; i < crossSectionVertexCount; ++i)
+						{
+							tp = matrixSymmetryPlane.Transform(_crossSection.Vertices(i));
+							// decide whether the transformed point is above or below the bevel plane
+							if (_crossSectionRotatedVertices[i].X >= crossSectionDistanceThreshold)
 							{
-								icurr = (i) % crossSectionVertexCount;
-								AddPositionAndNormal(_positionsTransformedStartNext[icurr], reflectionPlaneNormal);
+								// then the point is above the bevel plane; we need to project it to the bevel plane
+								_positionsTransformedEndCurrent[i] = bevelMatrix1.Transform(tp);
+								_positionsTransformedStartNext[i] = bevelMatrix2.Transform(tp);
+							}
+							else
+							{
+								_positionsTransformedEndCurrent[i] = _positionsTransformedStartNext[i] = tp;
+							}
+						}
+
+						// mesh the bevel plane now
+						if (firstIndexOfBevelVertex >= 0)
+						{
+							AddPositionAndNormal(pointAtBevelPlane, reflectionPlaneNormal);
+							int indexOfMidPoint = currIndex;
+							++currIndex;
+
+							int currentFirstIndexOfBevelVertex = firstIndexOfBevelVertex;
+
+							do
+							{
+								int startSearchForNextBevelVertex = currentFirstIndexOfBevelVertex;
+								int pointsInThisMesh = 0;
+								int i, icurr = currentFirstIndexOfBevelVertex;
+								for (i = currentFirstIndexOfBevelVertex; i < currentFirstIndexOfBevelVertex + crossSectionVertexCount; ++i)
+								{
+									icurr = (i) % crossSectionVertexCount;
+									if (_crossSectionRotatedVertices[icurr].X > crossSectionDistanceThreshold)
+									{
+										AddPositionAndNormal(_positionsTransformedEndCurrent[icurr], reflectionPlaneNormal);
+										++currIndex;
+										++pointsInThisMesh;
+										if (pointsInThisMesh >= 2)
+											AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
+									}
+									else
+									{
+										break;
+									}
+								}
+								startSearchForNextBevelVertex = icurr;
+
+								int iprev = (i - 1 + crossSectionVertexCount) % crossSectionVertexCount;
+								double r = (crossSectionDistanceThreshold - _crossSectionRotatedVertices[iprev].X) / (_crossSectionRotatedVertices[icurr].X - _crossSectionRotatedVertices[iprev].X);
+								if (!(0 <= r && r <= 1))
+									throw new InvalidProgramException("r should always be >=0 and <=1, so what's going wrong here?");
+
+								var additionalCrossSectionVertex = (1 - r) * _crossSection.Vertices(iprev) + r * _crossSection.Vertices(icurr);
+								tp = matrixSymmetryPlane.Transform(additionalCrossSectionVertex);
+								//tp = bevelMatrix1.Transform(tp);
+								AddPositionAndNormal(tp, reflectionPlaneNormal);
 								++currIndex;
 								AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
-							}
 
-							iprev = icurr;
-							icurr = (i + crossSectionVertexCount) % crossSectionVertexCount;
-							r = (height - _crossSectionRotatedVertices[iprev].X) / (_crossSectionRotatedVertices[icurr].X - _crossSectionRotatedVertices[iprev].X);
-							if (!(0 <= r && r <= 1))
-								throw new InvalidProgramException("r should always be >=0 and <=1, so what's going wrong here?");
-
-							additionalCrossSectionVertex = (1 - r) * _crossSection.Vertices(iprev) + r * _crossSection.Vertices(icurr);
-							tp = matrixSymmetryPlane.Transform(additionalCrossSectionVertex);
-							AddPositionAndNormal(tp, reflectionPlaneNormal);
-							++currIndex;
-							AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
-							// and now close the bevel
-							AddIndices(indexOfMidPoint + 1, currIndex - 1, indexOfMidPoint, true);
-
-							// search for the next start of a bevel plane
-
-							previousPointIsAboveHeight = false;
-							for (i = startSearchForNextBevelVertex; i < startSearchForNextBevelVertex + crossSectionVertexCount; ++i)
-							{
-								icurr = i % crossSectionVertexCount;
-								bool currentPointIsAboveHeight = _crossSectionRotatedVertices[icurr].X > height;
-								if (currentPointIsAboveHeight && !previousPointIsAboveHeight)
+								// now back
+								for (i = i - 1; i >= currentFirstIndexOfBevelVertex; --i)
 								{
-									currentFirstIndexOfBevelVertex = icurr;
-									break;
+									icurr = (i) % crossSectionVertexCount;
+									AddPositionAndNormal(_positionsTransformedStartNext[icurr], reflectionPlaneNormal);
+									++currIndex;
+									AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
 								}
-								previousPointIsAboveHeight = currentPointIsAboveHeight;
+
+								iprev = icurr;
+								icurr = (i + crossSectionVertexCount) % crossSectionVertexCount;
+								r = (crossSectionDistanceThreshold - _crossSectionRotatedVertices[iprev].X) / (_crossSectionRotatedVertices[icurr].X - _crossSectionRotatedVertices[iprev].X);
+								if (!(0 <= r && r <= 1))
+									throw new InvalidProgramException("r should always be >=0 and <=1, so what's going wrong here?");
+
+								additionalCrossSectionVertex = (1 - r) * _crossSection.Vertices(iprev) + r * _crossSection.Vertices(icurr);
+								tp = matrixSymmetryPlane.Transform(additionalCrossSectionVertex);
+								AddPositionAndNormal(tp, reflectionPlaneNormal);
+								++currIndex;
+								AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
+								// and now close the bevel
+								AddIndices(indexOfMidPoint + 1, currIndex - 1, indexOfMidPoint, true);
+
+								// search for the next start of a bevel plane
+
+								previousPointIsAboveHeight = false;
+								for (i = startSearchForNextBevelVertex; i < startSearchForNextBevelVertex + crossSectionVertexCount; ++i)
+								{
+									icurr = i % crossSectionVertexCount;
+									bool currentPointIsAboveHeight = _crossSectionRotatedVertices[icurr].X > crossSectionDistanceThreshold;
+									if (currentPointIsAboveHeight && !previousPointIsAboveHeight)
+									{
+										currentFirstIndexOfBevelVertex = icurr;
+										break;
+									}
+									previousPointIsAboveHeight = currentPointIsAboveHeight;
+								}
+							}
+							while (currentFirstIndexOfBevelVertex != firstIndexOfBevelVertex); // mesh all single bevel planes
+						}
+
+						// now mesh the side faces
+						for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
+						{
+							if (_crossSection.IsVertexSharp(i))
+							{ ++j; }
+
+							int inext = (i + 1) % crossSectionVertexCount;
+							int jnext = (j + 1) % crossSectionNormalCount;
+
+							if ((_crossSectionRotatedVertices[i].X > crossSectionDistanceThreshold && _crossSectionRotatedVertices[inext].X <= crossSectionDistanceThreshold) ||
+								(_crossSectionRotatedVertices[i].X <= crossSectionDistanceThreshold && _crossSectionRotatedVertices[inext].X > crossSectionDistanceThreshold))
+							{
+								double r = (crossSectionDistanceThreshold - _crossSectionRotatedVertices[i].X) / (_crossSectionRotatedVertices[inext].X - _crossSectionRotatedVertices[i].X);
+								if (!(0 <= r && r <= 1))
+									throw new InvalidProgramException("r should always be >=0 and <=1, so what's going wrong here?");
+
+								var additionalCrossSectionVertex = (1 - r) * _crossSection.Vertices(i) + r * _crossSection.Vertices(inext);
+								var additionalCrossSectionNormal = ((1 - r) * _crossSection.Normals(j) + r * _crossSection.Normals(jnext)).Normalized;
+
+								tp = matrixSymmetryPlane.Transform(additionalCrossSectionVertex);
+								tn = matrixCurr.Transform(additionalCrossSectionNormal);
+
+								AddPositionAndNormal(tp, tn);
+								++currIndex;
+								AddPositionAndNormal(_positionsTransformedEndCurrent[i], _normalsTransformedCurrent[j]);
+								++currIndex;
+								AddPositionAndNormal(_positionsTransformedEndCurrent[inext], _normalsTransformedCurrent[jnext]);
+								++currIndex;
+								AddIndices(currIndex - 1, currIndex - 2, currIndex - 3, true);
+
+								tn = matrixNext.Transform(additionalCrossSectionNormal);
+								AddPositionAndNormal(tp, tn);
+								++currIndex;
+								AddPositionAndNormal(_positionsTransformedStartNext[i], _normalsTransformedNext[j]);
+								++currIndex;
+								AddPositionAndNormal(_positionsTransformedStartNext[inext], _normalsTransformedNext[jnext]);
+								++currIndex;
+								AddIndices(currIndex - 1, currIndex - 2, currIndex - 3, false);
 							}
 						}
-						while (currentFirstIndexOfBevelVertex != firstIndexOfBevelVertex); // mesh all single bevel planes
 					}
-
-					// now mesh the side faces
-					for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
+					else // without bevel or miter
 					{
-						if (_crossSection.IsVertexSharp(i))
-						{ ++j; }
-
-						int inext = (i + 1) % crossSectionVertexCount;
-						int jnext = (j + 1) % crossSectionNormalCount;
-
-						if ((_crossSectionRotatedVertices[i].X > height && _crossSectionRotatedVertices[inext].X <= height) ||
-							(_crossSectionRotatedVertices[i].X <= height && _crossSectionRotatedVertices[inext].X > height))
+						// Calculate the positions of the end of the current segment
+						for (int i = 0; i < crossSectionVertexCount; ++i)
 						{
-							double r = (height - _crossSectionRotatedVertices[i].X) / (_crossSectionRotatedVertices[inext].X - _crossSectionRotatedVertices[i].X);
-							if (!(0 <= r && r <= 1))
-								throw new InvalidProgramException("r should always be >=0 and <=1, so what's going wrong here?");
-
-							var additionalCrossSectionVertex = (1 - r) * _crossSection.Vertices(i) + r * _crossSection.Vertices(inext);
-							var additionalCrossSectionNormal = ((1 - r) * _crossSection.Normals(j) + r * _crossSection.Normals(jnext)).Normalized;
-
-							tp = matrixSymmetryPlane.Transform(additionalCrossSectionVertex);
-							tn = matrixCurr.Transform(additionalCrossSectionNormal);
-
-							AddPositionAndNormal(tp, tn);
-							++currIndex;
-							AddPositionAndNormal(_positionsTransformedEndCurrent[i], _normalsTransformedCurrent[j]);
-							++currIndex;
-							AddPositionAndNormal(_positionsTransformedEndCurrent[inext], _normalsTransformedCurrent[jnext]);
-							++currIndex;
-							AddIndices(currIndex - 1, currIndex - 2, currIndex - 3, true);
-
-							tn = matrixNext.Transform(additionalCrossSectionNormal);
-							AddPositionAndNormal(tp, tn);
-							++currIndex;
-							AddPositionAndNormal(_positionsTransformedStartNext[i], _normalsTransformedNext[j]);
-							++currIndex;
-							AddPositionAndNormal(_positionsTransformedStartNext[inext], _normalsTransformedNext[jnext]);
-							++currIndex;
-							AddIndices(currIndex - 1, currIndex - 2, currIndex - 3, false);
+							_positionsTransformedEndCurrent[i] = _positionsTransformedStartNext[i] = matrixSymmetryPlane.Transform(_crossSection.Vertices(i));
 						}
-					}
-				}
-				else // without bevel or miter
-				{
-					// Calculate the positions of the end of the current segment
-					for (int i = 0; i < crossSectionVertexCount; ++i)
-					{
-						_positionsTransformedEndCurrent[i] = _positionsTransformedStartNext[i] = matrixSymmetryPlane.Transform(_crossSection.Vertices(i));
 					}
 				}
 

@@ -1,4 +1,4 @@
-﻿<local:LengthImageComboBox x:Class="Altaxo.Gui.Common.Drawing.MiterLimitComboBox"
+﻿<local:DimensionfulQuantityImageComboBox x:Class="Altaxo.Gui.Common.Drawing.MiterLimitComboBox"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Altaxo.Gui.Common.Drawing"
@@ -11,4 +11,4 @@
 			</StackPanel>
 		</DataTemplate>
 	</ComboBox.Resources>
-</local:LengthImageComboBox>
+</local:DimensionfulQuantityImageComboBox>
