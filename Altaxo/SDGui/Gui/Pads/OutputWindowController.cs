@@ -92,10 +92,9 @@ namespace Altaxo.Gui.Pads
 			{
 				ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 
-				WorkbenchSingleton.Workbench.GetPad(this.GetType()).BringPadToFront();
+				WorkbenchSingleton.Workbench.GetPad(this.GetType())?.BringPadToFront();
 
-				if (null != ww)
-					ww.SelectWindow();
+				ww?.SelectWindow();
 			}
 		}
 

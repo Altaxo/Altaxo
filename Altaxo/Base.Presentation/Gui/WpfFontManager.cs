@@ -192,7 +192,14 @@ namespace Altaxo.Gui
 
 						if (uri.IsFile)
 						{
-							pfc.AddFontFile(uri.LocalPath);
+							try
+							{
+								pfc.AddFontFile(uri.LocalPath);
+							}
+							catch (Exception ex)
+							{
+								Current.Console?.WriteLine("Warning: Font file {0} for font family {1}, typeface {2} could not be added to a System.Drawing.Text.PrivateFontFamily. The message is: {3}", uri.LocalPath, entry.Key, typeface?.FaceNames?.FirstOrDefault(), ex.Message);
+							}
 						}
 					}
 

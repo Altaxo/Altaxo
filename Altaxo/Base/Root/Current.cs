@@ -40,7 +40,7 @@ namespace Altaxo
 
 		private static Altaxo.Main.IPrintingService sm_thePrintingService;
 
-		private static Altaxo.Main.Services.IOutputService sm_theOutputService;
+		private static Altaxo.Main.Services.IOutputService sm_theOutputService = new Altaxo.Main.Services.OutputServiceTemporary();
 
 		private static Altaxo.Main.Services.IDataDisplayService sm_theDataDisplayService;
 
@@ -282,7 +282,15 @@ namespace Altaxo
 		public static void SetOutputService(Altaxo.Main.Services.IOutputService outputservice)
 		{
 			if (null == sm_theOutputService)
+			{
 				sm_theOutputService = outputservice;
+			}
+			else if (sm_theOutputService is Altaxo.Main.Services.OutputServiceTemporary)
+			{
+				var oldService = sm_theOutputService as Altaxo.Main.Services.OutputServiceTemporary;
+				sm_theOutputService = outputservice;
+				sm_theOutputService.Write(oldService.Text);
+			}
 			else
 				throw new ApplicationException("The output service can not be re-set to another value, only initialized for the first time!");
 		}
