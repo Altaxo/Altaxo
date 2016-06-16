@@ -45,6 +45,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 	using GraphicsContext;
 	using Groups;
 	using System.Collections;
+	using System.Collections.Specialized;
 
 	[Serializable]
 	public class PlotItemCollection
@@ -60,7 +61,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		private PlotGroupStyleCollection _plotGroupStyles;
 
 		/// <summary>Collection of plot items.</summary>
-		private List<IGPlotItem> _plotItems;
+		private ObservableList<IGPlotItem> _plotItems;
 
 		[NonSerialized]
 		private IGPlotItem[] _cachedPlotItemsFlattened;
@@ -108,7 +109,8 @@ namespace Altaxo.Graph.Graph3D.Plot
 
 		public PlotItemCollection()
 		{
-			_plotItems = new List<IGPlotItem>();
+			_plotItems = new ObservableList<IGPlotItem>();
+			_plotItems.CollectionChanged += EhPlotItemsCollectionChanged;
 			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 		}
 
@@ -125,7 +127,8 @@ namespace Altaxo.Graph.Graph3D.Plot
 		public PlotItemCollection(XYZPlotLayer owner)
 		{
 			_parent = owner;
-			_plotItems = new List<IGPlotItem>();
+			_plotItems = new ObservableList<IGPlotItem>();
+			_plotItems.CollectionChanged += EhPlotItemsCollectionChanged;
 			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 		}
 
@@ -140,9 +143,10 @@ namespace Altaxo.Graph.Graph3D.Plot
 			_parent = owner;
 			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 			if (clonePlotItems)
-				_plotItems = new List<IGPlotItem>(plotItems.Select(pi => (IGPlotItem)pi.Clone()));
+				_plotItems = new ObservableList<IGPlotItem>(plotItems.Select(pi => (IGPlotItem)pi.Clone()));
 			else
-				_plotItems = new List<IGPlotItem>(plotItems);
+				_plotItems = new ObservableList<IGPlotItem>(plotItems);
+			_plotItems.CollectionChanged += EhPlotItemsCollectionChanged;
 		}
 
 		public IGPlotItem[] Flattened
@@ -179,7 +183,6 @@ namespace Altaxo.Graph.Graph3D.Plot
 		public void ClearPlotItems()
 		{
 			_plotItems.Clear();
-			OnCollectionChanged();
 		}
 
 		public void ClearPlotItemsAndGroupStyles()
@@ -284,6 +287,25 @@ namespace Altaxo.Graph.Graph3D.Plot
 			{
 				yield return new Main.DocumentNodeAndName(_plotGroupStyles, () => _plotGroupStyles = null, "PlotGroupStyles");
 			}
+		}
+
+		protected override void Dispose(bool isDisposing)
+		{
+			if (null != _plotItems)
+			{
+				_plotItems.CollectionChanged -= EhPlotItemsCollectionChanged;
+				var oldColl = _plotItems;
+				_plotItems = new ObservableList<IGPlotItem>(); // Note: do not wire events here, the sole purpose of this new list is to avoid exceptions
+				foreach (var item in oldColl)
+					item.Dispose();
+			}
+			if (null != _plotGroupStyles)
+			{
+				_plotGroupStyles.Dispose();
+				_plotGroupStyles = null;
+			}
+
+			base.Dispose(isDisposing);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
@@ -423,13 +445,16 @@ namespace Altaxo.Graph.Graph3D.Plot
 
 			item.ParentObject = this;
 			_plotItems.Add(item);
-
-			OnCollectionChanged();
 		}
 
 		#endregion Collection methods
 
 		#region Change handling
+
+		private void EhPlotItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			OnCollectionChanged();
+		}
 
 		protected virtual void OnCollectionChanged()
 		{

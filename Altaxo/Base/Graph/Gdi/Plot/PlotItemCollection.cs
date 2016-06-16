@@ -35,6 +35,8 @@ namespace Altaxo.Graph.Gdi.Plot
 	using Geometry;
 	using Graph.Plot.Groups;
 	using Plot.Groups;
+	using System.Collections.Specialized;
+	using System.Linq;
 
 	[Serializable]
 	public class PlotItemCollection
@@ -49,7 +51,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		private PlotGroupStyleCollection _plotGroupStyles;
 
 		/// <summary>Collection of plot items.</summary>
-		private List<IGPlotItem> _plotItems;
+		private ObservableList<IGPlotItem> _plotItems;
 
 		[NonSerialized]
 		private IGPlotItem[] _cachedPlotItemsFlattened;
@@ -216,13 +218,15 @@ namespace Altaxo.Graph.Gdi.Plot
 		public PlotItemCollection(XYPlotLayer owner)
 		{
 			_parent = owner;
-			_plotItems = new List<IGPlotItem>();
+			_plotItems = new ObservableList<IGPlotItem>();
+			_plotItems.CollectionChanged += EhPlotItemsCollectionChanged;
 			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 		}
 
 		public PlotItemCollection()
 		{
-			_plotItems = new List<IGPlotItem>();
+			_plotItems = new ObservableList<IGPlotItem>();
+			_plotItems.CollectionChanged += EhPlotItemsCollectionChanged;
 			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 		}
 
@@ -253,11 +257,8 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			_parent = owner;
 			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
-			_plotItems = new List<IGPlotItem>();
-
-			// Clone all the items in the list.
-			for (int i = 0; i < from.Count; i++)
-				Add((IGPlotItem)from[i].Clone()); // clone the items
+			_plotItems = new ObservableList<IGPlotItem>(from.Select(x => (IGPlotItem)x.Clone())); // Clone all the items in the list.
+			_plotItems.CollectionChanged += EhPlotItemsCollectionChanged;
 
 			// special way neccessary to handle plot groups
 			ChildCopyToMember(ref _plotGroupStyles, from._plotGroupStyles);
@@ -880,8 +881,6 @@ namespace Altaxo.Graph.Gdi.Plot
 
 			item.ParentObject = this;
 			_plotItems.Add(item);
-
-			OnCollectionChanged();
 		}
 
 		public void AddRange(IEnumerable<IGPlotItem> items)
@@ -901,7 +900,6 @@ namespace Altaxo.Graph.Gdi.Plot
 		public void ClearPlotItems()
 		{
 			_plotItems.Clear();
-			OnCollectionChanged();
 		}
 
 		public void ClearPlotItemsAndGroupStyles()
@@ -929,8 +927,6 @@ namespace Altaxo.Graph.Gdi.Plot
 				plotitem = _plotItems[idx];
 				_plotItems.RemoveAt(idx);
 				plotitem.Dispose();
-
-				OnCollectionChanged();
 				return true;
 			}
 			return false;
@@ -938,7 +934,7 @@ namespace Altaxo.Graph.Gdi.Plot
 
 		public int IndexOf(IGPlotItem it)
 		{
-			return _plotItems.IndexOf(it, 0, Count);
+			return _plotItems.IndexOf(it);
 		}
 
 		/// <summary>
@@ -1029,8 +1025,9 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			if (null != _plotItems)
 			{
+				_plotItems.CollectionChanged -= EhPlotItemsCollectionChanged;
 				var oldColl = _plotItems;
-				_plotItems = new List<IGPlotItem>();
+				_plotItems = new ObservableList<IGPlotItem>(); // Note: do not wire events here, the sole purpose of this new list is to avoid exceptions
 				foreach (var item in oldColl)
 					item.Dispose();
 			}
@@ -1071,6 +1068,11 @@ namespace Altaxo.Graph.Gdi.Plot
 		public void EhPlotGroups_Changed(object sender, EventArgs e)
 		{
 			EhSelfChanged(EventArgs.Empty);
+		}
+
+		private void EhPlotItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			OnCollectionChanged();
 		}
 
 		protected virtual void OnCollectionChanged()
