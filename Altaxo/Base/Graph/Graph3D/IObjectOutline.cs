@@ -256,22 +256,22 @@ namespace Altaxo.Graph.Graph3D
 
 				PointD3D prevPoint = PointD3D.Empty;
 				bool prevPointIsValid = false;
-				foreach (var tp in Math3D.GetPolylinePointsWithWestAndNorth(_points))
+				foreach (var tp in PolylineMath3D.GetPolylinePointsWithWestAndNorth(_points))
 				{
 					if (prevPointIsValid)
 					{
-						var ne = _thickness1By2 * tp.Item2 + _thickness2By2 * tp.Item3;
-						var se = _thickness1By2 * tp.Item2 - _thickness2By2 * tp.Item3;
-						var nw = -_thickness1By2 * tp.Item2 + _thickness2By2 * tp.Item3;
-						var sw = -_thickness1By2 * tp.Item2 - _thickness2By2 * tp.Item3;
+						var ne = _thickness1By2 * tp.WestVector + _thickness2By2 * tp.NorthVector;
+						var se = _thickness1By2 * tp.WestVector - _thickness2By2 * tp.NorthVector;
+						var nw = -_thickness1By2 * tp.WestVector + _thickness2By2 * tp.NorthVector;
+						var sw = -_thickness1By2 * tp.WestVector - _thickness2By2 * tp.NorthVector;
 
-						yield return new LineD3D(_transformation.Transform(prevPoint + ne), _transformation.Transform(tp.Item1 + ne));
-						yield return new LineD3D(_transformation.Transform(prevPoint + se), _transformation.Transform(tp.Item1 + se));
-						yield return new LineD3D(_transformation.Transform(prevPoint + nw), _transformation.Transform(tp.Item1 + nw));
-						yield return new LineD3D(_transformation.Transform(prevPoint + sw), _transformation.Transform(tp.Item1 + sw));
+						yield return new LineD3D(_transformation.Transform(prevPoint + ne), _transformation.Transform(tp.Position + ne));
+						yield return new LineD3D(_transformation.Transform(prevPoint + se), _transformation.Transform(tp.Position + se));
+						yield return new LineD3D(_transformation.Transform(prevPoint + nw), _transformation.Transform(tp.Position + nw));
+						yield return new LineD3D(_transformation.Transform(prevPoint + sw), _transformation.Transform(tp.Position + sw));
 					}
 
-					prevPoint = tp.Item1;
+					prevPoint = tp.Position;
 					prevPointIsValid = true;
 				}
 			}
@@ -308,7 +308,7 @@ namespace Altaxo.Graph.Graph3D
 
 				foreach (var line in _lines)
 				{
-					var tp = Math3D.GetWestNorthVectors(line);
+					var tp = PolylineMath3D.GetWestNorthVectors(line);
 
 					PointD3D prevPoint = line.P0;
 					PointD3D currPoint = line.P1;

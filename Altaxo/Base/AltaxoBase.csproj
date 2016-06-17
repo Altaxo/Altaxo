@@ -256,6 +256,8 @@
     <Compile Include="Drawing\D3D\SolidStraightLineDashSegment.cs" />
     <Compile Include="Geometry\IPolygonD2D.cs" />
     <Compile Include="Geometry\Matrix2x2.cs" />
+    <Compile Include="Geometry\PolylineMath3D.cs" />
+    <Compile Include="Geometry\PolylinePointD3D.cs" />
     <Compile Include="Geometry\SharpPolylineD3D.cs" />
     <Compile Include="Geometry\Matrix3x3.cs" />
     <Compile Include="Geometry\Matrix4x4.cs" />

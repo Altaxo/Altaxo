@@ -237,7 +237,7 @@ namespace Altaxo.Graph.Graph3D
 		/// <returns>True if the polyline is hit; otherwise false.</returns>
 		public bool IsHit(IEnumerable<PointD3D> points, double thickness1, double thickness2)
 		{
-			var polyline = Math3D.GetPolylinePointsWithWestAndNorth(points);
+			var polyline = PolylineMath3D.GetPolylinePointsWithWestAndNorth(points);
 
 			var coll = polyline.GetEnumerator();
 
@@ -248,13 +248,13 @@ namespace Altaxo.Graph.Graph3D
 			double thickness2By2 = thickness2 / 2;
 			PointD3D[] pts = new PointD3D[8];
 
-			PointD3D P0 = coll.Current.Item1;
+			PointD3D P0 = coll.Current.Position;
 
 			while (coll.MoveNext())
 			{
-				var P1 = coll.Current.Item1; // end point of current line
-				var e = coll.Current.Item2; // east vector
-				var n = coll.Current.Item3; // north vector
+				var P1 = coll.Current.Position; // end point of current line
+				var e = coll.Current.WestVector; // east vector
+				var n = coll.Current.NorthVector; // north vector
 
 				pts[0] = _hitTransformation.Transform(P0 - thickness1By2 * e - thickness2By2 * n);
 				pts[1] = _hitTransformation.Transform(P1 - thickness1By2 * e - thickness2By2 * n);
@@ -283,7 +283,7 @@ namespace Altaxo.Graph.Graph3D
 			if (!(line.Length > 0))
 				return false;
 
-			var eastnorth = Math3D.GetWestNorthVectors(line);
+			var eastnorth = PolylineMath3D.GetWestNorthVectors(line);
 			var e = eastnorth.Item1; // east vector
 			var n = eastnorth.Item2; // north vector
 

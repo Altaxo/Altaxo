@@ -248,7 +248,7 @@ namespace Altaxo.Geometry
 				var points = _testCases[caseNo].Item1;
 				var expectedOutput = _testCases[caseNo].Item2;
 
-				var result = Math3D.GetPolylinePointsWithWestAndNorth(points).ToArray();
+				var result = PolylineMath3D.GetPolylinePointsWithWestAndNorth(points).ToArray();
 
 				// Verify results
 				Assert.AreEqual(expectedOutput.Length, result.Length);
@@ -257,15 +257,15 @@ namespace Altaxo.Geometry
 				{
 					string comment = string.Format("In case no. {0}, i={1}", caseNo, i);
 
-					Assert.AreEqual(expectedOutput[i].Item1, result[i].Item1, comment);
+					Assert.AreEqual(expectedOutput[i].Item1, result[i].Position, comment);
 
-					Assert.AreEqual(expectedOutput[i].Item2.X, result[i].Item2.X, maxDev, comment);
-					Assert.AreEqual(expectedOutput[i].Item2.Y, result[i].Item2.Y, maxDev, comment);
-					Assert.AreEqual(expectedOutput[i].Item2.Z, result[i].Item2.Z, maxDev, comment);
+					Assert.AreEqual(expectedOutput[i].Item2.X, result[i].WestVector.X, maxDev, comment);
+					Assert.AreEqual(expectedOutput[i].Item2.Y, result[i].WestVector.Y, maxDev, comment);
+					Assert.AreEqual(expectedOutput[i].Item2.Z, result[i].WestVector.Z, maxDev, comment);
 
-					Assert.AreEqual(expectedOutput[i].Item3.X, result[i].Item3.X, maxDev, comment);
-					Assert.AreEqual(expectedOutput[i].Item3.Y, result[i].Item3.Y, maxDev, comment);
-					Assert.AreEqual(expectedOutput[i].Item3.Z, result[i].Item3.Z, maxDev, comment);
+					Assert.AreEqual(expectedOutput[i].Item3.X, result[i].NorthVector.X, maxDev, comment);
+					Assert.AreEqual(expectedOutput[i].Item3.Y, result[i].NorthVector.Y, maxDev, comment);
+					Assert.AreEqual(expectedOutput[i].Item3.Z, result[i].NorthVector.Z, maxDev, comment);
 				}
 			}
 		}
@@ -285,13 +285,13 @@ namespace Altaxo.Geometry
 				testPoints[i] = new PointD3D(rnd.NextDouble(), rnd.NextDouble(), rnd.NextDouble());
 			}
 
-			var result = Math3D.GetPolylinePointsWithWestAndNorth(testPoints).ToArray();
+			var result = PolylineMath3D.GetPolylinePointsWithWestAndNorth(testPoints).ToArray();
 
 			for (int i = 1; i < result.Length; ++i)
 			{
-				var forwardRaw = result[i].Item1 - result[i - 1].Item1;
-				var west = result[i].Item2;
-				var north = result[i].Item3;
+				var forwardRaw = result[i].Position - result[i - 1].Position;
+				var west = result[i].WestVector;
+				var north = result[i].NorthVector;
 
 				Assert.AreNotEqual(forwardRaw.Length, 0); // GetPolylinePointsWithWestAndNorth should only deliver non-empty segments
 				var forward = forwardRaw.Normalized;
@@ -320,12 +320,12 @@ namespace Altaxo.Geometry
 					var v = new VectorD3D(Math.Cos(phi) * Math.Cos(theta), Math.Sin(phi) * Math.Cos(theta), Math.Sin(theta));
 					Assert.AreEqual(v.Length, 1, maxDev); // is forward normalized
 
-					var rawNorth = Math3D.GetRawNorthVectorAtStart(v);
+					var rawNorth = PolylineMath3D.GetRawNorthVectorAtStart(v);
 					Assert.AreEqual(rawNorth.X, 0);
 					Assert.AreEqual(rawNorth.Y, 0);
 					Assert.AreEqual(rawNorth.Z, 1);
 
-					var westNorth = Math3D.GetWestNorthVectors(new LineD3D(PointD3D.Empty, (PointD3D)v));
+					var westNorth = PolylineMath3D.GetWestNorthVectors(new LineD3D(PointD3D.Empty, (PointD3D)v));
 
 					var west = westNorth.Item1;
 					var north = westNorth.Item2;
@@ -360,7 +360,7 @@ namespace Altaxo.Geometry
 			for (int i = -1; i <= 1; i += 2)
 			{
 				var v = new VectorD3D(0, 0, i);
-				var westNorth = Math3D.GetWestNorthVectors(new LineD3D(PointD3D.Empty, (PointD3D)v));
+				var westNorth = PolylineMath3D.GetWestNorthVectors(new LineD3D(PointD3D.Empty, (PointD3D)v));
 				var west = westNorth.Item1;
 				var north = westNorth.Item2;
 
@@ -382,6 +382,92 @@ namespace Altaxo.Geometry
 				Assert.AreEqual(northExpected.X, north.X, maxDev);
 				Assert.AreEqual(northExpected.Y, north.Y, maxDev);
 				Assert.AreEqual(northExpected.Z, north.Z, maxDev);
+			}
+		}
+
+		[Test]
+		public static void Test_GetFractionalPolyline_01()
+		{
+			const double maxDev = 1E-6;
+			string comment = string.Empty;
+			for (int caseNo = 0; caseNo < _testCases.Length; ++caseNo)
+			{
+				if (caseNo == 1 || caseNo == 2) // not with coincidenting points
+					continue;
+
+				var points = _testCases[caseNo].Item1;
+				var expectedOutput = _testCases[caseNo].Item2;
+
+				var maxEndIndex = points.Length - 1;
+
+				for (double endIndex = 0.25; endIndex <= maxEndIndex; endIndex += 0.25)
+				{
+					for (double startIndex = 0; startIndex < endIndex; startIndex += 0.25)
+					{
+						var result = PolylineMath3D.GetPolylineWithFractionalStartAndEndIndex(
+							points,
+							expectedOutput[0].Item2, expectedOutput[0].Item3, (points[1] - points[0]).Normalized, startIndex, endIndex,
+							false,
+							false,
+							new PolylinePointD3DAsClass(),
+							false,
+							false,
+							new PolylinePointD3DAsClass()).ToArray();
+
+						int iShift = (int)Math.Floor(startIndex);
+						for (int i = (int)Math.Ceiling(startIndex); i < (int)Math.Floor(endIndex); ++i)
+						{
+							comment = string.Format("In case no. {0}, startIndex={1}, endIndex={2}, i={3}", caseNo, startIndex, endIndex, i);
+
+							Assert.AreEqual(expectedOutput[i].Item1, result[i - iShift].Position, comment);
+
+							Assert.AreEqual(expectedOutput[i].Item2.X, result[i - iShift].WestVector.X, maxDev, comment);
+							Assert.AreEqual(expectedOutput[i].Item2.Y, result[i - iShift].WestVector.Y, maxDev, comment);
+							Assert.AreEqual(expectedOutput[i].Item2.Z, result[i - iShift].WestVector.Z, maxDev, comment);
+
+							Assert.AreEqual(expectedOutput[i].Item3.X, result[i - iShift].NorthVector.X, maxDev, comment);
+							Assert.AreEqual(expectedOutput[i].Item3.Y, result[i - iShift].NorthVector.Y, maxDev, comment);
+							Assert.AreEqual(expectedOutput[i].Item3.Z, result[i - iShift].NorthVector.Z, maxDev, comment);
+						}
+
+						// start
+						int startIndexInt = (int)Math.Floor(startIndex);
+						double startIndexFrac = startIndex - startIndexInt;
+						var expectedStartPoint = startIndexFrac == 0 ? points[startIndexInt] : PointD3D.Interpolate(points[startIndexInt], points[startIndexInt + 1], startIndexFrac);
+						int vecIndex = startIndexFrac == 0 ? startIndexInt : startIndexInt + 1;
+
+						comment = string.Format("In case no. {0}, startIndex={1}, endIndex={2}", caseNo, startIndex, endIndex);
+
+						Assert.AreEqual(expectedStartPoint, result[0].Position, comment);
+
+						Assert.AreEqual(expectedOutput[vecIndex].Item2.X, result[0].WestVector.X, maxDev, comment);
+						Assert.AreEqual(expectedOutput[vecIndex].Item2.Y, result[0].WestVector.Y, maxDev, comment);
+						Assert.AreEqual(expectedOutput[vecIndex].Item2.Z, result[0].WestVector.Z, maxDev, comment);
+
+						Assert.AreEqual(expectedOutput[vecIndex].Item3.X, result[0].NorthVector.X, maxDev, comment);
+						Assert.AreEqual(expectedOutput[vecIndex].Item3.Y, result[0].NorthVector.Y, maxDev, comment);
+						Assert.AreEqual(expectedOutput[vecIndex].Item3.Z, result[0].NorthVector.Z, maxDev, comment);
+
+						// end
+						int endIndexInt = (int)Math.Floor(endIndex);
+						double endIndexFrac = endIndex - endIndexInt;
+						var expectedEndPoint = endIndexFrac == 0 ? points[endIndexInt] : PointD3D.Interpolate(points[endIndexInt], points[endIndexInt + 1], endIndexFrac);
+						vecIndex = endIndexFrac == 0 ? endIndexInt : endIndexInt + 1;
+						var resultLast = result[result.Length - 1];
+
+						Assert.AreEqual(expectedEndPoint, resultLast.Position, comment);
+
+						Assert.AreEqual(expectedOutput[vecIndex].Item2.X, resultLast.WestVector.X, maxDev, comment);
+						Assert.AreEqual(expectedOutput[vecIndex].Item2.Y, resultLast.WestVector.Y, maxDev, comment);
+						Assert.AreEqual(expectedOutput[vecIndex].Item2.Z, resultLast.WestVector.Z, maxDev, comment);
+
+						Assert.AreEqual(expectedOutput[vecIndex].Item3.X, resultLast.NorthVector.X, maxDev, comment);
+						Assert.AreEqual(expectedOutput[vecIndex].Item3.Y, resultLast.NorthVector.Y, maxDev, comment);
+						Assert.AreEqual(expectedOutput[vecIndex].Item3.Z, resultLast.NorthVector.Z, maxDev, comment);
+
+						// test first returned
+					}
+				}
 			}
 		}
 	}

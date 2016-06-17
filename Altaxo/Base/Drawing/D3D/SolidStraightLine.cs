@@ -45,7 +45,7 @@ namespace Altaxo.Drawing.D3D
 		LineD3D line
 		)
 		{
-			var westnorth = Math3D.GetWestNorthVectors(line);
+			var westnorth = PolylineMath3D.GetWestNorthVectors(line);
 			var westVector = westnorth.Item1;
 			var northVector = westnorth.Item2;
 

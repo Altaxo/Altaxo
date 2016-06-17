@@ -246,7 +246,7 @@ const double gripNominalSize = 10; // 10 Points nominal size on the screen
 			if ((GripKind.Move & gripKind) != 0)
 			{
 				var bounds = this.Bounds;
-				var wn = Math3D.GetWestNorthVectorAtStart(new PointD3D[] { bounds.Location, bounds.LocationPlusSize });
+				var wn = PolylineMath3D.GetWestNorthVectors(bounds.Size);
 				var transformation = Matrix4x3.NewFromBasisVectorsAndLocation(wn.Item1, wn.Item2, bounds.Size.Normalized, PointD3D.Empty);
 
 				transformation.AppendTransform(_transformation);
@@ -286,7 +286,7 @@ const double gripNominalSize = 10; // 10 Points nominal size on the screen
 
 					// Translation grips
 					var bounds = ls.Bounds;
-					var wn = Math3D.GetWestNorthVectorAtStart(new PointD3D[] { bounds.Location, bounds.LocationPlusSize });
+					var wn = PolylineMath3D.GetWestNorthVectors(bounds.Size);
 					var transformation = Matrix4x3.NewFromBasisVectorsAndLocation(wn.Item1, wn.Item2, bounds.Size.Normalized, PointD3D.Empty);
 
 					transformation.AppendTransform(ls._transformation);
