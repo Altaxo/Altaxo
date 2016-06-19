@@ -38,7 +38,7 @@ namespace Altaxo.Geometry
 		private static readonly double _northVectorMaxZComponent = Math.Cos(0.9 * Math.PI / 180);
 
 		/// <summary>
-		/// Gets a raw north vector for a straight line. Raw means that the returned vector is neither normalized, nor does it is perpendicular to the forward vector.
+		/// Gets a raw north vector for a straight line. Raw means that the returned vector is neither normalized, nor does it is forced to be perpendicular to the forward vector.
 		/// It is only guaranteed that the returned vector is not colinear with the provided forward vector.
 		/// </summary>
 		/// <param name="forward">The line forward vector. Can be unnormalized.</param>
@@ -184,7 +184,7 @@ namespace Altaxo.Geometry
 				if (!previousSegment.IsEmpty)
 				{
 					// if there was a previous segment, then calculate the new west and north vectors
-					GetWestAndNorthVectorsForNextSegment(previousSegment, currentSegment, ref w, ref n);
+					GetWestAndNorthVectorsForNextSegment(currentSegment, previousSegment, ref w, ref n);
 					f = currentSegment;
 				}
 
@@ -199,11 +199,11 @@ namespace Altaxo.Geometry
 		/// <summary>
 		/// Calculates the west and north vectors for the next segment.
 		/// </summary>
-		/// <param name="previousSegment">The previous segment. Required to be normalized!</param>
 		/// <param name="nextSegment">The next segment. Required to be normalized!</param>
+		/// <param name="previousSegment">The previous segment. Required to be normalized!</param>
 		/// <param name="westVector">The west vector of the previous segment. At return, this will be the west vector of the next segment.</param>
 		/// <param name="northVector">The north vector of the previous segment. At return, this will be the west vector of the next segment.</param>
-		public static void GetWestAndNorthVectorsForNextSegment(VectorD3D previousSegment, VectorD3D nextSegment, ref VectorD3D westVector, ref VectorD3D northVector)
+		public static void GetWestAndNorthVectorsForNextSegment(VectorD3D nextSegment, VectorD3D previousSegment, ref VectorD3D westVector, ref VectorD3D northVector)
 		{
 			VectorD3D symmetryPlaneNormal = (nextSegment + previousSegment); // no need to normalize it
 			double symmetryPlaneNormalLengthSqr = symmetryPlaneNormal.SquareOfLength;
@@ -234,15 +234,24 @@ namespace Altaxo.Geometry
 		/// <param name="northVector">The north vector of the next (!) segment. At return, this will be the west vector of the previous segment.</param>
 		public static void GetWestAndNorthVectorsForPreviousSegment(VectorD3D previousSegment, VectorD3D nextSegment, ref VectorD3D westVector, ref VectorD3D northVector)
 		{
-			GetWestAndNorthVectorsForNextSegment(nextSegment, previousSegment, ref westVector, ref northVector);
+			GetWestAndNorthVectorsForNextSegment(previousSegment, nextSegment, ref westVector, ref northVector);
 		}
 
 		#endregion Get west and north vector for a line
 
+		/// <summary>
+		/// Gets the fractional start index of a polyline with a start cap when given the absolute inset of the start cap.
+		/// </summary>
+		/// <param name="polylinePoints">The polyline points.</param>
+		/// <param name="capInsetAbsolute">The absolute cap inset. Must be a value &gt;= 0.</param>
+		/// <param name="startCapOrientationAndPositionProvided">On return, if this value is true, the position and orientation of the start cap was calculated and is returned in <paramref name="startCapCOS"/>.</param>
+		/// <param name="startCapNeedsJoiningSegment">On return, if this value is true, the start cap needs a joining segment with the same direction as the start cap to seamlessly merge with the first line segment.</param>
+		/// <param name="startCapCOS">On return, if <paramref name="startCapOrientationAndPositionProvided"/> is true, this value holds the position and orientation vectors of the start cap.</param>
+		/// <returns>The fractional start index. A value of 0 indicate that the new polyline should start at the original polyline start, a value of 0.5 indicate that is should start in the middle between the first and second point, and so on.</returns>
 		public static double GetFractionalStartIndexOfPolylineWithCapInsetAbsolute(
 			IList<PolylinePointD3D> polylinePoints,
 			double capInsetAbsolute,
-			out bool startCapForwardAndPositionProvided,
+			out bool startCapOrientationAndPositionProvided,
 			out bool startCapNeedsJoiningSegment,
 			PolylinePointD3DAsClass startCapCOS)
 		{
@@ -262,7 +271,7 @@ namespace Altaxo.Geometry
 					startCapCOS.NorthVector = curr.NorthVector;
 					PolylineMath3D.GetWestAndNorthVectorsForPreviousSegment(startCapCOS.ForwardVector, curr.ForwardVector, ref startCapCOS.WestVector, ref startCapCOS.NorthVector);
 					startCapNeedsJoiningSegment = VectorD3D.DotProduct(startCapCOS.ForwardVector, (polylinePoints[i + 1].Position - curr.Position).Normalized) < Cos01Degree;
-					startCapForwardAndPositionProvided = true;
+					startCapOrientationAndPositionProvided = true;
 					return i;
 				}
 				else if (diff > 0) // OK, sowewhere between previous point and here.
@@ -280,7 +289,7 @@ namespace Altaxo.Geometry
 					startCapCOS.NorthVector = curr.NorthVector;
 					PolylineMath3D.GetWestAndNorthVectorsForPreviousSegment(startCapCOS.ForwardVector, curr.ForwardVector, ref startCapCOS.WestVector, ref startCapCOS.NorthVector);
 					startCapNeedsJoiningSegment = VectorD3D.DotProduct(startCapCOS.ForwardVector, (curr.Position - prev.Position).Normalized) < Cos01Degree;
-					startCapForwardAndPositionProvided = true;
+					startCapOrientationAndPositionProvided = true;
 					return baseIndex + relIndex;
 				}
 			}
@@ -295,9 +304,9 @@ namespace Altaxo.Geometry
 					startCapCOS.Position = lineStart.Position + startCapCOS.ForwardVector * capInsetAbsolute;
 					startCapCOS.WestVector = lineStart.WestVector;
 					startCapCOS.NorthVector = lineStart.NorthVector;
-					PolylineMath3D.GetWestAndNorthVectorsForNextSegment(lineStart.ForwardVector, startCapCOS.ForwardVector, ref startCapCOS.WestVector, ref startCapCOS.NorthVector);
+					PolylineMath3D.GetWestAndNorthVectorsForNextSegment(startCapCOS.ForwardVector, lineStart.ForwardVector, ref startCapCOS.WestVector, ref startCapCOS.NorthVector);
 					startCapNeedsJoiningSegment = false;
-					startCapForwardAndPositionProvided = true;
+					startCapOrientationAndPositionProvided = true;
 					return double.NaN; ;
 				}
 			}
@@ -307,10 +316,19 @@ namespace Altaxo.Geometry
 			startCapCOS.NorthVector = VectorD3D.Empty;
 			startCapCOS.Position = lineStart.Position;
 			startCapNeedsJoiningSegment = false;
-			startCapForwardAndPositionProvided = false;
+			startCapOrientationAndPositionProvided = false;
 			return 0;
 		}
 
+		/// <summary>
+		/// Gets the fractional start index of a polyline with a start cap when given the absolute inset of the start cap.
+		/// </summary>
+		/// <param name="polylinePoints">The polyline points.</param>
+		/// <param name="capInsetAbsolute">The absolute cap inset. Must be a value &gt;= 0.</param>
+		/// <param name="startCapForwardAndPositionProvided">On return, if this value is true, the position and forward vector of the start cap was calculated and is returned in <paramref name="startCapCOS"/> (but not the west and north vectors).</param>
+		/// <param name="startCapNeedsJoiningSegment">On return, if this value is true, the start cap needs a joining segment with the same direction as the start cap to seamlessly merge with the first line segment.</param>
+		/// <param name="startCapCOS">On return, if <paramref name="startCapForwardAndPositionProvided"/> is true, this value holds the position and forward vector of the start cap (but not the west and north vector).</param>
+		/// <returns>The fractional start index. A value of 0 indicate that the new polyline should start at the original polyline start, a value of 0.5 indicate that is should start in the middle between the first and second point, and so on.</returns>
 		public static double GetFractionalStartIndexOfPolylineWithCapInsetAbsolute(
 		IList<PointD3D> polylinePoints,
 		double capInsetAbsolute,
@@ -372,10 +390,19 @@ namespace Altaxo.Geometry
 			return 0;
 		}
 
+		/// <summary>
+		/// Gets the fractional end index of a polyline with an end cap when given the absolute inset of the end cap.
+		/// </summary>
+		/// <param name="polylinePoints">The polyline points.</param>
+		/// <param name="capInsetAbsolute">The absolute cap inset. Must be a value &gt;= 0.</param>
+		/// <param name="endCapOrientationAndPositionProvided">On return, if this value is true, the position and orientation of the end cap was calculated and is returned in <paramref name="endCapCOS"/>.</param>
+		/// <param name="endCapNeedsJoiningSegment">On return, if this value is true, the end cap needs a joining segment with the same direction as the start cap to seamlessly merge with the last line segment.</param>
+		/// <param name="endCapCOS">On return, if <paramref name="endCapOrientationAndPositionProvided"/> is true, this value holds the position and orientation vectors of the end cap.</param>
+		/// <returns>The fractional end index. A value of polylinePoints.Count-1 indicate that the new polyline should end at the original polyline end, a value of e.g. polylinePoints.Count-1.5 indicate that it should end in the middle between the next-to-last and last point, and so on.</returns>
 		public static double GetFractionalEndIndexOfPolylineWithCapInsetAbsolute(
 		IList<PolylinePointD3D> polylinePoints,
 		double capInsetAbsolute,
-		out bool endCapForwardAndPositionProvided,
+		out bool endCapOrientationAndPositionProvided,
 		out bool endCapNeedsJoiningSegment,
 		PolylinePointD3DAsClass endCapCOS)
 		{
@@ -392,9 +419,9 @@ namespace Altaxo.Geometry
 					endCapCOS.ForwardVector = (lineEnd.Position - endCapCOS.Position).Normalized;
 					endCapCOS.WestVector = curr.WestVector;
 					endCapCOS.NorthVector = curr.NorthVector;
-					PolylineMath3D.GetWestAndNorthVectorsForNextSegment(curr.ForwardVector, endCapCOS.ForwardVector, ref endCapCOS.WestVector, ref endCapCOS.NorthVector);
+					PolylineMath3D.GetWestAndNorthVectorsForNextSegment(endCapCOS.ForwardVector, curr.ForwardVector, ref endCapCOS.WestVector, ref endCapCOS.NorthVector);
 					endCapNeedsJoiningSegment = VectorD3D.DotProduct(endCapCOS.ForwardVector, (polylinePoints[i - 1].Position - curr.Position).Normalized) < Cos01Degree;
-					endCapForwardAndPositionProvided = true;
+					endCapOrientationAndPositionProvided = true;
 					return i;
 				}
 				else if (diff > 0) // OK, sowewhere between previous point and here.
@@ -410,9 +437,9 @@ namespace Altaxo.Geometry
 					endCapCOS.ForwardVector = (lineEnd.Position - endCapCOS.Position).Normalized;
 					endCapCOS.WestVector = curr.WestVector;
 					endCapCOS.NorthVector = curr.NorthVector;
-					PolylineMath3D.GetWestAndNorthVectorsForNextSegment(curr.ForwardVector, endCapCOS.ForwardVector, ref endCapCOS.WestVector, ref endCapCOS.NorthVector);
+					PolylineMath3D.GetWestAndNorthVectorsForNextSegment(endCapCOS.ForwardVector, curr.ForwardVector, ref endCapCOS.WestVector, ref endCapCOS.NorthVector);
 					endCapNeedsJoiningSegment = VectorD3D.DotProduct(endCapCOS.ForwardVector, (prev.Position - curr.Position).Normalized) < Cos01Degree;
-					endCapForwardAndPositionProvided = true;
+					endCapOrientationAndPositionProvided = true;
 					return baseIndex - relIndex;
 				}
 			}
@@ -427,9 +454,9 @@ namespace Altaxo.Geometry
 					endCapCOS.Position = lineEnd.Position + endCapCOS.ForwardVector * capInsetAbsolute;
 					endCapCOS.WestVector = polylinePoints[i].WestVector;
 					endCapCOS.NorthVector = polylinePoints[i].NorthVector;
-					PolylineMath3D.GetWestAndNorthVectorsForNextSegment(polylinePoints[i].ForwardVector, endCapCOS.ForwardVector, ref endCapCOS.WestVector, ref endCapCOS.NorthVector);
+					PolylineMath3D.GetWestAndNorthVectorsForNextSegment(endCapCOS.ForwardVector, polylinePoints[i].ForwardVector, ref endCapCOS.WestVector, ref endCapCOS.NorthVector);
 					endCapNeedsJoiningSegment = false;
-					endCapForwardAndPositionProvided = true;
+					endCapOrientationAndPositionProvided = true;
 					return double.NaN;
 				}
 			}
@@ -437,10 +464,19 @@ namespace Altaxo.Geometry
 			endCapCOS.ForwardVector = VectorD3D.Empty;
 			endCapCOS.Position = lineEnd.Position;
 			endCapNeedsJoiningSegment = false;
-			endCapForwardAndPositionProvided = false;
+			endCapOrientationAndPositionProvided = false;
 			return polylinePoints.Count - 1;
 		}
 
+		/// <summary>
+		/// Gets the fractional end index of a polyline with an end cap when given the absolute inset of the end cap.
+		/// </summary>
+		/// <param name="polylinePoints">The polyline points.</param>
+		/// <param name="capInsetAbsolute">The absolute cap inset. Must be a value &gt;= 0.</param>
+		/// <param name="endCapForwardAndPositionProvided">On return, if this value is true, the position and forward vector of the end cap was calculated and is returned in <paramref name="endCapCOS"/> (but not the west and north vectors).</param>
+		/// <param name="endCapNeedsJoiningSegment">On return, if this value is true, the end cap needs a joining segment with the same direction as the start cap to seamlessly merge with the last line segment.</param>
+		/// <param name="endCapCOS">On return, if <paramref name="endCapForwardAndPositionProvided"/> is true, this value holds the position and forward vector of the end cap (but not the west and north vectors).</param>
+		/// <returns>The fractional end index. A value of polylinePoints.Count-1 indicate that the new polyline should end at the original polyline end, a value of e.g. polylinePoints.Count-1.5 indicate that it should end in the middle between the next-to-last and last point, and so on.</returns>
 		public static double GetFractionalEndIndexOfPolylineWithCapInsetAbsolute(
 			IList<PointD3D> polylinePoints,
 			double capInsetAbsolute,
@@ -594,10 +630,7 @@ namespace Altaxo.Geometry
 		/// Gets a part of an polyline by providing start end end indices. The indices are allowed to be real values (for instance the start index 0.5 means that the
 		/// start point of the returned polyline is excactly in the middle between the first point (index 0) and the second point (index 1) of the original polyline.
 		/// </summary>
-		/// <param name="originalPolyline">The original polyline.</param>
-		/// <param name="westVector">The west vector at start of the original polyline.</param>
-		/// <param name="northVector">The north vector at the start of the original polyline.</param>
-		/// <param name="forwardVector">The forward vector at the start of the original polyline.</param>
+		/// <param name="originalPolylineEnumerator">The enumerator for the points of the original polyline.</param>
 		/// <param name="startIndex">The start index. Must be greater than or equal to zero.</param>
 		/// <param name="endIndex">The end index Must be greater then the start index and smaller than or equal to originalPolyline.Count-1.</param>
 		/// <param name="startCapForwardAndPositionProvided">If <c>true</c>, position and forward vector of the start cap were already calculated (but not west and north vector).</param>
@@ -701,7 +734,7 @@ namespace Altaxo.Geometry
 			{
 				endCapCOS.WestVector = lastItem.WestVector;
 				endCapCOS.NorthVector = lastItem.NorthVector;
-				GetWestAndNorthVectorsForNextSegment(lastItem.ForwardVector, endCapCOS.ForwardVector, ref endCapCOS.WestVector, ref endCapCOS.NorthVector);
+				GetWestAndNorthVectorsForNextSegment(endCapCOS.ForwardVector, lastItem.ForwardVector, ref endCapCOS.WestVector, ref endCapCOS.NorthVector);
 				if (endCapNeedsJoiningSegment)
 				{
 					yield return new PolylinePointD3D(endCapCOS.ForwardVector, endCapCOS.WestVector, endCapCOS.NorthVector, lastItem.Position); // and maybe return a very last point which is the joining segment. Is has the same location as the previous point, and thus the forward vector must be used here!
@@ -720,8 +753,18 @@ namespace Altaxo.Geometry
 		/// Dissects a polyline into multiple polylines using a dash pattern.
 		/// </summary>
 		/// <param name="linePoints">The line points of the polyline that is dissected.</param>
+		/// <param name="startIndex">Fractional start index of the intermediate polyline that is then dissected. A value of 0 means the original start of the polyline, a value of 0.5 means the start is halfway between the first and the second point of the original polyline and so on.</param>
+		/// <param name="endIndex">Fractional end index of the  intermediate polyline that is then dissected. A value of linePoints.Count-1 means the original end of the polyline, a value of linePoints.Count-1.5 means the end is halfway between the next-to-last and the last point of the original polyline and so on. </param>
 		/// <param name="dashPattern">The dash pattern used to dissect the polyline.</param>
+		/// <param name="dashPatternOffset">The dash pattern offset (relative units, i.e. same units as dashPattern itself).</param>
 		/// <param name="dashPatternScale">Length of one unit of the dash pattern..</param>
+		/// <param name="dashPatternStartAbsolute">An absolute length. This parameter is similar to <paramref name="dashPatternOffset"/>, but in absolute units.</param>
+		/// <param name="startCapForwardAndPositionProvided">If true, the start cap position and forward vector are already known and are not need to be calculated in this procedure. But west and north vector are still calculated here.</param>
+		/// <param name="startCapNeedsJoiningSegment">If true, the start cap needs a joining segment to merge seamlessly with the first segment. This joining segment is provided by the enumeration. It is a segment of length zero, i.e. has the same position as the next point, but with an orientation as the startcap has.</param>
+		/// <param name="startCapCOS">Data to be filled out be the procedure that describes position and orientation of the start cap.</param>
+		/// <param name="endCapForwardAndPositionProvided">If true, the end cap position and forward vector are already known and are not need to be calculated in this procedure. But west and north vector are still calculated here.</param>
+		/// <param name="endCapNeedsJoiningSegment">If true, the end cap needs a joining segment to merge seamlessly with the first segment. This joining segment is provided by the enumeration. It is a segment of length zero, i.e. has the same position as the previous point, but with an orientation as the end cap has.</param>
+		/// <param name="endCapCOS">Data to be filled out be the procedure that describes position and orientation of the end cap.</param>
 		/// <returns>Enumeration of polylines. The first item of the returned tuples is the list with the polyline points, the second item is the west vector for the first polyline point, and the third item is the north vector for the first polyline point.</returns>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// </exception>

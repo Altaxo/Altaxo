@@ -40,15 +40,30 @@ namespace Altaxo.Drawing.D3D
 		private static readonly double Cos1Degree = Math.Cos(1.0 * Math.PI / 180);
 		private static readonly double Cos01Degree = Math.Cos(0.1 * Math.PI / 180);
 
-		// global Variables, initialized only one per line (not once per dash segment)
+		#region global Variables, initialized only once per line (not once per dash segment)
+
+		/// <summary>The _cross section of the pen.</summary>
 		private ICrossSectionOfLine _crossSection;
 
+		/// <summary>The number of vertices of the cross section of the pen.</summary>
 		private int _crossSectionVertexCount;
+
+		/// <summary>The number of normals of the cross section of the pen.</summary>
 		private int _crossSectionNormalCount;
+
+		/// <summary>The dash start cap of the pen. In some calls, it can be overridden by the line start cap of the pen.</summary>
 		private ILineCap _dashStartCap;
+
+		/// <summary>The absolute base inset of the dash start cap of the pen. Here, absolute means absolute units, not relative units.</summary>
 		private double _dashStartCapBaseInsetAbsolute;
+
+		/// <summary>The dash end cap of the pen. In some calls, it can be overridden by the line end cap of the pen.</summary>
 		private ILineCap _dashEndCap;
+
+		/// <summary>The absolute base inset of the dash end cap of the pen. Here, absolute means absolute units, not relative units.</summary>
 		private double _dashEndCapBaseInsetAbsolute;
+
+		/// <summary>The LineJoin property of the pen.</summary>
 		private PenLineJoin _lineJoin;
 
 		/// <summary>The miter limit of the pen. Applies only if lineJoin is Miter.</summary>
@@ -57,10 +72,15 @@ namespace Altaxo.Drawing.D3D
 		/// <summary>If the line join is miter, and the DotProduct of current and next segment is above this value, there is no need to clip the line join.</summary>
 		private double _miterLimitDotThreshold;
 
+		/// <summary>The maximal distance of any vertex of the cross section from the center of the cross section.</summary>
 		private double _crossSectionMaximalDistanceFromCenter;
 
-		// operational variables, i.e. variables evaluated during one call to draw
+		#endregion global Variables, initialized only once per line (not once per dash segment)
 
+		#region operational variables, i.e. variables evaluated during every call to draw
+
+		/// <summary>If true, the position and forward vector of the start cap is already calculated and stored in <see cref="_startCapCOS"/>
+		/// In cases in which <see cref="PolylinePointD3D"/>s are provided, this means that the west and north vectors were already calculated, too.</summary>
 		private bool _startCapForwardAndPositionProvided;
 
 		/// <summary>The index (can be fractional) of the polyline at the start cap base.</summary>
@@ -69,22 +89,30 @@ namespace Altaxo.Drawing.D3D
 		/// <summary>Is a small segment at the start of the polyline neccessary, that has the direction of the start cap? It is not neccessary if the direction of the start cap is the same as the direction of the first polyline segment.</summary>
 		private bool _startCapNeedsJoiningSegment;
 
+		/// <summary>Holds position and orientation of the start cap.</summary>
 		private PolylinePointD3DAsClass _startCapCOS;
 
+		/// <summary>If true, the position and forward vector of the end cap is already calculated and stored in <see cref="_endCapCOS"/>
+		/// In cases in which <see cref="PolylinePointD3D"/>s are provided, this means that the west and north vectors were already calculated, too.</summary>
 		private bool _endCapForwardAndPositionProvided;
 
 		/// <summary>Is a small segment at the end of the polyline neccessary, that has the direction of the end cap? It is not neccessary if the direction of the end cap is the same as the direction of the last polyline segment.</summary>
 		private bool _endCapNeedsJoiningSegment;
 
+		/// <summary>Holds position and orientation of the end cap.</summary>
 		private PolylinePointD3DAsClass _endCapCOS;
 
 		/// <summary>The index (can be fractional) of the polyline at the start cap base.</summary>
 		private double _polylineIndexAtEndCapBase;
 
-		// local variables, i.e. variables that change with every dash segment
+		#endregion operational variables, i.e. variables evaluated during every call to draw
 
+		#region local variables, i.e. variables that change with every dash segment
+
+		/// <summary>Temporary storage needed by the start cap drawing routine.</summary>
 		private object _startCapTemporaryStorageSpace;
 
+		/// <summary>Temporary storage needed by the end cap drawing routine.</summary>
 		private object _endCapTemporaryStorageSpace;
 
 		/// <summary>Transformed positions for the start of the current segment.</summary>
@@ -105,13 +133,12 @@ namespace Altaxo.Drawing.D3D
 		/// <summary>Cross section positions rotated in such a way that the point of the current joint is in x-direction of the rotated vertices.</summary>
 		private VectorD2D[] _crossSectionRotatedVertices;
 
+		#endregion local variables, i.e. variables that change with every dash segment
+
 		/// <summary>
 		/// Initialization that is needed only once per straigth line (not once per dash).
 		/// </summary>
 		/// <param name="pen">The pen that is used to draw the line.</param>
-		/// <param name="west">The west vector.</param>
-		/// <param name="north">The north vector.</param>
-		/// <param name="polylinePoints">The global line to draw.</param>
 		public void Initialize(
 			PenX3D pen
 			)
@@ -127,6 +154,16 @@ namespace Altaxo.Drawing.D3D
 				);
 		}
 
+		/// <summary>
+		/// Initialization that is needed only once per straigth line (not once per dash).
+		/// </summary>
+		/// <param name="crossSection">The cross section of the pen that is used to draw the line.</param>
+		/// <param name="thickness1">Thickness1 of the pen.</param>
+		/// <param name="thickness2">Thickness2 of the pen.</param>
+		/// <param name="lineJoin">The LineJoin property of the pen.</param>
+		/// <param name="miterLimit">The MiterLimit property of the pen.</param>
+		/// <param name="startCap">The start cap to be used for this polyline segment.</param>
+		/// <param name="endCap">The end cap to be used for this polyline segment.</param>
 		public void Initialize(
 		ICrossSectionOfLine crossSection,
 		double thickness1,
@@ -159,124 +196,15 @@ namespace Altaxo.Drawing.D3D
 			_endCapCOS = new PolylinePointD3DAsClass();
 		}
 
-		private void CalculateStartIndexOfPolylineWithCapInsetAbsolute(IList<PointD3D> polylinePoints, double capInsetAbsolute)
-		{
-			var lineStart = polylinePoints[0];
-			int polylinePointsCount = polylinePoints.Count;
-
-			for (int i = 1; i < polylinePointsCount; ++i)
-			{
-				var curr = polylinePoints[i];
-				double diff = (curr - lineStart).Length - capInsetAbsolute;
-
-				if (diff == 0 && (i + 1) < polylinePointsCount) // OK, exactly here
-				{
-					_startCapCOS.Position = curr;
-					_startCapCOS.ForwardVector = (_startCapCOS.Position - lineStart).Normalized;
-					_polylineIndexAtStartCapBase = i;
-					_startCapNeedsJoiningSegment = VectorD3D.DotProduct(_startCapCOS.ForwardVector, (polylinePoints[i + 1] - curr).Normalized) < Cos01Degree;
-					_startCapForwardAndPositionProvided = true;
-					return;
-				}
-				else if (diff > 0) // OK, sowewhere between previous point and here.
-				{
-					int baseIndex = i - 1;
-					var prev = polylinePoints[baseIndex];
-					var relIndex = Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(
-						(r) => (PointD3D.Interpolate(prev, curr, r) - lineStart).Length - capInsetAbsolute,
-						0, 1,
-						1e-3, 0);
-
-					_startCapCOS.Position = PointD3D.Interpolate(prev, curr, relIndex);
-					_startCapCOS.ForwardVector = (_startCapCOS.Position - lineStart).Normalized;
-					_polylineIndexAtStartCapBase = baseIndex + relIndex;
-					_startCapNeedsJoiningSegment = VectorD3D.DotProduct(_startCapCOS.ForwardVector, (curr - prev).Normalized) < Cos01Degree;
-					_startCapForwardAndPositionProvided = true;
-					return;
-				}
-			}
-
-			// the cap is too big, all the line is inside the cap
-			// now search at least for a point which can serve as cap direction
-			for (int i = polylinePoints.Count - 1; i > 0; --i)
-			{
-				if (polylinePoints[i] != lineStart)
-				{
-					_startCapCOS.ForwardVector = (polylinePoints[i] - lineStart).Normalized;
-					_startCapCOS.Position = lineStart + _startCapCOS.ForwardVector * capInsetAbsolute;
-					_polylineIndexAtStartCapBase = double.NaN;
-					_startCapNeedsJoiningSegment = false;
-					_startCapForwardAndPositionProvided = true;
-					return;
-				}
-			}
-
-			_startCapCOS.ForwardVector = VectorD3D.Empty;
-			_startCapCOS.Position = lineStart;
-			_polylineIndexAtStartCapBase = 0;
-			_startCapNeedsJoiningSegment = false;
-			_startCapForwardAndPositionProvided = false;
-		}
-
-		private void CalculateEndIndexOfPolylineWithCapInsetAbsolute(IList<PointD3D> polylinePoints, double capInsetAbsolute)
-		{
-			var lineEnd = polylinePoints[polylinePoints.Count - 1];
-			for (int i = polylinePoints.Count - 2; i >= 0; --i)
-			{
-				var curr = polylinePoints[i];
-
-				double diff = (curr - lineEnd).Length - capInsetAbsolute;
-
-				if (diff == 0 && i > 0) // OK, exactely here
-				{
-					_endCapCOS.Position = curr;
-					_endCapCOS.ForwardVector = (lineEnd - _endCapCOS.Position).Normalized;
-					_polylineIndexAtEndCapBase = i;
-					_endCapNeedsJoiningSegment = VectorD3D.DotProduct(_endCapCOS.ForwardVector, (polylinePoints[i - 1] - curr).Normalized) < Cos01Degree;
-					_endCapForwardAndPositionProvided = true;
-					return;
-				}
-				else if (diff > 0) // OK, sowewhere between previous point and here.
-				{
-					int baseIndex = i + 1;
-					var prev = polylinePoints[baseIndex];
-					var relIndex = Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(
-						(r) => (PointD3D.Interpolate(prev, curr, r) - lineEnd).Length - capInsetAbsolute,
-						0, 1,
-						1e-3, 0);
-
-					_endCapCOS.Position = PointD3D.Interpolate(prev, curr, relIndex);
-					_endCapCOS.ForwardVector = (lineEnd - _endCapCOS.Position).Normalized;
-					_polylineIndexAtEndCapBase = baseIndex - relIndex;
-					_endCapNeedsJoiningSegment = VectorD3D.DotProduct(_endCapCOS.ForwardVector, (prev - curr).Normalized) < Cos01Degree;
-					_endCapForwardAndPositionProvided = true;
-					return;
-				}
-			}
-
-			// the cap is too big, all the line is inside the cap
-			// now search at least for a point which can serve as cap direction
-			for (int i = 0; i < polylinePoints.Count; ++i)
-			{
-				if (polylinePoints[i] != lineEnd)
-				{
-					_endCapCOS.ForwardVector = (lineEnd - polylinePoints[i]).Normalized;
-					_endCapCOS.Position = lineEnd + _endCapCOS.ForwardVector * capInsetAbsolute;
-					_polylineIndexAtEndCapBase = double.NaN;
-					_endCapNeedsJoiningSegment = false;
-					_endCapForwardAndPositionProvided = true;
-					return;
-				}
-			}
-
-			_endCapCOS.ForwardVector = VectorD3D.Empty;
-			_endCapCOS.Position = lineEnd;
-			_polylineIndexAtEndCapBase = double.NaN;
-			_endCapNeedsJoiningSegment = false;
-			_endCapForwardAndPositionProvided = false;
-			return;
-		}
-
+		/// <summary>
+		/// Adds the triangle geometry for a polyline segment with start and end cap.
+		/// </summary>
+		/// <param name="AddPositionAndNormal">The procedure to add a vertex position and normal.</param>
+		/// <param name="AddIndices">The procedure to add vertex indices for one triangle.</param>
+		/// <param name="vertexIndexOffset">The vertex index offset.</param>
+		/// <param name="polylinePoints">The points of the original polyline to draw (not shortened to account for start and end cap). Here, the polyline points are already amended with orientation vectors.</param>
+		/// <param name="overrideStartCap">If not null, this parameter override the start cap that is stored in this class.</param>
+		/// <param name="overrideEndCap">If not null, this parameter overrides the end cap that is stored in this class.</param>
 		public void AddGeometry(
 	Action<PointD3D, VectorD3D> AddPositionAndNormal,
 	Action<int, int, int, bool> AddIndices,
@@ -289,13 +217,18 @@ namespace Altaxo.Drawing.D3D
 				throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
 
 			_polylineIndexAtStartCapBase = 0;
+			_startCapForwardAndPositionProvided = false;
+			_startCapNeedsJoiningSegment = false;
+
 			_polylineIndexAtEndCapBase = polylinePoints.Count - 1;
+			_endCapForwardAndPositionProvided = false;
+			_endCapNeedsJoiningSegment = false;
 
 			if (null != _dashStartCap && null == overrideStartCap)
 			{
 				if (_dashStartCapBaseInsetAbsolute < 0)
 				{
-					PolylineMath3D.GetFractionalStartIndexOfPolylineWithCapInsetAbsolute(
+					_polylineIndexAtStartCapBase = PolylineMath3D.GetFractionalStartIndexOfPolylineWithCapInsetAbsolute(
 						polylinePoints,
 						-_dashStartCapBaseInsetAbsolute,
 						out _startCapForwardAndPositionProvided,
@@ -308,7 +241,7 @@ namespace Altaxo.Drawing.D3D
 			{
 				if (_dashEndCapBaseInsetAbsolute < 0)
 				{
-					PolylineMath3D.GetFractionalEndIndexOfPolylineWithCapInsetAbsolute(
+					_polylineIndexAtEndCapBase = PolylineMath3D.GetFractionalEndIndexOfPolylineWithCapInsetAbsolute(
 						polylinePoints,
 						-_dashEndCapBaseInsetAbsolute,
 						out _endCapForwardAndPositionProvided,
@@ -334,7 +267,7 @@ namespace Altaxo.Drawing.D3D
 				{
 					_endCapCOS.WestVector = polylinePoints[polylinePoints.Count - 1].WestVector;
 					_endCapCOS.NorthVector = polylinePoints[polylinePoints.Count - 1].NorthVector;
-					PolylineMath3D.GetWestAndNorthVectorsForNextSegment(polylinePoints[polylinePoints.Count - 1].ForwardVector, _endCapCOS.ForwardVector, ref _endCapCOS.WestVector, ref _endCapCOS.NorthVector);
+					PolylineMath3D.GetWestAndNorthVectorsForNextSegment(_endCapCOS.ForwardVector, polylinePoints[polylinePoints.Count - 1].ForwardVector, ref _endCapCOS.WestVector, ref _endCapCOS.NorthVector);
 				}
 			}
 
@@ -347,6 +280,18 @@ namespace Altaxo.Drawing.D3D
 				overrideEndCap);
 		}
 
+		/// <summary>
+		/// Adds the triangle geometry for a polyline segment with start and end cap.
+		/// </summary>
+		/// <param name="AddPositionAndNormal">The procedure to add a vertex position and normal.</param>
+		/// <param name="AddIndices">The procedure to add vertex indices for one triangle.</param>
+		/// <param name="vertexIndexOffset">The vertex index offset.</param>
+		/// <param name="polylinePoints">The points of the original polyline to draw (not shortened to account for start and end cap).</param>
+		/// <param name="westVector">West vector at the start of the original polyline.</param>
+		/// <param name="northVector">North vector at the start of the original polyline.</param>
+		/// <param name="forwardVector">Forward vector at the start of the original polyline.</param>
+		/// <param name="overrideStartCap">If not null, this parameter override the start cap that is stored in this class.</param>
+		/// <param name="overrideEndCap">If not null, this parameter overrides the end cap that is stored in this class.</param>
 		public void AddGeometry(
 		Action<PointD3D, VectorD3D> AddPositionAndNormal,
 		Action<int, int, int, bool> AddIndices,
@@ -362,13 +307,18 @@ namespace Altaxo.Drawing.D3D
 				throw new InvalidProgramException("The structure is not initialized yet. Call Initialize before using it!");
 
 			_polylineIndexAtStartCapBase = 0;
+			_startCapForwardAndPositionProvided = false;
+			_startCapNeedsJoiningSegment = false;
+
 			_polylineIndexAtEndCapBase = polylinePoints.Count - 1;
+			_endCapForwardAndPositionProvided = false;
+			_endCapNeedsJoiningSegment = false;
 
 			if (null != _dashStartCap && null == overrideStartCap)
 			{
 				if (_dashStartCapBaseInsetAbsolute < 0)
 				{
-					PolylineMath3D.GetFractionalStartIndexOfPolylineWithCapInsetAbsolute(
+					_polylineIndexAtStartCapBase = PolylineMath3D.GetFractionalStartIndexOfPolylineWithCapInsetAbsolute(
 						polylinePoints,
 						-_dashStartCapBaseInsetAbsolute,
 						out _startCapForwardAndPositionProvided,
@@ -381,7 +331,7 @@ namespace Altaxo.Drawing.D3D
 			{
 				if (_dashEndCapBaseInsetAbsolute < 0)
 				{
-					PolylineMath3D.GetFractionalEndIndexOfPolylineWithCapInsetAbsolute(
+					_polylineIndexAtEndCapBase = PolylineMath3D.GetFractionalEndIndexOfPolylineWithCapInsetAbsolute(
 						polylinePoints,
 						-_dashEndCapBaseInsetAbsolute,
 						out _endCapForwardAndPositionProvided,
@@ -396,11 +346,11 @@ namespace Altaxo.Drawing.D3D
 			{
 				_startCapCOS.WestVector = westVector;
 				_startCapCOS.NorthVector = northVector;
-				PolylineMath3D.GetWestAndNorthVectorsForNextSegment(forwardVector, _startCapCOS.ForwardVector, ref _startCapCOS.WestVector, ref _startCapCOS.NorthVector);
+				PolylineMath3D.GetWestAndNorthVectorsForNextSegment(_startCapCOS.ForwardVector, forwardVector, ref _startCapCOS.WestVector, ref _startCapCOS.NorthVector);
 
 				_endCapCOS.WestVector = _startCapCOS.WestVector;
 				_endCapCOS.NorthVector = _startCapCOS.NorthVector;
-				PolylineMath3D.GetWestAndNorthVectorsForNextSegment(_startCapCOS.ForwardVector, _endCapCOS.ForwardVector, ref _endCapCOS.WestVector, ref _endCapCOS.NorthVector);
+				PolylineMath3D.GetWestAndNorthVectorsForNextSegment(_endCapCOS.ForwardVector, _startCapCOS.ForwardVector, ref _endCapCOS.WestVector, ref _endCapCOS.NorthVector);
 			}
 
 			AddGeometry(AddPositionAndNormal,
@@ -418,8 +368,7 @@ namespace Altaxo.Drawing.D3D
 		/// <param name="AddPositionAndNormal">The procedure to add a vertex position and normal.</param>
 		/// <param name="AddIndices">The procedure to add vertex indices for one triangle.</param>
 		/// <param name="vertexIndexOffset">The vertex index offset.</param>
-		/// <param name="lineStart">The line start. This is the precalculated base of the start line cap.</param>
-		/// <param name="lineEnd">The line end. Here, this is the precalculated base of the end line cap.</param>
+		/// <param name="polylinePoints">The points of the polyline to draw. This is not the original polyline segment, but the polyline segment shortened to account for the start and end cap.</param>
 		/// <param name="drawLine">If this parameter is true, the line segment between lineStart and lineEnd is drawn. If false, the line segment itself is not drawn, but the start end end caps are drawn.</param>
 		/// <param name="overrideStartCap">If not null, this parameter override the start cap that is stored in this class.</param>
 		/// <param name="overrideEndCap">If not null, this parameter overrides the end cap that is stored in this class.</param>
@@ -443,13 +392,7 @@ namespace Altaxo.Drawing.D3D
 			// draw the straight line if the remaining line length is >0
 			if (drawLine)
 			{
-				AddGeometryForLineOnly(
-					AddPositionAndNormal,
-			AddIndices,
-			ref vertexIndexOffset,
-			 _crossSection,
-			 polylinePoints
-			);
+				AddGeometryForLineOnly(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, polylinePoints);
 			}
 
 			// now the start cap
@@ -544,11 +487,17 @@ namespace Altaxo.Drawing.D3D
 			}
 		}
 
+		/// <summary>
+		/// Adds the geometry for the polyline only (i.e. it adds no geometry for the start and end caps).
+		/// </summary>
+		/// <param name="AddPositionAndNormal">The procedure to add position and normal of one triangle vertex.</param>
+		/// <param name="AddIndices">The prodedure to add the indices for one triangle.</param>
+		/// <param name="vertexIndexOffset">The vertex index offset at the start of this procedure.</param>
+		/// <param name="polylinePoints">The polyline points.</param>
 		private void AddGeometryForLineOnly(
 			Action<PointD3D, VectorD3D> AddPositionAndNormal,
 			Action<int, int, int, bool> AddIndices,
 			ref int vertexIndexOffset,
-			ICrossSectionOfLine _crossSection,
 			IEnumerable<PolylinePointD3D> polylinePoints
 			)
 		{

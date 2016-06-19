@@ -108,7 +108,7 @@ namespace Altaxo.Drawing.D3D
 					var v = pen.LineEndCap.GetAbsoluteBaseInset(pen.Thickness1, pen.Thickness2);
 					if (v < 0)
 					{
-						endIndex = PolylineMath3D.GetFractionalStartIndexOfPolylineWithCapInsetAbsolute(
+						endIndex = PolylineMath3D.GetFractionalEndIndexOfPolylineWithCapInsetAbsolute(
 							polylinePoints,
 							-v,
 							out endCapForwardAndPositionProvided,
@@ -154,15 +154,21 @@ namespace Altaxo.Drawing.D3D
 					// if current point list is null, then there is only one segment, namely previousPointList, we have to draw it with start line cap and end line cap.
 					if (currentPointList == null)
 					{
-						_dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, pen.LineStartCap, pen.LineEndCap);
-						wasLineStartCapDrawn = true;
-						wasLineEndCapDrawn = true;
+						// note start line cap and end line cap will be overridden for this segment, but only then if the seamless merge with the dash segment
+						bool overrideLineStartCap = startCapForwardAndPositionProvided && previousPointList[0].Position == startCapCOS.Position;
+						bool overrideLineEndCap = endCapForwardAndPositionProvided && previousPointList[previousPointList.Count - 1].Position == endCapCOS.Position;
+						_dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, overrideLineStartCap ? pen.LineStartCap : null, overrideLineEndCap ? pen.LineEndCap : null);
+						wasLineStartCapDrawn = overrideLineStartCap;
+						wasLineEndCapDrawn = overrideLineEndCap;
 					}
 					else // there are at least two segments
 					{
 						// this is the start of the line, thus we must use the lineStartCap instead of the dashStartCap
-						_dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, pen.LineStartCap, null);
-						wasLineStartCapDrawn = true;
+
+						// note start line cap will be overridden for this first segment, but only then if it seamlessly merge with the start of the dash segment
+						bool overrideLineStartCap = startCapForwardAndPositionProvided && previousPointList[0].Position == startCapCOS.Position;
+						_dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, overrideLineStartCap ? pen.LineStartCap : null, null);
+						wasLineStartCapDrawn = overrideLineStartCap;
 
 						previousPointList = currentPointList;
 						while (en.MoveNext())
@@ -174,9 +180,10 @@ namespace Altaxo.Drawing.D3D
 							previousPointList = currentList;
 						}
 
-						// now currentList is the last list, we can draw and endcap to this
-						_dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, null, pen.LineEndCap);
-						wasLineEndCapDrawn = true;
+						// now currentList is the last list, we can draw an endcap to this
+						bool overrideLineEndCap = endCapForwardAndPositionProvided && previousPointList[previousPointList.Count - 1].Position == endCapCOS.Position;
+						_dashSegment.AddGeometry(AddPositionAndNormal, AddIndices, ref vertexIndexOffset, previousPointList, null, overrideLineEndCap ? pen.LineEndCap : null);
+						wasLineEndCapDrawn = overrideLineEndCap;
 					}
 
 					object temporaryStorageSpace = null;
