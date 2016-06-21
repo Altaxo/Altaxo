@@ -499,6 +499,7 @@
     <Compile Include="Gui\Data\DecomposeByColumnContentDataSourceController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableOptionsController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceController.cs" />
+    <Compile Include="Gui\DragDropDelegateTypes.cs" />
     <Compile Include="Gui\Drawing\D3D\MaterialController.cs" />
     <Compile Include="Gui\Drawing\D3D\Material\MaterialWithUniformColorController.cs" />
     <Compile Include="Gui\Graph3D\Axis\AxisCreationController.cs" />

@@ -27,6 +27,7 @@ using Altaxo.Scripting;
 using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Altaxo.Data
 {
@@ -2045,6 +2046,38 @@ namespace Altaxo.Data
 			}
 
 			return true;
+		}
+
+		/// <summary>
+		/// Gets all group numbers in this table as a sorted set of numbers.
+		/// </summary>
+		/// <returns>All group numbers in this table as a sorted set of numbers.</returns>
+		public SortedSet<int> GetGroupNumbersAll()
+		{
+			return new SortedSet<int>(_columnInfoByColumn.Values.Select(x => x.Group));
+		}
+
+		/// <summary>
+		/// Gets all columns with the provided group number.
+		/// </summary>
+		/// <param name="groupNumber">The group number.</param>
+		/// <returns>A list with all data columns which have the provided group number. If no such columns exist, an emtpy list will be returned.</returns>
+		public List<DataColumn> GetListOfColumnsWithGroupNumber(int groupNumber)
+		{
+			return new List<DataColumn>(_columnInfoByColumn.Where(entry => entry.Value.Group == groupNumber).Select(entry => entry.Key));
+		}
+
+		/// <summary>
+		/// Gets all columns with the provided group number as a dictionary where the key is the column name and the value is the column itself.
+		/// </summary>
+		/// <param name="groupNumber">The group number.</param>
+		/// <returns>A dictionary with all data columns which have the provided group number. If no such columns exist, an emtpy dictionary will be returned.</returns>
+		public Dictionary<string, DataColumn> GetNameDictionaryOfColumnsWithGroupNumber(int groupNumber)
+		{
+			var result = new Dictionary<string, DataColumn>();
+			foreach (var entry in _columnInfoByColumn.Where(entry => entry.Value.Group == groupNumber))
+				result.Add(entry.Value.Name, entry.Key);
+			return result;
 		}
 
 		#endregion Collection Properties

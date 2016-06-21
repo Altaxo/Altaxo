@@ -44,6 +44,12 @@ namespace Altaxo.Graph.Plot.Data
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		System.ICloneable
 	{
+		/// <summary>Holds a reference to the underlying data table. If the Empty property of the proxy is null, the underlying table must be determined from the column proxies.</summary>
+		protected DataTableProxy _dataTable;
+
+		/// <summary>The group number of the data columns. All data columns should have this group number. Data columns having other group numbers will be marked.</summary>
+		protected int _groupNumber;
+
 		protected Altaxo.Data.IReadableColumnProxy _xColumn; // the X-Column
 		protected Altaxo.Data.IReadableColumnProxy _yColumn; // the Y-Column
 		protected Altaxo.Data.IReadableColumnProxy _zColumn; // the Z-Column
@@ -93,6 +99,9 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				var s = (XYZColumnPlotData)obj;
 
+				info.AddValue("DataTable", s._dataTable);
+				info.AddValue("GroupNumber", s._groupNumber);
+
 				info.AddValue("XColumn", s._xColumn);
 				info.AddValue("YColumn", s._yColumn);
 				info.AddValue("ZColumn", s._zColumn);
@@ -108,6 +117,11 @@ namespace Altaxo.Graph.Plot.Data
 			public virtual XYZColumnPlotData SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = (XYZColumnPlotData)o ?? new XYZColumnPlotData(info);
+
+				s._dataTable = (DataTableProxy)info.GetValue("DataTable", s);
+				if (null != s._dataTable) s._dataTable.ParentObject = s;
+
+				s._groupNumber = info.GetInt32("GroupNumber");
 
 				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
 				if (null != s._xColumn) s._xColumn.ParentObject = s;
@@ -156,6 +170,9 @@ namespace Altaxo.Graph.Plot.Data
 		/// <remarks>Only clones the references to the data columns, not the columns itself.</remarks>
 		public XYZColumnPlotData(XYZColumnPlotData from)
 		{
+			ChildCopyToMember(ref _dataTable, from._dataTable);
+			this._groupNumber = from._groupNumber;
+
 			ChildCopyToMember(ref _xColumn, from._xColumn);
 			ChildCopyToMember(ref _yColumn, from._yColumn);
 			ChildCopyToMember(ref _zColumn, from._zColumn);
@@ -181,6 +198,9 @@ namespace Altaxo.Graph.Plot.Data
 
 		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
+			if (null != _dataTable)
+				yield return new DocumentNodeAndName(_dataTable, "DataTable");
+
 			if (null != _xColumn)
 				yield return new Main.DocumentNodeAndName(_xColumn, "XColumn");
 
@@ -208,6 +228,39 @@ namespace Altaxo.Graph.Plot.Data
 		public object Clone()
 		{
 			return new XYZColumnPlotData(this);
+		}
+
+		public DataTable DataTable
+		{
+			get
+			{
+				return _dataTable?.Document;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (object.ReferenceEquals(DataTable, value))
+					return;
+
+				if (ChildSetMember(ref _dataTable, new DataTableProxy(value)))
+				{
+					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
+				}
+			}
+		}
+
+		public int GroupNumber
+		{
+			get
+			{
+				return _groupNumber;
+			}
+			set
+			{
+				_groupNumber = value;
+			}
 		}
 
 		/// <summary>
@@ -396,6 +449,7 @@ namespace Altaxo.Graph.Plot.Data
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
+			Report(_dataTable, this, "DataTable");
 			Report(_xColumn, this, "XColumn");
 			Report(_yColumn, this, "YColumn");
 			Report(_zColumn, this, "ZColumn");
@@ -436,6 +490,14 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
+		public string XColumnName
+		{
+			get
+			{
+				return _xColumn?.DocumentPath?.LastPart;
+			}
+		}
+
 		public Altaxo.Data.IReadableColumn YColumn
 		{
 			get
@@ -455,6 +517,14 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
+		public string YColumnName
+		{
+			get
+			{
+				return _yColumn?.DocumentPath?.LastPart;
+			}
+		}
+
 		public Altaxo.Data.IReadableColumn ZColumn
 		{
 			get
@@ -471,6 +541,14 @@ namespace Altaxo.Graph.Plot.Data
 					_isCachedDataValidX = _isCachedDataValidY = _isCachedDataValidZ = false; // this influences both x and y boundaries
 					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 				}
+			}
+		}
+
+		public string ZColumnName
+		{
+			get
+			{
+				return _zColumn?.DocumentPath?.LastPart;
 			}
 		}
 

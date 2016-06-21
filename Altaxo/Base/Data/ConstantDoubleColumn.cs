@@ -111,7 +111,12 @@ namespace Altaxo.Data
 		/// </summary>
 		public string FullName
 		{
-			get { return string.Format(Altaxo.Settings.GuiCulture.Instance, "ConstantDoubleColumn({0})", _value); }
+			get { return string.Format(Altaxo.Settings.GuiCulture.Instance, "Constant, value = {0}", _value); }
+		}
+
+		public override string ToString()
+		{
+			return string.Format(Altaxo.Settings.GuiCulture.Instance, "Constant, value = {0}", _value);
 		}
 	}
 }

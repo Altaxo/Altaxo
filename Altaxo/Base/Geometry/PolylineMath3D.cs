@@ -278,10 +278,8 @@ namespace Altaxo.Geometry
 				{
 					int baseIndex = i - 1;
 					var prev = polylinePoints[baseIndex];
-					var relIndex = Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(
-						(r) => (PointD3D.Interpolate(prev.Position, curr.Position, r) - lineStart.Position).Length - capInsetAbsolute,
-						0, 1,
-						1e-3, 0);
+
+					var relIndex = Math3D.GetFractionalIndexOfPointOnLineInGivenDistanceToAnotherPoint(prev.Position, curr.Position, lineStart.Position, capInsetAbsolute);
 
 					startCapCOS.Position = PointD3D.Interpolate(prev.Position, curr.Position, relIndex);
 					startCapCOS.ForwardVector = (startCapCOS.Position - lineStart.Position).Normalized;
@@ -356,10 +354,8 @@ namespace Altaxo.Geometry
 				{
 					int baseIndex = i - 1;
 					var prev = polylinePoints[baseIndex];
-					var relIndex = Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(
-						(r) => (PointD3D.Interpolate(prev, curr, r) - lineStart).Length - capInsetAbsolute,
-						0, 1,
-						1e-3, 0);
+
+					var relIndex = Math3D.GetFractionalIndexOfPointOnLineInGivenDistanceToAnotherPoint(prev, curr, lineStart, capInsetAbsolute);
 
 					startCapCOS.Position = PointD3D.Interpolate(prev, curr, relIndex);
 					startCapCOS.ForwardVector = (startCapCOS.Position - lineStart).Normalized;
@@ -428,10 +424,8 @@ namespace Altaxo.Geometry
 				{
 					int baseIndex = i + 1;
 					var prev = polylinePoints[baseIndex];
-					var relIndex = Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(
-						(r) => (PointD3D.Interpolate(prev.Position, curr.Position, r) - lineEnd.Position).Length - capInsetAbsolute,
-						0, 1,
-						1e-3, 0);
+
+					var relIndex = Math3D.GetFractionalIndexOfPointOnLineInGivenDistanceToAnotherPoint(prev.Position, curr.Position, lineEnd.Position, capInsetAbsolute);
 
 					endCapCOS.Position = PointD3D.Interpolate(prev.Position, curr.Position, relIndex);
 					endCapCOS.ForwardVector = (lineEnd.Position - endCapCOS.Position).Normalized;
@@ -503,10 +497,8 @@ namespace Altaxo.Geometry
 				{
 					int baseIndex = i + 1;
 					var prev = polylinePoints[baseIndex];
-					var relIndex = Calc.RootFinding.QuickRootFinding.ByBrentsAlgorithm(
-						(r) => (PointD3D.Interpolate(prev, curr, r) - lineEnd).Length - capInsetAbsolute,
-						0, 1,
-						1e-3, 0);
+
+					var relIndex = Math3D.GetFractionalIndexOfPointOnLineInGivenDistanceToAnotherPoint(prev, curr, lineEnd, capInsetAbsolute);
 
 					endCapCOS.Position = PointD3D.Interpolate(prev, curr, relIndex);
 					endCapCOS.ForwardVector = (lineEnd - endCapCOS.Position).Normalized;

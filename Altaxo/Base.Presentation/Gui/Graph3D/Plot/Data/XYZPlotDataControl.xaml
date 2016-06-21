@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Button">
@@ -36,7 +37,10 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<ComboBox x:Name="_cbTables" Grid.Column="0" Grid.Row="0" SelectionChanged="EhTables_SelectionChangeCommit" />
-		<ListBox x:Name="_lbColumns" Grid.Column="0" Grid.Row="2" Grid.RowSpan="5" ScrollViewer.VerticalScrollBarVisibility="Visible" />
+		<axogc:Int32UpDown x:Name="_guiGroupNumber" Grid.Column="2" Minimum="0" Change="1"  IsGotoMinimumAndMaximumVisible="False" ValueChanged="EhGroupNumber_Changed" />
+
+		<ListBox x:Name="_lbColumns" Grid.Column="0" Grid.Row="2" Grid.RowSpan="5" ScrollViewer.VerticalScrollBarVisibility="Visible"
+			 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
 		<GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="7" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeDirection="Columns" />
 
 		<Button x:Name="m_btToX"  Grid.Column="2" Grid.Row="2" Click="EhToX_Click">
@@ -47,7 +51,8 @@
 				<TextBlock Text="X" Margin="4,0,0,0" />
 			</StackPanel>
 		</Button>
-		<TextBox x:Name="_edXColumn" Grid.Column="3" Grid.Row="2" IsEnabled="False" />
+		<TextBox x:Name="_edXColumn" Grid.Column="3" Grid.Row="2" IsReadOnly="True" Tag="X"
+				dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding ColumnTextBoxesDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
 		<Button x:Name="m_btEraseX" Grid.Column="4" Grid.Row="2" Click="EhEraseX_Click">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource RemoveCrossPathStyle}" />
@@ -62,7 +67,8 @@
 				<TextBlock Text="Y" Margin="4,0,0,0" />
 			</StackPanel>
 		</Button>
-		<TextBox x:Name="_edYColumn" Grid.Column="3" Grid.Row="4" IsEnabled="False" />
+		<TextBox x:Name="_edYColumn" Grid.Column="3" Grid.Row="4" IsReadOnly="True" Tag="Y"
+			dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding ColumnTextBoxesDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
 		<Button x:Name="m_btEraseY"  Grid.Column="4" Grid.Row="4" Click="EhEraseY_Click">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource RemoveCrossPathStyle}" />
@@ -77,12 +83,16 @@
 				<TextBlock Text="Z" Margin="4,0,0,0" />
 			</StackPanel>
 		</Button>
-		<TextBox x:Name="_edZColumn" Grid.Column="3" Grid.Row="6" IsEnabled="False" />
+		<TextBox x:Name="_edZColumn" Grid.Column="3" Grid.Row="6" IsReadOnly="True" Tag="Z"
+				dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding ColumnTextBoxesDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
 		<Button x:Name="m_btEraseZ"  Grid.Column="4" Grid.Row="6" Click="EhEraseZ_Click">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource RemoveCrossPathStyle}" />
 			</Viewbox>
 		</Button>
+
+		<ListBox x:Name="_guiOtherAvailableColumns" Grid.Column="0" Grid.Row="8" ScrollViewer.VerticalScrollBarVisibility="Visible"
+						 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding OtherAvailableColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
 
 		<GroupBox Header="Plot Range:" Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="8" Margin="0,16,0,0"  Padding="0,4,0,0">
 			<Grid>

@@ -162,6 +162,31 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
+		/// Gets the fractional index of the point on a line that has a certain distance to another point <paramref name="ps"/>.
+		/// </summary>
+		/// <param name="p0">The start point of the line.</param>
+		/// <param name="p1">The end point of the line.</param>
+		/// <param name="ps">The other point.</param>
+		/// <param name="distance">The given distance.</param>
+		/// <returns>A relative index on the line [0..1] for the point on the line that has the provided distance to the point <paramref name="ps"/>. If the point <paramref name="ps"/> is too far away, the result will be double.NaN.
+		/// If the point <paramref name="ps"/> is too close, the result can be outside the interval [0,1].</returns>
+		public static double GetFractionalIndexOfPointOnLineInGivenDistanceToAnotherPoint(PointD3D p0, PointD3D p1, PointD3D ps, double distance)
+		{
+			VectorD3D p0s = p0 - ps;
+			VectorD3D seg = p1 - ps;
+			double dotps = VectorD3D.DotProduct(p0s, seg);
+			double slen_p0s = p0s.SquareOfLength;
+			double slen_seg = seg.SquareOfLength;
+
+			double sqrt = Math.Sqrt(dotps * dotps + (distance * distance - slen_p0s) * slen_seg);
+
+			double t1 = (-dotps - sqrt) / slen_seg;
+			double t2 = (-dotps + sqrt) / slen_seg;
+
+			return t1 >= 0 ? t1 : t2;
+		}
+
+		/// <summary>
 		/// Dissects a straight line into individual line segments, using a dash pattern.
 		/// </summary>
 		/// <param name="line">The line to dissect.</param>

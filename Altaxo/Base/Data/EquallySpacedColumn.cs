@@ -74,6 +74,12 @@ namespace Altaxo.Data
 			_increment = increment;
 		}
 
+		public EquallySpacedColumn()
+		{
+			_start = 0;
+			_increment = 1;
+		}
+
 		/// <summary>
 		/// Creates a cloned instance of this object.
 		/// </summary>
