@@ -32,9 +32,15 @@ using System.Windows.Controls;
 namespace Altaxo.Gui.Graph3D.Plot.Data
 {
 	using Altaxo.Collections;
+	using Common;
 	using GongSolutions.Wpf.DragDrop;
 	using System.Collections;
+	using System.IO;
+	using System.Windows.Data;
+	using System.Windows.Input;
+	using System.Windows.Markup;
 	using System.Windows.Media;
+	using System.Xml;
 
 	/// <summary>
 	/// Interaction logic for XYPlotDataControl.xaml
@@ -43,25 +49,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 	{
 		public event Action TableSelectionChanged;
 
-		public event Action Request_ToX;
+		public event Action<ColumnTag> Column_AddTo;
 
-		public event Action Request_ToY;
-
-		public event Action Request_ToZ;
-
-		public event Action Request_EraseX;
-
-		public event Action Request_EraseY;
-
-		public event Action Request_EraseZ;
+		public event Action<ColumnTag> Column_Erase;
 
 		public event Action<int> RangeFromChanged;
 
 		public event Action<int> RangeToChanged;
 
 		public event Action<int> GroupNumberChanged;
-
-		private Brush DefaultTextboxBackground;
 
 		public event CanStartDragDelegate AvailableDataColumns_CanStartDrag;
 
@@ -86,7 +82,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		public XYZPlotDataControl()
 		{
 			InitializeComponent();
-			DefaultTextboxBackground = _edXColumn.Background;
 		}
 
 		private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
@@ -98,40 +93,48 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
-		private void EhToX_Click(object sender, RoutedEventArgs e)
+		private List<List<SingleColumnControl>> _columnControls;
+
+		public void TargetColumns_Initialize(
+			IEnumerable<Tuple< // list of all groups
+			string, // Caption for each group of columns
+			IEnumerable<Tuple< // list of column definitions
+				ColumnTag, // tag to identify the column and group
+				string, // Label of the column
+				string, // name of the column,
+				string, // tooltip
+				ColumnControlState>
+			>>> groups)
 		{
-			if (null != Request_ToX)
+			_guiTargetColumnsStack.Children.Clear();
+			_columnControls = new List<List<SingleColumnControl>>();
+
+			foreach (var group in groups)
 			{
-				GuiHelper.SynchronizeSelectionFromGui(_lbColumns);
-				Request_ToX?.Invoke();
+				var textBlock = new TextBlock { Text = group.Item1, FontStyle = FontStyles.Italic, FontWeight = FontWeights.Bold };
+
+				_guiTargetColumnsStack.Children.Add(textBlock);
+				var groupList = new List<SingleColumnControl>();
+				_columnControls.Add(groupList);
+
+				foreach (var col in group.Item2)
+				{
+					groupList.Add(null);
+
+					var tag = col.Item1;
+					var sgc = new SingleColumnControl(tag, col.Item2, col.Item3, col.Item4, (int)col.Item5);
+					_guiTargetColumnsStack.Children.Add(sgc);
+					_columnControls[tag.GroupNumber][tag.ColumnNumber] = sgc;
+				}
 			}
 		}
 
-		private void EhEraseX_Click(object sender, RoutedEventArgs e)
+		public void Column_Update(ColumnTag tag, string colname, string toolTip, ColumnControlState state)
 		{
-			Request_EraseX?.Invoke();
-		}
-
-		private void EhToY_Click(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_lbColumns);
-			Request_ToY?.Invoke();
-		}
-
-		private void EhEraseY_Click(object sender, RoutedEventArgs e)
-		{
-			Request_EraseY?.Invoke();
-		}
-
-		private void EhToZ_Click(object sender, RoutedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_lbColumns);
-			Request_ToZ?.Invoke();
-		}
-
-		private void EhEraseZ_Click(object sender, RoutedEventArgs e)
-		{
-			Request_EraseZ?.Invoke();
+			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
+			sgc.ColumnText = colname;
+			sgc.ToolTipText = toolTip;
+			sgc.SetSeverityLevel((int)state);
 		}
 
 		private void EhPlotRangeFrom_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
@@ -159,42 +162,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		public void OtherAvailableColumns_Initialize(SelectableListNodeList items)
 		{
 			GuiHelper.Initialize(_guiOtherAvailableColumns, items);
-		}
-
-		private void ColumnBox_Initialize(TextBox box, string colName, string toolTip, ColumnControlState state)
-		{
-			box.Text = colName;
-			box.ToolTip = toolTip;
-
-			switch (state)
-			{
-				case ColumnControlState.Normal:
-					box.Background = DefaultTextboxBackground;
-					break;
-
-				case ColumnControlState.Warning:
-					box.Background = Brushes.Yellow;
-					break;
-
-				case ColumnControlState.Error:
-					box.Background = Brushes.LightPink;
-					break;
-			}
-		}
-
-		public void XColumn_Initialize(string colname, string toolTip, ColumnControlState state)
-		{
-			ColumnBox_Initialize(_edXColumn, colname, toolTip, state);
-		}
-
-		public void YColumn_Initialize(string colname, string toolTip, ColumnControlState state)
-		{
-			ColumnBox_Initialize(_edYColumn, colname, toolTip, state);
-		}
-
-		public void ZColumn_Initialize(string colname, string toolTip, ColumnControlState state)
-		{
-			ColumnBox_Initialize(_edZColumn, colname, toolTip, state);
 		}
 
 		public void PlotRangeFrom_Initialize(int from)
@@ -408,5 +375,52 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		}
 
 		#endregion Column text boxes drop handler
+
+		#region Column text boxes commands
+
+		#region ColumnAddTo command
+
+		private RelayCommand _columnAddToCommand;
+
+		public ICommand ColumnAddToCommand
+		{
+			get
+			{
+				if (this._columnAddToCommand == null)
+					this._columnAddToCommand = new RelayCommand(EhColumn_AddToCommand);
+				return this._columnAddToCommand;
+			}
+		}
+
+		private void EhColumn_AddToCommand(object parameter)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_lbColumns);
+			Column_AddTo?.Invoke(parameter as ColumnTag);
+		}
+
+		#endregion ColumnAddTo command
+
+		#region ColumnErase command
+
+		private RelayCommand _columnEraseCommand;
+
+		public ICommand ColumnEraseCommand
+		{
+			get
+			{
+				if (this._columnEraseCommand == null)
+					this._columnEraseCommand = new RelayCommand(EhColumn_EraseCommand);
+				return this._columnEraseCommand;
+			}
+		}
+
+		private void EhColumn_EraseCommand(object parameter)
+		{
+			Column_Erase?.Invoke(parameter as ColumnTag);
+		}
+
+		#endregion ColumnErase command
+
+		#endregion Column text boxes commands
 	}
 }

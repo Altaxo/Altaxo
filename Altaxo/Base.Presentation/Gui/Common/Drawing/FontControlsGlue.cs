@@ -33,29 +33,41 @@ using System.Windows;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-	public class FontControlsGlue : FrameworkElement
+	public class FontXControlsGlue : FrameworkElement
 	{
-		public FontControlsGlue()
+		public FontXControlsGlue()
 		{
 		}
 
 		#region Font
 
-		private FontX _font;
+		private FontX _fontX;
+
+		protected virtual FontX FontX
+		{
+			get
+			{
+				return _fontX;
+			}
+			set
+			{
+				_fontX = value;
+			}
+		}
 
 		public FontX SelectedFont
 		{
 			get
 			{
-				return _font;
+				return FontX;
 			}
 			set
 			{
-				_font = value;
+				FontX = value;
 
-				if (null != CbFontFamily) CbFontFamily.SelectedFontFamily = GdiFontManager.GdiFontFamily(_font);
-				if (null != _cbFontStyle) CbFontStyle.SelectedFontStyle = _font.Style;
-				if (null != CbFontSize) CbFontSize.SelectedQuantityAsValueInPoints = _font.Size;
+				if (null != CbFontFamily) CbFontFamily.SelectedFontFamily = GdiFontManager.GdiFontFamily(FontX);
+				if (null != _cbFontStyle) CbFontStyle.SelectedFontStyle = FontX.Style;
+				if (null != CbFontSize) CbFontSize.SelectedQuantityAsValueInPoints = FontX.Size;
 			}
 		}
 
@@ -86,8 +98,8 @@ namespace Altaxo.Gui.Common.Drawing
 					dpd.RemoveValueChanged(_cbFontFamily, EhFontFamily_SelectionChangeCommitted);
 
 				_cbFontFamily = value;
-				if (_font != null && _cbFontFamily != null)
-					_cbFontFamily.SelectedFontFamily = GdiFontManager.GdiFontFamily(_font);
+				if (FontX != null && _cbFontFamily != null)
+					_cbFontFamily.SelectedFontFamily = GdiFontManager.GdiFontFamily(FontX);
 
 				if (_cbFontFamily != null)
 					dpd.AddValueChanged(_cbFontFamily, EhFontFamily_SelectionChangeCommitted);
@@ -96,9 +108,9 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private void EhFontFamily_SelectionChangeCommitted(object sender, EventArgs e)
 		{
-			if (_font != null)
+			if (FontX != null)
 			{
-				_font = _font.GetFontWithNewFamily(_cbFontFamily.SelectedFontFamily.Name);
+				FontX = FontX.GetFontWithNewFamily(_cbFontFamily.SelectedFontFamily.Name);
 				OnSelectedFontChanged();
 			}
 		}
@@ -122,8 +134,8 @@ namespace Altaxo.Gui.Common.Drawing
 				}
 
 				_cbFontStyle = value;
-				if (_font != null && _cbFontStyle != null)
-					_cbFontStyle.SelectedFontStyle = _font.Style;
+				if (FontX != null && _cbFontStyle != null)
+					_cbFontStyle.SelectedFontStyle = FontX.Style;
 
 				if (_cbFontStyle != null)
 				{
@@ -134,9 +146,9 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private void EhFontStyle_SelectionChangeCommitted(object sender, EventArgs e)
 		{
-			if (_font != null)
+			if (FontX != null)
 			{
-				_font = _font.GetFontWithNewStyle(_cbFontStyle.SelectedFontStyle);
+				FontX = FontX.GetFontWithNewStyle(_cbFontStyle.SelectedFontStyle);
 				OnSelectedFontChanged();
 			}
 		}
@@ -158,8 +170,8 @@ namespace Altaxo.Gui.Common.Drawing
 				}
 
 				_cbFontSize = value;
-				if (_font != null && _cbFontSize != null)
-					_cbFontSize.SelectedQuantityAsValueInPoints = _font.Size;
+				if (FontX != null && _cbFontSize != null)
+					_cbFontSize.SelectedQuantityAsValueInPoints = FontX.Size;
 
 				if (_cbFontSize != null)
 				{
@@ -170,9 +182,91 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private void EhFontSize_SelectionChangeCommitted(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
 		{
-			if (_font != null)
+			if (FontX != null)
 			{
-				_font = _font.GetFontWithNewSize(_cbFontSize.SelectedQuantityAsValueInPoints);
+				FontX = FontX.GetFontWithNewSize(_cbFontSize.SelectedQuantityAsValueInPoints);
+				OnSelectedFontChanged();
+			}
+		}
+
+		#endregion Size
+	}
+
+	public class FontX3DControlsGlue : FontXControlsGlue
+	{
+		private Altaxo.Drawing.D3D.FontX3D _fontX3D;
+
+		protected override FontX FontX
+		{
+			get
+			{
+				return _fontX3D?.Font;
+			}
+			set
+			{
+				_fontX3D = new Altaxo.Drawing.D3D.FontX3D(value, _fontX3D.Depth);
+			}
+		}
+
+		protected virtual Altaxo.Drawing.D3D.FontX3D FontX3D
+		{
+			get
+			{
+				return _fontX3D;
+			}
+			set
+			{
+				_fontX3D = value;
+			}
+		}
+
+		public new Altaxo.Drawing.D3D.FontX3D SelectedFont
+		{
+			get
+			{
+				return _fontX3D;
+			}
+			set
+			{
+				_fontX3D = value;
+
+				if (null != CbFontFamily) CbFontFamily.SelectedFontFamily = GdiFontManager.GdiFontFamily(FontX);
+				if (null != CbFontStyle) CbFontStyle.SelectedFontStyle = FontX.Style;
+				if (null != CbFontSize) CbFontSize.SelectedQuantityAsValueInPoints = FontX.Size;
+				if (null != CbFontDepth) CbFontDepth.SelectedQuantityAsValueInPoints = FontX3D.Depth;
+			}
+		}
+
+		#region Size
+
+		private FontSizeComboBox _cbFontDepth;
+
+		public FontSizeComboBox CbFontDepth
+		{
+			get { return _cbFontDepth; }
+			set
+			{
+				if (_cbFontDepth != null)
+				{
+					_cbFontDepth.SelectedQuantityChanged -= EhFontDepth_SelectionChangeCommitted;
+				}
+
+				_cbFontDepth = value;
+				if (FontX3D != null && _cbFontDepth != null)
+					_cbFontDepth.SelectedQuantityAsValueInPoints = FontX3D.Depth;
+
+				if (_cbFontDepth != null)
+				{
+					_cbFontDepth.SelectedQuantityChanged += EhFontDepth_SelectionChangeCommitted;
+				}
+			}
+		}
+
+		private void EhFontDepth_SelectionChangeCommitted(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+		{
+			if (FontX != null)
+			{
+				FontX3D = FontX3D.WithDepth(_cbFontDepth.SelectedQuantityAsValueInPoints);
 				OnSelectedFontChanged();
 			}
 		}

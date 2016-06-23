@@ -272,13 +272,26 @@ namespace Altaxo.Graph.Graph3D.Background
 		/// <exception cref="NotImplementedException"></exception>
 		public void Draw(IGraphicsContext3D g, RectangleD3D itemRectangle)
 		{
+			Draw(g, itemRectangle, _material);
+		}
+
+		/// <summary>
+		/// Draws the specified background
+		/// </summary>
+		/// <param name="g">The drawing context.</param>
+		/// <param name="itemRectangle">Position and size of the item for which this background is intended. For text, this is the position and size of the text rectangle, already with a margin around.
+		/// This parameter should have the same size as was used in the previous call to <see cref="Measure(RectangleD3D)" /></param>
+		/// <param name="material">The material to use for this background.</param>
+		/// <exception cref="NotImplementedException"></exception>
+		public void Draw(IGraphicsContext3D g, RectangleD3D itemRectangle, IMaterial material)
+		{
 			var rectangleToDraw = GetRectangleToDraw(itemRectangle);
 
-			var buffers = g.GetPositionNormalIndexedTriangleBuffer(_material);
+			var buffers = g.GetPositionNormalIndexedTriangleBuffer(material);
 
 			if (null != buffers.PositionNormalColorIndexedTriangleBuffer)
 			{
-				var c = _material.Color.Color;
+				var c = material.Color.Color;
 				var voffs = buffers.PositionNormalColorIndexedTriangleBuffer.VertexCount;
 				Altaxo.Drawing.D3D.SolidCube.Add(
 					rectangleToDraw.X, rectangleToDraw.Y, rectangleToDraw.Z, rectangleToDraw.SizeX, rectangleToDraw.SizeY, rectangleToDraw.SizeZ,

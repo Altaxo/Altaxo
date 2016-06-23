@@ -29,6 +29,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+	using Altaxo.Data;
 	using Altaxo.Main;
 	using Data;
 	using Geometry;
@@ -449,6 +450,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				if (o is IRoutedPropertyReceiver)
 					(o as IRoutedPropertyReceiver).GetRoutedProperty(property);
 			}
+		}
+
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
+		{
+			yield break; // no additionally used columns
 		}
 
 		#endregion IRoutedPropertyReceiver Members

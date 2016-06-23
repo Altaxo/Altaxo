@@ -494,7 +494,7 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			get
 			{
-				return _xColumn?.DocumentPath?.LastPart;
+				return _xColumn?.DocumentPath?.LastPartOrDefault;
 			}
 		}
 
@@ -521,7 +521,7 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			get
 			{
-				return _yColumn?.DocumentPath?.LastPart;
+				return _yColumn?.DocumentPath?.LastPartOrDefault;
 			}
 		}
 
@@ -548,7 +548,7 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			get
 			{
-				return _zColumn?.DocumentPath?.LastPart;
+				return _zColumn?.DocumentPath?.LastPartOrDefault;
 			}
 		}
 

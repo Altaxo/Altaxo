@@ -86,6 +86,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 		void TranslateTransform(double x, double y, double z);
 
 		void TranslateTransform(VectorD3D diff);
+
+		void RotateTransform(double degreeX, double degreeY, double degreeZ);
 	}
 
 	public interface IOverlayContext3D : ITransformationContext

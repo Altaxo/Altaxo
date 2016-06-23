@@ -359,6 +359,7 @@
     <Compile Include="Graph\Graph3D\Plot\Styles\IG3DPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ILineConnectionStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\IScatterSymbolShape.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Styles\LabelPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\LineConnectionStyles\LineConnectionStyleBase.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\LineConnectionStyles\StraightConnection.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\LineConnectionStyles\NoConnection.cs" />
@@ -533,6 +534,7 @@
     <Compile Include="Gui\Graph3D\Plot\Groups\PlotGroupCollectionControllerAdvanced.cs" />
     <Compile Include="Gui\Graph3D\Plot\Groups\PlotGroupCollectionControllerSimple.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleController.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Styles\LabelPlotStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotLineStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotScatterStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotStyleCollectionController.cs" />

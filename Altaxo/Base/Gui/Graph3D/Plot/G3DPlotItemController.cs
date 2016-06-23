@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Data;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Plot;
 using Altaxo.Graph.Graph3D.Plot.Groups;
@@ -83,7 +84,7 @@ namespace Altaxo.Gui.Graph3D.Plot
 		/// <summary>Controller for the <see cref="PlotGroupStyleCollection"/> that is associated with the parent of this plot item.</summary>
 		private IMVCANController _plotGroupController;
 
-		private IMVCAController _dataController;
+		private Data.IColumnDataController _dataController;
 		private IXYZPlotStyleCollectionController _styleCollectionController;
 		private List<IMVCANController> _styleControllerList = new List<IMVCANController>();
 
@@ -138,7 +139,7 @@ namespace Altaxo.Gui.Graph3D.Plot
 				_styleCollectionController.StyleEditRequested += new Action<int>(_styleCollectionController_StyleEditRequested);
 
 				// Initialize the data controller
-				_dataController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataObject, _doc }, typeof(IMVCAController), UseDocument.Directly);
+				_dataController = (Data.IColumnDataController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataObject, _doc }, typeof(Data.IColumnDataController), UseDocument.Directly);
 
 				// Initialize the style controller list
 				InitializeStyleControllerList();
@@ -231,7 +232,7 @@ namespace Altaxo.Gui.Graph3D.Plot
 			// set the plot style tab items
 			for (int i = 0; i < _styleControllerList.Count; ++i)
 			{
-				string title = string.Format("#{0}:{1}", (i + 1), Current.Gui.GetUserFriendlyClassName(_doc.Style[i].GetType()));
+				string title = string.Format("#{0}: {1}", (i + 1), Current.Gui.GetUserFriendlyClassName(_doc.Style[i].GetType()));
 				_view.AddTab(title, _styleControllerList[i].ViewObject);
 			}
 		}
@@ -264,6 +265,44 @@ namespace Altaxo.Gui.Graph3D.Plot
 			{
 				IMVCANController ctrl = GetStyleController(_doc.Style[i]);
 				_styleControllerList.Add(ctrl);
+			}
+
+			_dataController.SetAdditionalColumns(GetAdditionalColumns());
+		}
+
+		private IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> GetAdditionalColumns()
+		{
+			for (int i = 0; i < _doc.Style.Count; i++)
+			{
+				var style = _doc.Style[i];
+
+				var additionalColumns = style.GetAdditionallyUsedColumns();
+
+				if (null != additionalColumns)
+				{
+					yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>(
+						string.Format("#{0}: {1}", i + 1, Current.Gui.GetUserFriendlyClassName(style.GetType())),
+						GetAdditionallyUsedColumnsWithAmendedControllerAction(additionalColumns, i));
+				}
+			}
+		}
+
+		/// <summary>
+		/// Amends the action to set back the column during apply with another action which updates the corresponding style controller.
+		/// </summary>
+		/// <param name="originalAdditionalColumns">The original additional columns.</param>
+		/// <param name="i">The index of the style (and of the style controller).</param>
+		/// <returns>Enumeration as the original enumeration, but with an action amended which updates the style controller.</returns>
+		private IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumnsWithAmendedControllerAction(IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> originalAdditionalColumns, int i)
+		{
+			foreach (var additionalColumn in originalAdditionalColumns)
+			{
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(
+					additionalColumn.Item1,
+					additionalColumn.Item2,
+					additionalColumn.Item3,
+					(column) => { additionalColumn.Item4(column); _styleControllerList[i].InitializeDocument(_doc.Style[i]); }
+					);
 			}
 		}
 

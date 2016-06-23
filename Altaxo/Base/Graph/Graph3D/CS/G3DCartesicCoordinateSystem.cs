@@ -35,6 +35,8 @@ namespace Altaxo.Graph.Graph3D.CS
 	{
 		private static Dictionary<G3DCartesicCoordinateSystem, IList<CSAxisInformation>> _axisInformationLists;
 
+		private static Dictionary<G3DCartesicCoordinateSystem, IList<CSPlaneInformation>> _planeInformationLists;
+
 		/// <summary>
 		/// Is the normal position of x and y axes interchanged, for instance x is vertical and y horizontal.
 		/// </summary>
@@ -118,6 +120,7 @@ namespace Altaxo.Graph.Graph3D.CS
 		static G3DCartesicCoordinateSystem()
 		{
 			_axisInformationLists = new Dictionary<G3DCartesicCoordinateSystem, IList<CSAxisInformation>>(new ComparerForStaticDictionary());
+			_planeInformationLists = new Dictionary<G3DCartesicCoordinateSystem, IList<CSPlaneInformation>>(new ComparerForStaticDictionary());
 		}
 
 		#endregion Construction and cloning
@@ -337,6 +340,23 @@ namespace Altaxo.Graph.Graph3D.CS
 			}
 		}
 
+		public override IEnumerable<CSPlaneInformation> PlaneStyles
+		{
+			get
+			{
+				IList<CSPlaneInformation> result;
+				if (!_planeInformationLists.TryGetValue(this, out result))
+				{
+					result = GetPlaneStyleInformations();
+					lock (this)
+					{
+						_planeInformationLists[(G3DCartesicCoordinateSystem)this.WithLayerSize(VectorD3D.Empty)] = result;
+					}
+				}
+				return result;
+			}
+		}
+
 		/// <summary>
 		/// Gets the axis line vector. This is a vector pointing from the origin to the axis line, when the layer is assumed to be a square of 2x2x2 size, centered at the origin.
 		/// Thus the returned vector has one member set to zero, and the other two members set either to +1 or -1.
@@ -357,6 +377,24 @@ namespace Altaxo.Graph.Graph3D.CS
 
 				case 2:
 					return new VectorD3D(id.LogicalValueOtherFirst * 2 - 1, id.LogicalValueOtherSecond * 2 - 1, 0);
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		public static VectorD3D GetUntransformedAxisPlaneVector(CSPlaneID id)
+		{
+			switch (id.PerpendicularAxisNumber)
+			{
+				case 0: // parallel axis is X
+					return new VectorD3D(1, 0, 0);
+
+				case 1:
+					return new VectorD3D(0, 1, 0);
+
+				case 2:
+					return new VectorD3D(0, 0, 1);
 
 				default:
 					throw new NotImplementedException();
@@ -728,6 +766,64 @@ namespace Altaxo.Graph.Graph3D.CS
 
 						axisStyleInformations.Add(item);
 					}
+				}
+			}
+
+			return axisStyleInformations.AsReadOnly();
+		}
+
+		private IList<CSPlaneInformation> GetPlaneStyleInformations()
+		{
+			var axisStyleInformations = new List<CSPlaneInformation>();
+
+			for (int axisnumber = 0; axisnumber <= 2; ++axisnumber)
+			{
+				for (int firstother = 0; firstother <= 1; ++firstother)
+				{
+					var planeId = new CSPlaneID(axisnumber, firstother);
+					var uv = GetUntransformedAxisPlaneVector(planeId);
+					var tv = VectorTransformation.Transform(uv);
+
+					var lv = planeId.LogicalValue;
+
+					if (tv.X == -1 || tv.Y == -1 || tv.Z == -1)
+						lv = 1 - lv;
+					string name = "";
+					if (Math.Abs(tv.X) == 1)
+					{
+						if (lv == 0)
+							name = "Left";
+						else if (lv == 1)
+							name = "Right";
+						else
+							name = string.Format("{0}% between left and right", lv * 100);
+					}
+					else if (Math.Abs(tv.Y) == 1)
+					{
+						if (lv == 0)
+							name = "Front";
+						else if (lv == 1)
+							name = "Back";
+						else
+							name = string.Format("{0}% between front and back", lv * 100);
+					}
+					else if (Math.Abs(tv.Z) == 1)
+					{
+						if (lv == 0)
+							name = "Bottom";
+						else if (lv == 1)
+							name = "Top";
+						else
+							name = string.Format("{0}% between bottom and top", lv * 100);
+					}
+					else
+					{
+						throw new NotImplementedException();
+					}
+
+					var item = new CSPlaneInformation(planeId) { Name = name };
+
+					axisStyleInformations.Add(item);
 				}
 			}
 

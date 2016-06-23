@@ -29,6 +29,7 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+	using Altaxo.Data;
 	using Altaxo.Main;
 	using Drawing;
 	using Drawing.D3D;
@@ -478,6 +479,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
+		}
+
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
+		{
+			return null; // no additionally used columns
 		}
 
 		#endregion IDocumentNode Members

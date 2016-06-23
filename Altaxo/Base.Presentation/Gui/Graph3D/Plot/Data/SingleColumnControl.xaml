@@ -1,0 +1,39 @@
+﻿<Grid x:Class="Altaxo.Gui.Graph3D.Plot.Data.SingleColumnControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Altaxo.Gui.Graph3D.Plot.Data"
+							xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
+							Margin="0,2,0,2">
+	<Grid.Resources>
+		<ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
+	</Grid.Resources>
+	<Grid.ColumnDefinitions>
+		<ColumnDefinition Width="Auto" SharedSizeGroup="BtnAdd" />
+		<ColumnDefinition Width="*" MinWidth="40" SharedSizeGroup="ColEdit" />
+		<ColumnDefinition Width="Auto" SharedSizeGroup="BtnErs" />
+	</Grid.ColumnDefinitions>
+
+	<Button
+					Grid.Column="0"
+					Command="{Binding ColumnAddToCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+					CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}">
+		<StackPanel Orientation="Horizontal">
+			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+				<Path Style="{StaticResource LeftArrowPathStyle}" />
+			</Viewbox>
+			<TextBlock Text="{Binding LabelText, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}" Margin="4,0,0,0" />
+		</StackPanel>
+	</Button>
+	<TextBox x:Name="_guiColumnText" Grid.Column="1"  IsReadOnly="True"
+					 Tag="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
+				dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding ColumnTextBoxesDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
+	<Button Grid.Column="2"
+					Command="{Binding ColumnEraseCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+					CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}">
+		<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+			<Path Style="{StaticResource RemoveCrossPathStyle}" />
+		</Viewbox>
+	</Button>
+</Grid>

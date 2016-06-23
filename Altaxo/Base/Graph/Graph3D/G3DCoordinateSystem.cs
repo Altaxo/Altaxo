@@ -359,6 +359,8 @@ namespace Altaxo.Graph.Graph3D
 		/// </summary>
 		public abstract IEnumerable<CSAxisInformation> AxisStyles { get; }
 
+		public abstract IEnumerable<CSPlaneInformation> PlaneStyles { get; }
+
 		public CSAxisInformation GetAxisStyleInformation(CSLineID styleID)
 		{
 			// search for the same axis first, then for the style with the nearest logical value

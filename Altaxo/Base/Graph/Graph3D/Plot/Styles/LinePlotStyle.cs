@@ -28,6 +28,7 @@ using System.Collections.Generic;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
+	using Altaxo.Data;
 	using Altaxo.Main;
 	using Drawing;
 	using Drawing.D3D;
@@ -470,6 +471,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					}
 					break;
 			}
+		}
+
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
+		{
+			return null; // no additionally used columns
 		}
 
 		#endregion IRoutedPropertyReceiver Members

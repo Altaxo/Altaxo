@@ -26,6 +26,7 @@ using Altaxo.Collections;
 using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -33,7 +34,9 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
+using System.Xml;
 
 namespace Altaxo.Gui
 {
@@ -547,5 +550,64 @@ namespace Altaxo.Gui
 		}
 
 		#endregion Miscellaneous
+
+		#region Conversion to / from Xaml string
+
+		/// <summary>
+		/// Registers a converter for a provided type.
+		/// </summary>
+		/// <typeparam name="T">The type for which the converter is to be registered.</typeparam>
+		/// <typeparam name="TC">The type of the converter.</typeparam>
+		public static void RegisterConverter<T, TC>()
+		{
+			Attribute[] attr = new Attribute[1];
+			TypeConverterAttribute vConv = new TypeConverterAttribute(typeof(TC));
+			attr[0] = vConv;
+			TypeDescriptor.AddAttributes(typeof(T), attr);
+		}
+
+		private static bool _converterForBindingExpressionRegistered;
+
+		/// <summary>
+		/// Clones a framework element and all elements under it, including Bindings.
+		/// </summary>
+		/// <param name="elementToClone">The element to clone.</param>
+		/// <returns>The cloned element. Please keep in mind that the cloned element (and the elements under it) have the same name than the original.</returns>
+		/// <remarks>For credit and details see <see href="http://stackoverflow.com/questions/32541/how-can-you-clone-a-wpf-object"/>.</remarks>
+		public static FrameworkElement CloneFrameworkElement(FrameworkElement elementToClone)
+		{
+			if (!_converterForBindingExpressionRegistered)
+			{
+				GuiHelper.RegisterConverter<BindingExpression, Common.Converters.BindingConverter>();
+				_converterForBindingExpressionRegistered = true;
+			}
+
+			var sb = new StringBuilder();
+			var writer = XmlWriter.Create(sb, new XmlWriterSettings
+			{
+				Indent = true,
+				ConformanceLevel = ConformanceLevel.Fragment,
+				OmitXmlDeclaration = true,
+				NamespaceHandling = NamespaceHandling.OmitDuplicates,
+			});
+			var mgr = new XamlDesignerSerializationManager(writer);
+
+			// HERE BE MAGIC!!!
+			mgr.XamlWriterMode = XamlWriterMode.Expression;
+			// THERE WERE MAGIC!!!
+
+			System.Windows.Markup.XamlWriter.Save(elementToClone, mgr);
+
+			string frameworkElementAsXamlString = sb.ToString();
+
+			// now deserialize it again
+
+			var stringReader = new System.IO.StringReader(frameworkElementAsXamlString);
+			XmlReader xmlReader = XmlReader.Create(stringReader);
+			var clonedFrameworkElement = (FrameworkElement)XamlReader.Load(xmlReader);
+			return clonedFrameworkElement;
+		}
+
+		#endregion Conversion to / from Xaml string
 	}
 }

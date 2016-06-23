@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Graph
 	/// </summary>
 	public partial class XYPlotLabelStyleControl : UserControl, IXYPlotLabelStyleView
 	{
-		private FontControlsGlue _fontControlsGlue;
+		private FontXControlsGlue _fontControlsGlue;
 		private BackgroundControlsGlue _backgroundGlue;
 
 		public event Action LabelColumnSelected;
@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Graph
 		{
 			InitializeComponent();
 
-			_fontControlsGlue = new FontControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle, CbFontSize = _cbFontSize };
+			_fontControlsGlue = new FontXControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle, CbFontSize = _cbFontSize };
 			_fontControlsGlue.SelectedFontChanged += EhFontSizeChanged;
 			_backgroundGlue = new BackgroundControlsGlue() { CbStyle = _cbBackgroundStyle, CbBrush = _cbBackgroundBrush };
 			_backgroundGlue.BackgroundStyleChanged += EhBackgroundStyleInstanceChanged;

@@ -42,6 +42,18 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		Error
 	}
 
+	public class ColumnTag
+	{
+		public ColumnTag(int groupNumber, int columnNumber)
+		{
+			GroupNumber = groupNumber;
+			ColumnNumber = columnNumber;
+		}
+
+		public int GroupNumber { get; private set; }
+		public int ColumnNumber { get; private set; }
+	}
+
 	public interface IXYZColumnPlotDataView
 	{
 		void Tables_Initialize(SelectableListNodeList items);
@@ -50,11 +62,18 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		void OtherAvailableColumns_Initialize(SelectableListNodeList items);
 
-		void XColumn_Initialize(string colname, string toolTip, ColumnControlState state);
+		void TargetColumns_Initialize(
+			IEnumerable<Tuple< // list of all groups
+			string, // Caption for each group of columns
+			IEnumerable<Tuple< // list of column definitions
+				ColumnTag, // tag to identify the column and group
+				string, // Label of the column
+				string, // name of the column,
+				string, // tooltip
+				ColumnControlState>
+			>>> groups);
 
-		void YColumn_Initialize(string colname, string toolTip, ColumnControlState state);
-
-		void ZColumn_Initialize(string colname, string toolTip, ColumnControlState state);
+		void Column_Update(ColumnTag tag, string colname, string toolTip, ColumnControlState state);
 
 		void GroupNumber_Initialize(int groupNumber, bool isEnabled);
 
@@ -64,17 +83,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		event Action TableSelectionChanged;
 
-		event Action Request_ToX;
+		event Action<ColumnTag> Column_AddTo;
 
-		event Action Request_ToY;
-
-		event Action Request_ToZ;
-
-		event Action Request_EraseX;
-
-		event Action Request_EraseY;
-
-		event Action Request_EraseZ;
+		event Action<ColumnTag> Column_Erase;
 
 		event Action<int> RangeFromChanged;
 
@@ -103,6 +114,20 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		event DropDelegate Column_Drop;
 	}
 
+	public interface IColumnDataController : IMVCANController
+	{
+		/// <summary>
+		/// Sets the additional columns that are used by some of the plot styles.
+		/// </summary>
+		/// <param name="additionalColumns">The additional columns. This is an enumerable of tuples, each tuple corresponding to one plot style.
+		/// The first item of this tuple is the plot style's number and name. The second item is another enumeration of tuples.
+		/// Each tuple in this second enumeration consist of the name of the column (first item) and a function which returns the column proxy which
+		/// can be used to get or set the underlying column.</param>
+		void SetAdditionalColumns(
+			IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> additionalColumns
+			);
+	}
+
 	#endregion Interfaces
 
 	/// <summary>
@@ -112,29 +137,106 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 	[ExpectedTypeOfView(typeof(IXYZColumnPlotDataView))]
 	public class XYZColumnPlotDataController
 		:
-		MVCANControllerEditOriginalDocBase<XYZColumnPlotData, IXYZColumnPlotDataView>
+		MVCANControllerEditOriginalDocBase<XYZColumnPlotData, IXYZColumnPlotDataView>, IColumnDataController
 	{
-		private struct ColumnInfo
+		private class ColumnInfo
 		{
 			public string Label;
 			public Altaxo.Data.IReadableColumn Column;
-			public string ColumnName;
+			public string ColumnNameToShow;
+			public string ColumnNameToCache;
+			public string ToolTip;
+			public ColumnControlState State;
 			public string Tag;
+			public Action<IReadableColumn> ColumnSetter;
+
+			public void UpdateTooltipAndState(DataTable dataTableOfPlotItem)
+			{
+				if (null == Column)
+				{
+					if (string.IsNullOrEmpty(ColumnNameToCache))
+					{
+						ColumnNameToShow = string.Empty;
+						ToolTip = string.Empty;
+						State = ColumnControlState.Normal;
+					}
+					else
+					{
+						ColumnNameToShow = ColumnNameToCache;
+						ToolTip = string.Format("Column {0} can not be found in this table with this group number", ColumnNameToCache);
+						State = ColumnControlState.Error;
+					}
+				}
+				else if (Column is DataColumn)
+				{
+					var dcolumn = (DataColumn)Column;
+					var parentTable = DataTable.GetParentDataTableOf(dcolumn);
+					var parentCollection = DataColumnCollection.GetParentDataColumnCollectionOf(dcolumn);
+					if (null == parentTable)
+					{
+						ToolTip = string.Format("This column is an orphaned data column without a parent data table", ColumnNameToShow);
+						State = ColumnControlState.Error;
+						if (parentCollection == null)
+							ColumnNameToShow = string.Format("Orphaned {0}", dcolumn.GetType().Name);
+						else
+							ColumnNameToShow = ColumnNameToCache = parentCollection.GetColumnName(dcolumn);
+					}
+					else // Column has a parent table
+					{
+						if (!object.ReferenceEquals(parentTable, dataTableOfPlotItem))
+						{
+							ColumnNameToShow = parentTable.DataColumns.GetColumnName(dcolumn);
+							ToolTip = string.Format("The column {0} is a data column with another parent data table: {1}", ColumnNameToShow, parentTable.Name);
+							State = ColumnControlState.Warning;
+						}
+						else
+						{
+							ColumnNameToShow = ColumnNameToCache = parentTable.DataColumns.GetColumnName(dcolumn);
+							ToolTip = string.Format("Column {0} of data table {1}", ColumnNameToShow, parentTable.Name);
+							State = ColumnControlState.Normal;
+						}
+					}
+				}
+				else // Column is something else
+				{
+					ColumnNameToShow = Column.FullName;
+					ColumnNameToCache = null;
+					ToolTip = string.Format("Independent data of type {0}: {1}", Column.GetType(), Column.ToString());
+					State = ColumnControlState.Normal;
+				}
+			}
+
+			public void UpdateColumnNameToCache()
+			{
+				if (null == Column)
+				{
+					ColumnNameToCache = null;
+				}
+				else if (Column is DataColumn)
+				{
+					var dcolumn = (DataColumn)Column;
+					var parentTable = DataColumnCollection.GetParentDataColumnCollectionOf(dcolumn);
+					ColumnNameToCache = parentTable?.GetColumnName(dcolumn);
+				}
+				else // Column is something else
+				{
+					ColumnNameToCache = null;
+				}
+			}
 		}
+
+		private class GroupInfo
+		{
+			public string GroupName;
+			public List<ColumnInfo> Columns = new List<ColumnInfo>();
+		}
+
+		private List<GroupInfo> _columnGroup;
 
 		private bool _isDirty = false;
 
 		private int _plotRangeFrom;
 		private int _plotRangeTo;
-
-		private Altaxo.Data.IReadableColumn _xColumn;
-		private string _xColumnName;
-
-		private Altaxo.Data.IReadableColumn _yColumn;
-		private string _yColumnName;
-
-		private Altaxo.Data.IReadableColumn _zColumn;
-		private string _zColumnName;
 
 		private int _maxPossiblePlotRangeTo;
 
@@ -150,10 +252,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public override void Dispose(bool isDisposing)
 		{
-			_xColumn = null;
-			_yColumn = null;
-			_zColumn = null;
-
+			_columnGroup = null;
 			_tableItems = null;
 			_columnItems = null;
 
@@ -166,12 +265,44 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			if (initData)
 			{
-				_xColumn = _doc.XColumn;
-				_xColumnName = _doc.XColumnName ?? GetColumnNameToCache(_xColumn);
-				_yColumn = _doc.YColumn;
-				_yColumnName = _doc.YColumnName ?? GetColumnNameToCache(_yColumn);
-				_zColumn = _doc.ZColumn;
-				_zColumnName = _doc.ZColumnName ?? GetColumnNameToCache(_zColumn);
+				// Fix docs datatable
+
+				if (_doc.DataTable == null)
+				{
+					_doc.DataTable = DataTable.GetParentDataTableOf(_doc.XColumn as DataColumn);
+					if (null != _doc.DataTable && _doc.DataTable.DataColumns.ContainsColumn((DataColumn)_doc.XColumn))
+						_doc.GroupNumber = _doc.DataTable.DataColumns.GetColumnGroup((DataColumn)_doc.XColumn);
+				}
+				if (_doc.DataTable == null)
+				{
+					_doc.DataTable = DataTable.GetParentDataTableOf(_doc.YColumn as DataColumn);
+					if (null != _doc.DataTable && _doc.DataTable.DataColumns.ContainsColumn((DataColumn)_doc.YColumn))
+						_doc.GroupNumber = _doc.DataTable.DataColumns.GetColumnGroup((DataColumn)_doc.YColumn);
+				}
+				if (_doc.DataTable == null)
+				{
+					_doc.DataTable = DataTable.GetParentDataTableOf(_doc.ZColumn as DataColumn);
+					if (null != _doc.DataTable && _doc.DataTable.DataColumns.ContainsColumn((DataColumn)_doc.ZColumn))
+						_doc.GroupNumber = _doc.DataTable.DataColumns.GetColumnGroup((DataColumn)_doc.ZColumn);
+				}
+
+				// initialize group 0
+
+				if (null == _columnGroup)
+					_columnGroup = new List<GroupInfo>();
+
+				if (_columnGroup.Count == 0)
+					_columnGroup.Add(new GroupInfo { GroupName = "#0: data (X-Y-Z)" });
+				else
+					_columnGroup[0].Columns.Clear();
+
+				_columnGroup[0].Columns.Add(new ColumnInfo() { Label = "X", Column = _doc.XColumn, ColumnNameToShow = _doc.XColumnName, ColumnNameToCache = _doc.XColumnName, ColumnSetter = (column) => _doc.XColumn = column });
+				_columnGroup[0].Columns.Add(new ColumnInfo() { Label = "Y", Column = _doc.YColumn, ColumnNameToShow = _doc.YColumnName, ColumnNameToCache = _doc.YColumnName, ColumnSetter = (column) => _doc.YColumn = column });
+				_columnGroup[0].Columns.Add(new ColumnInfo() { Label = "Z", Column = _doc.ZColumn, ColumnNameToShow = _doc.ZColumnName, ColumnNameToCache = _doc.ZColumnName, ColumnSetter = (column) => _doc.ZColumn = column });
+
+				for (int i = 0; i < 3; ++i)
+					_columnGroup[0].Columns[i].UpdateTooltipAndState(_doc.DataTable);
+
 				_plotRangeFrom = _doc.PlotRangeStart;
 				_plotRangeTo = _doc.PlotRangeLength == int.MaxValue ? int.MaxValue : _doc.PlotRangeStart + _doc.PlotRangeLength - 1;
 				CalcMaxPossiblePlotRangeTo();
@@ -179,28 +310,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				// Initialize tables
 				string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
 
-				if (_doc.DataTable == null)
-				{
-					_doc.DataTable = DataTable.GetParentDataTableOf(_xColumn as DataColumn);
-					if (null != _doc.DataTable && _doc.DataTable.DataColumns.ContainsColumn((DataColumn)_xColumn))
-						_doc.GroupNumber = _doc.DataTable.DataColumns.GetColumnGroup((DataColumn)_xColumn);
-				}
-				if (_doc.DataTable == null)
-				{
-					_doc.DataTable = DataTable.GetParentDataTableOf(_yColumn as DataColumn);
-					if (null != _doc.DataTable && _doc.DataTable.DataColumns.ContainsColumn((DataColumn)_yColumn))
-						_doc.GroupNumber = _doc.DataTable.DataColumns.GetColumnGroup((DataColumn)_yColumn);
-				}
-				if (_doc.DataTable == null)
-				{
-					_doc.DataTable = DataTable.GetParentDataTableOf(_zColumn as DataColumn);
-					if (null != _doc.DataTable && _doc.DataTable.DataColumns.ContainsColumn((DataColumn)_zColumn))
-						_doc.GroupNumber = _doc.DataTable.DataColumns.GetColumnGroup((DataColumn)_zColumn);
-				}
-
-				DataTable tg = _doc.DataTable;
-
 				_tableItems.Clear();
+				DataTable tg = _doc.DataTable;
 				foreach (var tableName in tables)
 				{
 					_tableItems.Add(new SelectableListNode(tableName, Current.Project.DataTableCollection[tableName], tg != null && tg.Name == tableName));
@@ -229,9 +340,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 				_view.Columns_Initialize(_columnItems);
 
-				ColumnInitialize(_view.XColumn_Initialize, _xColumn, _xColumnName);
-				ColumnInitialize(_view.YColumn_Initialize, _yColumn, _yColumnName);
-				ColumnInitialize(_view.ZColumn_Initialize, _zColumn, _zColumnName);
+				_view.TargetColumns_Initialize(GetEnumerationForAllGroupsOfColumns(_columnGroup));
 
 				_view.PlotRangeFrom_Initialize(_plotRangeFrom);
 				CalcMaxPossiblePlotRangeTo();
@@ -244,9 +353,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		{
 			if (_isDirty)
 			{
-				_doc.XColumn = _xColumn;
-				_doc.YColumn = _yColumn;
-				_doc.ZColumn = _zColumn;
+				for (int i = 0; i < _columnGroup.Count; ++i)
+					for (int j = 0; j < _columnGroup[i].Columns.Count; ++j)
+						_columnGroup[i].Columns[j].ColumnSetter(_columnGroup[i].Columns[j].Column);
+
 				_doc.PlotRangeStart = this._plotRangeFrom;
 				_doc.PlotRangeLength = this._plotRangeTo >= this._maxPossiblePlotRangeTo ? int.MaxValue : this._plotRangeTo + 1 - this._plotRangeFrom;
 			}
@@ -261,17 +371,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			_view.TableSelectionChanged += EhView_TableSelectionChanged;
 
-			_view.Request_ToX += EhView_ToX;
+			_view.Column_AddTo += EhView_ColumnAddTo;
 
-			_view.Request_ToY += EhView_ToY;
-
-			_view.Request_ToZ += EhView_ToZ;
-
-			_view.Request_EraseX += EhView_EraseX;
-
-			_view.Request_EraseY += EhView_EraseY;
-
-			_view.Request_EraseZ += EhView_EraseZ;
+			_view.Column_Erase += EhView_ColumnErase;
 
 			_view.RangeFromChanged += EhView_RangeFrom;
 
@@ -297,17 +399,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		{
 			_view.TableSelectionChanged -= EhView_TableSelectionChanged;
 
-			_view.Request_ToX -= EhView_ToX;
+			_view.Column_AddTo -= EhView_ColumnAddTo;
 
-			_view.Request_ToY -= EhView_ToY;
-
-			_view.Request_ToZ -= EhView_ToZ;
-
-			_view.Request_EraseX -= EhView_EraseX;
-
-			_view.Request_EraseY -= EhView_EraseY;
-
-			_view.Request_EraseZ -= EhView_EraseZ;
+			_view.Column_Erase -= EhView_ColumnErase;
 
 			_view.RangeFromChanged -= EhView_RangeFrom;
 
@@ -329,6 +423,90 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			_view.Column_Drop -= EhColumnDrop;
 
 			base.DetachView();
+		}
+
+		private IEnumerable<Tuple<
+			string, // group name
+		IEnumerable<Tuple< // list of column definitions
+				ColumnTag, // tag to identify the column and group
+				string, // Label for the column,
+				string, // name of the column,
+				string, // tooltip
+				ColumnControlState>>>>
+			GetEnumerationForAllGroupsOfColumns(List<GroupInfo> columnInfos)
+		{
+			for (int i = 0; i < columnInfos.Count; ++i)
+			{
+				var infoList = columnInfos[i];
+				yield return new Tuple<string, IEnumerable<Tuple<ColumnTag, string, string, string, ColumnControlState>>>(
+					infoList.GroupName,
+					GetEnumerationForOneGroupOfColumns(infoList.Columns, i));
+			}
+		}
+
+		private IEnumerable<Tuple< // list of column definitions
+			ColumnTag, // tag to identify the column and group
+			string, // Label for the column,
+			string, // name of the column,
+			string, // tooltip
+			ColumnControlState>>
+		GetEnumerationForOneGroupOfColumns(List<ColumnInfo> columnInfos, int groupNumber)
+		{
+			for (int i = 0; i < columnInfos.Count; ++i)
+			{
+				var info = columnInfos[i];
+				yield return new Tuple<ColumnTag, string, string, string, ColumnControlState>(
+					new ColumnTag(groupNumber, i),
+					info.Label,
+					info.ColumnNameToShow,
+					info.ToolTip,
+					info.State
+					);
+			}
+		}
+
+		/// <summary>
+		/// Sets the additional columns that are used by some of the plot styles.
+		/// </summary>
+		/// <param name="additionalColumns">The additional columns. This is an enumerable of tuples, each tuple corresponding to one plot style.
+		/// The first item of this tuple is the plot style's number and name. The second item is another enumeration of tuples.
+		/// Each tuple in this second enumeration consist of the name of the column (first item) and a function which returns the column proxy which
+		/// can be used to get or set the underlying column.</param>
+		public void SetAdditionalColumns(IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> additionalColumns)
+		{
+			int groupNumber = 0;
+			foreach (var group in additionalColumns)
+			{
+				++groupNumber;
+
+				if (!(groupNumber < _columnGroup.Count))
+				{
+					_columnGroup.Add(new GroupInfo() { GroupName = group.Item1 });
+				}
+				else
+				{
+					_columnGroup[groupNumber].GroupName = group.Item1;
+					_columnGroup[groupNumber].Columns.Clear();
+				}
+
+				foreach (var col in group.Item2)
+				{
+					var columnInfo = new ColumnInfo()
+					{
+						Label = col.Item1,
+						Column = col.Item2,
+						ColumnNameToCache = col.Item3,
+						ColumnNameToShow = col.Item3,
+						ColumnSetter = col.Item4
+					};
+
+					columnInfo.UpdateTooltipAndState(_doc.DataTable);
+					_columnGroup[groupNumber].Columns.Add(columnInfo);
+				}
+			}
+
+			if (null != _view)
+				_view.TargetColumns_Initialize(GetEnumerationForAllGroupsOfColumns(_columnGroup));
 		}
 
 		public void SetDirty()
@@ -357,10 +535,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		private void CalcMaxPossiblePlotRangeTo()
 		{
 			int len = int.MaxValue;
-			if (_xColumn is Altaxo.Data.IDefinedCount)
-				len = Math.Min(len, ((Altaxo.Data.IDefinedCount)_xColumn).Count);
-			if (_yColumn is Altaxo.Data.IDefinedCount)
-				len = Math.Min(len, ((Altaxo.Data.IDefinedCount)_yColumn).Count);
+			for (int i = 0; i < 3; ++i)
+			{
+				if (_columnGroup[0].Columns[i].Column is Altaxo.Data.IDefinedCount)
+					len = Math.Min(len, ((Altaxo.Data.IDefinedCount)_columnGroup[0].Columns[i].Column).Count);
+			}
 
 			_maxPossiblePlotRangeTo = len - 1;
 
@@ -417,6 +596,40 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
+		private void ColumnInitialize(ColumnTag tag, IReadableColumn column, string columnName)
+		{
+			if (null == _view)
+				return;
+
+			if (null == column)
+			{
+				if (string.IsNullOrEmpty(columnName))
+					_view.Column_Update(tag, string.Empty, string.Empty, ColumnControlState.Normal);
+				else
+					_view.Column_Update(tag, columnName, string.Format("Column {0} can not be found in this table with this group number", columnName), ColumnControlState.Error);
+			}
+			else if (column is DataColumn)
+			{
+				var dcolumn = (DataColumn)column;
+				var parentTable = DataTable.GetParentDataTableOf(dcolumn);
+				if (null == parentTable)
+				{
+					_view.Column_Update(tag, columnName, string.Format("This column is an orphaned data column without a parent data table", columnName), ColumnControlState.Error);
+				}
+				else
+				{
+					if (!object.ReferenceEquals(parentTable, _doc.DataTable))
+						_view.Column_Update(tag, columnName, string.Format("The column {0} is a data column with another parent data table: {1}", columnName, parentTable.Name), ColumnControlState.Warning);
+					else
+						_view.Column_Update(tag, columnName, string.Format("Column {0} of data table {1}", columnName, parentTable.Name), ColumnControlState.Normal);
+				}
+			}
+			else // Column is something else
+			{
+				_view.Column_Update(tag, column.ToString(), string.Format("Independent data of type {0}: {1}", column.GetType(), column.ToString()), ColumnControlState.Normal);
+			}
+		}
+
 		public void EhView_TableSelectionChanged()
 		{
 			var node = _tableItems.FirstSelectedNode;
@@ -430,9 +643,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			// If data table has changed, try to choose a group number that matches as many as possible columns
 			_doc.GroupNumber = ChooseBestMatchingGroupNumber(tg.DataColumns);
-			GroupNumberChanged(_doc.GroupNumber);
 			if (_view != null)
 				_view.GroupNumber_Initialize(_doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _groupNumbersAll.Min != _doc.GroupNumber));
+
+			ReplaceColumnsWithColumnsFromNewTableGroupAndUpdateColumnState();
 		}
 
 		/// <summary>
@@ -444,12 +658,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		{
 			var matchList = new List<DataColumn>();
 
-			if (_xColumn is DataColumn)
-				matchList.Add((DataColumn)_xColumn);
-			if (_yColumn is DataColumn)
-				matchList.Add((DataColumn)_yColumn);
-			if (_zColumn is DataColumn)
-				matchList.Add((DataColumn)_zColumn);
+			for (int i = 0; i < _columnGroup.Count; ++i)
+			{
+				for (int j = 0; j < _columnGroup[i].Columns.Count; ++j)
+					if (_columnGroup[i].Columns[j].Column is DataColumn)
+						matchList.Add((DataColumn)_columnGroup[i].Columns[j].Column);
+			}
 
 			int bestGroupNumber = _groupNumbersAll.Count > 0 ? _groupNumbersAll.Min : 0;
 			int bestNumberOfPoints = 0;
@@ -482,13 +696,18 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		private void EhGroupNumberChanged(int groupNumber)
 		{
 			if (groupNumber != _doc.GroupNumber)
-				GroupNumberChanged(groupNumber);
+			{
+				_doc.GroupNumber = groupNumber;
+				ReplaceColumnsWithColumnsFromNewTableGroupAndUpdateColumnState();
+			}
 		}
 
-		private void GroupNumberChanged(int groupNumber)
+		/// <summary>
+		/// Try to replace the columns in ColumnInfo with that of the currently chosen table/group number. Additionally, the state of the columns is updated, and
+		/// the changed infos are sent to the view.
+		/// </summary>
+		private void ReplaceColumnsWithColumnsFromNewTableGroupAndUpdateColumnState()
 		{
-			_doc.GroupNumber = groupNumber;
-
 			// Initialize columns
 			_columnItems.Clear();
 			var tg = _doc.DataTable;
@@ -501,94 +720,52 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				// now try to exchange the data columns with columns from the new group
 				var colDict = tg.DataColumns.GetNameDictionaryOfColumnsWithGroupNumber(_doc.GroupNumber);
 
-				if (_xColumn is DataColumn && !string.IsNullOrEmpty(_xColumnName) && colDict.ContainsKey(_xColumnName))
-					_xColumn = colDict[_xColumnName];
+				for (int i = 0; i < _columnGroup.Count; ++i)
+				{
+					for (int j = 0; j < _columnGroup[i].Columns.Count; ++j)
+					{
+						var info = _columnGroup[i].Columns[j];
 
-				if (_yColumn is DataColumn && !string.IsNullOrEmpty(_yColumnName) && colDict.ContainsKey(_yColumnName))
-					_yColumn = colDict[_yColumnName];
+						if (info.Column is DataColumn && !string.IsNullOrEmpty(info.ColumnNameToShow) && colDict.ContainsKey(info.ColumnNameToShow))
+						{
+							info.Column = colDict[info.ColumnNameToShow];
+						}
 
-				if (_zColumn is DataColumn && !string.IsNullOrEmpty(_zColumnName) && colDict.ContainsKey(_zColumnName))
-					_zColumn = colDict[_zColumnName];
-			}
-
-			if (_view != null)
-			{
-				_view.Columns_Initialize(_columnItems);
-
-				// hereby the status of the columns may change, too
-				ColumnInitialize(_view.XColumn_Initialize, _xColumn, _xColumnName);
-				ColumnInitialize(_view.YColumn_Initialize, _yColumn, _yColumnName);
-				ColumnInitialize(_view.ZColumn_Initialize, _zColumn, _zColumnName);
+						info.UpdateTooltipAndState(_doc.DataTable);
+						if (null != _view)
+							_view.Column_Update(new ColumnTag(i, j), info.ColumnNameToShow, info.ToolTip, info.State);
+					}
+				}
 			}
 		}
 
-		public void EhView_ToX()
+		public void EhView_ColumnAddTo(ColumnTag tag)
 		{
 			var node = _columnItems.FirstSelectedNode;
 			if (null != node)
 			{
 				SetDirty();
-				_xColumn = (DataColumn)node.Tag;
-				_xColumnName = GetColumnNameToCache(_xColumn);
+				var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+				info.Column = (DataColumn)node.Tag;
+				info.UpdateColumnNameToCache();
+				info.ColumnNameToShow = info.ColumnNameToCache;
+				info.UpdateTooltipAndState(_doc.DataTable);
 
 				if (null != _view)
-					ColumnInitialize(_view.XColumn_Initialize, _xColumn, _xColumnName);
+					_view.Column_Update(tag, info.ColumnNameToShow, info.ToolTip, info.State);
 			}
 		}
 
-		public void EhView_ToY()
-		{
-			var node = _columnItems.FirstSelectedNode;
-			if (null != node)
-			{
-				SetDirty();
-				_yColumn = (DataColumn)node.Tag;
-				_yColumnName = GetColumnNameToCache(_yColumn);
-
-				if (null != _view)
-					ColumnInitialize(_view.YColumn_Initialize, _yColumn, _yColumnName);
-			}
-		}
-
-		public void EhView_ToZ()
-		{
-			var node = _columnItems.FirstSelectedNode;
-			if (null != node)
-			{
-				SetDirty();
-				_zColumn = (DataColumn)node.Tag;
-				_zColumnName = GetColumnNameToCache(_zColumn);
-
-				if (null != _view)
-					ColumnInitialize(_view.ZColumn_Initialize, _zColumn, _zColumnName);
-			}
-		}
-
-		public void EhView_EraseX()
+		public void EhView_ColumnErase(ColumnTag tag)
 		{
 			SetDirty();
-			_xColumn = null;
-			_xColumnName = null;
+			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+			info.Column = null;
+			info.ColumnNameToShow = null;
+			info.ColumnNameToCache = null;
+			info.ToolTip = null;
 			if (null != _view)
-				ColumnInitialize(_view.XColumn_Initialize, _xColumn, _xColumnName);
-		}
-
-		public void EhView_EraseY()
-		{
-			SetDirty();
-			_yColumn = null;
-			_yColumnName = null;
-			if (null != _view)
-				ColumnInitialize(_view.YColumn_Initialize, _yColumn, _yColumnName);
-		}
-
-		public void EhView_EraseZ()
-		{
-			SetDirty();
-			_zColumn = null;
-			_zColumnName = null;
-			if (null != _view)
-				ColumnInitialize(_view.ZColumn_Initialize, _zColumn, _zColumnName);
+				_view.Column_Update(tag, info.ColumnNameToShow, info.ToolTip, info.State);
 		}
 
 		public void EhView_RangeFrom(int val)
@@ -694,15 +871,22 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public DropReturnData EhColumnDrop(object data, object nonGuiTargetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
 		{
+			var tag = nonGuiTargetItem as ColumnTag;
+			if (null == tag)
+				return new DropReturnData { IsCopy = false, IsMove = false };
+
+			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+
 			if (data is Type)
 			{
 				try
 				{
 					var col = (IReadableColumn)System.Activator.CreateInstance((Type)data);
-					_xColumn = col;
-					_xColumnName = null;
+					info.Column = col;
+					info.ColumnNameToShow = null;
+					info.UpdateTooltipAndState(_doc.DataTable);
 					if (null != _view)
-						ColumnInitialize(_view.XColumn_Initialize, _xColumn, _xColumnName);
+						_view.Column_Update(tag, info.ColumnNameToShow, info.ToolTip, info.State);
 				}
 				catch (Exception ex)
 				{
@@ -711,10 +895,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 			else if (data is DataColumn)
 			{
-				_xColumn = (DataColumn)data;
-				_xColumnName = GetColumnNameToCache(_xColumn);
+				info.Column = (DataColumn)data;
+				info.UpdateColumnNameToCache();
+				info.UpdateTooltipAndState(_doc.DataTable);
 				if (null != _view)
-					ColumnInitialize(_view.XColumn_Initialize, _xColumn, _xColumnName);
+					_view.Column_Update(tag, info.ColumnNameToShow, info.ToolTip, info.State);
 			}
 
 			return new DropReturnData

@@ -127,6 +127,8 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		public abstract void TranslateTransform(VectorD3D translation);
 
+		public abstract void RotateTransform(double degreeX, double degreeY, double degreeZ);
+
 		public abstract PositionIndexedTriangleBuffers GetPositionIndexedTriangleBuffer(IMaterial material);
 
 		public abstract PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBufferWithClipping(IMaterial material, PlaneD3D[] planes);

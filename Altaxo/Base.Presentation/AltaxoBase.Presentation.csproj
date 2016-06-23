@@ -585,6 +585,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph3D\Plot\Data\SingleColumnControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph3D\Plot\Data\XYZPlotDataControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -594,6 +598,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph3D\Plot\Styles\LabelPlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1115,7 +1123,9 @@
     <Compile Include="Gui\Analysis\Statistics\LinearBinningControl.xaml.cs">
       <DependentUpon>LinearBinningControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\Converters\BindingConverter.cs" />
     <Compile Include="Gui\Common\Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Gui\Common\RelayCommand.cs" />
     <Compile Include="Gui\Data\DecomposeByColumnContentOptionsControl.xaml.cs">
       <DependentUpon>DecomposeByColumnContentOptionsControl.xaml</DependentUpon>
     </Compile>
@@ -1517,6 +1527,9 @@
       <DependentUpon>PenAllPropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\PenControlsGlue.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Data\SingleColumnControl.xaml.cs">
+      <DependentUpon>SingleColumnControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph3D\Plot\Data\XYZPlotDataControl.xaml.cs">
       <DependentUpon>XYZPlotDataControl.xaml</DependentUpon>
     </Compile>
@@ -1525,6 +1538,9 @@
     </Compile>
     <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleControl.xaml.cs">
       <DependentUpon>DataMeshPlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Plot\Styles\LabelPlotStyleControl.xaml.cs">
+      <DependentUpon>LabelPlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotLineStyleControl.xaml.cs">
       <DependentUpon>XYZPlotLineStyleControl.xaml</DependentUpon>

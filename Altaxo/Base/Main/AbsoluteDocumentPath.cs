@@ -221,6 +221,23 @@ namespace Altaxo.Main
 			}
 		}
 
+		/// <summary>
+		/// Gets the last part, which is often the name of the object.
+		/// </summary>
+		/// <value>
+		/// The last part.
+		/// </value>
+		public string LastPartOrDefault
+		{
+			get
+			{
+				if (0 == Count)
+					return null;
+
+				return this[Count - 1];
+			}
+		}
+
 		public AbsoluteDocumentPath Append(AbsoluteDocumentPath other)
 		{
 			if (null == other)

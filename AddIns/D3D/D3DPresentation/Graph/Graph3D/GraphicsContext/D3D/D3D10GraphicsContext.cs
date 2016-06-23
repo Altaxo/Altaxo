@@ -226,6 +226,19 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
 			// no change to the inverse transform
 		}
 
+		public override void RotateTransform(double degreeX, double degreeY, double degreeZ)
+		{
+			if (0 != degreeZ)
+				_transformation.RotationZDegreePrepend(degreeZ);
+			if (0 != degreeY)
+				_transformation.RotationYDegreePrepend(degreeY);
+			if (0 != degreeX)
+				_transformation.RotationXDegreePrepend(degreeX);
+
+			if (0 != degreeZ || 0 != degreeY || 0 != degreeX)
+				_transposedInverseTransformation = _transformation.GetTransposedInverseMatrix3x3();
+		}
+
 		public override PositionNormalIndexedTriangleBuffers GetPositionNormalIndexedTriangleBuffer(IMaterial material)
 		{
 			var result = new PositionNormalIndexedTriangleBuffers();
