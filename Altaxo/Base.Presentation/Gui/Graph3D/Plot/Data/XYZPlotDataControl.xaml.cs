@@ -111,9 +111,14 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			foreach (var group in groups)
 			{
-				var textBlock = new TextBlock { Text = group.Item1, FontStyle = FontStyles.Italic, FontWeight = FontWeights.Bold };
+				var groupBox = new GroupBox();
+				var stackPanel = new StackPanel() { Orientation = Orientation.Vertical };
+				groupBox.Content = stackPanel;
 
-				_guiTargetColumnsStack.Children.Add(textBlock);
+				var textBlock = new TextBlock { Text = group.Item1, FontStyle = FontStyles.Italic, FontWeight = FontWeights.Bold };
+				groupBox.Header = textBlock;
+
+				_guiTargetColumnsStack.Children.Add(groupBox);
 				var groupList = new List<SingleColumnControl>();
 				_columnControls.Add(groupList);
 
@@ -123,7 +128,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 					var tag = col.Item1;
 					var sgc = new SingleColumnControl(tag, col.Item2, col.Item3, col.Item4, (int)col.Item5);
-					_guiTargetColumnsStack.Children.Add(sgc);
+					//_guiTargetColumnsStack.Children.Add(sgc);
+					stackPanel.Children.Add(sgc);
 					_columnControls[tag.GroupNumber][tag.ColumnNumber] = sgc;
 				}
 			}
