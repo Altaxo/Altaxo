@@ -267,7 +267,7 @@ namespace Altaxo.Gui.Graph3D.Plot
 				_styleControllerList.Add(ctrl);
 			}
 
-			_dataController.SetAdditionalColumns(GetAdditionalColumns());
+			_dataController.SetAdditionalPlotItemColumns(GetAdditionalColumns());
 		}
 
 		private IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> GetAdditionalColumns()

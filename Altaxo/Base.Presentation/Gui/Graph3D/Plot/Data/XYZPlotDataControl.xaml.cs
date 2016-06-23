@@ -47,25 +47,25 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 	/// </summary>
 	public partial class XYZPlotDataControl : UserControl, IXYZColumnPlotDataView
 	{
-		public event Action TableSelectionChanged;
+		public event Action SelectedTableChanged;
 
-		public event Action<ColumnTag> Column_AddTo;
+		public event Action<ColumnTag> PlotItemColumn_AddTo;
 
-		public event Action<ColumnTag> Column_Erase;
+		public event Action<ColumnTag> PlotItemColumn_Erase;
 
 		public event Action<int> RangeFromChanged;
 
 		public event Action<int> RangeToChanged;
 
-		public event Action<int> GroupNumberChanged;
+		public event Action<int> SelectedGroupNumberChanged;
 
-		public event CanStartDragDelegate AvailableDataColumns_CanStartDrag;
+		public event CanStartDragDelegate AvailableTableColumns_CanStartDrag;
 
-		public event StartDragDelegate AvailableDataColumns_StartDrag;
+		public event StartDragDelegate AvailableTableColumns_StartDrag;
 
-		public event DragEndedDelegate AvailableDataColumns_DragEnded;
+		public event DragEndedDelegate AvailableTableColumns_DragEnded;
 
-		public event DragCancelledDelegate AvailableDataColumns_DragCancelled;
+		public event DragCancelledDelegate AvailableTableColumns_DragCancelled;
 
 		public event CanStartDragDelegate OtherAvailableItems_CanStartDrag;
 
@@ -75,9 +75,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public event DragCancelledDelegate OtherAvailableItems_DragCancelled;
 
-		public event DropCanAcceptDataDelegate Column_DropCanAcceptData;
+		public event DropCanAcceptDataDelegate PlotItemColumn_DropCanAcceptData;
 
-		public event DropDelegate Column_Drop;
+		public event DropDelegate PlotItemColumn_Drop;
 
 		public XYZPlotDataControl()
 		{
@@ -86,16 +86,16 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
 		{
-			if (null != TableSelectionChanged)
+			if (null != SelectedTableChanged)
 			{
 				GuiHelper.SynchronizeSelectionFromGui(this._cbTables);
-				TableSelectionChanged?.Invoke();
+				SelectedTableChanged?.Invoke();
 			}
 		}
 
 		private List<List<SingleColumnControl>> _columnControls;
 
-		public void TargetColumns_Initialize(
+		public void PlotItemColumns_Initialize(
 			IEnumerable<Tuple< // list of all groups
 			string, // Caption for each group of columns
 			IEnumerable<Tuple< // list of column definitions
@@ -129,7 +129,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
-		public void Column_Update(ColumnTag tag, string colname, string toolTip, ColumnControlState state)
+		public void PlotItemColumn_Update(ColumnTag tag, string colname, string toolTip, ColumnControlState state)
 		{
 			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
 			sgc.ColumnText = colname;
@@ -149,12 +149,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		#region IXYColumnPlotDataView
 
-		public void Tables_Initialize(SelectableListNodeList items)
+		public void AvailableTables_Initialize(SelectableListNodeList items)
 		{
 			GuiHelper.Initialize(_cbTables, items);
 		}
 
-		public void Columns_Initialize(SelectableListNodeList items)
+		public void AvailableTableColumns_Initialize(SelectableListNodeList items)
 		{
 			GuiHelper.Initialize(_lbColumns, items);
 		}
@@ -182,7 +182,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhGroupNumber_Changed(object sender, RoutedPropertyChangedEventArgs<int> e)
 		{
-			GroupNumberChanged?.Invoke(_guiGroupNumber.Value);
+			SelectedGroupNumberChanged?.Invoke(_guiGroupNumber.Value);
 		}
 
 		public void GroupNumber_Initialize(int groupNumber, bool enableControl)
@@ -216,13 +216,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			public bool CanStartDrag(IDragInfo dragInfo)
 			{
-				var result = _parentControl.AvailableDataColumns_CanStartDrag?.Invoke(_parentControl._lbColumns.SelectedItems);
+				var result = _parentControl.AvailableTableColumns_CanStartDrag?.Invoke(_parentControl._lbColumns.SelectedItems);
 				return result.HasValue ? result.Value : false;
 			}
 
 			public void StartDrag(IDragInfo dragInfo)
 			{
-				var result = _parentControl.AvailableDataColumns_StartDrag?.Invoke(dragInfo.SourceItems);
+				var result = _parentControl.AvailableTableColumns_StartDrag?.Invoke(dragInfo.SourceItems);
 				if (null != result)
 				{
 					dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
@@ -234,12 +234,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			{
 				bool isCopy, isMove;
 				GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
-				_parentControl.AvailableDataColumns_DragEnded?.Invoke(isCopy, isMove);
+				_parentControl.AvailableTableColumns_DragEnded?.Invoke(isCopy, isMove);
 			}
 
 			public void DragCancelled()
 			{
-				_parentControl.AvailableDataColumns_DragCancelled?.Invoke();
+				_parentControl.AvailableTableColumns_DragCancelled?.Invoke();
 			}
 		}
 
@@ -335,7 +335,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			protected bool CanAcceptData(IDropInfo dropInfo, out DragDropEffects resultingEffect, out Type adornerType)
 			{
-				var result = _parentControl.Column_DropCanAcceptData?.Invoke(
+				var result = _parentControl.PlotItemColumn_DropCanAcceptData?.Invoke(
 					dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
 					(dropInfo.VisualTarget as FrameworkElement)?.Tag,
 					GuiHelper.ToAltaxo(dropInfo.InsertPosition),
@@ -359,7 +359,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			public void Drop(IDropInfo dropInfo)
 			{
-				var result = _parentControl.Column_Drop?.Invoke(
+				var result = _parentControl.PlotItemColumn_Drop?.Invoke(
 					dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
 					(dropInfo.VisualTarget as FrameworkElement)?.Tag,
 					GuiHelper.ToAltaxo(dropInfo.InsertPosition),
@@ -395,7 +395,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		private void EhColumn_AddToCommand(object parameter)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_lbColumns);
-			Column_AddTo?.Invoke(parameter as ColumnTag);
+			PlotItemColumn_AddTo?.Invoke(parameter as ColumnTag);
 		}
 
 		#endregion ColumnAddTo command
@@ -416,7 +416,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhColumn_EraseCommand(object parameter)
 		{
-			Column_Erase?.Invoke(parameter as ColumnTag);
+			PlotItemColumn_Erase?.Invoke(parameter as ColumnTag);
 		}
 
 		#endregion ColumnErase command

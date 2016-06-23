@@ -56,13 +56,30 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 	public interface IXYZColumnPlotDataView
 	{
-		void Tables_Initialize(SelectableListNodeList items);
+		/// <summary>
+		/// Initialize the list of available tables.
+		/// </summary>
+		/// <param name="items">The items.</param>
+		void AvailableTables_Initialize(SelectableListNodeList items);
 
-		void Columns_Initialize(SelectableListNodeList items);
+		/// <summary>
+		/// Initialize the list of available data columns in the selected table and for the selected group number.
+		/// </summary>
+		/// <param name="items">The items.</param>
+		void AvailableTableColumns_Initialize(SelectableListNodeList items);
 
+		/// <summary>
+		/// Initialize the list of other available columns.
+		/// </summary>
+		/// <param name="items">The items.</param>
 		void OtherAvailableColumns_Initialize(SelectableListNodeList items);
 
-		void TargetColumns_Initialize(
+		/// <summary>
+		/// Initialize the list of columns needed by the plot item. This is organized into groups, each group corresponding to
+		/// one plot style that needs data columns.
+		/// </summary>
+		/// <param name="groups">The groups.</param>
+		void PlotItemColumns_Initialize(
 			IEnumerable<Tuple< // list of all groups
 			string, // Caption for each group of columns
 			IEnumerable<Tuple< // list of column definitions
@@ -73,7 +90,14 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				ColumnControlState>
 			>>> groups);
 
-		void Column_Update(ColumnTag tag, string colname, string toolTip, ColumnControlState state);
+		/// <summary>
+		/// Updates the information for one plot item column
+		/// </summary>
+		/// <param name="tag">The tag that identifies the plot item column by the group number and column number.</param>
+		/// <param name="colname">The name of the column as it will be shown in the text box.</param>
+		/// <param name="toolTip">The tool tip for the text box.</param>
+		/// <param name="state">The state of the column, as indicated by different background colors of the text box.</param>
+		void PlotItemColumn_Update(ColumnTag tag, string colname, string toolTip, ColumnControlState state);
 
 		void GroupNumber_Initialize(int groupNumber, bool isEnabled);
 
@@ -81,25 +105,25 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		void PlotRangeTo_Initialize(int to);
 
-		event Action TableSelectionChanged;
+		event Action SelectedTableChanged;
 
-		event Action<ColumnTag> Column_AddTo;
+		event Action<int> SelectedGroupNumberChanged;
 
-		event Action<ColumnTag> Column_Erase;
+		event Action<ColumnTag> PlotItemColumn_AddTo;
+
+		event Action<ColumnTag> PlotItemColumn_Erase;
 
 		event Action<int> RangeFromChanged;
 
 		event Action<int> RangeToChanged;
 
-		event Action<int> GroupNumberChanged;
+		event CanStartDragDelegate AvailableTableColumns_CanStartDrag;
 
-		event CanStartDragDelegate AvailableDataColumns_CanStartDrag;
+		event StartDragDelegate AvailableTableColumns_StartDrag;
 
-		event StartDragDelegate AvailableDataColumns_StartDrag;
+		event DragEndedDelegate AvailableTableColumns_DragEnded;
 
-		event DragEndedDelegate AvailableDataColumns_DragEnded;
-
-		event DragCancelledDelegate AvailableDataColumns_DragCancelled;
+		event DragCancelledDelegate AvailableTableColumns_DragCancelled;
 
 		event CanStartDragDelegate OtherAvailableItems_CanStartDrag;
 
@@ -109,9 +133,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		event DragCancelledDelegate OtherAvailableItems_DragCancelled;
 
-		event DropCanAcceptDataDelegate Column_DropCanAcceptData;
+		event DropCanAcceptDataDelegate PlotItemColumn_DropCanAcceptData;
 
-		event DropDelegate Column_Drop;
+		event DropDelegate PlotItemColumn_Drop;
 	}
 
 	public interface IColumnDataController : IMVCANController
@@ -123,7 +147,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		/// The first item of this tuple is the plot style's number and name. The second item is another enumeration of tuples.
 		/// Each tuple in this second enumeration consist of the name of the column (first item) and a function which returns the column proxy which
 		/// can be used to get or set the underlying column.</param>
-		void SetAdditionalColumns(
+		void SetAdditionalPlotItemColumns(
 			IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> additionalColumns
 			);
 	}
@@ -139,15 +163,30 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		:
 		MVCANControllerEditOriginalDocBase<XYZColumnPlotData, IXYZColumnPlotDataView>, IColumnDataController
 	{
+		/// <summary>
+		/// Information about one plot item column.
+		/// </summary>
 		private class ColumnInfo
 		{
+			/// <summary>Label that will be shown to indicate the column's function, e.g. "X" for an x-colum.</summary>
 			public string Label;
-			public Altaxo.Data.IReadableColumn Column;
+
+			/// <summary>The column itself.</summary>
+			public IReadableColumn Column;
+
+			/// <summary>The column name as it will be shown in the text box.</summary>
 			public string ColumnNameToShow;
+
+			/// <summary>The column name as it was for the last data column. Will be used to choose a new data column if the table is changed by the user.</summary>
 			public string ColumnNameToCache;
+
+			/// <summary>The tooltip that will be shown when the user hovers over the column name text box.</summary>
 			public string ToolTip;
+
+			/// <summary>State of the column textbox. Depending on the state, the background of the textbox will assume different colors.</summary>
 			public ColumnControlState State;
-			public string Tag;
+
+			/// <summary>Action to set the column property back in the style, if Apply of this controller is called.</summary>
 			public Action<IReadableColumn> ColumnSetter;
 
 			public void UpdateTooltipAndState(DataTable dataTableOfPlotItem)
@@ -203,24 +242,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 					ColumnNameToCache = null;
 					ToolTip = string.Format("Independent data of type {0}: {1}", Column.GetType(), Column.ToString());
 					State = ColumnControlState.Normal;
-				}
-			}
-
-			public void UpdateColumnNameToCache()
-			{
-				if (null == Column)
-				{
-					ColumnNameToCache = null;
-				}
-				else if (Column is DataColumn)
-				{
-					var dcolumn = (DataColumn)Column;
-					var parentTable = DataColumnCollection.GetParentDataColumnCollectionOf(dcolumn);
-					ColumnNameToCache = parentTable?.GetColumnName(dcolumn);
-				}
-				else // Column is something else
-				{
-					ColumnNameToCache = null;
 				}
 			}
 		}
@@ -335,12 +356,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			if (null != _view)
 			{
-				_view.Tables_Initialize(_tableItems);
+				_view.AvailableTables_Initialize(_tableItems);
 				_view.GroupNumber_Initialize(_doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _doc.GroupNumber != _groupNumbersAll.Min));
 
-				_view.Columns_Initialize(_columnItems);
+				_view.AvailableTableColumns_Initialize(_columnItems);
 
-				_view.TargetColumns_Initialize(GetEnumerationForAllGroupsOfColumns(_columnGroup));
+				_view.PlotItemColumns_Initialize(GetEnumerationForAllGroupsOfColumns(_columnGroup));
 
 				_view.PlotRangeFrom_Initialize(_plotRangeFrom);
 				CalcMaxPossiblePlotRangeTo();
@@ -369,58 +390,58 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		{
 			base.AttachView();
 
-			_view.TableSelectionChanged += EhView_TableSelectionChanged;
+			_view.SelectedTableChanged += EhView_TableSelectionChanged;
 
-			_view.Column_AddTo += EhView_ColumnAddTo;
+			_view.PlotItemColumn_AddTo += EhView_ColumnAddTo;
 
-			_view.Column_Erase += EhView_ColumnErase;
+			_view.PlotItemColumn_Erase += EhView_ColumnErase;
 
 			_view.RangeFromChanged += EhView_RangeFrom;
 
 			_view.RangeToChanged += EhView_RangeTo;
 
-			_view.GroupNumberChanged += EhGroupNumberChanged;
+			_view.SelectedGroupNumberChanged += EhGroupNumberChanged;
 
-			_view.AvailableDataColumns_CanStartDrag += EhAvailableDataColumns_CanStartDrag;
-			_view.AvailableDataColumns_StartDrag += EhAvailableDataColumns_StartDrag;
-			_view.AvailableDataColumns_DragEnded += EhAvailableDataColumns_DragEnded;
-			_view.AvailableDataColumns_DragCancelled += EhAvailableDataColumns_DragCancelled;
+			_view.AvailableTableColumns_CanStartDrag += EhAvailableDataColumns_CanStartDrag;
+			_view.AvailableTableColumns_StartDrag += EhAvailableDataColumns_StartDrag;
+			_view.AvailableTableColumns_DragEnded += EhAvailableDataColumns_DragEnded;
+			_view.AvailableTableColumns_DragCancelled += EhAvailableDataColumns_DragCancelled;
 
 			_view.OtherAvailableItems_CanStartDrag += EhOtherAvailableItems_CanStartDrag;
 			_view.OtherAvailableItems_StartDrag += EhOtherAvailableItems_StartDrag;
 			_view.OtherAvailableItems_DragEnded += EhOtherAvailableItems_DragEnded;
 			_view.OtherAvailableItems_DragCancelled += EhOtherAvailableItems_DragCancelled;
 
-			_view.Column_DropCanAcceptData += EhColumnDropCanAcceptData;
-			_view.Column_Drop += EhColumnDrop;
+			_view.PlotItemColumn_DropCanAcceptData += EhColumnDropCanAcceptData;
+			_view.PlotItemColumn_Drop += EhColumnDrop;
 		}
 
 		protected override void DetachView()
 		{
-			_view.TableSelectionChanged -= EhView_TableSelectionChanged;
+			_view.SelectedTableChanged -= EhView_TableSelectionChanged;
 
-			_view.Column_AddTo -= EhView_ColumnAddTo;
+			_view.PlotItemColumn_AddTo -= EhView_ColumnAddTo;
 
-			_view.Column_Erase -= EhView_ColumnErase;
+			_view.PlotItemColumn_Erase -= EhView_ColumnErase;
 
 			_view.RangeFromChanged -= EhView_RangeFrom;
 
 			_view.RangeToChanged -= EhView_RangeTo;
 
-			_view.GroupNumberChanged -= EhGroupNumberChanged;
+			_view.SelectedGroupNumberChanged -= EhGroupNumberChanged;
 
-			_view.AvailableDataColumns_CanStartDrag -= EhAvailableDataColumns_CanStartDrag;
-			_view.AvailableDataColumns_StartDrag -= EhAvailableDataColumns_StartDrag;
-			_view.AvailableDataColumns_DragEnded -= EhAvailableDataColumns_DragEnded;
-			_view.AvailableDataColumns_DragCancelled -= EhAvailableDataColumns_DragCancelled;
+			_view.AvailableTableColumns_CanStartDrag -= EhAvailableDataColumns_CanStartDrag;
+			_view.AvailableTableColumns_StartDrag -= EhAvailableDataColumns_StartDrag;
+			_view.AvailableTableColumns_DragEnded -= EhAvailableDataColumns_DragEnded;
+			_view.AvailableTableColumns_DragCancelled -= EhAvailableDataColumns_DragCancelled;
 
 			_view.OtherAvailableItems_CanStartDrag -= EhOtherAvailableItems_CanStartDrag;
 			_view.OtherAvailableItems_StartDrag -= EhOtherAvailableItems_StartDrag;
 			_view.OtherAvailableItems_DragEnded -= EhOtherAvailableItems_DragEnded;
 			_view.OtherAvailableItems_DragCancelled -= EhOtherAvailableItems_DragCancelled;
 
-			_view.Column_DropCanAcceptData -= EhColumnDropCanAcceptData;
-			_view.Column_Drop -= EhColumnDrop;
+			_view.PlotItemColumn_DropCanAcceptData -= EhColumnDropCanAcceptData;
+			_view.PlotItemColumn_Drop -= EhColumnDrop;
 
 			base.DetachView();
 		}
@@ -472,7 +493,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		/// The first item of this tuple is the plot style's number and name. The second item is another enumeration of tuples.
 		/// Each tuple in this second enumeration consist of the name of the column (first item) and a function which returns the column proxy which
 		/// can be used to get or set the underlying column.</param>
-		public void SetAdditionalColumns(IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> additionalColumns)
+		public void SetAdditionalPlotItemColumns(IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> additionalColumns)
 		{
 			int groupNumber = 0;
 			foreach (var group in additionalColumns)
@@ -506,7 +527,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 
 			if (null != _view)
-				_view.TargetColumns_Initialize(GetEnumerationForAllGroupsOfColumns(_columnGroup));
+				_view.PlotItemColumns_Initialize(GetEnumerationForAllGroupsOfColumns(_columnGroup));
 		}
 
 		public void SetDirty()
@@ -604,9 +625,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			if (null == column)
 			{
 				if (string.IsNullOrEmpty(columnName))
-					_view.Column_Update(tag, string.Empty, string.Empty, ColumnControlState.Normal);
+					_view.PlotItemColumn_Update(tag, string.Empty, string.Empty, ColumnControlState.Normal);
 				else
-					_view.Column_Update(tag, columnName, string.Format("Column {0} can not be found in this table with this group number", columnName), ColumnControlState.Error);
+					_view.PlotItemColumn_Update(tag, columnName, string.Format("Column {0} can not be found in this table with this group number", columnName), ColumnControlState.Error);
 			}
 			else if (column is DataColumn)
 			{
@@ -614,19 +635,19 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				var parentTable = DataTable.GetParentDataTableOf(dcolumn);
 				if (null == parentTable)
 				{
-					_view.Column_Update(tag, columnName, string.Format("This column is an orphaned data column without a parent data table", columnName), ColumnControlState.Error);
+					_view.PlotItemColumn_Update(tag, columnName, string.Format("This column is an orphaned data column without a parent data table", columnName), ColumnControlState.Error);
 				}
 				else
 				{
 					if (!object.ReferenceEquals(parentTable, _doc.DataTable))
-						_view.Column_Update(tag, columnName, string.Format("The column {0} is a data column with another parent data table: {1}", columnName, parentTable.Name), ColumnControlState.Warning);
+						_view.PlotItemColumn_Update(tag, columnName, string.Format("The column {0} is a data column with another parent data table: {1}", columnName, parentTable.Name), ColumnControlState.Warning);
 					else
-						_view.Column_Update(tag, columnName, string.Format("Column {0} of data table {1}", columnName, parentTable.Name), ColumnControlState.Normal);
+						_view.PlotItemColumn_Update(tag, columnName, string.Format("Column {0} of data table {1}", columnName, parentTable.Name), ColumnControlState.Normal);
 				}
 			}
 			else // Column is something else
 			{
-				_view.Column_Update(tag, column.ToString(), string.Format("Independent data of type {0}: {1}", column.GetType(), column.ToString()), ColumnControlState.Normal);
+				_view.PlotItemColumn_Update(tag, column.ToString(), string.Format("Independent data of type {0}: {1}", column.GetType(), column.ToString()), ColumnControlState.Normal);
 			}
 		}
 
@@ -733,7 +754,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 						info.UpdateTooltipAndState(_doc.DataTable);
 						if (null != _view)
-							_view.Column_Update(new ColumnTag(i, j), info.ColumnNameToShow, info.ToolTip, info.State);
+							_view.PlotItemColumn_Update(new ColumnTag(i, j), info.ColumnNameToShow, info.ToolTip, info.State);
 					}
 				}
 			}
@@ -747,12 +768,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				SetDirty();
 				var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 				info.Column = (DataColumn)node.Tag;
-				info.UpdateColumnNameToCache();
-				info.ColumnNameToShow = info.ColumnNameToCache;
 				info.UpdateTooltipAndState(_doc.DataTable);
 
 				if (null != _view)
-					_view.Column_Update(tag, info.ColumnNameToShow, info.ToolTip, info.State);
+					_view.PlotItemColumn_Update(tag, info.ColumnNameToShow, info.ToolTip, info.State);
 			}
 		}
 
@@ -765,7 +784,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			info.ColumnNameToCache = null;
 			info.ToolTip = null;
 			if (null != _view)
-				_view.Column_Update(tag, info.ColumnNameToShow, info.ToolTip, info.State);
+				_view.PlotItemColumn_Update(tag, info.ColumnNameToShow, info.ToolTip, info.State);
 		}
 
 		public void EhView_RangeFrom(int val)
@@ -886,7 +905,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 					info.ColumnNameToShow = null;
 					info.UpdateTooltipAndState(_doc.DataTable);
 					if (null != _view)
-						_view.Column_Update(tag, info.ColumnNameToShow, info.ToolTip, info.State);
+						_view.PlotItemColumn_Update(tag, info.ColumnNameToShow, info.ToolTip, info.State);
 				}
 				catch (Exception ex)
 				{
@@ -896,10 +915,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			else if (data is DataColumn)
 			{
 				info.Column = (DataColumn)data;
-				info.UpdateColumnNameToCache();
 				info.UpdateTooltipAndState(_doc.DataTable);
 				if (null != _view)
-					_view.Column_Update(tag, info.ColumnNameToShow, info.ToolTip, info.State);
+					_view.PlotItemColumn_Update(tag, info.ColumnNameToShow, info.ToolTip, info.State);
 			}
 
 			return new DropReturnData
