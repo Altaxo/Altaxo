@@ -130,5 +130,13 @@ namespace Altaxo.Data
 		{
 			get { return "EquallySpacedColumn(" + _start.ToString() + "," + _increment.ToString() + ")"; }
 		}
+
+		public int? Count
+		{
+			get
+			{
+				return null;
+			}
+		}
 	}
 }

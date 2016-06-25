@@ -11,7 +11,8 @@
 	</Grid.Resources>
 	<Grid.ColumnDefinitions>
 		<ColumnDefinition Width="Auto" SharedSizeGroup="BtnAdd" />
-		<ColumnDefinition Width="*" MinWidth="40" SharedSizeGroup="ColEdit" />
+		<ColumnDefinition Width="Auto" SharedSizeGroup="Transfo" />
+		<ColumnDefinition Width="Auto" MinWidth="40" SharedSizeGroup="ColEdit" />
 		<ColumnDefinition Width="Auto" SharedSizeGroup="BtnErs" />
 	</Grid.ColumnDefinitions>
 
@@ -26,10 +27,16 @@
 			<TextBlock Text="{Binding LabelText, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}" Margin="4,0,0,0" />
 		</StackPanel>
 	</Button>
-	<TextBox x:Name="_guiColumnText" Grid.Column="1"  IsReadOnly="True"
+
+	<TextBox x:Name="_guiColumnTransformation" Grid.Column="1"  IsReadOnly="True"
 					 Tag="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
 				dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding ColumnTextBoxesDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
-	<Button Grid.Column="2"
+
+	<TextBox x:Name="_guiColumnText" Grid.Column="2"  IsReadOnly="True"
+					 Tag="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
+				dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding ColumnTextBoxesDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
+
+	<Button Grid.Column="3"
 					Command="{Binding ColumnEraseCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
 					CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}">
 		<Viewbox Style="{StaticResource ArrowViewBoxStyle}">

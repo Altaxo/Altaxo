@@ -38,7 +38,6 @@ namespace Altaxo.Data
 		Main.IEventIndicatedDisposable,
 		IReadableColumn,
 		IWriteableColumn,
-		IDefinedCount,
 		IList<AltaxoVariant>,
 		ICloneable
 	{
@@ -548,6 +547,14 @@ namespace Altaxo.Data
 			set
 			{
 				throw new ArithmeticException(string.Format("Column {0} is a {1} and can thus not be converted to IROVector", Name, this.GetType()));
+			}
+		}
+
+		int? IReadableColumn.Count
+		{
+			get
+			{
+				return this.Count;
 			}
 		}
 

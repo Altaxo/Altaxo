@@ -140,13 +140,13 @@ namespace Altaxo.Data
 		/// <returns>Array of fractional indices. Each item points into the slaveTable to the value that should be included in the master column at the item's index.</returns>
 		public static DoubleColumn GetFractionalIndex(INumericColumn masterColumn, INumericColumn slaveColumn)
 		{
-			if (!(masterColumn is IDefinedCount))
+			if (!(masterColumn.Count.HasValue))
 				throw new ArgumentException("masterColumn has no defined count");
-			if (!(slaveColumn is IDefinedCount))
+			if (!(slaveColumn.Count.HasValue))
 				throw new ArgumentException("slaveColumn has no defined count");
 
-			int masterCount = (masterColumn as IDefinedCount).Count;
-			int slaveCount = (slaveColumn as IDefinedCount).Count;
+			int masterCount = masterColumn.Count.Value;
+			int slaveCount = slaveColumn.Count.Value;
 
 			var result = new DoubleColumn();
 			var dict = new SortedDictionary<double, int>();

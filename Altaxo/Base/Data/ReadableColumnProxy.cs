@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -57,95 +57,25 @@ namespace Altaxo.Data
 		/// <returns>An instance of <see cref="IReadableColumnProxy"/>. The type of instance returned depends on the type of the provided column (e.g. whether the column is part of the document or not).</returns>
 		public static IReadableColumnProxy FromColumn(IReadableColumn column)
 		{
-			if (column is IDocumentLeafNode)
-				return ReadableColumnProxy.FromColumn(column);
+			if (column is ITransformedReadableColumn)
+			{
+				var tcolumn = (ITransformedReadableColumn)column;
+				if (tcolumn.OriginalReadableColumn is IDocumentLeafNode)
+					return TransformedReadableColumnProxy.FromColumn(tcolumn);
+				else
+					return TransformedReadableColumnProxyForStandaloneColumns.FromColumn(tcolumn);
+			}
 			else
-				return ReadableColumnProxyForStandaloneColumns.FromColumn(column);
+			{
+				if (column is IDocumentLeafNode)
+					return ReadableColumnProxy.FromColumn(column);
+				else
+					return ReadableColumnProxyForStandaloneColumns.FromColumn(column);
+			}
 		}
 	}
 
-	internal class ReadableColumnProxyForStandaloneColumns : Main.SuspendableDocumentLeafNodeWithEventArgs, IReadableColumnProxy
-	{
-		private IReadableColumn _column;
-
-		public static ReadableColumnProxyForStandaloneColumns FromColumn(IReadableColumn column)
-		{
-			var colAsDocumentNode = column as IDocumentLeafNode;
-			if (null != colAsDocumentNode)
-				throw new ArgumentException(string.Format("column does implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
-
-			return new ReadableColumnProxyForStandaloneColumns(column); ;
-		}
-
-		/// <summary>
-		/// Constructor by giving a numeric column.
-		/// </summary>
-		/// <param name="column">The numeric column to hold.</param>
-		protected ReadableColumnProxyForStandaloneColumns(IReadableColumn column)
-		{
-			_column = column;
-		}
-
-		#region Serialization
-
-		/// <summary>
-		/// 2014-12-26 Initial version
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ReadableColumnProxyForStandaloneColumns), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				var s = (ReadableColumnProxyForStandaloneColumns)obj;
-				info.AddValue("Column", s._column);
-			}
-
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var s = (ReadableColumnProxyForStandaloneColumns)o ?? new ReadableColumnProxyForStandaloneColumns(null);
-				object node = info.GetValue("Column", s);
-				s._column = (IReadableColumn)node;
-				return s;
-			}
-		}
-
-		#endregion Serialization
-
-		public IReadableColumn Document
-		{
-			get { return _column; }
-		}
-
-		public object Clone()
-		{
-			return FromColumn(_column);
-		}
-
-		public bool IsEmpty
-		{
-			get { return null == _column; }
-		}
-
-		public string GetName(int level)
-		{
-			return _column == null ? string.Empty : _column.ToString();
-		}
-
-		public object DocumentObject
-		{
-			get { return _column; }
-		}
-
-		public AbsoluteDocumentPath DocumentPath
-		{
-			get { return AbsoluteDocumentPath.DocumentPathOfRootNode; }
-		}
-
-		public bool ReplacePathParts(AbsoluteDocumentPath partToReplace, AbsoluteDocumentPath newPart, IDocumentLeafNode rootNode)
-		{
-			return false;
-		}
-	}
+	#region ReadableColumnProxy
 
 	/// <summary>
 	/// Summary description for DataColumnPlaceHolder.
@@ -202,7 +132,7 @@ namespace Altaxo.Data
 		public static ReadableColumnProxy FromColumn(IReadableColumn column)
 		{
 			if (null == column)
-				throw new ArgumentNullException("column");
+				throw new ArgumentNullException(nameof(column));
 			var colAsDocumentNode = column as IDocumentLeafNode;
 			if (null == colAsDocumentNode)
 				throw new ArgumentException(string.Format("column does not implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
@@ -252,7 +182,12 @@ namespace Altaxo.Data
 
 		public string GetName(int level)
 		{
-			IReadableColumn col = this.Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
+			return GetName(level, Document, InternalDocumentPath);
+		}
+
+		public static string GetName(int level, IReadableColumn Document, AbsoluteDocumentPath InternalDocumentPath)
+		{
+			IReadableColumn col = Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
 			if (col is Data.DataColumn)
 			{
 				Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
@@ -282,4 +217,6 @@ namespace Altaxo.Data
 			}
 		}
 	}
+
+	#endregion ReadableColumnProxy
 }

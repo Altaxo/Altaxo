@@ -75,6 +75,14 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public event DragCancelledDelegate OtherAvailableItems_DragCancelled;
 
+		public event CanStartDragDelegate AvailableTransformations_CanStartDrag;
+
+		public event StartDragDelegate AvailableTransformations_StartDrag;
+
+		public event DragEndedDelegate AvailableTransformations_DragEnded;
+
+		public event DragCancelledDelegate AvailableTransformations_DragCancelled;
+
 		public event DropCanAcceptDataDelegate PlotItemColumn_DropCanAcceptData;
 
 		public event DropDelegate PlotItemColumn_Drop;
@@ -100,10 +108,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			string, // Caption for each group of columns
 			IEnumerable<Tuple< // list of column definitions
 				ColumnTag, // tag to identify the column and group
-				string, // Label of the column
-				string, // name of the column,
-				string, // tooltip
-				ColumnControlState>
+				string>
 			>>> groups)
 		{
 			_guiTargetColumnsStack.Children.Clear();
@@ -127,7 +132,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 					groupList.Add(null);
 
 					var tag = col.Item1;
-					var sgc = new SingleColumnControl(tag, col.Item2, col.Item3, col.Item4, (int)col.Item5);
+					var sgc = new SingleColumnControl(tag, col.Item2);
 					//_guiTargetColumnsStack.Children.Add(sgc);
 					stackPanel.Children.Add(sgc);
 					_columnControls[tag.GroupNumber][tag.ColumnNumber] = sgc;
@@ -135,11 +140,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
-		public void PlotItemColumn_Update(ColumnTag tag, string colname, string toolTip, ColumnControlState state)
+		public void PlotItemColumn_Update(ColumnTag tag, string colname, string toolTip, string transformationText, string transformationToolTip, ColumnControlState state)
 		{
 			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
 			sgc.ColumnText = colname;
 			sgc.ToolTipText = toolTip;
+			sgc.TransformationText = transformationText;
+			sgc.TransformationToolTipText = transformationToolTip;
 			sgc.SetSeverityLevel((int)state);
 		}
 
@@ -168,6 +175,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		public void OtherAvailableColumns_Initialize(SelectableListNodeList items)
 		{
 			GuiHelper.Initialize(_guiOtherAvailableColumns, items);
+		}
+
+		public void AvailableTransformations_Initialize(SelectableListNodeList items)
+		{
+			GuiHelper.Initialize(_guiAvailableTransformations, items);
 		}
 
 		public void PlotRangeFrom_Initialize(int from)
@@ -304,6 +316,60 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		}
 
 		#endregion OtherAvailableColumns_DragHander
+
+		#region AvailableTransformations_DragHander
+
+		private IDragSource _availableTransformationsDragSource;
+
+		public IDragSource AvailableTransformationsDragSource
+		{
+			get
+			{
+				if (null == _availableTransformationsDragSource)
+					_availableTransformationsDragSource = new AvailableTransformations_DragSource(this);
+				return _availableTransformationsDragSource;
+			}
+		}
+
+		public class AvailableTransformations_DragSource : IDragSource
+		{
+			private XYZPlotDataControl _parentControl;
+
+			public AvailableTransformations_DragSource(XYZPlotDataControl ctrl)
+			{
+				_parentControl = ctrl;
+			}
+
+			public bool CanStartDrag(IDragInfo dragInfo)
+			{
+				var result = _parentControl.AvailableTransformations_CanStartDrag?.Invoke(_parentControl._guiAvailableTransformations.SelectedItems);
+				return result.HasValue ? result.Value : false;
+			}
+
+			public void StartDrag(IDragInfo dragInfo)
+			{
+				var result = _parentControl.AvailableTransformations_StartDrag?.Invoke(dragInfo.SourceItems);
+				if (null != result)
+				{
+					dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
+					dragInfo.Data = result.Value.Data;
+				}
+			}
+
+			public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
+			{
+				bool isCopy, isMove;
+				GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
+				_parentControl.AvailableTransformations_DragEnded?.Invoke(isCopy, isMove);
+			}
+
+			public void DragCancelled()
+			{
+				_parentControl.AvailableTransformations_DragCancelled?.Invoke();
+			}
+		}
+
+		#endregion AvailableTransformations_DragHander
 
 		#region Column text boxes drop handler
 

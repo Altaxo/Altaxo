@@ -547,8 +547,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			{
 				cols[i] = _independentVariables[i].Document;
 				selectedCols.Add(i);
-				if (cols[i] is IDefinedCount)
-					maxLength = Math.Min(maxLength, ((IDefinedCount)cols[i]).Count);
+				if (cols[i].Count.HasValue)
+					maxLength = Math.Min(maxLength, cols[i].Count.Value);
 			}
 
 			// note: for a fitting session some of the dependent variables can be null
@@ -558,8 +558,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				{
 					cols[i] = _dependentVariables[j].Document;
 					selectedCols.Add(i);
-					if (cols[i] is IDefinedCount)
-						maxLength = Math.Min(maxLength, ((IDefinedCount)cols[i]).Count);
+					if (cols[i].Count.HasValue)
+						maxLength = Math.Min(maxLength, cols[i].Count.Value);
 				}
 			}
 			if (maxLength == int.MaxValue)

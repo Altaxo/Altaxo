@@ -101,5 +101,13 @@ namespace Altaxo.Data
 		{
 			get { return "IndexerColumn"; }
 		}
+
+		public int? Count
+		{
+			get
+			{
+				return null;
+			}
+		}
 	}
 }

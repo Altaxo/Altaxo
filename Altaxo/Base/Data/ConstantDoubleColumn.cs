@@ -114,6 +114,14 @@ namespace Altaxo.Data
 			get { return string.Format(Altaxo.Settings.GuiCulture.Instance, "Constant, value = {0}", _value); }
 		}
 
+		public int? Count
+		{
+			get
+			{
+				return null;
+			}
+		}
+
 		public override string ToString()
 		{
 			return string.Format(Altaxo.Settings.GuiCulture.Instance, "Constant, value = {0}", _value);

@@ -253,9 +253,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			var dataColumn = DataColumn;
 
-			if (dataColumn is IDefinedCount)
+			if (dataColumn.Count.HasValue)
 			{
-				int len = ((IDefinedCount)dataColumn).Count;
+				int len = dataColumn.Count.Value;
 
 				var bounds = _scale.DataBounds;
 

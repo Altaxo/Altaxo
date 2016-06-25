@@ -92,6 +92,11 @@ namespace Altaxo.Data
 				get { return _participatingDataRows.Count; }
 			}
 
+			int? IReadableColumn.Count
+			{
+				get { return Length; }
+			}
+
 			public double this[int i]
 			{
 				get { return _col[_participatingDataRows[i]]; }
@@ -893,7 +898,7 @@ namespace Altaxo.Data
 		/// <returns></returns>
 		private int GetMaximumRowCountNow()
 		{
-			return _dataColumns.Where(p => p.Document != null).MaxOrDefault(p => p.Document is IDefinedCount ? ((IDefinedCount)p.Document).Count : 0, 0);
+			return _dataColumns.Where(p => p.Document != null).MaxOrDefault(p => p.Document.Count ?? 0, 0);
 		}
 
 		/// <summary>

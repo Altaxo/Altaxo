@@ -225,7 +225,20 @@
     <Compile Include="Data\IAltaxoTableDataSource.cs" />
     <Compile Include="Data\IROTableDataSource.cs" />
     <Compile Include="Data\DataTableProxy.cs" />
+    <Compile Include="Data\ITransformedReadableColumn.cs" />
+    <Compile Include="Data\Transformations\CompoundTransformation.cs" />
+    <Compile Include="Data\Transformations\DecadicExponentialTransformation.cs" />
+    <Compile Include="Data\Transformations\NaturalExponentialTransformation.cs" />
+    <Compile Include="Data\Transformations\DecadicLogarithmTransformation.cs" />
+    <Compile Include="Data\Transformations\NaturalLogarithmTransformation.cs" />
+    <Compile Include="Data\Transformations\NegateTransformation.cs" />
+    <Compile Include="Data\TransformedReadableColumnProxyForStandaloneColumns.cs" />
+    <Compile Include="Data\ReadableColumnProxyForStandaloneColumns.cs" />
     <Compile Include="Data\TableDataSourceBase.cs" />
+    <Compile Include="Data\Transformations\ImmutableClassWithoutMembersBase.cs" />
+    <Compile Include="Data\Transformations\InverseTransformation.cs" />
+    <Compile Include="Data\TransformedReadableColumn.cs" />
+    <Compile Include="Data\TransformedReadableColumnProxy.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Ellipsoidal.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Octagonal.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Triangular.cs" />
@@ -912,9 +925,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scripting\ExtractTableDataScript.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Data\IDefinedCount.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\IndexerColumn.cs">

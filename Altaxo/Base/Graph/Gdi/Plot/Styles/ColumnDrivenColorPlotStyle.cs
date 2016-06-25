@@ -229,9 +229,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			var dataColumn = _dataColumnProxy.Document;
 
-			if (dataColumn is IDefinedCount)
+			if (dataColumn.Count.HasValue)
 			{
-				int len = ((IDefinedCount)dataColumn).Count;
+				int len = dataColumn.Count.Value;
 
 				var bounds = _scale.DataBounds;
 

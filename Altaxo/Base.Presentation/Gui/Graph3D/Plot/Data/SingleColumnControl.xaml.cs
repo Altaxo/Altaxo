@@ -48,8 +48,17 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public SingleColumnControl()
 		{
-			Tag = "HooWorld";
 			InitializeComponent();
+			_defaultBackBrush = _guiColumnText.Background;
+		}
+
+		public SingleColumnControl(object tag, string labelText)
+		{
+			this.Tag = tag;
+			this.LabelText = labelText;
+
+			InitializeComponent();
+
 			_defaultBackBrush = _guiColumnText.Background;
 		}
 
@@ -104,6 +113,30 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			set
 			{
 				_guiColumnText.ToolTip = value;
+			}
+		}
+
+		public string TransformationText
+		{
+			get
+			{
+				return _guiColumnTransformation.Text;
+			}
+			set
+			{
+				_guiColumnTransformation.Text = value;
+			}
+		}
+
+		public string TransformationToolTipText
+		{
+			get
+			{
+				return _guiColumnTransformation.ToolTip as string;
+			}
+			set
+			{
+				_guiColumnTransformation.ToolTip = value;
 			}
 		}
 

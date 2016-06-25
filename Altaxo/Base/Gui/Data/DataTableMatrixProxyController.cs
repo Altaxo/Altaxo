@@ -228,10 +228,10 @@ namespace Altaxo.Gui.Data
 		private void CalcMaxPossiblePlotRangeTo()
 		{
 			int len = int.MaxValue;
-			if (_xColumn is Altaxo.Data.IDefinedCount)
-				len = Math.Min(len, ((Altaxo.Data.IDefinedCount)_xColumn).Count);
-			if (_yColumn is Altaxo.Data.IDefinedCount)
-				len = Math.Min(len, ((Altaxo.Data.IDefinedCount)_yColumn).Count);
+			if (_xColumn.Count.HasValue)
+				len = Math.Min(len, _xColumn.Count.Value);
+			if (_yColumn.Count.HasValue)
+				len = Math.Min(len, _yColumn.Count.Value);
 
 			_maxPossiblePlotRangeTo = len - 1;
 		}

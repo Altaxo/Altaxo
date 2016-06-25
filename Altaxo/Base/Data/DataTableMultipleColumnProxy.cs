@@ -862,7 +862,7 @@ namespace Altaxo.Data
 		/// <returns>Maximum row count of all resolveable data columns in all column bundles.</returns>
 		private int GetMaximumRowCountNow()
 		{
-			return GetAllColumnProxies().Where(p => p.Document != null).MaxOrDefault(p => p.Document is IDefinedCount ? ((IDefinedCount)p.Document).Count : 0, 0);
+			return GetAllColumnProxies().Where(p => p.Document != null).MaxOrDefault(p => p.Document.Count ?? 0, 0);
 		}
 
 		#region Change event handling

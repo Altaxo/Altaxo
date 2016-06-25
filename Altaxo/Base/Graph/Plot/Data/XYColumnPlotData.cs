@@ -703,10 +703,10 @@ namespace Altaxo.Graph.Plot.Data
 				}
 				else
 				{
-					if (xColumn is IDefinedCount)
-						_pointCount = System.Math.Min(_pointCount, ((IDefinedCount)xColumn).Count);
-					if (yColumn is IDefinedCount)
-						_pointCount = System.Math.Min(_pointCount, ((IDefinedCount)yColumn).Count);
+					if (xColumn.Count.HasValue)
+						_pointCount = System.Math.Min(_pointCount, xColumn.Count.Value);
+					if (yColumn.Count.HasValue)
+						_pointCount = System.Math.Min(_pointCount, yColumn.Count.Value);
 
 					// if both columns are indefinite long, we set the length to zero
 					if (_pointCount == int.MaxValue || _pointCount < 0)

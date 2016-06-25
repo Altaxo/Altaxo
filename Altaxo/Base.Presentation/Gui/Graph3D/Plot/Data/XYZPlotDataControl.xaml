@@ -23,7 +23,9 @@
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="4" />
 			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="4" />
 			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="4" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -42,20 +44,7 @@
 		<ComboBox x:Name="_cbTables"  Grid.Row="1" Grid.Column="0" SelectionChanged="EhTables_SelectionChangeCommit" />
 		<axogc:Int32UpDown x:Name="_guiGroupNumber" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" MinWidth="80" Margin="6,0,0,0"  Minimum="0" Change="1"  IsGotoMinimumAndMaximumVisible="False" ValueChanged="EhGroupNumber_Changed" />
 
-		<Label Content="Avail. columns: " Grid.Row="3" Grid.Column="0" />
-		<Label Content="Plot item columns: " Grid.Row="3" Grid.Column="2" />
-
-		<ListBox x:Name="_lbColumns" Grid.Row="4" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible"
-			 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
-
-		<StackPanel x:Name="_guiTargetColumnsStack" Grid.Row="4" Grid.Column="2" Orientation="Vertical" Grid.IsSharedSizeScope="True" Margin="6,0,0,6"></StackPanel>
-
-		<Label Content="Other columns: " Grid.Row="6" Grid.Column="0" />
-
-		<ListBox x:Name="_guiOtherAvailableColumns" Grid.Row="7" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible"
-						 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding OtherAvailableColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
-
-		<GroupBox Header="Plot Range:" Grid.Row="6" Grid.RowSpan="2" Grid.Column="2" Margin="0,6,0,0"  Padding="0,4,0,0" VerticalAlignment="Top">
+		<GroupBox Header="Plot Range:" Grid.Row="0" Grid.RowSpan="2" Grid.Column="4" Margin="0,6,0,0"  Padding="0,4,0,0" VerticalAlignment="Top">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
@@ -69,6 +58,24 @@
 				<axogc:Int32UpDown x:Name="m_nudPlotRangeTo" Grid.Column="3" Minimum="0" Change="1" MaximumReplacementText="Maximum" ValueIfTextIsEmpty="{Binding RelativeSource={RelativeSource Self}, Path=Maximum}" IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhPlotRangeTo_Validating" />
 			</Grid>
 		</GroupBox>
+
+		<Label Content="Avail. columns: " Grid.Row="3" Grid.Column="0" />
+		<Label Content="Plot item columns: " Grid.Row="3" Grid.Column="2" />
+
+		<ListBox x:Name="_lbColumns" Grid.Row="4" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible"
+			 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
+
+		<StackPanel x:Name="_guiTargetColumnsStack" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="3" Orientation="Vertical" Grid.IsSharedSizeScope="True" Margin="6,0,0,6"></StackPanel>
+
+		<Label Content="Other columns: " Grid.Row="6" Grid.Column="0" />
+
+		<ListBox x:Name="_guiOtherAvailableColumns" Grid.Row="7" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible"
+						 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding OtherAvailableColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
+
+		<Label Content="Available transformations: " Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="3" />
+
+		<ListBox x:Name="_guiAvailableTransformations" Grid.Row="7" Grid.Column="2"  Grid.ColumnSpan="3" ScrollViewer.VerticalScrollBarVisibility="Visible"
+						 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableTransformationsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
 
 		<GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="8" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeDirection="Columns" />
 	</Grid>

@@ -60,14 +60,12 @@ namespace Altaxo.Data
 			get;
 		}
 
-		/*
 		/// <summary>
-		/// Returns a descriptive name for the column. A level of zero only returns a basic (short) name. The higher the level,
-		/// the longer should be the returned name.
+		/// Gets the count if this column has a defined count; otherwise null.
 		/// </summary>
-		/// <param name="level">Name level.</param>
-		/// <returns>The descriptive name of the column according with a length according to the level.</returns>
-		string GetName(int level);
-		*/
+		/// <value>
+		/// The count if this column has a defined count; otherwise null.
+		/// </value>
+		int? Count { get; }
 	}
 }
