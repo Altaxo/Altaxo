@@ -98,6 +98,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		/// <param name="state">The state of the column, as indicated by different background colors of the text box.</param>
 		void PlotItemColumn_Update(ColumnTag tag, string colname, string toolTip, string transformationText, string transformationToolTip, ColumnControlState state);
 
+		/// <summary>
+		/// Shows a popup menu for the column corresponding to <paramref name="tag"/>, questioning whether to add the
+		/// selected transformation as single transformation, as prepending transformation, or as appending transformation.
+		/// </summary>
+		/// <param name="tag">The tag.</param>
+		void ShowTransformationSinglePrependAppendPopup(ColumnTag tag);
+
 		void GroupNumber_Initialize(int groupNumber, bool isEnabled);
 
 		void PlotRangeFrom_Initialize(int from);
@@ -110,7 +117,19 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		event Action<ColumnTag> PlotItemColumn_AddTo;
 
+		event Action<ColumnTag> OtherAvailableColumn_AddTo;
+
+		event Action<ColumnTag> Transformation_AddTo;
+
+		event Action<ColumnTag> Transformation_AddAsSingle;
+
+		event Action<ColumnTag> Transformation_AddAsPrepending;
+
+		event Action<ColumnTag> Transformation_AddAsAppending;
+
 		event Action<ColumnTag> PlotItemColumn_Erase;
+
+		event Action<ColumnTag> Transformation_Erase;
 
 		event Action<int> RangeFromChanged;
 
@@ -494,6 +513,18 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			_view.PlotItemColumn_Erase += EhView_ColumnErase;
 
+			_view.OtherAvailableColumn_AddTo += EhView_OtherAvailableColumnAddTo;
+
+			_view.Transformation_AddTo += EhView_TransformationAddTo;
+
+			_view.Transformation_AddAsSingle += EhView_TransformationAddAsSingle;
+
+			_view.Transformation_AddAsPrepending += EhView_TransformationAddAsPrepending;
+
+			_view.Transformation_AddAsAppending += EhView_TransformationAddAsAppending;
+
+			_view.Transformation_Erase += EhView_TransformationErase;
+
 			_view.RangeFromChanged += EhView_RangeFrom;
 
 			_view.RangeToChanged += EhView_RangeTo;
@@ -526,6 +557,18 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			_view.PlotItemColumn_AddTo -= EhView_ColumnAddTo;
 
 			_view.PlotItemColumn_Erase -= EhView_ColumnErase;
+
+			_view.OtherAvailableColumn_AddTo -= EhView_OtherAvailableColumnAddTo;
+
+			_view.Transformation_AddTo -= EhView_TransformationAddTo;
+
+			_view.Transformation_AddAsSingle -= EhView_TransformationAddAsSingle;
+
+			_view.Transformation_AddAsPrepending -= EhView_TransformationAddAsPrepending;
+
+			_view.Transformation_AddAsAppending -= EhView_TransformationAddAsAppending;
+
+			_view.Transformation_Erase -= EhView_TransformationErase;
 
 			_view.RangeFromChanged -= EhView_RangeFrom;
 
@@ -890,6 +933,159 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				_view.PlotItemColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
 		}
 
+		public void EhView_OtherAvailableColumnAddTo(ColumnTag tag)
+		{
+			var node = _otherAvailableColumns.FirstSelectedNode;
+			if (null != node)
+			{
+				SetDirty();
+				var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+
+				IReadableColumn createdObj = null;
+				try
+				{
+					createdObj = (IReadableColumn)System.Activator.CreateInstance((Type)node.Tag);
+				}
+				catch (Exception ex)
+				{
+					Current.Gui.ErrorMessageBox("This column could not be created, message: " + ex.ToString(), "Error");
+				}
+
+				if (null != createdObj)
+				{
+					info.UnderlyingColumn = createdObj;
+					info.UpdateTooltipAndState(_doc.DataTable);
+
+					if (null != _view)
+						_view.PlotItemColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+				}
+			}
+		}
+
+		private void EhTransformation_Add(ColumnTag tag, Type transformationType)
+		{
+			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+
+			// make sure we can create that transformation
+			IVariantToVariantTransformation createdTransformation = null;
+			try
+			{
+				createdTransformation = (IVariantToVariantTransformation)System.Activator.CreateInstance(transformationType);
+			}
+			catch (Exception ex)
+			{
+				Current.Gui.ErrorMessageBox("This column could not be created, message: " + ex.ToString(), "Error");
+				return;
+			}
+
+			if (info.Transformation == null)
+			{
+				info.Transformation = createdTransformation;
+				SetDirty();
+				info.UpdateTooltipAndState(_doc.DataTable);
+				_view?.PlotItemColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+			}
+			else
+			{
+				_view?.ShowTransformationSinglePrependAppendPopup(tag); // this will eventually fire one of three commands to add as single, as prepend or as append transformation
+			}
+		}
+
+		private void EhTransformation_AddMultiple(ColumnTag tag, Type transformationType, int multipleType)
+		{
+			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+
+			// make sure we can create that transformation
+			IVariantToVariantTransformation createdTransformation = null;
+			try
+			{
+				createdTransformation = (IVariantToVariantTransformation)System.Activator.CreateInstance(transformationType);
+			}
+			catch (Exception ex)
+			{
+				Current.Gui.ErrorMessageBox("This column could not be created, message: " + ex.ToString(), "Error");
+				return;
+			}
+
+			switch (multipleType)
+			{
+				case 0: // as single
+					info.Transformation = createdTransformation;
+					break;
+
+				case 1: // prepend
+					if (info.Transformation is Altaxo.Data.Transformations.CompoundTransformation)
+						info.Transformation = (info.Transformation as Altaxo.Data.Transformations.CompoundTransformation).WithPrependedTransformation(createdTransformation);
+					else if (info.Transformation != null)
+						info.Transformation = new Altaxo.Data.Transformations.CompoundTransformation(new[] {  info.Transformation, createdTransformation });
+					else
+						info.Transformation = createdTransformation;
+					break;
+
+				case 2: // append
+					if (info.Transformation is Altaxo.Data.Transformations.CompoundTransformation)
+						info.Transformation = (info.Transformation as Altaxo.Data.Transformations.CompoundTransformation).WithAppendedTransformation(createdTransformation);
+					else if (info.Transformation != null)
+						info.Transformation = new Altaxo.Data.Transformations.CompoundTransformation(new[] {  createdTransformation, info.Transformation });
+					else
+						info.Transformation = createdTransformation;
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+			SetDirty();
+			info.UpdateTooltipAndState(_doc.DataTable);
+			_view?.PlotItemColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+		}
+
+		public void EhView_TransformationAddTo(ColumnTag tag)
+		{
+			var node = _availableTransformations.FirstSelectedNode;
+			if (null != node)
+			{
+				EhTransformation_Add(tag, (Type)node.Tag);
+			}
+		}
+
+		public void EhView_TransformationAddAsSingle(ColumnTag tag)
+		{
+			var node = _availableTransformations.FirstSelectedNode;
+			if (null != node)
+			{
+				EhTransformation_AddMultiple(tag, (Type)node.Tag, 0);
+			}
+		}
+
+		public void EhView_TransformationAddAsPrepending(ColumnTag tag)
+		{
+			var node = _availableTransformations.FirstSelectedNode;
+			if (null != node)
+			{
+				EhTransformation_AddMultiple(tag, (Type)node.Tag, 1);
+			}
+		}
+
+		public void EhView_TransformationAddAsAppending(ColumnTag tag)
+		{
+			var node = _availableTransformations.FirstSelectedNode;
+			if (null != node)
+			{
+				EhTransformation_AddMultiple(tag, (Type)node.Tag, 2);
+			}
+		}
+
+		public void EhView_TransformationErase(ColumnTag tag)
+		{
+			SetDirty();
+			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+			info.Transformation = null;
+			info.TransformationTextToShow = null;
+			info.TransformationToolTip = null;
+			if (null != _view)
+				_view.PlotItemColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+		}
+
 		public void EhView_RangeFrom(int val)
 		{
 			SetDirty();
@@ -1052,7 +1248,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				}
 				else if (createdObj is IVariantToVariantTransformation)
 				{
-					info.Transformation = (IVariantToVariantTransformation)createdObj;
+					EhTransformation_Add(tag, (Type)data);
 				}
 
 				info.UpdateTooltipAndState(_doc.DataTable);

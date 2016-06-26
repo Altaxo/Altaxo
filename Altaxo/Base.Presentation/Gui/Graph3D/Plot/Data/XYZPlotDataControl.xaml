@@ -15,6 +15,7 @@
 			</Style.Setters>
 		</Style>
 	</UserControl.Resources>
+
 	<Grid x:Name="_guiOuterGrid">
 		<Grid.Resources>
 			<ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
@@ -62,19 +63,19 @@
 		<Label Content="Avail. columns: " Grid.Row="3" Grid.Column="0" />
 		<Label Content="Plot item columns: " Grid.Row="3" Grid.Column="2" />
 
-		<ListBox x:Name="_lbColumns" Grid.Row="4" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible"
+		<ListBox x:Name="_lbColumns" Grid.Row="4" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
 			 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
 
 		<StackPanel x:Name="_guiTargetColumnsStack" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="3" Orientation="Vertical" Grid.IsSharedSizeScope="True" Margin="6,0,0,6"></StackPanel>
 
 		<Label Content="Other columns: " Grid.Row="6" Grid.Column="0" />
 
-		<ListBox x:Name="_guiOtherAvailableColumns" Grid.Row="7" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible"
+		<ListBox x:Name="_guiOtherAvailableColumns" Grid.Row="7" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
 						 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding OtherAvailableColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
 
 		<Label Content="Available transformations: " Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="3" />
 
-		<ListBox x:Name="_guiAvailableTransformations" Grid.Row="7" Grid.Column="2"  Grid.ColumnSpan="3" ScrollViewer.VerticalScrollBarVisibility="Visible"
+		<ListBox x:Name="_guiAvailableTransformations" Grid.Row="7" Grid.Column="2"  Grid.ColumnSpan="3" ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
 						 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableTransformationsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
 
 		<GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="8" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeDirection="Columns" />

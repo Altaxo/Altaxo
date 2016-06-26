@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Data.Transformations.Foo
+namespace Altaxo.Data.Transformations
 {
 	public class CompoundTransformation : ImmutableClassWithoutMembersBase, IVariantToVariantTransformation
 	{
@@ -57,17 +57,21 @@ namespace Altaxo.Data.Transformations.Foo
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				int count = info.OpenArray("Transformations");
-				IVariantToVariantTransformation[] arr = new IVariantToVariantTransformation[count];
+				List<IVariantToVariantTransformation> arr = new List<IVariantToVariantTransformation>(count);
 				for (int i = 0; i < count; ++i)
 				{
-					arr[i] = (IVariantToVariantTransformation)info.GetValue("e", null);
+					arr.Add((IVariantToVariantTransformation)info.GetValue("e", null));
 				}
 				info.CloseArray(count);
-				return new CompoundTransformation(arr);
+				return new CompoundTransformation() { _transformations = arr };
 			}
 		}
 
 		#endregion Serialization
+
+		private CompoundTransformation()
+		{
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CompoundTransformation"/> class.
@@ -154,6 +158,44 @@ namespace Altaxo.Data.Transformations.Foo
 			{
 				return new CompoundTransformation(GetTransformationsInReverseOrder().Select(transfo => transfo.BackTransformation));
 			}
+		}
+
+		public CompoundTransformation WithPrependedTransformation(IVariantToVariantTransformation transformation)
+		{
+			if (null == transformation)
+				throw new ArgumentNullException(nameof(transformation));
+
+			var result = new CompoundTransformation();
+			result._transformations = new List<IVariantToVariantTransformation>(this._transformations);
+			if (transformation is CompoundTransformation)
+			{
+				result._transformations.AddRange(((CompoundTransformation)transformation)._transformations);
+			}
+			else
+			{
+				result._transformations.Add(transformation);
+			}
+			return result;
+		}
+
+		public CompoundTransformation WithAppendedTransformation(IVariantToVariantTransformation transformation)
+		{
+			if (null == transformation)
+				throw new ArgumentNullException(nameof(transformation));
+
+			var result = new CompoundTransformation();
+			result._transformations = new List<IVariantToVariantTransformation>();
+			if (transformation is CompoundTransformation)
+			{
+				result._transformations.AddRange(((CompoundTransformation)transformation)._transformations);
+			}
+			else
+			{
+				result._transformations.Add(transformation);
+			}
+
+			result._transformations.AddRange(this._transformations);
+			return result;
 		}
 
 		private IEnumerable<IVariantToVariantTransformation> GetTransformationsInReverseOrder()

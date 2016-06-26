@@ -140,6 +140,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
+		public void ShowTransformationSinglePrependAppendPopup(bool isOpen)
+		{
+			_guiPopup.IsOpen = isOpen;
+		}
+
 		public void SetSeverityLevel(int severity)
 		{
 			switch (severity)
@@ -156,6 +161,17 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 					_guiColumnText.Background = Brushes.LightPink;
 					break;
 			}
+		}
+
+		private void EhPopupFocusChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (false == (bool)e.NewValue)
+				_guiPopup.IsOpen = false;
+		}
+
+		private void EhPopup_Cancel(object sender, RoutedEventArgs e)
+		{
+			_guiPopup.IsOpen = false;
 		}
 	}
 }

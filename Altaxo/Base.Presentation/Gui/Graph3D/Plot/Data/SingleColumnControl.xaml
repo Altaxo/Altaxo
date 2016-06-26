@@ -11,7 +11,7 @@
 	</Grid.Resources>
 	<Grid.ColumnDefinitions>
 		<ColumnDefinition Width="Auto" SharedSizeGroup="BtnAdd" />
-		<ColumnDefinition Width="Auto" SharedSizeGroup="Transfo" />
+		<ColumnDefinition Width="Auto" MinWidth="20" SharedSizeGroup="Transfo" />
 		<ColumnDefinition Width="Auto" MinWidth="40" SharedSizeGroup="ColEdit" />
 		<ColumnDefinition Width="Auto" SharedSizeGroup="BtnErs" />
 	</Grid.ColumnDefinitions>
@@ -30,7 +30,13 @@
 
 	<TextBox x:Name="_guiColumnTransformation" Grid.Column="1"  IsReadOnly="True"
 					 Tag="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
-				dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding ColumnTextBoxesDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
+				dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding ColumnTextBoxesDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
+		<TextBox.InputBindings>
+			<KeyBinding Key="Delete"
+					Command="{Binding TransformationEraseCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+					CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}" />
+		</TextBox.InputBindings>
+	</TextBox>
 
 	<TextBox x:Name="_guiColumnText" Grid.Column="2"  IsReadOnly="True"
 					 Tag="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
@@ -43,4 +49,19 @@
 			<Path Style="{StaticResource RemoveCrossPathStyle}" />
 		</Viewbox>
 	</Button>
+
+	<Popup Name="_guiPopup" PlacementTarget="{Binding ElementName=_guiColumnTransformation}" Placement="Relative" VerticalOffset="0" HorizontalOffset="0"  AllowsTransparency="False" IsOpen="False" IsKeyboardFocusWithinChanged="EhPopupFocusChanged">
+		<StackPanel Orientation="Vertical" Background="AliceBlue">
+			<MenuItem Header="Set as single transformation"
+								Command="{Binding TransformationAddAsSingleCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+								CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}" />
+			<MenuItem Header="Prepend transformation"
+								Command="{Binding TransformationAddAsPrependingCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+								CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}" />
+			<MenuItem Header="Append transformation"
+								Command="{Binding TransformationAddAsAppendingCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+								CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}" />
+			<MenuItem Header="Cancel" Click="EhPopup_Cancel" />
+		</StackPanel>
+	</Popup>
 </Grid>

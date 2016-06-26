@@ -53,6 +53,18 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public event Action<ColumnTag> PlotItemColumn_Erase;
 
+		public event Action<ColumnTag> OtherAvailableColumn_AddTo;
+
+		public event Action<ColumnTag> Transformation_AddTo;
+
+		public event Action<ColumnTag> Transformation_AddAsSingle;
+
+		public event Action<ColumnTag> Transformation_AddAsPrepending;
+
+		public event Action<ColumnTag> Transformation_AddAsAppending;
+
+		public event Action<ColumnTag> Transformation_Erase;
+
 		public event Action<int> RangeFromChanged;
 
 		public event Action<int> RangeToChanged;
@@ -148,6 +160,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			sgc.TransformationText = transformationText;
 			sgc.TransformationToolTipText = transformationToolTip;
 			sgc.SetSeverityLevel((int)state);
+		}
+
+		public void ShowTransformationSinglePrependAppendPopup(ColumnTag tag)
+		{
+			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
+			sgc.ShowTransformationSinglePrependAppendPopup(true);
 		}
 
 		private void EhPlotRangeFrom_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
@@ -466,8 +484,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhColumn_AddToCommand(object parameter)
 		{
-			GuiHelper.SynchronizeSelectionFromGui(_lbColumns);
-			PlotItemColumn_AddTo?.Invoke(parameter as ColumnTag);
+			var listBox = _lastListBoxActivated ?? _lbColumns;
+			GuiHelper.SynchronizeSelectionFromGui(listBox);
+
+			if (object.ReferenceEquals(listBox, _lbColumns))
+				PlotItemColumn_AddTo?.Invoke(parameter as ColumnTag);
+			else if (object.ReferenceEquals(listBox, _guiOtherAvailableColumns))
+				OtherAvailableColumn_AddTo?.Invoke(parameter as ColumnTag);
+			if (object.ReferenceEquals(listBox, _guiAvailableTransformations))
+				Transformation_AddTo?.Invoke(parameter as ColumnTag);
 		}
 
 		#endregion ColumnAddTo command
@@ -493,6 +518,116 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		#endregion ColumnErase command
 
+		#region TransformationErase command
+
+		private RelayCommand _transformationEraseCommand;
+
+		public ICommand TransformationEraseCommand
+		{
+			get
+			{
+				if (this._transformationEraseCommand == null)
+					this._transformationEraseCommand = new RelayCommand(EhTransformation_EraseCommand);
+				return this._transformationEraseCommand;
+			}
+		}
+
+		private void EhTransformation_EraseCommand(object parameter)
+		{
+			Transformation_Erase?.Invoke(parameter as ColumnTag);
+		}
+
+		#endregion TransformationErase command
+
+		#region TransformationAddAsSingle command
+
+		private RelayCommand _transformationAddAsSingleCommand;
+
+		public ICommand TransformationAddAsSingleCommand
+		{
+			get
+			{
+				if (this._transformationAddAsSingleCommand == null)
+					this._transformationAddAsSingleCommand = new RelayCommand(EhTransformationAddAsSingleCommand);
+				return _transformationAddAsSingleCommand;
+			}
+		}
+
+		private void EhTransformationAddAsSingleCommand(object parameter)
+		{
+			var tag = (ColumnTag)parameter;
+			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
+			sgc.ShowTransformationSinglePrependAppendPopup(false);
+
+			Transformation_AddAsSingle?.Invoke(tag);
+		}
+
+		#endregion TransformationAddAsSingle command
+
+		#region TransformationAddAsPrepending command
+
+		private RelayCommand _transformationAddAsPrependingCommand;
+
+		public ICommand TransformationAddAsPrependingCommand
+		{
+			get
+			{
+				if (this._transformationAddAsPrependingCommand == null)
+					this._transformationAddAsPrependingCommand = new RelayCommand(EhTransformationAddAsPrependingCommand);
+				return _transformationAddAsPrependingCommand;
+			}
+		}
+
+		private void EhTransformationAddAsPrependingCommand(object parameter)
+		{
+			var tag = (ColumnTag)parameter;
+			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
+			sgc.ShowTransformationSinglePrependAppendPopup(false);
+
+			Transformation_AddAsPrepending?.Invoke(tag);
+		}
+
+		#endregion TransformationAddAsPrepending command
+
+		#region TransformationAddAsAppending command
+
+		private RelayCommand _transformationAddAsAppendingCommand;
+
+		public ICommand TransformationAddAsAppendingCommand
+		{
+			get
+			{
+				if (this._transformationAddAsAppendingCommand == null)
+					this._transformationAddAsAppendingCommand = new RelayCommand(EhTransformationAddAsAppendingCommand);
+				return _transformationAddAsAppendingCommand;
+			}
+		}
+
+		private void EhTransformationAddAsAppendingCommand(object parameter)
+		{
+			var tag = (ColumnTag)parameter;
+			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
+			sgc.ShowTransformationSinglePrependAppendPopup(false);
+			Transformation_AddAsAppending?.Invoke(tag);
+		}
+
+		#endregion TransformationAddAsAppending command
+
 		#endregion Column text boxes commands
+
+		private ListBox _lastListBoxActivated;
+
+		private void EhFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (true == (bool)e.NewValue)
+			{
+				if (
+					object.ReferenceEquals(_lbColumns, sender) ||
+					object.ReferenceEquals(_guiOtherAvailableColumns, sender) ||
+					object.ReferenceEquals(_guiAvailableTransformations, sender)
+					)
+					_lastListBoxActivated = (ListBox)sender;
+			}
+		}
 	}
 }
