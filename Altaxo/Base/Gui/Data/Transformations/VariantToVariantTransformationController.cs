@@ -22,25 +22,17 @@
 
 #endregion Copyright
 
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
-namespace Altaxo.Data.Transformations
+namespace Altaxo.Gui.Data.Transformations
 {
-	public class ImmutableClassWithoutMembersBase : Main.IImmutable
+	[UserControllerForObject(typeof(IVariantToVariantTransformation), 90)]
+	public class VariantToVariantTransformationController : Altaxo.Gui.Common.SimpleImmutableObjectController<IVariantToVariantTransformation>
 	{
-		public override int GetHashCode()
-		{
-			return this.GetType().GetHashCode();
-		}
-
-		public override bool Equals(object obj)
-		{
-			return this.GetType() == obj?.GetType();
-		}
-
-		public bool IsEditable { get { return false; } }
 	}
 }

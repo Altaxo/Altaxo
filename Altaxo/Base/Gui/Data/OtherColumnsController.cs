@@ -27,20 +27,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Data.Transformations
+namespace Altaxo.Gui.Data
 {
-	public class ImmutableClassWithoutMembersBase : Main.IImmutable
+	[UserControllerForObject(typeof(Altaxo.Data.EquallySpacedColumn))]
+	public class EquallySpacedColumnController : Altaxo.Gui.Common.SimpleImmutableObjectController<Altaxo.Data.EquallySpacedColumn>
 	{
-		public override int GetHashCode()
-		{
-			return this.GetType().GetHashCode();
-		}
+	}
 
-		public override bool Equals(object obj)
-		{
-			return this.GetType() == obj?.GetType();
-		}
-
-		public bool IsEditable { get { return false; } }
+	[UserControllerForObject(typeof(Altaxo.Data.ConstantDoubleColumn))]
+	public class ConstantDoubleColumnController : Altaxo.Gui.Common.SimpleImmutableObjectController<Altaxo.Data.ConstantDoubleColumn>
+	{
 	}
 }

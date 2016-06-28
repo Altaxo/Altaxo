@@ -54,16 +54,16 @@
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
 				<Label Grid.Column="0" Content="From:" />
-				<axogc:Int32UpDown x:Name="_nudPlotRangeFrom" Grid.Column="1" Minimum="0" Change="1"  IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhPlotRangeFrom_Validating" />
+				<axogc:Int32UpDown x:Name="_guiPlotRangeFrom" Grid.Column="1" Minimum="0" Change="1"  IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhPlotRangeFrom_Validating" />
 				<Label  Grid.Column="2" Content="To:" />
-				<axogc:Int32UpDown x:Name="m_nudPlotRangeTo" Grid.Column="3" Minimum="0" Change="1" MaximumReplacementText="Maximum" ValueIfTextIsEmpty="{Binding RelativeSource={RelativeSource Self}, Path=Maximum}" IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhPlotRangeTo_Validating" />
+				<axogc:Int32UpDown x:Name="_guiPlotRangeTo" Grid.Column="3" Minimum="0" Change="1" MaximumReplacementText="Maximum" ValueIfTextIsEmpty="{Binding RelativeSource={RelativeSource Self}, Path=Maximum}" IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhPlotRangeTo_Validating" />
 			</Grid>
 		</GroupBox>
 
 		<Label Content="Avail. columns: " Grid.Row="3" Grid.Column="0" />
 		<Label Content="Plot item columns: " Grid.Row="3" Grid.Column="2" />
 
-		<ListBox x:Name="_lbColumns" Grid.Row="4" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
+		<ListBox x:Name="_guiAvailableTableColumns" Grid.Row="4" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
 			 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
 
 		<StackPanel x:Name="_guiTargetColumnsStack" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="3" Orientation="Vertical" Grid.IsSharedSizeScope="True" Margin="6,0,0,6"></StackPanel>

@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Altaxo.Data.Transformations
 {
-	public class CompoundTransformation : ImmutableClassWithoutMembersBase, IVariantToVariantTransformation
+	public class CompoundTransformation : IVariantToVariantTransformation
 	{
 		/// <summary>
 		/// The transformations. The innermost (i.e. first transformation to carry out, the rightmost transformation) is located at index 0.
@@ -229,5 +229,7 @@ namespace Altaxo.Data.Transformations
 
 			return result;
 		}
+
+		public bool IsEditable { get { return true; } }
 	}
 }

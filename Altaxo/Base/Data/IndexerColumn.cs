@@ -31,8 +31,10 @@ namespace Altaxo.Data
 	/// it's index in the column, i.e. GetDoubleAt(i) simply returns the value i.
 	/// </summary>
 	[Serializable]
-	public class IndexerColumn : INumericColumn, IReadableColumn, ICloneable
+	public sealed class IndexerColumn : INumericColumn, IReadableColumn, ICloneable, Main.IImmutable
 	{
+		public static IndexerColumn Instance { get; private set; } = new IndexerColumn();
+
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IndexerColumn), 0)]
@@ -44,8 +46,7 @@ namespace Altaxo.Data
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				IndexerColumn s = null != o ? (IndexerColumn)o : new IndexerColumn();
-				return s;
+				return Instance;
 			}
 		}
 
@@ -57,7 +58,7 @@ namespace Altaxo.Data
 		/// <returns>The cloned instance of this object.</returns>
 		public object Clone()
 		{
-			return new IndexerColumn();
+			return this;
 		}
 
 		/// <summary>

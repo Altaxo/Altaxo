@@ -51,6 +51,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public event Action<ColumnTag> PlotItemColumn_AddTo;
 
+		public event Action<ColumnTag> PlotItemColumn_Edit;
+
 		public event Action<ColumnTag> PlotItemColumn_Erase;
 
 		public event Action<ColumnTag> OtherAvailableColumn_AddTo;
@@ -62,6 +64,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		public event Action<ColumnTag> Transformation_AddAsPrepending;
 
 		public event Action<ColumnTag> Transformation_AddAsAppending;
+
+		public event Action<ColumnTag> Transformation_Edit;
 
 		public event Action<ColumnTag> Transformation_Erase;
 
@@ -170,12 +174,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhPlotRangeFrom_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
 		{
-			RangeFromChanged?.Invoke(this._nudPlotRangeFrom.Value);
+			RangeFromChanged?.Invoke(this._guiPlotRangeFrom.Value);
 		}
 
 		private void EhPlotRangeTo_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
 		{
-			RangeToChanged?.Invoke(this.m_nudPlotRangeTo.Value);
+			RangeToChanged?.Invoke(this._guiPlotRangeTo.Value);
 		}
 
 		#region IXYColumnPlotDataView
@@ -187,7 +191,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public void AvailableTableColumns_Initialize(SelectableListNodeList items)
 		{
-			GuiHelper.Initialize(_lbColumns, items);
+			GuiHelper.Initialize(_guiAvailableTableColumns, items);
 		}
 
 		public void OtherAvailableColumns_Initialize(SelectableListNodeList items)
@@ -202,16 +206,16 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public void PlotRangeFrom_Initialize(int from)
 		{
-			this._nudPlotRangeFrom.Minimum = 0;
-			this._nudPlotRangeFrom.Maximum = int.MaxValue;
-			this._nudPlotRangeFrom.Value = from;
+			this._guiPlotRangeFrom.Minimum = 0;
+			this._guiPlotRangeFrom.Maximum = int.MaxValue;
+			this._guiPlotRangeFrom.Value = from;
 		}
 
 		public void PlotRangeTo_Initialize(int to)
 		{
-			this.m_nudPlotRangeTo.Minimum = 0;
-			this.m_nudPlotRangeTo.Maximum = int.MaxValue;
-			this.m_nudPlotRangeTo.Value = Math.Max(0, to);
+			this._guiPlotRangeTo.Minimum = 0;
+			this._guiPlotRangeTo.Maximum = int.MaxValue;
+			this._guiPlotRangeTo.Value = Math.Max(0, to);
 		}
 
 		#endregion IXYColumnPlotDataView
@@ -252,12 +256,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			public bool CanStartDrag(IDragInfo dragInfo)
 			{
-				var result = _parentControl.AvailableTableColumns_CanStartDrag?.Invoke(_parentControl._lbColumns.SelectedItems);
+				var result = _parentControl.AvailableTableColumns_CanStartDrag?.Invoke(_parentControl._guiAvailableTableColumns.SelectedItems);
 				return result.HasValue ? result.Value : false;
 			}
 
 			public void StartDrag(IDragInfo dragInfo)
 			{
+				GuiHelper.SynchronizeSelectionFromGui(_parentControl._guiAvailableTableColumns);
 				var result = _parentControl.AvailableTableColumns_StartDrag?.Invoke(dragInfo.SourceItems);
 				if (null != result)
 				{
@@ -312,6 +317,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			public void StartDrag(IDragInfo dragInfo)
 			{
+				GuiHelper.SynchronizeSelectionFromGui(_parentControl._guiOtherAvailableColumns);
 				var result = _parentControl.OtherAvailableItems_StartDrag?.Invoke(dragInfo.SourceItems);
 				if (null != result)
 				{
@@ -366,6 +372,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			public void StartDrag(IDragInfo dragInfo)
 			{
+				GuiHelper.SynchronizeSelectionFromGui(_parentControl._guiAvailableTransformations);
 				var result = _parentControl.AvailableTransformations_StartDrag?.Invoke(dragInfo.SourceItems);
 				if (null != result)
 				{
@@ -484,10 +491,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhColumn_AddToCommand(object parameter)
 		{
-			var listBox = _lastListBoxActivated ?? _lbColumns;
+			var listBox = _lastListBoxActivated ?? _guiAvailableTableColumns;
 			GuiHelper.SynchronizeSelectionFromGui(listBox);
 
-			if (object.ReferenceEquals(listBox, _lbColumns))
+			if (object.ReferenceEquals(listBox, _guiAvailableTableColumns))
 				PlotItemColumn_AddTo?.Invoke(parameter as ColumnTag);
 			else if (object.ReferenceEquals(listBox, _guiOtherAvailableColumns))
 				OtherAvailableColumn_AddTo?.Invoke(parameter as ColumnTag);
@@ -496,6 +503,27 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		}
 
 		#endregion ColumnAddTo command
+
+		#region ColumnEdit command
+
+		private RelayCommand _columnEditCommand;
+
+		public ICommand ColumnEditCommand
+		{
+			get
+			{
+				if (this._columnEditCommand == null)
+					this._columnEditCommand = new RelayCommand(EhColumn_EditCommand);
+				return this._columnEditCommand;
+			}
+		}
+
+		private void EhColumn_EditCommand(object parameter)
+		{
+			PlotItemColumn_Edit?.Invoke(parameter as ColumnTag);
+		}
+
+		#endregion ColumnEdit command
 
 		#region ColumnErase command
 
@@ -517,6 +545,27 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		}
 
 		#endregion ColumnErase command
+
+		#region TransformationEdit command
+
+		private RelayCommand _transformationEditCommand;
+
+		public ICommand TransformationEditCommand
+		{
+			get
+			{
+				if (this._transformationEditCommand == null)
+					this._transformationEditCommand = new RelayCommand(EhTransformation_EditCommand);
+				return this._transformationEditCommand;
+			}
+		}
+
+		private void EhTransformation_EditCommand(object parameter)
+		{
+			Transformation_Edit?.Invoke(parameter as ColumnTag);
+		}
+
+		#endregion TransformationEdit command
 
 		#region TransformationErase command
 
@@ -622,7 +671,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			if (true == (bool)e.NewValue)
 			{
 				if (
-					object.ReferenceEquals(_lbColumns, sender) ||
+					object.ReferenceEquals(_guiAvailableTableColumns, sender) ||
 					object.ReferenceEquals(_guiOtherAvailableColumns, sender) ||
 					object.ReferenceEquals(_guiAvailableTransformations, sender)
 					)

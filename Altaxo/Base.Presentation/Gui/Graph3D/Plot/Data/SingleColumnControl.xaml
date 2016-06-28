@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Altaxo.Gui.Graph3D.Plot.Data"
+							xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 							xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
 							Margin="0,2,0,2">
 	<Grid.Resources>
@@ -30,17 +31,36 @@
 
 	<TextBox x:Name="_guiColumnTransformation" Grid.Column="1"  IsReadOnly="True"
 					 Tag="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
-				dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding ColumnTextBoxesDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
+				dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding ColumnTextBoxesDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+				axogc:EventToCommandBinding.EventName0="MouseDoubleClick"
+		  	axogc:EventToCommandBinding.Command0="{Binding TransformationEditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+				axogc:EventToCommandBinding.CommandParameter0="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}">
+
 		<TextBox.InputBindings>
 			<KeyBinding Key="Delete"
 					Command="{Binding TransformationEraseCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+					CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}" />
+			<KeyBinding Key="Return"
+					Command="{Binding TransformationEditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
 					CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}" />
 		</TextBox.InputBindings>
 	</TextBox>
 
 	<TextBox x:Name="_guiColumnText" Grid.Column="2"  IsReadOnly="True"
 					 Tag="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
-				dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding ColumnTextBoxesDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
+					 dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding ColumnTextBoxesDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+					 axogc:EventToCommandBinding.EventName0="MouseDoubleClick"
+					 axogc:EventToCommandBinding.Command0="{Binding ColumnEditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+					 axogc:EventToCommandBinding.CommandParameter0="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}">
+		<TextBox.InputBindings>
+			<KeyBinding Key="Delete"
+					Command="{Binding ColumnEraseCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+					CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}" />
+			<KeyBinding Key="Return"
+					Command="{Binding ColumnEditCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+					CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}" />
+		</TextBox.InputBindings>
+	</TextBox>
 
 	<Button Grid.Column="3"
 					Command="{Binding ColumnEraseCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"

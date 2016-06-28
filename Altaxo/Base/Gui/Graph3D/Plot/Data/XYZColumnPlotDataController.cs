@@ -117,6 +117,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		event Action<ColumnTag> PlotItemColumn_AddTo;
 
+		event Action<ColumnTag> PlotItemColumn_Edit;
+
+		event Action<ColumnTag> PlotItemColumn_Erase;
+
 		event Action<ColumnTag> OtherAvailableColumn_AddTo;
 
 		event Action<ColumnTag> Transformation_AddTo;
@@ -127,7 +131,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		event Action<ColumnTag> Transformation_AddAsAppending;
 
-		event Action<ColumnTag> PlotItemColumn_Erase;
+		event Action<ColumnTag> Transformation_Edit;
 
 		event Action<ColumnTag> Transformation_Erase;
 
@@ -463,7 +467,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				}
 
 				// Initialize other available columns
-				InitializeOtherAvailableColumns();
+				Controller_OtherAvailableColumns_Initialize();
 
 				Controller_AvailableTransformations_Initialize();
 			}
@@ -511,6 +515,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			_view.PlotItemColumn_AddTo += EhView_ColumnAddTo;
 
+			_view.PlotItemColumn_Edit += EhView_ColumnEdit;
+
 			_view.PlotItemColumn_Erase += EhView_ColumnErase;
 
 			_view.OtherAvailableColumn_AddTo += EhView_OtherAvailableColumnAddTo;
@@ -522,6 +528,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			_view.Transformation_AddAsPrepending += EhView_TransformationAddAsPrepending;
 
 			_view.Transformation_AddAsAppending += EhView_TransformationAddAsAppending;
+
+			_view.Transformation_Edit += EhView_TransformationEdit;
 
 			_view.Transformation_Erase += EhView_TransformationErase;
 
@@ -556,6 +564,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			_view.PlotItemColumn_AddTo -= EhView_ColumnAddTo;
 
+			_view.PlotItemColumn_Edit -= EhView_ColumnEdit;
+
 			_view.PlotItemColumn_Erase -= EhView_ColumnErase;
 
 			_view.OtherAvailableColumn_AddTo -= EhView_OtherAvailableColumnAddTo;
@@ -567,6 +577,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			_view.Transformation_AddAsPrepending -= EhView_TransformationAddAsPrepending;
 
 			_view.Transformation_AddAsAppending -= EhView_TransformationAddAsAppending;
+
+			_view.Transformation_Edit -= EhView_TransformationEdit;
 
 			_view.Transformation_Erase -= EhView_TransformationErase;
 
@@ -699,40 +711,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		#region ILineScatterPlotDataController Members
 
-		private void InitializeOtherAvailableColumns()
-		{
-			var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IReadableColumn));
-
-			foreach (var t in types)
-			{
-				if (Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(t, typeof(DataColumn)))
-					continue; // not the DataColumn types
-
-				if (t.IsNestedPrivate)
-					continue; // types that are declared private will not be listed
-
-				_otherAvailableColumns.Add(new SelectableListNode(t.Name, t, false));
-			}
-		}
-
-		private void Controller_AvailableTransformations_Initialize()
-		{
-			var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IVariantToVariantTransformation));
-
-			foreach (var t in types)
-			{
-				if (t.IsNestedPrivate)
-					continue; // types that are declared private will not be listed
-
-				_availableTransformations.Add(new SelectableListNode(t.Name, t, false));
-			}
-		}
-
-		private void View_AvailableTransformations_Initialize()
-		{
-			_view.AvailableTransformations_Initialize(_availableTransformations);
-		}
-
 		private void CalcMaxPossiblePlotRangeTo()
 		{
 			int len = int.MaxValue;
@@ -746,24 +724,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			if (null != _view)
 				_view.PlotRangeTo_Initialize(Math.Min(this._plotRangeTo, _maxPossiblePlotRangeTo));
-		}
-
-		private string GetColumnNameToCache(IReadableColumn column)
-		{
-			if (null == column)
-			{
-				return null;
-			}
-			else if (column is DataColumn)
-			{
-				var dcolumn = (DataColumn)column;
-				var parentTable = DataColumnCollection.GetParentDataColumnCollectionOf(dcolumn);
-				return parentTable?.GetColumnName(dcolumn);
-			}
-			else // Column is something else
-			{
-				return null;
-			}
 		}
 
 		private void ColumnInitialize(Action<string, string, ColumnControlState> SetterMethod, IReadableColumn column, string columnName)
@@ -921,6 +881,22 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
+		public void EhView_ColumnEdit(ColumnTag tag)
+		{
+			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+
+			bool wasEdited;
+			var editedColumn = EditOtherAvailableColumn(info.UnderlyingColumn, out wasEdited);
+
+			if (wasEdited)
+			{
+				SetDirty();
+				info.UnderlyingColumn = editedColumn;
+				info.UpdateTooltipAndState(_doc.DataTable);
+				_view?.PlotItemColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+			}
+		}
+
 		public void EhView_ColumnErase(ColumnTag tag)
 		{
 			SetDirty();
@@ -931,6 +907,57 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			info.ColumnToolTip = null;
 			if (null != _view)
 				_view.PlotItemColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+		}
+
+		#region OtherAvailableColumns
+
+		private void Controller_OtherAvailableColumns_Initialize()
+		{
+			var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IReadableColumn));
+
+			foreach (var t in types)
+			{
+				if (Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(t, typeof(DataColumn)))
+					continue; // not the DataColumn types
+
+				if (t.IsNestedPrivate)
+					continue; // types that are declared private will not be listed
+
+				if (!(true == t.GetConstructor(Type.EmptyTypes)?.IsPublic))
+					continue; // don't has an empty public constructor
+
+				_otherAvailableColumns.Add(new SelectableListNode(t.Name, t, false));
+			}
+		}
+
+		/// <summary>
+		/// Edits the other available column.
+		/// </summary>
+		/// <param name="newlyCreatedColumn">Instance of an OtherAvailableColumn.</param>
+		/// <param name="wasEdited">If set to <c>true</c>, the column was edited.</param>
+		/// <returns></returns>
+		private static IReadableColumn EditOtherAvailableColumn(IReadableColumn newlyCreatedColumn, out bool wasEdited)
+		{
+			wasEdited = false;
+
+			if (newlyCreatedColumn is Altaxo.Main.IImmutable)
+			{
+				object prop = newlyCreatedColumn.GetType().GetProperty("IsEditable")?.GetValue(newlyCreatedColumn, null);
+				if ((prop is bool?) && true == (bool?)prop)
+				{
+					var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { newlyCreatedColumn }, typeof(IMVCANController));
+					if (null != controller && null != controller.ViewObject)
+					{
+						if (Current.Gui.ShowDialog(controller, "Edit " + newlyCreatedColumn.GetType().Name))
+						{
+							newlyCreatedColumn = (IReadableColumn)controller.ModelObject;
+							wasEdited = true;
+						}
+					}
+				}
+			}
+
+			return newlyCreatedColumn;
 		}
 
 		public void EhView_OtherAvailableColumnAddTo(ColumnTag tag)
@@ -953,7 +980,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 				if (null != createdObj)
 				{
-					info.UnderlyingColumn = createdObj;
+					bool wasEdited;
+					info.UnderlyingColumn = EditOtherAvailableColumn(createdObj, out wasEdited);
 					info.UpdateTooltipAndState(_doc.DataTable);
 
 					if (null != _view)
@@ -962,33 +990,47 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
-		private void EhTransformation_Add(ColumnTag tag, Type transformationType)
+		#endregion OtherAvailableColumns
+
+		#region Transformation
+
+		private void Controller_AvailableTransformations_Initialize()
 		{
-			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+			var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IVariantToVariantTransformation));
 
-			// make sure we can create that transformation
-			IVariantToVariantTransformation createdTransformation = null;
-			try
+			foreach (var t in types)
 			{
-				createdTransformation = (IVariantToVariantTransformation)System.Activator.CreateInstance(transformationType);
-			}
-			catch (Exception ex)
-			{
-				Current.Gui.ErrorMessageBox("This column could not be created, message: " + ex.ToString(), "Error");
-				return;
-			}
+				if (t.IsNestedPrivate)
+					continue; // types that are declared private will not be listed
 
-			if (info.Transformation == null)
-			{
-				info.Transformation = createdTransformation;
-				SetDirty();
-				info.UpdateTooltipAndState(_doc.DataTable);
-				_view?.PlotItemColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+				if (!(true == t.GetConstructor(Type.EmptyTypes)?.IsPublic))
+					continue; // don't has an empty public constructor
+
+				_availableTransformations.Add(new SelectableListNode(t.Name, t, false));
 			}
-			else
+		}
+
+		private void View_AvailableTransformations_Initialize()
+		{
+			_view.AvailableTransformations_Initialize(_availableTransformations);
+		}
+
+		private static IVariantToVariantTransformation EditAvailableTransformation(IVariantToVariantTransformation createdTransformation, out bool wasEdited)
+		{
+			wasEdited = false;
+			if (null != createdTransformation && createdTransformation.IsEditable)
 			{
-				_view?.ShowTransformationSinglePrependAppendPopup(tag); // this will eventually fire one of three commands to add as single, as prepend or as append transformation
+				var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { createdTransformation }, typeof(IMVCANController));
+				if (null != controller && null != controller.ViewObject)
+				{
+					if (Current.Gui.ShowDialog(controller, "Edit " + createdTransformation.GetType().Name))
+					{
+						createdTransformation = (IVariantToVariantTransformation)controller.ModelObject;
+						wasEdited = true;
+					}
+				}
 			}
+			return createdTransformation;
 		}
 
 		private void EhTransformation_AddMultiple(ColumnTag tag, Type transformationType, int multipleType)
@@ -1007,6 +1049,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				return;
 			}
 
+			bool wasEdited;
+			createdTransformation = EditAvailableTransformation(createdTransformation, out wasEdited);
+
 			switch (multipleType)
 			{
 				case 0: // as single
@@ -1017,7 +1062,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 					if (info.Transformation is Altaxo.Data.Transformations.CompoundTransformation)
 						info.Transformation = (info.Transformation as Altaxo.Data.Transformations.CompoundTransformation).WithPrependedTransformation(createdTransformation);
 					else if (info.Transformation != null)
-						info.Transformation = new Altaxo.Data.Transformations.CompoundTransformation(new[] {  info.Transformation, createdTransformation });
+						info.Transformation = new Altaxo.Data.Transformations.CompoundTransformation(new[] { info.Transformation, createdTransformation });
 					else
 						info.Transformation = createdTransformation;
 					break;
@@ -1026,7 +1071,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 					if (info.Transformation is Altaxo.Data.Transformations.CompoundTransformation)
 						info.Transformation = (info.Transformation as Altaxo.Data.Transformations.CompoundTransformation).WithAppendedTransformation(createdTransformation);
 					else if (info.Transformation != null)
-						info.Transformation = new Altaxo.Data.Transformations.CompoundTransformation(new[] {  createdTransformation, info.Transformation });
+						info.Transformation = new Altaxo.Data.Transformations.CompoundTransformation(new[] { createdTransformation, info.Transformation });
 					else
 						info.Transformation = createdTransformation;
 					break;
@@ -1044,7 +1089,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			var node = _availableTransformations.FirstSelectedNode;
 			if (null != node)
 			{
-				EhTransformation_Add(tag, (Type)node.Tag);
+				var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+				if (info.Transformation == null)
+				{
+					EhTransformation_AddMultiple(tag, (Type)node.Tag, 0);
+				}
+				else
+				{
+					_view?.ShowTransformationSinglePrependAppendPopup(tag); // this will eventually fire one of three commands to add as single, as prepend or as append transformation
+				}
 			}
 		}
 
@@ -1075,6 +1128,23 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
+		public void EhView_TransformationEdit(ColumnTag tag)
+		{
+			if (tag == null)
+				return;
+
+			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+
+			bool wasEdited;
+			info.Transformation = EditAvailableTransformation(info.Transformation, out wasEdited);
+			if (wasEdited)
+			{
+				SetDirty();
+				info.UpdateTooltipAndState(_doc.DataTable);
+				_view?.PlotItemColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+			}
+		}
+
 		public void EhView_TransformationErase(ColumnTag tag)
 		{
 			SetDirty();
@@ -1085,6 +1155,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			if (null != _view)
 				_view.PlotItemColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
 		}
+
+		#endregion Transformation
+
+		#region Range
 
 		public void EhView_RangeFrom(int val)
 		{
@@ -1097,6 +1171,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			SetDirty();
 			this._plotRangeTo = val;
 		}
+
+		#endregion Range
 
 		#endregion ILineScatterPlotDataController Members
 
@@ -1243,12 +1319,19 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 				if (createdObj is IReadableColumn)
 				{
-					info.UnderlyingColumn = (IReadableColumn)createdObj;
+					bool wasEdited;
+					info.UnderlyingColumn = EditOtherAvailableColumn((IReadableColumn)createdObj, out wasEdited);
 					info.ColumnTextToShow = null;
 				}
 				else if (createdObj is IVariantToVariantTransformation)
 				{
-					EhTransformation_Add(tag, (Type)data);
+					_availableTransformations.ClearSelectionsAll(); // we artificially select the node that holds that type
+					var nodeToSelect = _availableTransformations.FirstOrDefault(node => (Type)node.Tag == (Type)data);
+					if (null != nodeToSelect)
+					{
+						nodeToSelect.IsSelected = true;
+						EhView_TransformationAddTo(tag);
+					}
 				}
 
 				info.UpdateTooltipAndState(_doc.DataTable);

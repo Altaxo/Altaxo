@@ -61,4 +61,52 @@ namespace Altaxo.Gui.Common
 			this.execute(parameter);
 		}
 	}
+
+	public class RelayCommand<TArg> : ICommand
+	{
+		private Action<TArg> execute;
+		private Func<TArg, bool> canExecute;
+
+		public event EventHandler CanExecuteChanged
+		{
+			add { CommandManager.RequerySuggested += value; }
+			remove { CommandManager.RequerySuggested -= value; }
+		}
+
+		public RelayCommand(Action<TArg> execute) : this(execute, null)
+		{
+		}
+
+		public RelayCommand(Action<TArg> execute, Func<TArg, bool> canExecute)
+		{
+			this.execute = execute;
+			this.canExecute = canExecute;
+		}
+
+		public bool CanExecute(TArg parameter)
+		{
+			return this.canExecute == null || this.canExecute(parameter);
+		}
+
+		public void Execute(TArg parameter)
+		{
+			this.execute(parameter);
+		}
+
+		void ICommand.Execute(object parameter)
+		{
+			if (parameter is TArg)
+				Execute((TArg)parameter);
+			else
+				throw new ArgumentException(string.Format("Type {0} was expected, but it is type {1}", typeof(TArg), parameter?.GetType()), nameof(parameter));
+		}
+
+		bool ICommand.CanExecute(object parameter)
+		{
+			if (parameter is TArg)
+				return CanExecute((TArg)parameter);
+			else
+				return false;
+		}
+	}
 }

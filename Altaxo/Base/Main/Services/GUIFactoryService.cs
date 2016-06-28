@@ -221,6 +221,8 @@ namespace Altaxo.Main.Services
 			// if the controller has
 			System.Type ct = controller.GetType();
 			object[] viewattributes = ct.GetCustomAttributes(typeof(ExpectedTypeOfViewAttribute), false);
+			if (null == viewattributes || viewattributes.Length == 0)
+				viewattributes = ct.GetCustomAttributes(typeof(ExpectedTypeOfViewAttribute), true);
 
 			bool isInvokeRequired = InvokeRequired();
 

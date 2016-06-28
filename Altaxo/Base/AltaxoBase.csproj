@@ -226,6 +226,8 @@
     <Compile Include="Data\IROTableDataSource.cs" />
     <Compile Include="Data\DataTableProxy.cs" />
     <Compile Include="Data\ITransformedReadableColumn.cs" />
+    <Compile Include="Data\Transformations\OffsetTransformation.cs" />
+    <Compile Include="Data\Transformations\ScaleTransformation.cs" />
     <Compile Include="Data\Transformations\CompoundTransformation.cs" />
     <Compile Include="Data\Transformations\DecadicExponentialTransformation.cs" />
     <Compile Include="Data\Transformations\NaturalExponentialTransformation.cs" />
@@ -493,6 +495,7 @@
     <Compile Include="Gui\Common\DragDropDefinitions.cs" />
     <Compile Include="Gui\Common\Drawing\D3D\FontX3DController.cs" />
     <Compile Include="Gui\Common\Drawing\FontXController.cs" />
+    <Compile Include="Gui\Common\SimpleImmutableObjectController.cs" />
     <Compile Include="Gui\DataConnection\AltaxoOleDbDataSourceController.cs" />
     <Compile Include="Gui\DataConnection\ArbitrarySqlQueryController.cs" />
     <Compile Include="Gui\DataConnection\LoginCredentialsController.cs" />
@@ -513,6 +516,8 @@
     <Compile Include="Gui\Data\DecomposeByColumnContentDataSourceController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableOptionsController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceController.cs" />
+    <Compile Include="Gui\Data\OtherColumnsController.cs" />
+    <Compile Include="Gui\Data\Transformations\VariantToVariantTransformationController.cs" />
     <Compile Include="Gui\DragDropDelegateTypes.cs" />
     <Compile Include="Gui\Drawing\D3D\MaterialController.cs" />
     <Compile Include="Gui\Drawing\D3D\Material\MaterialWithUniformColorController.cs" />

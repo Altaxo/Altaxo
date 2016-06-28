@@ -85,5 +85,14 @@ namespace Altaxo.Data
 		/// The back transformation.
 		/// </value>
 		IVariantToVariantTransformation BackTransformation { get; }
+
+		/// <summary>
+		/// Gets a value indicating whether this instance is editable, i.e. contains methods to make new instances of this class
+		/// with other behaviour.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is editable; otherwise, <c>false</c>.
+		/// </value>
+		bool IsEditable { get; }
 	}
 }

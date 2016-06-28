@@ -221,6 +221,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Common\SimpleImmutableObjectControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Drawing\D3D\DashStyleComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1132,6 +1136,9 @@
     <Compile Include="Gui\Data\DecomposeByColumnContentDataControl.xaml.cs">
       <DependentUpon>DecomposeByColumnContentDataControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Common\SimpleImmutableObjectControl.xaml.cs">
+      <DependentUpon>SimpleImmutableObjectControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Drawing\D3D\DashStyleComboBox.xaml.cs">
       <DependentUpon>DashStyleComboBox.xaml</DependentUpon>
     </Compile>
@@ -1441,6 +1448,7 @@
     <Compile Include="Gui\Drawing\D3D\Material\MaterialWithUniformColorControl.xaml.cs">
       <DependentUpon>MaterialWithUniformColorControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\EventToCommandBinding.cs" />
     <Compile Include="Gui\GdiToWpfBitmap.cs" />
     <Compile Include="Gui\Geometry\Position3DControl.xaml.cs">
       <DependentUpon>Position3DControl.xaml</DependentUpon>

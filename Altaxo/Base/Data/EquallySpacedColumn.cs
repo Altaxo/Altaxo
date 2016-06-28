@@ -31,13 +31,13 @@ namespace Altaxo.Data
 	/// calculated from y = a+b*i. This means the value of the first element is a, the values are equally spaced by b.
 	/// </summary>
 	[Serializable]
-	public class EquallySpacedColumn : INumericColumn, IReadableColumn, ICloneable
+	public class EquallySpacedColumn : INumericColumn, IReadableColumn, ICloneable, Main.IImmutable
 	{
 		/// <summary>The start value, i.e. the value at index 0.</summary>
-		protected double _start = 0;
+		protected double _start;
 
 		/// <summary>The spacing value between consecutive elements.</summary>
-		protected double _increment = 1;
+		protected double _increment;
 
 		#region Serialization
 
@@ -53,11 +53,9 @@ namespace Altaxo.Data
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				EquallySpacedColumn s = null != o ? (EquallySpacedColumn)o : new EquallySpacedColumn(0, 1);
-
-				s._start = info.GetDouble("StartValue");
-				s._increment = info.GetDouble("Increment");
-				return s;
+				var start = info.GetDouble("StartValue");
+				var increment = info.GetDouble("Increment");
+				return new EquallySpacedColumn(start, increment);
 			}
 		}
 
@@ -86,7 +84,27 @@ namespace Altaxo.Data
 		/// <returns>The cloned instance of this object.</returns>
 		public object Clone()
 		{
-			return new EquallySpacedColumn(_start, _increment);
+			return this;
+		}
+
+		public double StartValue { get { return _start; } }
+
+		public EquallySpacedColumn WithStartValue(double startValue)
+		{
+			if (startValue == _start)
+				return this;
+			else
+				return new EquallySpacedColumn(startValue, _increment);
+		}
+
+		public double Increment { get { return _increment; } }
+
+		public EquallySpacedColumn WithIncrement(double increment)
+		{
+			if (increment == _increment)
+				return this;
+			else
+				return new EquallySpacedColumn(_start, increment);
 		}
 
 		/// <summary>
@@ -138,5 +156,7 @@ namespace Altaxo.Data
 				return null;
 			}
 		}
+
+		public bool IsEditable { get { return true; } }
 	}
 }

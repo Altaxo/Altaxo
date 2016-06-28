@@ -29,9 +29,9 @@ namespace Altaxo.Data
 	/// <summary>
 	/// A column whose rows all have the same value (of type Double).
 	/// </summary>
-	public class ConstantDoubleColumn : INumericColumn, IReadableColumn, ICloneable
+	public class ConstantDoubleColumn : INumericColumn, IReadableColumn, ICloneable, Main.IImmutable
 	{
-		private double _value;
+		private double _constantValue;
 
 		#region Serialization
 
@@ -41,7 +41,7 @@ namespace Altaxo.Data
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (ConstantDoubleColumn)obj;
-				info.AddValue("Value", s._value);
+				info.AddValue("Value", s._constantValue);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -55,12 +55,28 @@ namespace Altaxo.Data
 
 		public ConstantDoubleColumn(double value)
 		{
-			_value = value;
+			_constantValue = value;
 		}
 
 		public ConstantDoubleColumn()
 		{
-			_value = 0;
+			_constantValue = 0;
+		}
+
+		public double ConstantValue
+		{
+			get
+			{
+				return _constantValue;
+			}
+		}
+
+		public ConstantDoubleColumn WithConstantValue(double constantValue)
+		{
+			if (constantValue == _constantValue)
+				return this;
+			else
+				return new ConstantDoubleColumn(constantValue);
 		}
 
 		/// <summary>
@@ -69,7 +85,7 @@ namespace Altaxo.Data
 		/// <returns>The cloned instance of this object.</returns>
 		public object Clone()
 		{
-			return new ConstantDoubleColumn(_value);
+			return new ConstantDoubleColumn(_constantValue);
 		}
 
 		/// <summary>
@@ -81,7 +97,7 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return _value;
+				return _constantValue;
 			}
 		}
 
@@ -92,7 +108,7 @@ namespace Altaxo.Data
 		/// <returns>Always true.</returns>
 		public bool IsElementEmpty(int i)
 		{
-			return double.IsNaN(_value);
+			return double.IsNaN(_constantValue);
 		}
 
 		/// <summary>
@@ -102,7 +118,7 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return new AltaxoVariant(_value);
+				return new AltaxoVariant(_constantValue);
 			}
 		}
 
@@ -111,7 +127,7 @@ namespace Altaxo.Data
 		/// </summary>
 		public string FullName
 		{
-			get { return string.Format(Altaxo.Settings.GuiCulture.Instance, "Constant, value = {0}", _value); }
+			get { return string.Format(Altaxo.Settings.GuiCulture.Instance, "Constant, value = {0}", _constantValue); }
 		}
 
 		public int? Count
@@ -124,7 +140,9 @@ namespace Altaxo.Data
 
 		public override string ToString()
 		{
-			return string.Format(Altaxo.Settings.GuiCulture.Instance, "Constant, value = {0}", _value);
+			return string.Format(Altaxo.Settings.GuiCulture.Instance, "Constant, value = {0}", _constantValue);
 		}
+
+		public bool IsEditable { get { return true; } }
 	}
 }
