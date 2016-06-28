@@ -257,7 +257,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			_parent = owner;
 			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
-			_plotItems = new ObservableList<IGPlotItem>(from.Select(x => (IGPlotItem)x.Clone())); // Clone all the items in the list.
+			_plotItems = new ObservableList<IGPlotItem>(from.Select(x => { var result = (IGPlotItem)x.Clone(); result.ParentObject = this; return result; })); // Clone all the items in the list.
 			_plotItems.CollectionChanged += EhPlotItemsCollectionChanged;
 
 			// special way neccessary to handle plot groups

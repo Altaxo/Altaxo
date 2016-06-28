@@ -143,7 +143,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 			_parent = owner;
 			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
 			if (clonePlotItems)
-				_plotItems = new ObservableList<IGPlotItem>(plotItems.Select(pi => (IGPlotItem)pi.Clone()));
+				_plotItems = new ObservableList<IGPlotItem>(plotItems.Select(pi => { var result = (IGPlotItem)pi.Clone(); result.ParentObject = this; return result; }));
 			else
 				_plotItems = new ObservableList<IGPlotItem>(plotItems);
 			_plotItems.CollectionChanged += EhPlotItemsCollectionChanged;
