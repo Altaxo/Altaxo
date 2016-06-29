@@ -267,7 +267,7 @@ namespace Altaxo.Gui.Graph3D.Plot
 				_styleControllerList.Add(ctrl);
 			}
 
-			_dataController.SetAdditionalPlotItemColumns(GetAdditionalColumns());
+			_dataController.SetAdditionalPlotColumns(GetAdditionalColumns());
 		}
 
 		private IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> GetAdditionalColumns()
@@ -301,7 +301,7 @@ namespace Altaxo.Gui.Graph3D.Plot
 					additionalColumn.Item1,
 					additionalColumn.Item2,
 					additionalColumn.Item3,
-					(column) => { additionalColumn.Item4(column); _styleControllerList[i].InitializeDocument(_doc.Style[i]); }
+					(column) => { additionalColumn.Item4(column); _styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable); }
 					);
 			}
 		}
@@ -335,7 +335,7 @@ namespace Altaxo.Gui.Graph3D.Plot
 			for (int i = 0; i < _styleControllerList.Count; i++)
 			{
 				if (null != _styleControllerList[i])
-					_styleControllerList[i].InitializeDocument(_doc.Style[i]);
+					_styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable);
 			}
 		}
 

@@ -1535,6 +1535,7 @@
       <DependentUpon>PenAllPropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\PenControlsGlue.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Data\DefaultSeverityColumnColors.cs" />
     <Compile Include="Gui\Graph3D\Plot\Data\SingleColumnControl.xaml.cs">
       <DependentUpon>SingleColumnControl.xaml</DependentUpon>
     </Compile>

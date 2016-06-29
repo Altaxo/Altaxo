@@ -441,6 +441,8 @@ namespace Altaxo.Gui.Graph3D
 			if (null == tab)
 				return null;
 
+			int groupNumber = tab.DataColumns.GetColumnGroup(zcol);
+
 			DataColumn xcol = tab.DataColumns.FindXColumnOf(zcol);
 			DataColumn ycol = tab.DataColumns.FindYColumnOf(zcol);
 
@@ -473,6 +475,8 @@ namespace Altaxo.Gui.Graph3D
 			}
 
 			var xyzPlotData = new XYZColumnPlotData(
+				tab,
+				groupNumber,
 				(IReadableColumn)xcol ?? new IndexerColumn(),
 				(IReadableColumn)ycol ?? new ConstantDoubleColumn(0),
 				zcol);

@@ -156,8 +156,10 @@ namespace Altaxo.Graph.Plot.Data
 
 		#endregion Serialization
 
-		public XYZColumnPlotData(Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn, Altaxo.Data.IReadableColumn zColumn)
+		public XYZColumnPlotData(Altaxo.Data.DataTable dataTable, int groupNumber, Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn, Altaxo.Data.IReadableColumn zColumn)
 		{
+			DataTable = dataTable;
+			_groupNumber = groupNumber;
 			XColumn = xColumn;
 			YColumn = yColumn;
 			ZColumn = zColumn;

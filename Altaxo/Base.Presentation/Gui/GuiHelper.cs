@@ -58,6 +58,28 @@ namespace Altaxo.Gui
 				view.SelectedItem = data[idx];
 		}
 
+		/// <summary>
+		/// Initializes a combobox. If none of the provided nodes is selected, the selection
+		/// of this combobox will cleared.
+		/// </summary>
+		/// <param name="view">The view.</param>
+		/// <param name="data">The data.</param>
+		public static void InitializeDeselectable(ComboBox view, SelectableListNodeList data)
+		{
+			int idx = data.FirstSelectedNodeIndex; // Note: the selected index must be determined _before_ the data are bound to the box (otherwise when a binding is in place, it can happen that the selection is resetted)
+
+			if (view.ItemsSource != data)
+			{
+				//view.ItemsSource = null;
+				view.ItemsSource = data;
+			}
+
+			if (idx >= 0)
+				view.SelectedItem = data[idx];
+			else
+				view.SelectedItem = null;
+		}
+
 		public static void SynchronizeSelectionFromGui(ComboBox view)
 		{
 			foreach (ISelectableItem it in view.ItemsSource)

@@ -29,6 +29,8 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -39,7 +41,7 @@
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
-			<RowDefinition Height="20" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
@@ -53,32 +55,51 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Content="Label column:" />
-		<TextBox x:Name="_guiLabelColumn" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0" Margin="0,0,8,0" IsEnabled="False" />
-		<Button Grid.Column="3" Grid.Row="0" Content="Select.." Click="EhSelectLabelColumn_Click" />
+		<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+			<TextBox x:Name="_guiLabelTransformation" IsEnabled="True" IsReadOnly="True" />
+			<TextBox x:Name="_guiLabelColumn" IsEnabled="True" IsReadOnly="True" MinWidth="100" />
+		</StackPanel>
 		<CheckBox x:Name="_guiIndependentLabelColor" Grid.Column="0" Grid.Row="2" Content="Indep. color:" Checked="EhIndependentColor_CheckChanged" Unchecked="EhIndependentColor_CheckChanged" />
-		<axogdd:MaterialComboBox x:Name="_guiLabelBrush" Grid.Column="1" Grid.Row="2" SelectedMaterialChanged="EhLabelBrushChanged" />
+		<axogdd:MaterialComboBox x:Name="_guiLabelBrush"  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" SelectedMaterialChanged="EhLabelBrushChanged" />
 
 		<Label Grid.Column="0" Grid.Row="4" Content="Font:" />
 		<axogcd:FontFamilyComboBox x:Name="_cbFontFamily" Grid.Column="1" Grid.Row="4" />
-		<Label Grid.Column="2" Grid.Row="4" Content="Style:" />
-		<axogcd:FontStyleComboBox x:Name="_cbFontStyle" Grid.Column="3" Grid.Row="4" />
 
-		<Label Grid.Column="0" Grid.Row="6" Content="Font size:" />
-		<axogcd:FontSizeComboBox x:Name="_cbFontSize" Grid.Column="1" Grid.Row="6" />
-		<Label Grid.Column="2" Grid.Row="6" Content="Rotation:" />
-		<axogcd:RotationComboBox x:Name="_guiRotation" Grid.Column="3" Grid.Row="6" />
+		<Label Grid.Row="4" Grid.Column="2"  Content="Size:" />
+		<axogcd:FontSizeComboBox x:Name="_cbFontSize"  Grid.Row="4" Grid.Column="3" />
 
-		<GroupBox Grid.Column="2" Grid.Row="8" Grid.ColumnSpan="2" Grid.RowSpan="5" Header="Offset (%):" Margin="4,8,0,0" />
+		<Label Grid.Row="4" Grid.Column="4"  Content="Depth:" />
+		<axogcd:FontSizeComboBox x:Name="_cbFontDepth"  Grid.Row="4" Grid.Column="5" />
 
-		<Label Grid.Column="0" Grid.Row="10" Content="Horz. alignment:" />
-		<ComboBox x:Name="_guiHorizontalAlignment" Grid.Column="1" Grid.Row="10" SelectionChanged="EhHorizontalAlignementChanged" />
-		<Label Grid.Column="2" Grid.Row="10" Content="X:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiXOffset" Grid.Column="3" Grid.Row="10" />
+		<Label  Grid.Row="6" Grid.Column="0" Content="Style:" />
+		<axogcd:FontStyleComboBox x:Name="_cbFontStyle"  Grid.Row="6" Grid.Column="1" />
 
-		<Label Grid.Column="0" Grid.Row="12" Content="Vert. alignment:" />
-		<ComboBox x:Name="_guiVerticalAlignment" Grid.Column="1" Grid.Row="12" SelectionChanged="EhVerticalAlignementChanged" />
-		<Label Grid.Column="2" Grid.Row="12" Content="Y:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiYOffset" Grid.Column="3" Grid.Row="12" />
+		<Label  Grid.Row="8" Grid.Column="0" Content="RotationX:" />
+		<axogcd:RotationComboBox x:Name="_guiRotationX"  Grid.Row="8" Grid.Column="1" />
+
+		<Label  Grid.Row="8" Grid.Column="2" Content="RotationY:" />
+		<axogcd:RotationComboBox x:Name="_guiRotationY"  Grid.Row="8" Grid.Column="3" />
+
+		<Label  Grid.Row="8" Grid.Column="4" Content="RotationZ:" />
+		<axogcd:RotationComboBox x:Name="_guiRotationZ"  Grid.Row="8" Grid.Column="5" />
+
+		<Label Grid.Row="10" Grid.Column="0" Content="AlignmentX:" />
+		<ComboBox x:Name="_guiAlignmentX"  Grid.Row="10" Grid.Column="1" SelectionChanged="EhAlignmentXChanged" />
+
+		<Label Grid.Row="10" Grid.Column="2"  Content="AlignmentY:" />
+		<ComboBox x:Name="_guiAlignmentY"  Grid.Row="10" Grid.Column="3" SelectionChanged="EhAlignmentYChanged" />
+
+		<Label Grid.Row="10" Grid.Column="4"  Content="AlignmentZ:" />
+		<ComboBox x:Name="_guiAlignmentZ"  Grid.Row="10" Grid.Column="5" SelectionChanged="EhAlignmentZChanged" />
+
+		<Label Grid.Row="12" Grid.Column="0" Content="OffsetX:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetX" Grid.Row="12" Grid.Column="1" />
+
+		<Label Grid.Row="12" Grid.Column="2" Content="OffsetY:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetY" Grid.Row="12" Grid.Column="3" />
+
+		<Label Grid.Row="12" Grid.Column="4" Content="OffsetZ:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetZ" Grid.Row="12" Grid.Column="5" />
 
 		<CheckBox x:Name="_guiAttachToAxis" Grid.Column="0" Grid.Row="14" Content="Attach to axis:" Checked="EhAttachToAxis_CheckedChanged" Unchecked="EhAttachToAxis_CheckedChanged" />
 		<ComboBox x:Name="_guiAttachedAxis" Grid.Column="1" Grid.Row="14" SelectionChanged="EhAttachedAxisChanged" />
@@ -86,7 +107,7 @@
 		<Label Grid.Column="0" Grid.Row="16" Content="Background:" />
 		<ComboBox x:Name="_cbBackgroundStyle" Grid.Column="1" Grid.Row="16" />
 		<Label Grid.Column="2" Grid.Row="16" Content="Brush:" />
-		<axogdd:MaterialComboBox x:Name="_cbBackgroundBrush" Grid.Column="3" Grid.Row="16" />
+		<axogdd:MaterialComboBox x:Name="_cbBackgroundBrush" Grid.Row="16" Grid.Column="3" Grid.ColumnSpan="3" HorizontalAlignment="Left" />
 		<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="18" Margin="0,0,4,0" VerticalAlignment="Center" HorizontalAlignment="Right">
 			<TextBlock Text="Background" />
 			<TextBlock Text="color linkage:" />

@@ -2080,6 +2080,16 @@ namespace Altaxo.Data
 			return result;
 		}
 
+		/// <summary>
+		/// Gets an enumeration of all the names of columns with a given group number.
+		/// </summary>
+		/// <param name="groupNumber">The group number.</param>
+		/// <returns>Enumeration of all the names of columns with a given group number.</returns>
+		public IEnumerable<string> GetNamesOfColumnsWithGroupNumber(int groupNumber)
+		{
+			return _columnInfoByColumn.Values.Where(entry => entry.Group == groupNumber).Select(entry => entry.Name);
+		}
+
 		#endregion Collection Properties
 
 		#region Event handling

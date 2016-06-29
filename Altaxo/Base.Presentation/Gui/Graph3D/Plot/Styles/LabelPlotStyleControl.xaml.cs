@@ -64,7 +64,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		{
 			InitializeComponent();
 
-			_fontControlsGlue = new FontX3DControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle, CbFontSize = _cbFontSize };
+			Data.DefaultSeverityColumnColors.NormalColor = _guiLabelColumn.Background;
+
+			_fontControlsGlue = new FontX3DControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle, CbFontSize = _cbFontSize, CbFontDepth = _cbFontDepth };
 			_fontControlsGlue.SelectedFontChanged += EhFontSizeChanged;
 			_backgroundGlue = new BackgroundControlsGlue() { CbStyle = _cbBackgroundStyle, CbBrush = _cbBackgroundBrush };
 			_backgroundGlue.BackgroundStyleChanged += EhBackgroundStyleInstanceChanged;
@@ -96,9 +98,25 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		#region IXYPlotLabelStyleView
 
-		public void Init_LabelColumn(string labelColumnAsText)
+		public void Init_LabelColumn(string boxText, string toolTip, int status)
 		{
-			this._guiLabelColumn.Text = labelColumnAsText;
+			this._guiLabelColumn.Text = boxText;
+			this._guiLabelColumn.ToolTip = toolTip;
+			this._guiLabelColumn.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
+		}
+
+		public void Init_Transformation(string boxText, string toolTip)
+		{
+			if (null == boxText)
+			{
+				this._guiLabelTransformation.Visibility = Visibility.Collapsed;
+			}
+			else
+			{
+				this._guiLabelTransformation.Text = boxText;
+				this._guiLabelTransformation.ToolTip = toolTip;
+				this._guiLabelTransformation.Visibility = Visibility.Visible;
+			}
 		}
 
 		public new IBackgroundStyle Background
@@ -113,38 +131,73 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 		}
 
-		public double SelectedRotation
+		public double SelectedRotationX
 		{
 			get
 			{
-				return this._guiRotation.SelectedQuantityAsValueInDegrees;
+				return this._guiRotationX.SelectedQuantityAsValueInDegrees;
 			}
 			set
 			{
-				this._guiRotation.SelectedQuantityAsValueInDegrees = value;
+				this._guiRotationX.SelectedQuantityAsValueInDegrees = value;
 			}
 		}
 
-		public void Init_XOffset(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
+		public double SelectedRotationY
 		{
-			this._guiXOffset.UnitEnvironment = environment;
-			this._guiXOffset.SelectedQuantity = value;
+			get
+			{
+				return this._guiRotationY.SelectedQuantityAsValueInDegrees;
+			}
+			set
+			{
+				this._guiRotationY.SelectedQuantityAsValueInDegrees = value;
+			}
 		}
 
-		public void Init_YOffset(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
+		public double SelectedRotationZ
 		{
-			this._guiYOffset.UnitEnvironment = environment;
-			this._guiYOffset.SelectedQuantity = value;
+			get
+			{
+				return this._guiRotationZ.SelectedQuantityAsValueInDegrees;
+			}
+			set
+			{
+				this._guiRotationZ.SelectedQuantityAsValueInDegrees = value;
+			}
 		}
 
-		public DimensionfulQuantity XOffset
+		public void Init_OffsetX(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
 		{
-			get { return _guiXOffset.SelectedQuantity; }
+			this._guiOffsetX.UnitEnvironment = environment;
+			this._guiOffsetX.SelectedQuantity = value;
 		}
 
-		public DimensionfulQuantity YOffset
+		public void Init_OffsetY(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
 		{
-			get { return _guiYOffset.SelectedQuantity; }
+			this._guiOffsetY.UnitEnvironment = environment;
+			this._guiOffsetY.SelectedQuantity = value;
+		}
+
+		public void Init_OffsetZ(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
+		{
+			this._guiOffsetZ.UnitEnvironment = environment;
+			this._guiOffsetZ.SelectedQuantity = value;
+		}
+
+		public DimensionfulQuantity OffsetX
+		{
+			get { return _guiOffsetX.SelectedQuantity; }
+		}
+
+		public DimensionfulQuantity OffsetY
+		{
+			get { return _guiOffsetY.SelectedQuantity; }
+		}
+
+		public DimensionfulQuantity OffsetZ
+		{
+			get { return _guiOffsetZ.SelectedQuantity; }
 		}
 
 		public FontX3D SelectedFont
@@ -171,14 +224,19 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 		}
 
-		public void Init_HorizontalAlignment(Collections.SelectableListNodeList list)
+		public void Init_AlignmentX(Collections.SelectableListNodeList list)
 		{
-			GuiHelper.Initialize(_guiHorizontalAlignment, list);
+			GuiHelper.Initialize(_guiAlignmentX, list);
 		}
 
-		public void Init_VerticalAlignment(Collections.SelectableListNodeList list)
+		public void Init_AlignmentY(Collections.SelectableListNodeList list)
 		{
-			GuiHelper.Initialize(_guiVerticalAlignment, list);
+			GuiHelper.Initialize(_guiAlignmentY, list);
+		}
+
+		public void Init_AlignmentZ(Collections.SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_guiAlignmentZ, list);
 		}
 
 		public bool AttachToAxis
@@ -221,14 +279,19 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		#endregion IXYPlotLabelStyleView
 
-		private void EhHorizontalAlignementChanged(object sender, SelectionChangedEventArgs e)
+		private void EhAlignmentXChanged(object sender, SelectionChangedEventArgs e)
 		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiHorizontalAlignment);
+			GuiHelper.SynchronizeSelectionFromGui(_guiAlignmentX);
 		}
 
-		private void EhVerticalAlignementChanged(object sender, SelectionChangedEventArgs e)
+		private void EhAlignmentYChanged(object sender, SelectionChangedEventArgs e)
 		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiVerticalAlignment);
+			GuiHelper.SynchronizeSelectionFromGui(_guiAlignmentY);
+		}
+
+		private void EhAlignmentZChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiAlignmentZ);
 		}
 
 		private void EhAttachedAxisChanged(object sender, SelectionChangedEventArgs e)

@@ -327,6 +327,16 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
+		/// Sets the selection of all nodes using a function of the node.
+		/// </summary>
+		/// <param name="predicate">The predicate. Argument is the list node. The return value is a bool indicating whether this node should be selected or not.</param>
+		public void SetSelection(Func<SelectableListNode, bool> predicate)
+		{
+			foreach (var node in this)
+				node.IsSelected = predicate(node);
+		}
+
+		/// <summary>
 		/// Exchange the item at index i with the item at index j.
 		/// </summary>
 		/// <param name="i">First item index.</param>

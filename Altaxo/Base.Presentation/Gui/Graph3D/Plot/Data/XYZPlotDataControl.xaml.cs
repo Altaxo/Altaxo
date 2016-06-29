@@ -75,6 +75,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public event Action<int> SelectedGroupNumberChanged;
 
+		public event Action SelectedFittingTableChanged;
+
 		public event CanStartDragDelegate AvailableTableColumns_CanStartDrag;
 
 		public event StartDragDelegate AvailableTableColumns_StartDrag;
@@ -119,7 +121,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private List<List<SingleColumnControl>> _columnControls;
 
-		public void PlotItemColumns_Initialize(
+		public void PlotColumns_Initialize(
 			IEnumerable<Tuple< // list of all groups
 			string, // Caption for each group of columns
 			IEnumerable<Tuple< // list of column definitions
@@ -156,7 +158,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
-		public void PlotItemColumn_Update(ColumnTag tag, string colname, string toolTip, string transformationText, string transformationToolTip, ColumnControlState state)
+		public void PlotColumn_Update(ColumnTag tag, string colname, string toolTip, string transformationText, string transformationToolTip, ColumnControlState state)
 		{
 			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
 			sgc.ColumnText = colname;
@@ -187,6 +189,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		public void AvailableTables_Initialize(SelectableListNodeList items)
 		{
 			GuiHelper.Initialize(_cbTables, items);
+		}
+
+		public void FittingTables_Initialize(SelectableListNodeList items)
+		{
+			GuiHelper.InitializeDeselectable(_guiFittingTables, items);
 		}
 
 		public void AvailableTableColumns_Initialize(SelectableListNodeList items)
@@ -666,6 +673,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private ListBox _lastListBoxActivated;
 
+		/// <summary>
+		/// To decide which of the lists was the last one activated.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
 		private void EhFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (true == (bool)e.NewValue)
@@ -677,6 +689,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 					)
 					_lastListBoxActivated = (ListBox)sender;
 			}
+		}
+
+		private void EhFittingTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiFittingTables);
+			SelectedFittingTableChanged?.Invoke();
 		}
 	}
 }
