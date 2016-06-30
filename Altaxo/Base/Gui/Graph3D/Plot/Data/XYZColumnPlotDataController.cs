@@ -49,7 +49,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		/// Initialize the list of available data columns in the selected table and for the selected group number.
 		/// </summary>
 		/// <param name="items">The items.</param>
-		void AvailableTableColumns_Initialize(SelectableListNodeList items);
+		void AvailableTableColumns_Initialize(NGTreeNodeCollection items);
+
+		object AvailableTableColumns_SelectedItem { get; }
 
 		/// <summary>
 		/// Initialize the list of other available columns.
@@ -214,15 +216,17 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			public List<PlotColumnInformationInternal> Columns = new List<PlotColumnInformationInternal>();
 		}
 
-		private class DataColumnListNode : SelectableListNode
+		private class DataColumnListNode : NGTreeNode
 		{
 			private DataTable _table;
 			private string _toolTip = null;
 
 			public DataColumnListNode(DataTable table, DataColumn tag, bool isSelected)
 				:
-				base(table.DataColumns.GetColumnName(tag), tag, isSelected)
+				base(table.DataColumns.GetColumnName(tag))
 			{
+				_tag = tag;
+				_isSelected = isSelected;
 				_table = table;
 			}
 
@@ -279,7 +283,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		private SelectableListNodeList _availableTables = new SelectableListNodeList();
 
 		/// <summary>All data columns in the selected data table and with the selected group number.</summary>
-		private SelectableListNodeList _availableDataColumns = new SelectableListNodeList();
+		private NGTreeNode _availableDataColumns = new NGTreeNode();
 
 		/// <summary>Other types of columns, e.g. constant columns, equally spaced columns and so on..</summary>
 		private SelectableListNodeList _otherAvailableColumns = new SelectableListNodeList();
@@ -393,13 +397,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				_groupNumbersAll = tg.DataColumns.GetGroupNumbersAll();
 
 				// Initialize columns
-				_availableDataColumns.Clear();
-				if (null != tg)
-				{
-					var columns = tg.DataColumns.GetListOfColumnsWithGroupNumber(_doc.GroupNumber);
-					for (int i = 0; i < columns.Count; ++i)
-						_availableDataColumns.Add(new DataColumnListNode(tg, columns[i], false));
-				}
+				Controller_AvailableDataColumns_Initialize();
 
 				// Initialize other available columns
 				Controller_OtherAvailableColumns_Initialize();
@@ -414,7 +412,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				_view.AvailableTables_Initialize(_availableTables);
 				_view.GroupNumber_Initialize(_groupNumbersAll, _doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _doc.GroupNumber != _groupNumbersAll.Min));
 
-				_view.AvailableTableColumns_Initialize(_availableDataColumns);
+				_view.AvailableTableColumns_Initialize(_availableDataColumns.Nodes);
 
 				View_PlotColumns_Initialize();
 				View_PlotColumns_UpdateAll();
@@ -427,6 +425,23 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				_view.MatchingTables_Initialize(_matchingTables);
 
 				View_AvailableTransformations_Initialize();
+			}
+		}
+
+		private void Controller_AvailableDataColumns_Initialize()
+		{
+			_availableDataColumns.Nodes.Clear();
+			var tg = _doc.DataTable;
+
+			if (null != tg)
+			{
+				var columns = tg.DataColumns.GetListOfColumnsWithGroupNumber(_doc.GroupNumber);
+				for (int i = 0; i < columns.Count; ++i)
+				{
+					var col = columns[i];
+					var node = new DataColumnListNode(tg, columns[i], false);
+					_availableDataColumns.Nodes.Add(node);
+				}
 			}
 		}
 
@@ -724,14 +739,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		private void ReplaceColumnsWithColumnsFromNewTableGroupAndUpdateColumnState()
 		{
 			// Initialize columns
-			_availableDataColumns.Clear();
+			Controller_AvailableDataColumns_Initialize();
+			_view?.AvailableTableColumns_Initialize(_availableDataColumns.Nodes);
+
 			var dataTable = _doc.DataTable;
 			if (null != dataTable)
 			{
-				var columns = dataTable.DataColumns.GetListOfColumnsWithGroupNumber(_doc.GroupNumber);
-				for (int i = 0; i < columns.Count; ++i)
-					_availableDataColumns.Add(new DataColumnListNode(dataTable, columns[i], false));
-
 				// now try to exchange the data columns with columns from the new group
 				var colDict = dataTable.DataColumns.GetNameDictionaryOfColumnsWithGroupNumber(_doc.GroupNumber);
 
@@ -882,7 +895,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public void EhView_PlotColumnAddTo(PlotColumnTag tag)
 		{
-			var node = _availableDataColumns.FirstSelectedNode;
+			var node = _view?.AvailableTableColumns_SelectedItem as NGTreeNode;
 			if (null != node)
 			{
 				SetDirty();
@@ -1201,21 +1214,28 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private bool EhAvailableDataColumns_CanStartDrag(IEnumerable items)
 		{
-			var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
+			var selNode = items.OfType<NGTreeNode>().FirstOrDefault();
 			// to start a drag, at least one item must be selected
-			return selNode != null;
+			return selNode != null && (selNode.Tag is DataColumn);
 		}
 
 		private StartDragData EhAvailableDataColumns_StartDrag(IEnumerable items)
 		{
-			var node = items.OfType<SelectableListNode>().FirstOrDefault();
+			var node = items.OfType<NGTreeNode>().FirstOrDefault();
 
-			return new StartDragData
+			if (node != null && node.Tag is DataColumn)
 			{
-				Data = node.Tag,
-				CanCopy = true,
-				CanMove = false
-			};
+				return new StartDragData
+				{
+					Data = node.Tag,
+					CanCopy = true,
+					CanMove = false
+				};
+			}
+			else
+			{
+				return new StartDragData { Data = null, CanCopy = false, CanMove = false };
+			}
 		}
 
 		private void EhAvailableDataColumns_DragEnded(bool isCopy, bool isMove)

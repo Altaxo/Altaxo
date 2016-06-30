@@ -196,9 +196,17 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			GuiHelper.InitializeDeselectable(_guiFittingTables, items);
 		}
 
-		public void AvailableTableColumns_Initialize(SelectableListNodeList items)
+		public void AvailableTableColumns_Initialize(NGTreeNodeCollection nodes)
 		{
-			GuiHelper.Initialize(_guiAvailableTableColumns, items);
+			_guiAvailableTableColumns.ItemsSource = nodes;
+		}
+
+		public object AvailableTableColumns_SelectedItem
+		{
+			get
+			{
+				return _guiAvailableTableColumns.SelectedItem;
+			}
 		}
 
 		public void OtherAvailableColumns_Initialize(SelectableListNodeList items)
@@ -264,13 +272,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			public bool CanStartDrag(IDragInfo dragInfo)
 			{
-				var result = _parentControl.AvailableTableColumns_CanStartDrag?.Invoke(_parentControl._guiAvailableTableColumns.SelectedItems);
+				var result = _parentControl.AvailableTableColumns_CanStartDrag?.Invoke(new[] { _parentControl._guiAvailableTableColumns.SelectedItem });
 				return result.HasValue ? result.Value : false;
 			}
 
 			public void StartDrag(IDragInfo dragInfo)
 			{
-				GuiHelper.SynchronizeSelectionFromGui(_parentControl._guiAvailableTableColumns);
+				//GuiHelper.SynchronizeSelectionFromGui(_parentControl._guiAvailableTableColumns);
 				var result = _parentControl.AvailableTableColumns_StartDrag?.Invoke(dragInfo.SourceItems);
 				if (null != result)
 				{
@@ -499,8 +507,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhColumn_AddToCommand(object parameter)
 		{
-			var listBox = _lastListBoxActivated ?? _guiAvailableTableColumns;
-			GuiHelper.SynchronizeSelectionFromGui(listBox);
+			FrameworkElement listBox = _lastListBoxActivated ?? _guiAvailableTableColumns;
+			if (listBox is ListBox)
+				GuiHelper.SynchronizeSelectionFromGui((ListBox)listBox);
 
 			if (object.ReferenceEquals(listBox, _guiAvailableTableColumns))
 				PlotItemColumn_AddTo?.Invoke(parameter as PlotColumnTag);
@@ -672,7 +681,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		#endregion Column text boxes commands
 
-		private ListBox _lastListBoxActivated;
+		private FrameworkElement _lastListBoxActivated;
 
 		/// <summary>
 		/// To decide which of the lists was the last one activated.
@@ -688,7 +697,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 					object.ReferenceEquals(_guiOtherAvailableColumns, sender) ||
 					object.ReferenceEquals(_guiAvailableTransformations, sender)
 					)
-					_lastListBoxActivated = (ListBox)sender;
+					_lastListBoxActivated = (FrameworkElement)sender;
 			}
 		}
 

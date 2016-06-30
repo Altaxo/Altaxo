@@ -6,6 +6,7 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
 						 xmlns:local="clr-namespace:Altaxo.Gui.Graph3D.Plot.Data"
+ 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Button">
@@ -67,14 +68,28 @@
 			<ComboBox x:Name="_guiFittingTables" SelectionChanged="EhFittingTables_SelectionChangeCommit" ToolTip="Choose among those tables only, which contain columns with names like the plot columns below." />
 		</StackPanel>
 
-		<ListBox x:Name="_guiAvailableTableColumns" Grid.Row="4" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
+		<TreeView x:Name="_guiAvailableTableColumns" Grid.Row="4" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
 			 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
-			<ListBox.ItemTemplate>
-				<DataTemplate>
+			<ItemsControl.ItemContainerStyle>
+				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
+				<Style TargetType="{x:Type TreeViewItem}">
+					<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+					<Setter Property="FontWeight" Value="Normal" />
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding IsSelected}" Value="True">
+							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</ItemsControl.ItemContainerStyle>
+
+			<ItemsControl.Resources>
+				<HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
 					<TextBlock Text="{Binding Text}" ToolTip="{Binding ToolTip}" />
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+				</HierarchicalDataTemplate>
+			</ItemsControl.Resources>
+		</TreeView>
 
 		<StackPanel x:Name="_guiTargetColumnsStack" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="3" Orientation="Vertical" Grid.IsSharedSizeScope="True" Margin="6,0,0,6"></StackPanel>
 
