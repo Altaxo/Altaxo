@@ -37,25 +37,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 {
 	#region Interfaces
 
-	public enum ColumnControlState
-	{
-		Normal,
-		Warning,
-		Error
-	}
-
-	public class ColumnTag
-	{
-		public ColumnTag(int groupNumber, int columnNumber)
-		{
-			GroupNumber = groupNumber;
-			ColumnNumber = columnNumber;
-		}
-
-		public int GroupNumber { get; private set; }
-		public int ColumnNumber { get; private set; }
-	}
-
 	public interface IXYZColumnPlotDataView
 	{
 		/// <summary>
@@ -80,7 +61,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		/// Initialize the list of tables that fit to the current chosen columns.
 		/// </summary>
 		/// <param name="items">The items.</param>
-		void FittingTables_Initialize(SelectableListNodeList items);
+		void MatchingTables_Initialize(SelectableListNodeList items);
 
 		/// <summary>
 		/// Initialize the list of columns needed by the plot item. This is organized into groups, each group corresponding to
@@ -91,7 +72,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			IEnumerable<Tuple< // list of all groups
 			string, // Caption for each group of columns
 			IEnumerable<Tuple< // list of column definitions
-				ColumnTag, // tag to identify the column and group
+				PlotColumnTag, // tag to identify the column and group
 				string> // Label of the column
 			>>> groups);
 
@@ -104,16 +85,16 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		/// <param name="transformationText">The text for the transformation box.</param>
 		/// <param name="transformationToolTip">The tooltip for the transformation box.</param>
 		/// <param name="state">The state of the column, as indicated by different background colors of the text box.</param>
-		void PlotColumn_Update(ColumnTag tag, string colname, string toolTip, string transformationText, string transformationToolTip, ColumnControlState state);
+		void PlotColumn_Update(PlotColumnTag tag, string colname, string toolTip, string transformationText, string transformationToolTip, PlotColumnControlState state);
 
 		/// <summary>
 		/// Shows a popup menu for the column corresponding to <paramref name="tag"/>, questioning whether to add the
 		/// selected transformation as single transformation, as prepending transformation, or as appending transformation.
 		/// </summary>
 		/// <param name="tag">The tag.</param>
-		void ShowTransformationSinglePrependAppendPopup(ColumnTag tag);
+		void ShowTransformationSinglePrependAppendPopup(PlotColumnTag tag);
 
-		void GroupNumber_Initialize(int groupNumber, bool isEnabled);
+		void GroupNumber_Initialize(IEnumerable<int> availableGroupNumbers, int groupNumber, bool isEnabled);
 
 		void PlotRangeFrom_Initialize(int from);
 
@@ -121,29 +102,29 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		event Action SelectedTableChanged;
 
-		event Action SelectedFittingTableChanged;
+		event Action SelectedMatchingTableChanged;
 
 		event Action<int> SelectedGroupNumberChanged;
 
-		event Action<ColumnTag> PlotItemColumn_AddTo;
+		event Action<PlotColumnTag> PlotItemColumn_AddTo;
 
-		event Action<ColumnTag> PlotItemColumn_Edit;
+		event Action<PlotColumnTag> PlotItemColumn_Edit;
 
-		event Action<ColumnTag> PlotItemColumn_Erase;
+		event Action<PlotColumnTag> PlotItemColumn_Erase;
 
-		event Action<ColumnTag> OtherAvailableColumn_AddTo;
+		event Action<PlotColumnTag> OtherAvailableColumn_AddTo;
 
-		event Action<ColumnTag> Transformation_AddTo;
+		event Action<PlotColumnTag> Transformation_AddTo;
 
-		event Action<ColumnTag> Transformation_AddAsSingle;
+		event Action<PlotColumnTag> Transformation_AddAsSingle;
 
-		event Action<ColumnTag> Transformation_AddAsPrepending;
+		event Action<PlotColumnTag> Transformation_AddAsPrepending;
 
-		event Action<ColumnTag> Transformation_AddAsAppending;
+		event Action<PlotColumnTag> Transformation_AddAsAppending;
 
-		event Action<ColumnTag> Transformation_Edit;
+		event Action<PlotColumnTag> Transformation_Edit;
 
-		event Action<ColumnTag> Transformation_Erase;
+		event Action<PlotColumnTag> Transformation_Erase;
 
 		event Action<int> RangeFromChanged;
 
@@ -180,7 +161,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		event DragCancelledDelegate AvailableTransformations_DragCancelled;
 	}
 
-	public interface IColumnDataController : IMVCANController
+	public interface IPlotColumnDataController : IMVCANController
 	{
 		/// <summary>
 		/// Sets the additional columns that are used by some of the plot styles.
@@ -194,182 +175,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			);
 	}
 
-	/// <summary>
-	/// Information about one plot item column.
-	/// </summary>
-	public class PlotColumnInformation
-	{
-		/// <summary>Label that will be shown to indicate the column's function, e.g. "X" for an x-colum.</summary>
-		public string Label { get; set; }
-
-		private IReadableColumn _column;
-
-		/// <summary>The column itself.</summary>
-		public IReadableColumn Column
-		{
-			get { return _column; }
-			set
-			{
-				if (value is ITransformedReadableColumn)
-					_transformation = (value as ITransformedReadableColumn).Transformation;
-				_column = value;
-
-				OnResultingColumnChanged();
-			}
-		}
-
-		public IReadableColumn UnderlyingColumn
-		{
-			get
-			{
-				if (_column is ITransformedReadableColumn)
-					return (_column as ITransformedReadableColumn).OriginalReadableColumn;
-				else
-					return _column;
-			}
-			set
-			{
-				if (value is ITransformedReadableColumn)
-					throw new ArgumentException("Nesting transformed columns is not allowed", nameof(value));
-
-				if (null == value)
-					_column = null; // but transformation is kept
-				else if (null != _transformation)
-					_column = new TransformedReadableColumn(value, _transformation);
-				else
-					_column = value;
-
-				OnResultingColumnChanged();
-			}
-		}
-
-		/// <summary>The column name as it will be shown in the text box.</summary>
-		public string ColumnTextToShow { get; set; }
-
-		/// <summary>The column name as it was for the last data column. Will be used to choose a new data column if the table is changed by the user.</summary>
-		public string ColumnNameToCache { get; set; }
-
-		/// <summary>The tooltip that will be shown when the user hovers over the column name text box.</summary>
-		public string ColumnToolTip { get; set; }
-
-		private IVariantToVariantTransformation _transformation;
-
-		/// <summary>
-		/// The column transformation.
-		/// </summary>
-		public IVariantToVariantTransformation Transformation
-		{
-			get
-			{
-				return _transformation;
-			}
-			set
-			{
-				_transformation = value;
-
-				if (null != value)
-				{
-					_column = new TransformedReadableColumn(UnderlyingColumn, _transformation);
-				}
-				else
-				{
-					_column = UnderlyingColumn;
-				}
-				OnResultingColumnChanged();
-			}
-		}
-
-		/// <summary>This text will be shown in the transformation text box.</summary>
-		public string TransformationTextToShow { get; set; }
-
-		/// <summary>The tooltip that will be shown when the user hovers over the transformation text box.</summary>
-		public string TransformationToolTip { get; set; }
-
-		/// <summary>State of the column textbox. Depending on the state, the background of the textbox will assume different colors.</summary>
-		public ColumnControlState State { get; set; }
-
-		/// <summary>Action to set the column property back in the style, if Apply of this controller is called.</summary>
-		public Action<IReadableColumn> ColumnSetter { get; set; }
-
-		public void UpdateTooltipAndState(DataTable dataTableOfPlotItem)
-		{
-			if (null == Column)
-			{
-				if (string.IsNullOrEmpty(ColumnNameToCache))
-				{
-					ColumnTextToShow = string.Empty;
-					ColumnToolTip = string.Empty;
-					State = ColumnControlState.Normal;
-				}
-				else
-				{
-					ColumnTextToShow = ColumnNameToCache;
-					ColumnToolTip = string.Format("Column {0} can not be found in this table with this group number", ColumnNameToCache);
-					State = ColumnControlState.Error;
-				}
-				return;
-			}
-
-			var underlyingColumn = Column;
-			IVariantToVariantTransformation transformation = null;
-			if (Column is ITransformedReadableColumn)
-			{
-				underlyingColumn = ((ITransformedReadableColumn)Column).OriginalReadableColumn;
-				transformation = ((ITransformedReadableColumn)Column).Transformation;
-			}
-
-			if (underlyingColumn is DataColumn)
-			{
-				var dcolumn = (DataColumn)underlyingColumn;
-				var parentTable = DataTable.GetParentDataTableOf(dcolumn);
-				var parentCollection = DataColumnCollection.GetParentDataColumnCollectionOf(dcolumn);
-				if (null == parentTable)
-				{
-					ColumnToolTip = string.Format("This column is an orphaned data column without a parent data table", ColumnTextToShow);
-					State = ColumnControlState.Error;
-					if (parentCollection == null)
-						ColumnTextToShow = string.Format("Orphaned {0}", dcolumn.GetType().Name);
-					else
-						ColumnTextToShow = ColumnNameToCache = parentCollection.GetColumnName(dcolumn);
-				}
-				else // UnderlyingColumn has a parent table
-				{
-					if (!object.ReferenceEquals(parentTable, dataTableOfPlotItem))
-					{
-						ColumnTextToShow = parentTable.DataColumns.GetColumnName(dcolumn);
-						ColumnToolTip = string.Format("The column {0} is a data column with another parent data table: {1}", ColumnTextToShow, parentTable.Name);
-						State = ColumnControlState.Warning;
-					}
-					else
-					{
-						ColumnTextToShow = ColumnNameToCache = parentTable.DataColumns.GetColumnName(dcolumn);
-						ColumnToolTip = string.Format("UnderlyingColumn {0} of data table {1}", ColumnTextToShow, parentTable.Name);
-						State = ColumnControlState.Normal;
-					}
-				}
-			}
-			else // UnderlyingColumn is something else
-			{
-				ColumnTextToShow = underlyingColumn.FullName;
-				ColumnNameToCache = null;
-				ColumnToolTip = string.Format("Independent data of type {0}: {1}", underlyingColumn.GetType(), underlyingColumn.ToString());
-				State = ColumnControlState.Normal;
-			}
-
-			// now the transformation
-			if (null != transformation)
-			{
-				TransformationTextToShow = transformation.RepresentationAsOperator ?? transformation.RepresentationAsFunction;
-				TransformationToolTip = string.Format("Transforms the column data by the function f(x)={0}", transformation.RepresentationAsFunction);
-			}
-		}
-
-		private void OnResultingColumnChanged()
-		{
-			ColumnSetter?.Invoke(Column);
-		}
-	}
-
 	#endregion Interfaces
 
 	/// <summary>
@@ -379,12 +184,34 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 	[ExpectedTypeOfView(typeof(IXYZColumnPlotDataView))]
 	public class XYZColumnPlotDataController
 		:
-		MVCANControllerEditOriginalDocBase<XYZColumnPlotData, IXYZColumnPlotDataView>, IColumnDataController
+		MVCANControllerEditOriginalDocBase<XYZColumnPlotData, IXYZColumnPlotDataView>, IPlotColumnDataController
 	{
+		/// <summary>
+		/// Information about one plot item column.
+		/// </summary>
+		private class PlotColumnInformationInternal : PlotColumnInformation
+		{
+			/// <summary>Label that will be shown to indicate the column's function, e.g. "X" for an x-colum.</summary>
+			public string Label { get; set; }
+
+			/// <summary>Action to set the column property back in the style, if Apply of this controller is called.</summary>
+			public Action<IReadableColumn> ColumnSetter { get; set; }
+
+			public PlotColumnInformationInternal(IReadableColumn column, string nameOfUnderlyingDataColumn)
+				: base(column, nameOfUnderlyingDataColumn)
+			{
+			}
+
+			protected override void OnChanged()
+			{
+				ColumnSetter?.Invoke(Column);
+			}
+		}
+
 		private class GroupInfo
 		{
 			public string GroupName;
-			public List<PlotColumnInformation> Columns = new List<PlotColumnInformation>();
+			public List<PlotColumnInformationInternal> Columns = new List<PlotColumnInformationInternal>();
 		}
 
 		private class DataColumnListNode : SelectableListNode
@@ -461,15 +288,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		private SelectableListNodeList _availableTransformations = new SelectableListNodeList();
 
 		/// <summary>Tuples from tables and group numbers, for which the columns in that group contain all that column names which are currently plot columns in our controller.</summary>
-		private SelectableListNodeList _fittingTables = new SelectableListNodeList();
+		private SelectableListNodeList _matchingTables = new SelectableListNodeList();
 
 		private SortedSet<int> _groupNumbersAll;
 
 		/// <summary>Tasks which updates the _fittingTables.</summary>
-		private Task _updateFittingTablesTask;
+		private Task _updateMatchingTablesTask;
 
 		/// <summary>TokenSource to cancel the tasks which updates the _fittingTables.</summary>
-		private CancellationTokenSource _updateFittingTablesTaskCancellationTokenSource = new CancellationTokenSource();
+		private CancellationTokenSource _updateMatchingTablesTaskCancellationTokenSource = new CancellationTokenSource();
 
 		#region Infrastructur Dispose and GetSubControllers
 
@@ -484,13 +311,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			_availableTables = null;
 			_availableDataColumns = null;
 
-			_updateFittingTablesTaskCancellationTokenSource?.Cancel();
-			while (_updateFittingTablesTask?.Status == TaskStatus.Running)
+			_updateMatchingTablesTaskCancellationTokenSource?.Cancel();
+			while (_updateMatchingTablesTask?.Status == TaskStatus.Running)
 				Thread.Sleep(20);
-			_updateFittingTablesTaskCancellationTokenSource?.Dispose();
-			_updateFittingTablesTaskCancellationTokenSource = null;
-			_updateFittingTablesTask?.Dispose();
-			_updateFittingTablesTask = null;
+			_updateMatchingTablesTaskCancellationTokenSource?.Dispose();
+			_updateMatchingTablesTaskCancellationTokenSource = null;
+			_updateMatchingTablesTask?.Dispose();
+			_updateMatchingTablesTask = null;
 
 			base.Dispose(isDisposing);
 		}
@@ -541,12 +368,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				else
 					_columnGroup[0].Columns.Clear();
 
-				_columnGroup[0].Columns.Add(new PlotColumnInformation() { Label = "X", Column = _doc.XColumn, ColumnTextToShow = _doc.XColumnName, ColumnNameToCache = _doc.XColumnName, ColumnSetter = (column) => _doc.XColumn = column });
-				_columnGroup[0].Columns.Add(new PlotColumnInformation() { Label = "Y", Column = _doc.YColumn, ColumnTextToShow = _doc.YColumnName, ColumnNameToCache = _doc.YColumnName, ColumnSetter = (column) => _doc.YColumn = column });
-				_columnGroup[0].Columns.Add(new PlotColumnInformation() { Label = "Z", Column = _doc.ZColumn, ColumnTextToShow = _doc.ZColumnName, ColumnNameToCache = _doc.ZColumnName, ColumnSetter = (column) => _doc.ZColumn = column });
+				_columnGroup[0].Columns.Add(new PlotColumnInformationInternal(_doc.XColumn, _doc.XColumnName) { Label = "X", ColumnSetter = (column) => _doc.XColumn = column });
+				_columnGroup[0].Columns.Add(new PlotColumnInformationInternal(_doc.YColumn, _doc.YColumnName) { Label = "Y", ColumnSetter = (column) => _doc.YColumn = column });
+				_columnGroup[0].Columns.Add(new PlotColumnInformationInternal(_doc.ZColumn, _doc.ZColumnName) { Label = "Z", ColumnSetter = (column) => _doc.ZColumn = column });
 
 				for (int i = 0; i < 3; ++i)
-					_columnGroup[0].Columns[i].UpdateTooltipAndState(_doc.DataTable);
+					_columnGroup[0].Columns[i].Update(_doc.DataTable);
 
 				_plotRangeFrom = _doc.PlotRangeStart;
 				_plotRangeTo = _doc.PlotRangeLength == int.MaxValue ? int.MaxValue : _doc.PlotRangeStart + _doc.PlotRangeLength - 1;
@@ -579,13 +406,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 				Controller_AvailableTransformations_Initialize();
 
-				TriggerUpdateOfFittingTables();
+				TriggerUpdateOfMatchingTables();
 			}
 
 			if (null != _view)
 			{
 				_view.AvailableTables_Initialize(_availableTables);
-				_view.GroupNumber_Initialize(_doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _doc.GroupNumber != _groupNumbersAll.Min));
+				_view.GroupNumber_Initialize(_groupNumbersAll, _doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _doc.GroupNumber != _groupNumbersAll.Min));
 
 				_view.AvailableTableColumns_Initialize(_availableDataColumns);
 
@@ -597,7 +424,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 				_view.OtherAvailableColumns_Initialize(_otherAvailableColumns);
 
-				_view.FittingTables_Initialize(_fittingTables);
+				_view.MatchingTables_Initialize(_matchingTables);
 
 				View_AvailableTransformations_Initialize();
 			}
@@ -625,7 +452,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			_view.SelectedTableChanged += EhView_TableSelectionChanged;
 
-			_view.SelectedFittingTableChanged += EhView_FittingTableSelectionChanged;
+			_view.SelectedMatchingTableChanged += EhView_MatchingTableSelectionChanged;
 
 			_view.PlotItemColumn_AddTo += EhView_PlotColumnAddTo;
 
@@ -676,7 +503,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		{
 			_view.SelectedTableChanged -= EhView_TableSelectionChanged;
 
-			_view.SelectedFittingTableChanged -= EhView_FittingTableSelectionChanged;
+			_view.SelectedMatchingTableChanged -= EhView_MatchingTableSelectionChanged;
 
 			_view.PlotItemColumn_AddTo -= EhView_PlotColumnAddTo;
 
@@ -732,30 +559,30 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		private IEnumerable<Tuple<
 			string, // group name
 		IEnumerable<Tuple< // list of column definitions
-				ColumnTag, // tag to identify the column and group
+				PlotColumnTag, // tag to identify the column and group
 				string>>>>
 			GetEnumerationForAllGroupsOfPlotColumns(List<GroupInfo> columnInfos)
 		{
 			for (int i = 0; i < columnInfos.Count; ++i)
 			{
 				var infoList = columnInfos[i];
-				yield return new Tuple<string, IEnumerable<Tuple<ColumnTag, string>>>(
+				yield return new Tuple<string, IEnumerable<Tuple<PlotColumnTag, string>>>(
 					infoList.GroupName,
 					GetEnumerationForOneGroupOfPlotColumns(infoList.Columns, i));
 			}
 		}
 
 		private IEnumerable<Tuple< // list of column definitions
-			ColumnTag, // tag to identify the column and group
+			PlotColumnTag, // tag to identify the column and group
 			string // Label for the column,
 			>>
-		GetEnumerationForOneGroupOfPlotColumns(List<PlotColumnInformation> columnInfos, int groupNumber)
+		GetEnumerationForOneGroupOfPlotColumns(List<PlotColumnInformationInternal> columnInfos, int groupNumber)
 		{
 			for (int i = 0; i < columnInfos.Count; ++i)
 			{
 				var info = columnInfos[i];
-				yield return new Tuple<ColumnTag, string>(
-					new ColumnTag(groupNumber, i),
+				yield return new Tuple<PlotColumnTag, string>(
+					new PlotColumnTag(groupNumber, i),
 					info.Label
 
 					);
@@ -788,16 +615,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 				foreach (var col in group.Item2)
 				{
-					var columnInfo = new PlotColumnInformation()
+					var columnInfo = new PlotColumnInformationInternal(col.Item2, col.Item3)
 					{
 						Label = col.Item1,
-						Column = col.Item2,
-						ColumnNameToCache = col.Item3,
-						ColumnTextToShow = col.Item3,
 						ColumnSetter = col.Item4
 					};
 
-					columnInfo.UpdateTooltipAndState(_doc.DataTable);
+					columnInfo.Update(_doc.DataTable);
 					_columnGroup[groupNumber].Columns.Add(columnInfo);
 				}
 			}
@@ -820,7 +644,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				for (int j = 0; j < _columnGroup[i].Columns.Count; j++)
 				{
 					var info = _columnGroup[i].Columns[j];
-					_view.PlotColumn_Update(new ColumnTag(i, j), info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+					_view.PlotColumn_Update(new PlotColumnTag(i, j), info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 				}
 		}
 
@@ -842,11 +666,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			// If data table has changed, try to choose a group number that matches as many as possible columns
 			_doc.GroupNumber = ChooseBestMatchingGroupNumber(tg.DataColumns);
 			if (_view != null)
-				_view.GroupNumber_Initialize(_doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _groupNumbersAll.Min != _doc.GroupNumber));
+				_view.GroupNumber_Initialize(_groupNumbersAll, _doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _groupNumbersAll.Min != _doc.GroupNumber));
 
 			ReplaceColumnsWithColumnsFromNewTableGroupAndUpdateColumnState();
 
-			TriggerUpdateOfFittingTables(); // although nothing has changed in the column names, at least we get a new selection for the fitting combobox
+			TriggerUpdateOfMatchingTables(); // although nothing has changed in the column names, at least we get a new selection for the fitting combobox
 		}
 
 		/// <summary>
@@ -901,15 +725,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		{
 			// Initialize columns
 			_availableDataColumns.Clear();
-			var tg = _doc.DataTable;
-			if (null != tg)
+			var dataTable = _doc.DataTable;
+			if (null != dataTable)
 			{
-				var columns = tg.DataColumns.GetListOfColumnsWithGroupNumber(_doc.GroupNumber);
+				var columns = dataTable.DataColumns.GetListOfColumnsWithGroupNumber(_doc.GroupNumber);
 				for (int i = 0; i < columns.Count; ++i)
-					_availableDataColumns.Add(new DataColumnListNode(tg, columns[i], false));
+					_availableDataColumns.Add(new DataColumnListNode(dataTable, columns[i], false));
 
 				// now try to exchange the data columns with columns from the new group
-				var colDict = tg.DataColumns.GetNameDictionaryOfColumnsWithGroupNumber(_doc.GroupNumber);
+				var colDict = dataTable.DataColumns.GetNameDictionaryOfColumnsWithGroupNumber(_doc.GroupNumber);
 
 				for (int i = 0; i < _columnGroup.Count; ++i)
 				{
@@ -917,14 +741,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 					{
 						var info = _columnGroup[i].Columns[j];
 
-						if (info.UnderlyingColumn is DataColumn && !string.IsNullOrEmpty(info.ColumnTextToShow) && colDict.ContainsKey(info.ColumnTextToShow))
+						if (!string.IsNullOrEmpty(info.NameOfDataColumn) && colDict.ContainsKey(info.NameOfDataColumn))
 						{
-							info.UnderlyingColumn = colDict[info.ColumnTextToShow];
+							info.UnderlyingColumn = colDict[info.NameOfDataColumn];
 						}
 
-						info.UpdateTooltipAndState(_doc.DataTable);
-						if (null != _view)
-							_view.PlotColumn_Update(new ColumnTag(i, j), info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+						info.Update(_doc.DataTable, true);
+						_view?.PlotColumn_Update(new PlotColumnTag(i, j), info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 					}
 				}
 			}
@@ -932,16 +755,16 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		#endregion AvailableDataTables
 
-		#region FittingDataTables
+		#region MatchingDataTables
 
-		// Fitting data tables are those tables, which have at least one group of columns which best fits the existing plot item column names
+		// Matching data tables are those tables, which have at least one group of columns which best fits the existing plot item column names
 
 		/// <summary>
-		/// Ehes the view_ fitting table selection changed.
+		/// Occurs if the selection for the matching tables has changed.
 		/// </summary>
-		public void EhView_FittingTableSelectionChanged()
+		public void EhView_MatchingTableSelectionChanged()
 		{
-			var node = _fittingTables.FirstSelectedNode;
+			var node = _matchingTables.FirstSelectedNode;
 			if (null == node)
 				return; // no node selected
 
@@ -958,23 +781,23 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			_view?.AvailableTables_Initialize(_availableTables);
 		}
 
-		private void TriggerUpdateOfFittingTables()
+		private void TriggerUpdateOfMatchingTables()
 		{
-			if (_updateFittingTablesTask?.Status == TaskStatus.Running)
+			if (_updateMatchingTablesTask?.Status == TaskStatus.Running)
 			{
-				_updateFittingTablesTaskCancellationTokenSource.Cancel();
-				while (_updateFittingTablesTask?.Status == TaskStatus.Running)
+				_updateMatchingTablesTaskCancellationTokenSource.Cancel();
+				while (_updateMatchingTablesTask?.Status == TaskStatus.Running)
 					System.Threading.Thread.Sleep(20);
 			}
 
-			_fittingTables = new SelectableListNodeList();
-			_view?.FittingTables_Initialize(_fittingTables);
+			_matchingTables = new SelectableListNodeList();
+			_view?.MatchingTables_Initialize(_matchingTables);
 
-			var token = _updateFittingTablesTaskCancellationTokenSource.Token;
-			_updateFittingTablesTask = Task.Factory.StartNew(() => UpdateFittingTables(token));
+			var token = _updateMatchingTablesTaskCancellationTokenSource.Token;
+			_updateMatchingTablesTask = Task.Factory.StartNew(() => UpdateMatchingTables(token));
 		}
 
-		private void UpdateFittingTables(System.Threading.CancellationToken token)
+		private void UpdateMatchingTables(System.Threading.CancellationToken token)
 		{
 			var fittingTables2 = new SelectableListNodeList(); // we always update a new list, because _fittingTable1 is bound to the UI
 
@@ -986,8 +809,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 					object.ReferenceEquals(entry.Item1, _doc.DataTable)));
 			}
 
-			_fittingTables = fittingTables2;
-			Current.Gui.BeginExecute(() => _view?.FittingTables_Initialize(_fittingTables));
+			_matchingTables = fittingTables2;
+			Current.Gui.BeginExecute(() => _view?.MatchingTables_Initialize(_matchingTables));
 		}
 
 		private IEnumerable<Tuple<DataTable, int>> GetTablesWithGroupThatFitExistingPlotColumns(System.Threading.CancellationToken token)
@@ -1001,9 +824,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				{
 					var info = _columnGroup[i].Columns[j];
 
-					if (info.UnderlyingColumn is DataColumn)
+					if (!string.IsNullOrEmpty(info.NameOfDataColumn))
 					{
-						columnNamesThatMustFit.Add(info.ColumnNameToCache);
+						columnNamesThatMustFit.Add(info.NameOfDataColumn);
 					}
 				}
 			}
@@ -1040,7 +863,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
-		#endregion FittingDataTables
+		#endregion MatchingDataTables
 
 		#region Group Number
 
@@ -1057,7 +880,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		#region PlotColumns
 
-		public void EhView_PlotColumnAddTo(ColumnTag tag)
+		public void EhView_PlotColumnAddTo(PlotColumnTag tag)
 		{
 			var node = _availableDataColumns.FirstSelectedNode;
 			if (null != node)
@@ -1065,15 +888,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				SetDirty();
 				var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 				info.UnderlyingColumn = (DataColumn)node.Tag;
-				info.UpdateTooltipAndState(_doc.DataTable);
-				TriggerUpdateOfFittingTables();
-
-				if (null != _view)
-					_view.PlotColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+				info.Update(_doc.DataTable);
+				_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
+				TriggerUpdateOfMatchingTables();
 			}
 		}
 
-		public void EhView_PlotColumnEdit(ColumnTag tag)
+		public void EhView_PlotColumnEdit(PlotColumnTag tag)
 		{
 			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 
@@ -1084,22 +905,19 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			{
 				SetDirty();
 				info.UnderlyingColumn = editedColumn;
-				info.UpdateTooltipAndState(_doc.DataTable);
-				_view?.PlotColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+				info.Update(_doc.DataTable);
+				_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 			}
 		}
 
-		public void EhView_PlotColumnErase(ColumnTag tag)
+		public void EhView_PlotColumnErase(PlotColumnTag tag)
 		{
 			SetDirty();
 			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 			info.UnderlyingColumn = null;
-			info.ColumnTextToShow = null;
-			info.ColumnNameToCache = null;
-			info.ColumnToolTip = null;
-			TriggerUpdateOfFittingTables();
-			if (null != _view)
-				_view.PlotColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+			info.Update(_doc.DataTable);
+			_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
+			TriggerUpdateOfMatchingTables();
 		}
 
 		#endregion PlotColumns
@@ -1155,7 +973,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			return newlyCreatedColumn;
 		}
 
-		public void EhView_OtherAvailableColumnAddTo(ColumnTag tag)
+		public void EhView_OtherAvailableColumnAddTo(PlotColumnTag tag)
 		{
 			var node = _otherAvailableColumns.FirstSelectedNode;
 			if (null != node)
@@ -1177,10 +995,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				{
 					bool wasEdited;
 					info.UnderlyingColumn = EditOtherAvailableColumn(createdObj, out wasEdited);
-					info.UpdateTooltipAndState(_doc.DataTable);
-
-					if (null != _view)
-						_view.PlotColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+					info.Update(_doc.DataTable);
+					_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 				}
 			}
 		}
@@ -1228,7 +1044,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			return createdTransformation;
 		}
 
-		private void EhTransformation_AddMultiple(ColumnTag tag, Type transformationType, int multipleType)
+		private void EhTransformation_AddMultiple(PlotColumnTag tag, Type transformationType, int multipleType)
 		{
 			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 
@@ -1275,11 +1091,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 					throw new NotImplementedException();
 			}
 			SetDirty();
-			info.UpdateTooltipAndState(_doc.DataTable);
-			_view?.PlotColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+			info.Update(_doc.DataTable);
+			_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 		}
 
-		public void EhView_TransformationAddTo(ColumnTag tag)
+		public void EhView_TransformationAddTo(PlotColumnTag tag)
 		{
 			var node = _availableTransformations.FirstSelectedNode;
 			if (null != node)
@@ -1296,7 +1112,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
-		public void EhView_TransformationAddAsSingle(ColumnTag tag)
+		public void EhView_TransformationAddAsSingle(PlotColumnTag tag)
 		{
 			var node = _availableTransformations.FirstSelectedNode;
 			if (null != node)
@@ -1305,7 +1121,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
-		public void EhView_TransformationAddAsPrepending(ColumnTag tag)
+		public void EhView_TransformationAddAsPrepending(PlotColumnTag tag)
 		{
 			var node = _availableTransformations.FirstSelectedNode;
 			if (null != node)
@@ -1314,7 +1130,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
-		public void EhView_TransformationAddAsAppending(ColumnTag tag)
+		public void EhView_TransformationAddAsAppending(PlotColumnTag tag)
 		{
 			var node = _availableTransformations.FirstSelectedNode;
 			if (null != node)
@@ -1323,7 +1139,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
-		public void EhView_TransformationEdit(ColumnTag tag)
+		public void EhView_TransformationEdit(PlotColumnTag tag)
 		{
 			if (tag == null)
 				return;
@@ -1335,20 +1151,18 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			if (wasEdited)
 			{
 				SetDirty();
-				info.UpdateTooltipAndState(_doc.DataTable);
-				_view?.PlotColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+				info.Update(_doc.DataTable);
+				_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 			}
 		}
 
-		public void EhView_TransformationErase(ColumnTag tag)
+		public void EhView_TransformationErase(PlotColumnTag tag)
 		{
 			SetDirty();
 			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 			info.Transformation = null;
-			info.TransformationTextToShow = null;
-			info.TransformationToolTip = null;
-			if (null != _view)
-				_view.PlotColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+			info.Update(_doc.DataTable);
+			_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 		}
 
 		#endregion Transformation
@@ -1372,14 +1186,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			int len = int.MaxValue;
 			for (int i = 0; i < 3; ++i)
 			{
-				if (_columnGroup[0].Columns[i].Column.Count.HasValue)
+				if (true == _columnGroup[0].Columns[i].Column?.Count.HasValue)
 					len = Math.Min(len, _columnGroup[0].Columns[i].Column.Count.Value);
 			}
 
 			_maxPossiblePlotRangeTo = len - 1;
 
-			if (null != _view)
-				_view.PlotRangeTo_Initialize(Math.Min(this._plotRangeTo, _maxPossiblePlotRangeTo));
+			_view?.PlotRangeTo_Initialize(Math.Min(this._plotRangeTo, _maxPossiblePlotRangeTo));
 		}
 
 		#endregion Range
@@ -1505,7 +1318,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public DropReturnData EhColumnDrop(object data, object nonGuiTargetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
 		{
-			var tag = nonGuiTargetItem as ColumnTag;
+			var tag = nonGuiTargetItem as PlotColumnTag;
 			if (null == tag)
 				return new DropReturnData { IsCopy = false, IsMove = false };
 
@@ -1529,8 +1342,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				{
 					bool wasEdited;
 					info.UnderlyingColumn = EditOtherAvailableColumn((IReadableColumn)createdObj, out wasEdited);
-					TriggerUpdateOfFittingTables();
-					info.ColumnTextToShow = null;
+					TriggerUpdateOfMatchingTables();
 				}
 				else if (createdObj is IVariantToVariantTransformation)
 				{
@@ -1543,17 +1355,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 					}
 				}
 
-				info.UpdateTooltipAndState(_doc.DataTable);
-				if (null != _view)
-					_view.PlotColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+				info.Update(_doc.DataTable);
+				_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 			}
 			else if (data is DataColumn)
 			{
 				info.UnderlyingColumn = (DataColumn)data;
-				info.UpdateTooltipAndState(_doc.DataTable);
-				TriggerUpdateOfFittingTables();
-				if (null != _view)
-					_view.PlotColumn_Update(tag, info.ColumnTextToShow, info.ColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.State);
+				info.Update(_doc.DataTable);
+				_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
+				TriggerUpdateOfMatchingTables();
 			}
 
 			return new DropReturnData

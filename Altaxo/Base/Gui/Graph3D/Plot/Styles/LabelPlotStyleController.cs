@@ -348,10 +348,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		private void InitializeLabelColumnText()
 		{
-			var info = new Data.PlotColumnInformation { Column = _doc.LabelColumn };
-			info.UpdateTooltipAndState(_supposedParentDataTable);
+			var info = new Data.PlotColumnInformation(_doc.LabelColumn, _doc.LabelColumnDataColumnName);
+			info.Update(_supposedParentDataTable);
 
-			_view?.Init_LabelColumn(info.ColumnTextToShow, info.ColumnToolTip, (int)info.State);
+			_view?.Init_LabelColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
 			_view?.Init_Transformation(info.TransformationTextToShow, info.TransformationToolTip);
 		}
 

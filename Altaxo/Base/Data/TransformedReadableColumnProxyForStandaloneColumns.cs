@@ -41,7 +41,7 @@ namespace Altaxo.Data
 			if (null == column)
 				throw new ArgumentNullException(nameof(column));
 
-			var colAsDocumentNode = column.OriginalReadableColumn as IDocumentLeafNode;
+			var colAsDocumentNode = column.UnderlyingReadableColumn as IDocumentLeafNode;
 			if (null != colAsDocumentNode)
 				throw new ArgumentException(string.Format("Column does implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
 
@@ -54,7 +54,7 @@ namespace Altaxo.Data
 		/// <param name="column">The numeric column to hold.</param>
 		protected TransformedReadableColumnProxyForStandaloneColumns(ITransformedReadableColumn column)
 		{
-			_underlyingColumn = column.OriginalReadableColumn;
+			_underlyingColumn = column.UnderlyingReadableColumn;
 			_transformation = column.Transformation;
 			_cachedResultingColumn = column;
 		}

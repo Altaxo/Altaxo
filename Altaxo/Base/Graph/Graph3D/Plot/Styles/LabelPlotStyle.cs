@@ -297,12 +297,26 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
+		/// <summary>
+		/// Gets the name of the label column, if it is a data column. Otherwise, null is returned.
+		/// </summary>
+		/// <value>
+		/// The name of the label column if it is a data column. Otherwise, null.
+		/// </value>
+		public string LabelColumnDataColumnName
+		{
+			get
+			{
+				return _labelColumnProxy.DocumentPath.LastPartOrDefault;
+			}
+		}
+
 		public IEnumerable<Tuple<string, Altaxo.Data.IReadableColumn, string, Action<Altaxo.Data.IReadableColumn>>> GetAdditionallyUsedColumns()
 		{
 			yield return new Tuple<string, Altaxo.Data.IReadableColumn, string, Action<Altaxo.Data.IReadableColumn>>(
 				"Label",
-			_labelColumnProxy.Document,
-			_labelColumnProxy.DocumentPath.LastPartOrDefault,
+			LabelColumn,
+			LabelColumnDataColumnName,
 			(col) => this.LabelColumn = col);
 		}
 

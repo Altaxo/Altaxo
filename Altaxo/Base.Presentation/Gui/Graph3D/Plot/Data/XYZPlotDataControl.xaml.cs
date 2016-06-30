@@ -49,25 +49,25 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 	{
 		public event Action SelectedTableChanged;
 
-		public event Action<ColumnTag> PlotItemColumn_AddTo;
+		public event Action<PlotColumnTag> PlotItemColumn_AddTo;
 
-		public event Action<ColumnTag> PlotItemColumn_Edit;
+		public event Action<PlotColumnTag> PlotItemColumn_Edit;
 
-		public event Action<ColumnTag> PlotItemColumn_Erase;
+		public event Action<PlotColumnTag> PlotItemColumn_Erase;
 
-		public event Action<ColumnTag> OtherAvailableColumn_AddTo;
+		public event Action<PlotColumnTag> OtherAvailableColumn_AddTo;
 
-		public event Action<ColumnTag> Transformation_AddTo;
+		public event Action<PlotColumnTag> Transformation_AddTo;
 
-		public event Action<ColumnTag> Transformation_AddAsSingle;
+		public event Action<PlotColumnTag> Transformation_AddAsSingle;
 
-		public event Action<ColumnTag> Transformation_AddAsPrepending;
+		public event Action<PlotColumnTag> Transformation_AddAsPrepending;
 
-		public event Action<ColumnTag> Transformation_AddAsAppending;
+		public event Action<PlotColumnTag> Transformation_AddAsAppending;
 
-		public event Action<ColumnTag> Transformation_Edit;
+		public event Action<PlotColumnTag> Transformation_Edit;
 
-		public event Action<ColumnTag> Transformation_Erase;
+		public event Action<PlotColumnTag> Transformation_Erase;
 
 		public event Action<int> RangeFromChanged;
 
@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public event Action<int> SelectedGroupNumberChanged;
 
-		public event Action SelectedFittingTableChanged;
+		public event Action SelectedMatchingTableChanged;
 
 		public event CanStartDragDelegate AvailableTableColumns_CanStartDrag;
 
@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			IEnumerable<Tuple< // list of all groups
 			string, // Caption for each group of columns
 			IEnumerable<Tuple< // list of column definitions
-				ColumnTag, // tag to identify the column and group
+				PlotColumnTag, // tag to identify the column and group
 				string>
 			>>> groups)
 		{
@@ -158,7 +158,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			}
 		}
 
-		public void PlotColumn_Update(ColumnTag tag, string colname, string toolTip, string transformationText, string transformationToolTip, ColumnControlState state)
+		public void PlotColumn_Update(PlotColumnTag tag, string colname, string toolTip, string transformationText, string transformationToolTip, PlotColumnControlState state)
 		{
 			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
 			sgc.ColumnText = colname;
@@ -168,7 +168,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			sgc.SetSeverityLevel((int)state);
 		}
 
-		public void ShowTransformationSinglePrependAppendPopup(ColumnTag tag)
+		public void ShowTransformationSinglePrependAppendPopup(PlotColumnTag tag)
 		{
 			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
 			sgc.ShowTransformationSinglePrependAppendPopup(true);
@@ -191,7 +191,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			GuiHelper.Initialize(_cbTables, items);
 		}
 
-		public void FittingTables_Initialize(SelectableListNodeList items)
+		public void MatchingTables_Initialize(SelectableListNodeList items)
 		{
 			GuiHelper.InitializeDeselectable(_guiFittingTables, items);
 		}
@@ -232,8 +232,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			SelectedGroupNumberChanged?.Invoke(_guiGroupNumber.Value);
 		}
 
-		public void GroupNumber_Initialize(int groupNumber, bool enableControl)
+		public void GroupNumber_Initialize(IEnumerable<int> groupNumbers, int groupNumber, bool enableControl)
 		{
+			_guiGroupNumber.AvailableValues = groupNumbers;
 			_guiGroupNumber.Value = groupNumber;
 			_guiGroupNumber.IsEnabled = enableControl;
 		}
@@ -502,11 +503,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			GuiHelper.SynchronizeSelectionFromGui(listBox);
 
 			if (object.ReferenceEquals(listBox, _guiAvailableTableColumns))
-				PlotItemColumn_AddTo?.Invoke(parameter as ColumnTag);
+				PlotItemColumn_AddTo?.Invoke(parameter as PlotColumnTag);
 			else if (object.ReferenceEquals(listBox, _guiOtherAvailableColumns))
-				OtherAvailableColumn_AddTo?.Invoke(parameter as ColumnTag);
+				OtherAvailableColumn_AddTo?.Invoke(parameter as PlotColumnTag);
 			if (object.ReferenceEquals(listBox, _guiAvailableTransformations))
-				Transformation_AddTo?.Invoke(parameter as ColumnTag);
+				Transformation_AddTo?.Invoke(parameter as PlotColumnTag);
 		}
 
 		#endregion ColumnAddTo command
@@ -527,7 +528,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhColumn_EditCommand(object parameter)
 		{
-			PlotItemColumn_Edit?.Invoke(parameter as ColumnTag);
+			PlotItemColumn_Edit?.Invoke(parameter as PlotColumnTag);
 		}
 
 		#endregion ColumnEdit command
@@ -548,7 +549,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhColumn_EraseCommand(object parameter)
 		{
-			PlotItemColumn_Erase?.Invoke(parameter as ColumnTag);
+			PlotItemColumn_Erase?.Invoke(parameter as PlotColumnTag);
 		}
 
 		#endregion ColumnErase command
@@ -569,7 +570,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhTransformation_EditCommand(object parameter)
 		{
-			Transformation_Edit?.Invoke(parameter as ColumnTag);
+			Transformation_Edit?.Invoke(parameter as PlotColumnTag);
 		}
 
 		#endregion TransformationEdit command
@@ -590,7 +591,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhTransformation_EraseCommand(object parameter)
 		{
-			Transformation_Erase?.Invoke(parameter as ColumnTag);
+			Transformation_Erase?.Invoke(parameter as PlotColumnTag);
 		}
 
 		#endregion TransformationErase command
@@ -611,7 +612,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhTransformationAddAsSingleCommand(object parameter)
 		{
-			var tag = (ColumnTag)parameter;
+			var tag = (PlotColumnTag)parameter;
 			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
 			sgc.ShowTransformationSinglePrependAppendPopup(false);
 
@@ -636,7 +637,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhTransformationAddAsPrependingCommand(object parameter)
 		{
-			var tag = (ColumnTag)parameter;
+			var tag = (PlotColumnTag)parameter;
 			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
 			sgc.ShowTransformationSinglePrependAppendPopup(false);
 
@@ -661,7 +662,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhTransformationAddAsAppendingCommand(object parameter)
 		{
-			var tag = (ColumnTag)parameter;
+			var tag = (PlotColumnTag)parameter;
 			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
 			sgc.ShowTransformationSinglePrependAppendPopup(false);
 			Transformation_AddAsAppending?.Invoke(tag);
@@ -694,7 +695,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		private void EhFittingTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_guiFittingTables);
-			SelectedFittingTableChanged?.Invoke();
+			SelectedMatchingTableChanged?.Invoke();
 		}
 	}
 }

@@ -53,7 +53,7 @@ namespace Altaxo.Data
 			}
 		}
 
-		public IReadableColumn OriginalReadableColumn
+		public IReadableColumn UnderlyingReadableColumn
 		{
 			get
 			{
@@ -87,7 +87,7 @@ namespace Altaxo.Data
 			return false;
 		}
 
-		public ITransformedReadableColumn WithOriginalReadableColumn(IReadableColumn originalReadableColumn)
+		public ITransformedReadableColumn WithUnderlyingReadableColumn(IReadableColumn originalReadableColumn)
 		{
 			if (object.Equals(_originalColumn, originalReadableColumn))
 			{

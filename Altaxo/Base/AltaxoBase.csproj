@@ -226,6 +226,7 @@
     <Compile Include="Data\IROTableDataSource.cs" />
     <Compile Include="Data\DataTableProxy.cs" />
     <Compile Include="Data\ITransformedReadableColumn.cs" />
+    <Compile Include="Data\IVariantToVariantTransformation.cs" />
     <Compile Include="Data\Transformations\OffsetTransformation.cs" />
     <Compile Include="Data\Transformations\ScaleTransformation.cs" />
     <Compile Include="Data\Transformations\CompoundTransformation.cs" />
@@ -546,6 +547,9 @@
     <Compile Include="Graph\Graph3D\GuiModels\RootLayerMarkersVisibility.cs" />
     <Compile Include="Gui\Graph3D\PenAllPropertiesController.cs" />
     <Compile Include="Gui\Graph3D\Plot\DataMeshPlotItemController.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Data\PlotColumnControlState.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Data\PlotColumnInformation.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Data\PlotColumnTag.cs" />
     <Compile Include="Gui\Graph3D\Plot\Data\XYZColumnPlotDataController.cs" />
     <Compile Include="Gui\Graph3D\Plot\G3DPlotItemController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Groups\PlotGroupCollectionController.cs" />

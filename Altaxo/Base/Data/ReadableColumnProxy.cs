@@ -60,7 +60,7 @@ namespace Altaxo.Data
 			if (column is ITransformedReadableColumn)
 			{
 				var tcolumn = (ITransformedReadableColumn)column;
-				if (tcolumn.OriginalReadableColumn is IDocumentLeafNode)
+				if (tcolumn.UnderlyingReadableColumn is IDocumentLeafNode)
 					return TransformedReadableColumnProxy.FromColumn(tcolumn);
 				else
 					return TransformedReadableColumnProxyForStandaloneColumns.FromColumn(tcolumn);

@@ -84,7 +84,7 @@ namespace Altaxo.Gui.Graph3D.Plot
 		/// <summary>Controller for the <see cref="PlotGroupStyleCollection"/> that is associated with the parent of this plot item.</summary>
 		private IMVCANController _plotGroupController;
 
-		private Data.IColumnDataController _dataController;
+		private Data.IPlotColumnDataController _dataController;
 		private IXYZPlotStyleCollectionController _styleCollectionController;
 		private List<IMVCANController> _styleControllerList = new List<IMVCANController>();
 
@@ -139,7 +139,7 @@ namespace Altaxo.Gui.Graph3D.Plot
 				_styleCollectionController.StyleEditRequested += new Action<int>(_styleCollectionController_StyleEditRequested);
 
 				// Initialize the data controller
-				_dataController = (Data.IColumnDataController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataObject, _doc }, typeof(Data.IColumnDataController), UseDocument.Directly);
+				_dataController = (Data.IPlotColumnDataController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataObject, _doc }, typeof(Data.IPlotColumnDataController), UseDocument.Directly);
 
 				// Initialize the style controller list
 				InitializeStyleControllerList();

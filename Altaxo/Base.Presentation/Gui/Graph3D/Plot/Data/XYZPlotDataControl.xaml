@@ -43,7 +43,7 @@
 		<Label Content="GroupNumber: " Grid.Row="0" Grid.Column="2" />
 
 		<ComboBox x:Name="_cbTables"  Grid.Row="1" Grid.Column="0" SelectionChanged="EhTables_SelectionChangeCommit" ToolTip="Choose among all available tables, then select a group number." />
-		<axogc:Int32UpDown x:Name="_guiGroupNumber" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" MinWidth="80" Margin="6,0,0,0"  Minimum="0" Change="1"  IsGotoMinimumAndMaximumVisible="False" ValueChanged="EhGroupNumber_Changed" />
+		<axogc:Int32ListUpDown x:Name="_guiGroupNumber" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" MinWidth="80" Margin="6,0,0,0"  Minimum="0" IsGotoMinimumAndMaximumVisible="False" ValueChanged="EhGroupNumber_Changed" />
 
 		<GroupBox Header="Plot Range:" Grid.Row="0" Grid.RowSpan="2" Grid.Column="4" Margin="0,6,0,0"  Padding="0,4,0,0" VerticalAlignment="Top">
 			<Grid>
@@ -63,7 +63,7 @@
 		<Label Content="Available columns: " Grid.Row="3" Grid.Column="0" />
 		<Label Content="Plot item columns: " FontWeight="Bold" Grid.Row="3" Grid.Column="2" />
 		<StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="4">
-			<Label Content="Tables with fitting columns:" />
+			<Label Content="Tables with matching columns:" />
 			<ComboBox x:Name="_guiFittingTables" SelectionChanged="EhFittingTables_SelectionChangeCommit" ToolTip="Choose among those tables only, which contain columns with names like the plot columns below." />
 		</StackPanel>
 

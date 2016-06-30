@@ -70,7 +70,7 @@ namespace Altaxo.Data
 		{
 			if (null == column)
 				throw new ArgumentNullException(nameof(column));
-			var colAsDocumentNode = column.OriginalReadableColumn as IDocumentLeafNode;
+			var colAsDocumentNode = column.UnderlyingReadableColumn as IDocumentLeafNode;
 			if (null == colAsDocumentNode)
 				throw new ArgumentException(string.Format("column does not implement {0}. The actual type of column is {1}", typeof(IDocumentLeafNode), column.GetType()));
 
@@ -78,7 +78,7 @@ namespace Altaxo.Data
 		}
 
 		protected TransformedReadableColumnProxy(ITransformedReadableColumn column)
-			: base((IDocumentLeafNode)column.OriginalReadableColumn)
+			: base((IDocumentLeafNode)column.UnderlyingReadableColumn)
 		{
 			_transformation = column.Transformation;
 		}
