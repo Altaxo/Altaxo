@@ -34,10 +34,10 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
+			<RowDefinition Height="3*" />
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 
 		<Label Content="Table: " Grid.Row="0" Grid.Column="0" />
@@ -65,10 +65,19 @@
 		<Label Content="Plot item columns: " FontWeight="Bold" Grid.Row="3" Grid.Column="2" />
 		<StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="4">
 			<Label Content="Tables with matching columns:" />
-			<ComboBox x:Name="_guiFittingTables" SelectionChanged="EhFittingTables_SelectionChangeCommit" ToolTip="Choose among those tables only, which contain columns with names like the plot columns below." />
+			<ComboBox x:Name="_guiMatchingTables" SelectionChanged="EhMatchingTables_SelectionChangeCommit" ToolTip="Choose among those tables only, which contain columns with names like the plot columns below." />
 		</StackPanel>
 
-		<TreeView x:Name="_guiAvailableTableColumns" Grid.Row="4" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
+		<ListBox x:Name="_guiAvailableTableColumnsList" Grid.Row="4" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
+			 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Text}" ToolTip="{Binding ToolTip}" />
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+
+		<TreeView x:Name="_guiAvailableTableColumnsTree" Grid.Row="4" Grid.Column="0" Visibility="Hidden"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
 			 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->

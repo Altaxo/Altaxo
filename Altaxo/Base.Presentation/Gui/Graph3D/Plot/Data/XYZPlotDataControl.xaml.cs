@@ -105,6 +105,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public event DropDelegate PlotItemColumn_Drop;
 
+		private ItemsControl _guiAvailableTableColumnsCurrentlyActive;
+
 		public XYZPlotDataControl()
 		{
 			InitializeComponent();
@@ -193,19 +195,45 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		public void MatchingTables_Initialize(SelectableListNodeList items)
 		{
-			GuiHelper.InitializeDeselectable(_guiFittingTables, items);
+			GuiHelper.InitializeDeselectable(_guiMatchingTables, items);
 		}
 
 		public void AvailableTableColumns_Initialize(NGTreeNodeCollection nodes)
 		{
-			_guiAvailableTableColumns.ItemsSource = nodes;
+			bool isTreeWithSubnodes = nodes.Count > 0 && nodes[0].HasChilds;
+
+			if (isTreeWithSubnodes)
+			{
+				_guiAvailableTableColumnsList.ItemsSource = null;
+				_guiAvailableTableColumnsList.Visibility = Visibility.Hidden;
+
+				_guiAvailableTableColumnsTree.ItemsSource = nodes;
+				_guiAvailableTableColumnsTree.Visibility = Visibility.Visible;
+
+				_guiAvailableTableColumnsCurrentlyActive = _guiAvailableTableColumnsTree;
+			}
+			else
+			{
+				_guiAvailableTableColumnsTree.ItemsSource = null;
+				_guiAvailableTableColumnsTree.Visibility = Visibility.Hidden;
+
+				_guiAvailableTableColumnsList.ItemsSource = nodes;
+				_guiAvailableTableColumnsList.Visibility = Visibility.Visible;
+
+				_guiAvailableTableColumnsCurrentlyActive = _guiAvailableTableColumnsList;
+			}
 		}
 
 		public object AvailableTableColumns_SelectedItem
 		{
 			get
 			{
-				return _guiAvailableTableColumns.SelectedItem;
+				if (object.ReferenceEquals(_guiAvailableTableColumnsCurrentlyActive, _guiAvailableTableColumnsList))
+					return _guiAvailableTableColumnsList.SelectedItem;
+				else if (object.ReferenceEquals(_guiAvailableTableColumnsCurrentlyActive, _guiAvailableTableColumnsTree))
+					return _guiAvailableTableColumnsTree.SelectedItem;
+				else
+					return null;
 			}
 		}
 
@@ -272,7 +300,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 			public bool CanStartDrag(IDragInfo dragInfo)
 			{
-				var result = _parentControl.AvailableTableColumns_CanStartDrag?.Invoke(new[] { _parentControl._guiAvailableTableColumns.SelectedItem });
+				var result = _parentControl.AvailableTableColumns_CanStartDrag?.Invoke(new[] { _parentControl.AvailableTableColumns_SelectedItem });
 				return result.HasValue ? result.Value : false;
 			}
 
@@ -507,16 +535,26 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		private void EhColumn_AddToCommand(object parameter)
 		{
-			FrameworkElement listBox = _lastListBoxActivated ?? _guiAvailableTableColumns;
-			if (listBox is ListBox)
-				GuiHelper.SynchronizeSelectionFromGui((ListBox)listBox);
+			FrameworkElement itemsControl = _lastItemsControlActivated ?? _guiAvailableTableColumnsCurrentlyActive;
 
-			if (object.ReferenceEquals(listBox, _guiAvailableTableColumns))
+			if (object.ReferenceEquals(itemsControl, _guiAvailableTableColumnsList))
+			{
 				PlotItemColumn_AddTo?.Invoke(parameter as PlotColumnTag);
-			else if (object.ReferenceEquals(listBox, _guiOtherAvailableColumns))
+			}
+			else if (object.ReferenceEquals(itemsControl, _guiAvailableTableColumnsTree))
+			{
+				PlotItemColumn_AddTo?.Invoke(parameter as PlotColumnTag);
+			}
+			else if (object.ReferenceEquals(itemsControl, _guiOtherAvailableColumns))
+			{
+				GuiHelper.SynchronizeSelectionFromGui(_guiOtherAvailableColumns);
 				OtherAvailableColumn_AddTo?.Invoke(parameter as PlotColumnTag);
-			if (object.ReferenceEquals(listBox, _guiAvailableTransformations))
+			}
+			if (object.ReferenceEquals(itemsControl, _guiAvailableTransformations))
+			{
+				GuiHelper.SynchronizeSelectionFromGui(_guiAvailableTransformations);
 				Transformation_AddTo?.Invoke(parameter as PlotColumnTag);
+			}
 		}
 
 		#endregion ColumnAddTo command
@@ -681,7 +719,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 		#endregion Column text boxes commands
 
-		private FrameworkElement _lastListBoxActivated;
+		private ItemsControl _lastItemsControlActivated;
 
 		/// <summary>
 		/// To decide which of the lists was the last one activated.
@@ -693,17 +731,17 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			if (true == (bool)e.NewValue)
 			{
 				if (
-					object.ReferenceEquals(_guiAvailableTableColumns, sender) ||
+					object.ReferenceEquals(_guiAvailableTableColumnsCurrentlyActive, sender) ||
 					object.ReferenceEquals(_guiOtherAvailableColumns, sender) ||
 					object.ReferenceEquals(_guiAvailableTransformations, sender)
 					)
-					_lastListBoxActivated = (FrameworkElement)sender;
+					_lastItemsControlActivated = (ItemsControl)sender;
 			}
 		}
 
-		private void EhFittingTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
+		private void EhMatchingTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
 		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiFittingTables);
+			GuiHelper.SynchronizeSelectionFromGui(_guiMatchingTables);
 			SelectedMatchingTableChanged?.Invoke();
 		}
 	}

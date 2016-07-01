@@ -216,12 +216,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			public List<PlotColumnInformationInternal> Columns = new List<PlotColumnInformationInternal>();
 		}
 
-		private class DataColumnListNode : NGTreeNode
+		private class DataColumnSingleNode : NGTreeNode
 		{
 			private DataTable _table;
 			private string _toolTip = null;
 
-			public DataColumnListNode(DataTable table, DataColumn tag, bool isSelected)
+			public DataColumnSingleNode(DataTable table, DataColumn tag, bool isSelected)
 				:
 				base(table.DataColumns.GetColumnName(tag))
 			{
@@ -267,6 +267,56 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 
 				_toolTip = stb.ToString();
 				OnPropertyChanged(nameof(ToolTip));
+			}
+		}
+
+		private class DataColumnBundleNode : NGTreeNode
+		{
+			public const int MaxNumberOfColumnsInOneNode = 200;
+
+			private int _firstColumn;
+			private int _columnCount;
+			private DataTable _dataTable;
+			private List<DataColumn> _columns;
+
+			public DataColumnBundleNode(DataTable dataTable, List<DataColumn> columnList, int firstColumn, int columnCount)
+				: base(true)
+			{
+				_dataTable = dataTable;
+				_columns = columnList;
+				_firstColumn = firstColumn;
+				_columnCount = columnCount;
+				Text = string.Format("Cols {0}-{1}", firstColumn, firstColumn + columnCount - 1);
+			}
+
+			protected override void LoadChildren()
+			{
+				var coll = _columns;
+				Nodes.Clear();
+				int nextColumn = Math.Min(_firstColumn + _columnCount, coll.Count);
+
+				if (_columnCount <= MaxNumberOfColumnsInOneNode) // If number is low enough, expand to the data columns directly
+				{
+					for (int i = _firstColumn; i < nextColumn; ++i)
+						Nodes.Add(new DataColumnSingleNode(_dataTable, _columns[i], false));
+				}
+				else // if the number of data columns is too high to be directly shown, we create intermediate nodes
+				{
+					// calculate the number of nodes to be shown
+					int numNodes = (int)Math.Ceiling(_columnCount / (double)MaxNumberOfColumnsInOneNode);
+					numNodes = Math.Min(MaxNumberOfColumnsInOneNode, numNodes);
+					int colsInOneNode = MaxNumberOfColumnsInOneNode;
+					for (; colsInOneNode * numNodes < _columnCount; colsInOneNode *= MaxNumberOfColumnsInOneNode) ; // Multiply with a multiple of MaxNumberOfColumnsInOneNode until it fits
+
+					int first = _firstColumn;
+					int remaining = nextColumn - _firstColumn;
+					for (int i = 0; i < numNodes && remaining > 0; ++i)
+					{
+						Nodes.Add(new DataColumnBundleNode(_dataTable, coll, first, Math.Min(remaining, colsInOneNode)));
+						remaining -= colsInOneNode;
+						first += colsInOneNode;
+					}
+				}
 			}
 		}
 
@@ -425,23 +475,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				_view.MatchingTables_Initialize(_matchingTables);
 
 				View_AvailableTransformations_Initialize();
-			}
-		}
-
-		private void Controller_AvailableDataColumns_Initialize()
-		{
-			_availableDataColumns.Nodes.Clear();
-			var tg = _doc.DataTable;
-
-			if (null != tg)
-			{
-				var columns = tg.DataColumns.GetListOfColumnsWithGroupNumber(_doc.GroupNumber);
-				for (int i = 0; i < columns.Count; ++i)
-				{
-					var col = columns[i];
-					var node = new DataColumnListNode(tg, columns[i], false);
-					_availableDataColumns.Nodes.Add(node);
-				}
 			}
 		}
 
@@ -767,6 +800,41 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 		}
 
 		#endregion AvailableDataTables
+
+		#region AvailableDataColumns
+
+		private const int MaxNumberOfDataColumnsWithoutTreeView = 100;
+
+		private void Controller_AvailableDataColumns_Initialize()
+		{
+			_availableDataColumns.Nodes.Clear();
+			var dataTable = _doc.DataTable;
+			if (null == dataTable)
+				return;
+
+			var columns = dataTable.DataColumns.GetListOfColumnsWithGroupNumber(_doc.GroupNumber);
+			if (columns.Count <= MaxNumberOfDataColumnsWithoutTreeView)
+			{
+				for (int i = 0; i < columns.Count; ++i)
+				{
+					var col = columns[i];
+					var node = new DataColumnSingleNode(dataTable, columns[i], false);
+					_availableDataColumns.Nodes.Add(node);
+				}
+			}
+			else // Create a tree of nodes
+			{
+				int levels = (int)(Math.Floor(Math.Log(columns.Count, DataColumnBundleNode.MaxNumberOfColumnsInOneNode)));
+				int numberOfColumnsInRootLevel = (int)Calc.RMath.Pow(DataColumnBundleNode.MaxNumberOfColumnsInOneNode, levels);
+				for (int i = 0; i < columns.Count; i += numberOfColumnsInRootLevel)
+				{
+					var node = new DataColumnBundleNode(dataTable, columns, i, Math.Min(numberOfColumnsInRootLevel, columns.Count - i));
+					_availableDataColumns.Nodes.Add(node);
+				}
+			}
+		}
+
+		#endregion AvailableDataColumns
 
 		#region MatchingDataTables
 
