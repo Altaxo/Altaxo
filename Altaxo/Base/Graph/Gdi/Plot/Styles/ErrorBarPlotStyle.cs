@@ -113,7 +113,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddValue("PositiveError", s._positiveErrorColumn);
 				info.AddValue("NegativeError", s._negativeErrorColumn);
 
-				info.AddValue("IndependentColor", s._isHorizontalStyle);
+				info.AddValue("IndependentColor", s._independentColor);
 				info.AddValue("Pen", s._strokePen);
 
 				info.AddValue("Axis", s._isHorizontalStyle ? 0 : 1);
