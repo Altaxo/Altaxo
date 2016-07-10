@@ -52,7 +52,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>
 		/// The scatter symbol.
 		/// </summary>
-		protected IScatterSymbolShape _symbolShape;
+		protected IScatterSymbol _symbolShape;
 
 		/// <summary>Size of the symbols in points.</summary>
 		protected double _symbolSize;
@@ -100,7 +100,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			{
 				ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
 
-				s._symbolShape = (IScatterSymbolShape)info.GetValue("Shape", s);
+				s._symbolShape = (IScatterSymbol)info.GetValue("Shape", s);
 				s._material = (IMaterial)info.GetValue("Material", s);
 				s._symbolSize = info.GetSingle("SymbolSize");
 				s._independentColor = info.GetBoolean("IndependentColor");
@@ -161,7 +161,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			CopyFrom(from, Main.EventFiring.Suppressed);
 		}
 
-		public ScatterPlotStyle(IScatterSymbolShape symbol, double size, double penWidth, NamedColor penColor)
+		public ScatterPlotStyle(IScatterSymbol symbol, double size, double penWidth, NamedColor penColor)
 		{
 			if (null == symbol)
 				throw new ArgumentNullException(nameof(symbol));
@@ -182,7 +182,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			double symbolSize = GraphDocument.GetDefaultSymbolSize(context);
 			var color = GraphDocument.GetDefaultPlotColor(context);
 
-			this._symbolShape = new ScatterSymbolShapes.Cube();
+			this._symbolShape = new ScatterSymbols.Cube();
 			this._material = new MaterialWithUniformColor(color);
 			this._independentColor = false;
 
@@ -201,7 +201,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			yield break;
 		}
 
-		public IScatterSymbolShape Shape
+		public IScatterSymbol Shape
 		{
 			get { return this._symbolShape; }
 			set
@@ -333,7 +333,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			get
 			{
-				return !this._independentSymbolSize && !object.ReferenceEquals(_symbolShape, ScatterSymbolShapes.NoSymbol.Instance);
+				return !this._independentSymbolSize && !object.ReferenceEquals(_symbolShape, ScatterSymbols.NoSymbol.Instance);
 			}
 		}
 
@@ -341,7 +341,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			get
 			{
-				return !this._independentSymbolSize && !object.ReferenceEquals(_symbolShape, ScatterSymbolShapes.NoSymbol.Instance);
+				return !this._independentSymbolSize && !object.ReferenceEquals(_symbolShape, ScatterSymbols.NoSymbol.Instance);
 			}
 		}
 
@@ -357,7 +357,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				_skipFreq = 1;
 
 			// paint the scatter style
-			if (!object.ReferenceEquals(_symbolShape, ScatterSymbolShapes.NoSymbol.Instance))
+			if (!object.ReferenceEquals(_symbolShape, ScatterSymbols.NoSymbol.Instance))
 			{
 				PointD3D pos = PointD3D.Empty;
 				VectorD3D diff;
@@ -397,7 +397,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
 		{
-			if (!object.ReferenceEquals(_symbolShape, ScatterSymbolShapes.NoSymbol.Instance))
+			if (!object.ReferenceEquals(_symbolShape, ScatterSymbols.NoSymbol.Instance))
 			{
 				_symbolShape.Paint(g, _material, bounds.Center, _symbolSize);
 				bounds = bounds.WithPadding(0, Math.Max(0, this.SymbolSize - bounds.SizeY), Math.Max(0, this.SymbolSize - bounds.SizeZ));
@@ -415,14 +415,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (this.IsSymbolSizeProvider)
 				SymbolSizeGroupStyle.AddExternalGroupStyle(externalGroups);
 
-			SymbolShapeStyleGroupStyle.AddExternalGroupStyle(externalGroups);
+			ScatterSymbolGroupStyle.AddExternalGroupStyle(externalGroups);
 		}
 
 		public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
 			ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 			SymbolSizeGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
-			SymbolShapeStyleGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+			ScatterSymbolGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 			SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group style only)
 		}
 
@@ -431,7 +431,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (this.IsColorProvider)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this.Color; });
 
-			SymbolShapeStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this._symbolShape; });
+			ScatterSymbolGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this._symbolShape; });
 
 			if (this.IsSymbolSizeProvider)
 				SymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SymbolSize; });
@@ -451,7 +451,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					_cachedColorForIndexFunction = null;
 			}
 
-			SymbolShapeStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IScatterSymbolShape c) { this.Shape = c; });
+			ScatterSymbolGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IScatterSymbol c) { this.Shape = c; });
 
 			// per Default, set the symbol size evaluation function to null
 			_cachedSymbolSizeForIndexFunction = null;

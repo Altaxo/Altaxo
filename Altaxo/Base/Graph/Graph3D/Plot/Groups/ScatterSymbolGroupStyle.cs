@@ -31,32 +31,41 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 	using Graph.Plot.Groups;
 	using Styles;
 
-	public class SymbolShapeStyleGroupStyle
+	public class ScatterSymbolGroupStyle
 		:
 		Main.SuspendableDocumentLeafNodeWithEventArgs,
 		IPlotGroupStyle
 	{
 		private bool _isInitialized;
-		private IScatterSymbolShape _shapeAndStyle;
+		private IScatterSymbol _shapeAndStyle;
 		private bool _isStepEnabled = true;
 
-		private static List<IScatterSymbolShape> _standardSymbolOrder;
+		/// <summary>
+		/// The list of symbols to switch through
+		/// </summary>
+		private ScatterSymbolList _symbolList;
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SymbolShapeStyleGroupStyle), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterSymbolGroupStyle), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				SymbolShapeStyleGroupStyle s = (SymbolShapeStyleGroupStyle)obj;
+				ScatterSymbolGroupStyle s = (ScatterSymbolGroupStyle)obj;
 				info.AddValue("StepEnabled", s._isStepEnabled);
+
+				if (s._isStepEnabled)
+					info.AddValue("SymbolList", s._symbolList);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				SymbolShapeStyleGroupStyle s = null != o ? (SymbolShapeStyleGroupStyle)o : new SymbolShapeStyleGroupStyle();
+				ScatterSymbolGroupStyle s = null != o ? (ScatterSymbolGroupStyle)o : new ScatterSymbolGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
+
+				if (s._isStepEnabled)
+					s._symbolList = (ScatterSymbolList)info.GetValue("SymbolList", s);
 				return s;
 			}
 		}
@@ -65,34 +74,34 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		#region Constructors
 
-		static SymbolShapeStyleGroupStyle()
+		static ScatterSymbolGroupStyle()
 		{
-			_standardSymbolOrder = new List<IScatterSymbolShape>();
 		}
 
-		public SymbolShapeStyleGroupStyle()
+		public ScatterSymbolGroupStyle()
 		{
-			_shapeAndStyle = new Styles.ScatterSymbolShapes.Cube();
+			_shapeAndStyle = new Styles.ScatterSymbols.Cube();
 		}
 
-		public SymbolShapeStyleGroupStyle(SymbolShapeStyleGroupStyle from)
+		public ScatterSymbolGroupStyle(ScatterSymbolGroupStyle from)
 		{
 			this._isInitialized = from._isInitialized;
 			this._shapeAndStyle = from._shapeAndStyle;
+			this._symbolList = from._symbolList;
 		}
 
 		#endregion Constructors
 
 		#region ICloneable Members
 
-		public SymbolShapeStyleGroupStyle Clone()
+		public ScatterSymbolGroupStyle Clone()
 		{
-			return new SymbolShapeStyleGroupStyle(this);
+			return new ScatterSymbolGroupStyle(this);
 		}
 
 		object ICloneable.Clone()
 		{
-			return new SymbolShapeStyleGroupStyle(this);
+			return new ScatterSymbolGroupStyle(this);
 		}
 
 		#endregion ICloneable Members
@@ -101,9 +110,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		public void TransferFrom(IPlotGroupStyle fromb)
 		{
-			SymbolShapeStyleGroupStyle from = (SymbolShapeStyleGroupStyle)fromb;
+			ScatterSymbolGroupStyle from = (ScatterSymbolGroupStyle)fromb;
 			this._isInitialized = from._isInitialized;
 			this._shapeAndStyle = from._shapeAndStyle;
+			this._symbolList = from._symbolList;
 		}
 
 		public void BeginPrepare()
@@ -137,7 +147,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		public int Step(int step)
 		{
-			var list = _standardSymbolOrder;
+			if (0 == step)
+				return 0; // nothing changed
+
+			if (null == _symbolList)
+				_symbolList = ScatterSymbolList.BuiltinDefault;
+
+			var list = _symbolList;
 			var listcount = list.Count;
 
 			if (listcount == 0)
@@ -187,6 +203,28 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			}
 		}
 
+		/// <summary>
+		/// The list of symbols to switch through
+		/// </summary>
+		public ScatterSymbolList ScatterSymbolList
+		{
+			get
+			{
+				return _symbolList;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (!object.ReferenceEquals(_symbolList, value))
+				{
+					_symbolList = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
 		#endregion IGroupStyle Members
 
 		#region Other members
@@ -199,7 +237,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			}
 		}
 
-		public void Initialize(IScatterSymbolShape s)
+		public void Initialize(IScatterSymbol s)
 		{
 			if (null == s)
 				throw new ArgumentNullException(nameof(s));
@@ -208,7 +246,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			_shapeAndStyle = s;
 		}
 
-		public IScatterSymbolShape ShapeAndStyle
+		public IScatterSymbol ShapeAndStyle
 		{
 			get
 			{
@@ -222,9 +260,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		public static void AddExternalGroupStyle(IPlotGroupStyleCollection externalGroups)
 		{
-			if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(SymbolShapeStyleGroupStyle)))
+			if (PlotGroupStyle.ShouldAddExternalGroupStyle(externalGroups, typeof(ScatterSymbolGroupStyle)))
 			{
-				SymbolShapeStyleGroupStyle gstyle = new SymbolShapeStyleGroupStyle();
+				ScatterSymbolGroupStyle gstyle = new ScatterSymbolGroupStyle();
 				gstyle.IsStepEnabled = true;
 				externalGroups.Add(gstyle);
 			}
@@ -234,52 +272,52 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		 IPlotGroupStyleCollection externalGroups,
 		 IPlotGroupStyleCollection localGroups)
 		{
-			if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(SymbolShapeStyleGroupStyle)))
-				localGroups.Add(new SymbolShapeStyleGroupStyle());
+			if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(ScatterSymbolGroupStyle)))
+				localGroups.Add(new ScatterSymbolGroupStyle());
 		}
 
-		public delegate IScatterSymbolShape Getter();
+		public delegate IScatterSymbol Getter();
 
 		public static void PrepareStyle(
 			IPlotGroupStyleCollection externalGroups,
 			IPlotGroupStyleCollection localGroups,
 			Getter getter)
 		{
-			if (!externalGroups.ContainsType(typeof(SymbolShapeStyleGroupStyle))
+			if (!externalGroups.ContainsType(typeof(ScatterSymbolGroupStyle))
 				&& null != localGroups
-				&& !localGroups.ContainsType(typeof(SymbolShapeStyleGroupStyle)))
+				&& !localGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
 			{
-				localGroups.Add(new SymbolShapeStyleGroupStyle());
+				localGroups.Add(new ScatterSymbolGroupStyle());
 			}
 
-			SymbolShapeStyleGroupStyle grpStyle = null;
-			if (externalGroups.ContainsType(typeof(SymbolShapeStyleGroupStyle)))
-				grpStyle = (SymbolShapeStyleGroupStyle)externalGroups.GetPlotGroupStyle(typeof(SymbolShapeStyleGroupStyle));
+			ScatterSymbolGroupStyle grpStyle = null;
+			if (externalGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
+				grpStyle = (ScatterSymbolGroupStyle)externalGroups.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle));
 			else if (localGroups != null)
-				grpStyle = (SymbolShapeStyleGroupStyle)localGroups.GetPlotGroupStyle(typeof(SymbolShapeStyleGroupStyle));
+				grpStyle = (ScatterSymbolGroupStyle)localGroups.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle));
 
 			if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
 				grpStyle.Initialize(getter());
 		}
 
-		public delegate void Setter(IScatterSymbolShape val);
+		public delegate void Setter(IScatterSymbol val);
 
 		public static void ApplyStyle(
 			IPlotGroupStyleCollection externalGroups,
 			IPlotGroupStyleCollection localGroups,
 			Setter setter)
 		{
-			SymbolShapeStyleGroupStyle grpStyle = null;
+			ScatterSymbolGroupStyle grpStyle = null;
 			IPlotGroupStyleCollection grpColl = null;
-			if (externalGroups.ContainsType(typeof(SymbolShapeStyleGroupStyle)))
+			if (externalGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
 				grpColl = externalGroups;
-			else if (localGroups != null && localGroups.ContainsType(typeof(SymbolShapeStyleGroupStyle)))
+			else if (localGroups != null && localGroups.ContainsType(typeof(ScatterSymbolGroupStyle)))
 				grpColl = localGroups;
 
 			if (null != grpColl)
 			{
-				grpStyle = (SymbolShapeStyleGroupStyle)grpColl.GetPlotGroupStyle(typeof(SymbolShapeStyleGroupStyle));
-				grpColl.OnBeforeApplication(typeof(SymbolShapeStyleGroupStyle));
+				grpStyle = (ScatterSymbolGroupStyle)grpColl.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle));
+				grpColl.OnBeforeApplication(typeof(ScatterSymbolGroupStyle));
 				setter(grpStyle.ShapeAndStyle);
 			}
 		}

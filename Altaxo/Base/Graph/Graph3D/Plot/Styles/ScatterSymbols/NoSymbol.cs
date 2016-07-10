@@ -22,30 +22,50 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
+using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Drawing;
 
-namespace Altaxo.Graph.Graph3D.Plot.Styles
+namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 {
 	/// <summary>
-	/// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable.
+	/// Represents the null symbol in a scatter plot, i.e. this symbol is not visible.
 	/// </summary>
-	/// <seealso cref="Altaxo.Main.IImmutable" />
-	public interface IScatterSymbolShape : Main.IImmutable
+	/// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol" />
+	public sealed class NoSymbol : ScatterSymbolShapeBase
 	{
+		public static NoSymbol Instance { get; private set; } = new NoSymbol();
+
+		private NoSymbol()
+		{
+		}
+
+		#region Serialization
+
 		/// <summary>
-		/// Paints the symbol with the specified size at the origin of the coordinate system.
+		/// 2016-05-09 initial version.
 		/// </summary>
-		/// <param name="g">The graphics context.</param>
-		/// <param name="material">The material used to draw the symbol.</param>
-		/// <param name="centerLocation">The location of the center of the symbol.</param>
-		/// <param name="symbolSize">Size of the symbol.</param>
-		void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize);
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NoSymbol), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				return Instance;
+			}
+		}
+
+		#endregion Serialization
+
+		public override void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize)
+		{
+		}
 	}
 }

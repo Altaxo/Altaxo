@@ -108,8 +108,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 				_doc.RemoveType(typeof(ColorGroupStyle));
 			if (_doc.ContainsType(typeof(LineStyleGroupStyle)))
 				_doc.RemoveType(typeof(LineStyleGroupStyle));
-			if (_doc.ContainsType(typeof(SymbolShapeStyleGroupStyle)))
-				_doc.RemoveType(typeof(SymbolShapeStyleGroupStyle));
+			if (_doc.ContainsType(typeof(ScatterSymbolGroupStyle)))
+				_doc.RemoveType(typeof(ScatterSymbolGroupStyle));
 
 			if (color)
 			{
@@ -125,11 +125,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			if (symbol)
 			{
 				if (serial && linestyle)
-					_doc.Add(new SymbolShapeStyleGroupStyle(), typeof(LineStyleGroupStyle));
+					_doc.Add(new ScatterSymbolGroupStyle(), typeof(LineStyleGroupStyle));
 				else if (serial && color)
-					_doc.Add(new SymbolShapeStyleGroupStyle(), typeof(ColorGroupStyle));
+					_doc.Add(new ScatterSymbolGroupStyle(), typeof(ColorGroupStyle));
 				else
-					_doc.Add(new SymbolShapeStyleGroupStyle());
+					_doc.Add(new ScatterSymbolGroupStyle());
 			}
 
 			_doc.PlotGroupStrictness = _view.PlotGroupStrict;
@@ -171,7 +171,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 				isGroupedByColor = plotGroupStyles.ContainsType(typeof(ColorGroupStyle));
 				isGroupedByLineStyle = plotGroupStyles.ContainsType(typeof(LineStyleGroupStyle));
-				isGroupedBySymbolStyle = plotGroupStyles.ContainsType(typeof(SymbolShapeStyleGroupStyle));
+				isGroupedBySymbolStyle = plotGroupStyles.ContainsType(typeof(ScatterSymbolGroupStyle));
 
 				if (plotGroupStyles.Count != (isGroupedByColor ? 1 : 0) + (isGroupedByLineStyle ? 1 : 0) + (isGroupedBySymbolStyle ? 1 : 0))
 					return false;
@@ -182,7 +182,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 				if (isGroupedByLineStyle)
 					list.Add(typeof(LineStyleGroupStyle));
 				if (isGroupedBySymbolStyle)
-					list.Add(typeof(SymbolShapeStyleGroupStyle));
+					list.Add(typeof(ScatterSymbolGroupStyle));
 
 				// Test for concurrent stepping
 				bool isConcurrent = true;

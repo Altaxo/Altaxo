@@ -22,21 +22,22 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Linq;
+using System.Text;
 
-namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbolShapes
+namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
 	/// <summary>
-	/// Represents the null symbol in a scatter plot, i.e. this symbol is not visible.
+	/// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable.
 	/// </summary>
-	/// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbolShape" />
-	public abstract class ScatterSymbolShapeBase : IScatterSymbolShape
+	/// <seealso cref="Altaxo.Main.IImmutable" />
+	public interface IScatterSymbol : Main.IImmutable
 	{
 		/// <summary>
 		/// Paints the symbol with the specified size at the origin of the coordinate system.
@@ -45,16 +46,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbolShapes
 		/// <param name="material">The material used to draw the symbol.</param>
 		/// <param name="centerLocation">The location of the center of the symbol.</param>
 		/// <param name="symbolSize">Size of the symbol.</param>
-		public abstract void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize);
-
-		public override int GetHashCode()
-		{
-			return this.GetType().GetHashCode();
-		}
-
-		public override bool Equals(object obj)
-		{
-			return this.GetType() == obj?.GetType();
-		}
+		void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize);
 	}
 }

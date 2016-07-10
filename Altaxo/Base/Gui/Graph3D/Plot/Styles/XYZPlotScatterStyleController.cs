@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
 
-				var symbolTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbolShape));
+				var symbolTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbol));
 				_symbolShapeChoices = new SelectableListNodeList();
 				foreach (var ty in symbolTypes)
 				{
@@ -163,7 +163,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 				// Symbol Shape
 				var shapeType = (Type)_symbolShapeChoices.FirstSelectedNode.Tag;
-				_doc.Shape = (IScatterSymbolShape)Activator.CreateInstance(shapeType);
+				_doc.Shape = (IScatterSymbol)Activator.CreateInstance(shapeType);
 				// Symbol Style
 
 				// Symbol Size

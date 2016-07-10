@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -51,6 +51,8 @@ namespace Altaxo.Gui.Graph
 		public event Action RequestMoveUpGroupStyle;
 
 		public event Action RequestMoveDownGroupStyle;
+
+		public event Action RequestGroupStyleDoubleClick;
 
 		public PlotGroupCollectionControlAdvanced()
 		{
@@ -105,6 +107,11 @@ namespace Altaxo.Gui.Graph
 		{
 			// SynchronizeListBoxWithCheckableSelectableListNodes(_lbGroupStyles);
 			RequestMoveDownGroupStyle?.Invoke();
+		}
+
+		private void EhCurrentUsedGroupStyles_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			RequestGroupStyleDoubleClick?.Invoke();
 		}
 
 		#region IPlotGroupCollectionView

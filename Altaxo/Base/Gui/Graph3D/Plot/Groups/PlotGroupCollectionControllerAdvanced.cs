@@ -29,6 +29,7 @@ using Altaxo.Graph.Plot.Groups;
 using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Altaxo.Gui.Graph3D.Plot.Groups
@@ -64,6 +65,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 		event Action RequestMoveUpGroupStyle;
 
 		event Action RequestMoveDownGroupStyle;
+
+		event Action RequestGroupStyleDoubleClick;
 	}
 
 	#endregion Interfaces
@@ -256,6 +259,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			_view.RequestMoveUpGroupStyle += EhView_MoveUpGroupStyle;
 
 			_view.RequestMoveDownGroupStyle += EhView_MoveDownGroupStyle;
+
+			_view.RequestGroupStyleDoubleClick += EhView_EditGroupStyle;
 		}
 
 		protected override void DetachView()
@@ -275,6 +280,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			_view.RequestMoveUpGroupStyle -= EhView_MoveUpGroupStyle;
 
 			_view.RequestMoveDownGroupStyle -= EhView_MoveDownGroupStyle;
+
+			_view.RequestGroupStyleDoubleClick -= EhView_EditGroupStyle;
 
 			base.DetachView();
 		}
@@ -546,6 +553,25 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			// this requires the whole currentNormalStyle list to be updated
 			UpdateCurrentNormalOrder();
 			_view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
+		}
+
+		public void EhView_EditGroupStyle()
+		{
+			var selNode = _currentNormalStyles.FirstOrDefault(x => x.IsSelected);
+			if (null == selNode)
+				return;
+
+			IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)selNode.Tag);
+
+			var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { style }, typeof(IMVCANController));
+
+			if (null != controller && null != controller.ViewObject)
+			{
+				if (Current.Gui.ShowDialog(controller, "Edit style"))
+				{
+					// TODO set plot group style
+				}
+			}
 		}
 
 		#endregion IPlotGroupCollectionViewEventSink Members

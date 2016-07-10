@@ -30,22 +30,24 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbolShapes
+namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 {
 	/// <summary>
 	/// Represents the null symbol in a scatter plot, i.e. this symbol is not visible.
 	/// </summary>
-	/// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbolShape" />
-	public sealed class Cube : ScatterSymbolShapeBase
+	/// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol" />
+	public sealed class Sphere : ScatterSymbolShapeBase
 	{
-		public static Cube Instance { get; private set; } = new Cube();
+		public static Sphere Instance { get; private set; } = new Sphere();
+
+		public static SolidIcoSphere _geometry = new SolidIcoSphere(2);
 
 		#region Serialization
 
 		/// <summary>
-		/// 2016-05-09 initial version.
+		/// 2016-07-01 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Cube), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Sphere), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -64,16 +66,22 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbolShapes
 		{
 			var symbolSizeBy2 = symbolSize / 2;
 			var buffers = g.GetPositionNormalIndexedTriangleBuffer(material);
+
 			if (null != buffers.PositionNormalIndexedTriangleBuffer)
 			{
-				var buf = buffers.PositionNormalIndexedTriangleBuffer;
-				var voffs = buffers.PositionNormalIndexedTriangleBuffer.VertexCount;
-				SolidCube.Add(
-					centerLocation.X - symbolSizeBy2, centerLocation.Y - symbolSizeBy2, centerLocation.Z - symbolSizeBy2,
-					symbolSize, symbolSize, symbolSize,
-					(point, normal) => buf.AddTriangleVertex(point.X, point.Y, point.Z, normal.X, normal.Y, normal.Z),
-					(i1, i2, i3) => buf.AddTriangleIndices(i1 + voffs, i2 + voffs, i3 + voffs),
-					ref voffs);
+				var buffer = buffers.PositionNormalIndexedTriangleBuffer;
+				var offs = buffer.VertexCount;
+
+				foreach (var entry in _geometry.VerticesAndNormalsForSphere)
+				{
+					var pt = centerLocation + symbolSizeBy2 * (VectorD3D)entry.Item1;
+					var nm = entry.Item2;
+					buffer.AddTriangleVertex(pt.X, pt.Y, pt.Z, nm.X, nm.Y, nm.Z);
+				}
+				foreach (var idx in _geometry.TriangleIndicesForSphere)
+				{
+					buffer.AddTriangleIndices(idx.Item1 + offs, idx.Item2 + offs, idx.Item3 + offs);
+				}
 			}
 		}
 	}

@@ -62,7 +62,7 @@
 		</ListBox>
 
 		<Label Grid.Column="2" Grid.Row="2" Content="Currently used group styles:" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
-		<ListBox x:Name="_lbGroupStyles" Grid.Column="2" Grid.Row="3" Grid.RowSpan="7" MinWidth="80">
+		<ListBox x:Name="_lbGroupStyles" Grid.Column="2" Grid.Row="3" Grid.RowSpan="7" MinWidth="80" MouseDoubleClick="EhCurrentUsedGroupStyles_MouseDoubleClick">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a ListBoxItem to a CheckableSelectableListNode -->
 				<Style TargetType="{x:Type ListBoxItem}">
