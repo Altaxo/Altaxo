@@ -229,14 +229,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._width = from._width;
 				this._position = from._position;
 				this._independentFillColor = from._independentFillColor;
-				this._fillBrush = from._fillBrush == null ? null : from._fillBrush.Clone();
+				ChildCloneToMember(ref _fillBrush, from._fillBrush);
 				this._independentFrameColor = from._independentFrameColor;
-				this._framePen = from._framePen == null ? null : from._framePen.Clone();
+				ChildCloneToMember(ref _framePen, from._framePen);
 				this._startAtPreviousItem = from._startAtPreviousItem;
 				this._previousItemYGap = from._previousItemYGap;
 				this._usePhysicalBaseValue = from._usePhysicalBaseValue;
 				this._baseValue = from._baseValue;
-				//this._parent = from._parent;
+				EhSelfChanged();
 				return true;
 			}
 			return false;

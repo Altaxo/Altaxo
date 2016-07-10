@@ -188,10 +188,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._showEndBars = from._showEndBars;
 				this._isHorizontalStyle = from._isHorizontalStyle;
 				this._doNotShiftHorizontalPosition = from._doNotShiftHorizontalPosition;
-				this._strokePen = (PenX)from._strokePen.Clone();
-				this._positiveErrorColumn = (INumericColumnProxy)from._positiveErrorColumn.Clone();
-				this._negativeErrorColumn = (INumericColumnProxy)from._negativeErrorColumn.Clone();
+				ChildCloneToMember(ref _strokePen, from._strokePen);
+				ChildCloneToMember(ref _positiveErrorColumn, from._positiveErrorColumn);
+				ChildCloneToMember(ref _negativeErrorColumn, from._negativeErrorColumn);
 				this._cachedLogicalShiftOfIndependent = from._cachedLogicalShiftOfIndependent;
+				EhSelfChanged();
 				return true;
 			}
 			return false;
