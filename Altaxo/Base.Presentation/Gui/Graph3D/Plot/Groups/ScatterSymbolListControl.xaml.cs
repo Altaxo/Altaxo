@@ -57,6 +57,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 		public event DragCancelledDelegate AvailableSymbols_DragCancelled;
 
+		public event DropCanAcceptDataDelegate AvailableSymbols_DropCanAcceptData;
+
+		public event DropDelegate AvailableSymbols_Drop;
+
 		public event CanStartDragDelegate CurrentSymbols_CanStartDrag;
 
 		public event StartDragDelegate CurrentSymbols_StartDrag;
@@ -68,6 +72,20 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 		public event DropCanAcceptDataDelegate CurrentSymbols_DropCanAcceptData;
 
 		public event DropDelegate CurrentSymbols_Drop;
+
+		public bool StoreInUserSettings { get { return true == _guiStoreInUserSettings.IsChecked; } }
+
+		public event Action AvailableItem_AddToCurrent;
+
+		public event Action CurrentItem_MoveUp;
+
+		public event Action CurrentItem_MoveDown;
+
+		public event Action CurrentItem_Remove;
+
+		public event Action CurrentItem_Edit;
+
+		public event Action CurrentList_Store;
 
 		public ScatterSymbolListControl()
 		{
@@ -95,6 +113,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			_guiNewListName.ToolTip = toolTipText;
 
 			_guiNewListName.IsReadOnly = !isEnabled;
+			_guiStoreInUserSettings.IsEnabled = isEnabled;
+			_guiStoreList.IsEnabled = isEnabled;
 
 			if (isMarked)
 				_guiNewListName.Background = Brushes.LightPink;
@@ -156,6 +176,85 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 		}
 
 		#endregion AvailableSymbols_DragHander
+
+		#region Available symbols drop handler
+
+		// this drop handler's only purpose is to get item dragged from the current list onto the available list being removed from the list
+
+		private IDropTarget _availableSymbols_DropTarget;
+
+		public IDropTarget AvailableSymbolsDropTarget
+		{
+			get
+			{
+				if (null == _availableSymbols_DropTarget)
+					_availableSymbols_DropTarget = new AvailableSymbols_DropTarget(this);
+				return _availableSymbols_DropTarget;
+			}
+		}
+
+		public class AvailableSymbols_DropTarget : IDropTarget
+		{
+			private ScatterSymbolListControl _parentControl;
+
+			public AvailableSymbols_DropTarget(ScatterSymbolListControl ctrl)
+			{
+				_parentControl = ctrl;
+			}
+
+			public void DragOver(IDropInfo dropInfo)
+			{
+				DragDropEffects resultingEffect;
+				Type adornerType;
+				if (CanAcceptData(dropInfo, out resultingEffect, out adornerType))
+				{
+					dropInfo.Effects = resultingEffect;
+					dropInfo.DropTargetAdorner = adornerType;
+				}
+			}
+
+			protected bool CanAcceptData(IDropInfo dropInfo, out DragDropEffects resultingEffect, out Type adornerType)
+			{
+				var result = _parentControl.AvailableSymbols_DropCanAcceptData?.Invoke(
+					dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
+					(dropInfo.VisualTarget as FrameworkElement)?.Tag,
+					GuiHelper.ToAltaxo(dropInfo.InsertPosition),
+					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
+					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey));
+
+				if (null != result)
+				{
+					resultingEffect = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
+					adornerType = result.Value.ItemIsSwallowingData ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
+
+					return result.Value.CanCopy | result.Value.CanMove;
+				}
+				else
+				{
+					resultingEffect = DragDropEffects.None;
+					adornerType = null;
+					return false;
+				}
+			}
+
+			public void Drop(IDropInfo dropInfo)
+			{
+				var result = _parentControl.AvailableSymbols_Drop?.Invoke(
+					dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
+					dropInfo.TargetItem,
+					GuiHelper.ToAltaxo(dropInfo.InsertPosition),
+					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
+					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey)
+					);
+
+				if (null != result)
+				{
+					dropInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.IsCopy, result.Value.IsMove); // it is important to get back the resulting effect to dropInfo, because dropInfo informs the drag handler about the resulting effect, which can e.g. delete the items after a move operation
+				}
+			}
+		}
+
+		#endregion Available symbols drop handler
 
 		#region CurrentSymbols_DragHander
 
@@ -250,7 +349,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			{
 				var result = _parentControl.CurrentSymbols_DropCanAcceptData?.Invoke(
 					dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
-					(dropInfo.VisualTarget as FrameworkElement)?.Tag,
+					dropInfo.TargetItem,
 					GuiHelper.ToAltaxo(dropInfo.InsertPosition),
 					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
 					dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey));
@@ -299,6 +398,42 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 		private void EhAvailableList_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			AvailableLists_SelectionChanged?.Invoke((NGTreeNode)_guiAvailableLists.SelectedItem);
+		}
+
+		private void EhAvailableItem_AddToCurrent(object sender, RoutedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiAvailableSymbols);
+			GuiHelper.SynchronizeSelectionFromGui(_guiCurrentItems);
+			AvailableItem_AddToCurrent?.Invoke();
+		}
+
+		private void EhCurrentItem_Remove(object sender, RoutedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiCurrentItems);
+			CurrentItem_Remove?.Invoke();
+		}
+
+		private void EhCurrentItem_MoveUp(object sender, RoutedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiCurrentItems);
+			CurrentItem_MoveUp?.Invoke();
+		}
+
+		private void EhCurrentItem_MoveDown(object sender, RoutedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiCurrentItems);
+			CurrentItem_MoveDown?.Invoke();
+		}
+
+		private void EhCurrentItem_Edit(object sender, RoutedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiCurrentItems);
+			CurrentItem_Edit?.Invoke();
+		}
+
+		private void EhCurrentList_Store(object sender, RoutedEventArgs e)
+		{
+			CurrentList_Store?.Invoke();
 		}
 	}
 }

@@ -151,17 +151,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				return 0; // nothing changed
 
 			if (null == _symbolList)
-				_symbolList = ScatterSymbolList.BuiltinDefault;
+				_symbolList = ScatterSymbolListManager.Instance.BuiltinDefault;
 
 			var list = _symbolList;
-			var listcount = list.Count;
+			var listcount = list.Items.Count;
 
 			if (listcount == 0)
 			{
 				return 0;
 			}
 
-			var idx = list.IndexOf(_shapeAndStyle);
+			var idx = list.Items.IndexOf(_shapeAndStyle);
 			if (idx < 0)
 				idx = 0;
 
@@ -184,7 +184,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				}
 			}
 
-			_shapeAndStyle = list[destIdx];
+			_shapeAndStyle = list.Items[destIdx];
 			return wraps;
 		}
 

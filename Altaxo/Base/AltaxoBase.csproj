@@ -364,6 +364,7 @@
     <Compile Include="Graph\Graph3D\Plot\Groups\ICoordinateTransformingGroupStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\LineStyleGroupStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\PlotGroupStyleCollection.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Groups\ScatterSymbolListManager.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\ScatterSymbolList.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\ScatterSymbolGroupStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\IGPlotItem.cs" />
