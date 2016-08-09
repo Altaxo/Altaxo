@@ -607,7 +607,7 @@ namespace Altaxo.Graph.Gdi.Axis
 			}
 			set
 			{
-				this._brush = (BrushX)value.Clone();
+				this.ChildCloneToMember(ref _brush, value.Clone());
 				EhSelfChanged(EventArgs.Empty);
 			}
 		}
