@@ -30,11 +30,11 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph3D.Plot.Groups
 {
-	[ExpectedTypeOfView(typeof(IScatterSymbolListView))]
-	[UserControllerForObject(typeof(ScatterSymbolGroupStyle))]
-	public class ScatterSymbolGroupStyleController : MVCANControllerEditOriginalDocBase<ScatterSymbolGroupStyle, IScatterSymbolListView>
+	[ExpectedTypeOfView(typeof(IStyleListView))]
+	[UserControllerForObject(typeof(LineStyleGroupStyle))]
+	public class LineStyleGroupStyleController : MVCANControllerEditOriginalDocBase<LineStyleGroupStyle, IStyleListView>
 	{
-		private ScatterSymbolListController _listController;
+		private DashPatternListController _listController;
 
 		protected override void Initialize(bool initData)
 		{
@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 			if (initData)
 			{
-				_listController = new ScatterSymbolListController();
+				_listController = new DashPatternListController();
 				_listController.InitializeDocument(_doc.ListOfValues);
 			}
 
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			if (!_listController.Apply(disposeController))
 				return ApplyEnd(false, disposeController);
 
-			_doc.ListOfValues = (ScatterSymbolList)_listController.ModelObject;
+			_doc.ListOfValues = (DashPatternList)_listController.ModelObject;
 
 			return ApplyEnd(true, disposeController);
 		}

@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Collections;
+using Altaxo.Graph;
 using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Gui.Common;
@@ -34,45 +35,45 @@ using System.Text;
 
 namespace Altaxo.Gui.Graph3D.Plot.Groups
 {
-	public interface IScatterSymbolListView
+	public interface IStyleListView
 	{
 		void AvailableLists_Initialize(NGTreeNodeCollection nodes);
 
 		event Action<NGTreeNode> AvailableLists_SelectionChanged;
 
-		event Action CurrentScatterSymbolListName_Changed;
+		event Action CurrentItemListName_Changed;
 
-		void AvailableScatterSymbols_Initialize(SelectableListNodeList items);
+		void AvailableItems_Initialize(SelectableListNodeList items);
 
-		void CurrentScatterSymbolList_Initialize(SelectableListNodeList items);
+		void CurrentItemList_Initialize(SelectableListNodeList items);
 
-		void CurrentScatterSymbolListName_Initialize(string name, bool isEnabled, bool isMarked, string toolTipText);
+		void CurrentItemListName_Initialize(string name, bool isEnabled, bool isMarked, string toolTipText);
 
-		string CurrentScatterSymbolListName { get; }
+		string CurrentItemListName { get; }
 
-		event CanStartDragDelegate AvailableSymbols_CanStartDrag;
+		event CanStartDragDelegate AvailableItems_CanStartDrag;
 
-		event StartDragDelegate AvailableSymbols_StartDrag;
+		event StartDragDelegate AvailableItems_StartDrag;
 
-		event DragEndedDelegate AvailableSymbols_DragEnded;
+		event DragEndedDelegate AvailableItems_DragEnded;
 
-		event DragCancelledDelegate AvailableSymbols_DragCancelled;
+		event DragCancelledDelegate AvailableItems_DragCancelled;
 
-		event DropCanAcceptDataDelegate AvailableSymbols_DropCanAcceptData;
+		event DropCanAcceptDataDelegate AvailableItems_DropCanAcceptData;
 
-		event DropDelegate AvailableSymbols_Drop;
+		event DropDelegate AvailableItems_Drop;
 
-		event CanStartDragDelegate CurrentSymbols_CanStartDrag;
+		event CanStartDragDelegate CurrentItems_CanStartDrag;
 
-		event StartDragDelegate CurrentSymbols_StartDrag;
+		event StartDragDelegate CurrentItems_StartDrag;
 
-		event DragEndedDelegate CurrentSymbols_DragEnded;
+		event DragEndedDelegate CurrentItems_DragEnded;
 
-		event DragCancelledDelegate CurrentSymbols_DragCancelled;
+		event DragCancelledDelegate CurrentItems_DragCancelled;
 
-		event DropCanAcceptDataDelegate CurrentSymbols_DropCanAcceptData;
+		event DropCanAcceptDataDelegate CurrentItems_DropCanAcceptData;
 
-		event DropDelegate CurrentSymbols_Drop;
+		event DropDelegate CurrentItems_Drop;
 
 		bool StoreInUserSettings { get; }
 
@@ -89,16 +90,27 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 		event Action CurrentList_Store;
 	}
 
-	[ExpectedTypeOfView(typeof(IScatterSymbolListView))]
-	[UserControllerForObject(typeof(ScatterSymbolList))]
-	public class ScatterSymbolListController : MVCANControllerEditImmutableDocBase<ScatterSymbolList, IScatterSymbolListView>
+	[ExpectedTypeOfView(typeof(IStyleListView))]
+	public class StyleListController<TManager, TList, TItem>
+		:
+		MVCANControllerEditImmutableDocBase<IStyleList<TItem>, IStyleListView>
+		where TItem : class, Altaxo.Main.IImmutable
+		where TList : IStyleList<TItem>
+		where TManager : IStyleListManager<TList, TItem>
 	{
-		private NGTreeNode _availableListsRootNode;
-		private SelectableListNodeList _availableScatterSymbolTypes;
-		private SelectableListNodeList _currentScatterSymbols;
+		private TManager _manager;
 
-		private bool _currentScatterSymbols_IsDirty;
+		private NGTreeNode _availableListsRootNode;
+		private SelectableListNodeList _availableItemTypes;
+		private SelectableListNodeList _currentItems;
+
+		private bool _currentItems_IsDirty;
 		private bool _isNameOfNewListValid;
+
+		public StyleListController(TManager managerInstance)
+		{
+			_manager = managerInstance;
+		}
 
 		protected override void Initialize(bool initData)
 		{
@@ -108,17 +120,17 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			{
 				Controller_AvailableLists_Initialize();
 
-				// Available scatter symbols
-				var scatterSymbolTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbol));
-				_availableScatterSymbolTypes = new SelectableListNodeList();
-				foreach (var type in scatterSymbolTypes)
-					_availableScatterSymbolTypes.Add(new SelectableListNode(type.Name, type, false));
+				// Available items
+				var itemTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(TItem));
+				_availableItemTypes = new SelectableListNodeList();
+				foreach (var type in itemTypes)
+					_availableItemTypes.Add(new SelectableListNode(type.Name, type, false));
 
-				// Current scatter symbols
-				_currentScatterSymbols = new SelectableListNodeList();
+				// Current items
+				_currentItems = new SelectableListNodeList();
 				foreach (var sym in _doc)
 				{
-					_currentScatterSymbols.Add(new SelectableListNode(sym.GetType().Name, sym, false));
+					_currentItems.Add(new SelectableListNode(sym.GetType().Name, sym, false));
 				}
 			}
 
@@ -126,9 +138,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			{
 				View_AvailableLists_Initialize();
 
-				_view.AvailableScatterSymbols_Initialize(_availableScatterSymbolTypes);
-				_view.CurrentScatterSymbolList_Initialize(_currentScatterSymbols);
-				_view.CurrentScatterSymbolListName_Initialize(_doc.Name, false, false, "Name can not be changed because list is already stored!");
+				_view.AvailableItems_Initialize(_availableItemTypes);
+				_view.CurrentItemList_Initialize(_currentItems);
+				_view.CurrentItemListName_Initialize(_doc.Name, false, false, "Name can not be changed because list is already stored!");
 			}
 		}
 
@@ -151,31 +163,31 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 			_view.AvailableLists_SelectionChanged += EhAvailableLists_SelectionChanged;
 
-			_view.CurrentScatterSymbolListName_Changed += EhCurrentScatterSymbolListName_Changed;
+			_view.CurrentItemListName_Changed += EhCurrentItemListName_Changed;
 
-			_view.AvailableSymbols_CanStartDrag += EhAvailableSymbols_CanStartDrag;
+			_view.AvailableItems_CanStartDrag += EhAvailableItems_CanStartDrag;
 
-			_view.AvailableSymbols_StartDrag += EhAvailableSymbols_StartDrag;
+			_view.AvailableItems_StartDrag += EhAvailableItems_StartDrag;
 
-			_view.AvailableSymbols_DragEnded += AvailableSymbols_DragEnded;
+			_view.AvailableItems_DragEnded += AvailableItems_DragEnded;
 
-			_view.AvailableSymbols_DragCancelled += EhAvailableSymbols_DragCancelled;
+			_view.AvailableItems_DragCancelled += EhAvailableItems_DragCancelled;
 
-			_view.AvailableSymbols_DropCanAcceptData += EhAvailableSymbols_DropCanAcceptData;
+			_view.AvailableItems_DropCanAcceptData += EhAvailableItems_DropCanAcceptData;
 
-			_view.AvailableSymbols_Drop += EhAvailableSymbols_Drop;
+			_view.AvailableItems_Drop += EhAvailableItems_Drop;
 
-			_view.CurrentSymbols_CanStartDrag += EhCurrentSymbols_CanStartDrag;
+			_view.CurrentItems_CanStartDrag += EhCurrentItems_CanStartDrag;
 
-			_view.CurrentSymbols_StartDrag += EhCurrentSymbols_StartDrag;
+			_view.CurrentItems_StartDrag += EhCurrentItems_StartDrag;
 
-			_view.CurrentSymbols_DragEnded += EhCurrentSymbols_DragEnded;
+			_view.CurrentItems_DragEnded += EhCurrentItems_DragEnded;
 
-			_view.CurrentSymbols_DragCancelled += EhCurrentSymbols_DragCancelled;
+			_view.CurrentItems_DragCancelled += EhCurrentItems_DragCancelled;
 
-			_view.CurrentSymbols_DropCanAcceptData += EhCurrentSymbols_DropCanAcceptData;
+			_view.CurrentItems_DropCanAcceptData += EhCurrentItems_DropCanAcceptData;
 
-			_view.CurrentSymbols_Drop += EhCurrentSymbols_Drop;
+			_view.CurrentItems_Drop += EhCurrentItems_Drop;
 
 			_view.AvailableItem_AddToCurrent += EhAvailableItem_AddToCurrent;
 
@@ -194,31 +206,31 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 		{
 			_view.AvailableLists_SelectionChanged -= EhAvailableLists_SelectionChanged;
 
-			_view.CurrentScatterSymbolListName_Changed -= EhCurrentScatterSymbolListName_Changed;
+			_view.CurrentItemListName_Changed -= EhCurrentItemListName_Changed;
 
-			_view.AvailableSymbols_CanStartDrag -= EhAvailableSymbols_CanStartDrag;
+			_view.AvailableItems_CanStartDrag -= EhAvailableItems_CanStartDrag;
 
-			_view.AvailableSymbols_StartDrag -= EhAvailableSymbols_StartDrag;
+			_view.AvailableItems_StartDrag -= EhAvailableItems_StartDrag;
 
-			_view.AvailableSymbols_DragEnded -= AvailableSymbols_DragEnded;
+			_view.AvailableItems_DragEnded -= AvailableItems_DragEnded;
 
-			_view.AvailableSymbols_DragCancelled -= EhAvailableSymbols_DragCancelled;
+			_view.AvailableItems_DragCancelled -= EhAvailableItems_DragCancelled;
 
-			_view.AvailableSymbols_DropCanAcceptData -= EhAvailableSymbols_DropCanAcceptData;
+			_view.AvailableItems_DropCanAcceptData -= EhAvailableItems_DropCanAcceptData;
 
-			_view.AvailableSymbols_Drop -= EhAvailableSymbols_Drop;
+			_view.AvailableItems_Drop -= EhAvailableItems_Drop;
 
-			_view.CurrentSymbols_CanStartDrag -= EhCurrentSymbols_CanStartDrag;
+			_view.CurrentItems_CanStartDrag -= EhCurrentItems_CanStartDrag;
 
-			_view.CurrentSymbols_StartDrag -= EhCurrentSymbols_StartDrag;
+			_view.CurrentItems_StartDrag -= EhCurrentItems_StartDrag;
 
-			_view.CurrentSymbols_DragEnded -= EhCurrentSymbols_DragEnded;
+			_view.CurrentItems_DragEnded -= EhCurrentItems_DragEnded;
 
-			_view.CurrentSymbols_DragCancelled -= EhCurrentSymbols_DragCancelled;
+			_view.CurrentItems_DragCancelled -= EhCurrentItems_DragCancelled;
 
-			_view.CurrentSymbols_DropCanAcceptData -= EhCurrentSymbols_DropCanAcceptData;
+			_view.CurrentItems_DropCanAcceptData -= EhCurrentItems_DropCanAcceptData;
 
-			_view.CurrentSymbols_Drop -= EhCurrentSymbols_Drop;
+			_view.CurrentItems_Drop -= EhCurrentItems_Drop;
 
 			_view.AvailableItem_AddToCurrent -= EhAvailableItem_AddToCurrent;
 
@@ -241,13 +253,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 		{
 			_availableListsRootNode = new NGTreeNode();
 
-			var allNames = ScatterSymbolListManager.Instance.GetAllListNames().ToArray();
+			var allNames = _manager.GetAllListNames().ToArray();
 			Array.Sort(allNames);
 			var dict = new Dictionary<string, NGTreeNode>();
 
 			foreach (var name in allNames)
 			{
-				var list = ScatterSymbolListManager.Instance.GetList(name);
+				var list = _manager.GetList(name);
 				_availableListsRootNode.Nodes.Add(new NGTreeNode(name) { Tag = list, IsSelected = object.ReferenceEquals(list, _doc) });
 			}
 		}
@@ -261,19 +273,19 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 		private void ControllerAndView_CurrentItemsAndName_Initialize()
 		{
-			_currentScatterSymbols.Clear();
+			_currentItems.Clear();
 			foreach (var sym in _doc)
 			{
-				_currentScatterSymbols.Add(new SelectableListNode(sym.GetType().Name, sym, false));
+				_currentItems.Add(new SelectableListNode(sym.GetType().Name, sym, false));
 			}
-			_view?.CurrentScatterSymbolList_Initialize(_currentScatterSymbols);
-			_view?.CurrentScatterSymbolListName_Initialize(_doc.Name, false, false, "Name can't be changed because list is already stored!");
-			_currentScatterSymbols_IsDirty = false;
+			_view?.CurrentItemList_Initialize(_currentItems);
+			_view?.CurrentItemListName_Initialize(_doc.Name, false, false, "Name can't be changed because list is already stored!");
+			_currentItems_IsDirty = false;
 		}
 
 		private bool TryToStoreList()
 		{
-			if (_currentScatterSymbols.Count == 0)
+			if (_currentItems.Count == 0)
 			{
 				Current.Gui.ErrorMessageBox("The list does not contains any items, thus it can not be stored");
 				return false;
@@ -285,13 +297,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 				return false;
 			}
 
-			var newList = new ScatterSymbolList(_view.CurrentScatterSymbolListName, _currentScatterSymbols.Select(node => (IScatterSymbol)node.Tag));
-
 			bool isUser = _view.StoreInUserSettings;
+			_doc = _manager.CreateNewList(_view.CurrentItemListName, _currentItems.Select(node => (TItem)node.Tag), true, isUser ? Altaxo.Main.ItemDefinitionLevel.UserDefined : Altaxo.Main.ItemDefinitionLevel.Project);
 
-			ScatterSymbolListManager.Instance.TryRegisterList(isUser ? Altaxo.Main.ItemDefinitionLevel.UserDefined : Altaxo.Main.ItemDefinitionLevel.Project, newList, out _doc);
 			_isNameOfNewListValid = true;
-			_currentScatterSymbols_IsDirty = false;
+			_currentItems_IsDirty = false;
 
 			Controller_AvailableLists_Initialize();
 			View_AvailableLists_Initialize();
@@ -302,7 +312,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 		private void EhCurrentList_Store()
 		{
-			if (_currentScatterSymbols_IsDirty)
+			if (_currentItems_IsDirty)
 				TryToStoreList();
 		}
 
@@ -318,8 +328,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 		private void EhCurrentItem_Edit()
 		{
-			var node = _currentScatterSymbols.FirstSelectedNode;
-			var item = node?.Tag as IScatterSymbol;
+			var node = _currentItems.FirstSelectedNode;
+			var item = node?.Tag as TItem;
 			if (null == item || !IsItemEditable(item))
 				return;
 
@@ -329,7 +339,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 			if (true == Current.Gui.ShowDialog(controller, "Edit item"))
 			{
-				item = (IScatterSymbol)controller.ModelObject;
+				item = (TItem)controller.ModelObject;
 				node.Text = item.GetType().Name;
 				node.Tag = item;
 			}
@@ -337,35 +347,35 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 		private void EhCurrentItem_Remove()
 		{
-			var node = _currentScatterSymbols.FirstSelectedNode;
+			var node = _currentItems.FirstSelectedNode;
 			if (node != null)
-				_currentScatterSymbols.Remove(node);
+				_currentItems.Remove(node);
 			SetListDirty();
 		}
 
 		private void EhCurrentItem_MoveDown()
 		{
-			_currentScatterSymbols.MoveSelectedItemsDown();
+			_currentItems.MoveSelectedItemsDown();
 			SetListDirty();
-			_view?.CurrentScatterSymbolList_Initialize(_currentScatterSymbols);
+			_view?.CurrentItemList_Initialize(_currentItems);
 		}
 
 		private void EhCurrentItem_MoveUp()
 		{
-			_currentScatterSymbols.MoveSelectedItemsUp();
+			_currentItems.MoveSelectedItemsUp();
 			SetListDirty();
-			_view?.CurrentScatterSymbolList_Initialize(_currentScatterSymbols);
+			_view?.CurrentItemList_Initialize(_currentItems);
 		}
 
 		private void EhAvailableItem_AddToCurrent()
 		{
-			var avNode = _availableScatterSymbolTypes.FirstSelectedNode;
+			var avNode = _availableItemTypes.FirstSelectedNode;
 			if (null == avNode)
 				return;
-			IScatterSymbol newItem = null;
+			TItem newItem = default(TItem);
 			try
 			{
-				newItem = (IScatterSymbol)Activator.CreateInstance((Type)avNode.Tag);
+				newItem = (TItem)Activator.CreateInstance((Type)avNode.Tag);
 			}
 			catch (Exception ex)
 			{
@@ -374,7 +384,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 			if (null != newItem)
 			{
-				_currentScatterSymbols.Add(new SelectableListNode(newItem.GetType().Name, newItem, false));
+				_currentItems.Add(new SelectableListNode(newItem.GetType().Name, newItem, false));
 				SetListDirty();
 			}
 		}
@@ -384,21 +394,21 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			if (null == node)
 				return;
 
-			if (_currentScatterSymbols_IsDirty)
+			if (_currentItems_IsDirty)
 			{
 				if (false == AskForDirtyListToSave())
 					return;
 			}
 
 			// node.Tag contains the list to choose
-			_doc = (ScatterSymbolList)node.Tag;
+			_doc = (TList)node.Tag;
 
 			ControllerAndView_CurrentItemsAndName_Initialize();
 		}
 
 		private bool AskForDirtyListToSave()
 		{
-			if (_currentScatterSymbols_IsDirty)
+			if (_currentItems_IsDirty)
 			{
 				for (;;)
 				{
@@ -415,7 +425,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			return true;
 		}
 
-		private void EhCurrentScatterSymbolListName_Changed()
+		private void EhCurrentItemListName_Changed()
 		{
 			SetListDirty();
 		}
@@ -423,33 +433,33 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 		private void SetListDirty()
 		{
 			string existingName;
-			if (ScatterSymbolListManager.Instance.TryGetListByMembers(_currentScatterSymbols.Select(node => (IScatterSymbol)node.Tag), out existingName))
+			if (_manager.TryGetListByMembers(_currentItems.Select(node => (TItem)node.Tag), out existingName))
 			{
-				_currentScatterSymbols_IsDirty = false;
+				_currentItems_IsDirty = false;
 				_isNameOfNewListValid = true;
-				_doc = ScatterSymbolListManager.Instance.GetList(existingName);
-				_view.CurrentScatterSymbolListName_Initialize(existingName, false, false, "Name can't be changed because list is already stored!");
+				_doc = _manager.GetList(existingName);
+				_view.CurrentItemListName_Initialize(existingName, false, false, "Name can't be changed because list is already stored!");
 				_availableListsRootNode.FromHereToLeavesDo(treeNode => treeNode.IsSelected = object.ReferenceEquals(treeNode.Tag, _doc));
 			}
 			else // this list is not known up to now
 			{
-				_currentScatterSymbols_IsDirty = true;
+				_currentItems_IsDirty = true;
 				_isNameOfNewListValid = true;
-				string name = _view.CurrentScatterSymbolListName;
-				_currentScatterSymbols_IsDirty = true;
-				if (!ScatterSymbolListManager.Instance.ContainsList(name) && !string.IsNullOrEmpty(name))
+				string name = _view.CurrentItemListName;
+				_currentItems_IsDirty = true;
+				if (!_manager.ContainsList(name) && !string.IsNullOrEmpty(name))
 				{
 					// is OK, we can use this name
-					_view.CurrentScatterSymbolListName_Initialize(name, true, false, "The name is available as new name of the list");
+					_view.CurrentItemListName_Initialize(name, true, false, "The name is available as new name of the list");
 				}
 				else if (string.IsNullOrEmpty(name))
 				{
-					_view.CurrentScatterSymbolListName_Initialize(name, true, true, "Please enter the name of the new list!");
+					_view.CurrentItemListName_Initialize(name, true, true, "Please enter the name of the new list!");
 					_isNameOfNewListValid = false;
 				}
 				else
 				{
-					_view.CurrentScatterSymbolListName_Initialize(name, true, true, "Please choose another name since this name is already in use!");
+					_view.CurrentItemListName_Initialize(name, true, true, "Please choose another name since this name is already in use!");
 					_isNameOfNewListValid = false;
 				}
 			}
@@ -457,18 +467,18 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 		private static DropReturnData DropFailedReturnData { get { return new DropReturnData { IsCopy = false, IsMove = false }; } }
 
-		#region Drag current symbols
+		#region Drag current items
 
-		private void EhCurrentSymbols_DragCancelled()
+		private void EhCurrentItems_DragCancelled()
 		{
 			_draggedNode = null;
 		}
 
-		private void EhCurrentSymbols_DragEnded(bool isCopy, bool isMove)
+		private void EhCurrentItems_DragEnded(bool isCopy, bool isMove)
 		{
 			if (isMove && _draggedNode != null)
 			{
-				_currentScatterSymbols.Remove(_draggedNode);
+				_currentItems.Remove(_draggedNode);
 				SetListDirty();
 			}
 
@@ -477,7 +487,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 		private SelectableListNode _draggedNode;
 
-		private StartDragData EhCurrentSymbols_StartDrag(IEnumerable items)
+		private StartDragData EhCurrentItems_StartDrag(IEnumerable items)
 		{
 			_draggedNode = items.OfType<SelectableListNode>().FirstOrDefault();
 
@@ -489,22 +499,22 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			};
 		}
 
-		private bool EhCurrentSymbols_CanStartDrag(IEnumerable items)
+		private bool EhCurrentItems_CanStartDrag(IEnumerable items)
 		{
 			var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
 			// to start a drag, at least one item must be selected
 			return selNode != null;
 		}
 
-		#endregion Drag current symbols
+		#endregion Drag current items
 
-		#region Drop onto current symbols
+		#region Drop onto current items
 
-		private DropCanAcceptDataReturnData EhCurrentSymbols_DropCanAcceptData(object data, object nonGuiTargetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
+		private DropCanAcceptDataReturnData EhCurrentItems_DropCanAcceptData(object data, object nonGuiTargetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
 		{
 			// investigate data
 
-			if (data is IScatterSymbol)
+			if (data is TItem)
 			{
 				return new DropCanAcceptDataReturnData
 				{
@@ -533,9 +543,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			}
 		}
 
-		private DropReturnData EhCurrentSymbols_Drop(object data, object nonGuiTargetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
+		private DropReturnData EhCurrentItems_Drop(object data, object nonGuiTargetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
 		{
-			IScatterSymbol droppedSymbol = null;
+			TItem droppedItem = default(TItem);
 			if (data is Type)
 			{
 				object createdObj = null;
@@ -549,17 +559,17 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 					return DropFailedReturnData;
 				}
 
-				if (!(createdObj is IScatterSymbol))
+				if (!(createdObj is TItem))
 				{
 					return DropFailedReturnData;
 				}
 
-				droppedSymbol = (IScatterSymbol)createdObj;
+				droppedItem = (TItem)createdObj;
 			} // end if data is type
-			else if (data is IScatterSymbol)
+			else if (data is TItem)
 			{
-				droppedSymbol = (IScatterSymbol)data;
-			} // end if data is IScatterSymbol
+				droppedItem = (TItem)data;
+			} // end if data is TItem
 			else
 			{
 				return DropFailedReturnData;
@@ -568,17 +578,17 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			int targetIndex = int.MaxValue;
 			if (nonGuiTargetItem is SelectableListNode)
 			{
-				int idx = _currentScatterSymbols.IndexOf((SelectableListNode)nonGuiTargetItem);
+				int idx = _currentItems.IndexOf((SelectableListNode)nonGuiTargetItem);
 				if (idx >= 0 && insertPosition.HasFlag(DragDropRelativeInsertPosition.AfterTargetItem))
 					++idx;
 				targetIndex = idx;
 			}
 
-			var newNode = new SelectableListNode(droppedSymbol.GetType().Name, droppedSymbol, false);
-			if (targetIndex >= _currentScatterSymbols.Count)
-				_currentScatterSymbols.Add(newNode);
+			var newNode = new SelectableListNode(droppedItem.GetType().Name, droppedItem, false);
+			if (targetIndex >= _currentItems.Count)
+				_currentItems.Add(newNode);
 			else
-				_currentScatterSymbols.Insert(targetIndex, newNode);
+				_currentItems.Insert(targetIndex, newNode);
 
 			SetListDirty();
 
@@ -589,19 +599,19 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			};
 		}
 
-		#endregion Drop onto current symbols
+		#endregion Drop onto current items
 
-		#region Drag Available Symbols
+		#region Drag Available items
 
-		private void EhAvailableSymbols_DragCancelled()
+		private void EhAvailableItems_DragCancelled()
 		{
 		}
 
-		private void AvailableSymbols_DragEnded(bool isCopy, bool isMove)
+		private void AvailableItems_DragEnded(bool isCopy, bool isMove)
 		{
 		}
 
-		private StartDragData EhAvailableSymbols_StartDrag(IEnumerable items)
+		private StartDragData EhAvailableItems_StartDrag(IEnumerable items)
 		{
 			var node = items.OfType<SelectableListNode>().FirstOrDefault();
 
@@ -613,40 +623,40 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			};
 		}
 
-		private bool EhAvailableSymbols_CanStartDrag(IEnumerable items)
+		private bool EhAvailableItems_CanStartDrag(IEnumerable items)
 		{
 			var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
 			// to start a drag, at least one item must be selected
 			return selNode != null;
 		}
 
-		#endregion Drag Available Symbols
+		#endregion Drag Available items
 
-		#region Drop onto Available Symbols
+		#region Drop onto available items
 
-		private DropCanAcceptDataReturnData EhAvailableSymbols_DropCanAcceptData(object data, object nonGuiTargetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
+		private DropCanAcceptDataReturnData EhAvailableItems_DropCanAcceptData(object data, object nonGuiTargetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
 		{
-			// when dropping onto available symbols, it's only purpose is to remove some items from the current scatter symbol lists
+			// when dropping onto available items, it's only purpose is to remove some items from the current item lists
 			// thus the only operation here is move
 			return new DropCanAcceptDataReturnData
 			{
 				CanCopy = false,
-				CanMove = true, // we want the item to be removed from the current scatter symbol list
+				CanMove = true, // we want the item to be removed from the current item list
 				ItemIsSwallowingData = false
 			};
 		}
 
-		private DropReturnData EhAvailableSymbols_Drop(object data, object nonGuiTargetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
+		private DropReturnData EhAvailableItems_Drop(object data, object nonGuiTargetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
 		{
-			// when dropping onto available symbols, it's only purpose is to remove some items from the current scatter symbol lists
+			// when dropping onto available items, it's only purpose is to remove some items from the item lists
 			// thus the only operation here is move
 
-			if (data is IScatterSymbol)
+			if (data is TItem)
 			{
 				return new DropReturnData
 				{
 					IsCopy = false,
-					IsMove = true // we want the item to be removed from the current scatter symbol list
+					IsMove = true // we want the item to be removed from the current item list
 				};
 			}
 			else
@@ -655,6 +665,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			}
 		}
 
-		#endregion Drop onto Available Symbols
+		#endregion Drop onto available items
 	}
 }

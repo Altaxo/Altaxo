@@ -31,18 +31,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
-	public class ScatterSymbolList : Main.IImmutable // TODO NET45 replace IList with IReadonlyList
+	public class ScatterSymbolList : StyleListBase<IScatterSymbol>
 	{
-		private string _name;
-		private IList<IScatterSymbol> _list;
-
 		#region Serialization
-
-		private ScatterSymbolList(string name, List<IScatterSymbol> listToTakeDirectly, Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-			_name = name;
-			_list = listToTakeDirectly.AsReadOnly();
-		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterSymbolList), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -52,7 +43,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				var s = (ScatterSymbolList)obj;
 				info.AddValue("Name", s._name);
 				info.CreateArray("Elements", s._list.Count);
-				foreach (var ele in s._list)
+				foreach (var ele in s)
 					info.AddValue("e", ele);
 				info.CommitArray();
 			}
@@ -68,7 +59,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 				var result = new ScatterSymbolList(name, list);
 				ScatterSymbolList existingList;
-				ScatterSymbolListManager.Instance.TryRegisterInstance(result, out existingList);
+				ScatterSymbolListManager.Instance.TryRegisterList(Main.ItemDefinitionLevel.Project, result, out existingList);
 				return result;
 			}
 		}
@@ -76,53 +67,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		#endregion Serialization
 
 		public ScatterSymbolList(string name, IEnumerable<IScatterSymbol> symbols)
+			: base(name, symbols)
 		{
-			_name = name;
-			_list = new List<IScatterSymbol>(symbols).AsReadOnly();
-		}
-
-		public string Name { get { return _name; } }
-
-		public IList<IScatterSymbol> Items { get { return _list; } }
-
-		public static bool AreListsStructuralEquivalent(IList<IScatterSymbol> l1, IList<IScatterSymbol> l2)
-		{
-			if (l1 == null || l2 == null)
-				return false;
-
-			if (l1.Count != l2.Count)
-				return false;
-
-			for (int i = l1.Count - 1; i >= 0; --i)
-			{
-				if (!l1[i].Equals(l2[i]))
-					return false;
-			}
-
-			return true;
-		}
-
-		public static bool AreListsStructuralEquivalent(IEnumerable<IScatterSymbol> l1, IList<IScatterSymbol> l2)
-		{
-			if (l1 == null || l2 == null)
-				return false;
-
-			int i = 0;
-			int len2 = l2.Count;
-			foreach (var item1 in l1)
-			{
-				if (i >= len2)
-					return false;
-
-				if (!item1.Equals(l2[i]))
-					return false;
-				++i;
-			}
-
-			if (i != l2.Count)
-				return false;
-
-			return true;
 		}
 	}
 }

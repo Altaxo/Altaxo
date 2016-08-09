@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D.Plot.Styles;
-using Altaxo.Main;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -32,29 +32,30 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
-	public class ScatterSymbolListManager : StyleListManagerBase<ScatterSymbolList, IScatterSymbol>
+	public class DashPatternListManager : StyleListManagerBase<DashPatternList, IDashPattern>
 	{
-		private static ScatterSymbolListManager _instance;
+		private static DashPatternListManager _instance;
 
-		static ScatterSymbolListManager()
+		static DashPatternListManager()
 		{
-			Instance = new ScatterSymbolListManager();
+			Instance = new DashPatternListManager();
 		}
 
-		protected ScatterSymbolListManager()
+		protected DashPatternListManager()
 			: base(
-					new ScatterSymbolList("BuiltinDefault", new IScatterSymbol[] {
-				new Styles.ScatterSymbols.Cube(),
-					new Styles.ScatterSymbols.Sphere(),
-					new Styles.ScatterSymbols.TetrahedronUp(),
-					new Styles.ScatterSymbols.TetrahedronDown()
+					new DashPatternList("BuiltinDefault", new IDashPattern[] {
+					new Drawing.D3D.DashPatterns.Solid(),
+					new Drawing.D3D.DashPatterns.Dash(),
+					new Drawing.D3D.DashPatterns.Dot(),
+					new Drawing.D3D.DashPatterns.DashDot(),
+					new Drawing.D3D.DashPatterns.DashDotDot(),
 			})
 					)
 
 		{
 		}
 
-		public static ScatterSymbolListManager Instance
+		public static DashPatternListManager Instance
 		{
 			get
 			{
@@ -75,9 +76,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			}
 		}
 
-		public override ScatterSymbolList CreateNewList(string name, IEnumerable<IScatterSymbol> symbols, bool registerNewList, ItemDefinitionLevel level)
+		public override DashPatternList CreateNewList(string name, IEnumerable<IDashPattern> symbols, bool registerNewList, Main.ItemDefinitionLevel level)
 		{
-			var newList = new ScatterSymbolList(name, symbols);
+			var newList = new DashPatternList(name, symbols);
 			var outList = newList;
 			if (registerNewList)
 			{

@@ -39,8 +39,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		private bool _isInitialized;
 		private IDashPattern _value;
 		private bool _isStepEnabled = true;
-
-		private static List<IDashPattern> _standardDashPatterns;
+		private IStyleList<IDashPattern> _listOfValues;
 
 		#region Serialization
 
@@ -51,12 +50,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			{
 				LineStyleGroupStyle s = (LineStyleGroupStyle)obj;
 				info.AddValue("StepEnabled", s._isStepEnabled);
+
+				if (s._isStepEnabled)
+					info.AddValue("ListOfValues", s._listOfValues);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				LineStyleGroupStyle s = null != o ? (LineStyleGroupStyle)o : new LineStyleGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
+
+				if (s._isStepEnabled)
+					s._listOfValues = (IStyleList<IDashPattern>)info.GetValue("ListOfValues", s);
+
 				return s;
 			}
 		}
@@ -65,24 +71,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		#region Constructors
 
-		static LineStyleGroupStyle()
-		{
-			_standardDashPatterns = new List<IDashPattern>();
-			_standardDashPatterns.Add(new Drawing.D3D.DashPatterns.Solid());
-			_standardDashPatterns.Add(new Drawing.D3D.DashPatterns.Dot());
-			_standardDashPatterns.Add(new Drawing.D3D.DashPatterns.Dash());
-			_standardDashPatterns.Add(new Drawing.D3D.DashPatterns.DashDot());
-			_standardDashPatterns.Add(new Drawing.D3D.DashPatterns.DashDotDot());
-		}
-
 		public LineStyleGroupStyle()
 		{
+			_value = DashPatternListManager.Instance.BuiltinDefault[0];
 		}
 
 		public LineStyleGroupStyle(LineStyleGroupStyle from)
 		{
 			this._isInitialized = from._isInitialized;
 			this._value = from._value;
+			this._listOfValues = from._listOfValues;
 		}
 
 		#endregion Constructors
@@ -108,6 +106,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			LineStyleGroupStyle from = (LineStyleGroupStyle)fromb;
 			this._isInitialized = from._isInitialized;
 			this._value = from._value;
+			this._listOfValues = from._listOfValues;
 		}
 
 		public void BeginPrepare()
@@ -141,13 +140,27 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		public int Step(int step)
 		{
-			int current = _standardDashPatterns.IndexOf(_value);
+			if (0 == step)
+				return 0; // nothing changed
+
+			if (null == _listOfValues)
+				_listOfValues = DashPatternListManager.Instance.BuiltinDefault;
+
+			var list = _listOfValues;
+			var listcount = list.Count;
+
+			if (listcount == 0)
+			{
+				return 0;
+			}
+
+			int current = _listOfValues.IndexOf(_value);
 			if (!(current >= 0))
 				current = 0;
 
-			var valueIndex = Calc.BasicFunctions.PMod(current + step, _standardDashPatterns.Count);
-			int wraps = Calc.BasicFunctions.NumberOfWraps(_standardDashPatterns.Count, current, step);
-			_value = _standardDashPatterns[valueIndex];
+			var valueIndex = Calc.BasicFunctions.PMod(current + step, _listOfValues.Count);
+			int wraps = Calc.BasicFunctions.NumberOfWraps(_listOfValues.Count, current, step);
+			_value = _listOfValues[valueIndex];
 			return wraps;
 		}
 
@@ -163,6 +176,28 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			set
 			{
 				_isStepEnabled = value;
+			}
+		}
+
+		/// <summary>
+		/// The list of values to switch through
+		/// </summary>
+		public IStyleList<IDashPattern> ListOfValues
+		{
+			get
+			{
+				return _listOfValues;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (!object.ReferenceEquals(_listOfValues, value))
+				{
+					_listOfValues = value;
+					EhSelfChanged();
+				}
 			}
 		}
 

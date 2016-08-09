@@ -37,13 +37,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		IPlotGroupStyle
 	{
 		private bool _isInitialized;
-		private IScatterSymbol _shapeAndStyle;
+		private IScatterSymbol _value;
 		private bool _isStepEnabled = true;
 
 		/// <summary>
 		/// The list of symbols to switch through
 		/// </summary>
-		private ScatterSymbolList _symbolList;
+		private IStyleList<IScatterSymbol> _listOfValues;
 
 		#region Serialization
 
@@ -56,7 +56,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				info.AddValue("StepEnabled", s._isStepEnabled);
 
 				if (s._isStepEnabled)
-					info.AddValue("SymbolList", s._symbolList);
+					info.AddValue("ListOfValues", s._listOfValues);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -65,7 +65,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
 
 				if (s._isStepEnabled)
-					s._symbolList = (ScatterSymbolList)info.GetValue("SymbolList", s);
+					s._listOfValues = (ScatterSymbolList)info.GetValue("ListOfValues", s);
 				return s;
 			}
 		}
@@ -74,20 +74,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		#region Constructors
 
-		static ScatterSymbolGroupStyle()
-		{
-		}
-
 		public ScatterSymbolGroupStyle()
 		{
-			_shapeAndStyle = new Styles.ScatterSymbols.Cube();
+			_value = ScatterSymbolListManager.Instance.BuiltinDefault[0];
 		}
 
 		public ScatterSymbolGroupStyle(ScatterSymbolGroupStyle from)
 		{
 			this._isInitialized = from._isInitialized;
-			this._shapeAndStyle = from._shapeAndStyle;
-			this._symbolList = from._symbolList;
+			this._value = from._value;
+			this._listOfValues = from._listOfValues;
 		}
 
 		#endregion Constructors
@@ -112,8 +108,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		{
 			ScatterSymbolGroupStyle from = (ScatterSymbolGroupStyle)fromb;
 			this._isInitialized = from._isInitialized;
-			this._shapeAndStyle = from._shapeAndStyle;
-			this._symbolList = from._symbolList;
+			this._value = from._value;
+			this._listOfValues = from._listOfValues;
 		}
 
 		public void BeginPrepare()
@@ -150,18 +146,18 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			if (0 == step)
 				return 0; // nothing changed
 
-			if (null == _symbolList)
-				_symbolList = ScatterSymbolListManager.Instance.BuiltinDefault;
+			if (null == _listOfValues)
+				_listOfValues = ScatterSymbolListManager.Instance.BuiltinDefault;
 
-			var list = _symbolList;
-			var listcount = list.Items.Count;
+			var list = _listOfValues;
+			var listcount = list.Count;
 
 			if (listcount == 0)
 			{
 				return 0;
 			}
 
-			var idx = list.Items.IndexOf(_shapeAndStyle);
+			var idx = list.IndexOf(_value);
 			if (idx < 0)
 				idx = 0;
 
@@ -184,7 +180,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				}
 			}
 
-			_shapeAndStyle = list.Items[destIdx];
+			_value = list[destIdx];
 			return wraps;
 		}
 
@@ -206,20 +202,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		/// <summary>
 		/// The list of symbols to switch through
 		/// </summary>
-		public ScatterSymbolList ScatterSymbolList
+		public IStyleList<IScatterSymbol> ListOfValues
 		{
 			get
 			{
-				return _symbolList;
+				return _listOfValues;
 			}
 			set
 			{
 				if (null == value)
 					throw new ArgumentNullException(nameof(value));
 
-				if (!object.ReferenceEquals(_symbolList, value))
+				if (!object.ReferenceEquals(_listOfValues, value))
 				{
-					_symbolList = value;
+					_listOfValues = value;
 					EhSelfChanged();
 				}
 			}
@@ -243,14 +239,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				throw new ArgumentNullException(nameof(s));
 
 			_isInitialized = true;
-			_shapeAndStyle = s;
+			_value = s;
 		}
 
 		public IScatterSymbol ShapeAndStyle
 		{
 			get
 			{
-				return _shapeAndStyle;
+				return _value;
 			}
 		}
 

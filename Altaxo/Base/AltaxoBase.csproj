@@ -361,9 +361,11 @@
     <Compile Include="Graph\Graph3D\Plot\Data\Processed3DPlotData.cs" />
     <Compile Include="Graph\Graph3D\Plot\G3DPlotItem.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\CoordinateTransformingStyleBase.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Groups\DashPatternList.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\ICoordinateTransformingGroupStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\LineStyleGroupStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\PlotGroupStyleCollection.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Groups\DashPatternListManager.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\ScatterSymbolListManager.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\ScatterSymbolList.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\ScatterSymbolGroupStyle.cs" />
@@ -382,6 +384,7 @@
     <Compile Include="Graph\Graph3D\Plot\Styles\LineConnectionStyles\StraightConnection.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\LineConnectionStyles\NoConnection.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\LinePlotStyle.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Styles\DropPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ScatterPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ScatterSymbols\TetrahedronDown.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ScatterSymbols\TetrahedronUp.cs" />
@@ -443,6 +446,8 @@
     <Compile Include="Graph\Gdi\IPaintContext.cs" />
     <Compile Include="Graph\GraphDocumentBase.cs" />
     <Compile Include="Graph\GraphDocumentBaseExportActions.cs" />
+    <Compile Include="Graph\IStyleList.cs" />
+    <Compile Include="Graph\IStyleListManager.cs" />
     <Compile Include="Graph\LinearPartitioning.cs" />
     <Compile Include="Graph\ICoordinateSystem.cs" />
     <Compile Include="Graph\IPaintContext.cs" />
@@ -491,6 +496,8 @@
     <Compile Include="Graph\Scales\Rescaling\IScaleRescaleConditions.cs" />
     <Compile Include="Graph\Scales\Ticks\InverseTickSpacing.cs" />
     <Compile Include="Graph\Scales\Ticks\CumulativeProbabilityTickSpacing.cs" />
+    <Compile Include="Graph\StyleListBase.cs" />
+    <Compile Include="Graph\StyleListManagerBase.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DDataSourceController.cs" />
     <Compile Include="Gui\Analysis\Statistics\HistogramCreationController.cs" />
     <Compile Include="Gui\Analysis\Statistics\LogarithmicBinningController.cs" />
@@ -557,10 +564,13 @@
     <Compile Include="Gui\Graph3D\Plot\Data\PlotColumnTag.cs" />
     <Compile Include="Gui\Graph3D\Plot\Data\XYZColumnPlotDataController.cs" />
     <Compile Include="Gui\Graph3D\Plot\G3DPlotItemController.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Groups\DashPatternListController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Groups\PlotGroupCollectionController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Groups\PlotGroupCollectionControllerAdvanced.cs" />
     <Compile Include="Gui\Graph3D\Plot\Groups\PlotGroupCollectionControllerSimple.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Groups\LineStyleGroupStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Groups\ScatterSymbolGroupStyleController.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Groups\StyleListController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Groups\ScatterSymbolListController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\LabelPlotStyleController.cs" />
@@ -673,6 +683,7 @@
     <Compile Include="Main\IProjectItemCollection.cs" />
     <Compile Include="Main\IProjectItemImageExporter.cs" />
     <Compile Include="Main\IProjectItemViewModel.cs" />
+    <Compile Include="Main\ItemDefinitionLevel.cs" />
     <Compile Include="Main\RelativeDocumentPath.cs" />
     <Compile Include="Main\EventInterfaces.cs" />
     <Compile Include="Main\SelfAccumulateableEventArgs.cs" />

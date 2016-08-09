@@ -23,58 +23,53 @@
 #endregion Copyright
 
 using Altaxo.Drawing.D3D;
-using Altaxo.Geometry;
-using Altaxo.Graph.Graph3D.GraphicsContext;
-using Altaxo.Serialization;
+using Altaxo.Graph.Graph3D.Plot.Styles;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Linq;
+using System.Text;
 
-namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
+namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
-	/// <summary>
-	/// Represents the null symbol in a scatter plot, i.e. this symbol is not visible.
-	/// </summary>
-	/// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol" />
-	public sealed class Cube : ScatterSymbolShapeBase
+	public class DashPatternList : StyleListBase<IDashPattern>
 	{
-		public static Cube Instance { get; private set; } = new Cube();
-
 		#region Serialization
 
-		/// <summary>
-		/// 2016-05-09 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Cube), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DashPatternList), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				var s = (DashPatternList)obj;
+				info.AddValue("Name", s._name);
+				info.CreateArray("Elements", s._list.Count);
+				foreach (var ele in s)
+					info.AddValue("e", ele);
+				info.CommitArray();
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				return Instance;
+				string name = info.GetString("Name");
+				int count = info.OpenArray("Elements");
+				var list = new List<IDashPattern>(count);
+				for (int i = 0; i < count; ++i)
+					list.Add((IDashPattern)info.GetValue("e", null));
+				info.CloseArray(count);
+
+				var result = new DashPatternList(name, list);
+				DashPatternList existingList;
+				DashPatternListManager.Instance.TryRegisterList(Main.ItemDefinitionLevel.Project, result, out existingList);
+				return result;
 			}
 		}
 
 		#endregion Serialization
 
-		public override void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize)
+		public DashPatternList(string name, IEnumerable<IDashPattern> symbols)
+			: base(name, symbols)
 		{
-			var symbolSizeBy2 = symbolSize * 0.5;
-			var buffers = g.GetPositionNormalIndexedTriangleBuffer(material);
-			if (null != buffers.PositionNormalIndexedTriangleBuffer)
-			{
-				var buf = buffers.PositionNormalIndexedTriangleBuffer;
-				var voffs = buffers.PositionNormalIndexedTriangleBuffer.VertexCount;
-				SolidCube.Add(
-					centerLocation.X - symbolSizeBy2, centerLocation.Y - symbolSizeBy2, centerLocation.Z - symbolSizeBy2,
-					symbolSize, symbolSize, symbolSize,
-					(point, normal) => buf.AddTriangleVertex(point.X, point.Y, point.Z, normal.X, normal.Y, normal.Z),
-					(i1, i2, i3) => buf.AddTriangleIndices(i1 + voffs, i2 + voffs, i3 + voffs),
-					ref voffs);
-			}
 		}
 	}
 }

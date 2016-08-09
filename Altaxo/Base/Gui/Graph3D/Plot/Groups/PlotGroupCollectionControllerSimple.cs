@@ -104,32 +104,53 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			bool symbol = _view.PlotGroupSymbol;
 			bool serial = !_view.PlotGroupConcurrently;
 
+			ColorGroupStyle newColorGroupStyle = null;
+			LineStyleGroupStyle newLineStyleGroupStyle = null;
+			ScatterSymbolGroupStyle newScatterSymbolGroupStyle = null;
+
 			if (_doc.ContainsType(typeof(ColorGroupStyle)))
+			{
+				newColorGroupStyle = (ColorGroupStyle)_doc.GetPlotGroupStyle(typeof(ColorGroupStyle)).Clone();
 				_doc.RemoveType(typeof(ColorGroupStyle));
+			}
 			if (_doc.ContainsType(typeof(LineStyleGroupStyle)))
+			{
+				newLineStyleGroupStyle = (LineStyleGroupStyle)_doc.GetPlotGroupStyle(typeof(LineStyleGroupStyle)).Clone();
 				_doc.RemoveType(typeof(LineStyleGroupStyle));
+			}
 			if (_doc.ContainsType(typeof(ScatterSymbolGroupStyle)))
+			{
+				newScatterSymbolGroupStyle = (ScatterSymbolGroupStyle)_doc.GetPlotGroupStyle(typeof(ScatterSymbolGroupStyle)).Clone();
 				_doc.RemoveType(typeof(ScatterSymbolGroupStyle));
+			}
 
 			if (color)
 			{
-				_doc.Add(ColorGroupStyle.NewExternalGroupStyle());
+				newColorGroupStyle = newColorGroupStyle ?? ColorGroupStyle.NewExternalGroupStyle();
+				newColorGroupStyle.IsStepEnabled = true;
+				_doc.Add(newColorGroupStyle);
 			}
 			if (linestyle)
 			{
+				newLineStyleGroupStyle = newLineStyleGroupStyle ?? new LineStyleGroupStyle();
+				newLineStyleGroupStyle.IsStepEnabled = true;
+
 				if (serial && color)
-					_doc.Add(new LineStyleGroupStyle(), typeof(ColorGroupStyle));
+					_doc.Add(newLineStyleGroupStyle, typeof(ColorGroupStyle));
 				else
-					_doc.Add(new LineStyleGroupStyle());
+					_doc.Add(newLineStyleGroupStyle);
 			}
 			if (symbol)
 			{
+				newScatterSymbolGroupStyle = newScatterSymbolGroupStyle ?? new ScatterSymbolGroupStyle();
+				newScatterSymbolGroupStyle.IsStepEnabled = true;
+
 				if (serial && linestyle)
-					_doc.Add(new ScatterSymbolGroupStyle(), typeof(LineStyleGroupStyle));
+					_doc.Add(newScatterSymbolGroupStyle, typeof(LineStyleGroupStyle));
 				else if (serial && color)
-					_doc.Add(new ScatterSymbolGroupStyle(), typeof(ColorGroupStyle));
+					_doc.Add(newScatterSymbolGroupStyle, typeof(ColorGroupStyle));
 				else
-					_doc.Add(new ScatterSymbolGroupStyle());
+					_doc.Add(newScatterSymbolGroupStyle);
 			}
 
 			_doc.PlotGroupStrictness = _view.PlotGroupStrict;
