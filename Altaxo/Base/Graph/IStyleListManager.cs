@@ -36,11 +36,43 @@ namespace Altaxo.Graph
 	/// <typeparam name="T">The type of the style</typeparam>
 	public interface IStyleListManager<TList, T> where TList : IStyleList<T> where T : Main.IImmutable
 	{
+		/// <summary>
+		/// Gets the names of all entries (styles) in the list.
+		/// </summary>
+		/// <returns>The names of all entries (styles) in the list.</returns>
 		IEnumerable<string> GetAllListNames();
 
+		/// <summary>
+		/// Gets all lists together with their definition level.
+		/// </summary>
+		/// <returns>The lists together with their definition level.</returns>
+		IEnumerable<Tuple<TList, Main.ItemDefinitionLevel>> GetListsWithLevel();
+
+		/// <summary>
+		/// Determines whether the specified name contains a list (style) with the provided name.
+		/// </summary>
+		/// <param name="name">The name.</param>
+		/// <returns>
+		///   <c>true</c> if the specified name contains a list (style) with the provided name; otherwise, <c>false</c>.
+		/// </returns>
+		bool ContainsList(string name);
+
+		/// <summary>
+		/// Gets the list (style) with the provided name.
+		/// </summary>
+		/// <param name="name">The name.</param>
+		/// <returns>The list (style) with the provided name.</returns>
 		TList GetList(string name);
 
-		bool ContainsList(string name);
+		/// <summary>
+		/// Gets the list (style) with the provided name.
+		/// </summary>
+		/// <param name="name">The name.</param>
+		/// <param name="level">Returns the definition level of the list.</param>
+		/// <returns>The list (style) with the provided name.</returns>
+		TList GetList(string name, out Main.ItemDefinitionLevel level);
+
+		bool TryGetListByMembers(IEnumerable<T> symbols, out string nameOfExistingList);
 
 		/// <summary>
 		/// Try to register the provided list.
@@ -50,8 +82,6 @@ namespace Altaxo.Graph
 		/// <param name="storedList">On return, this is the list which is either registered, or is an already registed list with exactly the same elements.</param>
 		/// <returns>True if the list was new and thus was added to the collection; false if the list has already existed.</returns>
 		bool TryRegisterList(Main.ItemDefinitionLevel level, TList instance, out TList storedList);
-
-		bool TryGetListByMembers(IEnumerable<T> symbols, out string nameOfExistingList);
 
 		TList CreateNewList(string name, IEnumerable<T> symbols, bool registerNewList, Main.ItemDefinitionLevel level);
 	}

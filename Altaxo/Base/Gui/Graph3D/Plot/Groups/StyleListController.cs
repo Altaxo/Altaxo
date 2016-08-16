@@ -27,6 +27,7 @@ using Altaxo.Graph;
 using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Gui.Common;
+using Altaxo.Main;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 		event Action CurrentItemListName_Changed;
 
-		void AvailableItems_Initialize(SelectableListNodeList items);
+		void AvailableItems_Initialize(NGTreeNodeCollection items);
 
 		void CurrentItemList_Initialize(SelectableListNodeList items);
 
@@ -94,15 +95,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 	public class StyleListController<TManager, TList, TItem>
 		:
 		MVCANControllerEditImmutableDocBase<IStyleList<TItem>, IStyleListView>
-		where TItem : class, Altaxo.Main.IImmutable
+		where TItem : Altaxo.Main.IImmutable
 		where TList : IStyleList<TItem>
 		where TManager : IStyleListManager<TList, TItem>
 	{
 		private TManager _manager;
 
 		private NGTreeNode _availableListsRootNode;
-		private SelectableListNodeList _availableItemTypes;
-		private SelectableListNodeList _currentItems;
+		protected NGTreeNode _availableItemsRootNode;
+		protected SelectableListNodeList _currentItems;
 
 		private bool _currentItems_IsDirty;
 		private bool _isNameOfNewListValid;
@@ -121,24 +122,17 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 				Controller_AvailableLists_Initialize();
 
 				// Available items
-				var itemTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(TItem));
-				_availableItemTypes = new SelectableListNodeList();
-				foreach (var type in itemTypes)
-					_availableItemTypes.Add(new SelectableListNode(type.Name, type, false));
+				Controller_AvailableItems_Initialize();
 
 				// Current items
-				_currentItems = new SelectableListNodeList();
-				foreach (var sym in _doc)
-				{
-					_currentItems.Add(new SelectableListNode(sym.GetType().Name, sym, false));
-				}
+				Controller_CurrentItems_Initialize();
 			}
 
 			if (null != _view)
 			{
 				View_AvailableLists_Initialize();
+				View_AvailableItems_Initialize();
 
-				_view.AvailableItems_Initialize(_availableItemTypes);
 				_view.CurrentItemList_Initialize(_currentItems);
 				_view.CurrentItemListName_Initialize(_doc.Name, false, false, "Name can not be changed because list is already stored!");
 			}
@@ -247,20 +241,49 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			base.DetachView();
 		}
 
+		#region How to display items
+
+		protected virtual string ToDisplayName(TItem item)
+		{
+			return ToDisplayName(item.GetType()); ;
+		}
+
+		protected virtual string ToDisplayName(Type item)
+		{
+			return item.Name;
+		}
+
+		#endregion How to display items
+
 		#region Available lists
 
 		private void Controller_AvailableLists_Initialize()
 		{
 			_availableListsRootNode = new NGTreeNode();
 
-			var allNames = _manager.GetAllListNames().ToArray();
-			Array.Sort(allNames);
+			var levelDict = new Dictionary<ItemDefinitionLevel, NGTreeNode>();
+
+			var allListsWithLevel = _manager.GetListsWithLevel().ToArray();
+			Array.Sort(allListsWithLevel, (x, y) =>
+			{
+				if (x.Item2 != y.Item2)
+					return Comparer<ItemDefinitionLevel>.Default.Compare(x.Item2, y.Item2);
+				return string.Compare(x.Item1.Name, y.Item1.Name);
+			}
+			);
+
 			var dict = new Dictionary<string, NGTreeNode>();
 
-			foreach (var name in allNames)
+			foreach (var listAndLevel in allListsWithLevel)
 			{
-				var list = _manager.GetList(name);
-				_availableListsRootNode.Nodes.Add(new NGTreeNode(name) { Tag = list, IsSelected = object.ReferenceEquals(list, _doc) });
+				NGTreeNode levelNode;
+				if (!levelDict.TryGetValue(listAndLevel.Item2, out levelNode))
+				{
+					levelNode = new NGTreeNode(Enum.GetName(typeof(ItemDefinitionLevel), listAndLevel.Item2));
+					levelDict.Add(listAndLevel.Item2, levelNode);
+					_availableListsRootNode.Nodes.Add(levelNode);
+				}
+				levelNode.Nodes.Add(new NGTreeNode(listAndLevel.Item1.Name) { Tag = listAndLevel.Item1, IsSelected = object.ReferenceEquals(listAndLevel.Item1, _doc) });
 			}
 		}
 
@@ -271,17 +294,53 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 		#endregion Available lists
 
+		#region AvailableItens
+
+		protected virtual void Controller_AvailableItems_Initialize()
+		{
+			_availableItemsRootNode = new NGTreeNode();
+
+			var availableItems = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(TItem));
+			foreach (var item in availableItems)
+				_availableItemsRootNode.Nodes.Add(new NGTreeNode(ToDisplayName(item)) { Tag = item, IsSelected = false });
+		}
+
+		private void View_AvailableItems_Initialize()
+		{
+			_view.AvailableItems_Initialize(_availableItemsRootNode.Nodes);
+		}
+
+		#endregion AvailableItens
+
+		#region Current items
+
+		protected virtual void Controller_CurrentItems_Initialize()
+		{
+			if (null == _currentItems)
+				_currentItems = new SelectableListNodeList();
+			else
+				_currentItems.Clear();
+
+			foreach (var currentItem in _doc)
+			{
+				_currentItems.Add(new SelectableListNode(ToDisplayName(currentItem), currentItem, false));
+			}
+		}
+
+		protected virtual void View_CurrentItems_Initialize()
+		{
+			_view?.CurrentItemList_Initialize(_currentItems);
+		}
+
 		private void ControllerAndView_CurrentItemsAndName_Initialize()
 		{
-			_currentItems.Clear();
-			foreach (var sym in _doc)
-			{
-				_currentItems.Add(new SelectableListNode(sym.GetType().Name, sym, false));
-			}
+			Controller_CurrentItems_Initialize();
 			_view?.CurrentItemList_Initialize(_currentItems);
 			_view?.CurrentItemListName_Initialize(_doc.Name, false, false, "Name can't be changed because list is already stored!");
 			_currentItems_IsDirty = false;
 		}
+
+		#endregion Current items
 
 		private bool TryToStoreList()
 		{
@@ -316,7 +375,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 				TryToStoreList();
 		}
 
-		private static bool IsItemEditable(Altaxo.Main.IImmutable item)
+		protected virtual bool IsItemEditable(Altaxo.Main.IImmutable item)
 		{
 			if (null == item)
 				return false;
@@ -326,11 +385,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			return (bool)prop.GetValue(item, null);
 		}
 
-		private void EhCurrentItem_Edit()
+		protected virtual void EhCurrentItem_Edit()
 		{
 			var node = _currentItems.FirstSelectedNode;
-			var item = node?.Tag as TItem;
-			if (null == item || !IsItemEditable(item))
+
+			if (!(node?.Tag is TItem))
+				return;
+
+			var item = (TItem)(node?.Tag);
+			if (null == item)
 				return;
 
 			var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { item }, typeof(IMVCANController));
@@ -340,8 +403,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			if (true == Current.Gui.ShowDialog(controller, "Edit item"))
 			{
 				item = (TItem)controller.ModelObject;
-				node.Text = item.GetType().Name;
+				node.Text = ToDisplayName(item);
 				node.Tag = item;
+
+				SetListDirty();
+				View_CurrentItems_Initialize();
 			}
 		}
 
@@ -367,9 +433,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			_view?.CurrentItemList_Initialize(_currentItems);
 		}
 
-		private void EhAvailableItem_AddToCurrent()
+		protected virtual void EhAvailableItem_AddToCurrent()
 		{
-			var avNode = _availableItemTypes.FirstSelectedNode;
+			var avNode = _availableItemsRootNode.FirstSelectedNode;
 			if (null == avNode)
 				return;
 			TItem newItem = default(TItem);
@@ -384,14 +450,14 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 			if (null != newItem)
 			{
-				_currentItems.Add(new SelectableListNode(newItem.GetType().Name, newItem, false));
+				_currentItems.Add(new SelectableListNode(ToDisplayName(newItem), newItem, false));
 				SetListDirty();
 			}
 		}
 
 		private void EhAvailableLists_SelectionChanged(NGTreeNode node)
 		{
-			if (null == node)
+			if (!(node?.Tag is TList))
 				return;
 
 			if (_currentItems_IsDirty)
@@ -412,7 +478,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			{
 				for (;;)
 				{
-					bool? hasToBeStored = Current.Gui.YesNoCancelMessageBox("You selected a new list, but your current list is not stored yet, and all changed would be discarded. Would you like to store your current list now?", "Attention - list not stored!", null);
+					bool? hasToBeStored = Current.Gui.YesNoCancelMessageBox("You selected a new list, but your current list is not stored yet, and all changes would be discarded. Would you like to store your current list now?", "Attention - list not stored!", null);
 
 					if (false == hasToBeStored)
 						return true; // true means we can discard the list
@@ -430,7 +496,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			SetListDirty();
 		}
 
-		private void SetListDirty()
+		protected void SetListDirty()
 		{
 			string existingName;
 			if (_manager.TryGetListByMembers(_currentItems.Select(node => (TItem)node.Tag), out existingName))
@@ -518,8 +584,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			{
 				return new DropCanAcceptDataReturnData
 				{
-					CanCopy = isCtrlKeyPressed,
-					CanMove = !isCtrlKeyPressed,
+					CanCopy = true,
+					CanMove = false,
 					ItemIsSwallowingData = false
 				};
 			}
@@ -584,7 +650,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 				targetIndex = idx;
 			}
 
-			var newNode = new SelectableListNode(droppedItem.GetType().Name, droppedItem, false);
+			var newNode = new SelectableListNode(droppedItem.ToString(), droppedItem, false);
 			if (targetIndex >= _currentItems.Count)
 				_currentItems.Add(newNode);
 			else

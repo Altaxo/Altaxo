@@ -51,15 +51,12 @@ namespace Altaxo.Collections
 	/// <summary>
 	/// Represents a non GUI tree node that can be used for interfacing/communication with Gui components.
 	/// </summary>
-	public class NGTreeNode : System.ComponentModel.INotifyPropertyChanged, ITreeListNodeWithParent<NGTreeNode>
+	public class NGTreeNode : SelectableListNode, ITreeListNodeWithParent<NGTreeNode>
 	{
 		private static NGTreeNode _dummyNode = new NGTreeNode();
 
-		protected object _tag;
 		protected object _guiTag;
-		protected string _text;
 		protected bool _isExpanded;
-		protected bool _isSelected;
 
 		/// <summary>
 		/// Collection of child nodes.
@@ -70,8 +67,6 @@ namespace Altaxo.Collections
 		/// Parent node.
 		/// </summary>
 		private NGTreeNode _parent;
-
-		public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
 		/// <summary>
 		/// Empty constructor.
@@ -121,31 +116,6 @@ namespace Altaxo.Collections
 			}
 		}
 
-		protected virtual void OnPropertyChanged(string name)
-		{
-			if (null != PropertyChanged)
-				PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(name));
-		}
-
-		/// <summary>
-		/// Can be used by the application to get a connection to document items.
-		/// Do not use this for Gui items, the <c>GuiTag</c> can be used for this purpose.
-		/// </summary>
-		public object Tag
-		{
-			get
-			{
-				return _tag;
-			}
-			set
-			{
-				var oldValue = _tag;
-				_tag = value;
-				if (!object.ReferenceEquals(value, oldValue))
-					OnPropertyChanged("Tag");
-			}
-		}
-
 		/// <summary>
 		/// Can be used by some GUI to get a connection to GUI elements.
 		/// </summary>
@@ -161,24 +131,6 @@ namespace Altaxo.Collections
 				_guiTag = value;
 				if (!object.ReferenceEquals(value, oldValue))
 					OnPropertyChanged("GuiTag");
-			}
-		}
-
-		/// <summary>
-		/// Text a Gui node can display.
-		/// </summary>
-		public virtual string Text
-		{
-			get
-			{
-				return _text;
-			}
-			set
-			{
-				var oldVal = _text;
-				_text = value;
-				if (oldVal != value)
-					OnPropertyChanged("Text");
 			}
 		}
 
@@ -215,28 +167,19 @@ namespace Altaxo.Collections
 			}
 		}
 
-		/// <summary>
-		/// Gets/sets whether the TreeViewItem
-		/// associated with this object is selected.
-		/// </summary>
-		public virtual bool IsSelected
-		{
-			get { return _isSelected; }
-			set
-			{
-				if (value != _isSelected)
-				{
-					_isSelected = value;
-					this.OnPropertyChanged("IsSelected");
-				}
-			}
-		}
-
 		public virtual void ClearSelectionRecursively()
 		{
 			IsSelected = false;
 			foreach (var n in Nodes)
 				n.ClearSelectionRecursively();
+		}
+
+		public NGTreeNode FirstSelectedNode
+		{
+			get
+			{
+				return Altaxo.Collections.TreeNodeExtensions.AnyBetweenHereAndLeaves(this, node => node.IsSelected);
+			}
 		}
 
 		/// <summary>
@@ -258,7 +201,7 @@ namespace Altaxo.Collections
 		/// <summary>
 		/// Returns an image index, or -1 if no image is set. The default implementation here returns -1, but this behaviour can be overriden in a derived class.
 		/// </summary>
-		public virtual int ImageIndex
+		public override int ImageIndex
 		{
 			get { return -1; }
 			set
@@ -269,8 +212,8 @@ namespace Altaxo.Collections
 
 		/// <summary>
 		/// Returns an image index (for the selected node), or -1 if no image is set. The default implementation here returns -1, but this can be overriden in a derived class.
-		/// Note that when using SelectedImageIndex, you probably also need to override <see cref="OnPropertyChanged"/>, so that when the <see cref="IsSelected"/> property changed,
-		/// you must also call <see cref="OnPropertyChanged"/> with "ImageIndex" as argument.
+		/// Note that when using SelectedImageIndex, you probably also need to override <see cref="M:OnPropertyChanged"/>, so that when the <see cref="P:IsSelected"/> property changed,
+		/// you must also call <see cref="M:OnPropertyChanged"/> with "ImageIndex" as argument.
 		/// </summary>
 		public virtual int SelectedImageIndex
 		{
@@ -341,7 +284,7 @@ namespace Altaxo.Collections
 		public void ReplaceBy(NGTreeNode newNode)
 		{
 			if (null == newNode)
-				throw new ArgumentNullException("newNode");
+				throw new ArgumentNullException(nameof(newNode));
 
 			if (_parent != null)
 			{

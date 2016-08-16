@@ -195,7 +195,7 @@ namespace Altaxo.Gui.Common.Drawing
 			if (true == (bool)e.NewValue && false == (bool)e.OldValue) // show only plot colors
 			{
 				// if the current color is a plot color, we can leave everything as it is, except that we must update the tree view nodes
-				if (InternalSelectedColor.ParentColorSet != null && InternalSelectedColor.ParentColorSet.IsPlotColorSet)
+				if (InternalSelectedColor.ParentColorSet != null && ColorSetManager.Instance.IsPlotColorSet(InternalSelectedColor.ParentColorSet))
 				{
 					UpdateTreeViewTreeNodes();
 					UpdateTreeViewSelection();
@@ -224,7 +224,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			color = color.CoerceParentColorSetToNullIfNotMember();
 
-			if (this.ShowPlotColorsOnly && (color.ParentColorSet == null || false == color.ParentColorSet.IsPlotColorSet))
+			if (this.ShowPlotColorsOnly && (color.ParentColorSet == null || false == ColorSetManager.Instance.IsPlotColorSet(color.ParentColorSet)))
 			{
 				return ColorSetManager.Instance.BuiltinDarkPlotColors[0];
 			}
@@ -362,34 +362,34 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			var manager = ColorSetManager.Instance;
 
-			var builtIn = new NGTreeNode() { Text = "Builtin", Tag = ColorSetLevel.Builtin };
-			var app = new NGTreeNode() { Text = "Application", Tag = ColorSetLevel.Application };
-			var user = new NGTreeNode() { Text = "User", Tag = ColorSetLevel.UserDefined };
-			var proj = new NGTreeNode() { Text = "Project", Tag = ColorSetLevel.Project };
+			var builtIn = new NGTreeNode() { Text = "Builtin", Tag = Altaxo.Main.ItemDefinitionLevel.Builtin };
+			var app = new NGTreeNode() { Text = "Application", Tag = Altaxo.Main.ItemDefinitionLevel.Application };
+			var user = new NGTreeNode() { Text = "User", Tag = Altaxo.Main.ItemDefinitionLevel.UserDefined };
+			var proj = new NGTreeNode() { Text = "Project", Tag = Altaxo.Main.ItemDefinitionLevel.Project };
 
 			bool showPlotColorsOnly = this.ShowPlotColorsOnly;
 
-			foreach (var set in manager.GetAllColorSets())
+			foreach (var set in manager.GetAllColorSetsWithLevelAndPlotColorStatus())
 			{
 				if (showPlotColorsOnly && !set.IsPlotColorSet)
 					continue;
 
 				switch (set.Level)
 				{
-					case ColorSetLevel.Builtin:
-						builtIn.Nodes.Add(new NGTreeNodeForColorSet(set));
+					case Altaxo.Main.ItemDefinitionLevel.Builtin:
+						builtIn.Nodes.Add(new NGTreeNodeForColorSet(set.ColorSet));
 						break;
 
-					case ColorSetLevel.Application:
-						app.Nodes.Add(new NGTreeNodeForColorSet(set));
+					case Altaxo.Main.ItemDefinitionLevel.Application:
+						app.Nodes.Add(new NGTreeNodeForColorSet(set.ColorSet));
 						break;
 
-					case ColorSetLevel.UserDefined:
-						user.Nodes.Add(new NGTreeNodeForColorSet(set));
+					case Altaxo.Main.ItemDefinitionLevel.UserDefined:
+						user.Nodes.Add(new NGTreeNodeForColorSet(set.ColorSet));
 						break;
 
-					case ColorSetLevel.Project:
-						proj.Nodes.Add(new NGTreeNodeForColorSet(set));
+					case Altaxo.Main.ItemDefinitionLevel.Project:
+						proj.Nodes.Add(new NGTreeNodeForColorSet(set.ColorSet));
 						break;
 				}
 			}
@@ -414,9 +414,14 @@ namespace Altaxo.Gui.Common.Drawing
 			if (selColor.ParentColorSet != null)
 			{
 				var colorSet = selColor.ParentColorSet;
+				Altaxo.Main.ItemDefinitionLevel level = Altaxo.Main.ItemDefinitionLevel.Project;
+				bool isPlotColorSet;
+				if (selColor.ParentColorSet != null)
+					ColorSetManager.Instance.TryGetValue(selColor.ParentColorSet.Name, out colorSet, out level, out isPlotColorSet);
+
 				_treeRootNode.FromHereToLeavesDo(node =>
 				{
-					if ((node.Tag is ColorSetLevel) && (ColorSetLevel)node.Tag == colorSet.Level)
+					if ((node.Tag is Altaxo.Main.ItemDefinitionLevel) && (Altaxo.Main.ItemDefinitionLevel)node.Tag == level)
 					{
 						node.IsExpanded = true; // expand the node the current color set belongs to (like "Builtin", "Application" etc.)
 					}

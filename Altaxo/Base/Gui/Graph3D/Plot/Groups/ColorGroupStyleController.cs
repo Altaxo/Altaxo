@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph.Graph3D.Plot.Groups;
+using Altaxo.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,10 +33,10 @@ using System.Text;
 namespace Altaxo.Gui.Graph3D.Plot.Groups
 {
 	[ExpectedTypeOfView(typeof(IStyleListView))]
-	[UserControllerForObject(typeof(ScatterSymbolGroupStyle))]
-	public class ScatterSymbolGroupStyleController : MVCANControllerEditOriginalDocBase<ScatterSymbolGroupStyle, IStyleListView>
+	[UserControllerForObject(typeof(ColorGroupStyle))]
+	public class ColorGroupStyleController : MVCANControllerEditOriginalDocBase<ColorGroupStyle, IStyleListView>
 	{
-		private ScatterSymbolListController _listController;
+		private ColorSetController _listController;
 
 		protected override void Initialize(bool initData)
 		{
@@ -42,7 +44,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 			if (initData)
 			{
-				_listController = new ScatterSymbolListController();
+				_listController = new ColorSetController();
 				_listController.InitializeDocument(_doc.ListOfValues);
 			}
 
@@ -57,7 +59,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			if (!_listController.Apply(disposeController))
 				return ApplyEnd(false, disposeController);
 
-			_doc.ListOfValues = (ScatterSymbolList)_listController.ModelObject;
+			_doc.ListOfValues = (IColorSet)_listController.ModelObject;
 
 			return ApplyEnd(true, disposeController);
 		}

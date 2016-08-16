@@ -71,6 +71,10 @@ namespace Altaxo.Collections
 			}
 		}
 
+		protected ListNode()
+		{
+		}
+
 		public ListNode(string text, object tag)
 		{
 			_text = text;
@@ -120,7 +124,17 @@ namespace Altaxo.Collections
 			return null;
 		}
 
-		public virtual int ImageIndex { get { return 0; } }
+		public virtual int ImageIndex
+		{
+			get
+			{
+				return 0;
+			}
+			set
+			{
+				throw new NotImplementedException("ImageIndex is not implemented here. You must use a derived class with an implementation of this property.");
+			}
+		}
 
 		protected virtual void OnPropertyChanged(string propertyName)
 		{
@@ -180,7 +194,7 @@ namespace Altaxo.Collections
 	{
 		protected bool _isSelected;
 
-		public bool IsSelected
+		public virtual bool IsSelected
 		{
 			get { return _isSelected; }
 			set
@@ -190,6 +204,10 @@ namespace Altaxo.Collections
 				if (oldValue != value)
 					OnPropertyChanged("IsSelected");
 			}
+		}
+
+		protected SelectableListNode()
+		{
 		}
 
 		public SelectableListNode(string text, object tag, bool isSelected)

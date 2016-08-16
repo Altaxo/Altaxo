@@ -72,10 +72,10 @@ namespace Altaxo.Gui.Graph.ColorManagement
 		{
 			var manager = ColorSetManager.Instance;
 
-			var builtIn = new NGTreeNode() { Text = "Builtin", Tag = ColorSetLevel.Builtin };
-			var app = new NGTreeNode() { Text = "Application", Tag = ColorSetLevel.Application };
-			var user = new NGTreeNode() { Text = "User", Tag = ColorSetLevel.UserDefined };
-			var proj = new NGTreeNode() { Text = "Project", Tag = ColorSetLevel.Project };
+			var builtIn = new NGTreeNode() { Text = "Builtin", Tag = Altaxo.Main.ItemDefinitionLevel.Builtin };
+			var app = new NGTreeNode() { Text = "Application", Tag = Altaxo.Main.ItemDefinitionLevel.Application };
+			var user = new NGTreeNode() { Text = "User", Tag = Altaxo.Main.ItemDefinitionLevel.UserDefined };
+			var proj = new NGTreeNode() { Text = "Project", Tag = Altaxo.Main.ItemDefinitionLevel.Project };
 
 			IColorSet parentColorSetOfColor = null;
 			NamedColor selectedColor;
@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 				selectedColor = NamedColors.Black;
 			}
 
-			foreach (var set in manager.GetAllColorSets())
+			foreach (var set in manager.GetAllColorSetsWithLevelAndPlotColorStatus())
 			{
 				if (showPlotColorsOnly && !set.IsPlotColorSet)
 					continue;
@@ -98,20 +98,20 @@ namespace Altaxo.Gui.Graph.ColorManagement
 
 				switch (set.Level)
 				{
-					case ColorSetLevel.Builtin:
-						builtIn.Nodes.Add(newNode = new NGTreeNodeForColorSet(set));
+					case Altaxo.Main.ItemDefinitionLevel.Builtin:
+						builtIn.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.ColorSet));
 						break;
 
-					case ColorSetLevel.Application:
-						app.Nodes.Add(newNode = new NGTreeNodeForColorSet(set));
+					case Altaxo.Main.ItemDefinitionLevel.Application:
+						app.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.ColorSet));
 						break;
 
-					case ColorSetLevel.UserDefined:
-						user.Nodes.Add(newNode = new NGTreeNodeForColorSet(set));
+					case Altaxo.Main.ItemDefinitionLevel.UserDefined:
+						user.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.ColorSet));
 						break;
 
-					case ColorSetLevel.Project:
-						proj.Nodes.Add(newNode = new NGTreeNodeForColorSet(set));
+					case Altaxo.Main.ItemDefinitionLevel.Project:
+						proj.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.ColorSet));
 						break;
 
 					default:

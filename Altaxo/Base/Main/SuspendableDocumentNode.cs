@@ -280,6 +280,9 @@ namespace Altaxo.Main
 					_parent.EhChildChanged(this, eventArgsTransformed); // inform parent with transformed event args. Attention: parent may change our suspend state
 				}
 
+				if (IsDisposeInProgress)
+					return; // maybe the parent has disposed us now
+
 				if (!IsSuspendedOrResumeInProgress)
 				{
 					OnChanged(eventArgsTransformed); // Fire change event with transformed event args

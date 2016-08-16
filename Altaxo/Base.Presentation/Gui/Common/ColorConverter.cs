@@ -65,20 +65,20 @@ namespace Altaxo.Gui.Common
 
 	public class NamedColorToColorSetNameConverter : IValueConverter
 	{
-		public string GetLevelString(ColorSetLevel level)
+		public string GetLevelString(Altaxo.Main.ItemDefinitionLevel level)
 		{
 			switch (level)
 			{
-				case ColorSetLevel.Builtin:
+				case Altaxo.Main.ItemDefinitionLevel.Builtin:
 					return "Builtin";
 
-				case ColorSetLevel.Application:
+				case Altaxo.Main.ItemDefinitionLevel.Application:
 					return "App";
 
-				case ColorSetLevel.UserDefined:
+				case Altaxo.Main.ItemDefinitionLevel.UserDefined:
 					return "User";
 
-				case ColorSetLevel.Project:
+				case Altaxo.Main.ItemDefinitionLevel.Project:
 					return "Project";
 
 				default:
@@ -91,8 +91,12 @@ namespace Altaxo.Gui.Common
 			if (value is NamedColor)
 			{
 				var c = (NamedColor)value;
-				if (c.ParentColorSet != null)
-					return string.Format("{0}/{1}", GetLevelString(c.ParentColorSet.Level), c.ParentColorSet.Name);
+				IColorSet colorSet;
+				Altaxo.Main.ItemDefinitionLevel level;
+				bool isPlotColorSet;
+
+				if (c.ParentColorSet != null && ColorSetManager.Instance.TryGetValue(c.ParentColorSet.Name, out colorSet, out level, out isPlotColorSet))
+					return string.Format("{0}/{1}", GetLevelString(level), c.ParentColorSet.Name);
 				else
 					return "<<no color set>>";
 			}

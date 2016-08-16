@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Graph3D
 
 		public PenControlsGlue(bool isAllPropertiesGlue)
 		{
-			this.InternalSelectedPen = new PenX3D(BuiltinDarkPlotColorSet.Instance[0], 1);
+			this.InternalSelectedPen = new PenX3D(ColorSetManager.Instance.BuiltinDarkPlotColors[0], 1);
 			_isAllPropertiesGlue = isAllPropertiesGlue;
 		}
 

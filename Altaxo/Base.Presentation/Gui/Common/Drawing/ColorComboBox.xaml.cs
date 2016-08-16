@@ -214,7 +214,7 @@ namespace Altaxo.Gui.Common.Drawing
 			filterString = filterString.ToLowerInvariant();
 			foreach (var item in originalList)
 			{
-				if (showPlotColorsOnly && (item.ParentColorSet == null || !item.ParentColorSet.IsPlotColorSet))
+				if (showPlotColorsOnly && (item.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(item.ParentColorSet)))
 					continue;
 				if (item.Name.ToLowerInvariant().StartsWith(filterString))
 					result.Add(item);

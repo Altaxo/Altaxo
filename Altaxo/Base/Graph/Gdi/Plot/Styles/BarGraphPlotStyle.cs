@@ -446,7 +446,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			if (!_independentFillColor)
 			{
-				if (null == _fillBrush) _fillBrush = new BrushX(Drawing.ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
+				if (null == _fillBrush) _fillBrush = new BrushX(Drawing.ColorManagement.ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
 				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this._fillBrush.Color = c; });
 
 				// but if there is a color evaluation function, then use that function with higher priority
@@ -455,7 +455,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			if (!_independentFrameColor)
 			{
-				if (null == _framePen) _framePen = new PenX(Drawing.ColorManagement.BuiltinDarkPlotColorSet.Instance[0]);
+				if (null == _framePen) _framePen = new PenX(Drawing.ColorManagement.ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
 				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this._framePen.Color = c; });
 
 				// but if there is a color evaluation function, then use that function with higher priority

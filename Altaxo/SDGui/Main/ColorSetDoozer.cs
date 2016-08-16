@@ -74,11 +74,9 @@ namespace Altaxo.Main
 			bool isPlotColorSet = args.Codon.Properties.Get<bool>("IsPlotColorSet", false);
 
 			var subItems = args.BuildSubItems<NamedColor>();
-			var result = new ColorSet(label, ColorSetLevel.Application, subItems);
-			if (isPlotColorSet)
-				result.DeclareThisSetAsPlotColorSet();
+			var result = new ColorSet(label, subItems);
 
-			return result;
+			return new Tuple<IColorSet, bool>(result, isPlotColorSet);
 		}
 	}
 }

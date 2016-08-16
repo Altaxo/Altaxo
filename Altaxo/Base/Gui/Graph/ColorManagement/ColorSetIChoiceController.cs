@@ -52,7 +52,9 @@ namespace Altaxo.Gui.Graph.ColorManagement
 			if (initData)
 			{
 				IColorSet colorSetCurrentlySelected;
-				ColorSetManager.Instance.TryGetValue(_doc.Level, _doc.Name, out colorSetCurrentlySelected);
+				Altaxo.Main.ItemDefinitionLevel level;
+				bool isPlotColorSet;
+				ColorSetManager.Instance.TryGetValue(_doc.Name, out colorSetCurrentlySelected, out level, out isPlotColorSet);
 				ColorControllerHelper.UpdateColorTreeViewTreeNodes(_treeRootNode, ShowPlotColorsOnly, colorSetCurrentlySelected);
 			}
 			if (null != _view)
@@ -77,7 +79,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 				return false;
 			}
 
-			_doc = new ColorSetIdentifier(tag.Level, tag.Name);
+			_doc = new ColorSetIdentifier(Altaxo.Main.ItemDefinitionLevel.Project, tag.Name);
 
 			return ApplyEnd(true, disposeController);
 		}

@@ -282,7 +282,7 @@ namespace Altaxo.Gui.Graph
 				}
 				else if (null == _view.FillBrush || _view.FillBrush.IsInvisible)
 				{
-					_view.FillBrush = new BrushX(BuiltinDarkPlotColorSet.Instance[0]);
+					_view.FillBrush = new BrushX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
 				}
 			}
 			_view.UseFill = newValue; // to enable/disable gui items in the control
@@ -300,7 +300,7 @@ namespace Altaxo.Gui.Graph
 				}
 				else if (null == _view.FramePen || _view.FramePen.IsInvisible)
 				{
-					_view.FramePen = new PenX(BuiltinDarkPlotColorSet.Instance[0]);
+					_view.FramePen = new PenX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
 				}
 			}
 

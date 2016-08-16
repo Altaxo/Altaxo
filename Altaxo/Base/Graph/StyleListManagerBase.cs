@@ -31,6 +31,21 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
+	public class StyleListManagerBaseEntryValue<TList, T> : Main.IImmutable where TList : IStyleList<T> where T : Main.IImmutable
+	{
+		public Main.ItemDefinitionLevel Level { get; private set; }
+		public TList List { get; private set; }
+
+		public StyleListManagerBaseEntryValue(Main.ItemDefinitionLevel level, TList list)
+		{
+			if (null == list)
+				throw new ArgumentNullException(nameof(list));
+
+			Level = level;
+			List = list;
+		}
+	}
+
 	/// <summary>
 	/// Implements a basic manager for style lists.
 	/// </summary>
@@ -43,14 +58,14 @@ namespace Altaxo.Graph
 		/// Dictionary of all existing lists. Key is the list name. Value is a tuple, whose boolean entry designates whether this is
 		/// a buildin or user list (false) or a project list (true).
 		/// </summary>
-		private Dictionary<string, Tuple<Main.ItemDefinitionLevel, TList>> _allLists = new Dictionary<string, Tuple<Main.ItemDefinitionLevel, TList>>();
+		private Dictionary<string, StyleListManagerBaseEntryValue<TList, T>> _allLists = new Dictionary<string, StyleListManagerBaseEntryValue<TList, T>>();
 
 		public TList BuiltinDefault { get; private set; }
 
 		protected StyleListManagerBase(TList builtinDefaultList)
 		{
 			BuiltinDefault = builtinDefaultList;
-			_allLists.Add(BuiltinDefault.Name, new Tuple<Main.ItemDefinitionLevel, TList>(Main.ItemDefinitionLevel.Builtin, BuiltinDefault));
+			_allLists.Add(BuiltinDefault.Name, new StyleListManagerBaseEntryValue<TList, T>(Main.ItemDefinitionLevel.Builtin, BuiltinDefault));
 		}
 
 		public IEnumerable<string> GetAllListNames()
@@ -60,7 +75,20 @@ namespace Altaxo.Graph
 
 		public TList GetList(string name)
 		{
-			return _allLists[name].Item2;
+			return _allLists[name].List;
+		}
+
+		public IEnumerable<Tuple<TList, ItemDefinitionLevel>> GetListsWithLevel()
+		{
+			foreach (var entry in _allLists.Values)
+				yield return new Tuple<TList, ItemDefinitionLevel>(entry.List, entry.Level);
+		}
+
+		public TList GetList(string name, out ItemDefinitionLevel level)
+		{
+			var r = _allLists[name];
+			level = r.Level;
+			return r.List;
 		}
 
 		/// <summary>
@@ -68,7 +96,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		protected virtual void EhProjectClosed(object sender, Main.ProjectEventArgs e)
 		{
-			var namesToRemove = new List<string>(_allLists.Where(entry => entry.Value.Item1 == Main.ItemDefinitionLevel.Project).Select(entry => entry.Key));
+			var namesToRemove = new List<string>(_allLists.Where(entry => entry.Value.Level == Main.ItemDefinitionLevel.Project).Select(entry => entry.Key));
 			foreach (var name in namesToRemove)
 				_allLists.Remove(name);
 		}
@@ -87,12 +115,12 @@ namespace Altaxo.Graph
 			{
 				if (nameOfExistingGroup != instance.Name) // if it has the same list, but a different name, do nothing at all
 				{
-					storedList = _allLists[nameOfExistingGroup].Item2;
+					storedList = _allLists[nameOfExistingGroup].List;
 					return false;
 				}
 				else // if it has the same list, and the same name, even better, nothing is left to be done
 				{
-					storedList = _allLists[nameOfExistingGroup].Item2;
+					storedList = _allLists[nameOfExistingGroup].List;
 					return false;
 				}
 			}
@@ -101,13 +129,13 @@ namespace Altaxo.Graph
 				if (_allLists.ContainsKey(instance.Name)) // but name is already in use
 				{
 					storedList = (TList)instance.WithName(GetUnusedName(instance.Name));
-					_allLists.Add(storedList.Name, new Tuple<Main.ItemDefinitionLevel, TList>(level, storedList));
+					_allLists.Add(storedList.Name, new StyleListManagerBaseEntryValue<TList, T>(level, storedList));
 					return true;
 				}
 				else // name is not in use
 				{
 					storedList = instance;
-					_allLists.Add(instance.Name, new Tuple<Main.ItemDefinitionLevel, TList>(level, instance));
+					_allLists.Add(instance.Name, new StyleListManagerBaseEntryValue<TList, T>(level, instance));
 					return true;
 				}
 			}
@@ -115,6 +143,11 @@ namespace Altaxo.Graph
 
 		protected virtual string GetUnusedName(string usedName)
 		{
+			if (string.IsNullOrEmpty(usedName))
+				throw new ArgumentNullException(nameof(usedName));
+			if (!_allLists.ContainsKey(usedName))
+				return usedName;
+
 			int i;
 			for (i = usedName.Length - 1; i >= 0; --i)
 			{
@@ -126,13 +159,13 @@ namespace Altaxo.Graph
 
 			if (0 == numberOfDigits)
 			{
-				return usedName + "0";
+				return GetUnusedName(usedName + "0");
 			}
 			else
 			{
 				int number = int.Parse(usedName.Substring(i + 1), System.Globalization.NumberStyles.Any);
 				string formatString = "N" + numberOfDigits.ToString(System.Globalization.CultureInfo.InvariantCulture);
-				return usedName.Substring(0, i + 1) + (number + 1).ToString(formatString, System.Globalization.CultureInfo.InvariantCulture);
+				return GetUnusedName(usedName.Substring(0, i + 1) + (number + 1).ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
 			}
 		}
 
@@ -140,7 +173,7 @@ namespace Altaxo.Graph
 		{
 			foreach (var entry in _allLists)
 			{
-				if (entry.Value.Item2.IsStructuralEquivalentTo(symbols))
+				if (entry.Value.List.IsStructuralEquivalentTo(symbols))
 				{
 					nameOfExistingList = entry.Key;
 					return true;

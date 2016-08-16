@@ -73,7 +73,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		public LineStyleGroupStyle()
 		{
-			_value = DashPatternListManager.Instance.BuiltinDefault[0];
+			_listOfValues = DashPatternListManager.Instance.BuiltinDefault;
+			_value = _listOfValues[0];
 		}
 
 		public LineStyleGroupStyle(LineStyleGroupStyle from)
@@ -143,9 +144,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			if (0 == step)
 				return 0; // nothing changed
 
-			if (null == _listOfValues)
-				_listOfValues = DashPatternListManager.Instance.BuiltinDefault;
-
 			var list = _listOfValues;
 			var listcount = list.Count;
 
@@ -196,6 +194,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				if (!object.ReferenceEquals(_listOfValues, value))
 				{
 					_listOfValues = value;
+					var idx = _listOfValues.IndexOf(_value);
+					if (idx < 0)
+						_value = _listOfValues[0];
+
 					EhSelfChanged();
 				}
 			}

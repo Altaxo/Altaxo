@@ -75,9 +75,30 @@
 		<Button x:Name="_guiStoreList" Content="Store list now" Grid.Row="5" Grid.Column="4" ToolTip="Stores the list in the collection of available lists" Click="EhCurrentList_Store" />
 
 		<Label Content="Available items:" Grid.Row="7" Grid.Column="0" />
-		<ListBox x:Name="_guiAvailableSymbols" Grid.Row="8" Grid.RowSpan="7" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible"
-		dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableItemsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
-		dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding AvailableItemsDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
+
+		<TreeView x:Name="_guiAvailableSymbols" Grid.Row="8" Grid.RowSpan="7" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible"
+			dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableItemsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+			dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding AvailableItemsDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
+			<ItemsControl.ItemContainerStyle>
+				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
+				<Style TargetType="{x:Type TreeViewItem}">
+					<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+					<Setter Property="FontWeight" Value="Normal" />
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding IsSelected}" Value="True">
+							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</ItemsControl.ItemContainerStyle>
+
+			<ItemsControl.Resources>
+				<HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
+					<TextBlock Text="{Binding Text}" ToolTip="{Binding ToolTip}" />
+				</HierarchicalDataTemplate>
+			</ItemsControl.Resources>
+		</TreeView>
 
 		<Button  Grid.Row="8" Grid.Column="2"  ToolTip="Adds the item to the list" Click="EhAvailableItem_AddToCurrent">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">

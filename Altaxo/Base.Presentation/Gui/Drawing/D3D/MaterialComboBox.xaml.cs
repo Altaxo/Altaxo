@@ -194,7 +194,7 @@ namespace Altaxo.Gui.Drawing.D3D
 				material = Materials.GetMaterialWithNewColor(material, coercedColor);
 			}
 
-			if (this.ShowPlotColorsOnly && (material.Color.ParentColorSet == null || false == material.Color.ParentColorSet.IsPlotColorSet))
+			if (this.ShowPlotColorsOnly && (material.Color.ParentColorSet == null || false == ColorSetManager.Instance.IsPlotColorSet(material.Color.ParentColorSet)))
 			{
 				material = Materials.GetMaterialWithNewColor(material, ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
 			}
@@ -307,7 +307,7 @@ namespace Altaxo.Gui.Drawing.D3D
 			filterString = filterString.ToLowerInvariant();
 			foreach (var item in originalList)
 			{
-				if (showPlotColorsOnly && (item.Color.ParentColorSet == null || !item.Color.ParentColorSet.IsPlotColorSet))
+				if (showPlotColorsOnly && (item.Color.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(item.Color.ParentColorSet)))
 					continue;
 
 				if (item.Color.Name.ToLowerInvariant().StartsWith(filterString))

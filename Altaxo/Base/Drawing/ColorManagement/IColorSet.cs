@@ -30,47 +30,10 @@ using System.Text;
 namespace Altaxo.Drawing.ColorManagement
 {
 	/// <summary>
-	/// Hierarchy level of the color set.
-	/// </summary>
-	public enum ColorSetLevel
-	{
-		/// <summary>The color set is built-in, i.e. hard coded in the source code of Altaxo.</summary>
-		Builtin = 0,
-
-		/// <summary>The color set is defined on the application level, i.e. for instance in an .addin file.</summary>
-		Application = 1,
-
-		/// <summary>The color set is defined on the user level. Those sets are usually stored in the user's profile.</summary>
-		UserDefined = 2,
-
-		/// <summary>The color set is defined on the project level.</summary>
-		Project = 3
-	}
-
-	/// <summary>
 	/// Set of colors with a given (<see cref="Name"/>) and <see cref="ColorSetLevel"/>. This set can be writeable or not (see <see cref="P:IList{T}.IsReadOnly"/>).
 	/// </summary>
-	public interface IColorSet : IList<NamedColor>
+	public interface IColorSet : Altaxo.Graph.IStyleList<NamedColor>
 	{
-		/// <summary>Gets the name of the color set (without any prefix like 'Builtin', 'Application' etc.).</summary>
-		string Name { get; }
-
-		/// <summary>Gets the hierarchy level of the color set (see <see cref="ColorSetLevel"/>).</summary>
-		ColorSetLevel Level { get; }
-
-		/// <summary>
-		/// Gets a value indicating whether this instance is used as a plot color set.
-		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if this instance is a plot color set; otherwise, <c>false</c>.
-		/// </value>
-		bool IsPlotColorSet { get; }
-
-		/// <summary>
-		/// Declares the this set as plot color set. This decision is not reversable.
-		/// </summary>
-		void DeclareThisSetAsPlotColorSet();
-
 		/// <summary>
 		/// Tries to find a color with a given name.
 		/// </summary>
@@ -102,22 +65,5 @@ namespace Altaxo.Drawing.ColorManagement
 		/// <param name="colorValue">The color value.</param>
 		/// <returns>The index of the color in this color set, if a such a color was found in the set. Otherwise, a negative value is returned.</returns>
 		int IndexOf(AxoColor colorValue);
-
-		/// <summary>
-		/// Adds a color with the specified color value and name to the collection.
-		/// </summary>
-		/// <param name="colorValue">The color value.</param>
-		/// <param name="name">The name of the color.</param>
-		/// <returns>The freshly added named color with the color value and name provided by the arguments.</returns>
-		NamedColor Add(AxoColor colorValue, string name);
-
-		/// <summary>
-		/// Determines whether this color set has the same colors (matching by name and color value, and index) as another set.
-		/// </summary>
-		/// <param name="other">The other set to compare with.</param>
-		/// <returns>
-		///   <c>true</c> if this set has the same colors as the other set; otherwise, <c>false</c>.
-		/// </returns>
-		bool HasSameContentAs(IList<NamedColor> other);
 	}
 }

@@ -50,14 +50,14 @@ namespace Altaxo.Graph.Plot.Groups
 	{
 		private bool _isInitialized;
 		private bool _isStepEnabled;
-		private Drawing.ColorManagement.IColorSet _colorSet;
+		private Drawing.ColorManagement.IColorSet _listOfValues;
 
 		/// <summary>Index of the current color in the color set.</summary>
 		private int _colorIndex;
 
 		/// <summary>
 		/// The current color of this group style. This color is cached and should never be serialized. It is allowed that this color is not a valid plot color, but only when the group style is used only locally (inside of a plot style collection),
-		/// so that it is never serialized. In this case the <see cref="_colorSet"/> is <c>null</c>, and the _colorIndex is undefined.
+		/// so that it is never serialized. In this case the <see cref="_listOfValues"/> is <c>null</c>, and the _colorIndex is undefined.
 		/// </summary>
 		private NamedColor _cachedColor;
 
@@ -96,14 +96,14 @@ namespace Altaxo.Graph.Plot.Groups
 			{
 				ColorGroupStyle s = (ColorGroupStyle)obj;
 				info.AddValue("StepEnabled", s._isStepEnabled);
-				info.AddValue("ColorSet", s._colorSet);
+				info.AddValue("ColorSet", s._listOfValues);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
-				s._colorSet = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
+				s._listOfValues = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
 				return s;
 			}
 		}
@@ -119,7 +119,7 @@ namespace Altaxo.Graph.Plot.Groups
 			{
 				ColorGroupStyle s = (ColorGroupStyle)obj;
 				info.AddValue("StepEnabled", s._isStepEnabled);
-				info.AddValue("ColorSet", s._colorSet);
+				info.AddValue("ColorSet", s._listOfValues);
 				info.AddValue("ColorIndex", s._colorIndex);
 
 				if (s._isLocalGroupStyle)
@@ -130,7 +130,7 @@ namespace Altaxo.Graph.Plot.Groups
 			{
 				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
-				s._colorSet = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
+				s._listOfValues = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
 				s._colorIndex = info.GetInt32("ColorIndex");
 				return s;
 			}
@@ -142,6 +142,10 @@ namespace Altaxo.Graph.Plot.Groups
 
 		protected ColorGroupStyle(bool isLocalGroupStyle)
 		{
+			_listOfValues = ColorSetManager.Instance.BuiltinDarkPlotColors;
+			_colorIndex = 0;
+			_cachedColor = _listOfValues[_colorIndex];
+
 			_isLocalGroupStyle = isLocalGroupStyle;
 			if (isLocalGroupStyle)
 			{
@@ -175,8 +179,8 @@ namespace Altaxo.Graph.Plot.Groups
 		{
 			this._isStepEnabled = from._isStepEnabled;
 			this._isInitialized = from._isInitialized;
+			this._listOfValues = from._listOfValues;
 			this._colorIndex = from._colorIndex;
-			this._colorSet = from._colorSet;
 			this._cachedColor = from._cachedColor;
 			this._isLocalGroupStyle = from._isLocalGroupStyle;
 		}
@@ -204,7 +208,7 @@ namespace Altaxo.Graph.Plot.Groups
 			ColorGroupStyle from = (ColorGroupStyle)fromb;
 			//System.Diagnostics.Debug.WriteLine(string.Format("ColorTransfer: myIni={0}, myCol={1}, fromI={2}, fromC={3}", _isInitialized, _color.Color.ToString(), from._isInitialized, from._color.Color.ToString()));
 			this._isInitialized = from._isInitialized;
-			this._colorSet = from._colorSet;
+			this._listOfValues = from._listOfValues;
 			this._colorIndex = from._colorIndex;
 			this._cachedColor = from._cachedColor;
 		}
@@ -242,11 +246,11 @@ namespace Altaxo.Graph.Plot.Groups
 
 		public int Step(int step)
 		{
-			if (this._colorSet == null)
+			if (this._listOfValues == null)
 				return 0;
 
 			int wraps;
-			this._colorIndex = ColorSetExtensions.GetNextPlotColorIndex(_colorSet, _colorIndex, step, out wraps);
+			this._colorIndex = ColorSetExtensions.GetNextPlotColorIndex(_listOfValues, _colorIndex, step, out wraps);
 			this._cachedColor = InternalGetColorFromColorSetAndIndex();
 			return wraps;
 		}
@@ -280,36 +284,14 @@ namespace Altaxo.Graph.Plot.Groups
 
 		public void Initialize(NamedColor c)
 		{
-			c = c.CoerceParentColorSetToNullIfNotMember();
-
-			if (c.ParentColorSet != null && c.ParentColorSet.IsPlotColorSet && c.ParentColorSet.Count > 0)
+			if (c.ParentColorSet != null && !object.ReferenceEquals(c.ParentColorSet, _listOfValues))
 			{
-				_colorSet = c.ParentColorSet;
-				_colorIndex = _colorSet.IndexOf(c);
-				_cachedColor = c;
-			}
-			else
-			{
-				if (_isLocalGroupStyle)
-				{
-					_colorSet = null;
-					_colorIndex = 0;
-					_cachedColor = c;
-				}
-				else
-				{
-					if (null == _colorSet || !_colorSet.IsPlotColorSet || _colorSet.Count == 0)
-						_colorSet = ColorSetManager.Instance.BuiltinDarkPlotColors;
-					_colorIndex = _colorSet.IndexOf(c.Color);
-					if (_colorIndex < 0)
-						_colorIndex = 0;
-
-					_cachedColor = InternalGetColorFromColorSetAndIndex();
-				}
+				_listOfValues = c.ParentColorSet;
 			}
 
+			_colorIndex = Math.Max(0, _listOfValues.IndexOf(c));
+			_cachedColor = _listOfValues[_colorIndex];
 			_isInitialized = true;
-			//System.Diagnostics.Debug.WriteLine(string.Format("ColorGroup.Initialize, col={0}", _color.Color));
 		}
 
 		public NamedColor Color
@@ -320,27 +302,54 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 		}
 
-		public Drawing.ColorManagement.IColorSet ColorSet
+		/// <summary>
+		/// The list of symbols to switch through
+		/// </summary>
+		public Drawing.ColorManagement.IColorSet ListOfValues
 		{
 			get
 			{
-				return _colorSet;
+				return _listOfValues;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (!object.ReferenceEquals(_listOfValues, value))
+				{
+					_listOfValues = value;
+					int idx = _listOfValues.IndexOf(_cachedColor);
+					if (idx < 0)
+					{
+						_colorIndex = 0;
+						_cachedColor = _listOfValues[0];
+					}
+					else
+					{
+						_colorIndex = idx;
+						_cachedColor = _listOfValues[idx];
+					}
+					ColorSetManager.Instance.DeclareAsPlotColorList(_listOfValues);
+
+					EhSelfChanged();
+				}
 			}
 		}
 
 		private NamedColor InternalGetColorFromColorSetAndIndex()
 		{
-			if (_colorSet != null && _colorSet.Count > 0)
+			if (_listOfValues != null && _listOfValues.Count > 0)
 			{
 				if (_colorIndex < 0)
 					_colorIndex = 0;
-				if (_colorIndex >= _colorSet.Count)
-					_colorIndex = _colorSet.Count - 1;
-				return _colorSet[_colorIndex];
+				if (_colorIndex >= _listOfValues.Count)
+					_colorIndex = _listOfValues.Count - 1;
+				return _listOfValues[_colorIndex];
 			}
 			else
 			{
-				return BuiltinDarkPlotColorSet.Instance[0];
+				return ColorSetManager.Instance.BuiltinDarkPlotColors[0];
 			}
 		}
 

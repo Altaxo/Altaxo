@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,17 +33,35 @@ namespace Altaxo.Drawing.ColorManagement
 	/// <summary>
 	/// Manages the set of colors for the application. This class has only a single instance (see <see cref="Instance"/>).
 	/// </summary>
-	public class ColorSetManager
+	public class ColorSetManager : Graph.IStyleListManager<IColorSet, NamedColor>
 	{
+		#region Inner classes
+
+		public class ColorSetManagerEntry
+		{
+			public IColorSet ColorSet { get; private set; }
+			public Main.ItemDefinitionLevel Level { get; private set; }
+			public bool IsPlotColorSet { get; private set; }
+
+			public ColorSetManagerEntry(IColorSet colorSet, Main.ItemDefinitionLevel level, bool isPlotColorSet)
+			{
+				ColorSet = colorSet;
+				Level = level;
+				IsPlotColorSet = isPlotColorSet;
+			}
+		}
+
+		#endregion Inner classes
+
 		/// <summary>
 		/// Stores the only instance of this class.
 		/// </summary>
 		private static ColorSetManager _instance = new ColorSetManager();
 
 		/// <summary>
-		/// Stores all color sets in a dictionary. The key is a compound key, consisting of the level and name of the color set.
+		/// Stores all color sets in a dictionary. The key is the name of the colorset, the value is a struct consisting of the level and name of the color set.
 		/// </summary>
-		private SortedDictionary<ColorSetIdentifier, IColorSet> _colorSetCollection = new SortedDictionary<ColorSetIdentifier, IColorSet>();
+		private SortedDictionary<string, ColorSetManagerEntry> _allLists = new SortedDictionary<string, ColorSetManagerEntry>();
 
 		private IColorSet _builtinKnownColors;
 		private IColorSet _builtinDarkPlotColors;
@@ -50,15 +69,179 @@ namespace Altaxo.Drawing.ColorManagement
 		private ColorSetManager()
 		{
 			_builtinKnownColors = NamedColors.Instance;
-			_builtinDarkPlotColors = BuiltinDarkPlotColorSet.Instance;
-			this.Add(_builtinDarkPlotColors);
-			this.Add(_builtinKnownColors);
+			_allLists.Add(_builtinKnownColors.Name, new ColorSetManagerEntry(_builtinKnownColors, Main.ItemDefinitionLevel.Builtin, false));
+
+			_builtinDarkPlotColors = new ColorSet("PlotColorsDark", GetPlotColorsDark_Version0());
+			_allLists.Add(_builtinDarkPlotColors.Name, new ColorSetManagerEntry(_builtinDarkPlotColors, Main.ItemDefinitionLevel.Builtin, true));
 		}
+
+		#region Buildin
+
+		private static NamedColor[] GetPlotColorsDark_Version0() // Version 2012-09-10
+		{
+			return new NamedColor[]{
+			NamedColors.Black,
+			NamedColors.Red,
+			NamedColors.Green,
+			NamedColors.Blue,
+			NamedColors.Magenta,
+			NamedColors.Goldenrod,
+			NamedColors.Coral
+			};
+		}
+
+		#endregion Buildin
 
 		/// <summary>
 		/// Gets the (single) instance of this class.
 		/// </summary>
 		public static ColorSetManager Instance { get { return _instance; } }
+
+		#region IStyleListManager interface
+
+		public IEnumerable<string> GetAllListNames()
+		{
+			return _allLists.Keys;
+		}
+
+		public IEnumerable<Tuple<IColorSet, ItemDefinitionLevel>> GetListsWithLevel()
+		{
+			foreach (var entry in _allLists.Values)
+				yield return new Tuple<IColorSet, ItemDefinitionLevel>(entry.ColorSet, entry.Level);
+		}
+
+		public bool ContainsList(string name)
+		{
+			return _allLists.ContainsKey(name);
+		}
+
+		public bool TryGetValue(string name, out IColorSet colorSet, out Main.ItemDefinitionLevel level, out bool isPlotColorSet)
+		{
+			ColorSetManagerEntry value;
+			if (_allLists.TryGetValue(name, out value))
+			{
+				colorSet = value.ColorSet;
+				level = value.Level;
+				isPlotColorSet = value.IsPlotColorSet;
+				return true;
+			}
+			else
+			{
+				colorSet = null;
+				level = default(Main.ItemDefinitionLevel);
+				isPlotColorSet = default(bool);
+				return false;
+			}
+		}
+
+		public IColorSet GetList(string name)
+		{
+			var value = _allLists[name];
+			return value.ColorSet;
+		}
+
+		public IColorSet GetList(string name, out ItemDefinitionLevel level)
+		{
+			var value = _allLists[name];
+			level = value.Level;
+			return value.ColorSet;
+		}
+
+		public bool TryGetListByMembers(IEnumerable<NamedColor> symbols, out string nameOfExistingList)
+		{
+			foreach (var entry in _allLists)
+			{
+				if (entry.Value.ColorSet.IsStructuralEquivalentTo(symbols))
+				{
+					nameOfExistingList = entry.Key;
+					return true;
+				}
+			}
+			nameOfExistingList = null;
+			return false;
+		}
+
+		/// <summary>
+		/// Try to register the provided list.
+		/// </summary>
+		/// <param name="level">The level on which this list is defined.</param>
+		/// <param name="instance">The new list which is tried to register.</param>
+		/// <param name="storedList">On return, this is the list which is either registered, or is an already registed list with exactly the same elements.</param>
+		/// <returns>True if the list was new and thus was added to the collection; false if the list has already existed.</returns>
+		public bool TryRegisterList(Main.ItemDefinitionLevel level, IColorSet instance, out IColorSet storedList)
+		{
+			string nameOfExistingGroup;
+			if (TryGetListByMembers(instance, out nameOfExistingGroup)) // if a group with such a list already exist
+			{
+				if (nameOfExistingGroup != instance.Name) // if it has the same list, but a different name, do nothing at all
+				{
+					storedList = _allLists[nameOfExistingGroup].ColorSet;
+					return false;
+				}
+				else // if it has the same list, and the same name, even better, nothing is left to be done
+				{
+					storedList = _allLists[nameOfExistingGroup].ColorSet;
+					return false;
+				}
+			}
+			else // a group with such members don't exist currently
+			{
+				if (_allLists.ContainsKey(instance.Name)) // but name is already in use
+				{
+					storedList = (IColorSet)instance.WithName(GetUnusedName(instance.Name));
+					_allLists.Add(storedList.Name, new ColorSetManagerEntry(storedList, level, false));
+					return true;
+				}
+				else // name is not in use
+				{
+					storedList = instance;
+					_allLists.Add(instance.Name, new ColorSetManagerEntry(instance, level, false));
+					return true;
+				}
+			}
+		}
+
+		public IColorSet CreateNewList(string name, IEnumerable<NamedColor> symbols, bool registerNewList, Main.ItemDefinitionLevel level)
+		{
+			var newList = new ColorSet(name, symbols);
+			IColorSet outList = newList;
+			if (registerNewList)
+			{
+				TryRegisterList(level, newList, out outList);
+			}
+			return outList;
+		}
+
+		protected virtual string GetUnusedName(string usedName)
+		{
+			if (string.IsNullOrEmpty(usedName))
+				throw new ArgumentNullException(nameof(usedName));
+
+			if (!_allLists.ContainsKey(usedName))
+				return usedName;
+
+			int i;
+			for (i = usedName.Length - 1; i >= 0; --i)
+			{
+				if (!char.IsDigit(usedName[i]))
+					break;
+			}
+
+			int numberOfDigits = usedName.Length - (i + 1);
+
+			if (0 == numberOfDigits)
+			{
+				return GetUnusedName(usedName + "0");
+			}
+			else
+			{
+				int number = int.Parse(usedName.Substring(i + 1), System.Globalization.NumberStyles.Any);
+				string formatString = "N" + numberOfDigits.ToString(System.Globalization.CultureInfo.InvariantCulture);
+				return GetUnusedName(usedName.Substring(0, i + 1) + (number + 1).ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
+			}
+		}
+
+		#endregion IStyleListManager interface
 
 		/// <summary>
 		/// Gets the builtin set of known colors.
@@ -82,64 +265,39 @@ namespace Altaxo.Drawing.ColorManagement
 			}
 		}
 
-		/// <summary>
-		/// Adds the specified color set to the color manager.
-		/// </summary>
-		/// <param name="plotColors">The color set to add.</param>
-		public void Add(IColorSet plotColors)
+		public bool IsPlotColorSet(IColorSet colorSet)
 		{
-			IColorSet existing;
-			var key = new ColorSetIdentifier(plotColors.Level, plotColors.Name);
-			if (_colorSetCollection.TryGetValue(key, out existing) && !object.ReferenceEquals(existing, plotColors))
-				throw new ArgumentException(string.Format("Try to add a plot color collection <<{0}>>, but another collection with the same name is already present", plotColors.Name));
+			if (null == colorSet)
+				return false;
 
-			_colorSetCollection.Add(key, plotColors);
+			ColorSetManagerEntry value;
+			if (_allLists.TryGetValue(colorSet.Name, out value))
+				return value.IsPlotColorSet;
+
+			return false;
 		}
 
-		/// <summary>
-		/// Adds a range of color sets to the manager.
-		/// </summary>
-		/// <param name="sets">The sets.</param>
-		public void AddRange(IEnumerable<IColorSet> sets)
+		public void DeclareAsPlotColorList(IColorSet colorSet)
 		{
-			foreach (var s in sets)
-				Add(s);
-		}
+			if (null == colorSet)
+				throw new ArgumentNullException(nameof(colorSet));
+			if (!_allLists.ContainsKey(colorSet.Name))
+				throw new ArgumentException("Provided ColorSet is not registered in ColorSetManager", nameof(colorSet));
 
-		/// <summary>
-		/// Determines whether the manager contains a color set with the given <see cref="ColorSetLevel"/> and name.
-		/// </summary>
-		/// <param name="level">The color set level.</param>
-		/// <param name="name">The color set name.</param>
-		/// <returns>
-		///   <c>true</c> if the manager contains a set with the given <see cref="ColorSetLevel"/> and name; otherwise, <c>false</c>.
-		/// </returns>
-		public bool Contains(ColorSetLevel level, string name)
-		{
-			return _colorSetCollection.ContainsKey(new ColorSetIdentifier(level, name));
+			var value = _allLists[colorSet.Name];
+			if (!value.IsPlotColorSet)
+				_allLists[colorSet.Name] = new ColorSetManagerEntry(colorSet, value.Level, true);
 		}
 
 		/// <summary>
 		/// Gets the <see cref="IColorSet"/> with the specified level and name.
 		/// </summary>
-		public IColorSet this[ColorSetLevel level, string name]
+		public IColorSet this[string name]
 		{
 			get
 			{
-				return _colorSetCollection[new ColorSetIdentifier(level, name)];
+				return _allLists[name].ColorSet;
 			}
-		}
-
-		/// <summary>
-		/// Tries to get the <see cref="IColorSet"/> with the specified level and name.
-		/// </summary>
-		/// <param name="level">The color set level.</param>
-		/// <param name="name">The color set name.</param>
-		/// <param name="colorSet">On return, if the color set with given level and name was found, contains the found color set.</param>
-		/// <returns><c>True</c> if a color set with the specified level and name was found in the manager.</returns>
-		public bool TryGetValue(ColorSetLevel level, string name, out IColorSet colorSet)
-		{
-			return _colorSetCollection.TryGetValue(new ColorSetIdentifier(level, name), out colorSet);
 		}
 
 		/// <summary>
@@ -148,13 +306,71 @@ namespace Altaxo.Drawing.ColorManagement
 		/// <returns></returns>
 		public IEnumerable<IColorSet> GetAllColorSets()
 		{
-			foreach (var entry in _colorSetCollection)
+			foreach (var entry in _allLists)
+			{
+				yield return entry.Value.ColorSet;
+			}
+		}
+
+		/// <summary>
+		/// Enumerates through all color sets in this manager.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<ColorSetManagerEntry> GetAllColorSetsWithLevelAndPlotColorStatus()
+		{
+			foreach (var entry in _allLists)
 			{
 				yield return entry.Value;
 			}
 		}
 
 		#region Deserialization of colors
+
+		public bool TryFindColorSetContaining(AxoColor color, out IColorSet value)
+		{
+			NamedColor namedColor;
+
+			foreach (Main.ItemDefinitionLevel level in Enum.GetValues(typeof(Main.ItemDefinitionLevel)))
+			{
+				foreach (var entry in _allLists)
+				{
+					if (entry.Value.Level != level)
+						continue;
+
+					if (entry.Value.ColorSet.TryGetValue(color, out namedColor))
+					{
+						value = entry.Value.ColorSet;
+						return true;
+					}
+				}
+			}
+
+			value = null;
+			return false;
+		}
+
+		public bool TryFindColorSetContaining(AxoColor colorValue, string colorName, out IColorSet value)
+		{
+			NamedColor namedColor;
+
+			foreach (Main.ItemDefinitionLevel level in Enum.GetValues(typeof(Main.ItemDefinitionLevel)))
+			{
+				foreach (var entry in _allLists)
+				{
+					if (entry.Value.Level != level)
+						continue;
+
+					if (entry.Value.ColorSet.TryGetValue(colorValue, colorName, out namedColor))
+					{
+						value = entry.Value.ColorSet;
+						return true;
+					}
+				}
+			}
+
+			value = null;
+			return false;
+		}
 
 		public NamedColor GetDeserializedColorWithNoSet(AxoColor color, string name)
 		{
@@ -174,140 +390,33 @@ namespace Altaxo.Drawing.ColorManagement
 			return new NamedColor(color, colorName, builtinColorSet);
 		}
 
-		public NamedColor GetDeserializedColorFromLevelAndSetName(AxoColor colorValue, string colorName, ColorSetLevel colorSetLevel, string colorSetName)
+		public NamedColor GetDeserializedColorFromLevelAndSetName(AxoColor colorValue, string colorName, string colorSetName)
 		{
-			IColorSet foundSet;
+			ColorSetManagerEntry foundSet;
 			NamedColor foundColor;
 
-			if (TryGetValue(colorSetLevel, colorSetName, out foundSet)) // if a set with the give name and level was found
+			if (_allLists.TryGetValue(colorSetName, out foundSet)) // if a set with the give name and level was found
 			{
-				if (foundSet.TryGetValue(colorName, out foundColor) && colorValue.Equals(foundColor.Color)) // if the color is known by this name, and the color value matches
+				if (foundSet.ColorSet.TryGetValue(colorName, out foundColor) && colorValue.Equals(foundColor.Color)) // if the color is known by this name, and the color value matches
 					return foundColor;                                                                  // then return this found color
-				if (foundSet.TryGetValue(colorValue, out foundColor)) // if only the color value matches,
+				if (foundSet.ColorSet.TryGetValue(colorValue, out foundColor)) // if only the color value matches,
 					return foundColor;                            // then return the found color, even if it has another name than the deserialized color
 
-				// set was found, but color is not therein -> if we are at the project level, then simply add the color. If we are at the Application or User level, we must re-entrance this function with the project level
-				if (colorSetLevel == ColorSetLevel.Project)
-				{
-					if (!foundSet.IsReadOnly)
-					{
-						return foundSet.Add(colorValue, colorName);
-					}
-					else // this set on the project level is readonly -> this would mean we have to create another set on the project level
-					{
-						// here we simply try all names by adding a number from 2 to infinity
-						for (int i = 2; i < int.MaxValue; ++i)
-						{
-							string newSetName = colorSetName + i.ToString(System.Globalization.CultureInfo.InvariantCulture);
-							if (!TryGetValue(colorSetLevel, newSetName, out foundSet))
-								foundSet = new ColorSet(newSetName, colorSetLevel);
-
-							if (foundSet.IsReadOnly)
-								continue;
-							else
-								return foundSet.Add(colorValue, colorName);
-						}
-						throw new InvalidOperationException("All set names already in use");
-					}
-				}
-				else // a set was found, but color was not therein, and the set level was not project level -> we re-entrance the function with project level
-				{
-					return GetDeserializedColorFromLevelAndSetName(colorValue, colorName, ColorSetLevel.Project, colorSetName); // re-entrance of this function with project level
-				}
+				// set was found, but color is not therein -> return a color without set (or use the first set where the color could be found
+				IColorSet cset;
+				TryFindColorSetContaining(colorValue, colorName, out cset);
+				var result = new NamedColor(colorValue, colorName, cset);
+				return result;
 			}
-			else // the color set with the given name and level was not found
+			else // the color set with the given name was not found by name
 			{
-				// what we can do here: if we are already on the project level, we create a new color set with the given name and store the color therein
-				if (ColorSetLevel.Project == colorSetLevel)
-				{
-					foundSet = new ColorSet(colorSetName, ColorSetLevel.Project);
-					Add(foundSet);
-					return foundSet.Add(colorValue, colorName);
-				}
-				else
-				{
-					colorSetName += string.Format("_(from{0})", System.Enum.GetName(typeof(ColorSetLevel), colorSetLevel));
-					return GetDeserializedColorFromLevelAndSetName(colorValue, colorName, ColorSetLevel.Project, colorSetName);
-				}
+				IColorSet cset;
+				TryFindColorSetContaining(colorValue, colorName, out cset);
+				var result = new NamedColor(colorValue, colorName, cset);
+				return result;
 			}
 		}
 
 		#endregion Deserialization of colors
-
-		#region Deserialization of color sets
-
-		public IColorSet GetDeserializedColorSet(string colorSetName, ColorSetLevel colorSetLevel, DateTime creationDate, bool isPlotColorSet, IList<NamedColor> set)
-		{
-			// the given color set can have three levels:
-			// Application: if an equal color set on Application level is found in Altaxo, use this instead. Otherwise, when an equal color set is found on user level, use that. Else, if an equal color set is found on project level, use that.
-			//							Else, create a new color set on project level.
-			// User:				Same procedure as above
-			// Project:			Same procedure as above
-
-			foreach (var builtinSet in _colorSetCollection.Values.Where(x => x.Level == ColorSetLevel.Builtin))
-			{
-				if (builtinSet.HasSameContentAs(set) && (isPlotColorSet == false || builtinSet.IsPlotColorSet))
-					return builtinSet;
-			}
-			foreach (var appSet in _colorSetCollection.Values.Where(x => x.Level == ColorSetLevel.Application))
-			{
-				if (appSet.HasSameContentAs(set) && (isPlotColorSet == false || appSet.IsPlotColorSet))
-					return appSet;
-			}
-			foreach (var userSet in _colorSetCollection.Values.Where(x => x.Level == ColorSetLevel.UserDefined))
-			{
-				if (userSet.HasSameContentAs(set) && (isPlotColorSet == false || userSet.IsPlotColorSet))
-					return userSet;
-			}
-			foreach (var projSet in _colorSetCollection.Values.Where(x => x.Level == ColorSetLevel.Project))
-			{
-				if (projSet.HasSameContentAs(set) && (isPlotColorSet == false || projSet.IsPlotColorSet))
-					return projSet;
-			}
-
-			// no such set found, then we should include the set at the project level
-			// find an available name at the project level
-
-			var newSet = new ColorSet(FindAvailableName(colorSetName, ColorSetLevel.Project), ColorSetLevel.Project, colorSetName, colorSetLevel, set);
-			if (isPlotColorSet)
-				newSet.DeclareThisSetAsPlotColorSet();
-
-			this.Add(newSet);
-
-			return newSet;
-		}
-
-		/// <summary>
-		/// Finds an available name that can be used for a new color set, at the given color set level.
-		/// </summary>
-		/// <param name="name">The proposed name. Must not be null or empty.</param>
-		/// <param name="level">The color set level.</param>
-		/// <returns>A name (either the given name or a name with an appended number), that can be used for a new color set in this collection.</returns>
-		/// <exception cref="System.ArgumentOutOfRangeException">Thrown if name is null or empty.</exception>
-		public string FindAvailableName(string name, ColorSetLevel level)
-		{
-			if (string.IsNullOrEmpty(name))
-				throw new ArgumentOutOfRangeException("name is null or empty");
-
-			if (!_colorSetCollection.Keys.Contains(new ColorSetIdentifier(level, name)))
-				return name;
-			// else try to append a number to the name
-			int firstIdx;
-			if (name[name.Length - 1] == ')' && (firstIdx = name.LastIndexOf('(')) > 0)
-			{
-				int number;
-				if (int.TryParse(name.Substring(firstIdx + 1, name.Length - firstIdx - 2), System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out number))
-					name = name.Substring(firstIdx);
-			}
-
-			for (int n = 2; ; ++n)
-			{
-				string result = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}({1})", name, n);
-				if (!_colorSetCollection.Keys.Contains(new ColorSetIdentifier(level, result)))
-					return result;
-			}
-		}
-
-		#endregion Deserialization of color sets
 	}
 }

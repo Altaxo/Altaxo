@@ -81,7 +81,15 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			Altaxo.Main.Services.FitFunctionService fitFunctionService = new Altaxo.Main.Services.FitFunctionService();
 			Altaxo.Current.SetFitFunctionService(fitFunctionService);
 			AddInTree.GetTreeNode("/Altaxo/BuiltinTextures").BuildChildItems<object>(this);
-			ColorSetManager.Instance.AddRange(AddInTree.GetTreeNode("/Altaxo/ApplicationColorSets").BuildChildItems<ColorSet>(this));
+
+			var colorSets = AddInTree.GetTreeNode("/Altaxo/ApplicationColorSets").BuildChildItems<Tuple<IColorSet, bool>>(this);
+			foreach (var entry in colorSets)
+			{
+				IColorSet storedList;
+				ColorSetManager.Instance.TryRegisterList(ItemDefinitionLevel.Application, entry.Item1, out storedList);
+				if (entry.Item2)
+					ColorSetManager.Instance.DeclareAsPlotColorList(storedList);
+			}
 			Altaxo.Main.Services.ParserServiceConnector.Initialize();
 			Altaxo.Serialization.AutoUpdates.UpdateDownloaderStarter.Run();
 		}

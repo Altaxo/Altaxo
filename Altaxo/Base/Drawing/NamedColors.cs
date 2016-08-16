@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Altaxo.Drawing
 {
-	public class NamedColors : ColorManagement.BuiltinColorSet
+	public class NamedColors : ColorManagement.ColorSet
 	{
 		private static NamedColors _colors;
 
@@ -49,11 +49,6 @@ namespace Altaxo.Drawing
 			{
 				return _colors;
 			}
-		}
-
-		public override bool IsPlotColorSet
-		{
-			get { return false; }
 		}
 
 		#region Auto generated code

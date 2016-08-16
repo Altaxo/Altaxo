@@ -70,11 +70,13 @@ namespace Altaxo.Drawing
 		/// 2015-11-14 Move to Altaxo.Drawing namespace.
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.NamedColor", 1)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NamedColor), 2)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Drawing.NamedColor", 2)]
 		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of an old version is not permitted");
+				/*
 				NamedColor s = (NamedColor)obj;
 				info.AddValue("Color", s.Color.ToInvariantString());
 				info.AddValue("Name", s.Name);
@@ -91,6 +93,7 @@ namespace Altaxo.Drawing
 						info.AddEnum("SetLevel", s._parent.Level);
 					}
 				}
+				*/
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -108,8 +111,40 @@ namespace Altaxo.Drawing
 				else if (info.CurrentElementName == "SetName")
 				{
 					string colorSetName = info.GetString("SetName");
-					var colorSetLevel = (ColorManagement.ColorSetLevel)info.GetEnum("SetLevel", typeof(ColorManagement.ColorSetLevel));
-					return ColorManagement.ColorSetManager.Instance.GetDeserializedColorFromLevelAndSetName(colorValue, colorName, colorSetLevel, colorSetName);
+					var colorSetLevel = (Altaxo.Main.ItemDefinitionLevel)info.GetEnum("SetLevel", typeof(Altaxo.Main.ItemDefinitionLevel));
+					return ColorManagement.ColorSetManager.Instance.GetDeserializedColorFromLevelAndSetName(colorValue, colorName, colorSetName);
+				}
+				else // nothing of both, thus color belongs to nothing or to the standard color set
+				{
+					return ColorManagement.ColorSetManager.Instance.GetDeserializedColorWithNoSet(colorValue, colorName);
+				}
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NamedColor), 3)]
+		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				NamedColor s = (NamedColor)obj;
+				info.AddValue("Color", s.Color.ToInvariantString());
+				info.AddValue("Name", s.Name);
+
+				if (null != s._parent)
+				{
+					info.AddValue("SetName", s._parent.Name);
+				}
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var colorValue = AxoColor.FromInvariantString(info.GetString("Color"));
+				var colorName = info.GetString("Name");
+
+				if (info.CurrentElementName == "SetName")
+				{
+					string colorSetName = info.GetString("SetName");
+					return ColorManagement.ColorSetManager.Instance.GetDeserializedColorFromLevelAndSetName(colorValue, colorName, colorSetName);
 				}
 				else // nothing of both, thus color belongs to nothing or to the standard color set
 				{
@@ -252,6 +287,11 @@ namespace Altaxo.Drawing
 			return this._color.Equals(from._color) && 0 == string.Compare(this._name, from._name) && object.ReferenceEquals(this._parent, from._parent);
 		}
 
+		public bool EqualsInNameAndColor(NamedColor from)
+		{
+			return this._color.Equals(from._color) && 0 == string.Compare(this._name, from._name);
+		}
+
 		public bool Equals(AxoColor from)
 		{
 			return this._color.Equals(from);
@@ -285,20 +325,20 @@ namespace Altaxo.Drawing
 
 		#region Name
 
-		private static string GetLevelString(ColorManagement.ColorSetLevel level)
+		private static string GetLevelString(Main.ItemDefinitionLevel level)
 		{
 			switch (level)
 			{
-				case ColorManagement.ColorSetLevel.Builtin:
+				case Main.ItemDefinitionLevel.Builtin:
 					return "Builtin";
 
-				case ColorManagement.ColorSetLevel.Application:
+				case Main.ItemDefinitionLevel.Application:
 					return "App";
 
-				case ColorManagement.ColorSetLevel.UserDefined:
+				case Main.ItemDefinitionLevel.UserDefined:
 					return "User";
 
-				case ColorManagement.ColorSetLevel.Project:
+				case Main.ItemDefinitionLevel.Project:
 					return "Project";
 
 				default:
@@ -308,8 +348,13 @@ namespace Altaxo.Drawing
 
 		public override string ToString()
 		{
-			if (ParentColorSet != null)
-				return string.Format("{0} ({1}/{2})", Name, GetLevelString(ParentColorSet.Level), ParentColorSet.Name);
+			ColorManagement.IColorSet set;
+			Main.ItemDefinitionLevel level;
+			bool isPlotColorSet;
+			if (ParentColorSet != null && ColorManagement.ColorSetManager.Instance.TryGetValue(ParentColorSet.Name, out set, out level, out isPlotColorSet))
+			{
+				return string.Format("{0} ({1}/{2})", Name, GetLevelString(level), ParentColorSet.Name);
+			}
 			else
 				return string.Format("{0} ({1})", Name, "<<no color set>>");
 		}

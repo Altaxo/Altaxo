@@ -160,7 +160,7 @@ namespace Altaxo.Gui.Common.Drawing
 				brush.Color = coercedColor;
 			}
 
-			if (this.ShowPlotColorsOnly && (brush.Color.ParentColorSet == null || false == brush.Color.ParentColorSet.IsPlotColorSet))
+			if (this.ShowPlotColorsOnly && (brush.Color.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(brush.Color.ParentColorSet)))
 			{
 				brush = brush.Clone();
 				brush.Color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
@@ -263,9 +263,10 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			var result = new List<object>();
 			filterString = filterString.ToLowerInvariant();
+
 			foreach (var item in originalList)
 			{
-				if (showPlotColorsOnly && (item.Color.ParentColorSet == null || !item.Color.ParentColorSet.IsPlotColorSet))
+				if (showPlotColorsOnly && (item.Color.ParentColorSet == null || !ColorSetManager.Instance.IsPlotColorSet(item.Color.ParentColorSet)))
 					continue;
 
 				if (item.Color.Name.ToLowerInvariant().StartsWith(filterString))

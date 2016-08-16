@@ -97,9 +97,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			_guiAvailableLists.ItemsSource = nodes;
 		}
 
-		public void AvailableItems_Initialize(SelectableListNodeList items)
+		public void AvailableItems_Initialize(NGTreeNodeCollection items)
 		{
-			GuiHelper.Initialize(_guiAvailableSymbols, items);
+			_guiAvailableSymbols.ItemsSource = items;
 		}
 
 		public void CurrentItemList_Initialize(SelectableListNodeList items)
@@ -147,13 +147,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 			public bool CanStartDrag(IDragInfo dragInfo)
 			{
-				var result = _parentControl.AvailableItems_CanStartDrag?.Invoke(_parentControl._guiAvailableSymbols.SelectedItems);
+				var result = _parentControl.AvailableItems_CanStartDrag?.Invoke(dragInfo.SourceItems);
 				return result.HasValue ? result.Value : false;
 			}
 
 			public void StartDrag(IDragInfo dragInfo)
 			{
-				GuiHelper.SynchronizeSelectionFromGui(_parentControl._guiAvailableSymbols);
 				var result = _parentControl.AvailableItems_StartDrag?.Invoke(dragInfo.SourceItems);
 				if (null != result)
 				{
@@ -402,7 +401,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 		private void EhAvailableItem_AddToCurrent(object sender, RoutedEventArgs e)
 		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiAvailableSymbols);
 			GuiHelper.SynchronizeSelectionFromGui(_guiCurrentItems);
 			AvailableItem_AddToCurrent?.Invoke();
 		}

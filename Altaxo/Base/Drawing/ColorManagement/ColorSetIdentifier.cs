@@ -35,7 +35,7 @@ namespace Altaxo.Drawing.ColorManagement
 	[System.ComponentModel.ImmutableObject(true)]
 	public class ColorSetIdentifier : IEquatable<ColorSetIdentifier>, IComparable<ColorSetIdentifier>, Main.IImmutable
 	{
-		private ColorSetLevel _level;
+		private Altaxo.Main.ItemDefinitionLevel _level;
 		private string _name;
 
 		#region Serialization
@@ -56,7 +56,7 @@ namespace Altaxo.Drawing.ColorManagement
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var colorSetLevel = (ColorManagement.ColorSetLevel)info.GetEnum("Level", typeof(ColorManagement.ColorSetLevel));
+				var colorSetLevel = (Altaxo.Main.ItemDefinitionLevel)info.GetEnum("Level", typeof(Altaxo.Main.ItemDefinitionLevel));
 				string colorSetName = info.GetString("Name");
 				return new ColorSetIdentifier(colorSetLevel, colorSetName);
 			}
@@ -64,7 +64,7 @@ namespace Altaxo.Drawing.ColorManagement
 
 		#endregion Serialization
 
-		public ColorSetIdentifier(ColorSetLevel colorSetLevel, string colorSetName)
+		public ColorSetIdentifier(Altaxo.Main.ItemDefinitionLevel colorSetLevel, string colorSetName)
 		{
 			if (string.IsNullOrEmpty(colorSetName))
 				throw new ArgumentOutOfRangeException("colorSetName is null or is empty");
@@ -79,7 +79,7 @@ namespace Altaxo.Drawing.ColorManagement
 		/// <value>
 		/// The level of the color set.
 		/// </value>
-		public ColorSetLevel Level { get { return _level; } }
+		public Altaxo.Main.ItemDefinitionLevel Level { get { return _level; } }
 
 		/// <summary>
 		/// Gets the name of the color set.

@@ -50,7 +50,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public PenControlsGlue(bool isAllPropertiesGlue)
 		{
-			this.InternalSelectedPen = new PenX(BuiltinDarkPlotColorSet.Instance[0]);
+			this.InternalSelectedPen = new PenX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
 			_isAllPropertiesGlue = isAllPropertiesGlue;
 		}
 

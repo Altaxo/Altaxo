@@ -22,34 +22,23 @@
 
 #endregion Copyright
 
+using Altaxo.Graph;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Altaxo.Drawing.ColorManagement
 {
-	public class ColorSet : System.Collections.ObjectModel.ObservableCollection<NamedColor>, IColorSet
+	public class ColorSet : IColorSet
 	{
+		private IList<NamedColor> _innerList;
 		protected readonly string _name;
-		protected readonly ColorSetLevel _colorSetLevel;
-		private bool _isPlotColorSet;
-		private DateTime _creationDate;
 
 		protected Dictionary<string, int> _nameToIndexDictionary;
 		protected Dictionary<AxoColor, int> _colorToIndexDictionary;
 		protected Dictionary<ColorNameKey, int> _namecolorToIndexDictionary;
-
-		/// <summary>Original name of the color set (name as it was in deserialized content).</summary>
-		protected readonly string _originalName;
-
-		/// <summary>Original level of the color set (level as it was in deserialized content).</summary>
-		protected readonly ColorSetLevel _originalColorSetLevel;
-
-		/// <summary>
-		/// Used to suppress Changed events when a bulk of changes has to be made.
-		/// </summary>
-		private Main.TemporaryDisabler _bulkChanger;
 
 		#region Serialization
 
@@ -57,11 +46,13 @@ namespace Altaxo.Drawing.ColorManagement
 		/// 2015-11-15 Version 1 moved to Altaxo.Drawing.ColorManagement namespace.
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.ColorManagement.ColorSet", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorSet), 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Drawing.ColorManagement.ColorSet", 1)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old version is not supported");
+				/*
 				var s = (ColorSet)obj;
 				info.AddValue("Name", s._originalName);
 				info.AddEnum("Level", s._originalColorSetLevel);
@@ -79,12 +70,13 @@ namespace Altaxo.Drawing.ColorManagement
 				}
 
 				info.CommitArray();
+				*/
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				string colorSetName = info.GetString("Name");
-				var colorSetLevel = (ColorManagement.ColorSetLevel)info.GetEnum("Level", typeof(ColorManagement.ColorSetLevel));
+				var colorSetLevel = (Altaxo.Main.ItemDefinitionLevel)info.GetEnum("Level", typeof(Altaxo.Main.ItemDefinitionLevel));
 				var creationDate = info.GetDateTime("CreationDate");
 				var isPlotColorSet = info.GetBoolean("IsPlotColorSet");
 
@@ -99,7 +91,56 @@ namespace Altaxo.Drawing.ColorManagement
 
 				info.CloseArray(count);
 
-				return ColorSetManager.Instance.GetDeserializedColorSet(colorSetName, colorSetLevel, creationDate, isPlotColorSet, colors);
+				IColorSet returnValue;
+				ColorSetManager.Instance.TryRegisterList(Main.ItemDefinitionLevel.Project, new ColorSet(colorSetName, colors), out returnValue);
+				return returnValue;
+			}
+		}
+
+		/// <summary>
+		/// 2016-08-15 Simplification and Immutability of ColorSet
+		/// </summary>
+		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorSet), 2)]
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (ColorSet)obj;
+				info.AddValue("Name", s._name);
+
+				info.CreateArray("Colors", s._innerList.Count);
+
+				foreach (NamedColor c in s)
+				{
+					info.CreateElement("e");
+					info.AddAttributeValue("Name", c.Name);
+					info.SetNodeContent(c.Color.ToInvariantString());
+					info.CommitElement();
+				}
+
+				info.CommitArray();
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				string colorSetName = info.GetString("Name");
+
+				int count = info.OpenArray("Colors");
+				var colors = new NamedColor[count];
+				for (int i = 0; i < count; ++i)
+				{
+					string name = info.GetStringAttribute("Name");
+					string cvalue = info.GetString("e");
+					colors[i] = new NamedColor(AxoColor.FromInvariantString(cvalue), name);
+				}
+
+				info.CloseArray(count);
+
+				IColorSet returnValue;
+				ColorSetManager.Instance.TryRegisterList(Main.ItemDefinitionLevel.Project, new ColorSet(colorSetName, colors), out returnValue);
+
+				return returnValue;
 			}
 		}
 
@@ -109,59 +150,15 @@ namespace Altaxo.Drawing.ColorManagement
 		/// Creates a new collection of plot colors with a given name. The initial items will be copied from another plot color collection.
 		/// </summary>
 		/// <param name="name">Name of this plot color collection.</param>
-		/// <param name="colorSetLevel">Hierarchie level of this color set.</param>
-		public ColorSet(string name, ColorSetLevel colorSetLevel)
-			: this(name, colorSetLevel, name, colorSetLevel, null)
-		{
-		}
-
-		/// <summary>
-		/// Creates a new collection of plot colors with a given name. The initial items will be copied from another plot color collection.
-		/// </summary>
-		/// <param name="name">Name of this plot color collection.</param>
-		/// <param name="colorSetLevel">Hierarchie level of this color set.</param>
-		/// <param name="basedOn">Another plot color collection from which to copy the initial items.</param>
-		public ColorSet(string name, ColorSetLevel colorSetLevel, IEnumerable<NamedColor> basedOn)
-			: this(name, colorSetLevel, name, colorSetLevel, basedOn)
-		{
-		}
-
-		/// <summary>
-		/// Creates a new collection of plot colors with a given name. The initial items will be copied from another plot color collection.
-		/// The direct use of this constructor is intended mainly after deserialization, when the name and/or level deviates from the original name or level, because such a name-level combination is already present in the color set manager.
-		/// </summary>
-		/// <param name="name">Name of this plot color collection.</param>
-		/// <param name="colorSetLevel">Hierarchie level of this color set.</param>
-		/// <param name="originalName">Original name of the color set (name as it was in deserialized content).</param>
-		/// <param name="originalColorSetLevel">Original level of the color set (level as it was in deserialized content).</param>
-		/// <param name="basedOn">Another plot color collection from which to copy the initial items.</param>
-		protected internal ColorSet(string name, ColorSetLevel colorSetLevel, string originalName, ColorSetLevel originalColorSetLevel, IEnumerable<NamedColor> basedOn)
+		/// <param name="colors">The colors for this set.</param>
+		public ColorSet(string name, IEnumerable<NamedColor> colors)
 		{
 			if (string.IsNullOrEmpty(name))
-				throw new ArgumentOutOfRangeException("Argument name must not be null or empty!");
-			if (string.IsNullOrEmpty(originalName))
-				throw new ArgumentOutOfRangeException("Argument originalName must not be null or empty!");
-			if (colorSetLevel == ColorSetLevel.Builtin)
-				throw new ArgumentOutOfRangeException("Argument colorSetLevel must not be 'ColorSetLevel.Builtin'. Please use a separate class for a new built-in color set");
-			if (originalColorSetLevel == ColorSetLevel.Builtin)
-				throw new ArgumentOutOfRangeException("Argument originalColorSetLevel must not be 'ColorSetLevel.Builtin'. Please use a separate class for a new built-in color set");
-
-			_creationDate = DateTime.UtcNow;
-			_bulkChanger = new Main.TemporaryDisabler(BuildSideDictionaries);
+				throw new ArgumentNullException(nameof(name));
 
 			_name = name;
-			_colorSetLevel = colorSetLevel;
-			_originalName = originalName;
-			_originalColorSetLevel = originalColorSetLevel;
-
-			if (null != basedOn)
-			{
-				using (var updateToken = _bulkChanger.SuspendGetToken())
-				{
-					foreach (var item in basedOn)
-						Add(new NamedColor(item, this));
-				}
-			}
+			_innerList = new List<NamedColor>(colors.Select(c => new NamedColor(c.Color, c.Name, this)));
+			BuildSideDictionaries();
 		}
 
 		private void BuildSideDictionaries()
@@ -181,70 +178,13 @@ namespace Altaxo.Drawing.ColorManagement
 			else
 				_namecolorToIndexDictionary.Clear();
 
-			for (int i = this.Count - 1; i >= 0; --i)
+			for (int i = this._innerList.Count - 1; i >= 0; --i)
 			{
-				var c = this[i];
+				var c = this._innerList[i];
 				_nameToIndexDictionary[c.Name] = i;
 				_colorToIndexDictionary[c.Color] = i;
 				_namecolorToIndexDictionary[new ColorNameKey(c.Color, c.Name)] = i;
 			}
-		}
-
-		/// <summary>
-		/// Inserts an <see cref="NamedColor"/> item at the specified position.
-		/// </summary>
-		/// <param name="index">The insertion position.</param>
-		/// <param name="item">The color item to insert.</param>
-		protected override void InsertItem(int index, NamedColor item)
-		{
-			base.InsertItem(index, new NamedColor(item, this));
-			if (!_bulkChanger.IsSuspended)
-				BuildSideDictionaries();
-		}
-
-		/// <summary>
-		/// Sets the item at the specified position.
-		/// </summary>
-		/// <param name="index">The index.</param>
-		/// <param name="item">The item.</param>
-		protected override void SetItem(int index, NamedColor item)
-		{
-			base.SetItem(index, new NamedColor(item, this));
-			if (!_bulkChanger.IsSuspended)
-				BuildSideDictionaries();
-		}
-
-		/// <summary>
-		/// Removes the item.
-		/// </summary>
-		/// <param name="index">The index.</param>
-		protected override void RemoveItem(int index)
-		{
-			base.RemoveItem(index);
-			if (!_bulkChanger.IsSuspended)
-				BuildSideDictionaries();
-		}
-
-		/// <summary>
-		/// Clears all items in the set.
-		/// </summary>
-		protected override void ClearItems()
-		{
-			base.ClearItems();
-			if (!_bulkChanger.IsSuspended)
-				BuildSideDictionaries();
-		}
-
-		/// <summary>
-		/// Moves the item from one position to another position.
-		/// </summary>
-		/// <param name="oldIndex">The old index.</param>
-		/// <param name="newIndex">The new index.</param>
-		protected override void MoveItem(int oldIndex, int newIndex)
-		{
-			base.MoveItem(oldIndex, newIndex);
-			if (!_bulkChanger.IsSuspended)
-				BuildSideDictionaries();
 		}
 
 		/// <summary>
@@ -259,21 +199,42 @@ namespace Altaxo.Drawing.ColorManagement
 			}
 		}
 
+		public int Count
+		{
+			get
+			{
+				return _innerList.Count;
+			}
+		}
+
+		public bool IsReadOnly
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+		public NamedColor this[int index]
+		{
+			get
+			{
+				return _innerList[index];
+			}
+
+			set
+			{
+				throw new InvalidOperationException();
+			}
+		}
+
 		/// <summary>
 		/// Copies all color items to an array.
 		/// </summary>
 		/// <returns>Array with all colors in this set.</returns>
 		public NamedColor[] ToArray()
 		{
-			return this.ToArray();
-		}
-
-		/// <summary>
-		/// Gets the hierarchy level of the color set (see <see cref="ColorSetLevel"/>).
-		/// </summary>
-		public ColorSetLevel Level
-		{
-			get { return _colorSetLevel; }
+			return this._innerList.ToArray();
 		}
 
 		/// <summary>
@@ -289,7 +250,7 @@ namespace Altaxo.Drawing.ColorManagement
 			int idx;
 			if (_nameToIndexDictionary.TryGetValue(colorName, out idx))
 			{
-				namedColor = this[idx];
+				namedColor = this._innerList[idx];
 				return true;
 			}
 			else
@@ -312,7 +273,7 @@ namespace Altaxo.Drawing.ColorManagement
 			int idx;
 			if (_colorToIndexDictionary.TryGetValue(colorValue, out idx))
 			{
-				namedColor = this[idx];
+				namedColor = this._innerList[idx];
 				return true;
 			}
 			else
@@ -336,7 +297,7 @@ namespace Altaxo.Drawing.ColorManagement
 			int idx;
 			if (_namecolorToIndexDictionary.TryGetValue(new ColorNameKey(colorValue, colorName), out idx))
 			{
-				namedColor = this[idx];
+				namedColor = this._innerList[idx];
 				return true;
 			}
 			else
@@ -351,7 +312,7 @@ namespace Altaxo.Drawing.ColorManagement
 		/// </summary>
 		/// <param name="color">The color.</param>
 		/// <returns>The index of the color in the set. If the color is not found in the set, a negative value is returned.</returns>
-		public new virtual int IndexOf(NamedColor color)
+		public virtual int IndexOf(NamedColor color)
 		{
 			int idx;
 			if (_namecolorToIndexDictionary.TryGetValue(new ColorNameKey(color.Color, color.Name), out idx))
@@ -382,50 +343,82 @@ namespace Altaxo.Drawing.ColorManagement
 			}
 		}
 
-		/// <summary>
-		/// Adds a color with the specified color value and name to the collection.
-		/// </summary>
-		/// <param name="colorValue">The color value.</param>
-		/// <param name="name">The name of the color.</param>
-		/// <returns>
-		/// The freshly added named color with the color value and name provided by the arguments.
-		/// </returns>
-		public NamedColor Add(AxoColor colorValue, string name)
+		public IStyleList<NamedColor> WithName(string name)
 		{
-			var result = new NamedColor(colorValue, name);
-			Add(result);
-			return result;
+			if (this.Name == name)
+				return this;
+			else
+				return new ColorSet(name, this._innerList);
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether this instance is used as a plot color set.
-		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if this instance is a plot color set; otherwise, <c>false</c>.
-		/// </value>
-		public bool IsPlotColorSet
+		public bool IsStructuralEquivalentTo(IEnumerable<NamedColor> l1)
 		{
-			get { return _isPlotColorSet; }
+			if (l1 == null)
+				return false;
+
+			var l2 = this;
+
+			int i = 0;
+			int len2 = l2._innerList.Count;
+			foreach (var item1 in l1)
+			{
+				if (i >= len2)
+					return false;
+
+				if (!item1.EqualsInNameAndColor(l2._innerList[i]))
+					return false;
+				++i;
+			}
+
+			if (i != l2._innerList.Count)
+				return false;
+
+			return true;
 		}
 
-		/// <summary>
-		/// Declares the this set as plot color set. This decision is not reversable.
-		/// </summary>
-		public void DeclareThisSetAsPlotColorSet()
+		public void Insert(int index, NamedColor item)
 		{
-			_isPlotColorSet = true;
+			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Determines whether this color set has the same colors (matching by name and color value, and index) as another set.
-		/// </summary>
-		/// <param name="other">The other set to compare with.</param>
-		/// <returns>
-		///   <c>true</c> if this set has the same colors as the other set; otherwise, <c>false</c>.
-		/// </returns>
-		public bool HasSameContentAs(IList<NamedColor> other)
+		public void RemoveAt(int index)
 		{
-			return BuiltinColorSet.HaveSameNamedColors(this, other);
+			throw new NotImplementedException();
+		}
+
+		public void Add(NamedColor item)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Clear()
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool Contains(NamedColor item)
+		{
+			return _innerList.Contains(item);
+		}
+
+		public void CopyTo(NamedColor[] array, int arrayIndex)
+		{
+			_innerList.CopyTo(array, arrayIndex);
+		}
+
+		public bool Remove(NamedColor item)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IEnumerator<NamedColor> GetEnumerator()
+		{
+			return _innerList.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return _innerList.GetEnumerator();
 		}
 	}
 }

@@ -132,7 +132,10 @@ new Main.Properties.PropertyKey<NamedColor>(
 "Graph\\Colors\\Default plot color",
 Main.Properties.PropertyLevel.Document,
 typeof(GraphDocument),
-() => ColorSetManager.Instance.BuiltinDarkPlotColors[0]
+() =>
+{
+	return ColorSetManager.Instance.BuiltinDarkPlotColors[0];
+}
 )
 {
 	EditingControllerCreation = (doc) =>
