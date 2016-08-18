@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
@@ -263,17 +264,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._pen = (PenX)info.GetValue("Pen", s);
 				s._symbolSize = info.GetSingle("SymbolSize");
 				s._relativePenWidth = info.GetSingle("RelativePenWidth");
-
-				if (0 != (dropLine & XYPlotScatterStyles.DropLine.Bottom))
-					s._dropLine.Add(CSPlaneID.Bottom);
-				if (0 != (dropLine & XYPlotScatterStyles.DropLine.Top))
-					s._dropLine.Add(CSPlaneID.Top);
-				if (0 != (dropLine & XYPlotScatterStyles.DropLine.Left))
-					s._dropLine.Add(CSPlaneID.Left);
-				if (0 != (dropLine & XYPlotScatterStyles.DropLine.Right))
-					s._dropLine.Add(CSPlaneID.Right);
+				s._dropLine = new CSPlaneIDList(GetCSPlaneIds(dropLine));
 
 				return s;
+			}
+
+			private static IEnumerable<CSPlaneID> GetCSPlaneIds(XYPlotScatterStyles.DropLine dropLine)
+			{
+				if (0 != (dropLine & XYPlotScatterStyles.DropLine.Bottom))
+					yield return CSPlaneID.Bottom;
+				if (0 != (dropLine & XYPlotScatterStyles.DropLine.Top))
+					yield return CSPlaneID.Top;
+				if (0 != (dropLine & XYPlotScatterStyles.DropLine.Left))
+					yield return CSPlaneID.Left;
+				if (0 != (dropLine & XYPlotScatterStyles.DropLine.Right))
+					yield return CSPlaneID.Right;
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -383,11 +388,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				this._shape = from._shape;
 				this._style = from._style;
-				if (null == this._dropLine)
-					this._dropLine = new CSPlaneIDList();
-				else
-					this._dropLine.Clear();
-				this._dropLine.AddClonedRange(from._dropLine);
+				this._dropLine = from._dropLine; // immutable
 				ChildCopyToMember(ref _pen, from._pen);
 				this._independentColor = from._independentColor;
 				this._independentSymbolSize = from._independentSymbolSize;
@@ -416,7 +417,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			_shape = shape;
 			_style = style;
-			_dropLine = new CSPlaneIDList();
+			_dropLine = CSPlaneIDList.Empty;
 			_pen = new PenX(penColor, (float)penWidth);
 			_symbolSize = size;
 
@@ -436,7 +437,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			this._shape = XYPlotScatterStyles.Shape.Square;
 			this._style = XYPlotScatterStyles.Style.Solid;
-			this._dropLine = new CSPlaneIDList();
+			this._dropLine = CSPlaneIDList.Empty;
 			this._pen = new PenX(color, penWidth) { ParentObject = this };
 			this._independentColor = false;
 
@@ -848,8 +849,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// paint the drop style
 			if (this.DropLine.Count > 0)
 			{
-				foreach (CSPlaneID id in _dropLine)
-					layer.UpdateCSPlaneID(id);
+				var dropTargets = _dropLine.Select(id => layer.UpdateCSPlaneID(id)).ToArray();
 
 				int rangeidx = 0;
 				PlotRange range = pdata.RangeList[rangeidx];
@@ -863,7 +863,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					}
 
 					Logical3D r3d = layer.GetLogical3D(pdata, j + range.OffsetToOriginal);
-					foreach (CSPlaneID id in _dropLine)
+					foreach (CSPlaneID id in dropTargets)
 						layer.CoordinateSystem.DrawIsolineFromPointToPlane(g, this._pen, r3d, id);
 				}
 			} // end paint the drop style

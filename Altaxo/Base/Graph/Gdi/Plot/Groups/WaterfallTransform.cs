@@ -556,7 +556,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				get { return _layer.AxisStyleIDs; }
 			}
 
-			public void UpdateCSPlaneID(CSPlaneID id)
+			public CSPlaneID UpdateCSPlaneID(CSPlaneID id)
 			{
 				if (id.UsePhysicalValue)
 				{
@@ -564,18 +564,19 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					switch (scaleidx)
 					{
 						case 0:
-							id.LogicalValue = _xScale.PhysicalVariantToNormal(id.PhysicalValue);
+							id = id.WithLogicalValue(_xScale.PhysicalVariantToNormal(id.PhysicalValue));
 							break;
 
 						case 1:
-							id.LogicalValue = _yScale.PhysicalVariantToNormal(id.PhysicalValue);
+							id = id.WithLogicalValue(_yScale.PhysicalVariantToNormal(id.PhysicalValue));
 							break;
 
 						default:
-							_layer.UpdateCSPlaneID(id);
+							id = _layer.UpdateCSPlaneID(id);
 							break;
 					}
 				}
+				return id;
 			}
 
 			#endregion IPlotArea Members

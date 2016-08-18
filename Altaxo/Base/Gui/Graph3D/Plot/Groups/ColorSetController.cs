@@ -57,11 +57,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 				_availableItemsRootNode.Nodes.Clear();
 
 			var levelDict = new Dictionary<ItemDefinitionLevel, NGTreeNode>();
-			var allLists = ColorSetManager.Instance.GetAllColorSetsWithLevelAndPlotColorStatus().ToArray(); ;
+			var allLists = ColorSetManager.Instance.GetEntryValues().ToArray(); ;
 			Array.Sort(allLists, (x, y) =>
 			{
 				int result = Comparer<ItemDefinitionLevel>.Default.Compare(x.Level, y.Level);
-				return 0 != result ? result : string.Compare(x.ColorSet.Name, y.ColorSet.Name);
+				return 0 != result ? result : string.Compare(x.List.Name, y.List.Name);
 			}
 			);
 
@@ -75,8 +75,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 					_availableItemsRootNode.Nodes.Add(levelNode);
 				}
 
-				var listNode = new NGTreeNode(list.ColorSet.Name);
-				foreach (var color in list.ColorSet)
+				var listNode = new NGTreeNode(list.List.Name);
+				foreach (var color in list.List)
 					listNode.Nodes.Add(new NGTreeNode(ToDisplayName(color)) { Tag = color });
 				levelNode.Nodes.Add(listNode);
 			}

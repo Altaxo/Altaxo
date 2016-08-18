@@ -360,7 +360,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._ignoreMissingPoints = from._ignoreMissingPoints;
 				this._fillArea = from._fillArea;
 				this._fillBrush = null == from._fillBrush ? null : (BrushX)from._fillBrush.Clone();
-				this._fillDirection = null == from._fillDirection ? null : from._fillDirection.Clone();
+				this._fillDirection = from._fillDirection;
 				this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
 				this._independentColor = from._independentColor;
 				this._fillColorLinkage = from._fillColorLinkage;
@@ -662,7 +662,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (null != _fillBrush)
 					_fillBrush.SetEnvironment(new RectangleD2D(PointD2D.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
 
-				layer.UpdateCSPlaneID(_fillDirection);
+				_fillDirection = layer.UpdateCSPlaneID(_fillDirection);
 			}
 
 			int rangelistlen = rangeList.Count;
@@ -688,7 +688,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			PlotRangeList rangeList = pdata.RangeList;
-			layer.UpdateCSPlaneID(fillDirection);
+			fillDirection = layer.UpdateCSPlaneID(fillDirection);
 
 			int rangelistlen = rangeList.Count;
 

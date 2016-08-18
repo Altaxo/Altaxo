@@ -422,14 +422,16 @@ namespace Altaxo.Graph.Graph3D
 			return result;
 		}
 
+		/// <summary>
+		/// Gets the name of the provided plane.
+		/// </summary>
+		/// <param name="planeId">The plane identifier.</param>
+		/// <returns>The name of the provided plane.</returns>
+		public abstract string GetNameOfPlane(CSPlaneID planeId);
+
 		public CSPlaneInformation GetPlaneInformation(CSPlaneID planeID)
 		{
-			CSLineID lineID = (CSLineID)planeID;
-			CSAxisInformation lineInfo = GetAxisStyleInformation(lineID);
-
-			CSPlaneInformation result = new CSPlaneInformation(planeID);
-			result.Name = lineInfo.NameOfAxisStyle;
-			return result;
+			return new CSPlaneInformation(planeID) { Name = GetNameOfPlane(planeID) };
 		}
 
 		public IEnumerable<CSLineID> GetJoinedAxisStyleIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSLineID> list2)
@@ -469,36 +471,43 @@ namespace Altaxo.Graph.Graph3D
 
 		public IEnumerable<CSPlaneID> GetJoinedPlaneIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSPlaneID> list2)
 		{
-			Dictionary<CSPlaneID, object> dict = new Dictionary<CSPlaneID, object>();
+			HashSet<CSPlaneID> set = new HashSet<CSPlaneID>();
 
 			foreach (CSAxisInformation info in AxisStyles)
 			{
-				CSPlaneID p1 = (CSPlaneID)info.Identifier;
-				dict.Add(p1, null);
-				yield return p1;
+				foreach (var planeID in CSPlaneID.GetPlanesParallelToAxis3D(info.Identifier))
+				{
+					if (!set.Contains(planeID))
+					{
+						set.Add(planeID);
+						yield return planeID;
+					}
+				}
 			}
 
 			if (list1 != null)
 			{
-				foreach (CSLineID id in list1)
+				foreach (CSLineID lineID in list1)
 				{
-					CSPlaneID p2 = (CSPlaneID)id;
-					if (!dict.ContainsKey(p2))
+					foreach (var planeID in CSPlaneID.GetPlanesParallelToAxis3D(lineID))
 					{
-						dict.Add(p2, null);
-						yield return p2;
+						if (!set.Contains(planeID))
+						{
+							set.Add(planeID);
+							yield return planeID;
+						}
 					}
 				}
 			}
 
 			if (list2 != null)
 			{
-				foreach (CSPlaneID id in list2)
+				foreach (CSPlaneID planeID in list2)
 				{
-					if (null != id && !dict.ContainsKey(id))
+					if (null != planeID && !set.Contains(planeID))
 					{
-						dict.Add(id, null);
-						yield return id;
+						set.Add(planeID);
+						yield return planeID;
 					}
 				}
 			}

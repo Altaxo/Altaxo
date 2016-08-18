@@ -613,6 +613,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph3D\Plot\Styles\DropPlotStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph3D\Plot\Styles\XYZPlotLineStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1558,6 +1562,9 @@
     </Compile>
     <Compile Include="Gui\Graph3D\Plot\Styles\LabelPlotStyleControl.xaml.cs">
       <DependentUpon>LabelPlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph3D\Plot\Styles\DropPlotStyleControl.xaml.cs">
+      <DependentUpon>DropPlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotLineStyleControl.xaml.cs">
       <DependentUpon>XYZPlotLineStyleControl.xaml</DependentUpon>

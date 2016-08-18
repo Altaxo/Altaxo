@@ -166,9 +166,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 		protected override void OnChanged(EventArgs e)
 		{
-			UpdateTransformationMatrix();
-
-			base.OnChanged(e);
+			if (!IsDisposeInProgress)
+			{
+				UpdateTransformationMatrix();
+				base.OnChanged(e);
+			}
 		}
 
 		#endregion Suspend/Resume

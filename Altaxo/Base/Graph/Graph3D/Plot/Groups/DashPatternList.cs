@@ -60,7 +60,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 				var result = new DashPatternList(name, list);
 				DashPatternList existingList;
-				DashPatternListManager.Instance.TryRegisterList(Main.ItemDefinitionLevel.Project, result, out existingList);
+				DashPatternListManager.Instance.TryRegisterList(result, Main.ItemDefinitionLevel.Project, out existingList);
 				return result;
 			}
 		}

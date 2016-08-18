@@ -24,11 +24,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Altaxo.Graph
 {
-	public class CSPlaneIDList : IList<CSPlaneID>
+	public class CSPlaneIDList : IList<CSPlaneID> // TODO NET45 replace with IReadonlyList
 	{
 		private List<CSPlaneID> _innerList = new List<CSPlaneID>();
 
@@ -50,12 +51,7 @@ namespace Altaxo.Graph
 
 			protected virtual CSPlaneIDList SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				CSPlaneIDList s = (o == null ? new CSPlaneIDList() : (CSPlaneIDList)o);
-
-				int count = info.OpenArray("PlaneIDs");
-				for (int i = count; i > 0; i--)
-					s.Add((CSPlaneID)info.GetValue("e", s));
-				info.CloseArray(count);
+				var s = new CSPlaneIDList(info);
 
 				return s;
 			}
@@ -69,13 +65,37 @@ namespace Altaxo.Graph
 
 		#endregion Version 0
 
+		private CSPlaneIDList(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+			_innerList = new List<CSPlaneID>();
+			int count = info.OpenArray("PlaneIDs");
+			for (int i = count; i > 0; i--)
+				_innerList.Add((CSPlaneID)info.GetValue("e", null));
+			info.CloseArray(count);
+		}
+
 		#endregion Serialization
 
-		public void AddClonedRange(IEnumerable<CSPlaneID> list)
+		#region Constructors
+
+		private CSPlaneIDList()
 		{
-			foreach (CSPlaneID id in list)
-				Add(id.Clone());
+			_innerList = new List<CSPlaneID>();
 		}
+
+		public static CSPlaneIDList Empty { get; private set; }
+
+		static CSPlaneIDList()
+		{
+			Empty = new CSPlaneIDList();
+		}
+
+		public CSPlaneIDList(IEnumerable<CSPlaneID> ids)
+		{
+			_innerList = new List<CSPlaneID>(ids);
+		}
+
+		#endregion Constructors
 
 		#region IList<CSPlaneID> Members
 
@@ -86,12 +106,12 @@ namespace Altaxo.Graph
 
 		public void Insert(int index, CSPlaneID item)
 		{
-			_innerList.Insert(index, item);
+			throw new InvalidOperationException("Readonly");
 		}
 
 		public void RemoveAt(int index)
 		{
-			_innerList.RemoveAt(index);
+			throw new InvalidOperationException("Readonly");
 		}
 
 		public CSPlaneID this[int index]
@@ -102,7 +122,7 @@ namespace Altaxo.Graph
 			}
 			set
 			{
-				_innerList[index] = value;
+				throw new InvalidOperationException("Readonly");
 			}
 		}
 
@@ -112,12 +132,12 @@ namespace Altaxo.Graph
 
 		public void Add(CSPlaneID item)
 		{
-			_innerList.Add(item);
+			throw new InvalidOperationException("Readonly");
 		}
 
 		public void Clear()
 		{
-			_innerList.Clear();
+			throw new InvalidOperationException("Readonly");
 		}
 
 		public bool Contains(CSPlaneID item)
@@ -137,12 +157,12 @@ namespace Altaxo.Graph
 
 		public bool IsReadOnly
 		{
-			get { return false; }
+			get { return true; }
 		}
 
 		public bool Remove(CSPlaneID item)
 		{
-			return _innerList.Remove(item);
+			throw new InvalidOperationException("Readonly");
 		}
 
 		#endregion ICollection<CSPlaneID> Members

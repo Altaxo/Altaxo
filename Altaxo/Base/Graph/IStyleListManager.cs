@@ -46,7 +46,7 @@ namespace Altaxo.Graph
 		/// Gets all lists together with their definition level.
 		/// </summary>
 		/// <returns>The lists together with their definition level.</returns>
-		IEnumerable<Tuple<TList, Main.ItemDefinitionLevel>> GetListsWithLevel();
+		IEnumerable<StyleListManagerBaseEntryValue<TList, T>> GetEntryValues();
 
 		/// <summary>
 		/// Determines whether the specified name contains a list (style) with the provided name.
@@ -65,24 +65,36 @@ namespace Altaxo.Graph
 		TList GetList(string name);
 
 		/// <summary>
-		/// Gets the list (style) with the provided name.
+		/// Gets the list (style) with the provided name together with the level.
 		/// </summary>
 		/// <param name="name">The name.</param>
-		/// <param name="level">Returns the definition level of the list.</param>
-		/// <returns>The list (style) with the provided name.</returns>
-		TList GetList(string name, out Main.ItemDefinitionLevel level);
+		/// <returns>The list (style) with the provided name together with its definition level.</returns>
+		StyleListManagerBaseEntryValue<TList, T> GetEntryValue(string name);
 
-		bool TryGetListByMembers(IEnumerable<T> symbols, out string nameOfExistingList);
+		/// <summary>
+		/// Try to find an existing list by using only the values of the items. A hint to the name of the existing list can speed up the search, but is not used otherwise.
+		/// </summary>
+		/// <param name="symbols">The items of the list.</param>
+		/// <param name="nameHint">The name of the existing list, to which the items belong. Can be <c>null</c>.</param>
+		/// <param name="nameOfExistingList">If found (the return value is then <c>true</c>), the name of existing list.</param>
+		/// <returns>True if a list with such items was found in the manager, otherwise, <c>false</c>.</returns>
+		bool TryGetListByMembers(IEnumerable<T> symbols, string nameHint, out string nameOfExistingList);
 
 		/// <summary>
 		/// Try to register the provided list.
 		/// </summary>
-		/// <param name="level">The level on which this list is defined.</param>
 		/// <param name="instance">The new list which is tried to register.</param>
+		/// <param name="level">The level on which this list is defined.</param>
 		/// <param name="storedList">On return, this is the list which is either registered, or is an already registed list with exactly the same elements.</param>
 		/// <returns>True if the list was new and thus was added to the collection; false if the list has already existed.</returns>
-		bool TryRegisterList(Main.ItemDefinitionLevel level, TList instance, out TList storedList);
+		bool TryRegisterList(TList instance, Main.ItemDefinitionLevel level, out TList storedList);
 
-		TList CreateNewList(string name, IEnumerable<T> symbols, bool registerNewList, Main.ItemDefinitionLevel level);
+		/// <summary>
+		/// Creates a new standard list of items.
+		/// </summary>
+		/// <param name="listName">The name of the list.</param>
+		/// <param name="listItems">The items of the list.</param>
+		/// <returns></returns>
+		TList CreateNewList(string listName, IEnumerable<T> listItems);
 	}
 }

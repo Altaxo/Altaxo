@@ -100,6 +100,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 		private SelectableListNodeList _availableUpdateModes;
 		private ICoordinateTransformingGroupStyle _currentTransfoStyle;
 
+		public event Action GroupStyleChanged;
+
 		/// <summary>
 		/// Number of items where the property <see cref="IPlotGroupStyle.CanCarryOver"/> is true. The list of items is maintained in the way, that those items appear first in the list.
 		/// </summary>
@@ -570,6 +572,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 				if (Current.Gui.ShowDialog(controller, "Edit style"))
 				{
 					// TODO set plot group style
+					GroupStyleChanged?.Invoke();
 				}
 			}
 		}

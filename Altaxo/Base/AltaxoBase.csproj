@@ -575,6 +575,7 @@
     <Compile Include="Gui\Graph3D\Plot\Groups\StyleListController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\LabelPlotStyleController.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Styles\DropPlotStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotLineStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotScatterStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotStyleCollectionController.cs" />

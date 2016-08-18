@@ -39,27 +39,27 @@ namespace Altaxo.Graph
 	/// in 2D this means 0==X-Axis (normally horizontal), and 1==Y-Axis (vertical).
 	/// For 3D this means 0==X-Axis (horizontal), 1==Y-Axis (vertical, and 2==Z-Axis (points in the screen).
 	/// </remarks>
-	public sealed class CSPlaneID : ICloneable
+	public sealed class CSPlaneID : Main.IImmutable
 	{
 		/// <summary>
 		/// Number of axis: 0==X-Axis, 1==Y-Axis, 2==Z-Axis
 		/// </summary>
-		private int _perpendicularAxisNumber;
+		private readonly int _perpendicularAxisNumber;
 
 		/// <summary>
 		/// The logical value of the isoline.
 		/// </summary>
-		private double _logicalValue;
+		private readonly double _logicalValue;
 
 		/// <summary>
 		/// True when the isoline of this axis is determined by a physical value together with the corresponding axis scale
 		/// </summary>
-		private bool _usePhysicalValue;
+		private readonly bool _usePhysicalValue;
 
 		/// <summary>
 		/// The physical value of this axis.
 		/// </summary>
-		private AltaxoVariant _physicalValue;
+		private readonly AltaxoVariant _physicalValue;
 
 		#region Serialization
 
@@ -80,15 +80,14 @@ namespace Altaxo.Graph
 
 			protected virtual CSPlaneID SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				CSPlaneID s = (o == null ? new CSPlaneID() : (CSPlaneID)o);
+				var perpendicularAxisNumber = info.GetInt32("Axis");
+				var logicalValue = info.GetDouble("Logical");
+				var usePhysicalValue = info.GetBoolean("UsePhysical");
+				double physicalValue = 0;
+				if (usePhysicalValue)
+					physicalValue = (AltaxoVariant)info.GetValue("Physical", null);
 
-				s._perpendicularAxisNumber = info.GetInt32("Axis");
-				s._logicalValue = info.GetDouble("Logical");
-				s._usePhysicalValue = info.GetBoolean("UsePhysical");
-				if (s._usePhysicalValue)
-					s._physicalValue = (AltaxoVariant)info.GetValue("Physical", s);
-
-				return s;
+				return new CSPlaneID(perpendicularAxisNumber, logicalValue, usePhysicalValue, physicalValue);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -114,26 +113,12 @@ namespace Altaxo.Graph
 			_usePhysicalValue = false;
 		}
 
-		private CSPlaneID()
+		private CSPlaneID(int perpendicularAxisNumer, double logicalValue, bool usePhysicalValue, double physicalValue)
 		{
-		}
-
-		public CSPlaneID(CSPlaneID from)
-		{
-			this._perpendicularAxisNumber = from._perpendicularAxisNumber;
-			this._logicalValue = from._logicalValue;
-			this._usePhysicalValue = from._usePhysicalValue;
-			this._physicalValue = from._physicalValue;
-		}
-
-		object ICloneable.Clone()
-		{
-			return new CSPlaneID(this);
-		}
-
-		public CSPlaneID Clone()
-		{
-			return new CSPlaneID(this);
+			_perpendicularAxisNumber = perpendicularAxisNumer;
+			_logicalValue = logicalValue;
+			_usePhysicalValue = usePhysicalValue;
+			_physicalValue = physicalValue;
 		}
 
 		public static CSPlaneID FromPhysicalValue(int perpendicularAxisNumber, double physicalValue)
@@ -141,12 +126,7 @@ namespace Altaxo.Graph
 			if (double.IsNaN(physicalValue))
 				throw new ArgumentException("You can not set physical values that return false when compared to itself, value is: " + physicalValue.ToString());
 
-			CSPlaneID id = new CSPlaneID();
-			id._perpendicularAxisNumber = perpendicularAxisNumber;
-			id._physicalValue = physicalValue;
-			id._logicalValue = double.NaN;
-			id._usePhysicalValue = true;
-			return id;
+			return new CSPlaneID(perpendicularAxisNumber, double.NaN, true, physicalValue);
 		}
 
 		public static CSPlaneID FromPhysicalVariant(int perpendicularAxisNumber, AltaxoVariant physicalValue)
@@ -156,12 +136,7 @@ namespace Altaxo.Graph
 				throw new ArgumentException("You can not set physical values that return false when compared to itself, value is: " + physicalValue.ToString());
 #pragma warning restore CS1718 // Comparison made to same variable
 
-			CSPlaneID id = new CSPlaneID();
-			id._perpendicularAxisNumber = perpendicularAxisNumber;
-			id._physicalValue = physicalValue;
-			id._logicalValue = double.NaN;
-			id._usePhysicalValue = true;
-			return id;
+			return new CSPlaneID(perpendicularAxisNumber, double.NaN, true, physicalValue);
 		}
 
 		/// <summary>
@@ -175,12 +150,20 @@ namespace Altaxo.Graph
 		public double LogicalValue
 		{
 			get { return _logicalValue; }
-			set
+		}
+
+		public CSPlaneID WithLogicalValue(double logicalValue)
+		{
+			if (!_usePhysicalValue)
+				throw new NotSupportedException("You must not set the logical value of this identifier unless the property UsePhysicalValue is true"); ;
+
+			if (logicalValue == _logicalValue)
 			{
-				if (_usePhysicalValue)
-					_logicalValue = value;
-				else
-					throw new NotSupportedException("You must not set the logical value of this identifier unless the property UsePhysicalValue is true");
+				return this;
+			}
+			else
+			{
+				return new CSPlaneID(_perpendicularAxisNumber, logicalValue, _usePhysicalValue, _physicalValue);
 			}
 		}
 
@@ -331,17 +314,53 @@ namespace Altaxo.Graph
 				throw new ArgumentOutOfRangeException("Axis number is greater than 1. You can only convert to a line if the axis number is 0 or 1");
 
 			if (plane.UsePhysicalValue)
-				return CSLineID.FromPhysicalVariant(plane.PerpendicularAxisNumber == 0 ? 1 : 0, plane.PhysicalValue);
+				return CSLineID.FromPhysicalVariant(plane.PerpendicularAxisNumber, plane.PhysicalValue);
 			else
-				return new CSLineID(plane.PerpendicularAxisNumber == 0 ? 1 : 0, plane.LogicalValue);
+				return new CSLineID(plane.PerpendicularAxisNumber, plane.LogicalValue);
 		}
 
-		public static explicit operator CSPlaneID(CSLineID line)
+		public static CSPlaneID GetPlaneParallelToAxis2D(CSLineID id)
 		{
-			if (line.UsePhysicalValueOtherFirst)
-				return CSPlaneID.FromPhysicalVariant(line.ParallelAxisNumber == 0 ? 1 : 0, line.PhysicalValueOtherFirst);
-			else
-				return new CSPlaneID(line.ParallelAxisNumber == 0 ? 1 : 0, line.LogicalValueOtherFirst);
+			switch (id.ParallelAxisNumber)
+			{
+				case 0:
+					return id.UsePhysicalValueOtherFirst ? CSPlaneID.FromPhysicalVariant(1, id.PhysicalValueOtherFirst) : new CSPlaneID(1, id.LogicalValueOtherFirst);
+
+				case 1:
+					return id.UsePhysicalValueOtherFirst ? CSPlaneID.FromPhysicalVariant(0, id.PhysicalValueOtherFirst) : new CSPlaneID(0, id.LogicalValueOtherFirst);
+
+				default:
+					throw new ArgumentOutOfRangeException(nameof(id.ParallelAxisNumber));
+			}
+		}
+
+		/// <summary>
+		/// Gets the two planes parallel to the provided axis that are oriented to the main coordinate system axes.
+		/// </summary>
+		/// <param name="id">The line  identifier.</param>
+		/// <returns></returns>
+		public static IEnumerable<CSPlaneID> GetPlanesParallelToAxis3D(CSLineID id)
+		{
+			switch (id.ParallelAxisNumber)
+			{
+				case 0:
+					yield return id.UsePhysicalValueOtherFirst ? CSPlaneID.FromPhysicalVariant(1, id.PhysicalValueOtherFirst) : new CSPlaneID(1, id.LogicalValueOtherFirst);
+					yield return id.UsePhysicalValueOtherSecond ? CSPlaneID.FromPhysicalVariant(2, id.PhysicalValueOtherSecond) : new CSPlaneID(2, id.LogicalValueOtherSecond);
+					break;
+
+				case 1:
+					yield return id.UsePhysicalValueOtherFirst ? CSPlaneID.FromPhysicalVariant(0, id.PhysicalValueOtherFirst) : new CSPlaneID(0, id.LogicalValueOtherFirst);
+					yield return id.UsePhysicalValueOtherSecond ? CSPlaneID.FromPhysicalVariant(2, id.PhysicalValueOtherSecond) : new CSPlaneID(2, id.LogicalValueOtherSecond);
+					break;
+
+				case 2:
+					yield return id.UsePhysicalValueOtherFirst ? CSPlaneID.FromPhysicalVariant(0, id.PhysicalValueOtherFirst) : new CSPlaneID(0, id.LogicalValueOtherFirst);
+					yield return id.UsePhysicalValueOtherSecond ? CSPlaneID.FromPhysicalVariant(1, id.PhysicalValueOtherSecond) : new CSPlaneID(1, id.LogicalValueOtherSecond);
+					break;
+
+				default:
+					throw new ArgumentOutOfRangeException(nameof(id.ParallelAxisNumber));
+			}
 		}
 	}
 }

@@ -61,9 +61,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 		private PlotGroupCollectionControllerAdvanced _controllerAdvanced;
 		private PlotGroupCollectionControllerSimple _controllerSimple;
 
+		public event Action GroupStyleChanged;
+
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			yield return new ControllerAndSetNullMethod(_controllerAdvanced, () => _controllerAdvanced = null);
+			yield return new ControllerAndSetNullMethod(_controllerAdvanced, () => { _controllerAdvanced = null; });
 			yield return new ControllerAndSetNullMethod(_controllerSimple, () => _controllerSimple = null);
 		}
 
@@ -92,8 +94,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 				}
 				else
 				{
-					_controllerAdvanced = new PlotGroupCollectionControllerAdvanced() { UseDocumentCopy = UseDocument.Directly };
-					_controllerAdvanced.InitializeDocument(_doc);
+					var controllerAdvanced = new PlotGroupCollectionControllerAdvanced() { UseDocumentCopy = UseDocument.Directly };
+					controllerAdvanced.InitializeDocument(_doc);
+					controllerAdvanced.GroupStyleChanged += new WeakActionHandler(EhGroupStyleChanged, (handler) => controllerAdvanced.GroupStyleChanged -= handler);
+					_controllerAdvanced = controllerAdvanced;
 				}
 			}
 
@@ -112,6 +116,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 					_view.SetAdvancedView(_controllerAdvanced.ViewObject);
 				}
 			}
+		}
+
+		private void EhGroupStyleChanged()
+		{
+			GroupStyleChanged?.Invoke();
 		}
 
 		public override bool Apply(bool disposeController)
@@ -178,9 +187,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			_doc = (PlotGroupStyleCollection)_controllerSimple.ModelObject;
 			_controllerSimple = null;
 
-			_controllerAdvanced = new PlotGroupCollectionControllerAdvanced();
-			_controllerAdvanced.UseDocumentCopy = UseDocument.Directly;
-			_controllerAdvanced.InitializeDocument(_doc);
+			var controllerAdvanced = new PlotGroupCollectionControllerAdvanced();
+			controllerAdvanced.UseDocumentCopy = UseDocument.Directly;
+			controllerAdvanced.InitializeDocument(_doc);
+			controllerAdvanced.GroupStyleChanged += new WeakActionHandler(EhGroupStyleChanged, (handler) => controllerAdvanced.GroupStyleChanged -= handler);
+			_controllerAdvanced = controllerAdvanced;
 			Initialize(false);
 		}
 	}

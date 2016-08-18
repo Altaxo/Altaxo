@@ -32,7 +32,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
-	public class ScatterSymbolListManager : StyleListManagerBase<ScatterSymbolList, IScatterSymbol>
+	public class ScatterSymbolListManager : StyleListManagerBase<ScatterSymbolList, IScatterSymbol, StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>>
 	{
 		private static ScatterSymbolListManager _instance;
 
@@ -43,6 +43,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		protected ScatterSymbolListManager()
 			: base(
+					(list, level) => new StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>(list, level),
 					new ScatterSymbolList("BuiltinDefault", new IScatterSymbol[] {
 				new Styles.ScatterSymbols.Cube(),
 					new Styles.ScatterSymbols.Sphere(),
@@ -75,15 +76,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			}
 		}
 
-		public override ScatterSymbolList CreateNewList(string name, IEnumerable<IScatterSymbol> symbols, bool registerNewList, ItemDefinitionLevel level)
+		public override ScatterSymbolList CreateNewList(string name, IEnumerable<IScatterSymbol> symbols)
 		{
-			var newList = new ScatterSymbolList(name, symbols);
-			var outList = newList;
-			if (registerNewList)
-			{
-				TryRegisterList(level, newList, out outList);
-			}
-			return outList;
+			return new ScatterSymbolList(name, symbols);
 		}
 	}
 }

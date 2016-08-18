@@ -122,7 +122,8 @@
 	<!-- Context menu of this user control.-->
 	<UserControl.ContextMenu>
 		<ContextMenu x:Name="_contextMenu">
-			<MenuItem Header="Custom color.." Click="EhShowCustomColorDialog" />
+			<MenuItem Header="Custom color .." Click="EhShowCustomColorDialog" />
+			<MenuItem Header="New color set .." Click="EhShowColorSetManagerDialog" />
 			<Separator />
 			<MenuItem Header="100% opacity" Tag="100" Click="EhChooseOpacityFromContextMenu" />
 			<MenuItem Header="90% opacity" Tag="90" Click="EhChooseOpacityFromContextMenu" />

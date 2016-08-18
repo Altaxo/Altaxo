@@ -92,7 +92,7 @@ namespace Altaxo.Drawing.ColorManagement
 				info.CloseArray(count);
 
 				IColorSet returnValue;
-				ColorSetManager.Instance.TryRegisterList(Main.ItemDefinitionLevel.Project, new ColorSet(colorSetName, colors), out returnValue);
+				ColorSetManager.Instance.TryRegisterList(new ColorSet(colorSetName, colors), Main.ItemDefinitionLevel.Project, out returnValue);
 				return returnValue;
 			}
 		}
@@ -138,7 +138,7 @@ namespace Altaxo.Drawing.ColorManagement
 				info.CloseArray(count);
 
 				IColorSet returnValue;
-				ColorSetManager.Instance.TryRegisterList(Main.ItemDefinitionLevel.Project, new ColorSet(colorSetName, colors), out returnValue);
+				ColorSetManager.Instance.TryRegisterList(new ColorSet(colorSetName, colors), Main.ItemDefinitionLevel.Project, out returnValue);
 
 				return returnValue;
 			}

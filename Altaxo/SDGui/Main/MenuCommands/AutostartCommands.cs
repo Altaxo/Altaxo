@@ -86,7 +86,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			foreach (var entry in colorSets)
 			{
 				IColorSet storedList;
-				ColorSetManager.Instance.TryRegisterList(ItemDefinitionLevel.Application, entry.Item1, out storedList);
+				ColorSetManager.Instance.TryRegisterList(entry.Item1, ItemDefinitionLevel.Application, out storedList);
 				if (entry.Item2)
 					ColorSetManager.Instance.DeclareAsPlotColorList(storedList);
 			}

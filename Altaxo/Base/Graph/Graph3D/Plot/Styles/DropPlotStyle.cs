@@ -26,6 +26,7 @@ using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
@@ -55,6 +56,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>Pen width 2 for the drop line, either absolute or relative to the size of the scatter symbol.</summary>
 		protected RADouble _penWidth2;
 
+		protected RADouble _gapAtStart;
+
+		protected RADouble _gapAtEnd;
+
 		/// <summary>Target(s) for the drop line.</summary>
 		protected CSPlaneIDList _dropLine;
 
@@ -62,13 +67,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		protected bool _independentColor;
 
 		/// <summary>A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
-		protected int? _skipFreq;
+		protected int _skipFreq;
 
-		/// <summary>The skip frequency that is currently applied.</summary>
-		protected int _cachedSkipFreq;
+		/// <summary>A value indicating whether the skip frequency value is independent from other values.</summary>
+		protected bool _independentSkipFreq;
 
 		/// <summary>The symbol size that is received from another substyle.</summary>
-		protected double _cachedSymbolSize = 1;
+		protected double _cachedSymbolSize = 10;
 
 		// cached values:
 		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
@@ -98,6 +103,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("PenWidth2", s._penWidth2);
 				info.AddValue("IndependentColor", s._independentColor);
 				info.AddValue("SkipFreq", s._skipFreq);
+				info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
+				info.AddValue("GapAtStart", s._gapAtStart);
+				info.AddValue("GapAtEnd", s._gapAtEnd);
 			}
 
 			protected virtual DropPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -109,7 +117,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				s._penWidth1 = (RADouble)info.GetValue("PenWidth1", s);
 				s._penWidth2 = (RADouble)info.GetValue("PenWidth2", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
-				s._skipFreq = info.GetNullableInt32("SkipFreq");
+				s._skipFreq = info.GetInt32("SkipFreq");
+				s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
+				s._gapAtStart = (RADouble)info.GetValue("GapAtStart", s);
+				s._gapAtEnd = (RADouble)info.GetValue("GapAtEnd", s);
 				return s;
 			}
 
@@ -146,17 +157,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				if (null == this._dropLine)
-					this._dropLine = new CSPlaneIDList();
-				else
-					this._dropLine.Clear();
-				this._dropLine.AddClonedRange(from._dropLine);
+				this._dropLine = from._dropLine; // immutable
 
 				this._pen = from._pen; // immutable
 				this._penWidth1 = from._penWidth1;
 				this._penWidth2 = from._penWidth2;
 				this._independentColor = from._independentColor;
 				this._skipFreq = from._skipFreq;
+				this._independentSkipFreq = from._independentSkipFreq;
+				this._gapAtStart = from._gapAtStart;
+				this._gapAtEnd = from._gapAtEnd;
 
 				EhSelfChanged(EventArgs.Empty);
 
@@ -174,8 +184,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (null == pen)
 				throw new ArgumentNullException(nameof(pen));
 
-			this._dropLine = new CSPlaneIDList();
-			_dropLine.Add(planeID);
+			this._dropLine = new CSPlaneIDList(new[] { planeID });
 
 			// Cached values
 			SetCachedValues();
@@ -183,15 +192,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public DropPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			this._dropLine = new CSPlaneIDList();
-			_dropLine.Add(new CSPlaneID(2, 0));
+			this._dropLine = new CSPlaneIDList(new[] { new CSPlaneID(2, 0) });
 
 			var color = GraphDocument.GetDefaultPlotColor(context);
 			double penWidth = GraphDocument.GetDefaultPenWidth(context);
 			_pen = new PenX3D(color, penWidth);
 
 			_penWidth1 = RADouble.NewAbs(penWidth);
-			_penWidth2 = RADouble.NewRel(penWidth);
+			_penWidth2 = RADouble.NewAbs(penWidth);
 		}
 
 		public object Clone()
@@ -279,15 +287,90 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		public int? SkipFrequency
+		public int SkipFrequency
 		{
 			get { return _skipFreq; }
 			set
 			{
+				value = Math.Max(1, value);
 				if (value != _skipFreq)
 				{
 					_skipFreq = value;
 					EhSelfChanged(EventArgs.Empty); // Fire Changed event
+				}
+			}
+		}
+
+		public bool IndependentSkipFrequency
+		{
+			get
+			{
+				return _independentSkipFreq;
+			}
+			set
+			{
+				bool oldValue = _independentSkipFreq;
+				_independentSkipFreq = value;
+				if (value != oldValue)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		public RADouble GapAtStart
+		{
+			get { return _gapAtStart; }
+			set
+			{
+				if (value != _gapAtStart)
+				{
+					_gapAtStart = value;
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
+				}
+			}
+		}
+
+		public RADouble GapAtEnd
+		{
+			get { return _gapAtEnd; }
+			set
+			{
+				if (value != _gapAtEnd)
+				{
+					_gapAtEnd = value;
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the cached size of the scatter symbol.
+		/// </summary>
+		/// <value>
+		/// The size of the scatter symbol.
+		/// </value>
+		public double CachedSymbolSize
+		{
+			get
+			{
+				return _cachedSymbolSize;
+			}
+		}
+
+		public CSPlaneIDList DropTargets
+		{
+			get
+			{
+				return _dropLine;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (!object.ReferenceEquals(value, _dropLine))
+				{
+					_dropLine = value;
+					EhSelfChanged();
 				}
 			}
 		}
@@ -335,11 +418,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
 
 			// adjust the skip frequency if it was not set appropriate
-			if (_cachedSkipFreq <= 0)
+			if (_skipFreq <= 0)
 				_skipFreq = 1;
 
-			foreach (CSPlaneID id in _dropLine)
-				layer.UpdateCSPlaneID(id);
+			var dropTargets = _dropLine.Select(id => layer.UpdateCSPlaneID(id)).ToArray();
 
 			// paint the scatter style
 
@@ -355,7 +437,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 				int rangeidx = 0;
 				PlotRange range = pdata.RangeList[rangeidx];
-				for (int j = 0; j < ptArray.Length; j += _cachedSkipFreq)
+				for (int j = 0; j < ptArray.Length; j += _skipFreq)
 				{
 					// syncronize range
 					while (j >= range.UpperBound)
@@ -365,11 +447,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					}
 
 					Logical3D r3d = layer.GetLogical3D(pdata, j + range.OffsetToOriginal);
-					foreach (CSPlaneID id in _dropLine)
+					foreach (CSPlaneID id in dropTargets)
 					{
 						IPolylineD3D isoLine;
 						layer.CoordinateSystem.GetIsolineFromPointToPlane(r3d, id, out isoLine);
-						g.DrawLine(_pen, isoLine);
+						if (_gapAtStart.Value != 0 || _gapAtEnd.Value != 0)
+							isoLine = isoLine.ShortenedBy(RADouble.NewAbs(_gapAtStart.IsAbsolute ? _gapAtStart.Value : _gapAtStart.Value * _cachedSymbolSize), RADouble.NewAbs(_gapAtEnd.IsAbsolute ? _gapAtEnd.Value : _gapAtEnd.Value * _cachedSymbolSize));
+
+						if (null != isoLine)
+							g.DrawLine(_pen, isoLine);
 					}
 				}
 			}
@@ -380,7 +466,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					int lower = rangeList[r].LowerBound;
 					int upper = rangeList[r].UpperBound;
 					int offset = rangeList[r].OffsetToOriginal;
-					for (int j = lower; j < upper; j += _cachedSkipFreq)
+					for (int j = lower; j < upper; j += _skipFreq)
 					{
 						var pen = _pen;
 						if (null == _cachedColorForIndexFunction)
@@ -405,7 +491,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 						{
 							IPolylineD3D isoLine;
 							layer.CoordinateSystem.GetIsolineFromPointToPlane(r3d, id, out isoLine);
-							g.DrawLine(_pen, isoLine);
+
+							if (_gapAtStart.Value != 0 || _gapAtEnd.Value != 0)
+								isoLine = isoLine.ShortenedBy(RADouble.NewAbs(_gapAtStart.IsAbsolute ? _gapAtStart.Value : _gapAtStart.Value * _cachedSymbolSize), RADouble.NewAbs(_gapAtEnd.IsAbsolute ? _gapAtEnd.Value : _gapAtEnd.Value * _cachedSymbolSize));
+							if (null != isoLine)
+								g.DrawLine(_pen, isoLine);
 						}
 					}
 				}
@@ -439,7 +529,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this.Color; });
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SkipFrequency.HasValue ? SkipFrequency.Value : 1; });
+			if (!_independentSkipFreq)
+				SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return _skipFreq; });
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -460,8 +551,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				_cachedSymbolSizeForIndexFunction = null;
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			_cachedSkipFreq = _skipFreq.HasValue ? _skipFreq.Value : 1;
-			SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this._cachedSkipFreq = c; });
+			if (!_independentSkipFreq)
+			{
+				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this._skipFreq = c; });
+			}
 		}
 
 		#endregion IPlotStyle Members

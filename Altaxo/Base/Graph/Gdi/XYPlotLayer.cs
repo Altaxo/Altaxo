@@ -307,13 +307,15 @@ namespace Altaxo.Graph.Gdi
 		/// Updates the logical value of a plane id in case it uses a physical value.
 		/// </summary>
 		/// <param name="id">The plane identifier</param>
-		public void UpdateCSPlaneID(CSPlaneID id)
+		public CSPlaneID UpdateCSPlaneID(CSPlaneID id)
 		{
 			if (id.UsePhysicalValue)
 			{
 				double l = this.Scales[id.PerpendicularAxisNumber].PhysicalVariantToNormal(id.PhysicalValue);
-				id.LogicalValue = l;
+				id = id.WithLogicalValue(l);
 			}
+
+			return id;
 		}
 
 		#endregion IPlotLayer methods

@@ -94,17 +94,27 @@ namespace Altaxo.Drawing.D3D
 			}
 		}
 
+	
+
 		public bool IsTransitionFromIdxToNextIdxSharp(int idx)
 		{
 			return idx < _isSharpTransition.Count ? _isSharpTransition[idx] : false;
 		}
 
-		PointD3D IPolylineD3D.GetPoint(int idx)
+
+		public double TotalLineLength
 		{
-			throw new NotImplementedException();
+			get
+			{
+				double sum = 0;
+				for (int i = 1; i < _points.Count; ++i)
+					sum += (_points[i] - _points[i - 1]).Length;
+
+				return sum;
+			}
 		}
 
-		bool IPolylineD3D.IsTransitionFromIdxToNextIdxSharp(int idx)
+		public IPolylineD3D ShortenedBy(RADouble marginAtStart, RADouble marginAtEnd)
 		{
 			throw new NotImplementedException();
 		}

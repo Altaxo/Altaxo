@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Graph3D
 		/// Updates the logical value of a plane id in case it uses a physical value.
 		/// </summary>
 		/// <param name="id">The plane identifier</param>
-		void UpdateCSPlaneID(CSPlaneID id);
+		CSPlaneID UpdateCSPlaneID(CSPlaneID id);
 
 		/// <summary>
 		/// Determines whether plot data are clipped to the frame boundaries or not.

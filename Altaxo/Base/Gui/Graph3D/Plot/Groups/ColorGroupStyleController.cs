@@ -59,7 +59,14 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			if (!_listController.Apply(disposeController))
 				return ApplyEnd(false, disposeController);
 
-			_doc.ListOfValues = (IColorSet)_listController.ModelObject;
+			var colorSet = (IColorSet)_listController.ModelObject;
+			if (object.ReferenceEquals(colorSet, ColorSetManager.Instance.BuiltinKnownColors))
+			{
+				Current.Gui.ErrorMessageBox(string.Format("The color set '{0}' is not admitted to be used as plot color set. Please choose another color set, or derive a new color set from '{0}'.", ColorSetManager.Instance.BuiltinKnownColors.Name), "ColorSet not admitted");
+				return ApplyEnd(false, disposeController);
+			}
+
+			_doc.ListOfValues = colorSet;
 
 			return ApplyEnd(true, disposeController);
 		}

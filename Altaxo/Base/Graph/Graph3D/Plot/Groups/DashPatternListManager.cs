@@ -32,7 +32,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
-	public class DashPatternListManager : StyleListManagerBase<DashPatternList, IDashPattern>
+	public class DashPatternListManager : StyleListManagerBase<DashPatternList, IDashPattern, StyleListManagerBaseEntryValue<DashPatternList, IDashPattern>>
 	{
 		private static DashPatternListManager _instance;
 
@@ -43,6 +43,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		protected DashPatternListManager()
 			: base(
+					(list, level) => new StyleListManagerBaseEntryValue<DashPatternList, IDashPattern>(list, level),
 					new DashPatternList("BuiltinDefault", new IDashPattern[] {
 					new Drawing.D3D.DashPatterns.Solid(),
 					new Drawing.D3D.DashPatterns.Dash(),
@@ -76,15 +77,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			}
 		}
 
-		public override DashPatternList CreateNewList(string name, IEnumerable<IDashPattern> symbols, bool registerNewList, Main.ItemDefinitionLevel level)
+		public override DashPatternList CreateNewList(string name, IEnumerable<IDashPattern> symbols)
 		{
-			var newList = new DashPatternList(name, symbols);
-			var outList = newList;
-			if (registerNewList)
-			{
-				TryRegisterList(level, newList, out outList);
-			}
-			return outList;
+			return new DashPatternList(name, symbols);
 		}
 	}
 }

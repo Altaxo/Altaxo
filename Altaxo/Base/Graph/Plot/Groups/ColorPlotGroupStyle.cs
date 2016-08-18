@@ -284,9 +284,15 @@ namespace Altaxo.Graph.Plot.Groups
 
 		public void Initialize(NamedColor c)
 		{
-			if (c.ParentColorSet != null && !object.ReferenceEquals(c.ParentColorSet, _listOfValues))
+			// we will not accept the known color set here
+			// this has historical reasons: until 2012 we don't even have the concept of color sets
+			// thus all plot colors were part of the know color set, and we could not distinguish between known colors and plot colors
+			if (	null != c.ParentColorSet &&
+					!object.ReferenceEquals(c.ParentColorSet, ColorSetManager.Instance.BuiltinKnownColors) 
+				)
 			{
 				_listOfValues = c.ParentColorSet;
+				ColorSetManager.Instance.DeclareAsPlotColorList(_listOfValues);
 			}
 
 			_colorIndex = Math.Max(0, _listOfValues.IndexOf(c));
@@ -315,6 +321,12 @@ namespace Altaxo.Graph.Plot.Groups
 			{
 				if (null == value)
 					throw new ArgumentNullException(nameof(value));
+
+				// we will not accept the known color set here
+				// this has historical reasons: until 2012 we don't even have the concept of color sets
+				// thus all plot colors were part of the know color set, and we could not distinguish between known colors and plot colors
+				if (object.ReferenceEquals(value, ColorSetManager.Instance.BuiltinKnownColors))
+					throw new ArgumentException(string.Format("The color set {0} is not allowed to be a plot color set", ColorSetManager.Instance.BuiltinKnownColors.Name));
 
 				if (!object.ReferenceEquals(_listOfValues, value))
 				{

@@ -594,23 +594,26 @@ namespace Altaxo.Graph.Gdi
 
 		public IEnumerable<CSPlaneID> GetJoinedPlaneIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSPlaneID> list2)
 		{
-			Dictionary<CSPlaneID, object> dict = new Dictionary<CSPlaneID, object>();
+			var dict = new HashSet<CSPlaneID>();
 
 			foreach (CSAxisInformation info in AxisStyles)
 			{
-				CSPlaneID p1 = (CSPlaneID)info.Identifier;
-				dict.Add(p1, null);
-				yield return p1;
+				CSPlaneID p1 = CSPlaneID.GetPlaneParallelToAxis2D(info.Identifier);
+				if (!dict.Contains(p1))
+				{
+					dict.Add(p1);
+					yield return p1;
+				}
 			}
 
 			if (list1 != null)
 			{
 				foreach (CSLineID id in list1)
 				{
-					CSPlaneID p2 = (CSPlaneID)id;
-					if (!dict.ContainsKey(p2))
+					CSPlaneID p2 = CSPlaneID.GetPlaneParallelToAxis2D(id);
+					if (!dict.Contains(p2))
 					{
-						dict.Add(p2, null);
+						dict.Add(p2);
 						yield return p2;
 					}
 				}
@@ -620,9 +623,9 @@ namespace Altaxo.Graph.Gdi
 			{
 				foreach (CSPlaneID id in list2)
 				{
-					if (null != id && !dict.ContainsKey(id))
+					if (null != id && !dict.Contains(id))
 					{
-						dict.Add(id, null);
+						dict.Add(id);
 						yield return id;
 					}
 				}

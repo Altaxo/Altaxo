@@ -77,6 +77,30 @@ namespace Altaxo.Geometry
 			return true;
 		}
 
+		
+
+		public double TotalLineLength
+		{
+			get
+			{
+				return (_p0 - _p1).Length;
+			}
+		}
+
+		public IPolylineD3D ShortenedBy(RADouble marginAtStart, RADouble marginAtEnd)
+		{
+			double totLength = TotalLineLength;
+
+			double r1 = marginAtStart.IsAbsolute ? marginAtStart.Value/totLength : marginAtStart.Value;
+			double r2 = marginAtEnd.IsAbsolute ? marginAtEnd.Value/totLength : marginAtEnd.Value;
+
+			if (!((r1 + r2) < 1))
+				return null;
+
+
+			return new StraightLineAsPolylineD3D(PointD3D.Interpolate(_p0, _p1, r1), PointD3D.Interpolate(_p1, _p0, r2));
+		}
+
 		#region IList<PointD3D>
 
 		public bool IsReadOnly
@@ -86,6 +110,8 @@ namespace Altaxo.Geometry
 				return true;
 			}
 		}
+
+	
 
 		public PointD3D this[int index]
 		{
@@ -161,6 +187,7 @@ namespace Altaxo.Geometry
 			yield return _p0;
 			yield return _p1;
 		}
+
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{

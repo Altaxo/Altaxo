@@ -348,12 +348,10 @@ namespace Altaxo.Drawing
 
 		public override string ToString()
 		{
-			ColorManagement.IColorSet set;
-			Main.ItemDefinitionLevel level;
-			bool isPlotColorSet;
-			if (ParentColorSet != null && ColorManagement.ColorSetManager.Instance.TryGetValue(ParentColorSet.Name, out set, out level, out isPlotColorSet))
+			ColorManagement.ColorSetManagerEntryValue value;
+			if (ParentColorSet != null && ColorManagement.ColorSetManager.Instance.TryGetList(ParentColorSet.Name, out value))
 			{
-				return string.Format("{0} ({1}/{2})", Name, GetLevelString(level), ParentColorSet.Name);
+				return string.Format("{0} ({1}/{2})", Name, GetLevelString(value.Level), ParentColorSet.Name);
 			}
 			else
 				return string.Format("{0} ({1})", Name, "<<no color set>>");

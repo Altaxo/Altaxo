@@ -51,11 +51,10 @@ namespace Altaxo.Gui.Graph.ColorManagement
 
 			if (initData)
 			{
-				IColorSet colorSetCurrentlySelected;
-				Altaxo.Main.ItemDefinitionLevel level;
-				bool isPlotColorSet;
-				ColorSetManager.Instance.TryGetValue(_doc.Name, out colorSetCurrentlySelected, out level, out isPlotColorSet);
-				ColorControllerHelper.UpdateColorTreeViewTreeNodes(_treeRootNode, ShowPlotColorsOnly, colorSetCurrentlySelected);
+				ColorSetManagerEntryValue value;
+
+				ColorSetManager.Instance.TryGetList(_doc.Name, out value);
+				ColorControllerHelper.UpdateColorTreeViewTreeNodes(_treeRootNode, ShowPlotColorsOnly, value.List);
 			}
 			if (null != _view)
 			{

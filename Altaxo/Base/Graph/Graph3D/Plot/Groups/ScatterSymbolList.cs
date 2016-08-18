@@ -59,7 +59,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 				var result = new ScatterSymbolList(name, list);
 				ScatterSymbolList existingList;
-				ScatterSymbolListManager.Instance.TryRegisterList(Main.ItemDefinitionLevel.Project, result, out existingList);
+				ScatterSymbolListManager.Instance.TryRegisterList(result, Main.ItemDefinitionLevel.Project, out existingList);
 				return result;
 			}
 		}

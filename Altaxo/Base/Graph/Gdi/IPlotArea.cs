@@ -68,6 +68,6 @@ namespace Altaxo.Graph.Gdi
 		/// Updates the logical value of a plane id in case it uses a physical value.
 		/// </summary>
 		/// <param name="id">The plane identifier</param>
-		void UpdateCSPlaneID(CSPlaneID id);
+		CSPlaneID UpdateCSPlaneID(CSPlaneID id);
 	}
 }

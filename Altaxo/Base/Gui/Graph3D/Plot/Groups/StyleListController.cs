@@ -263,12 +263,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 			var levelDict = new Dictionary<ItemDefinitionLevel, NGTreeNode>();
 
-			var allListsWithLevel = _manager.GetListsWithLevel().ToArray();
+			var allListsWithLevel = _manager.GetEntryValues().ToArray();
 			Array.Sort(allListsWithLevel, (x, y) =>
 			{
-				if (x.Item2 != y.Item2)
-					return Comparer<ItemDefinitionLevel>.Default.Compare(x.Item2, y.Item2);
-				return string.Compare(x.Item1.Name, y.Item1.Name);
+				int result = Comparer<ItemDefinitionLevel>.Default.Compare(x.Level, y.Level);
+				return result != 0 ? result : string.Compare(x.List.Name, y.List.Name);
 			}
 			);
 
@@ -277,13 +276,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			foreach (var listAndLevel in allListsWithLevel)
 			{
 				NGTreeNode levelNode;
-				if (!levelDict.TryGetValue(listAndLevel.Item2, out levelNode))
+				if (!levelDict.TryGetValue(listAndLevel.Level, out levelNode))
 				{
-					levelNode = new NGTreeNode(Enum.GetName(typeof(ItemDefinitionLevel), listAndLevel.Item2));
-					levelDict.Add(listAndLevel.Item2, levelNode);
+					levelNode = new NGTreeNode(Enum.GetName(typeof(ItemDefinitionLevel), listAndLevel.Level));
+					levelDict.Add(listAndLevel.Level, levelNode);
 					_availableListsRootNode.Nodes.Add(levelNode);
 				}
-				levelNode.Nodes.Add(new NGTreeNode(listAndLevel.Item1.Name) { Tag = listAndLevel.Item1, IsSelected = object.ReferenceEquals(listAndLevel.Item1, _doc) });
+				levelNode.Nodes.Add(new NGTreeNode(listAndLevel.List.Name) { Tag = listAndLevel.List, IsSelected = object.ReferenceEquals(listAndLevel.List, _doc) });
 			}
 		}
 
@@ -357,7 +356,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			}
 
 			bool isUser = _view.StoreInUserSettings;
-			_doc = _manager.CreateNewList(_view.CurrentItemListName, _currentItems.Select(node => (TItem)node.Tag), true, isUser ? Altaxo.Main.ItemDefinitionLevel.UserDefined : Altaxo.Main.ItemDefinitionLevel.Project);
+			var doc = _manager.CreateNewList(_view.CurrentItemListName, _currentItems.Select(node => (TItem)node.Tag));
+			_manager.TryRegisterList(doc, isUser ? Altaxo.Main.ItemDefinitionLevel.UserDefined : Altaxo.Main.ItemDefinitionLevel.Project, out doc);
+			_doc = doc;
 
 			_isNameOfNewListValid = true;
 			_currentItems_IsDirty = false;
@@ -499,7 +500,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 		protected void SetListDirty()
 		{
 			string existingName;
-			if (_manager.TryGetListByMembers(_currentItems.Select(node => (TItem)node.Tag), out existingName))
+			if (_manager.TryGetListByMembers(_currentItems.Select(node => (TItem)node.Tag), null, out existingName))
 			{
 				_currentItems_IsDirty = false;
 				_isNameOfNewListValid = true;

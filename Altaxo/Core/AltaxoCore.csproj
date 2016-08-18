@@ -629,6 +629,7 @@
     <Compile Include="Units\Dimensionless\Percent.cs" />
     <Compile Include="Units\Dimensionless\Permille.cs" />
     <Compile Include="Units\Dimensionless\Unity.cs" />
+    <Compile Include="WeakDelegate.cs" />
     <Compile Include="WeakEventHandlers.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -213,7 +213,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				ChildCopyToMember(ref _backgroundStyle, from._backgroundStyle);
 				this._backgroundColorLinkage = from._backgroundColorLinkage;
 				this._cachedStringFormat = (System.Drawing.StringFormat)from._cachedStringFormat.Clone();
-				this._attachedPlane = null == from._attachedPlane ? null : from._attachedPlane.Clone();
+				this._attachedPlane = from._attachedPlane;
 				this.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)from._labelColumnProxy.Clone();
 
 				EhSelfChanged(EventArgs.Empty);
@@ -640,7 +640,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				return;
 
 			if (null != _attachedPlane)
-				layer.UpdateCSPlaneID(_attachedPlane);
+				_attachedPlane = layer.UpdateCSPlaneID(_attachedPlane);
 
 			PlotRangeList rangeList = pdata.RangeList;
 			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;

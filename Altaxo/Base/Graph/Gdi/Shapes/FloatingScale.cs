@@ -621,7 +621,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				get { throw new NotImplementedException(); }
 			}
 
-			public void UpdateCSPlaneID(CSPlaneID id)
+			public CSPlaneID UpdateCSPlaneID(CSPlaneID id)
 			{
 				throw new NotImplementedException();
 			}

@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Graph.ColorManagement
 				selectedColor = NamedColors.Black;
 			}
 
-			foreach (var set in manager.GetAllColorSetsWithLevelAndPlotColorStatus())
+			foreach (var set in manager.GetEntryValues())
 			{
 				if (showPlotColorsOnly && !set.IsPlotColorSet)
 					continue;
@@ -99,19 +99,19 @@ namespace Altaxo.Gui.Graph.ColorManagement
 				switch (set.Level)
 				{
 					case Altaxo.Main.ItemDefinitionLevel.Builtin:
-						builtIn.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.ColorSet));
+						builtIn.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.List));
 						break;
 
 					case Altaxo.Main.ItemDefinitionLevel.Application:
-						app.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.ColorSet));
+						app.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.List));
 						break;
 
 					case Altaxo.Main.ItemDefinitionLevel.UserDefined:
-						user.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.ColorSet));
+						user.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.List));
 						break;
 
 					case Altaxo.Main.ItemDefinitionLevel.Project:
-						proj.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.ColorSet));
+						proj.Nodes.Add(newNode = new NGTreeNodeForColorSet(set.List));
 						break;
 
 					default:

@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Graph3D.Plot
 		private PlotGroupStyleCollection _groupStyles;
 
 		/// <summary>Controller for the <see cref="PlotGroupStyleCollection"/> that is associated with the parent of this plot item.</summary>
-		private IMVCANController _plotGroupController;
+		private PlotGroupCollectionController _plotGroupController;
 
 		private Data.IPlotColumnDataController _dataController;
 		private IXYZPlotStyleCollectionController _styleCollectionController;
@@ -130,8 +130,10 @@ namespace Altaxo.Gui.Graph3D.Plot
 				if (null == _groupStyles && null != _doc.ParentCollection)
 					_groupStyles = _doc.ParentCollection.GroupStyles;
 
-				_plotGroupController = new PlotGroupCollectionController();
-				_plotGroupController.InitializeDocument(_groupStyles);
+				var plotGroupController = new PlotGroupCollectionController();
+				plotGroupController.InitializeDocument(_groupStyles);
+				plotGroupController.GroupStyleChanged += new WeakActionHandler(EhPlotGroupChanged, (handler) => plotGroupController.GroupStyleChanged -= handler);
+				_plotGroupController = plotGroupController;
 
 				// find the style collection controller
 				_styleCollectionController = (IXYZPlotStyleCollectionController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style }, typeof(IXYZPlotStyleCollectionController), UseDocument.Directly);
@@ -330,6 +332,27 @@ namespace Altaxo.Gui.Graph3D.Plot
 		{
 			IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
 			_doc.Style.DistributeSubStyleChange(pivotelement, layer, _doc.GetRangesAndPoints(layer));
+
+			// now all style controllers must be updated
+			for (int i = 0; i < _styleControllerList.Count; i++)
+			{
+				if (null != _styleControllerList[i])
+					_styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable);
+			}
+		}
+
+		/// <summary>
+		/// Is called when the user has made a major change to the plot groups.
+		/// </summary>
+		/// <remarks>In this case probably one of the lists in the plot group has changed. Thus the first item of the plot item collection is used as
+		/// pivot element to distribute the style changes.</remarks>
+		private void EhPlotGroupChanged()
+		{
+			var parColl = _doc.ParentCollection;
+			if (null != parColl)
+			{
+				parColl.DistributeChanges(parColl[0]);
+			}
 
 			// now all style controllers must be updated
 			for (int i = 0; i < _styleControllerList.Count; i++)

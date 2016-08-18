@@ -91,12 +91,11 @@ namespace Altaxo.Gui.Common
 			if (value is NamedColor)
 			{
 				var c = (NamedColor)value;
-				IColorSet colorSet;
-				Altaxo.Main.ItemDefinitionLevel level;
-				bool isPlotColorSet;
 
-				if (c.ParentColorSet != null && ColorSetManager.Instance.TryGetValue(c.ParentColorSet.Name, out colorSet, out level, out isPlotColorSet))
-					return string.Format("{0}/{1}", GetLevelString(level), c.ParentColorSet.Name);
+				ColorSetManagerEntryValue colorSetEntry;
+
+				if (c.ParentColorSet != null && ColorSetManager.Instance.TryGetList(c.ParentColorSet.Name, out colorSetEntry))
+					return string.Format("{0}/{1}", GetLevelString(colorSetEntry.Level), c.ParentColorSet.Name);
 				else
 					return "<<no color set>>";
 			}

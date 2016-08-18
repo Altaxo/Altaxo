@@ -142,6 +142,11 @@ namespace Altaxo.Gui.Common.Drawing
 		protected abstract bool FillComboBoxWithFilteredItems(string filterString, bool onlyIfItemsRemaining);
 
 		/// <summary>
+		/// The color set manager used here.
+		/// </summary>
+		private ColorSetManager _colorSetManager;
+
+		/// <summary>
 		/// Temporary storage for the selected value of the TreeView when the Popup is opened
 		/// </summary>
 		protected object _selectedFromTreeView;
@@ -164,6 +169,12 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			IsTreeDropDownOpenProperty = DependencyProperty.Register("IsTreeDropDownOpen", typeof(bool), typeof(ColorComboBoxBase), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(EhIsTreeDropDownOpenChanged)));
 			ShowPlotColorsOnlyProperty = DependencyProperty.Register("ShowPlotColorsOnly", typeof(bool), typeof(ColorComboBoxBase), new FrameworkPropertyMetadata(false, EhShowPlotColorsOnlyChanged));
+		}
+
+		protected ColorComboBoxBase()
+		{
+			_colorSetManager = ColorSetManager.Instance;
+			_colorSetManager.ListAdded += UpdateTreeViewTreeNodes;
 		}
 
 		#endregion Constructors
@@ -360,8 +371,6 @@ namespace Altaxo.Gui.Common.Drawing
 		/// </summary>
 		protected virtual void UpdateTreeViewTreeNodes()
 		{
-			var manager = ColorSetManager.Instance;
-
 			var builtIn = new NGTreeNode() { Text = "Builtin", Tag = Altaxo.Main.ItemDefinitionLevel.Builtin };
 			var app = new NGTreeNode() { Text = "Application", Tag = Altaxo.Main.ItemDefinitionLevel.Application };
 			var user = new NGTreeNode() { Text = "User", Tag = Altaxo.Main.ItemDefinitionLevel.UserDefined };
@@ -369,7 +378,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 			bool showPlotColorsOnly = this.ShowPlotColorsOnly;
 
-			foreach (var set in manager.GetAllColorSetsWithLevelAndPlotColorStatus())
+			foreach (var set in _colorSetManager.GetEntryValues())
 			{
 				if (showPlotColorsOnly && !set.IsPlotColorSet)
 					continue;
@@ -377,19 +386,19 @@ namespace Altaxo.Gui.Common.Drawing
 				switch (set.Level)
 				{
 					case Altaxo.Main.ItemDefinitionLevel.Builtin:
-						builtIn.Nodes.Add(new NGTreeNodeForColorSet(set.ColorSet));
+						builtIn.Nodes.Add(new NGTreeNodeForColorSet(set.List));
 						break;
 
 					case Altaxo.Main.ItemDefinitionLevel.Application:
-						app.Nodes.Add(new NGTreeNodeForColorSet(set.ColorSet));
+						app.Nodes.Add(new NGTreeNodeForColorSet(set.List));
 						break;
 
 					case Altaxo.Main.ItemDefinitionLevel.UserDefined:
-						user.Nodes.Add(new NGTreeNodeForColorSet(set.ColorSet));
+						user.Nodes.Add(new NGTreeNodeForColorSet(set.List));
 						break;
 
 					case Altaxo.Main.ItemDefinitionLevel.Project:
-						proj.Nodes.Add(new NGTreeNodeForColorSet(set.ColorSet));
+						proj.Nodes.Add(new NGTreeNodeForColorSet(set.List));
 						break;
 				}
 			}
@@ -415,9 +424,13 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				var colorSet = selColor.ParentColorSet;
 				Altaxo.Main.ItemDefinitionLevel level = Altaxo.Main.ItemDefinitionLevel.Project;
-				bool isPlotColorSet;
-				if (selColor.ParentColorSet != null)
-					ColorSetManager.Instance.TryGetValue(selColor.ParentColorSet.Name, out colorSet, out level, out isPlotColorSet);
+
+				bool isPlotColorSet = false;
+				ColorSetManagerEntryValue colorSetEntry;
+				if (selColor.ParentColorSet != null && ColorSetManager.Instance.TryGetList(selColor.ParentColorSet.Name, out colorSetEntry))
+				{
+					isPlotColorSet = colorSetEntry.IsPlotColorSet;
+				}
 
 				_treeRootNode.FromHereToLeavesDo(node =>
 				{
@@ -555,6 +568,35 @@ namespace Altaxo.Gui.Common.Drawing
 			// Trim local used colors to maximum count
 			for (int i = _listOfLocalLastUsedItems.Count - 1; i >= MaxNumberOfLastLocalUsedColors; --i)
 				_listOfLocalLastUsedItems.RemoveAt(i);
+		}
+
+		protected virtual void EhShowColorSetManagerDialog(object sender, RoutedEventArgs e)
+		{
+			var listController = new Graph3D.Plot.Groups.ColorSetController();
+			listController.InitializeDocument(InternalSelectedColor.ParentColorSet);
+			Current.Gui.FindAndAttachControlTo(listController);
+
+			if (Current.Gui.ShowDialog(listController, "Manage color sets", false))
+			{
+				var colorSetChosen = (IColorSet)listController.ModelObject;
+
+				if (object.ReferenceEquals(InternalSelectedColor.ParentColorSet, colorSetChosen))
+					return; // nothing has changed
+
+				if (ShowPlotColorsOnly && object.ReferenceEquals(colorSetChosen, ColorSetManager.Instance.BuiltinKnownColors))
+				{
+					Current.Gui.ErrorMessageBox(string.Format("The color set '{0}' is not admitted to be used as plot color set. Please choose another color set, or derive a new color set from '{0}'.", ColorSetManager.Instance.BuiltinKnownColors.Name), "ColorSet not admitted");
+					return;
+				}
+
+				if (ShowPlotColorsOnly)
+				{
+					ColorSetManager.Instance.DeclareAsPlotColorList(colorSetChosen);
+				}
+
+				// we choose the first color from the new color set
+				InternalSelectedColor = colorSetChosen[0];
+			}
 		}
 
 		#endregion Context menus

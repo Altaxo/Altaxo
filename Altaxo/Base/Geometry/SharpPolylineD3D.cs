@@ -68,5 +68,90 @@ namespace Altaxo.Geometry
 		{
 			return true;
 		}
+
+		public double TotalLineLength
+		{
+			get
+			{
+				double sum = 0;
+				for (int i = 1; i < _points.Length; ++i)
+					sum += (_points[i] - _points[i - 1]).Length;
+
+				return sum;
+			}
+		}
+
+		public IPolylineD3D ShortenedBy(RADouble marginAtStart, RADouble marginAtEnd)
+		{
+			if (_points.Length < 2)
+				return null;
+
+			double totLength = TotalLineLength;
+
+			double a1 = marginAtStart.IsAbsolute ? marginAtStart.Value : marginAtStart.Value * totLength;
+			double a2 = marginAtEnd.IsAbsolute ? marginAtEnd.Value : marginAtEnd.Value * totLength;
+
+			if (!((a1 + a2) < totLength))
+				return null;
+
+			PointD3D? p0 = null;
+			PointD3D? p1 = null;
+			int i0 = 0;
+			int i1 = 0;
+
+			if (a1 <= 0)
+			{
+				p0 = PointD3D.Interpolate(_points[0], _points[1], a1 / totLength);
+			}
+			else
+			{
+				double sum = 0, prevSum = 0;
+				for (int i = 1; i < _points.Length; ++i)
+				{
+					sum += (_points[i] - _points[i - 1]).Length;
+					if (!(sum < a1))
+					{
+						p0 = PointD3D.Interpolate(_points[i - 1], _points[i], (a1 - prevSum) / (sum - prevSum));
+						i0 = p0 != _points[i] ? i : i + 1;
+						break;
+					}
+					prevSum = sum;
+				}
+			}
+
+			if (a2 <= 0)
+			{
+				p1 = PointD3D.Interpolate(_points[_points.Length - 2], _points[_points.Length - 1], 1 - a2 / totLength);
+			}
+			else
+			{
+				double sum = 0, prevSum = 0;
+				for (int i = _points.Length - 2; i >= 0; --i)
+				{
+					sum += (_points[i] - _points[i + 1]).Length;
+					if (!(sum < a2))
+					{
+						p1 = PointD3D.Interpolate(_points[i + 1], _points[i], (a1 - prevSum) / (sum - prevSum));
+						i1 = p1 != _points[i] ? i : i - 1;
+						break;
+					}
+					prevSum = sum;
+				}
+			}
+
+			if (p0.HasValue && p1.HasValue)
+			{
+				var plist = new List<PointD3D>();
+				plist.Add(p0.Value);
+				for (int i = i0; i <= i1; ++i)
+					plist.Add(_points[i]);
+				plist.Add(p1.Value);
+				return new SharpPolylineD3D(plist.ToArray());
+			}
+			else
+			{
+				return null;
+			}
+		}
 	}
 }
