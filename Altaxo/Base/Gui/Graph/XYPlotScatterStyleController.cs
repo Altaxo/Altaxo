@@ -29,6 +29,7 @@ using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Main;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Altaxo.Gui.Graph
 {
@@ -176,15 +177,7 @@ namespace Altaxo.Gui.Graph
 				_doc.SymbolSize = _view.SymbolSize;
 
 				// Drop line left
-				_doc.DropLine.Clear();
-
-				foreach (SelectableListNode node in _dropLineChoices)
-				{
-					if (node.IsSelected)
-					{
-						_doc.DropLine.Add((CSPlaneID)node.Tag);
-					}
-				}
+				_doc.DropLine = new CSPlaneIDList(_dropLineChoices.Where(node => node.IsSelected).Select(node => (CSPlaneID)node.Tag));
 
 				// Skip points
 

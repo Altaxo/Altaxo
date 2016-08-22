@@ -22,31 +22,43 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.D3D;
-using Altaxo.Geometry;
-using Altaxo.Graph.Graph3D.GraphicsContext;
+using Altaxo.Graph.Graph3D.Plot.Styles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Graph3D.Plot.Styles
+namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
-	/// <summary>
-	/// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable. They still need to be cloneable,
-	/// because in a list of scatter symbols we need unique instances.
-	/// </summary>
-	/// <seealso cref="Altaxo.Main.IImmutable" />
-	public interface IScatterSymbol : Main.IImmutable, ICloneable
+	public class ScatterSymbolListBag : StyleListBag<ScatterSymbolList, IScatterSymbol>
 	{
+		public ScatterSymbolListBag(IEnumerable<ScatterSymbolList> lists)
+			: base(lists)
+		{
+		}
+
+		protected ScatterSymbolListBag(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(info)
+		{
+		}
+
 		/// <summary>
-		/// Paints the symbol with the specified size at the origin of the coordinate system.
+		/// 2016-08-22 Initial version
 		/// </summary>
-		/// <param name="g">The graphics context.</param>
-		/// <param name="material">The material used to draw the symbol.</param>
-		/// <param name="centerLocation">The location of the center of the symbol.</param>
-		/// <param name="symbolSize">Size of the symbol.</param>
-		void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize);
+		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterSymbolListBag), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (ScatterSymbolListBag)obj;
+				s.Serialize(info);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				return new ScatterSymbolListBag(info);
+			}
+		}
 	}
 }

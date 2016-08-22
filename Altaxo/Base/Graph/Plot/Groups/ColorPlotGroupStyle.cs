@@ -104,6 +104,8 @@ namespace Altaxo.Graph.Plot.Groups
 				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
 				s._listOfValues = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
+				ColorSetManager.Instance.TryRegisterList(s._listOfValues, Main.ItemDefinitionLevel.Project, out s._listOfValues);
+
 				return s;
 			}
 		}
@@ -131,6 +133,7 @@ namespace Altaxo.Graph.Plot.Groups
 				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
 				s._listOfValues = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
+				ColorSetManager.Instance.TryRegisterList(s._listOfValues, Main.ItemDefinitionLevel.Project, out s._listOfValues);
 				s._colorIndex = info.GetInt32("ColorIndex");
 				return s;
 			}
@@ -287,8 +290,8 @@ namespace Altaxo.Graph.Plot.Groups
 			// we will not accept the known color set here
 			// this has historical reasons: until 2012 we don't even have the concept of color sets
 			// thus all plot colors were part of the know color set, and we could not distinguish between known colors and plot colors
-			if (	null != c.ParentColorSet &&
-					!object.ReferenceEquals(c.ParentColorSet, ColorSetManager.Instance.BuiltinKnownColors) 
+			if (null != c.ParentColorSet &&
+					!object.ReferenceEquals(c.ParentColorSet, ColorSetManager.Instance.BuiltinKnownColors)
 				)
 			{
 				_listOfValues = c.ParentColorSet;

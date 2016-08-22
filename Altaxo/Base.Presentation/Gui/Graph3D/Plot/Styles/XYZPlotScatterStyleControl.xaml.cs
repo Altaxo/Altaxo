@@ -25,6 +25,7 @@
 using Altaxo.Collections;
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Gui.Common.Drawing;
 using System;
 using System.Collections.Generic;
@@ -50,22 +51,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			InitializeComponent();
 		}
 
-		private void EhSymbolShape_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
-		{
-			if (null != _cbSymbolShape)
-			{
-				GuiHelper.SynchronizeSelectionFromGui(_cbSymbolShape);
-			}
-		}
-
-		private void EhSymbolStyle_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
-		{
-			if (null != _cbSymbolStyle)
-			{
-				GuiHelper.SynchronizeSelectionFromGui(_cbSymbolStyle);
-			}
-		}
-
 		public void EnableDisableMain(bool bEnable)
 		{
 			this._chkIndependentColor.IsEnabled = bEnable;
@@ -73,7 +58,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 			this._cbColor.IsEnabled = bEnable;
 			this._cbSymbolSize.IsEnabled = bEnable;
-			this._cbSymbolStyle.IsEnabled = bEnable;
 			this._edSymbolSkipFrequency.IsEnabled = bEnable;
 		}
 
@@ -81,17 +65,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		public void InitializeSymbolStyle(SelectableListNodeList list)
 		{
-			GuiHelper.Initialize(_cbSymbolStyle, list);
 		}
 
 		public void InitializeSymbolShape(SelectableListNodeList list)
 		{
-			GuiHelper.Initialize(_cbSymbolShape, list);
-		}
-
-		public void InitializeDropLineConditions(SelectableListNodeList names)
-		{
-			_lbDropLines.Initialize(names);
+			_cbSymbolShape.SelectedItem = list.FirstSelectedNode?.Tag as Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol;
 		}
 
 		public bool IndependentColor
@@ -106,15 +84,16 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 		}
 
-		public IMaterial SymbolPen
+		public IMaterial SymbolMaterial
 		{
 			get { return _cbColor.SelectedMaterial; }
 			set { _cbColor.SelectedMaterial = value; }
 		}
 
-		public SelectableListNode SymbolShape
+		public IScatterSymbol SymbolShape
 		{
-			get { return (SelectableListNode)_cbSymbolShape.SelectedItem; }
+			get { return _cbSymbolShape.SelectedItem; }
+			set { _cbSymbolShape.SelectedItem = value; }
 		}
 
 		public bool IndependentSymbolSize
@@ -123,18 +102,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			set { this._chkIndependentSize.IsChecked = value; }
 		}
 
-		public SelectableListNode SymbolStyle
-		{
-			get { return (SelectableListNode)_cbSymbolStyle.SelectedItem; }
-		}
-
 		public double SymbolSize
 		{
 			get { return _cbSymbolSize.SelectedQuantityAsValueInPoints; }
 			set { _cbSymbolSize.SelectedQuantityAsValueInPoints = value; }
 		}
 
-		public int SkipPoints
+		public int SkipFrequency
 		{
 			get
 			{
@@ -146,16 +120,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 		}
 
-		public double RelativePenWidth
+		public bool IndependentSkipFrequency
 		{
-			get
-			{
-				return _edRelativePenWidth.SelectedQuantityAsValueInSIUnits;
-			}
-			set
-			{
-				_edRelativePenWidth.SelectedQuantityAsValueInSIUnits = value;
-			}
+			get { return true == _chkIndependentSkipFreq.IsChecked; }
+			set { this._chkIndependentSkipFreq.IsChecked = value; }
 		}
 
 		#endregion IXYPlotScatterStyleView

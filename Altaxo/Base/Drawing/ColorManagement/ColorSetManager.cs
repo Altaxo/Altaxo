@@ -47,13 +47,29 @@ namespace Altaxo.Drawing.ColorManagement
 	/// </summary>
 	public class ColorSetManager : StyleListManagerBase<IColorSet, NamedColor, ColorSetManagerEntryValue>
 	{
+		public static readonly Main.Properties.PropertyKey<ColorSetBag> PropertyKeyUserDefinedColorSets;
+
 		/// <summary>
 		/// Stores the only instance of this class.
 		/// </summary>
-		private static ColorSetManager _instance = new ColorSetManager();
+		private static ColorSetManager _instance;
 
 		private IColorSet _builtinKnownColors;
 		private IColorSet _builtinDarkPlotColors;
+
+		static ColorSetManager()
+		{
+			PropertyKeyUserDefinedColorSets =
+				new Main.Properties.PropertyKey<ColorSetBag>(
+				"98C37A90-D75A-4058-B6C6-8C180F37DD71",
+				"Graph\\Colors\\UserDefinedColors",
+				Main.Properties.PropertyLevel.Application,
+				() => new ColorSetBag(Enumerable.Empty<Tuple<IColorSet, bool>>()));
+
+			var instance = new ColorSetManager();
+
+			_instance = instance;
+		}
 
 		private ColorSetManager()
 			: base(
@@ -65,6 +81,19 @@ namespace Altaxo.Drawing.ColorManagement
 
 			_builtinDarkPlotColors = new ColorSet("PlotColorsDark", GetPlotColorsDark_Version0());
 			_allLists.Add(_builtinDarkPlotColors.Name, new ColorSetManagerEntryValue(_builtinDarkPlotColors, Main.ItemDefinitionLevel.Builtin, true));
+
+			ColorSetBag userColorSets;
+			Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedColorSets, out userColorSets);
+			if (null != userColorSets)
+			{
+				IColorSet dummy;
+				foreach (var userColorSet in userColorSets.ColorSets)
+				{
+					InternalTryRegisterList(userColorSet.Item1, ItemDefinitionLevel.UserDefined, out dummy, false);
+					if (userColorSet.Item2) // .IsPlotColorSet
+						_allLists[dummy.Name] = new ColorSetManagerEntryValue(dummy, _allLists[dummy.Name].Level, true);
+				}
+			}
 		}
 
 		#region Buildin
@@ -92,6 +121,11 @@ namespace Altaxo.Drawing.ColorManagement
 		public override IColorSet CreateNewList(string name, IEnumerable<NamedColor> symbols)
 		{
 			return new ColorSet(name, symbols);
+		}
+
+		public override IColorSet GetParentList(NamedColor item)
+		{
+			return item.ParentColorSet;
 		}
 
 		/// <summary>
@@ -137,7 +171,10 @@ namespace Altaxo.Drawing.ColorManagement
 
 			var value = _allLists[colorSet.Name];
 			if (!value.IsPlotColorSet)
+			{
 				_allLists[colorSet.Name] = new ColorSetManagerEntryValue(colorSet, value.Level, true);
+				OnListAdded(colorSet, value.Level);
+			}
 		}
 
 		#region Deserialization of colors
@@ -234,5 +271,15 @@ namespace Altaxo.Drawing.ColorManagement
 		}
 
 		#endregion Deserialization of colors
+
+		#region User defined color sets
+
+		protected override void OnUserDefinedListAddedChangedRemoved(IColorSet list)
+		{
+			var colorSetBag = new ColorSetBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => new Tuple<IColorSet, bool>(entry.List, entry.IsPlotColorSet)));
+			Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedColorSets, colorSetBag);
+		}
+
+		#endregion User defined color sets
 	}
 }

@@ -65,7 +65,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
 
 				if (s._isStepEnabled)
-					s._listOfValues = (ScatterSymbolList)info.GetValue("ListOfValues", s);
+				{
+					var listOfValues = (ScatterSymbolList)info.GetValue("ListOfValues", s);
+					ScatterSymbolList registeredList;
+					ScatterSymbolListManager.Instance.TryRegisterList(listOfValues, Main.ItemDefinitionLevel.Project, out registeredList);
+					s._listOfValues = registeredList;
+				}
 				return s;
 			}
 		}
@@ -214,9 +219,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				if (!object.ReferenceEquals(_listOfValues, value))
 				{
 					_listOfValues = value;
-					var idx = _listOfValues.IndexOf(_value);
-					if (idx < 0)
-						_value = _listOfValues[0];
+					var idx = Math.Max(0, _listOfValues.IndexOf(_value));
+					_value = _listOfValues[idx];
 
 					EhSelfChanged();
 				}
@@ -241,7 +245,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				throw new ArgumentNullException(nameof(s));
 
 			_isInitialized = true;
-			_value = s;
+
+			var parentList = ScatterSymbolListManager.Instance.GetParentList(s);
+			if (null != parentList)
+			{
+				_listOfValues = parentList;
+			}
+
+			var idx = Math.Max(0, _listOfValues.IndexOf(s));
+			_value = _listOfValues[idx];
 		}
 
 		public IScatterSymbol ShapeAndStyle

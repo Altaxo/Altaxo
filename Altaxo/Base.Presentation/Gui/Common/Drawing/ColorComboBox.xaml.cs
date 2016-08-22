@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private event Action ViewEvent_SelectedColorChanged;
 
-		event Action Altaxo.Gui.Common.Drawing.INamedColorView.SelectedColorChanged
+		event Action Altaxo.Gui.Common.Drawing.INamedColorView.SelectedItemChanged
 		{
 			add { ViewEvent_SelectedColorChanged += value; }
 			remove { ViewEvent_SelectedColorChanged -= value; }

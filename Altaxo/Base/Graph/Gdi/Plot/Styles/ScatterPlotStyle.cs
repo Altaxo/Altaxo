@@ -514,9 +514,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public IList<CSPlaneID> DropLine
+		public CSPlaneIDList DropLine
 		{
 			get { return _dropLine; }
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (!object.ReferenceEquals(value, _dropLine))
+				{
+					_dropLine = value;
+					EhSelfChanged();
+				}
+			}
 		}
 
 		public bool IsVisible

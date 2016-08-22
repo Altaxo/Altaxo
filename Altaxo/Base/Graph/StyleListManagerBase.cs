@@ -74,10 +74,10 @@ namespace Altaxo.Graph
 	/// Implements a basic manager for style lists.
 	/// </summary>
 	/// <typeparam name="TList">Type of the list of style items.</typeparam>
-	/// <typeparam name="T">Type of the style item in the lists.</typeparam>
+	/// <typeparam name="TItem">Type of the style item in the lists.</typeparam>
 	/// <typeparam name="TListManagerEntry">Type of the entries used by the list manager (amended for instance with the list level or other information).</typeparam>
 	/// <seealso cref="Altaxo.Graph.IStyleListManager{TList, T}" />
-	public abstract class StyleListManagerBase<TList, T, TListManagerEntry> : IStyleListManager<TList, T> where TList : IStyleList<T> where T : Main.IImmutable where TListManagerEntry : StyleListManagerBaseEntryValue<TList, T>
+	public abstract class StyleListManagerBase<TList, TItem, TListManagerEntry> : IStyleListManager<TList, TItem> where TList : IStyleList<TItem> where TItem : Main.IImmutable where TListManagerEntry : StyleListManagerBaseEntryValue<TList, TItem>
 	{
 		/// <summary>
 		/// Dictionary of all existing lists. Key is the list name. Value is a tuple, whose boolean entry designates whether this is
@@ -104,26 +104,41 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Fired when a list is added to the manager.
 		/// </summary>
-		private WeakDelegate<Action> _listAdded = new WeakDelegate<Action>();
+		private WeakDelegate<Action> _changed = new WeakDelegate<Action>();
 
 		/// <summary>
 		/// Occurs when a list is added to the manager. The event is hold weak, thus you can safely add your handler without running in memory leaks.
 		/// </summary>
-		public event Action ListAdded
+		public event Action Changed
 		{
 			add
 			{
-				_listAdded.Combine(value);
+				_changed.Combine(value);
 			}
 			remove
 			{
-				_listAdded.Remove(value);
+				_changed.Remove(value);
 			}
 		}
 
-		protected virtual void OnListAdded()
+		protected virtual void OnListAdded(TList list, Main.ItemDefinitionLevel level)
 		{
-			_listAdded.Target?.Invoke();
+			if (level == ItemDefinitionLevel.UserDefined)
+				OnUserDefinedListAddedChangedRemoved(list);
+
+			_changed.Target?.Invoke();
+		}
+
+		protected virtual void OnListChanged(TList list, Main.ItemDefinitionLevel level)
+		{
+			if (level == ItemDefinitionLevel.UserDefined)
+				OnUserDefinedListAddedChangedRemoved(list);
+
+			_changed.Target?.Invoke();
+		}
+
+		protected virtual void OnUserDefinedListAddedChangedRemoved(TList list)
+		{
 		}
 
 		#endregion ListAdded event
@@ -138,7 +153,7 @@ namespace Altaxo.Graph
 			return _allLists[name].List;
 		}
 
-		IEnumerable<StyleListManagerBaseEntryValue<TList, T>> IStyleListManager<TList, T>.GetEntryValues()
+		IEnumerable<StyleListManagerBaseEntryValue<TList, TItem>> IStyleListManager<TList, TItem>.GetEntryValues()
 		{
 			return _allLists.Values;
 		}
@@ -148,7 +163,7 @@ namespace Altaxo.Graph
 			return _allLists.Values;
 		}
 
-		StyleListManagerBaseEntryValue<TList, T> IStyleListManager<TList, T>.GetEntryValue(string name)
+		StyleListManagerBaseEntryValue<TList, TItem> IStyleListManager<TList, TItem>.GetEntryValue(string name)
 		{
 			return _allLists[name];
 		}
@@ -170,7 +185,11 @@ namespace Altaxo.Graph
 		{
 			var namesToRemove = new List<string>(_allLists.Where(entry => entry.Value.Level == Main.ItemDefinitionLevel.Project).Select(entry => entry.Key));
 			foreach (var name in namesToRemove)
+			{
 				_allLists.Remove(name);
+			}
+
+			OnListChanged(default(TList), ItemDefinitionLevel.Builtin);
 		}
 
 		/// <summary>
@@ -181,6 +200,19 @@ namespace Altaxo.Graph
 		/// <param name="storedList">On return, this is the list which is either registered, or is an already registed list with exactly the same elements.</param>
 		/// <returns>True if the list was new and thus was added to the collection; false if the list has already existed.</returns>
 		public bool TryRegisterList(TList instance, Main.ItemDefinitionLevel level, out TList storedList)
+		{
+			return InternalTryRegisterList(instance, level, out storedList, true);
+		}
+
+		/// <summary>
+		/// Try to register the provided list.
+		/// </summary>
+		/// <param name="instance">The new list which is tried to register.</param>
+		/// <param name="level">The level on which this list is defined.</param>
+		/// <param name="storedList">On return, this is the list which is either registered, or is an already registed list with exactly the same elements.</param>
+		/// <param name="fireAddEvent">If true, the add event is fired when a list is added.</param>
+		/// <returns>True if the list was new and thus was added to the collection; false if the list has already existed.</returns>
+		protected bool InternalTryRegisterList(TList instance, Main.ItemDefinitionLevel level, out TList storedList, bool fireAddEvent)
 		{
 			string nameOfExistingGroup;
 			if (TryGetListByMembers(instance, instance.Name, out nameOfExistingGroup)) // if a group with such a list already exist
@@ -202,14 +234,16 @@ namespace Altaxo.Graph
 				{
 					storedList = (TList)instance.WithName(GetUnusedName(instance.Name));
 					_allLists.Add(storedList.Name, EntryValueCreator(storedList, level));
-					OnListAdded();
+					if (fireAddEvent)
+						OnListAdded(storedList, level);
 					return true;
 				}
 				else // name is not in use
 				{
 					storedList = instance;
 					_allLists.Add(instance.Name, EntryValueCreator(instance, level));
-					OnListAdded();
+					if (fireAddEvent)
+						OnListAdded(instance, level);
 					return true;
 				}
 			}
@@ -224,7 +258,7 @@ namespace Altaxo.Graph
 		/// <param name="ListCreator">Function used to create a new list from listName and listItems. Can be null: in this case the standard list creator will be used.</param>
 		/// <param name="storedList">On return, this is the list which is either registered, or is an already registed list with exactly the same elements.</param>
 		/// <returns>True if the list was new and thus was added to the collection; false if the list has already existed.</returns>
-		public bool TryRegisterList(string listName, IEnumerable<T> listItems, Main.ItemDefinitionLevel listLevel, Func<string, IEnumerable<T>, TList> ListCreator, out TList storedList)
+		public bool TryRegisterList(string listName, IEnumerable<TItem> listItems, Main.ItemDefinitionLevel listLevel, Func<string, IEnumerable<TItem>, TList> ListCreator, out TList storedList)
 		{
 			if (string.IsNullOrEmpty(listName))
 				throw new ArgumentNullException(nameof(listName));
@@ -242,7 +276,7 @@ namespace Altaxo.Graph
 
 				storedList = (ListCreator ?? CreateNewList)(listName, listItems);
 				_allLists.Add(storedList.Name, EntryValueCreator(storedList, listLevel));
-				OnListAdded();
+				OnListAdded(storedList, listLevel);
 				return true;
 			}
 		}
@@ -276,7 +310,7 @@ namespace Altaxo.Graph
 		}
 
 		/// <inheritdoc />
-		public bool TryGetListByMembers(IEnumerable<T> symbols, string nameHint, out string nameOfExistingList)
+		public bool TryGetListByMembers(IEnumerable<TItem> symbols, string nameHint, out string nameOfExistingList)
 		{
 			// fast lookup: first test if a list with the hinted name exists and has the same items
 			TListManagerEntry existingEntry;
@@ -306,6 +340,8 @@ namespace Altaxo.Graph
 			return _allLists.ContainsKey(name);
 		}
 
-		public abstract TList CreateNewList(string name, IEnumerable<T> symbols);
+		public abstract TList CreateNewList(string name, IEnumerable<TItem> symbols);
+
+		public abstract TList GetParentList(TItem item);
 	}
 }

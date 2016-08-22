@@ -50,6 +50,8 @@ namespace Altaxo.Graph
 		{
 			_name = name;
 			_list = new List<T>(symbols);
+			if (_list.Count == 0)
+				throw new ArgumentException("Provided enumeration is emtpy", nameof(symbols));
 		}
 
 		public string Name { get { return _name; } }

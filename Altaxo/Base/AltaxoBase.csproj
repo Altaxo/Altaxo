@@ -242,6 +242,7 @@
     <Compile Include="Data\Transformations\InverseTransformation.cs" />
     <Compile Include="Data\TransformedReadableColumn.cs" />
     <Compile Include="Data\TransformedReadableColumnProxy.cs" />
+    <Compile Include="Drawing\ColorManagement\ColorSetBag.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Ellipsoidal.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Octagonal.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Triangular.cs" />
@@ -284,6 +285,8 @@
     <Compile Include="Geometry\RayD3D.cs" />
     <Compile Include="Geometry\VectorD2D.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Groups\ScatterSymbolListBag.cs" />
+    <Compile Include="Graph\StyleListBag.cs" />
     <Compile Include="Graph\Graph3D\Axis\AxisLabelStyle.cs" />
     <Compile Include="Graph\Graph3D\Axis\AxisLineStyle.cs" />
     <Compile Include="Graph\Graph3D\Axis\AxisStyle.cs" />
@@ -497,6 +500,7 @@
     <Compile Include="Graph\Scales\Ticks\CumulativeProbabilityTickSpacing.cs" />
     <Compile Include="Graph\StyleListBase.cs" />
     <Compile Include="Graph\StyleListManagerBase.cs" />
+    <Compile Include="Graph\StyleListManagerBaseForClasses.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DDataSourceController.cs" />
     <Compile Include="Gui\Analysis\Statistics\HistogramCreationController.cs" />
     <Compile Include="Gui\Analysis\Statistics\LogarithmicBinningController.cs" />

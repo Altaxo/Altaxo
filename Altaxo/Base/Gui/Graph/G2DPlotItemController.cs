@@ -176,7 +176,7 @@ namespace Altaxo.Gui.Graph
 			{
 				if (false == _styleControllerList[i].Apply(disposeController))
 				{
-					_view.BringTabToFront(i);
+					_view.BringTabToFront(i + 1);
 					applyResult = false;
 					goto end_of_function;
 				}

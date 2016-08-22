@@ -33,12 +33,12 @@ namespace Altaxo.Drawing.ColorManagement
 {
 	public class ColorSet : IColorSet
 	{
-		private IList<NamedColor> _innerList;
+		private NamedColor[] _innerList;
 		protected readonly string _name;
 
-		protected Dictionary<string, int> _nameToIndexDictionary;
-		protected Dictionary<AxoColor, int> _colorToIndexDictionary;
-		protected Dictionary<ColorNameKey, int> _namecolorToIndexDictionary;
+		protected Lazy<Dictionary<string, int>> _nameToIndexDictionary;
+		protected Lazy<Dictionary<AxoColor, int>> _colorToIndexDictionary;
+		protected Lazy<Dictionary<ColorNameKey, int>> _namecolorToIndexDictionary;
 
 		#region Serialization
 
@@ -91,9 +91,7 @@ namespace Altaxo.Drawing.ColorManagement
 
 				info.CloseArray(count);
 
-				IColorSet returnValue;
-				ColorSetManager.Instance.TryRegisterList(new ColorSet(colorSetName, colors), Main.ItemDefinitionLevel.Project, out returnValue);
-				return returnValue;
+				return new ColorSet(colorSetName, colors);
 			}
 		}
 
@@ -109,7 +107,7 @@ namespace Altaxo.Drawing.ColorManagement
 				var s = (ColorSet)obj;
 				info.AddValue("Name", s._name);
 
-				info.CreateArray("Colors", s._innerList.Count);
+				info.CreateArray("Colors", s._innerList.Length);
 
 				foreach (NamedColor c in s)
 				{
@@ -124,24 +122,25 @@ namespace Altaxo.Drawing.ColorManagement
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				string colorSetName = info.GetString("Name");
-
-				int count = info.OpenArray("Colors");
-				var colors = new NamedColor[count];
-				for (int i = 0; i < count; ++i)
-				{
-					string name = info.GetStringAttribute("Name");
-					string cvalue = info.GetString("e");
-					colors[i] = new NamedColor(AxoColor.FromInvariantString(cvalue), name);
-				}
-
-				info.CloseArray(count);
-
-				IColorSet returnValue;
-				ColorSetManager.Instance.TryRegisterList(new ColorSet(colorSetName, colors), Main.ItemDefinitionLevel.Project, out returnValue);
-
-				return returnValue;
+				return new ColorSet(info);
 			}
+		}
+
+		private ColorSet(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+			_name = info.GetString("Name");
+
+			int count = info.OpenArray("Colors");
+			_innerList = new NamedColor[count];
+			for (int i = 0; i < count; ++i)
+			{
+				string name = info.GetStringAttribute("Name");
+				string cvalue = info.GetString("e");
+				_innerList[i] = new NamedColor(AxoColor.FromInvariantString(cvalue), name, this);
+			}
+			info.CloseArray(count);
+
+			InitLazyVariables();
 		}
 
 		#endregion Serialization
@@ -157,34 +156,48 @@ namespace Altaxo.Drawing.ColorManagement
 				throw new ArgumentNullException(nameof(name));
 
 			_name = name;
-			_innerList = new List<NamedColor>(colors.Select(c => new NamedColor(c.Color, c.Name, this)));
-			BuildSideDictionaries();
+			_innerList = colors.Select(c => new NamedColor(c.Color, c.Name, this)).ToArray();
+			InitLazyVariables();
 		}
 
-		private void BuildSideDictionaries()
+		private void InitLazyVariables()
 		{
-			if (null == _nameToIndexDictionary)
-				_nameToIndexDictionary = new Dictionary<string, int>();
-			else
-				_nameToIndexDictionary.Clear();
+			_nameToIndexDictionary = new Lazy<Dictionary<string, int>>(BuildNameToIndexDict);
+			_colorToIndexDictionary = new Lazy<Dictionary<AxoColor, int>>(BuildColorToIndexDictionary);
+			_namecolorToIndexDictionary = new Lazy<Dictionary<ColorNameKey, int>>(BuildNameColorToIndexDictionary);
+		}
 
-			if (null == _colorToIndexDictionary)
-				_colorToIndexDictionary = new Dictionary<AxoColor, int>();
-			else
-				_colorToIndexDictionary.Clear();
+		private Dictionary<string, int> BuildNameToIndexDict()
+		{
+			var nameToIndexDictionary = new Dictionary<string, int>();
+			for (int i = this._innerList.Length - 1; i >= 0; --i)
+			{
+				nameToIndexDictionary[this._innerList[i].Name] = i;
+			}
+			return nameToIndexDictionary;
+		}
 
-			if (null == _namecolorToIndexDictionary)
-				_namecolorToIndexDictionary = new Dictionary<ColorNameKey, int>();
-			else
-				_namecolorToIndexDictionary.Clear();
+		private Dictionary<AxoColor, int> BuildColorToIndexDictionary()
+		{
+			var colorToIndexDictionary = new Dictionary<AxoColor, int>();
 
-			for (int i = this._innerList.Count - 1; i >= 0; --i)
+			for (int i = this._innerList.Length - 1; i >= 0; --i)
+			{
+				colorToIndexDictionary[this._innerList[i].Color] = i;
+			}
+			return colorToIndexDictionary;
+		}
+
+		private Dictionary<ColorNameKey, int> BuildNameColorToIndexDictionary()
+		{
+			var namecolorToIndexDictionary = new Dictionary<ColorNameKey, int>();
+
+			for (int i = this._innerList.Length - 1; i >= 0; --i)
 			{
 				var c = this._innerList[i];
-				_nameToIndexDictionary[c.Name] = i;
-				_colorToIndexDictionary[c.Color] = i;
-				_namecolorToIndexDictionary[new ColorNameKey(c.Color, c.Name)] = i;
+				namecolorToIndexDictionary[new ColorNameKey(c.Color, c.Name)] = i;
 			}
+			return namecolorToIndexDictionary;
 		}
 
 		/// <summary>
@@ -203,7 +216,7 @@ namespace Altaxo.Drawing.ColorManagement
 		{
 			get
 			{
-				return _innerList.Count;
+				return _innerList.Length;
 			}
 		}
 
@@ -248,7 +261,7 @@ namespace Altaxo.Drawing.ColorManagement
 		public bool TryGetValue(string colorName, out NamedColor namedColor)
 		{
 			int idx;
-			if (_nameToIndexDictionary.TryGetValue(colorName, out idx))
+			if (_nameToIndexDictionary.Value.TryGetValue(colorName, out idx))
 			{
 				namedColor = this._innerList[idx];
 				return true;
@@ -271,7 +284,7 @@ namespace Altaxo.Drawing.ColorManagement
 		public bool TryGetValue(AxoColor colorValue, out NamedColor namedColor)
 		{
 			int idx;
-			if (_colorToIndexDictionary.TryGetValue(colorValue, out idx))
+			if (_colorToIndexDictionary.Value.TryGetValue(colorValue, out idx))
 			{
 				namedColor = this._innerList[idx];
 				return true;
@@ -295,7 +308,7 @@ namespace Altaxo.Drawing.ColorManagement
 		public bool TryGetValue(AxoColor colorValue, string colorName, out NamedColor namedColor)
 		{
 			int idx;
-			if (_namecolorToIndexDictionary.TryGetValue(new ColorNameKey(colorValue, colorName), out idx))
+			if (_namecolorToIndexDictionary.Value.TryGetValue(new ColorNameKey(colorValue, colorName), out idx))
 			{
 				namedColor = this._innerList[idx];
 				return true;
@@ -315,7 +328,7 @@ namespace Altaxo.Drawing.ColorManagement
 		public virtual int IndexOf(NamedColor color)
 		{
 			int idx;
-			if (_namecolorToIndexDictionary.TryGetValue(new ColorNameKey(color.Color, color.Name), out idx))
+			if (_namecolorToIndexDictionary.Value.TryGetValue(new ColorNameKey(color.Color, color.Name), out idx))
 			{
 				return idx;
 			}
@@ -333,7 +346,7 @@ namespace Altaxo.Drawing.ColorManagement
 		public virtual int IndexOf(AxoColor color)
 		{
 			int idx;
-			if (_colorToIndexDictionary.TryGetValue(color, out idx))
+			if (_colorToIndexDictionary.Value.TryGetValue(color, out idx))
 			{
 				return idx;
 			}
@@ -359,7 +372,7 @@ namespace Altaxo.Drawing.ColorManagement
 			var l2 = this;
 
 			int i = 0;
-			int len2 = l2._innerList.Count;
+			int len2 = l2._innerList.Length;
 			foreach (var item1 in l1)
 			{
 				if (i >= len2)
@@ -370,7 +383,7 @@ namespace Altaxo.Drawing.ColorManagement
 				++i;
 			}
 
-			if (i != l2._innerList.Count)
+			if (i != l2._innerList.Length)
 				return false;
 
 			return true;
@@ -413,7 +426,7 @@ namespace Altaxo.Drawing.ColorManagement
 
 		public IEnumerator<NamedColor> GetEnumerator()
 		{
-			return _innerList.GetEnumerator();
+			return ((IList<NamedColor>)_innerList).GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()

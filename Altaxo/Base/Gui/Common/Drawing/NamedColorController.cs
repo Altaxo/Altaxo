@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Common.Drawing
 	{
 		Altaxo.Drawing.NamedColor SelectedColor { get; set; }
 
-		event Action SelectedColorChanged;
+		event Action SelectedItemChanged;
 	}
 
 	[ExpectedTypeOfView(typeof(INamedColorView))]
@@ -64,12 +64,12 @@ namespace Altaxo.Gui.Common.Drawing
 
 		protected override void AttachView()
 		{
-			_view.SelectedColorChanged += EhSelectedColorChanged;
+			_view.SelectedItemChanged += EhSelectedColorChanged;
 		}
 
 		protected override void DetachView()
 		{
-			_view.SelectedColorChanged -= EhSelectedColorChanged;
+			_view.SelectedItemChanged -= EhSelectedColorChanged;
 		}
 
 		private void EhSelectedColorChanged()

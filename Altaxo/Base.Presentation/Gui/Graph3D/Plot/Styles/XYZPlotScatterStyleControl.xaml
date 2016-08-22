@@ -7,6 +7,7 @@
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
  						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Drawing.D3D"
+						 xmlns:local="clr-namespace:Altaxo.Gui.Graph3D.Plot.Styles"
              mc:Ignorable="d">
 
 	<UserControl.Resources>
@@ -53,10 +54,7 @@
 		</Grid.RowDefinitions>
 
 		<Label Grid.Column="0" Grid.Row="0" Content="Shape:" />
-		<ComboBox x:Name="_cbSymbolShape" Grid.Column="1" Grid.Row="0" SelectionChanged="EhSymbolShape_SelectionChangeCommit" />
-
-		<Label Grid.Column="0" Grid.Row="2" Content="Style:" />
-		<ComboBox x:Name="_cbSymbolStyle" Grid.Column="1" Grid.Row="2" SelectionChanged="EhSymbolStyle_SelectionChangeCommit" />
+		<local:ScatterSymbolComboBox x:Name="_cbSymbolShape" Grid.Column="1" Grid.Row="0" />
 
 		<CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="6" Content="Indep. color:" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged" />
 		<axoggc:MaterialComboBox x:Name="_cbColor" Grid.Column="1" Grid.Row="6" />
@@ -64,14 +62,7 @@
 		<CheckBox x:Name="_chkIndependentSize" Grid.Column="0" Grid.Row="8" Content="Indep. symbol size:" />
 		<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSize" Grid.Column="1" Grid.Row="8" />
 
-		<Label Grid.Column="0" Grid.Row="10" Content="Pen width (rel. to symbol size):" />
-		<axogc:QuantityWithUnitTextBox x:Name="_edRelativePenWidth" Grid.Column="1" Grid.Row="10"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-
-		<Label Grid.Column="0" Grid.Row="12" Content="Show every nth point:" />
+		<CheckBox x:Name="_chkIndependentSkipFreq" Grid.Column="0" Grid.Row="12" Content="Indep. skip frequency: " />
 		<axogc:Int32UpDown x:Name="_edSymbolSkipFrequency" Grid.Column="1" Grid.Row="12" Minimum="1" />
-
-		<GroupBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="14" Header="Drop lines:">
-			<axogc:EnumFlagControl  x:Name="_lbDropLines" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="Aqua" />
-		</GroupBox>
 	</Grid>
 </UserControl>

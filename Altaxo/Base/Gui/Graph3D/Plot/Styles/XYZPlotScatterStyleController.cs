@@ -42,9 +42,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	public interface IXYZPlotScatterStyleView
 	{
 		/// <summary>
-		/// Initializes the plot style color combobox.
+		/// Material for the scatter symbol.
 		/// </summary>
-		IMaterial SymbolPen { get; set; }
+		IMaterial SymbolMaterial { get; set; }
 
 		/// <summary>
 		/// Indicates, whether only colors of plot color sets should be shown.
@@ -62,22 +62,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		bool IndependentSymbolSize { get; set; }
 
 		/// <summary>
-		/// Initializes the symbol style combobox.
-		/// </summary>
-		/// <param name="list">Possible selections</param>
-		void InitializeSymbolStyle(SelectableListNodeList list);
-
-		/// <summary>
 		/// Initializes the symbol shape combobox.
 		/// </summary>
-		/// <param name="list">Possible selections</param>
-		void InitializeSymbolShape(SelectableListNodeList list);
+		IScatterSymbol SymbolShape { get; set; }
 
 		bool IndependentColor { get; set; }
 
-		int SkipPoints { get; set; }
+		bool IndependentSkipFrequency { get; set; }
 
-		double RelativePenWidth { get; set; }
+		int SkipFrequency { get; set; }
 
 		#region events
 
@@ -138,14 +131,14 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 				// now we have to set all dialog elements to the right values
 				_view.IndependentColor = _doc.IndependentColor;
 				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-				_view.SymbolPen = _doc.Pen;
+				_view.SymbolMaterial = _doc.Material;
 
-				_view.InitializeSymbolShape(_symbolShapeChoices);
-				//_view.InitializeSymbolStyle(_symbolStyleChoices);
+				_view.SymbolShape = _doc.Shape;
 
 				_view.IndependentSymbolSize = _doc.IndependentSymbolSize;
 				_view.SymbolSize = _doc.SymbolSize;
-				_view.SkipPoints = _doc.SkipFrequency;
+				_view.SkipFrequency = _doc.SkipFrequency;
+				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
 			}
 		}
 
@@ -155,15 +148,14 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			try
 			{
 				// Symbol Color
-				_doc.Pen = _view.SymbolPen;
+				_doc.Material = _view.SymbolMaterial;
 
 				_doc.IndependentColor = _view.IndependentColor;
 
 				_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
 
 				// Symbol Shape
-				var shapeType = (Type)_symbolShapeChoices.FirstSelectedNode.Tag;
-				_doc.Shape = (IScatterSymbol)Activator.CreateInstance(shapeType);
+				_doc.Shape = _view.SymbolShape;
 				// Symbol Style
 
 				// Symbol Size
@@ -171,7 +163,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 				// Skip points
 
-				_doc.SkipFrequency = _view.SkipPoints;
+				_doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
+				_doc.SkipFrequency = _view.SkipFrequency;
 			}
 			catch (Exception ex)
 			{

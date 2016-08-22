@@ -174,7 +174,7 @@ namespace Altaxo.Gui.Common.Drawing
 		protected ColorComboBoxBase()
 		{
 			_colorSetManager = ColorSetManager.Instance;
-			_colorSetManager.ListAdded += UpdateTreeViewTreeNodes;
+			_colorSetManager.Changed += EhColorSetManager_ListAdded;
 		}
 
 		#endregion Constructors
@@ -365,6 +365,11 @@ namespace Altaxo.Gui.Common.Drawing
 		#endregion Tree view event handlers
 
 		#region Tree view data handling
+
+		private void EhColorSetManager_ListAdded()
+		{
+			UpdateTreeViewTreeNodes();
+		}
 
 		/// <summary>
 		/// Updates/fills the data nodes used for the TreeView content.

@@ -37,6 +37,19 @@ namespace Altaxo.Graph
 	public interface IStyleListManager<TList, T> where TList : IStyleList<T> where T : Main.IImmutable
 	{
 		/// <summary>
+		/// Occurs when a list is added or removed from the manager or when the properties of a list (e.g. list level) have changed.
+		/// </summary>
+		event Action Changed;
+
+		/// <summary>
+		/// Gets the builtin default list.
+		/// </summary>
+		/// <value>
+		/// The builtin default list;
+		/// </value>
+		TList BuiltinDefault { get; }
+
+		/// <summary>
 		/// Gets the names of all entries (styles) in the list.
 		/// </summary>
 		/// <returns>The names of all entries (styles) in the list.</returns>
@@ -96,5 +109,12 @@ namespace Altaxo.Graph
 		/// <param name="listItems">The items of the list.</param>
 		/// <returns></returns>
 		TList CreateNewList(string listName, IEnumerable<T> listItems);
+
+		/// <summary>
+		/// Gets the parent list of the item
+		/// </summary>
+		/// <param name="item">The item.</param>
+		/// <returns>The parent list of the item.</returns>
+		TList GetParentList(T item);
 	}
 }

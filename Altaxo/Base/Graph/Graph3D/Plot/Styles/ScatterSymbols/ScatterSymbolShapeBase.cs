@@ -56,5 +56,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 		{
 			return this.GetType() == obj?.GetType();
 		}
+
+		public object Clone()
+		{
+			return this.MemberwiseClone();
+		}
 	}
 }

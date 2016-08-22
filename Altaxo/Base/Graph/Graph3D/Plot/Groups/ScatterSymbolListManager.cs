@@ -32,12 +32,21 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
-	public class ScatterSymbolListManager : StyleListManagerBase<ScatterSymbolList, IScatterSymbol, StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>>
+	public class ScatterSymbolListManager : StyleListManagerBaseForClasses<ScatterSymbolList, IScatterSymbol, StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>>
 	{
+		public static readonly Main.Properties.PropertyKey<ScatterSymbolListBag> PropertyKeyUserDefinedScatterSymbolLists;
+
 		private static ScatterSymbolListManager _instance;
 
 		static ScatterSymbolListManager()
 		{
+			PropertyKeyUserDefinedScatterSymbolLists =
+				new Main.Properties.PropertyKey<ScatterSymbolListBag>(
+				"28A88605-7595-4107-BA5A-E732C7D3819C",
+				"Graph3D\\UserDefinedScatterSymbolLists",
+				Main.Properties.PropertyLevel.Application,
+				() => new ScatterSymbolListBag(Enumerable.Empty<ScatterSymbolList>()));
+
 			Instance = new ScatterSymbolListManager();
 		}
 
@@ -45,7 +54,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			: base(
 					(list, level) => new StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>(list, level),
 					new ScatterSymbolList("BuiltinDefault", new IScatterSymbol[] {
-				new Styles.ScatterSymbols.Cube(),
+					new Styles.ScatterSymbols.Cube(),
 					new Styles.ScatterSymbols.Sphere(),
 					new Styles.ScatterSymbols.TetrahedronUp(),
 					new Styles.ScatterSymbols.TetrahedronDown()
@@ -53,6 +62,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 					)
 
 		{
+			ScatterSymbolListBag userStyleLists;
+			Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedScatterSymbolLists, out userStyleLists);
+			if (null != userStyleLists)
+			{
+				ScatterSymbolList dummy;
+				foreach (var list in userStyleLists.StyleLists)
+				{
+					InternalTryRegisterList(list, ItemDefinitionLevel.UserDefined, out dummy, false);
+				}
+			}
 		}
 
 		public static ScatterSymbolListManager Instance
@@ -80,5 +99,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		{
 			return new ScatterSymbolList(name, symbols);
 		}
+
+		#region User defined lists
+
+		protected override void OnUserDefinedListAddedChangedRemoved(ScatterSymbolList list)
+		{
+			var listBag = new ScatterSymbolListBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => entry.List));
+			Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedScatterSymbolLists, listBag);
+		}
+
+		#endregion User defined lists
 	}
 }

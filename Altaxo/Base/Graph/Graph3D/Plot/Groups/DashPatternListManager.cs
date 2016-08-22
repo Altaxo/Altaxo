@@ -32,7 +32,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
-	public class DashPatternListManager : StyleListManagerBase<DashPatternList, IDashPattern, StyleListManagerBaseEntryValue<DashPatternList, IDashPattern>>
+	public class DashPatternListManager : StyleListManagerBaseForClasses<DashPatternList, IDashPattern, StyleListManagerBaseEntryValue<DashPatternList, IDashPattern>>
 	{
 		private static DashPatternListManager _instance;
 

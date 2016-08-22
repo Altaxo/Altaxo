@@ -66,6 +66,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
 		protected int _skipFreq;
 
+		/// <summary>
+		/// Indicates whether <see cref="SkipFrequency"/> is independent of other sub-styles.
+		/// </summary>
+		protected bool _independentSkipFreq;
+
 		// cached values:
 		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
 		[field: NonSerialized]
@@ -94,6 +99,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("IndependentColor", s._independentColor);
 				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
 				info.AddValue("SkipFreq", s._skipFreq);
+				info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
 			}
 
 			protected virtual ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -106,6 +112,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
 				s._skipFreq = info.GetInt32("SkipFreq");
+				s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
 				return s;
 			}
 
@@ -149,6 +156,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 				this._symbolSize = from._symbolSize;
 				this._skipFreq = from._skipFreq;
+				this._independentSkipFreq = from._independentSkipFreq;
 
 				EhSelfChanged(EventArgs.Empty);
 
@@ -171,6 +179,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			_symbolSize = size;
 
 			_skipFreq = 1;
+			_independentSkipFreq = false;
 
 			// Cached values
 			SetCachedValues();
@@ -182,7 +191,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			double symbolSize = GraphDocument.GetDefaultSymbolSize(context);
 			var color = GraphDocument.GetDefaultPlotColor(context);
 
-			this._symbolShape = new ScatterSymbols.Cube();
+			this._symbolShape = ScatterSymbolListManager.Instance.BuiltinDefault[0];
 			this._material = new MaterialWithUniformColor(color);
 			this._independentColor = false;
 
@@ -228,7 +237,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		public IMaterial Pen
+		public IMaterial Material
 		{
 			get { return this._material; }
 			set
@@ -250,7 +259,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			get { return this._material.Color; }
 			set
 			{
-				Pen = _material.WithColor(value);
+				Material = _material.WithColor(value);
 			}
 		}
 
@@ -310,6 +319,21 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
+		public bool IndependentSkipFrequency
+		{
+			get
+			{
+				return _independentSkipFreq;
+			}
+			set
+			{
+				bool oldValue = _independentSkipFreq;
+				_independentSkipFreq = value;
+				if (value != oldValue)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
 		protected void SetCachedValues()
 		{
 		}
@@ -333,7 +357,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			get
 			{
-				return !this._independentSymbolSize && !object.ReferenceEquals(_symbolShape, ScatterSymbols.NoSymbol.Instance);
+				return !this._independentSymbolSize && !ScatterSymbols.NoSymbol.Instance.Equals(_symbolShape);
 			}
 		}
 
@@ -341,7 +365,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			get
 			{
-				return !this._independentSymbolSize && !object.ReferenceEquals(_symbolShape, ScatterSymbols.NoSymbol.Instance);
+				return !this._independentSymbolSize && !ScatterSymbols.NoSymbol.Instance.Equals(_symbolShape);
 			}
 		}
 
@@ -357,7 +381,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				_skipFreq = 1;
 
 			// paint the scatter style
-			if (!object.ReferenceEquals(_symbolShape, ScatterSymbols.NoSymbol.Instance))
+			if (!ScatterSymbols.NoSymbol.Instance.Equals(_symbolShape))
 			{
 				PointD3D pos = PointD3D.Empty;
 				VectorD3D diff;
@@ -397,7 +421,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
 		{
-			if (!object.ReferenceEquals(_symbolShape, ScatterSymbols.NoSymbol.Instance))
+			if (!ScatterSymbols.NoSymbol.Instance.Equals(_symbolShape))
 			{
 				_symbolShape.Paint(g, _material, bounds.Center, _symbolSize);
 				bounds = bounds.WithPadding(0, Math.Max(0, this.SymbolSize - bounds.SizeY), Math.Max(0, this.SymbolSize - bounds.SizeZ));
@@ -437,7 +461,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				SymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SymbolSize; });
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SkipFrequency; });
+			if (!this._independentSkipFreq)
+				SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SkipFrequency; });
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -465,7 +490,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this.SkipFrequency = c; });
+			if (!this._independentSkipFreq)
+				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this.SkipFrequency = c; });
 		}
 
 		#endregion IPlotStyle Members

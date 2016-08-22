@@ -22,31 +22,64 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Drawing.D3D;
-using Altaxo.Geometry;
-using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Graph3D.Plot.Styles
+namespace Altaxo.Graph
 {
 	/// <summary>
-	/// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable. They still need to be cloneable,
-	/// because in a list of scatter symbols we need unique instances.
+	/// Used to store user color sets in the user's settings.
 	/// </summary>
-	/// <seealso cref="Altaxo.Main.IImmutable" />
-	public interface IScatterSymbol : Main.IImmutable, ICloneable
+	public class StyleListBag<TList, TItem>
+		where TList : IStyleList<TItem>
+		where TItem : Altaxo.Main.IImmutable
 	{
 		/// <summary>
-		/// Paints the symbol with the specified size at the origin of the coordinate system.
+		/// The color sets. One tupe consist of the color set and a bool indication whether this is a plot color set.
 		/// </summary>
-		/// <param name="g">The graphics context.</param>
-		/// <param name="material">The material used to draw the symbol.</param>
-		/// <param name="centerLocation">The location of the center of the symbol.</param>
-		/// <param name="symbolSize">Size of the symbol.</param>
-		void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize);
+		protected TList[] _styleLists;
+
+		public StyleListBag(IEnumerable<TList> styleLists)
+		{
+			_styleLists = styleLists.ToArray();
+		}
+
+		public IEnumerable<TList> StyleLists
+		{
+			get
+			{
+				return _styleLists;
+			}
+		}
+
+		#region Serialization Helper
+
+		public void Serialize(Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+		{
+			info.CreateArray("StyleLists", _styleLists.Length);
+			foreach (var list in _styleLists)
+			{
+				info.AddValue("e", list);
+			}
+
+			info.CommitArray();
+		}
+
+		protected StyleListBag(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+			int count = info.OpenArray("StyleLists");
+			var lists = new TList[count];
+			for (int i = 0; i < count; ++i)
+			{
+				lists[i] = (TList)info.GetValue("e", null);
+			}
+			info.CloseArray(count);
+			_styleLists = lists;
+		}
+
+		#endregion Serialization Helper
 	}
 }
