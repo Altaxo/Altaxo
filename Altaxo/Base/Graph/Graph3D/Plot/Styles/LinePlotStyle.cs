@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 
@@ -32,6 +31,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 	using Altaxo.Main;
 	using Drawing;
 	using Drawing.D3D;
+	using Drawing.DashPatternManagement;
 	using Geometry;
 	using Graph.Plot.Data;
 	using Graph.Plot.Groups;
@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			double symbolGap);
 
 		protected bool _independentColor;
-		protected PenX3D _penHolder;
+		protected PenX3D _linePen;
 		protected ILineConnectionStyle _connectionStyle;
 		protected bool _useLineSymbolGap;
 		protected double _symbolGap;
@@ -72,8 +72,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		/// <summary>If true, the start and the end point of the line are connected too.</summary>
 		protected bool _connectCircular;
-
-		private static List<IDashPattern> _standardDashPatterns;
 
 		#region Serialization
 
@@ -86,7 +84,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				LinePlotStyle s = (LinePlotStyle)obj;
-				info.AddValue("Pen", s._penHolder);
+				info.AddValue("Pen", s._linePen);
 				info.AddValue("Connection", s._connectionStyle);
 				info.AddValue("LineSymbolGap", s._useLineSymbolGap);
 				info.AddValue("IgnoreMissingPoints", s._ignoreMissingPoints);
@@ -96,9 +94,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
 
-				s._penHolder = (PenX3D)info.GetValue("Pen", s);
+				s._linePen = (PenX3D)info.GetValue("Pen", s);
 				s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
 				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
 				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
@@ -108,26 +106,24 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
+		/// <summary>
+		/// Deserialization constructor.
+		/// </summary>
+		/// <param name="info">The deserialization information.</param>
+		protected LinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+		}
+
 		#endregion Serialization
 
 		#region Construction and copying
-
-		static LinePlotStyle()
-		{
-			_standardDashPatterns = new List<IDashPattern>();
-			_standardDashPatterns.Add(new Drawing.D3D.DashPatterns.Solid());
-			_standardDashPatterns.Add(new Drawing.D3D.DashPatterns.Dot());
-			_standardDashPatterns.Add(new Drawing.D3D.DashPatterns.Dash());
-			_standardDashPatterns.Add(new Drawing.D3D.DashPatterns.DashDot());
-			_standardDashPatterns.Add(new Drawing.D3D.DashPatterns.DashDotDot());
-		}
 
 		public LinePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			var penWidth = GraphDocument.GetDefaultPenWidth(context);
 			var color = GraphDocument.GetDefaultPlotColor(context);
 
-			_penHolder = new PenX3D(color, penWidth).WithLineJoin(PenLineJoin.Bevel);
+			_linePen = new PenX3D(color, penWidth).WithLineJoin(PenLineJoin.Bevel);
 			_useLineSymbolGap = true;
 			_ignoreMissingPoints = false;
 			_connectionStyle = new LineConnectionStyles.StraightConnection();
@@ -156,7 +152,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				this._penHolder = from._penHolder; // immutable
+				this._linePen = from._linePen; // immutable
 				this._useLineSymbolGap = from._useLineSymbolGap;
 				this._symbolGap = from._symbolGap;
 				this._ignoreMissingPoints = from._ignoreMissingPoints;
@@ -164,8 +160,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._independentColor = from._independentColor;
 				this._connectCircular = from._connectCircular;
 
-				//this._parent = from._parent;
-
+				EhSelfChanged();
 				suspendToken.Resume(eventFiring);
 			}
 		}
@@ -255,40 +250,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		public void SetToNextLineStyle(IDashPattern template)
-		{
-			SetToNextLineStyle(template, 1);
-		}
-
-		public void SetToNextLineStyle(IDashPattern template, int step)
-		{
-			// this.CopyFrom(template,true);
-
-			// note a exception: since the last dashstyle is "Custom", not only the next dash
-			// style has to be defined, but also the overnect to avoid the selection of "Custom"
-
-			var list = _standardDashPatterns;
-
-			var idx = list.IndexOf(template);
-			if (idx < 0)
-				idx = 0;
-
-			int len = _standardDashPatterns.Count;
-			int next = step + idx;
-			next = Calc.BasicFunctions.PMod(next, len);
-
-			_penHolder = _penHolder.WithDashPattern(list[next]);
-			EhSelfChanged(EventArgs.Empty); // Fire Changed event
-		}
-
 		public PenX3D LinePen
 		{
-			get { return _penHolder; }
+			get { return _linePen; }
 			set
 			{
-				if (!object.ReferenceEquals(_penHolder, value))
+				if (!object.ReferenceEquals(_linePen, value))
 				{
-					_penHolder = value;
+					_linePen = value;
 					EhSelfChanged();
 				}
 			}
@@ -308,9 +277,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public virtual void PaintLine(IGraphicsContext3D g, PointD3D beg, PointD3D end)
 		{
-			if (null != _penHolder)
+			if (null != _linePen)
 			{
-				g.DrawLine(_penHolder, beg, end);
+				g.DrawLine(_linePen, beg, end);
 			}
 		}
 
@@ -353,13 +322,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				// as one range, i.e. continuously
 				// for this, we create the totalRange, which contains all ranges
 				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
-				_connectionStyle.Paint(g, pdata, totalRange, layer, _penHolder, _useLineSymbolGap ? _symbolGap : 0, _connectCircular);
+				_connectionStyle.Paint(g, pdata, totalRange, layer, _linePen, _useLineSymbolGap ? _symbolGap : 0, _connectCircular);
 			}
 			else // we not ignore missing points, so plot all ranges separately
 			{
 				for (int i = 0; i < rangelistlen; i++)
 				{
-					_connectionStyle.Paint(g, pdata, rangeList[i], layer, _penHolder, _useLineSymbolGap ? _symbolGap : 0, _connectCircular);
+					_connectionStyle.Paint(g, pdata, rangeList[i], layer, _linePen, _useLineSymbolGap ? _symbolGap : 0, _connectCircular);
 				}
 			}
 		}
@@ -375,11 +344,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			get
 			{
-				return this._penHolder.Color;
+				return this._linePen.Color;
 			}
 			set
 			{
-				this._penHolder = this._penHolder.WithColor(value);
+				this._linePen = this._linePen.WithColor(value);
 			}
 		}
 
@@ -405,7 +374,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
 			ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
-			LineStyleGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+			DashPatternGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 		}
 
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
@@ -413,7 +382,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (this.IsColorProvider)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this.Color; });
 
-			LineStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashPattern ?? Drawing.D3D.DashPatterns.Solid.Instance; });
+			DashPatternGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashPattern ?? DashPatternListManager.Instance.BuiltinDefaultSolid; });
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -421,7 +390,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (this.IsColorReceiver)
 				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this.Color = c; });
 
-			LineStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern c) { this._penHolder = this.LinePen.WithDashPattern(c); });
+			DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern c) { this._linePen = this.LinePen.WithDashPattern(c); });
 
 			if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolGap = size; }))
 			{
@@ -453,7 +422,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				case "StrokeWidth":
 					{
 						var prop = (RoutedSetterProperty<double>)property;
-						this._penHolder = this._penHolder.WithUniformThickness(prop.Value);
+						this._linePen = this._linePen.WithUniformThickness(prop.Value);
 						EhSelfChanged(EventArgs.Empty);
 					}
 					break;
@@ -467,7 +436,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				case "StrokeWidth":
 					{
 						var prop = (RoutedGetterProperty<double>)property;
-						prop.Merge(Math.Max(this._penHolder.Thickness1, this._penHolder.Thickness2));
+						prop.Merge(Math.Max(this._linePen.Thickness1, this._linePen.Thickness2));
 					}
 					break;
 			}

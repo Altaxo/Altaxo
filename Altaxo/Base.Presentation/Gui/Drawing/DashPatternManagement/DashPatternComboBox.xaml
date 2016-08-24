@@ -1,0 +1,173 @@
+﻿<local:DashPatternComboBoxBase x:Class="Altaxo.Gui.Drawing.DashPatternManagement.DashPatternComboBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:axog="clr-namespace:Altaxo.Graph;assembly=AltaxoBase"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:base="clr-namespace:Altaxo.Gui.Drawing"
+						 xmlns:local="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
+             mc:Ignorable="d">
+	<UserControl.Resources>
+
+		<local:DashPatternToImageSourceConverter x:Key="ItemToItemImageConverter" />
+		<local:DashPatternToItemNameConverter x:Key="ItemToItemNameConverter" />
+		<local:DashPatternToListNameConverter x:Key="ItemToListNameConverter" />
+
+		<!-- Checkerboard brush for the background of color items -->
+		<DrawingBrush x:Key="CheckerboardBrush"
+        Stretch="None" TileMode="Tile" AlignmentX="Left" AlignmentY="Top"
+        Viewport="0,0,8,8" ViewportUnits="Absolute">
+			<DrawingBrush.Drawing>
+				<DrawingGroup>
+					<GeometryDrawing Brush="White">
+						<GeometryDrawing.Geometry>
+							<RectangleGeometry Rect="0,0,8,8" />
+						</GeometryDrawing.Geometry>
+					</GeometryDrawing>
+					<GeometryDrawing Brush="Black">
+						<GeometryDrawing.Geometry>
+							<RectangleGeometry Rect="0,0,4,4" />
+						</GeometryDrawing.Geometry>
+					</GeometryDrawing>
+					<GeometryDrawing Brush="Black">
+						<GeometryDrawing.Geometry>
+							<RectangleGeometry Rect="4,4,4,4" />
+						</GeometryDrawing.Geometry>
+					</GeometryDrawing>
+				</DrawingGroup>
+			</DrawingBrush.Drawing>
+		</DrawingBrush>
+
+		<!-- Shown as the content of the button that opens the TreeView dropdown -->
+		<Path x:Key="ColorGroupButtonContent" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Fill="Black">
+			<Path.Data>
+				<Geometry>M 0 0 L 3.5 4 L 7 0 Z M 0 10 L 3.5 14 L 7 10 Z</Geometry>
+			</Path.Data>
+		</Path>
+
+		<!-- Item template for  items in the TreeView (which are of type NGTreeNode -->
+		<DataTemplate x:Key="TItemTemplate">
+			<StackPanel Orientation="Horizontal" Margin="2">
+				<Border BorderBrush="Black" BorderThickness="1" Background="{StaticResource CheckerboardBrush}" SnapsToDevicePixels="True">
+					<Image Width="16" Height="16" Source="{Binding Tag, Converter={StaticResource ItemToItemImageConverter}}" />
+				</Border>
+				<TextBlock Text="{Binding Text}" Margin="4 0 4 0" VerticalAlignment="Center" />
+			</StackPanel>
+		</DataTemplate>
+
+		<!-- Item template for  items in the ComboBox -->
+		<DataTemplate x:Key="TItemTemplateForComboBox">
+			<StackPanel Orientation="Horizontal" Margin="2">
+				<Border BorderBrush="Black" BorderThickness="1" Background="{StaticResource CheckerboardBrush}" SnapsToDevicePixels="True">
+					<Image Width="16" Height="16" Source="{Binding ., Converter={StaticResource ItemToItemImageConverter}}" />
+				</Border>
+				<TextBlock Text="{Binding ., Converter={StaticResource ItemToItemNameConverter}}" Margin="4 0 4 0" VerticalAlignment="Center" />
+			</StackPanel>
+		</DataTemplate>
+
+		<!-- Template for the separators in the ComboBox -->
+		<DataTemplate x:Key="TItemTemplateForSeparator">
+			<StackPanel Orientation="Vertical">
+				<Separator />
+				<TextBlock Text="{Binding Tag}" FontStyle="Italic" />
+				<Separator />
+			</StackPanel>
+		</DataTemplate>
+
+		<!-- Template of the currently selected item, shown directly in the ComboBox if it is closed. -->
+		<DataTemplate x:Key="TItemTemplateForComboBoxFront">
+			<StackPanel Orientation="Vertical">
+				<TextBlock Text="{Binding Path=., Converter={StaticResource ItemToListNameConverter}}" FontSize="8" FontStyle="Italic" />
+				<StackPanel Orientation="Horizontal" Margin="2">
+					<Border BorderBrush="Black" BorderThickness="1" Background="{StaticResource CheckerboardBrush}" SnapsToDevicePixels="True" VerticalAlignment="Center">
+						<Image Width="16" Height="12"  Source="{Binding ., Converter={StaticResource ItemToItemImageConverter}}" />
+					</Border>
+					<TextBlock Text="{Binding ., Converter={StaticResource ItemToItemNameConverter}}" Margin="4 0 4 0" VerticalAlignment="Center" />
+				</StackPanel>
+			</StackPanel>
+		</DataTemplate>
+
+		<!-- Selects on of three templates for the ComboBox items, depending whether the ComboBox item is shown
+		in the popup or if it is shown directly in the ComboBox, or if it is a separator item. -->
+		<DataTemplate x:Key="CombinedTemplate">
+			<ContentPresenter x:Name="Presenter"
+       Content="{Binding}"
+       ContentTemplate="{StaticResource TItemTemplateForComboBox}" />
+			<DataTemplate.Triggers>
+				<DataTrigger
+        Binding="{Binding RelativeSource={RelativeSource FindAncestor,ComboBoxItem,1}}"
+        Value="{x:Null}">
+					<Setter TargetName="Presenter" Property="ContentTemplate"
+                Value="{StaticResource TItemTemplateForComboBoxFront}" />
+				</DataTrigger>
+				<DataTrigger
+        Binding="{Binding Name}"
+        Value="ThisIsASeparatorForTheComboBox">
+					<Setter TargetName="Presenter" Property="ContentTemplate"
+                Value="{StaticResource TItemTemplateForSeparator}" />
+				</DataTrigger>
+			</DataTemplate.Triggers>
+		</DataTemplate>
+
+		<!-- Data template for a tree node that contains a ColorSet -->
+		<HierarchicalDataTemplate x:Key="TListTemplate" ItemsSource="{Binding Nodes}">
+			<TextBlock Text="{Binding Text}" />
+		</HierarchicalDataTemplate>
+
+		<!-- Data template for a tree node that contains neither a ColorSet nor a Color. -->
+		<HierarchicalDataTemplate x:Key="TreeOtherTemplate" ItemsSource="{Binding Nodes}">
+			<TextBlock Text="{Binding Text}" />
+		</HierarchicalDataTemplate>
+	</UserControl.Resources>
+
+	<!-- Context menu of this user control.-->
+	<UserControl.ContextMenu>
+		<ContextMenu x:Name="_contextMenu">
+			<MenuItem Header="New item list .." Click="EhShowStyleListManagerDialog" />
+		</ContextMenu>
+	</UserControl.ContextMenu>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Stroke="Gray" StrokeThickness="0.5" Fill="White" RadiusX="2" RadiusY="2" />
+		<TextBlock Grid.Row="0" Grid.Column="0" FontSize="8" FontStyle="Italic" Margin="4,2,4,2" Text="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=local:DashPatternComboBox}, Converter={StaticResource ItemToListNameConverter}}"></TextBlock>
+		<ComboBox x:Name="_guiComboBox"
+							Grid.Row="1" Grid.Column="0"
+							IsEditable="True"
+							ItemTemplate="{StaticResource CombinedTemplate}"
+							DropDownOpened="EhComboBox_DropDownOpened"
+							DropDownClosed="EhComboBox_DropDownClosed">
+		</ComboBox>
+		<ToggleButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" IsChecked="{Binding IsTreeDropDownOpen, RelativeSource={RelativeSource AncestorType=local:DashPatternComboBox}, Mode=TwoWay}" Content="{StaticResource ColorGroupButtonContent}" />
+		<Popup x:Name="_treePopup"
+					 AllowsTransparency="true"
+					 Focusable="false"
+					 IsOpen="{Binding IsTreeDropDownOpen, RelativeSource={RelativeSource AncestorType=local:DashPatternComboBox}}"
+					 MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=local:DashPatternComboBox}}"
+					 PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}"
+					 Placement="Bottom">
+			<Border x:Name="DropDownBorder" BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" BorderThickness="1" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+				<TreeView x:Name="_guiTreeView"
+									MouseDoubleClick="EhTreeViewMouseDoubleClick"
+									KeyDown="EhTreeViewKeyDown"
+									ItemTemplateSelector="{Binding TreeViewItemTemplateSelector, RelativeSource={RelativeSource AncestorType=local:DashPatternComboBox}}">
+					<ItemsControl.ItemContainerStyle>
+						<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
+						<Style TargetType="{x:Type TreeViewItem}">
+							<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+							<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+						</Style>
+					</ItemsControl.ItemContainerStyle>
+				</TreeView>
+			</Border>
+		</Popup>
+	</Grid>
+</local:DashPatternComboBoxBase>

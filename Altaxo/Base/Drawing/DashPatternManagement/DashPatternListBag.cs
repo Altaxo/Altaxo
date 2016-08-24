@@ -23,51 +23,44 @@
 #endregion Copyright
 
 using Altaxo.Drawing;
-using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Drawing.D3D;
+using Altaxo.Graph;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Graph3D.Plot.Groups
+namespace Altaxo.Drawing.DashPatternManagement
 {
-	public class ScatterSymbolList : StyleListBase<IScatterSymbol>
+	public class DashPatternListBag : StyleListBag<DashPatternList, IDashPattern>
 	{
-		#region Serialization
+		public DashPatternListBag(IEnumerable<DashPatternList> lists)
+			: base(lists)
+		{
+		}
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterSymbolList), 0)]
+		protected DashPatternListBag(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+			: base(info)
+		{
+		}
+
+		/// <summary>
+		/// 2016-08-23 Initial version
+		/// </summary>
+		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DashPatternListBag), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (ScatterSymbolList)obj;
-				info.AddValue("Name", s._name);
-				info.CreateArray("Elements", s._list.Count);
-				foreach (var ele in s)
-					info.AddValue("e", ele);
-				info.CommitArray();
+				var s = (DashPatternListBag)obj;
+				s.Serialize(info);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				string name = info.GetString("Name");
-				int count = info.OpenArray("Elements");
-				var list = new List<IScatterSymbol>(count);
-				for (int i = 0; i < count; ++i)
-					list.Add((IScatterSymbol)info.GetValue("e", null));
-				info.CloseArray(count);
-
-				var result = new ScatterSymbolList(name, list);
-				return result;
+				return new DashPatternListBag(info);
 			}
-		}
-
-		#endregion Serialization
-
-		public ScatterSymbolList(string name, IEnumerable<IScatterSymbol> symbols)
-			: base(name, symbols.Select(instance => (IScatterSymbol)instance.Clone()))
-		{
 		}
 	}
 }

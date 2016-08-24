@@ -38,7 +38,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Altaxo.Gui.Graph3D.Plot.Groups
+namespace Altaxo.Gui.Drawing
 {
 	/// <summary>
 	/// Interaction logic for StyleListControl.xaml

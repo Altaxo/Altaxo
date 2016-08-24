@@ -33,10 +33,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.Graph3D.Plot.Groups
+namespace Altaxo.Gui.Drawing.ColorManagement
 {
 	[ExpectedTypeOfView(typeof(IStyleListView))]
-	[UserControllerForObject(typeof(DashPatternList))]
+	[UserControllerForObject(typeof(IColorSet))]
 	public class ColorSetController : StyleListController<ColorSetManager, IColorSet, NamedColor>
 	{
 		public ColorSetController()

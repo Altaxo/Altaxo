@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
-using Altaxo.Drawing.D3D.DashPatterns;
+using Altaxo.Drawing;
+using Altaxo.Drawing.DashPatterns;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Common.Drawing;
 using System;

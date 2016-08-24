@@ -30,7 +30,9 @@ using Altaxo.Gui.Common;
 using Altaxo.Gui.Common.Drawing.D3D;
 using Altaxo.Gui.Drawing.D3D;
 using Altaxo.Gui.Drawing.D3D.LineCaps;
+using Altaxo.Gui.Drawing.DashPatternManagement;
 using Altaxo.Gui.Graph3D.Material;
+using Altaxo.Gui.Graph3D.Plot.Styles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -124,6 +126,7 @@ namespace Altaxo.Gui.Graph3D
 			if (null != CbCrossSection) InitializeCrossSectionCombobox();
 
 			if (null != CbDashStyle) CbDashStyle.SelectedDashStyle = _pen.DashPattern;
+			if (null != CbDashPattern) CbDashPattern.SelectedItem = _pen.DashPattern;
 
 			if (null != CbLineStartCap) CbLineStartCap.SelectedLineCap = _pen.LineStartCap;
 			if (null != CbLineStartCapAbsSize) CbLineStartCapAbsSize.SelectedQuantityAsValueInPoints = null != _pen.LineStartCap ? _pen.LineStartCap.MinimumAbsoluteSizePt : 0;
@@ -224,8 +227,10 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (_pen != null)
 			{
+				var oldPen = _pen;
 				_pen = _pen.WithMaterial(_cbBrush.SelectedMaterial);
-				OnPenChanged();
+				if (!object.ReferenceEquals(_pen, oldPen))
+					OnPenChanged();
 			}
 		}
 
@@ -278,8 +283,10 @@ namespace Altaxo.Gui.Graph3D
 					var type = (Type)node.Tag;
 					var crossSection = (ICrossSectionOfLine)Activator.CreateInstance(type);
 					crossSection = crossSection.WithSize(_pen.Thickness1, _pen.Thickness2);
+					var oldPen = _pen;
 					_pen = _pen.WithCrossSection(crossSection);
-					OnPenChanged();
+					if (!object.ReferenceEquals(_pen, oldPen))
+						OnPenChanged();
 				}
 			}
 		}
@@ -287,6 +294,42 @@ namespace Altaxo.Gui.Graph3D
 		#endregion Cross section
 
 		#region Dash pattern
+
+		private DashPatternComboBox _cbDashPattern;
+
+		public DashPatternComboBox CbDashPattern
+		{
+			get { return _cbDashPattern; }
+			set
+			{
+				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(DashPatternComboBox.SelectedItemProperty, typeof(DashPatternComboBox));
+
+				if (_cbDashPattern != null)
+					dpd.RemoveValueChanged(_cbDashPattern, EhDashPattern_SelectionChangeCommitted);
+
+				_cbDashPattern = value;
+				if (_pen != null && _cbDashPattern != null)
+					_cbDashPattern.SelectedItem = _pen.DashPattern;
+
+				if (_cbDashPattern != null)
+					dpd.AddValueChanged(_cbDashPattern, EhDashPattern_SelectionChangeCommitted);
+			}
+		}
+
+		private void EhDashPattern_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+			if (_pen != null)
+			{
+				var oldPen = _pen;
+				_pen = _pen.WithDashPattern(_cbDashPattern.SelectedItem);
+				if (!object.ReferenceEquals(_pen, oldPen))
+					OnPenChanged();
+			}
+		}
+
+		#endregion Dash pattern
+
+		#region Dash style
 
 		private DashStyleComboBox _cbDashStyle;
 
@@ -313,12 +356,14 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (_pen != null)
 			{
+				var oldPen = _pen;
 				_pen = _pen.WithDashPattern(_cbDashStyle.SelectedDashStyle);
-				OnPenChanged();
+				if (!object.ReferenceEquals(_pen, oldPen))
+					OnPenChanged();
 			}
 		}
 
-		#endregion Dash pattern
+		#endregion Dash style
 
 		/*
 
@@ -381,11 +426,15 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (_pen != null)
 			{
+				var oldPen = _pen;
+
 				if (null != _cbThickness2)
 					_pen = _pen.WithThickness1(_cbThickness1.SelectedQuantityAsValueInPoints);
 				else
 					_pen = _pen.WithUniformThickness(_cbThickness1.SelectedQuantityAsValueInPoints);
-				OnPenChanged();
+
+				if (!object.ReferenceEquals(_pen, oldPen))
+					OnPenChanged();
 			}
 		}
 
@@ -416,8 +465,11 @@ namespace Altaxo.Gui.Graph3D
 		{
 			if (_pen != null)
 			{
+				var oldPen = _pen;
 				_pen = _pen.WithThickness2(_cbThickness2.SelectedQuantityAsValueInPoints);
-				OnPenChanged();
+
+				if (!object.ReferenceEquals(_pen, oldPen))
+					OnPenChanged();
 			}
 		}
 

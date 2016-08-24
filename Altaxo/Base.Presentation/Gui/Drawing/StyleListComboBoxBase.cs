@@ -35,7 +35,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Altaxo.Gui.Graph
+namespace Altaxo.Gui.Drawing
 {
 	/// <summary>
 	/// Base class to choose items from a style lists. See <see cref="IStyleList{T}"/>

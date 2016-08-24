@@ -27,51 +27,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Drawing.D3D.DashPatterns
+namespace Altaxo.Drawing
 {
-	public class Solid : DashPatternBase
+	public interface IDashPattern : IList<double>, Main.IImmutable, ICloneable // TODO NET45 replace with IReadonlyList
 	{
-		public static Solid Instance { get; private set; } = new Solid();
-
-		public override double this[int index]
-		{
-			get
-			{
-				switch (index)
-				{
-					case 0:
-						return double.PositiveInfinity;
-
-					case 1:
-
-						return 0;
-
-					default:
-						throw new IndexOutOfRangeException(nameof(index));
-				}
-			}
-			set
-			{
-				throw new InvalidOperationException("Sorry, this class is read-only");
-			}
-		}
-
-		public override int Count
-		{
-			get
-			{
-				return 2;
-			}
-		}
-
-		public override bool Equals(object obj)
-		{
-			return obj is Solid;
-		}
-
-		public override int GetHashCode()
-		{
-			return 0x41C477CC;
-		}
+		double DashOffset { get; }
 	}
 }

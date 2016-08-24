@@ -104,7 +104,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			protected virtual ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+				ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle(info);
 
 				s._symbolShape = (IScatterSymbol)info.GetValue("Shape", s);
 				s._material = (IMaterial)info.GetValue("Material", s);
@@ -125,6 +125,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 				return s;
 			}
+		}
+
+		/// <summary>
+		/// Deserialization constructor.
+		/// </summary>
+		/// <param name="info">The deserialization information.</param>
+		protected ScatterPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
 		}
 
 		#endregion Serialization

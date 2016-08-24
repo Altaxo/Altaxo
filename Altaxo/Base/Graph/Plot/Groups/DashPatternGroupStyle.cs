@@ -26,42 +26,56 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Graph.Graph3D.Plot.Groups
+namespace Altaxo.Graph.Plot.Groups
 {
-	using Drawing.D3D;
-	using Graph.Plot.Groups;
+	using Drawing;
+	using Drawing.DashPatternManagement;
 
-	public class LineStyleGroupStyle
+	public class DashPatternGroupStyle
 		:
 		Main.SuspendableDocumentLeafNodeWithEventArgs,
 		IPlotGroupStyle
 	{
 		private bool _isInitialized;
 		private IDashPattern _value;
-		private bool _isStepEnabled = true;
+
+		/// <summary>True if step enabled (only if used as external group style with symbol grouping).</summary>
+		private bool _isStepEnabled;
+
+		/// <summary>The list of dash pattern to switch through.</summary>
 		private IStyleList<IDashPattern> _listOfValues;
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineStyleGroupStyle), 0)]
+		/// <summary>
+		/// 2016-08-24 Initial version.
+		/// </summary>
+		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DashPatternGroupStyle), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				LineStyleGroupStyle s = (LineStyleGroupStyle)obj;
+				DashPatternGroupStyle s = (DashPatternGroupStyle)obj;
 				info.AddValue("StepEnabled", s._isStepEnabled);
 
-				if (s._isStepEnabled)
-					info.AddValue("ListOfValues", s._listOfValues);
+				info.AddValue("Value", s._value);
+
+				info.AddValue("ListOfValues", s._listOfValues);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				LineStyleGroupStyle s = null != o ? (LineStyleGroupStyle)o : new LineStyleGroupStyle();
+				DashPatternGroupStyle s = null != o ? (DashPatternGroupStyle)o : new DashPatternGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
 
-				if (s._isStepEnabled)
-					s._listOfValues = (IStyleList<IDashPattern>)info.GetValue("ListOfValues", s);
+				var value = (IDashPattern)info.GetValue("Value", s);
+
+				var listOfValues = (DashPatternList)info.GetValue("ListOfValues", s);
+				DashPatternList registeredList;
+				DashPatternListManager.Instance.TryRegisterList(listOfValues, Main.ItemDefinitionLevel.Project, out registeredList);
+				s._listOfValues = registeredList;
+				s.SetValueCoercedToGroup(value);
 
 				return s;
 			}
@@ -71,13 +85,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		#region Constructors
 
-		public LineStyleGroupStyle()
+		public DashPatternGroupStyle()
 		{
 			_listOfValues = DashPatternListManager.Instance.BuiltinDefault;
 			_value = _listOfValues[0];
 		}
 
-		public LineStyleGroupStyle(LineStyleGroupStyle from)
+		public DashPatternGroupStyle(DashPatternGroupStyle from)
 		{
 			this._isInitialized = from._isInitialized;
 			this._value = from._value;
@@ -88,14 +102,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		#region ICloneable Members
 
-		public LineStyleGroupStyle Clone()
+		public DashPatternGroupStyle Clone()
 		{
-			return new LineStyleGroupStyle(this);
+			return new DashPatternGroupStyle(this);
 		}
 
 		object ICloneable.Clone()
 		{
-			return new LineStyleGroupStyle(this);
+			return new DashPatternGroupStyle(this);
 		}
 
 		#endregion ICloneable Members
@@ -104,7 +118,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		public void TransferFrom(IPlotGroupStyle fromb)
 		{
-			LineStyleGroupStyle from = (LineStyleGroupStyle)fromb;
+			DashPatternGroupStyle from = (DashPatternGroupStyle)fromb;
 			this._isInitialized = from._isInitialized;
 			this._value = from._value;
 			this._listOfValues = from._listOfValues;
@@ -152,12 +166,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				return 0;
 			}
 
-			int current = _listOfValues.IndexOf(_value);
-			if (!(current >= 0))
-				current = 0;
+			int currentIdx = Math.Max(0, _listOfValues.IndexOf(_value));
 
-			var valueIndex = Calc.BasicFunctions.PMod(current + step, _listOfValues.Count);
-			int wraps = Calc.BasicFunctions.NumberOfWraps(_listOfValues.Count, current, step);
+			var valueIndex = Calc.BasicFunctions.PMod(currentIdx + step, _listOfValues.Count);
+			int wraps = Calc.BasicFunctions.NumberOfWraps(_listOfValues.Count, currentIdx, step);
 			_value = _listOfValues[valueIndex];
 			return wraps;
 		}
@@ -173,7 +185,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			}
 			set
 			{
+				var oldValue = _isStepEnabled;
 				_isStepEnabled = value;
+
+				if (value != oldValue)
+					SetValueCoercedToGroup(_value);
 			}
 		}
 
@@ -194,12 +210,23 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				if (!object.ReferenceEquals(_listOfValues, value))
 				{
 					_listOfValues = value;
-					var idx = _listOfValues.IndexOf(_value);
-					if (idx < 0)
-						_value = _listOfValues[0];
+					SetValueCoercedToGroup(_value);
 
 					EhSelfChanged();
 				}
+			}
+		}
+
+		private void SetValueCoercedToGroup(IDashPattern value)
+		{
+			if (_isStepEnabled)
+			{
+				var idx = Math.Max(0, _listOfValues.IndexOf(value));
+				_value = _listOfValues[0];
+			}
+			else
+			{
+				_value = value;
 			}
 		}
 
@@ -215,13 +242,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			}
 		}
 
-		public void Initialize(IDashPattern c)
+		public void Initialize(IDashPattern value)
 		{
-			if (null == c)
-				throw new ArgumentNullException(nameof(c));
+			if (null == value)
+				throw new ArgumentNullException(nameof(value));
 
 			_isInitialized = true;
-			_value = c;
+
+			var parentList = DashPatternListManager.Instance.GetParentList(value);
+			if (null != parentList)
+			{
+				_listOfValues = parentList;
+			}
+
+			SetValueCoercedToGroup(value);
 		}
 
 		public IDashPattern DashStyle
@@ -240,8 +274,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 	 IPlotGroupStyleCollection externalGroups,
 	 IPlotGroupStyleCollection localGroups)
 		{
-			if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(LineStyleGroupStyle)))
-				localGroups.Add(new LineStyleGroupStyle());
+			if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(DashPatternGroupStyle)))
+				localGroups.Add(new DashPatternGroupStyle());
 		}
 
 		public delegate IDashPattern Getter();
@@ -251,18 +285,18 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			IPlotGroupStyleCollection localGroups,
 			Getter getter)
 		{
-			if (!externalGroups.ContainsType(typeof(LineStyleGroupStyle))
+			if (!externalGroups.ContainsType(typeof(DashPatternGroupStyle))
 				&& null != localGroups
-				&& !localGroups.ContainsType(typeof(LineStyleGroupStyle)))
+				&& !localGroups.ContainsType(typeof(DashPatternGroupStyle)))
 			{
-				localGroups.Add(new LineStyleGroupStyle());
+				localGroups.Add(new DashPatternGroupStyle());
 			}
 
-			LineStyleGroupStyle grpStyle = null;
-			if (externalGroups.ContainsType(typeof(LineStyleGroupStyle)))
-				grpStyle = (LineStyleGroupStyle)externalGroups.GetPlotGroupStyle(typeof(LineStyleGroupStyle));
+			DashPatternGroupStyle grpStyle = null;
+			if (externalGroups.ContainsType(typeof(DashPatternGroupStyle)))
+				grpStyle = (DashPatternGroupStyle)externalGroups.GetPlotGroupStyle(typeof(DashPatternGroupStyle));
 			else if (localGroups != null)
-				grpStyle = (LineStyleGroupStyle)localGroups.GetPlotGroupStyle(typeof(LineStyleGroupStyle));
+				grpStyle = (DashPatternGroupStyle)localGroups.GetPlotGroupStyle(typeof(DashPatternGroupStyle));
 
 			if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
 				grpStyle.Initialize(getter());
@@ -275,17 +309,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			IPlotGroupStyleCollection localGroups,
 			Setter setter)
 		{
-			LineStyleGroupStyle grpStyle = null;
+			DashPatternGroupStyle grpStyle = null;
 			IPlotGroupStyleCollection grpColl = null;
-			if (externalGroups.ContainsType(typeof(LineStyleGroupStyle)))
+			if (externalGroups.ContainsType(typeof(DashPatternGroupStyle)))
 				grpColl = externalGroups;
-			else if (localGroups != null && localGroups.ContainsType(typeof(LineStyleGroupStyle)))
+			else if (localGroups != null && localGroups.ContainsType(typeof(DashPatternGroupStyle)))
 				grpColl = localGroups;
 
 			if (null != grpColl)
 			{
-				grpStyle = (LineStyleGroupStyle)grpColl.GetPlotGroupStyle(typeof(LineStyleGroupStyle));
-				grpColl.OnBeforeApplication(typeof(LineStyleGroupStyle));
+				grpStyle = (DashPatternGroupStyle)grpColl.GetPlotGroupStyle(typeof(DashPatternGroupStyle));
+				grpColl.OnBeforeApplication(typeof(DashPatternGroupStyle));
 				setter(grpStyle.DashStyle);
 			}
 		}

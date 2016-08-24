@@ -23,9 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Collections;
-using Altaxo.Graph;
-using Altaxo.Graph.Graph3D.Plot.Groups;
-using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Drawing;
 using Altaxo.Gui.Common;
 using Altaxo.Main;
 using System;
@@ -34,7 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.Graph3D.Plot.Groups
+namespace Altaxo.Gui.Drawing
 {
 	public interface IStyleListView
 	{

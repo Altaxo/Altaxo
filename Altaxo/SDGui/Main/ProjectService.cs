@@ -363,6 +363,24 @@ namespace Altaxo.Main
 		{
 			var errorText = new System.Text.StringBuilder();
 
+			try
+			{
+				Current.Workbench.CloseAllViews();
+			}
+			catch (Exception exc)
+			{
+				errorText.Append(exc.ToString());
+			}
+
+			try
+			{
+				this.SetCurrentProject(null, string.Empty);
+			}
+			catch (Exception exc)
+			{
+				errorText.Append(exc.ToString());
+			}
+
 			ZipFile zipFile = null; ;
 			AltaxoDocument newdocument = null; ;
 			Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info;
@@ -395,8 +413,8 @@ namespace Altaxo.Main
 
 			try
 			{
-				Current.Workbench.CloseAllViews();
 				this.SetCurrentProject(newdocument, filename);
+
 				RestoreWindowStateFromZippedFile(zipFile, info, newdocument);
 				info.AnnounceDeserializationEnd(newdocument, true); // Final call to deserialization end
 

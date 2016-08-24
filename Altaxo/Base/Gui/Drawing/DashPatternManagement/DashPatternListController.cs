@@ -22,14 +22,16 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
+using Altaxo.Drawing.DashPatternManagement;
 using Altaxo.Graph.Graph3D.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.Graph3D.Plot.Groups
+namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
 	[ExpectedTypeOfView(typeof(IStyleListView))]
 	[UserControllerForObject(typeof(DashPatternList))]

@@ -29,7 +29,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Altaxo.Graph
+namespace Altaxo.Drawing
 {
 	/// <summary>
 	/// Base class for style lists whose items are immutable class instances.
@@ -37,7 +37,7 @@ namespace Altaxo.Graph
 	/// <typeparam name="TList">The type of the list.</typeparam>
 	/// <typeparam name="TItem">The type of the list item.</typeparam>
 	/// <typeparam name="TListManagerEntry">The type of the list manager entry.</typeparam>
-	/// <seealso cref="Altaxo.Graph.StyleListManagerBase{TList, T, TListManagerEntry}" />
+	/// <seealso cref="Altaxo.Drawing.StyleListManagerBase{TList, T, TListManagerEntry}" />
 	public abstract class StyleListManagerBaseForClasses<TList, TItem, TListManagerEntry> : StyleListManagerBase<TList, TItem, TListManagerEntry>
 		where TList : IStyleList<TItem>
 		where TItem : class, Main.IImmutable

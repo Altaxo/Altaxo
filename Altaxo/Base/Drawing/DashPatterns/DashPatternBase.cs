@@ -28,10 +28,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Drawing.D3D.DashPatterns
+namespace Altaxo.Drawing.DashPatterns
 {
 	public abstract class DashPatternBase : IDashPattern
 	{
+		public override int GetHashCode()
+		{
+			return this.GetType().GetHashCode();
+		}
+
+		public override bool Equals(object obj)
+		{
+			return this.GetType() == obj?.GetType();
+		}
+
+		public object Clone()
+		{
+			return this.MemberwiseClone();
+		}
+
 		public abstract double this[int index] { get; set; }
 
 		public abstract int Count { get; }

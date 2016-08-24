@@ -30,9 +30,9 @@ using System.Text;
 namespace Altaxo.Drawing.ColorManagement
 {
 	/// <summary>
-	/// Set of colors with a given (<see cref="Name"/>) and <see cref="ColorSetLevel"/>. This set can be writeable or not (see <see cref="P:IList{T}.IsReadOnly"/>).
+	/// Set of colors with a given name and level. This set can be writeable or not (see <see cref="P:IList{T}.IsReadOnly"/>).
 	/// </summary>
-	public interface IColorSet : Altaxo.Graph.IStyleList<NamedColor>
+	public interface IColorSet : IStyleList<NamedColor>
 	{
 		/// <summary>
 		/// Tries to find a color with a given name.

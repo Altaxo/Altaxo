@@ -22,22 +22,34 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
+using Altaxo.Graph;
 using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Main;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Graph3D.Plot.Groups
+namespace Altaxo.Drawing.DashPatternManagement
 {
 	public class DashPatternListManager : StyleListManagerBaseForClasses<DashPatternList, IDashPattern, StyleListManagerBaseEntryValue<DashPatternList, IDashPattern>>
 	{
+		public static readonly Main.Properties.PropertyKey<DashPatternListBag> PropertyKeyUserDefinedDashPatternLists;
+
 		private static DashPatternListManager _instance;
 
 		static DashPatternListManager()
 		{
+			PropertyKeyUserDefinedDashPatternLists =
+				new Main.Properties.PropertyKey<DashPatternListBag>(
+				"6C8F87E2-F80A-458E-A5C5-DFF92EBDBA90",
+				"Graph3D\\UserDefinedDashPatternLists",
+				Main.Properties.PropertyLevel.Application,
+				() => new DashPatternListBag(Enumerable.Empty<DashPatternList>()));
+
 			Instance = new DashPatternListManager();
 		}
 
@@ -45,16 +57,34 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			: base(
 					(list, level) => new StyleListManagerBaseEntryValue<DashPatternList, IDashPattern>(list, level),
 					new DashPatternList("BuiltinDefault", new IDashPattern[] {
-					new Drawing.D3D.DashPatterns.Solid(),
-					new Drawing.D3D.DashPatterns.Dash(),
-					new Drawing.D3D.DashPatterns.Dot(),
-					new Drawing.D3D.DashPatterns.DashDot(),
-					new Drawing.D3D.DashPatterns.DashDotDot(),
+					new Drawing.DashPatterns.Solid(),
+					new Drawing.DashPatterns.Dash(),
+					new Drawing.DashPatterns.Dot(),
+					new Drawing.DashPatterns.DashDot(),
+					new Drawing.DashPatterns.DashDotDot(),
 			})
 					)
 
 		{
+			DashPatternListBag userStyleLists;
+			Current.PropertyService.UserSettings.TryGetValue(PropertyKeyUserDefinedDashPatternLists, out userStyleLists);
+			if (null != userStyleLists)
+			{
+				DashPatternList dummy;
+				foreach (var list in userStyleLists.StyleLists)
+				{
+					InternalTryRegisterList(list, ItemDefinitionLevel.UserDefined, out dummy, false);
+				}
+			}
 		}
+
+		/// <summary>
+		/// Gets the buildin default solid dash pattern belonging to the BuildinDefault list.
+		/// </summary>
+		/// <value>
+		/// The buildin default solid dash pattern belonging to the BuildinDefault list.
+		/// </value>
+		public IDashPattern BuiltinDefaultSolid { get { return this.BuiltinDefault[0]; } }
 
 		public static DashPatternListManager Instance
 		{
@@ -80,6 +110,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		public override DashPatternList CreateNewList(string name, IEnumerable<IDashPattern> symbols)
 		{
 			return new DashPatternList(name, symbols);
+		}
+
+		protected override void OnUserDefinedListAddedChangedRemoved(DashPatternList list)
+		{
+			var listBag = new DashPatternListBag(_allLists.Values.Where(entry => entry.Level == ItemDefinitionLevel.UserDefined).Select(entry => entry.List));
+			Current.PropertyService.UserSettings.SetValue(PropertyKeyUserDefinedDashPatternLists, listBag);
 		}
 	}
 }

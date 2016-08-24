@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing.DashPatternManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,7 +83,7 @@ namespace Altaxo.Drawing.D3D
 				if (null != s._lineEndCap)
 					info.AddValue("LineEndCap", s._lineEndCap);
 
-				if (null != s._dashPattern)
+				if (null != s._dashPattern && !DashPatterns.Solid.Instance.Equals(s._dashPattern))
 				{
 					info.AddValue("DashPattern", s._dashPattern);
 
@@ -110,9 +111,10 @@ namespace Altaxo.Drawing.D3D
 				var lineStartCap = ("LineStartCap" == info.CurrentElementName) ? (ILineCap)info.GetValue("LineStartCap", null) : null;
 				var lineEndCap = ("LineEndCap" == info.CurrentElementName) ? (ILineCap)info.GetValue("LineEndCap", null) : null;
 				var dashPattern = ("DashPattern" == info.CurrentElementName) ? (IDashPattern)info.GetValue("DashPattern", null) : null;
+				dashPattern = dashPattern ?? DashPatterns.Solid.Instance;
 				ILineCap dashStartCap = null, dashEndCap = null;
 				bool dashStartCapSuppression = false, dashEndCapSuppression = false;
-				if (null != dashPattern)
+				if (!DashPatterns.Solid.Instance.Equals(dashPattern))
 				{
 					if ("DashStartCap" == info.CurrentElementName)
 					{
@@ -143,12 +145,14 @@ namespace Altaxo.Drawing.D3D
 		{
 			_material = Materials.GetSolidMaterial(color);
 			_crossSection = new CrossSections.Rectangular(thickness, thickness);
+			_dashPattern = DashPatternListManager.Instance.BuiltinDefaultSolid;
 		}
 
 		public PenX3D(IMaterial material, ICrossSectionOfLine crossSection)
 		{
 			_material = material;
 			_crossSection = crossSection;
+			_dashPattern = DashPatternListManager.Instance.BuiltinDefaultSolid;
 		}
 
 		public PenX3D(
@@ -160,6 +164,8 @@ namespace Altaxo.Drawing.D3D
 		{
 			if (!(miterLimit >= 1))
 				throw new ArgumentOutOfRangeException(nameof(miterLimit), "must be >= 1");
+			if (null == dashPattern)
+				throw new ArgumentNullException(nameof(dashPattern));
 
 			_material = material;
 			_crossSection = crossSection;
@@ -355,6 +361,9 @@ namespace Altaxo.Drawing.D3D
 		{
 			get
 			{
+				if (null == _dashPattern)
+					throw new InvalidProgramException("_dashPattern member should always be != null.");
+
 				return _dashPattern;
 			}
 		}
@@ -366,14 +375,19 @@ namespace Altaxo.Drawing.D3D
 		/// <returns>A new instance of this pen, with the dash pattern provided in the argument.</returns>
 		public PenX3D WithDashPattern(IDashPattern dashPattern)
 		{
-			if (dashPattern is DashPatterns.Solid)
-				dashPattern = null;
-			if (object.Equals(_dashPattern, dashPattern))
-				return this;
+			if (null == dashPattern)
+				throw new ArgumentNullException(nameof(dashPattern));
 
-			var result = (PenX3D)this.MemberwiseClone();
-			result._dashPattern = dashPattern;
-			return result;
+			if (object.ReferenceEquals(_dashPattern, dashPattern)) // Reference equality is important, since the parent DashPatternList is determined by reference equality
+			{
+				return this;
+			}
+			else
+			{
+				var result = (PenX3D)this.MemberwiseClone();
+				result._dashPattern = dashPattern;
+				return result;
+			}
 		}
 
 		#endregion Dash Pattern
@@ -484,7 +498,7 @@ namespace Altaxo.Drawing.D3D
 
 				pen1.Material == pen2.Material &&
 				pen1.CrossSection.GetType() == pen2.CrossSection.GetType() &&
-				object.Equals(pen1._dashPattern, pen2._dashPattern) &&
+				object.ReferenceEquals(pen1._dashPattern, pen2._dashPattern) && // Reference equality because DashPatterns parent list is determined by reference equality.
 				object.Equals(pen1._lineStartCap, pen2._lineStartCap) &&
 				object.Equals(pen1._lineEndCap, pen2._lineEndCap) &&
 				object.Equals(pen1._dashStartCap, pen2._dashStartCap) &&

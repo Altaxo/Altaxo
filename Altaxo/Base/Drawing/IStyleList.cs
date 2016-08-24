@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph
+namespace Altaxo.Drawing
 {
 	/// <summary>
 	/// Lists of styles, for instance scatter styles, line styles, etc., that are used in grouping.

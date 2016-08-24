@@ -26,6 +26,7 @@ using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph;
+using Altaxo.Gui.Drawing.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -577,7 +578,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		protected virtual void EhShowColorSetManagerDialog(object sender, RoutedEventArgs e)
 		{
-			var listController = new Graph3D.Plot.Groups.ColorSetController();
+			var listController = new ColorSetController();
 			listController.InitializeDocument(InternalSelectedColor.ParentColorSet);
 			Current.Gui.FindAndAttachControlTo(listController);
 

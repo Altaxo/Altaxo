@@ -29,7 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph
+namespace Altaxo.Drawing
 {
 	public class StyleListBase<T> : IStyleList<T> where T : Main.IImmutable // TODO NET45 replace IList with IReadonlyList
 	{

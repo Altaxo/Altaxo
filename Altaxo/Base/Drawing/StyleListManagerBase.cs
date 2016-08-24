@@ -29,7 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph
+namespace Altaxo.Drawing
 {
 	#region Value class for StyleListManagerBase
 
@@ -76,7 +76,7 @@ namespace Altaxo.Graph
 	/// <typeparam name="TList">Type of the list of style items.</typeparam>
 	/// <typeparam name="TItem">Type of the style item in the lists.</typeparam>
 	/// <typeparam name="TListManagerEntry">Type of the entries used by the list manager (amended for instance with the list level or other information).</typeparam>
-	/// <seealso cref="Altaxo.Graph.IStyleListManager{TList, T}" />
+	/// <seealso cref="Altaxo.Drawing.IStyleListManager{TList, T}" />
 	public abstract class StyleListManagerBase<TList, TItem, TListManagerEntry> : IStyleListManager<TList, TItem> where TList : IStyleList<TItem> where TItem : Main.IImmutable where TListManagerEntry : StyleListManagerBaseEntryValue<TList, TItem>
 	{
 		/// <summary>
@@ -201,6 +201,9 @@ namespace Altaxo.Graph
 		/// <returns>True if the list was new and thus was added to the collection; false if the list has already existed.</returns>
 		public bool TryRegisterList(TList instance, Main.ItemDefinitionLevel level, out TList storedList)
 		{
+			if (null == instance)
+				throw new ArgumentNullException(nameof(instance));
+
 			return InternalTryRegisterList(instance, level, out storedList, true);
 		}
 

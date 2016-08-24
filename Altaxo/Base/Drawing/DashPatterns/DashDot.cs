@@ -27,16 +27,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Drawing.D3D.DashPatterns
+namespace Altaxo.Drawing.DashPatterns
 {
-	public class Dot : DashPatternBase
+	public class DashDot : DashPatternBase
 	{
+		/// <summary>
+		/// Gets an pre-instantiated instance of this class.
+		/// </summary>
+		/// <value>
+		/// An instance of this class.
+		/// </value>
+		public static DashDot Instance { get; private set; } = new DashDot();
+
 		#region Serialization
 
 		/// <summary>
 		/// 2016-04-22 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Dot), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DashDot), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -45,7 +53,7 @@ namespace Altaxo.Drawing.D3D.DashPatterns
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				return new Dot();
+				return Instance;
 			}
 		}
 
@@ -58,9 +66,15 @@ namespace Altaxo.Drawing.D3D.DashPatterns
 				switch (index)
 				{
 					case 0:
-						return 1;
+						return 3;
 
 					case 1:
+						return 1;
+
+					case 2:
+						return 1;
+
+					case 3:
 						return 1;
 
 					default:
@@ -77,18 +91,8 @@ namespace Altaxo.Drawing.D3D.DashPatterns
 		{
 			get
 			{
-				return 2;
+				return 4;
 			}
-		}
-
-		public override bool Equals(object obj)
-		{
-			return obj is Dot;
-		}
-
-		public override int GetHashCode()
-		{
-			return 0xEDD4F40;
 		}
 	}
 }

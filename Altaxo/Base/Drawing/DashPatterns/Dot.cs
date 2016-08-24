@@ -27,16 +27,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Drawing.D3D.DashPatterns
+namespace Altaxo.Drawing.DashPatterns
 {
-	public class Dash : DashPatternBase
+	public class Dot : DashPatternBase
 	{
+		/// <summary>
+		/// Gets an pre-instantiated instance of this class.
+		/// </summary>
+		/// <value>
+		/// An instance of this class.
+		/// </value>
+		public static Dot Instance { get; private set; } = new Dot();
+
 		#region Serialization
 
 		/// <summary>
 		/// 2016-04-22 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Dash), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Dot), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -45,7 +53,7 @@ namespace Altaxo.Drawing.D3D.DashPatterns
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				return new Dash();
+				return Instance;
 			}
 		}
 
@@ -58,7 +66,7 @@ namespace Altaxo.Drawing.D3D.DashPatterns
 				switch (index)
 				{
 					case 0:
-						return 3;
+						return 1;
 
 					case 1:
 						return 1;
@@ -79,16 +87,6 @@ namespace Altaxo.Drawing.D3D.DashPatterns
 			{
 				return 2;
 			}
-		}
-
-		public override bool Equals(object obj)
-		{
-			return obj is Dash;
-		}
-
-		public override int GetHashCode()
-		{
-			return 0x32476D4;
 		}
 	}
 }

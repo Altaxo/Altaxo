@@ -601,7 +601,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Groups\StyleListControl.xaml">
+    <Page Include="Gui\Drawing\StyleListControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Drawing\DashPatternManagement\DashPatternComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1141,8 +1145,12 @@
     </Compile>
     <Compile Include="Gui\Common\Converters\BindingConverter.cs" />
     <Compile Include="Gui\Common\Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternComboBox.xaml.cs">
+      <DependentUpon>DashPatternComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternConverters.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\ScatterSymbolConverters.cs" />
-    <Compile Include="Gui\Graph\StyleListComboBoxBase.cs" />
+    <Compile Include="Gui\Drawing\StyleListComboBoxBase.cs" />
     <Compile Include="Gui\Common\Int32ListUpDown.cs" />
     <Compile Include="Gui\Common\RelayCommand.cs" />
     <Compile Include="Gui\Data\DecomposeByColumnContentOptionsControl.xaml.cs">
@@ -1560,7 +1568,7 @@
     <Compile Include="Gui\Graph3D\Plot\G3DPlotItemControl.xaml.cs">
       <DependentUpon>G3DPlotItemControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Groups\StyleListControl.xaml.cs">
+    <Compile Include="Gui\Drawing\StyleListControl.xaml.cs">
       <DependentUpon>StyleListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Plot\Styles\ScatterSymbolComboBox.xaml.cs">
@@ -1988,6 +1996,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Gui\Graph3D\Material\" />
+    <Folder Include="Gui\Graph3D\Plot\Groups\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

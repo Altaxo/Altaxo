@@ -27,10 +27,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Drawing.D3D.DashPatterns
+namespace Altaxo.Drawing.DashPatterns
 {
 	public class DashDotDot : DashPatternBase
 	{
+		/// <summary>
+		/// Gets an pre-instantiated instance of this class.
+		/// </summary>
+		/// <value>
+		/// An instance of this class.
+		/// </value>
+		public static DashDotDot Instance { get; private set; } = new DashDotDot();
+
 		#region Serialization
 
 		/// <summary>
@@ -45,7 +53,7 @@ namespace Altaxo.Drawing.D3D.DashPatterns
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				return new DashDotDot();
+				return Instance;
 			}
 		}
 
@@ -91,16 +99,6 @@ namespace Altaxo.Drawing.D3D.DashPatterns
 			{
 				return 6;
 			}
-		}
-
-		public override bool Equals(object obj)
-		{
-			return obj is DashDotDot;
-		}
-
-		public override int GetHashCode()
-		{
-			return 0x18997EC1;
 		}
 	}
 }

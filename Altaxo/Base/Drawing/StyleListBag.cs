@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph
+namespace Altaxo.Drawing
 {
 	/// <summary>
 	/// Used to store user color sets in the user's settings.

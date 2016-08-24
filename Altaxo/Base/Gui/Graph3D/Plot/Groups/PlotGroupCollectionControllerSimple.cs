@@ -105,7 +105,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			bool serial = !_view.PlotGroupConcurrently;
 
 			ColorGroupStyle newColorGroupStyle = null;
-			LineStyleGroupStyle newLineStyleGroupStyle = null;
+			DashPatternGroupStyle newLineStyleGroupStyle = null;
 			ScatterSymbolGroupStyle newScatterSymbolGroupStyle = null;
 
 			if (_doc.ContainsType(typeof(ColorGroupStyle)))
@@ -113,10 +113,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 				newColorGroupStyle = (ColorGroupStyle)_doc.GetPlotGroupStyle(typeof(ColorGroupStyle)).Clone();
 				_doc.RemoveType(typeof(ColorGroupStyle));
 			}
-			if (_doc.ContainsType(typeof(LineStyleGroupStyle)))
+			if (_doc.ContainsType(typeof(DashPatternGroupStyle)))
 			{
-				newLineStyleGroupStyle = (LineStyleGroupStyle)_doc.GetPlotGroupStyle(typeof(LineStyleGroupStyle)).Clone();
-				_doc.RemoveType(typeof(LineStyleGroupStyle));
+				newLineStyleGroupStyle = (DashPatternGroupStyle)_doc.GetPlotGroupStyle(typeof(DashPatternGroupStyle)).Clone();
+				_doc.RemoveType(typeof(DashPatternGroupStyle));
 			}
 			if (_doc.ContainsType(typeof(ScatterSymbolGroupStyle)))
 			{
@@ -132,7 +132,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			}
 			if (linestyle)
 			{
-				newLineStyleGroupStyle = newLineStyleGroupStyle ?? new LineStyleGroupStyle();
+				newLineStyleGroupStyle = newLineStyleGroupStyle ?? new DashPatternGroupStyle();
 				newLineStyleGroupStyle.IsStepEnabled = true;
 
 				if (serial && color)
@@ -146,7 +146,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 				newScatterSymbolGroupStyle.IsStepEnabled = true;
 
 				if (serial && linestyle)
-					_doc.Add(newScatterSymbolGroupStyle, typeof(LineStyleGroupStyle));
+					_doc.Add(newScatterSymbolGroupStyle, typeof(DashPatternGroupStyle));
 				else if (serial && color)
 					_doc.Add(newScatterSymbolGroupStyle, typeof(ColorGroupStyle));
 				else
@@ -191,7 +191,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 					return false;
 
 				isGroupedByColor = plotGroupStyles.ContainsType(typeof(ColorGroupStyle));
-				isGroupedByLineStyle = plotGroupStyles.ContainsType(typeof(LineStyleGroupStyle));
+				isGroupedByLineStyle = plotGroupStyles.ContainsType(typeof(DashPatternGroupStyle));
 				isGroupedBySymbolStyle = plotGroupStyles.ContainsType(typeof(ScatterSymbolGroupStyle));
 
 				if (plotGroupStyles.Count != (isGroupedByColor ? 1 : 0) + (isGroupedByLineStyle ? 1 : 0) + (isGroupedBySymbolStyle ? 1 : 0))
@@ -201,7 +201,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 				if (isGroupedByColor)
 					list.Add(typeof(ColorGroupStyle));
 				if (isGroupedByLineStyle)
-					list.Add(typeof(LineStyleGroupStyle));
+					list.Add(typeof(DashPatternGroupStyle));
 				if (isGroupedBySymbolStyle)
 					list.Add(typeof(ScatterSymbolGroupStyle));
 

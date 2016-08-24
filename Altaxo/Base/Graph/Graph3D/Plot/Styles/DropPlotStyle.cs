@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			protected virtual DropPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				DropPlotStyle s = null != o ? (DropPlotStyle)o : new DropPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+				DropPlotStyle s = null != o ? (DropPlotStyle)o : new DropPlotStyle(info);
 
 				s._dropLine = (CSPlaneIDList)info.GetValue("DropLine", s);
 				s._pen = (PenX3D)info.GetValue("Pen", s);
@@ -133,6 +133,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 				return s;
 			}
+		}
+
+		/// <summary>
+		/// Deserialization constructor.
+		/// </summary>
+		/// <param name="info">The deserialization information.</param>
+		protected DropPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
 		}
 
 		#endregion Serialization

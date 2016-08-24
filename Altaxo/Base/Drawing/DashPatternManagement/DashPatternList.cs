@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
+using Altaxo.Graph;
 using Altaxo.Graph.Graph3D.Plot.Styles;
 using System;
 using System.Collections;
@@ -30,7 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Graph3D.Plot.Groups
+namespace Altaxo.Drawing.DashPatternManagement
 {
 	public class DashPatternList : StyleListBase<IDashPattern>
 	{
@@ -59,8 +61,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 				info.CloseArray(count);
 
 				var result = new DashPatternList(name, list);
-				DashPatternList existingList;
-				DashPatternListManager.Instance.TryRegisterList(result, Main.ItemDefinitionLevel.Project, out existingList);
 				return result;
 			}
 		}
@@ -68,7 +68,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		#endregion Serialization
 
 		public DashPatternList(string name, IEnumerable<IDashPattern> symbols)
-			: base(name, symbols)
+			: base(name, symbols.Select(instance => (IDashPattern)instance.Clone()))
 		{
 		}
 	}

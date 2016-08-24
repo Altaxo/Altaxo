@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Drawing.D3D.DashPatterns
+namespace Altaxo.Drawing.DashPatterns
 {
 	public class Custom : DashPatternBase
 	{
@@ -149,7 +149,7 @@ namespace Altaxo.Drawing.D3D.DashPatterns
 
 		public override int GetHashCode()
 		{
-			return 0xC697036 + _customDashPattern.Length * 17 + _customDashPattern[0].GetHashCode();
+			return GetType().GetHashCode() + _customDashPattern.Length * 17 + _customDashPattern[0].GetHashCode();
 		}
 	}
 }

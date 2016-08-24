@@ -25,6 +25,7 @@
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Gui.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;

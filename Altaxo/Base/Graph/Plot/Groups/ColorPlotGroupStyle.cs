@@ -132,8 +132,12 @@ namespace Altaxo.Graph.Plot.Groups
 			{
 				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
-				s._listOfValues = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
-				ColorSetManager.Instance.TryRegisterList(s._listOfValues, Main.ItemDefinitionLevel.Project, out s._listOfValues);
+				IColorSet listOfValues = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
+				if (null != listOfValues)
+				{
+					ColorSetManager.Instance.TryRegisterList(listOfValues, Main.ItemDefinitionLevel.Project, out s._listOfValues);
+				}
+
 				s._colorIndex = info.GetInt32("ColorIndex");
 				return s;
 			}

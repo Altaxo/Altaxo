@@ -24,45 +24,56 @@
 
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
+using Altaxo.Drawing.D3D;
+using Altaxo.Drawing.DashPatternManagement;
+using Altaxo.Drawing.DashPatterns;
 using Altaxo.Graph;
 using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Gui.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace Altaxo.Gui.Graph3D.Plot.Styles
+namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
-	public abstract class ScatterSymbolComboBoxBase : Altaxo.Gui.Drawing.StyleListComboBoxBase<ScatterSymbolListManager, ScatterSymbolList, IScatterSymbol>
+	public abstract class DashPatternComboBoxBase : Altaxo.Gui.Drawing.StyleListComboBoxBase<DashPatternListManager, DashPatternList, IDashPattern>
 	{
-		public ScatterSymbolComboBoxBase(ScatterSymbolListManager manager) : base(manager)
+		public DashPatternComboBoxBase(DashPatternListManager manager) : base(manager)
 		{
 		}
 	}
 
-	/// <summary>
-	/// Interaction logic for ColorComboBoxEx.xaml
-	/// </summary>
-	public partial class ScatterSymbolComboBox : ScatterSymbolComboBoxBase
+	public partial class DashPatternComboBox : DashPatternComboBoxBase
 	{
-		private ScatterSymbolToItemNameConverter _itemToItemNameConverter = new ScatterSymbolToItemNameConverter();
+		private DashPatternToItemNameConverter _itemToItemNameConverter;
 
 		#region Constructors
 
-		public ScatterSymbolComboBox()
-			: base(ScatterSymbolListManager.Instance)
+		public DashPatternComboBox()
+			: base(DashPatternListManager.Instance)
 		{
 			UpdateTreeViewTreeNodes();
 
 			InitializeComponent();
 
+			_itemToItemNameConverter = new DashPatternToItemNameConverter(GuiComboBox);
+
 			UpdateComboBoxSourceSelection(SelectedItem);
 			UpdateTreeViewSelection();
+
+			var valueBinding = new Binding();
+			valueBinding.Source = this;
+			valueBinding.Path = new PropertyPath("SelectedItem");
+			valueBinding.Converter = _itemToItemNameConverter;
+			//valueBinding.ValidationRules.Add(new ValidationWithErrorString(_itemToItemNameConverter.EhValidateText));
+			GuiComboBox.SetBinding(ComboBox.TextProperty, valueBinding);
 		}
 
 		#endregion Constructors
@@ -73,7 +84,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
 
-		public override string GetDisplayName(IScatterSymbol item)
+		public override string GetDisplayName(IDashPattern item)
 		{
 			return (string)_itemToItemNameConverter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.InvariantCulture);
 		}

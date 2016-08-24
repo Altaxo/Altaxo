@@ -22,19 +22,22 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Graph3D.Plot.Groups;
+using Altaxo.Drawing.ColorManagement;
+using Altaxo.Graph.Plot.Groups;
+using Altaxo.Gui.Drawing;
+using Altaxo.Gui.Drawing.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.Graph3D.Plot.Groups
+namespace Altaxo.Gui.Graph.Plot.Groups
 {
 	[ExpectedTypeOfView(typeof(IStyleListView))]
-	[UserControllerForObject(typeof(LineStyleGroupStyle))]
-	public class LineStyleGroupStyleController : MVCANControllerEditOriginalDocBase<LineStyleGroupStyle, IStyleListView>
+	[UserControllerForObject(typeof(ColorGroupStyle))]
+	public class ColorGroupStyleController : MVCANControllerEditOriginalDocBase<ColorGroupStyle, IStyleListView>
 	{
-		private DashPatternListController _listController;
+		private ColorSetController _listController;
 
 		protected override void Initialize(bool initData)
 		{
@@ -42,7 +45,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 
 			if (initData)
 			{
-				_listController = new DashPatternListController();
+				_listController = new ColorSetController();
 				_listController.InitializeDocument(_doc.ListOfValues);
 			}
 
@@ -57,7 +60,14 @@ namespace Altaxo.Gui.Graph3D.Plot.Groups
 			if (!_listController.Apply(disposeController))
 				return ApplyEnd(false, disposeController);
 
-			_doc.ListOfValues = (DashPatternList)_listController.ModelObject;
+			var colorSet = (IColorSet)_listController.ModelObject;
+			if (object.ReferenceEquals(colorSet, ColorSetManager.Instance.BuiltinKnownColors))
+			{
+				Current.Gui.ErrorMessageBox(string.Format("The color set '{0}' is not admitted to be used as plot color set. Please choose another color set, or derive a new color set from '{0}'.", ColorSetManager.Instance.BuiltinKnownColors.Name), "ColorSet not admitted");
+				return ApplyEnd(false, disposeController);
+			}
+
+			_doc.ListOfValues = colorSet;
 
 			return ApplyEnd(true, disposeController);
 		}

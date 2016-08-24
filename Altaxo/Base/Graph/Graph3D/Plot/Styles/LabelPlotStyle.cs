@@ -142,7 +142,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent, bool nativeCall)
 			{
-				LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+				LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle(info);
 
 				s._font = (FontX3D)info.GetValue("Font", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
@@ -181,8 +181,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		#endregion Serialization
 
 		/// <summary>
-		/// For deserialization purposes.
+		/// Deserialization constructor.
 		/// </summary>
+		/// <param name="info">The deserialization information.</param>
 		protected LabelPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
 			this._cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);

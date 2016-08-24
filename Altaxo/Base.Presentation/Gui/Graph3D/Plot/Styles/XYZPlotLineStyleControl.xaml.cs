@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			_linePenGlue = new PenControlsGlue(false);
 			_linePenGlue.PenChanged += new EventHandler(EhLinePenChanged);
 			_linePenGlue.CbBrush = _guiLineBrush;
-			_linePenGlue.CbDashStyle = _guiLineDashStyle;
+			_linePenGlue.CbDashPattern = _guiLineDashStyle;
 			_linePenGlue.CbLineThickness1 = _guiLineThickness1;
 			_linePenGlue.CbLineThickness2 = _guiLineThickness2;
 		}

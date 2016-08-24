@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph
+namespace Altaxo.Drawing
 {
 	/// <summary>
 	/// Manager for style lists. Usually only a single instance of this manager should exist in the application.
