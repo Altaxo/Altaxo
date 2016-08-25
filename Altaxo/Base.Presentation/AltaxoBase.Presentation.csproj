@@ -625,11 +625,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Styles\XYZPlotLineStyleControl.xaml">
+    <Page Include="Gui\Graph3D\Plot\Styles\LinePlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Styles\XYZPlotScatterStyleControl.xaml">
+    <Page Include="Gui\Graph3D\Plot\Styles\ScatterPlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1583,11 +1583,11 @@
     <Compile Include="Gui\Graph3D\Plot\Styles\DropPlotStyleControl.xaml.cs">
       <DependentUpon>DropPlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotLineStyleControl.xaml.cs">
-      <DependentUpon>XYZPlotLineStyleControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph3D\Plot\Styles\LinePlotStyleControl.xaml.cs">
+      <DependentUpon>LinePlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotScatterStyleControl.xaml.cs">
-      <DependentUpon>XYZPlotScatterStyleControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph3D\Plot\Styles\ScatterPlotStyleControl.xaml.cs">
+      <DependentUpon>ScatterPlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Shapes\AnchoringControl.xaml.cs">
       <DependentUpon>AnchoringControl.xaml</DependentUpon>

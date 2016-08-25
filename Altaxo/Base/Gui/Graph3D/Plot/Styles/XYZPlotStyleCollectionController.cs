@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 	[UserControllerForObject(typeof(G3DPlotStyleCollection))]
 	[ExpectedTypeOfView(typeof(IXYZPlotStyleCollectionView))]
-	public class XYPlotStyleCollectionController
+	public class XYZPlotStyleCollectionController
 		:
 		MVCANControllerEditOriginalDocBase<G3DPlotStyleCollection, IXYZPlotStyleCollectionView>,
 		IXYZPlotStyleCollectionController

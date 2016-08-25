@@ -39,13 +39,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	#region Interfaces
 
 	/// <summary>
-	/// This view interface is for showing the options of the XYXYPlotLineStyle
+	/// This view interface is for showing the options of the XYZPlotLineStyle
 	/// </summary>
-	public interface IXYZPlotLineStyleView
+	public interface ILinePlotStyleView
 	{
 		bool ShowPlotColorsOnlyForLinePen { set; }
 
 		bool IndependentLineColor { get; set; }
+
+		bool IndependentDashStyle { get; set; }
 
 		PenX3D LinePen { get; set; }
 
@@ -55,6 +57,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		bool LineSymbolGap { get; set; }
 
 		bool ConnectCircular { get; set; }
+
+		bool IgnoreMissingDataPoints { get; set; }
 
 		/// <summary>
 		/// Initializes the Line connection combobox.
@@ -90,15 +94,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	/// Summary description for XYPlotLineStyleController.
 	/// </summary>
 	[UserControllerForObject(typeof(LinePlotStyle))]
-	[ExpectedTypeOfView(typeof(IXYZPlotLineStyleView))]
-	public class XYZPlotLineStyleController : MVCANControllerEditOriginalDocBase<LinePlotStyle, IXYZPlotLineStyleView>
+	[ExpectedTypeOfView(typeof(ILinePlotStyleView))]
+	public class LinePlotStyleController : MVCANControllerEditOriginalDocBase<LinePlotStyle, ILinePlotStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
 		private SelectableListNodeList _lineConnectChoices;
-		private SelectableListNodeList _areaFillDirectionChoices;
-		private SelectableListNodeList _fillColorLinkageChoices;
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -110,8 +112,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			_colorGroupStyleTracker = null;
 
 			_lineConnectChoices = null;
-			_areaFillDirectionChoices = null;
-			_fillColorLinkageChoices = null;
 
 			base.Dispose(isDisposing);
 		}
@@ -132,7 +132,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 				_view.InitializeLineConnect(_lineConnectChoices);
 				_view.LineSymbolGap = _doc.LineSymbolGap;
 				_view.ConnectCircular = _doc.ConnectCircular;
+				_view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
 				_view.IndependentLineColor = _doc.IndependentLineColor;
+				_view.IndependentDashStyle = _doc.IndependentDashStyle;
 				_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
 				_view.LinePen = _doc.LinePen;
 			}
@@ -160,13 +162,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			{
 				// Symbol Gap
 				_doc.LineSymbolGap = _view.LineSymbolGap;
+				_doc.ConnectCircular = _view.ConnectCircular;
+				_doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
 
 				// Pen
 				_doc.IndependentLineColor = _view.IndependentLineColor;
+				_doc.IndependentDashStyle = _view.IndependentDashStyle;
 				_doc.LinePen = _view.LinePen;
 
 				// Line Connect
-				_doc.ConnectCircular = _view.ConnectCircular;
 
 				var selNode = _lineConnectChoices.FirstSelectedNode;
 				var connectionType = (Type)(selNode.Tag);

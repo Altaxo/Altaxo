@@ -37,7 +37,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	/// <summary>
 	/// Interaction logic for XYPlotLineStyleControl.xaml
 	/// </summary>
-	public partial class XYZPlotLineStyleControl : UserControl, IXYZPlotLineStyleView
+	public partial class LinePlotStyleControl : UserControl, ILinePlotStyleView
 	{
 		private PenControlsGlue _linePenGlue;
 
@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		public event Action LinePenChanged;
 
-		public XYZPlotLineStyleControl()
+		public LinePlotStyleControl()
 		{
 			InitializeComponent();
 
@@ -77,6 +77,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		{
 			if (null != IndependentFillColorChanged)
 				IndependentFillColorChanged();
+		}
+
+		private void EhIndependentDashStyleChanged(object sender, RoutedEventArgs e)
+		{
 		}
 
 		private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -136,6 +140,18 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 		}
 
+		public bool IndependentDashStyle
+		{
+			get
+			{
+				return true == _guiIndependentDashStyle.IsChecked;
+			}
+			set
+			{
+				_guiIndependentDashStyle.IsChecked = value;
+			}
+		}
+
 		public bool ShowPlotColorsOnlyForLinePen
 		{
 			set { _linePenGlue.ShowPlotColorsOnly = value; }
@@ -178,6 +194,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		{
 			get { return true == _guiConnectCircular.IsChecked; }
 			set { _guiConnectCircular.IsChecked = value; }
+		}
+
+		public bool IgnoreMissingDataPoints
+		{
+			get { return true == _guiIgnoreMissingPoints.IsChecked; }
+			set { _guiIgnoreMissingPoints.IsChecked = value; }
 		}
 
 		#endregion IXYPlotLineStyleView

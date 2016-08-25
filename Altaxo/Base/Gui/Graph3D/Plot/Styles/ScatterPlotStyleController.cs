@@ -39,7 +39,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	/// <summary>
 	/// This view interface is for showing the options of the XYXYPlotScatterStyle
 	/// </summary>
-	public interface IXYZPlotScatterStyleView
+	public interface IScatterPlotStyleView
 	{
 		/// <summary>
 		/// Material for the scatter symbol.
@@ -85,8 +85,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	/// Summary description for XYPlotScatterStyleController.
 	/// </summary>
 	[UserControllerForObject(typeof(ScatterPlotStyle))]
-	[ExpectedTypeOfView(typeof(IXYZPlotScatterStyleView))]
-	public class XYZPlotScatterStyleController : MVCANControllerEditOriginalDocBase<ScatterPlotStyle, IXYZPlotScatterStyleView>
+	[ExpectedTypeOfView(typeof(IScatterPlotStyleView))]
+	public class ScatterPlotStyleController : MVCANControllerEditOriginalDocBase<ScatterPlotStyle, IScatterPlotStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;

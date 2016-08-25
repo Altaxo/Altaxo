@@ -40,7 +40,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 	using Plot.Groups;
 
 	/// <summary>
-	/// Summary description for XYPlotLineStyle.
+	/// Style to show 3D data as lines.
 	/// </summary>
 	public class LinePlotStyle
 		:
@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		protected ILineConnectionStyle _connectionStyle;
 		protected bool _useLineSymbolGap;
 		protected double _symbolGap;
-		protected bool _ignoreMissingPoints; // treat missing points as if not present (connect lines over missing points)
+		protected bool _ignoreMissingDataPoints; // treat missing points as if not present (connect lines over missing points)
 
 		/// <summary>If true, the start and the end point of the line are connected too.</summary>
 		protected bool _connectCircular;
@@ -90,7 +90,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("IndependentColor", s._independentColor);
 				info.AddValue("Connection", s._connectionStyle);
 				info.AddValue("LineSymbolGap", s._useLineSymbolGap);
-				info.AddValue("IgnoreMissingPoints", s._ignoreMissingPoints);
+				info.AddValue("IgnoreMissingPoints", s._ignoreMissingDataPoints);
 				info.AddValue("ConnectCircular", s._connectCircular);
 			}
 
@@ -103,7 +103,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
 				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
-				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
+				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
 				s._connectCircular = info.GetBoolean("ConnectCircular");
 				return s;
 			}
@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			_linePen = new PenX3D(color, penWidth).WithLineJoin(PenLineJoin.Bevel);
 			_useLineSymbolGap = true;
-			_ignoreMissingPoints = false;
+			_ignoreMissingDataPoints = false;
 			_connectionStyle = new LineConnectionStyles.StraightConnection();
 			_independentColor = false;
 
@@ -155,13 +155,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				this._linePen = from._linePen; // immutable
 				this._useLineSymbolGap = from._useLineSymbolGap;
-				this._symbolGap = from._symbolGap;
-				this._ignoreMissingPoints = from._ignoreMissingPoints;
-				this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
-				this._independentColor = from._independentColor;
 				this._connectCircular = from._connectCircular;
+				this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+
+				this._symbolGap = from._symbolGap;
+
+				this._independentColor = from._independentColor;
+				this._independentDashStyle = from._independentDashStyle;
+				this._linePen = from._linePen; // immutable
+
+				this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
 
 				EhSelfChanged();
 				suspendToken.Resume(eventFiring);
@@ -223,6 +227,43 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
+		public bool ConnectCircular
+		{
+			get
+			{
+				return _connectCircular;
+			}
+			set
+			{
+				bool oldValue = _connectCircular;
+				_connectCircular = value;
+				if (value != oldValue)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether to ignore missing data points. If the value is set to true,
+		/// the line is plotted even if there is a gap in the data points.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if missing data points should be ignored; otherwise, if <c>false</c>, no line is plotted between a gap in the data.
+		/// </value>
+		public bool IgnoreMissingDataPoints
+		{
+			get
+			{
+				return _ignoreMissingDataPoints;
+			}
+			set
+			{
+				bool oldValue = _ignoreMissingDataPoints;
+				_ignoreMissingDataPoints = value;
+				if (value != oldValue)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
 		public bool IndependentLineColor
 		{
 			get
@@ -238,16 +279,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		public bool ConnectCircular
+		public bool IndependentDashStyle
 		{
 			get
 			{
-				return _connectCircular;
+				return _independentDashStyle;
 			}
 			set
 			{
-				bool oldValue = _connectCircular;
-				_connectCircular = value;
+				bool oldValue = _independentDashStyle;
+				_independentDashStyle = value;
 				if (value != oldValue)
 					EhSelfChanged(EventArgs.Empty);
 			}
@@ -319,7 +360,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			int rangelistlen = rangeList.Count;
 
-			if (this._ignoreMissingPoints)
+			if (this._ignoreMissingDataPoints)
 			{
 				// in case we ignore the missing points, all ranges can be plotted
 				// as one range, i.e. continuously
@@ -385,7 +426,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (this.IsColorProvider)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this.Color; });
 
-			DashPatternGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashPattern ?? DashPatternListManager.Instance.BuiltinDefaultSolid; });
+			if (!_independentDashStyle)
+				DashPatternGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashPattern ?? DashPatternListManager.Instance.BuiltinDefaultSolid; });
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -393,7 +435,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (this.IsColorReceiver)
 				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this.Color = c; });
 
-			DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern c) { this._linePen = this.LinePen.WithDashPattern(c); });
+			if (!_independentDashStyle)
+				DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern c) { this._linePen = this.LinePen.WithDashPattern(c); });
 
 			if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolGap = size; }))
 			{

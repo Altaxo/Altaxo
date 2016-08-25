@@ -39,14 +39,14 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	/// <summary>
 	/// Interaction logic for XYPlotScatterStyleControl.xaml
 	/// </summary>
-	public partial class XYZPlotScatterStyleControl : UserControl, IXYZPlotScatterStyleView
+	public partial class ScatterPlotStyleControl : UserControl, IScatterPlotStyleView
 	{
 		public event Action IndependentColorChanged;
 
 		private bool _enableDisableAll = false;
 		private int _suppressEvents = 0;
 
-		public XYZPlotScatterStyleControl()
+		public ScatterPlotStyleControl()
 		{
 			InitializeComponent();
 		}
