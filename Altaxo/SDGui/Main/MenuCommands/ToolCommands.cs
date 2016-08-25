@@ -41,7 +41,7 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			Altaxo.Main.Commands.TestAllProjectsInFolder.VerifyOpeningOfDocumentsWithoutException();
+			Altaxo.Main.Commands.TestAllProjectsInFolder.ShowDialogToVerifyOpeningOfDocumentsWithoutException();
 		}
 	}
 

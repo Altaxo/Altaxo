@@ -347,7 +347,7 @@ namespace Altaxo.Main
 		public static IDocumentLeafNode GetRootNode(IDocumentLeafNode node)
 		{
 			if (null == node)
-				throw new ArgumentNullException("node");
+				throw new ArgumentNullException(nameof(node));
 
 			var parent = node.ParentObject;
 			while (null != parent)

@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Altaxo.Main.Services
 {
-	public class OutputServiceTemporary : IOutputService
+	public class OutputServiceTemporary : OutputServiceBase
 	{
 		private StringBuilder _stb = new StringBuilder();
 		private object _locker = new object();
@@ -42,46 +42,12 @@ namespace Altaxo.Main.Services
 			}
 		}
 
-		#region IOutputService Members
-
-		public void Write(string text)
+		protected override void InternalWrite(string text)
 		{
 			lock (_locker)
 			{
 				_stb.Append(text);
 			}
 		}
-
-		public void WriteLine()
-		{
-			Write(System.Environment.NewLine);
-		}
-
-		public void WriteLine(string text)
-		{
-			Write(text + System.Environment.NewLine);
-		}
-
-		public void WriteLine(string format, params object[] args)
-		{
-			Write(string.Format(format, args) + System.Environment.NewLine);
-		}
-
-		public void WriteLine(System.IFormatProvider provider, string format, params object[] args)
-		{
-			Write(string.Format(provider, format, args) + System.Environment.NewLine);
-		}
-
-		public void Write(string format, params object[] args)
-		{
-			Write(string.Format(format, args));
-		}
-
-		public void Write(System.IFormatProvider provider, string format, params object[] args)
-		{
-			Write(string.Format(provider, format, args));
-		}
-
-		#endregion IOutputService Members
 	}
 }

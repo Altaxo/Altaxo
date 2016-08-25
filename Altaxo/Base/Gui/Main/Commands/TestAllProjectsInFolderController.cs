@@ -35,6 +35,8 @@ namespace Altaxo.Gui.Common.Tools
 		string FolderPaths { get; set; }
 
 		bool TestSavingAndReopening { get; set; }
+
+		string ProtocolFileName { get; set; }
 	}
 
 	[UserControllerForObject(typeof(TestAllProjectsInFolderOptions))]
@@ -54,6 +56,7 @@ namespace Altaxo.Gui.Common.Tools
 			{
 				_view.FolderPaths = _doc.FolderPaths;
 				_view.TestSavingAndReopening = _doc.TestSavingAndReopening;
+				_view.ProtocolFileName = _doc.ProtocolFileName ?? @"C:\TEMP\AltaxoVerifyOpeningOfDocumentsLogFile.txt";
 			}
 		}
 
@@ -61,6 +64,7 @@ namespace Altaxo.Gui.Common.Tools
 		{
 			_doc.TestSavingAndReopening = _view.TestSavingAndReopening;
 			_doc.FolderPaths = _view.FolderPaths;
+			_doc.ProtocolFileName = _view.ProtocolFileName;
 
 			var applyResult = !string.IsNullOrEmpty(_doc.FolderPaths);
 

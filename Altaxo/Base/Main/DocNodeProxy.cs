@@ -585,7 +585,11 @@ namespace Altaxo.Main
 		{
 			get
 			{
-				return ResolveDocumentObject(Current.Project);
+				var currentProject = Current.Project;
+				if (null == currentProject) // probably we are loading the AltaxoDocument now, and it is not set yet
+					currentProject = (AltaxoDocument)AbsoluteDocumentPath.GetRootNode(this);
+
+				return ResolveDocumentObject(currentProject);
 			}
 		}
 

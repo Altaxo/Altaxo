@@ -279,8 +279,10 @@ namespace Altaxo
 		/// Sets the current output service.
 		/// </summary>
 		/// <param name="outputservice">The instance of the output service to use in this application.</param>
-		public static void SetOutputService(Altaxo.Main.Services.IOutputService outputservice)
+		public static Altaxo.Main.Services.IOutputService SetOutputService(Altaxo.Main.Services.IOutputService outputservice)
 		{
+			var oldOutputService = sm_theOutputService;
+
 			if (null == sm_theOutputService)
 			{
 				sm_theOutputService = outputservice;
@@ -292,7 +294,13 @@ namespace Altaxo
 				sm_theOutputService.Write(oldService.Text);
 			}
 			else
-				throw new ApplicationException("The output service can not be re-set to another value, only initialized for the first time!");
+			{
+				if (null == outputservice)
+					throw new ArgumentNullException(nameof(outputservice));
+
+				sm_theOutputService = outputservice;
+			}
+			return oldOutputService;
 		}
 
 		/// <summary>

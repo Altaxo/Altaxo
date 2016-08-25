@@ -204,7 +204,7 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			Current.ProjectService.SaveProjectCoypAs();
+			Current.ProjectService.SaveProjectCopyAs();
 		}
 	}
 

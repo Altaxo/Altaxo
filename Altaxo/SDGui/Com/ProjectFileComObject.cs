@@ -71,7 +71,6 @@ namespace Altaxo.Com
 		{
 			// 1. Monitor the change of the project instance
 			Current.ProjectService.ProjectChanged += EhCurrentProjectInstanceChanged;
-			Current.ProjectService.ProjectRenamed += EhCurrentProjectFileNameChanged;
 
 			EhCurrentProjectInstanceChanged(null, null);
 		}
@@ -86,13 +85,15 @@ namespace Altaxo.Com
 				_currentProject = null;
 			}
 			Current.ProjectService.ProjectChanged -= EhCurrentProjectInstanceChanged;
-			Current.ProjectService.ProjectRenamed -= EhCurrentProjectFileNameChanged;
 		}
 
 		public IMoniker FileMoniker { get { return _fileMoniker; } }
 
 		private void EhCurrentProjectInstanceChanged(object sender, Altaxo.Main.ProjectEventArgs e)
 		{
+			if (e?.ProjectEventKind == Main.ProjectEventKind.ProjectRenamed)
+				EhCurrentProjectFileNameChanged(e.NewName);
+
 			if (object.ReferenceEquals(Current.Project, _currentProject))
 				return;
 
@@ -122,11 +123,6 @@ namespace Altaxo.Com
 						comObj.EhDocumentRenamed(_fileMoniker);
 				}
 			}
-		}
-
-		private void EhCurrentProjectFileNameChanged(object sender, Altaxo.Main.ProjectRenameEventArgs e)
-		{
-			EhCurrentProjectFileNameChanged(e.NewName);
 		}
 
 		private void EhCurrentProjectFileNameChanged(string fileName)

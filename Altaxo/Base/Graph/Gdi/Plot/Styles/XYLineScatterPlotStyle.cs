@@ -82,7 +82,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYLineScatterPlotStyle s = null != o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle();
+				XYLineScatterPlotStyle s = null != o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle(info);
 				// do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
 				s.m_LineStyle = (LinePlotStyle)info.GetValue("XYPlotLineStyle", s);
 				// do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYLineScatterPlotStyle s = null != o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle();
+				XYLineScatterPlotStyle s = null != o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle(info);
 				// do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
 				s.m_LineStyle = (LinePlotStyle)info.GetValue("XYPlotLineStyle", s);
 				// do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
@@ -143,7 +143,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYLineScatterPlotStyle s = null != o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle();
+				XYLineScatterPlotStyle s = null != o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle(info);
 				// do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
 				s.m_LineStyle = (LinePlotStyle)info.GetValue("XYPlotLineStyle", s);
 				// do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
@@ -163,22 +163,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion Serialization
 
-		public XYLineScatterPlotStyle()
-			: this(LineScatterPlotStyleKind.LineAndScatter)
-		{
-		}
+		public XYLineScatterPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 
-		public XYLineScatterPlotStyle(LineScatterPlotStyleKind kind)
 		{
+			var kind = LineScatterPlotStyleKind.LineAndScatter;
+
 			if (0 != (kind & LineScatterPlotStyleKind.Line))
-				this.m_LineStyle = new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+				this.m_LineStyle = new LinePlotStyle(info, oldDeserializationRequiresFullConstruction: true);
 
 			if (0 != (kind & LineScatterPlotStyleKind.Scatter))
-				this.m_ScatterStyle = new ScatterPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+				this.m_ScatterStyle = new ScatterPlotStyle(info, oldDeserializationRequiresFullConstruction: true);
 
 			this.m_LineSymbolGap = kind == LineScatterPlotStyleKind.LineAndScatter;
 		}
 
+		/*
 		public XYLineScatterPlotStyle(XYColumnPlotData pa)
 		{
 			this.m_LineStyle = new LinePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
@@ -186,6 +185,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// this.m_PlotAssociation = pa;
 			this.m_LineSymbolGap = true;
 		}
+		*/
 
 		public NamedColor Color
 		{

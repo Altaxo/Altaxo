@@ -11,11 +11,15 @@
 			<RowDefinition Height="8" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Label Grid.Row="0" Content="This command will search for all Altaxo projects in the provided directories and all subdirectories therein.&#10;Then these projects will be opened and closed, and any errors (exceptions during loading) will be reported in the output pane.&#10;Please enter your root directory name here. You can even enter multiple directories by separating them with semicolons (;)" />
 		<TextBox x:Name="_guiPathsToTest" Grid.Row="1" />
 		<Rectangle Fill="AliceBlue" Grid.Row="2" />
 		<Label Grid.Row="3" Content="Check the box below if you want to test whether the loaded project can  be saved again&#10;(now possibly as the current project version), and than can be re-opened again.&#10;This test requires additional time. The project will be saved in the user's temporary folder." />
 		<CheckBox x:Name="_guiStoreLoadTest" Grid.Row="4" Content="Perform test to save and re-open as current project version" />
+		<Label Grid.Row="5" Content="Full name of the protocol file (leave this empty if you don't want a protocol file) :" Margin="0, 16, 0,0" />
+		<TextBox x:Name="_guiProtocolFileName" Grid.Row="6" />
 	</Grid>
 </UserControl>

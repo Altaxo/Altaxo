@@ -35,8 +35,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		private class DeprecatedCurlyBraceShape : ClosedPathShapeBase
 		{
-			public DeprecatedCurlyBraceShape()
-				: base(new ItemLocationDirect(), (Altaxo.Main.Properties.IReadOnlyPropertyBag)null)
+			public DeprecatedCurlyBraceShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+				: base(new ItemLocationDirect(), info)
 			{ }
 
 			/// <summary>
@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (DeprecatedCurlyBraceShape)o : new DeprecatedCurlyBraceShape();
+				var s = null != o ? (DeprecatedCurlyBraceShape)o : new DeprecatedCurlyBraceShape(info);
 				info.GetBaseValueEmbedded(s, typeof(DeprecatedCurlyBraceShape).BaseType, parent);
 
 				var l = new CurlyBraceShape(info);

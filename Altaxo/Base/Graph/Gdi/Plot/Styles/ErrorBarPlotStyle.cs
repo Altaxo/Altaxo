@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			protected virtual ErrorBarPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				ErrorBarPlotStyle s = null != o ? (ErrorBarPlotStyle)o : new ErrorBarPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+				ErrorBarPlotStyle s = null != o ? (ErrorBarPlotStyle)o : new ErrorBarPlotStyle(info);
 
 				s._positiveErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("PositiveError", s);
 				if (null != s._positiveErrorColumn) s._positiveErrorColumn.ParentObject = s;
@@ -160,6 +160,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		#endregion Serialization
+
+		protected ErrorBarPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+		}
 
 		public ErrorBarPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
@@ -368,13 +372,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// </summary>
 		public INumericColumn PositiveErrorColumn
 		{
-			get { return _positiveErrorColumn == null ? null : _positiveErrorColumn.Document; }
+			get { return _positiveErrorColumn?.Document; }
 			set
 			{
-				var oldValue = _positiveErrorColumn == null ? null : _positiveErrorColumn.Document;
-				_positiveErrorColumn = NumericColumnProxyBase.FromColumn(value);
-				if (!object.ReferenceEquals(oldValue, value))
+				var oldValue = _positiveErrorColumn?.Document;
+				if (!object.ReferenceEquals(value, oldValue))
+				{
+					_positiveErrorColumn.Dispose();
+
+					_positiveErrorColumn = null == value ? null : NumericColumnProxyBase.FromColumn(value);
+
 					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -383,13 +392,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// </summary>
 		public INumericColumn NegativeErrorColumn
 		{
-			get { return _negativeErrorColumn == null ? null : _negativeErrorColumn.Document; }
+			get { return _negativeErrorColumn?.Document; }
 			set
 			{
-				var oldValue = _negativeErrorColumn == null ? null : _negativeErrorColumn.Document;
-				_negativeErrorColumn = NumericColumnProxyBase.FromColumn(value);
-				if (oldValue != value)
+				var oldValue = _negativeErrorColumn?.Document;
+				if (!object.ReferenceEquals(value, oldValue))
+				{
+					_negativeErrorColumn.Dispose();
+					_negativeErrorColumn = null == value ? null : NumericColumnProxyBase.FromColumn(value);
 					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -478,8 +490,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// Plot error bars for the dependent variable (y)
 			PlotRangeList rangeList = pdata.RangeList;
 			PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			INumericColumn posErrCol = _positiveErrorColumn.Document;
-			INumericColumn negErrCol = _negativeErrorColumn.Document;
+			INumericColumn posErrCol = PositiveErrorColumn;
+			INumericColumn negErrCol = NegativeErrorColumn;
 
 			if (posErrCol == null && negErrCol == null)
 				return; // nothing to do if both error columns are null

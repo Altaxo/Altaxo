@@ -56,7 +56,13 @@ namespace Altaxo.Main
 		{
 		}
 
-		public void SetCurrentProject(Altaxo.AltaxoDocument project, string projectFileName)
+		/// <summary>
+		/// Sets the current project instance and file name. No events raised (events should be raised by the caller).
+		/// The old project instance will be disposed of.
+		/// </summary>
+		/// <param name="project">The new project.</param>
+		/// <param name="projectFileName">Name of the new project file (for internally build instances, null).</param>
+		private void SetCurrentProject(Altaxo.AltaxoDocument project, string projectFileName)
 		{
 			Altaxo.AltaxoDocument oldProject = _currentProject;
 			string oldProjectFileName = _currentProjectFileName;
@@ -64,7 +70,6 @@ namespace Altaxo.Main
 			if (null != _currentProject)
 			{
 				_currentProject.DirtyChanged -= EhProjectDirtyChanged;
-				OnProjectClosed(new ProjectEventArgs(oldProject));
 			}
 
 			_currentProject = project;
@@ -87,13 +92,6 @@ namespace Altaxo.Main
 					{
 					}
 				}
-
-				OnProjectChanged();
-			}
-			else // Project instance has not changed
-			{
-				if (oldProjectFileName != _currentProjectFileName)
-					OnRenameProject(new ProjectRenameEventArgs(_currentProject, oldProjectFileName, _currentProjectFileName));
 			}
 		}
 
@@ -102,9 +100,10 @@ namespace Altaxo.Main
 			if (null != _currentProject)
 				throw new InvalidOperationException("There should be no document before creating the initial document");
 
+			OnProjectChanged(new ProjectEventArgs(null, null, ProjectEventKind.ProjectOpening));
 			var newProject = new AltaxoDocument();
 			SetCurrentProject(newProject, null);
-			OnProjectOpened(new ProjectEventArgs(newProject));
+			OnProjectChanged(new ProjectEventArgs(newProject, null, ProjectEventKind.ProjectOpened));
 		}
 
 		/// <summary>
@@ -267,22 +266,20 @@ namespace Altaxo.Main
 		/// to close (without saving). If there is a exception during opening, this exception is thrown.</param>
 		public void OpenProject(string filename, bool withoutUserInteraction)
 		{
-			if (CurrentOpenProject != null)
-			{
-				System.ComponentModel.CancelEventArgs e = new System.ComponentModel.CancelEventArgs();
-				if (this.CurrentOpenProject.IsDirty && withoutUserInteraction == false)
-					AskForSavingOfProject(e);
-
-				if (e.Cancel == true)
-					return;
-
-				CloseProject(true);
-			}
-
 			if (!FileUtility.TestFileExists(filename))
 			{
 				return;
 			}
+
+			if (CurrentOpenProject != null && CurrentOpenProject.IsDirty && !withoutUserInteraction)
+			{
+				System.ComponentModel.CancelEventArgs e = new System.ComponentModel.CancelEventArgs();
+				AskForSavingOfProject(e);
+
+				if (e.Cancel == true)
+					return;
+			}
+
 			WorkbenchSingleton.Workbench.StatusBar.SetMessage("${res:MainWindow.StatusBar.OpeningCombineMessage}");
 
 			try
@@ -292,12 +289,12 @@ namespace Altaxo.Main
 					string validproject = Path.ChangeExtension(filename, ".axoprj");
 					if (File.Exists(validproject))
 					{
-						InternalLoadProjectFromFile(validproject);
+						Load(validproject);
 					}
 				}
 				else
 				{
-					InternalLoadProjectFromFile(filename);
+					Load(filename);
 				}
 			}
 			catch (Exception ex)
@@ -312,23 +309,7 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// Loads a existing Altaxo project with the provided name.
-		/// </summary>
-		/// <param name="filename">The file name of the project to load.</param>
-		private void InternalLoadProjectFromFile(string filename)
-		{
-			if (!FileUtility.TestFileExists(filename))
-			{
-				return;
-			}
-
-			this.Load(filename);
-
-			FileService.RecentOpen.AddLastProject(filename);
-		}
-
-		/// <summary>
-		/// Opens a Altaxo project from a project file (without asking the user).
+		/// Opens a Altaxo project from a project file (without asking the user). The old project is closed without asking the user.
 		/// </summary>
 		/// <param name="filename"></param>
 		private void Load(string filename)
@@ -342,10 +323,12 @@ namespace Altaxo.Main
 
 			if (errorText.Length != 0)
 				throw new ApplicationException(errorText);
+
+			FileService.RecentOpen.AddLastProject(filename);
 		}
 
 		/// <summary>
-		/// Opens an Altaxo project from a stream.
+		/// Opens an Altaxo project from a stream. Use
 		/// </summary>
 		/// <param name="myStream">The stream from which to load the project.</param>
 		public string LoadProject(System.IO.Stream myStream)
@@ -355,13 +338,18 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// Opens a Altaxo project from a stream.
+		/// Opens a Altaxo project from a stream. Any existing old project will be closed without confirmation.
 		/// </summary>
 		/// <param name="myStream">The stream from which to load the project.</param>
 		/// <param name="filename">Either the filename of the file which stored the document, or null (e.g. myStream is a MemoryStream).</param>
 		private string InternalLoadProjectFromStream(System.IO.Stream myStream, string filename)
 		{
 			var errorText = new System.Text.StringBuilder();
+
+			var oldProject = CurrentOpenProject;
+
+			if (null != oldProject)
+				OnProjectChanged(new ProjectEventArgs(oldProject, oldProject.Name, ProjectEventKind.ProjectClosing));
 
 			try
 			{
@@ -381,6 +369,14 @@ namespace Altaxo.Main
 				errorText.Append(exc.ToString());
 			}
 
+			// Old project is now closed
+			if (null != oldProject)
+				OnProjectChanged(new ProjectEventArgs(oldProject, oldProject.Name, ProjectEventKind.ProjectClosed));
+
+			// Now open new project
+
+			OnProjectChanged(new ProjectEventArgs(null, filename, ProjectEventKind.ProjectOpening));
+
 			ZipFile zipFile = null; ;
 			AltaxoDocument newdocument = null; ;
 			Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info;
@@ -388,9 +384,10 @@ namespace Altaxo.Main
 
 			try
 			{
+				newdocument = new AltaxoDocument();
+
 				zipFile = new ZipFile(myStream);
 				info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
-				newdocument = new AltaxoDocument();
 				zipFileWrapper = new ZipFileWrapper(zipFile);
 			}
 			catch (Exception exc)
@@ -422,7 +419,7 @@ namespace Altaxo.Main
 
 				info.AnnounceDeserializationHasCompletelyFinished(); // Annonce completly finished deserialization, activate data sources of the Altaxo document
 
-				OnProjectOpened(new ProjectEventArgs(newdocument));
+				OnProjectChanged(new ProjectEventArgs(this.CurrentOpenProject, filename, ProjectEventKind.ProjectOpened));
 			}
 			catch (Exception exc)
 			{
@@ -531,7 +528,7 @@ namespace Altaxo.Main
 			string oldFileName = this._currentProjectFileName;
 			this._currentProjectFileName = filename;
 			if (oldFileName != filename)
-				this.OnRenameProject(new ProjectRenameEventArgs(this._currentProject, oldFileName, filename));
+				OnProjectChanged(new ProjectRenamedEventArgs(this._currentProject, oldFileName, filename));
 
 			FileUtility.ObservedSave(new NamedFileOperationDelegate(this.Save),
 				filename,
@@ -564,7 +561,7 @@ namespace Altaxo.Main
 		/// This command is used if in embedded object mode. It saves the current project to a file,
 		/// but don't set the current file name of the project (in project service). Furthermore, the title in the title bar is not influenced by the saving.
 		/// </summary>
-		public void SaveProjectCoypAs()
+		public void SaveProjectCopyAs()
 		{
 			SaveFileDialog fdiag = new SaveFileDialog();
 			fdiag.OverwritePrompt = true;
@@ -611,42 +608,38 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// Closes a project. If the project is dirty, and <paramref name="forceClose"/> is <c>false</c>, the user is asked to save the project.
+		/// Closes a project. If the project is dirty, and <paramref name="withoutUserInteraction"/> is <c>false</c>, the user is asked to save the project.
 		/// </summary>
-		/// <param name="forceClose">If <c>false</c> and the project is dirty, the user will be asked whether he really wants to close the project.
+		/// <param name="withoutUserInteraction">If <c>false</c> and the project is dirty, the user will be asked whether he really wants to close the project.
 		/// If <c>true</c>, the project is closed without user interaction.</param>
-		public void CloseProject(bool forceClose)
+		public void CloseProject(bool withoutUserInteraction)
 		{
-			if (CurrentOpenProject != null)
+			if (CurrentOpenProject != null && CurrentOpenProject.IsDirty && !withoutUserInteraction)
 			{
 				System.ComponentModel.CancelEventArgs e = new System.ComponentModel.CancelEventArgs();
-				if (this.CurrentOpenProject.IsDirty && !forceClose)
-					AskForSavingOfProject(e);
-
-				if (e.Cancel == false)
-				{
-					//if (saveCombinePreferencies)
-					//  SaveCombinePreferences(CurrentOpenCombine, openCombineFileName);
-
-					Altaxo.AltaxoDocument closedProject = CurrentOpenProject;
-					//CurrentSelectedProject = null;
-					//CurrentOpenCombine = CurrentSelectedCombine = null;
-					_currentProjectFileName = null;
-					WorkbenchSingleton.Workbench.CloseAllViews();
-					OnProjectClosed(new ProjectEventArgs(closedProject));
-					//closedProject.Dispose();
-
-					// now create a new project
-					var newProject = new Altaxo.AltaxoDocument();
-					this.SetCurrentProject(newProject, null);
-
-					// dispose the old project
-					if (null != closedProject)
-						closedProject.Dispose();
-
-					OnProjectOpened(new ProjectEventArgs(newProject));
-				}
+				AskForSavingOfProject(e);
+				if (true == e.Cancel)
+					return;
 			}
+
+			var oldProject = _currentProject;
+			var oldProjectName = _currentProjectFileName;
+
+			if (oldProject != null)
+				OnProjectChanged(new ProjectEventArgs(oldProject, oldProjectName, ProjectEventKind.ProjectClosing));
+
+			WorkbenchSingleton.Workbench.CloseAllViews();
+			SetCurrentProject(null, null);
+
+			if (oldProject != null)
+				OnProjectChanged(new ProjectEventArgs(oldProject, oldProjectName, ProjectEventKind.ProjectClosed));
+
+			// now create a new project
+
+			OnProjectChanged(new ProjectEventArgs(null, null, ProjectEventKind.ProjectOpening));
+			var newProject = new Altaxo.AltaxoDocument();
+			SetCurrentProject(newProject, null);
+			OnProjectChanged(new ProjectEventArgs(newProject, null, ProjectEventKind.ProjectOpened));
 		}
 
 		/// <summary>
@@ -1313,76 +1306,47 @@ namespace Altaxo.Main
 
 		private void EhProjectDirtyChanged(object sender, EventArgs e)
 		{
-			OnProjectDirtyChanged(new Altaxo.Main.ProjectEventArgs(this._currentProject));
+			OnProjectChanged(new Altaxo.Main.ProjectEventArgs(this._currentProject, this._currentProject.Name, ProjectEventKind.ProjectDirtyChanged));
 		}
 
 		//********* own events
-
-		/// <summary>
-		/// Fires the ProjectOpened event.
-		/// </summary>
-		/// <param name="e">Event args indicating which project was opened.</param>
-		protected virtual void OnProjectOpened(ProjectEventArgs e)
-		{
-			if (ProjectOpened != null)
-			{
-				ProjectOpened(this, e);
-			}
-
-			OnProjectChanged();
-		}
-
-		/// <summary>
-		/// Fires the project closed event.
-		/// </summary>
-		/// <param name="e">Indicates which project was closed.</param>
-		protected virtual void OnProjectClosed(ProjectEventArgs e)
-		{
-			if (ProjectClosed != null)
-			{
-				ProjectClosed(this, e);
-			}
-
-			OnProjectChanged();
-		}
-
-		/// <summary>
-		/// Fires the <see cref="ProjectRenamed" /> event.
-		/// </summary>
-		/// <param name="e">Indicates which project was renamed, and the old and the new name of the project.</param>
-		protected virtual void OnRenameProject(ProjectRenameEventArgs e)
-		{
-			if (ProjectRenamed != null)
-			{
-				ProjectRenamed(this, e);
-			}
-
-			OnProjectChanged();
-		}
-
-		/// <summary>
-		/// Fires the <see cref="ProjectDirtyChanged" /> event.
-		/// </summary>
-		/// <param name="e">Indicats on which project the dirty flag changed.</param>
-		protected virtual void OnProjectDirtyChanged(ProjectEventArgs e)
-		{
-			if (ProjectDirtyChanged != null)
-			{
-				ProjectDirtyChanged(this, e);
-			}
-
-			OnProjectChanged();
-		}
 
 		/// <summary>
 		/// Fires the <see cref="ProjectChanged" /> event. This occurs <b>after</b> the events <see cref="ProjectOpened" />,
 		/// <see cref="ProjectClosed" />, <see cref="ProjectRenamed" />, and <see cref="ProjectDirtyChanged" /> event. Usefull if
 		/// you not want to subscribe to the above mentioned single events.
 		/// </summary>
-		protected virtual void OnProjectChanged()
+		protected virtual void OnProjectChanged(ProjectEventArgs e)
 		{
-			if (ProjectChanged != null)
-				ProjectChanged(this, new ProjectEventArgs(this.CurrentOpenProject));
+			switch (e.ProjectEventKind)
+			{
+				case ProjectEventKind.ProjectOpening:
+					break;
+
+				case ProjectEventKind.ProjectOpened:
+					ProjectOpened?.Invoke(this, e);
+					break;
+
+				case ProjectEventKind.ProjectClosing:
+					break;
+
+				case ProjectEventKind.ProjectClosed:
+					ProjectClosed?.Invoke(this, e);
+					break;
+
+				case ProjectEventKind.ProjectRenamed:
+					ProjectRenamed?.Invoke(this, (ProjectRenamedEventArgs)e);
+					break;
+
+				case ProjectEventKind.ProjectDirtyChanged:
+					ProjectDirtyChanged?.Invoke(this, e);
+					break;
+
+				default:
+					break;
+			}
+
+			ProjectChanged?.Invoke(this, e);
 		}
 
 		/// <summary>

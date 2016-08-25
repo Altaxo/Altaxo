@@ -32,69 +32,79 @@ namespace Altaxo.Main
 	/// </summary>
 	public delegate void ProjectEventHandler(object sender, ProjectEventArgs e);
 
+	public enum ProjectEventKind
+	{
+		/// <summary>Occurs before a new project is opened from file. Not fired when a new project is created internally.</summary>
+		ProjectOpening,
+
+		/// <summary>Occurs after a new project is opened, both internally or from file.</summary>
+		ProjectOpened,
+
+		/// <summary>Occurs when a project is about to be closed.</summary>
+		ProjectClosing,
+
+		/// <summary>Occurs after a project is closed.</summary>
+		ProjectClosed,
+
+		/// <summary>Occurs after a project has been renamed.</summary>
+		ProjectRenamed,
+
+		/// <summary>Occurs when the dirty flag of a project has been changed.</summary>
+		ProjectDirtyChanged,
+	}
+
 	/// <summary>
 	/// Usefull to indicate the change of an Altaxo project.
 	/// </summary>
 	public class ProjectEventArgs : EventArgs
 	{
-		private Altaxo.AltaxoDocument project;
+		/// <summary>
+		/// Gets the project. When opening a new project, this property is null.
+		/// </summary>
+		/// <value>
+		/// The project.
+		/// </value>
+		public Altaxo.AltaxoDocument Project { get; private set; }
 
 		/// <summary>
-		/// Returns the project which was changed.
+		/// Gets the kind of the project event.
 		/// </summary>
-		public Altaxo.AltaxoDocument Project
-		{
-			get
-			{
-				return project;
-			}
-		}
+		/// <value>
+		/// The kind of the project event.
+		/// </value>
+		public ProjectEventKind ProjectEventKind { get; private set; }
+
+		/// <summary>The name of the project after renaming.</summary>
+		public string NewName { get; private set; }
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="renamedProject">The project which was changed.</param>
-		public ProjectEventArgs(Altaxo.AltaxoDocument renamedProject)
+		/// <param name="project">The project which was changed.</param>
+		/// <param name="fileName">The file name of the project.</param>
+		/// <param name="eventKind">The kind of the event.</param>
+		public ProjectEventArgs(Altaxo.AltaxoDocument project, string fileName, ProjectEventKind eventKind)
 		{
-			this.project = renamedProject;
+			this.Project = project;
+			this.NewName = fileName;
+			this.ProjectEventKind = eventKind;
 		}
 	}
 
 	/// <summary>
 	/// The event handler to indicate the renaming of a project.
 	/// </summary>
-	public delegate void ProjectRenameEventHandler(object sender, ProjectRenameEventArgs e);
+	public delegate void ProjectRenameEventHandler(object sender, ProjectRenamedEventArgs e);
 
 	/// <summary>
 	/// Usefull to indicate the renaming of an Altaxo project.
 	/// </summary>
-	public class ProjectRenameEventArgs : ProjectEventArgs
+	public class ProjectRenamedEventArgs : ProjectEventArgs
 	{
-		private string oldName;
-		private string newName;
-
 		/// <summary>
 		/// The name of the project before renaming.
 		/// </summary>
-
-		public string OldName
-		{
-			get
-			{
-				return oldName;
-			}
-		}
-
-		/// <summary>
-		/// The name of the project after renaming.
-		/// </summary>
-		public string NewName
-		{
-			get
-			{
-				return newName;
-			}
-		}
+		public string OldName { get; private set; }
 
 		/// <summary>
 		/// Constructor.
@@ -102,11 +112,10 @@ namespace Altaxo.Main
 		/// <param name="renamedProject">The project renamed.</param>
 		/// <param name="oldName">The old name of the project.</param>
 		/// <param name="newName">The new name of the project.</param>
-		public ProjectRenameEventArgs(Altaxo.AltaxoDocument renamedProject, string oldName, string newName)
-			: base(renamedProject)
+		public ProjectRenamedEventArgs(Altaxo.AltaxoDocument renamedProject, string oldName, string newName)
+			: base(renamedProject, newName, ProjectEventKind.ProjectRenamed)
 		{
-			this.oldName = oldName;
-			this.newName = newName;
+			this.OldName = oldName;
 		}
 	}
 
@@ -161,7 +170,7 @@ namespace Altaxo.Main
 		/// This command is used if in embedded object mode. It saves the current project to a file,
 		/// but don't set the current file name of the project (in project service). Furthermore, the title in the title bar is not influenced by the saving.
 		/// </summary>
-		void SaveProjectCoypAs();
+		void SaveProjectCopyAs();
 
 		/// <summary>
 		/// Saves the project under the given file name.

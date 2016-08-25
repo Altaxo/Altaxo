@@ -64,7 +64,7 @@ namespace Altaxo.Com
 
 			ComDebug.ReportInfo("IOleObject.SetHostNames szContainerApp={0}, szContainerObj={1}", containerApplicationName, containerFileName);
 
-			Current.Workbench.EhProjectChanged(this, new Main.ProjectEventArgs(null)); // Set new title in title bar
+			Current.Workbench.EhProjectChanged(this, new Main.ProjectEventArgs(null, null, Main.ProjectEventKind.ProjectDirtyChanged)); // Set new title in title bar
 		}
 
 		/// <summary>

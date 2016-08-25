@@ -118,7 +118,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			protected virtual ColumnDrivenSymbolSizePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = (ColumnDrivenSymbolSizePlotStyle)o ?? new ColumnDrivenSymbolSizePlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+				var s = (ColumnDrivenSymbolSizePlotStyle)o ?? new ColumnDrivenSymbolSizePlotStyle(info);
 
 				s._dataColumnProxy = (Altaxo.Data.INumericColumnProxy)info.GetValue("DataColumn", s);
 				if (null != s._dataColumnProxy) s._dataColumnProxy.ParentObject = s;
@@ -143,6 +143,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		#endregion Serialization
+
+		protected ColumnDrivenSymbolSizePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+		}
 
 		/// <summary>
 		/// Creates a new instance with default values.

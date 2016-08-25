@@ -37,8 +37,8 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		private class DeprecatedLineShape : ClosedPathShapeBase
 		{
-			public DeprecatedLineShape()
-				: base(new ItemLocationDirect(), (Altaxo.Main.Properties.IReadOnlyPropertyBag)null)
+			public DeprecatedLineShape(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+				: base(new ItemLocationDirect(), info)
 			{
 			}
 
@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = null != o ? (DeprecatedLineShape)o : new DeprecatedLineShape();
+				var s = null != o ? (DeprecatedLineShape)o : new DeprecatedLineShape(info);
 
 				info.GetBaseValueEmbedded(s, "AltaxoBase,Altaxo.Graph.GraphicsObject,0", parent);
 

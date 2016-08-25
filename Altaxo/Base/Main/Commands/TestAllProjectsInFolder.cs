@@ -35,6 +35,8 @@ namespace Altaxo.Main.Commands
 
 		public bool TestSavingAndReopening { get; set; }
 
+		public string ProtocolFileName { get; set; }
+
 		public bool CopyFrom(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))
@@ -44,6 +46,7 @@ namespace Altaxo.Main.Commands
 			{
 				this.FolderPaths = from.FolderPaths;
 				this.TestSavingAndReopening = from.TestSavingAndReopening;
+				this.ProtocolFileName = from.ProtocolFileName;
 				return true;
 			}
 			return false;
@@ -59,7 +62,60 @@ namespace Altaxo.Main.Commands
 
 	public class TestAllProjectsInFolder
 	{
-		private static void GetAltaxoProjectFileNames(System.IO.DirectoryInfo dir, List<string> list)
+		#region Internal class Reporter
+
+		public class Reporter : Altaxo.Main.Services.OutputServiceBase
+		{
+			private System.IO.StreamWriter _wr;
+			private Altaxo.Main.Services.IOutputService _previousOutputService;
+
+			public Reporter(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.IOutputService previousOutputService)
+			{
+				_previousOutputService = previousOutputService;
+
+				if (!string.IsNullOrEmpty(testOptions.ProtocolFileName))
+				{
+					var stream = new System.IO.FileStream(testOptions.ProtocolFileName, System.IO.FileMode.Append, System.IO.FileAccess.Write, System.IO.FileShare.Read);
+					_wr = new System.IO.StreamWriter(stream, Encoding.UTF8);
+
+					_wr.WriteLine();
+					_wr.WriteLine("******************************************************************************");
+					_wr.WriteLine("{0}: Test of Altaxo project files. Folder(s) to test: {1}, SaveAndReopeningProjects: {2}", DateTime.Now, testOptions.FolderPaths, testOptions.TestSavingAndReopening);
+					_wr.WriteLine("------------------------------------------------------------------------------");
+				}
+			}
+
+			public void Close()
+			{
+				_wr?.Close();
+				_wr = null;
+			}
+
+			protected override void InternalWrite(string text)
+			{
+				if (null != _wr)
+				{
+					_wr.Write(text);
+					_wr.Flush();
+				}
+
+				_previousOutputService.Write(text);
+			}
+		}
+
+		#endregion Internal class Reporter
+
+		private Reporter _reporter;
+
+		private TestAllProjectsInFolderOptions _testOptions;
+
+		private TestAllProjectsInFolder(Reporter reporter, TestAllProjectsInFolderOptions testOptions)
+		{
+			_reporter = reporter;
+			_testOptions = testOptions;
+		}
+
+		private void GetAltaxoProjectFileNames(System.IO.DirectoryInfo dir, List<string> list)
 		{
 			try
 			{
@@ -70,7 +126,7 @@ namespace Altaxo.Main.Commands
 			}
 			catch (Exception ex)
 			{
-				Current.Console.WriteLine("Warning: unable to enumerate subfolders in folder {0}: {1}", dir.FullName, ex.Message);
+				_reporter.WriteLine("Warning: unable to enumerate subfolders in folder {0}: {1}", dir.FullName, ex.Message);
 			}
 
 			try
@@ -81,11 +137,11 @@ namespace Altaxo.Main.Commands
 			}
 			catch (Exception ex)
 			{
-				Current.Console.WriteLine("Warning: unable to enumerate Altaxo project files in folder {0}: {1}", dir.FullName, ex.Message);
+				_reporter.WriteLine("Warning: unable to enumerate Altaxo project files in folder {0}: {1}", dir.FullName, ex.Message);
 			}
 		}
 
-		private static List<string> GetAltaxoProjectFileNames(string pathsSeparatedBySemicolon)
+		private List<string> GetAltaxoProjectFileNames(string pathsSeparatedBySemicolon)
 		{
 			var list = new List<string>();
 
@@ -99,7 +155,7 @@ namespace Altaxo.Main.Commands
 
 				if (!System.IO.Directory.Exists(path))
 				{
-					Current.Console.WriteLine("Error: directory {0} does not exist", path);
+					_reporter.WriteLine("Error: directory {0} does not exist", path);
 					continue;
 				}
 
@@ -109,12 +165,12 @@ namespace Altaxo.Main.Commands
 
 			if (list.Count == 0)
 			{
-				Current.Console.WriteLine("Warning: no files found in {0}", pathsSeparatedBySemicolon);
+				_reporter.WriteLine("Warning: no files found in {0}", pathsSeparatedBySemicolon);
 			}
 			return list;
 		}
 
-		public static void VerifyOpeningOfDocumentsWithoutException()
+		public static void ShowDialogToVerifyOpeningOfDocumentsWithoutException()
 		{
 			if (Current.Project.IsDirty)
 			{
@@ -129,13 +185,45 @@ namespace Altaxo.Main.Commands
 				return;
 
 			var monitor = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
-			Current.Gui.ShowBackgroundCancelDialog(10, monitor, () => InternalVerifyOpeningOfDocumentsWithoutException(testOptions, monitor));
+			Current.Gui.ShowBackgroundCancelDialog(10, monitor, () => InternalVerifyOpeningOfDocumentsWithoutExceptionStart(testOptions, monitor));
 		}
 
-		public static void InternalVerifyOpeningOfDocumentsWithoutException(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor)
+		private static void InternalVerifyOpeningOfDocumentsWithoutExceptionStart(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor)
 		{
-			Current.Gui.Execute(Current.ProjectService.CloseProject, true);
+			var reporter = new Reporter(testOptions, Current.Console);
+			var oldOutputService = Current.SetOutputService(reporter);
 
+			var test = new TestAllProjectsInFolder(reporter, testOptions);
+
+			Current.ProjectService.ProjectChanged += test.EhProjectChanged;
+
+			try
+			{
+				test.InternalVerifyOpeningOfDocumentsWithoutException(testOptions, monitor);
+			}
+			catch (Exception ex)
+			{
+				reporter.WriteLine("Fatal error: Test has to close due to an unhandled exception. The exception details:");
+				reporter.WriteLine(ex.ToString());
+			}
+			finally
+			{
+				Current.ProjectService.ProjectChanged += test.EhProjectChanged;
+
+				reporter.WriteLine("----------------------- End of test ------------------------------------------");
+				reporter.Close();
+				Current.SetOutputService(oldOutputService);
+			}
+		}
+
+		private void EhProjectChanged(object sender, ProjectEventArgs e)
+		{
+			if (!string.IsNullOrEmpty(e.NewName) && e.ProjectEventKind != ProjectEventKind.ProjectDirtyChanged)
+				_reporter.WriteLine("Project changed: Type: {0}; fileName: {1}", e.ProjectEventKind, e.NewName);
+		}
+
+		private void InternalVerifyOpeningOfDocumentsWithoutException(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor)
+		{
 			monitor.ReportProgress("Searching Altaxo project files ...", 0);
 			var path = testOptions.FolderPaths;
 			Current.Console.WriteLine("Begin of test. Search path(s): {0}", path);
@@ -151,9 +239,6 @@ namespace Altaxo.Main.Commands
 
 			foreach (var filename in filelist)
 			{
-				if (monitor.CancellationPending)
-					break;
-
 				if (monitor.CancellationPending)
 					break;
 

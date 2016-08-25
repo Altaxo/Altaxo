@@ -155,7 +155,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent, bool nativeCall)
 			{
-				LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+				LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle(info);
 
 				s._font = (FontX)info.GetValue("Font", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
@@ -250,7 +250,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent, bool nativeCall)
 			{
-				LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+				LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle(info);
 
 				s._font = (FontX)info.GetValue("Font", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
@@ -314,7 +314,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent, bool nativeCall)
 			{
-				LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+				LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle(info);
 
 				s._font = (FontX)info.GetValue("Font", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
@@ -376,7 +376,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent, bool nativeCall)
 			{
-				LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle((Altaxo.Main.Properties.IReadOnlyPropertyBag)null);
+				LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle(info);
 
 				s._font = (FontX)info.GetValue("Font", s);
 				s._independentColor = info.GetBoolean("IndependentColor");

@@ -125,8 +125,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			_directoryNodesByName.Add((string)_projectDirectoryRoot.Tag, _projectDirectoryRoot);
 			_allItemsNode.Nodes.Add(_projectDirectoryRoot);
 
-			Current.ProjectService.ProjectOpened += this.EhProjectOpened;
-			Current.ProjectService.ProjectClosed += this.EhProjectClosed;
+			Current.ProjectService.ProjectChanged += this.EhProjectChanged;
 
 			Initialize(true);
 		}
@@ -135,7 +134,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			if (initData)
 			{
-				EhProjectOpened(this, new ProjectEventArgs(Current.Project));
+				EhProjectChanged(this, new ProjectEventArgs(Current.Project, Current.Project.Name, ProjectEventKind.ProjectOpened));
 			}
 
 			if (null != _view)
@@ -159,9 +158,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			get { return _doc; }
 		}
 
-		private void EhProjectOpened(object sender, ProjectEventArgs e)
+		private void EhProjectChanged(object sender, ProjectEventArgs e)
 		{
-			Current.Gui.Execute(EhProjectOpened_Unsynchronized, sender, e);
+			if (e.ProjectEventKind == ProjectEventKind.ProjectOpened)
+				Current.Gui.Execute(EhProjectOpened_Unsynchronized, sender, e);
+			else if (e.ProjectEventKind == ProjectEventKind.ProjectClosing)
+				Current.Gui.Execute(EhProjectClosing_Unsynchronized, sender, e);
 		}
 
 		private void EhProjectOpened_Unsynchronized(object sender, ProjectEventArgs e)
@@ -185,12 +187,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			SetItemListHandler(new SpecificProjectFolderHandler(Altaxo.Main.ProjectFolder.RootFolderName));
 		}
 
-		private void EhProjectClosed(object sender, ProjectEventArgs e)
-		{
-			Current.Gui.Execute(EhProjectClosed_Unsynchronized, sender, e);
-		}
-
-		private void EhProjectClosed_Unsynchronized(object sender, ProjectEventArgs e)
+		private void EhProjectClosing_Unsynchronized(object sender, ProjectEventArgs e)
 		{
 			if (null != _doc)
 			{

@@ -52,6 +52,18 @@ namespace Altaxo.Gui.Common.Tools
 			}
 		}
 
+		public string ProtocolFileName
+		{
+			get
+			{
+				return _guiProtocolFileName.Text;
+			}
+			set
+			{
+				_guiProtocolFileName.Text = value;
+			}
+		}
+
 		public bool TestSavingAndReopening
 		{
 			get

@@ -64,6 +64,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			double symbolGap);
 
 		protected bool _independentColor;
+		protected bool _independentDashStyle;
 		protected PenX3D _linePen;
 		protected ILineConnectionStyle _connectionStyle;
 		protected bool _useLineSymbolGap;
@@ -85,10 +86,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			{
 				LinePlotStyle s = (LinePlotStyle)obj;
 				info.AddValue("Pen", s._linePen);
+				info.AddValue("IndependentDashStyle", s._independentDashStyle);
+				info.AddValue("IndependentColor", s._independentColor);
 				info.AddValue("Connection", s._connectionStyle);
 				info.AddValue("LineSymbolGap", s._useLineSymbolGap);
 				info.AddValue("IgnoreMissingPoints", s._ignoreMissingPoints);
-				info.AddValue("IndependentColor", s._independentColor);
 				info.AddValue("ConnectCircular", s._connectCircular);
 			}
 
@@ -97,10 +99,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
 
 				s._linePen = (PenX3D)info.GetValue("Pen", s);
+				s._independentDashStyle = info.GetBoolean("IndependentDashStyle");
+				s._independentColor = info.GetBoolean("IndependentColor");
 				s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
 				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
 				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
-				s._independentColor = info.GetBoolean("IndependentColor");
 				s._connectCircular = info.GetBoolean("ConnectCircular");
 				return s;
 			}
