@@ -130,6 +130,25 @@ namespace Altaxo.Calc
 			return xmin < x && x <= xmax;
 		}
 
+		/// <summary>
+		/// Clamps the value <paramref name="x"/> to the interval [<paramref name="xmin"/>, <paramref name="xmax"/>]. If Double.NaN is provided, the return value is Double.NaN.
+		/// </summary>
+		/// <param name="x">The x value.</param>
+		/// <param name="xmin">The interval minimum.</param>
+		/// <param name="xmax">The interval maximum.</param>
+		/// <returns>The value <paramref name="x"/> clamped to the interval [<paramref name="xmin"/>, <paramref name="xmax"/>]. If Double.NaN is provided, the return value is Double.NaN.</returns>
+		public static double ClampToInterval(this double x, double xmin, double xmax)
+		{
+			if (!(xmin <= xmax))
+				throw new ArgumentOutOfRangeException(nameof(xmin) + " should be less than or equal to " + nameof(xmax));
+
+			if (x < xmin)
+				x = xmin;
+			if (x > xmax)
+				x = xmax;
+			return x;
+		}
+
 		#endregion Number tests
 
 		public static double Log1p(double x)

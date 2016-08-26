@@ -487,6 +487,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		protected void PaintYErrorBars(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
 		{
+			const double logicalClampMinimum = -10;
+			const double logicalClampMaximum = 11;
+
 			// Plot error bars for the dependent variable (y)
 			PlotRangeList rangeList = pdata.RangeList;
 			PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
@@ -517,7 +520,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					AltaxoVariant y = pdata.GetYPhysical(j + offset);
 					Logical3D lm = layer.GetLogical3D(pdata, j + offset);
 					lm.RX += _cachedLogicalShiftOfIndependent;
-					if (lm.IsNaN)
+
+					if (!Calc.RMath.IsInIntervalCC(lm.RX, logicalClampMinimum, logicalClampMaximum))
+						continue;
+					if (!Calc.RMath.IsInIntervalCC(lm.RY, logicalClampMinimum, logicalClampMaximum))
 						continue;
 
 					Logical3D lh = lm;
@@ -526,13 +532,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					bool llvalid = false;
 					if (posErrCol != null)
 					{
-						lh.RY = layer.YAxis.PhysicalVariantToNormal(y + Math.Abs(posErrCol[j + offset]));
-						lhvalid = !lh.IsNaN;
+						var ry = layer.YAxis.PhysicalVariantToNormal(y + Math.Abs(posErrCol[j + offset]));
+						ry = Calc.RMath.ClampToInterval(ry, logicalClampMinimum, logicalClampMaximum);
+						lh.RY = ry;
+						lhvalid = !lh.IsNaN && lh.RY != lm.RY;
 					}
 					if (negErrCol != null)
 					{
-						ll.RY = layer.YAxis.PhysicalVariantToNormal(y - Math.Abs(negErrCol[j + offset]));
-						llvalid = !ll.IsNaN;
+						var ry = layer.YAxis.PhysicalVariantToNormal(y - Math.Abs(negErrCol[j + offset]));
+						ry = Calc.RMath.ClampToInterval(ry, logicalClampMinimum, logicalClampMaximum);
+						ll.RY = ry;
+						llvalid = !ll.IsNaN && ll.RY != lm.RY;
 					}
 					if (!(lhvalid || llvalid))
 						continue; // nothing to do for this point if both pos and neg logical point are invalid.
