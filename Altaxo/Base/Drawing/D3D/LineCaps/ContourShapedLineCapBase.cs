@@ -32,8 +32,6 @@ namespace Altaxo.Drawing.D3D.LineCaps
 {
 	public abstract class ContourShapedLineCapBase : ILineCap
 	{
-		public abstract double BaseInset { get; }
-
 		public virtual double MinimumRelativeSize
 		{
 			get
@@ -63,10 +61,8 @@ namespace Altaxo.Drawing.D3D.LineCaps
 			return this;
 		}
 
-		public virtual double GetAbsoluteBaseInset(double thickness1, double thickness2)
-		{
-			return BaseInset * 0.5 * Math.Max(thickness1, thickness2);
-		}
+		/// <inheritdoc/>
+		public abstract double GetAbsoluteBaseInset(double thickness1, double thickness2);
 
 		/// <summary>
 		/// we have 3 different situations here:

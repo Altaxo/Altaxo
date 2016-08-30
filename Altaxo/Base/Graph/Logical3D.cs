@@ -59,6 +59,24 @@ namespace Altaxo.Graph
 			return result;
 		}
 
+		public double GetR(int axisNumber)
+		{
+			switch (axisNumber)
+			{
+				case 0:
+					return RX;
+
+				case 1:
+					return RY;
+
+				case 2:
+					return RZ;
+
+				default:
+					throw new ArgumentOutOfRangeException(nameof(axisNumber));
+			}
+		}
+
 		public void SetR(int axisNumber, double r)
 		{
 			switch (axisNumber)
@@ -76,7 +94,7 @@ namespace Altaxo.Graph
 					break;
 
 				default:
-					throw new NotImplementedException();
+					throw new ArgumentOutOfRangeException(nameof(axisNumber));
 			}
 		}
 

@@ -30,22 +30,24 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.LineCaps
 {
-	public class ContourArrow20 : ContourShapedLineCapBase
+	public class ContourDisc10 : ContourShapedLineCapBase
 	{
-		private class ArrowContour : ILineCapContour
+		private class Contour : ILineCapContour
 		{
 			private double _relativeSize;
+			private double _relativeDiscThickness;
 
-			public ArrowContour(double relativeSize)
+			public Contour(double relativeSize, double relativeDiscThickness)
 			{
 				_relativeSize = relativeSize;
+				_relativeDiscThickness = relativeDiscThickness;
 			}
 
 			public int NumberOfNormals
 			{
 				get
 				{
-					return 4;
+					return 6;
 				}
 			}
 
@@ -53,7 +55,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
 			{
 				get
 				{
-					return 3;
+					return 4;
 				}
 			}
 
@@ -73,10 +75,16 @@ namespace Altaxo.Drawing.D3D.LineCaps
 						return new VectorD2D(-1, 0);
 
 					case 2:
-						return VectorD2D.CreateNormalized(1, 4);
+						return new VectorD2D(0, 1);
 
 					case 3:
-						return VectorD2D.CreateNormalized(1, 4);
+						return new VectorD2D(0, 1);
+
+					case 4:
+						return new VectorD2D(1, 0);
+
+					case 5:
+						return new VectorD2D(1, 0);
 
 					default:
 						throw new IndexOutOfRangeException();
@@ -94,7 +102,10 @@ namespace Altaxo.Drawing.D3D.LineCaps
 						return new PointD2D(0, _relativeSize);
 
 					case 2:
-						return new PointD2D(4 * _relativeSize, 0);
+						return new PointD2D(_relativeDiscThickness, _relativeSize);
+
+					case 3:
+						return new PointD2D(_relativeDiscThickness, 0);
 
 					default:
 						throw new IndexOutOfRangeException();
@@ -110,12 +121,12 @@ namespace Altaxo.Drawing.D3D.LineCaps
 		/// <summary>
 		/// 2016-05-02 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ContourArrow20), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ContourDisc10), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (ContourArrow20)obj;
+				var s = (ContourDisc10)obj;
 				info.AddValue("MinAbsoluteSize", s._minimumAbsoluteSize);
 				info.AddValue("MinRelativeSize", s._minimumRelativeSize);
 			}
@@ -124,19 +135,19 @@ namespace Altaxo.Drawing.D3D.LineCaps
 			{
 				double abs = info.GetDouble("MinAbsoluteSize");
 				double rel = info.GetDouble("MinRelativeSize");
-				return new ContourArrow20(abs, rel);
+				return new ContourDisc10(abs, rel);
 			}
 		}
 
 		#endregion Serialization
 
-		public ContourArrow20()
+		public ContourDisc10()
 		{
 			_minimumAbsoluteSize = 8;
 			_minimumRelativeSize = 2;
 		}
 
-		public ContourArrow20(double minAbsoluteSizePt, double minRelativeSize)
+		public ContourDisc10(double minAbsoluteSizePt, double minRelativeSize)
 		{
 			if (!(minAbsoluteSizePt >= 0))
 				throw new ArgumentOutOfRangeException(nameof(minAbsoluteSizePt), "must be >= 0");
@@ -176,7 +187,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
 			}
 			else
 			{
-				var result = (ContourArrow20)MemberwiseClone();
+				var result = (ContourDisc10)MemberwiseClone();
 				result._minimumAbsoluteSize = absoluteSizePt;
 				result._minimumRelativeSize = relativeSize;
 				return result;
@@ -185,13 +196,13 @@ namespace Altaxo.Drawing.D3D.LineCaps
 
 		public override double GetAbsoluteBaseInset(double thickness1, double thickness2)
 		{
-			double relSize = Math.Max(_minimumRelativeSize, _minimumAbsoluteSize / Math.Max(thickness1, thickness2));
-			return -relSize * 2 * Math.Max(thickness1, thickness2);
+			return Math.Min(thickness1, thickness2);
 		}
 
 		public override void AddGeometry(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int, bool> AddIndices, ref int vertexIndexOffset, bool isStartCap, PointD3D basePoint, VectorD3D eastVector, VectorD3D northVector, VectorD3D forwardVectorNormalized, ICrossSectionOfLine lineCrossSection, PointD3D[] baseCrossSectionPositions, VectorD3D[] baseCrossSectionNormals, ref object temporaryStorageSpace)
 		{
 			double relSize = Math.Max(_minimumRelativeSize, _minimumAbsoluteSize / Math.Max(lineCrossSection.Size1, lineCrossSection.Size2));
+			double relDiscThickness = 2*Math.Min(lineCrossSection.Size1, lineCrossSection.Size2) / Math.Max(lineCrossSection.Size1, lineCrossSection.Size2);
 
 			Add(
 				AddPositionAndNormal,
@@ -206,7 +217,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
 				baseCrossSectionPositions,
 				baseCrossSectionNormals,
 				ref temporaryStorageSpace,
-				new ArrowContour(relSize));
+				new Contour(relSize, relDiscThickness));
 		}
 	}
 }

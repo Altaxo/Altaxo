@@ -321,6 +321,8 @@ namespace Altaxo.Gui.Graph3D.Plot
 					DistributeStyleChange(i);
 				}
 			}
+
+			_dataController.SetAdditionalPlotColumns(GetAdditionalColumns()); // update list in case it has changed
 		}
 
 		/// <summary>
