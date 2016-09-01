@@ -177,9 +177,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			double mant;
 			SplitInFirstPartAndExponent((double)mtick, out firstpart, out mant, out middelpart, out exponent);
 
-			var size1 = g.MeasureString(_prefix + firstpart + middelpart, font, PointD3D.Empty, strfmt);
-			var size2 = g.MeasureString(exponent, font, PointD3D.Empty, strfmt);
-			var size3 = g.MeasureString(_suffix, font, PointD3D.Empty, strfmt);
+			var size1 = g.MeasureString(_prefix + firstpart + middelpart, font, PointD3D.Empty);
+			var size2 = g.MeasureString(exponent, font, PointD3D.Empty);
+			var size3 = g.MeasureString(_suffix, font, PointD3D.Empty);
 
 			return new VectorD3D(size1.X + size2.X + size3.X, size1.Y, font.Depth);
 		}
@@ -190,7 +190,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			double mant;
 			SplitInFirstPartAndExponent((double)item, out firstpart, out mant, out middelpart, out exponent);
 
-			var size1 = g.MeasureString(_prefix + firstpart + middelpart, font, morg, strfmt);
+			var size1 = g.MeasureString(_prefix + firstpart + middelpart, font, morg);
 			g.DrawString(_prefix + firstpart + middelpart, font, brush, morg, strfmt);
 			var orginalY = morg.Y;
 			morg = morg + new VectorD3D(size1.X, size1.Y, 0);
@@ -198,7 +198,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			g.DrawString(exponent, font2, brush, morg, strfmt);
 			if (!string.IsNullOrEmpty(_suffix))
 			{
-				var shiftX = g.MeasureString(exponent, font2, morg, strfmt).X;
+				var shiftX = g.MeasureString(exponent, font2, morg).X;
 				morg = new PointD3D(morg.X + shiftX, orginalY, morg.Z);
 			}
 
@@ -243,7 +243,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 				}
 				firstp[i] = firstpart;
 				expos[i] = exponent;
-				maxexposize = Math.Max(maxexposize, g.MeasureString(exponent, localfont2, PointD3D.Empty, strfmt).X);
+				maxexposize = Math.Max(maxexposize, g.MeasureString(exponent, localfont2, PointD3D.Empty).X);
 			}
 
 			if (firstpartmax > 0 && firstpartmax > firstpartmin) // then we must use special measures to equilibrate the mantissa
@@ -290,9 +290,9 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 				_font1 = font1;
 				_font2 = font2;
 				_strfmt = strfmt;
-				_size1 = g.MeasureString(_firstpart, _font1, PointD3D.Empty, strfmt);
-				_size2 = g.MeasureString(_exponent, _font2, new PointD3D(_size1.X, 0, 0), strfmt);
-				_size3 = g.MeasureString(_lastpart, _font1, PointD3D.Empty, strfmt);
+				_size1 = g.MeasureString(_firstpart, _font1, PointD3D.Empty);
+				_size2 = g.MeasureString(_exponent, _font2, new PointD3D(_size1.X, 0, 0));
+				_size3 = g.MeasureString(_lastpart, _font1, PointD3D.Empty);
 				_rightPadding = maxexposize - _size2.X;
 			}
 

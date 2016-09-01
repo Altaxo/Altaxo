@@ -31,7 +31,8 @@ namespace Altaxo.Graph.Plot.Groups
 	public class BarSizePosition3DGroupStyle
 		:
 		Main.SuspendableDocumentLeafNodeWithEventArgs,
-		IPlotGroupStyle
+		IPlotGroupStyle,
+		IShiftLogicalXYZGroupStyle
 	{
 		private bool _isInitialized;
 		private bool _isStepEnabled;
@@ -42,6 +43,11 @@ namespace Altaxo.Graph.Plot.Groups
 		private bool _wasTouchedInThisPrepareStep;
 
 		private int _numberOfItems;
+
+		private BarShiftStrategy3D _barShiftStrategy;
+
+		/// <summary>The number of items in one direction. This field is used in Step() if bar shift strategy is one of the manual values, to switch in y-Direction after every this number of items Steps in x-Direction.</summary>
+		private int _barShiftMaxNumberOfItemsInOneDirection;
 
 		/// <summary>
 		/// Relative gap between the bars belonging to the same x-value.
@@ -77,14 +83,26 @@ namespace Altaxo.Graph.Plot.Groups
 		/// </summary>
 		private double _logicalClusterSizeY;
 
-		private double _sizeX;
-		private double _positionX;
+		/// <summary>The x-size of a bar in logical units.</summary>
+		private double _logicalItemSizeX;
 
-		/// <summary>The number of items in x-direction. This field is used in Step() to switch in y-Direction after every this number of items Steps in x-Direction.</summary>
-		private int _numberOfItemsX;
+		/// <summary>The y-size of a bar in logical units.</summary>
+		private double _logicalItemSizeY;
 
-		private double _sizeY;
-		private double _positionY;
+		/// <summary>The running x offset from the real data point to the center of the bar in logical units.</summary>
+		private double _logicalItemOffsetX;
+
+		/// <summary>The running y offset from the real data point to the center of the bar in logical units.</summary>
+		private double _logicalItemOffsetY;
+
+		/// <summary>The number of items in x-direction in a bar cluster.</summary>
+		private int _cachedNumberOfItemsX;
+
+		/// <summary>The number of items in y-direction in a bar cluster.</summary>
+		private int _cachedNumberOfItemsY;
+
+		/// <summary>The running number of the item which is processed in the Step() call.</summary>
+		private int _cachedCurrentItemIndex;
 
 		#region Serialization
 
@@ -112,37 +130,44 @@ namespace Altaxo.Graph.Plot.Groups
 			if (object.ReferenceEquals(this, from))
 				return;
 
-			_isInitialized = from._isInitialized;
-			_isStepEnabled = from._isStepEnabled;
-			_wasTouchedInThisPrepareStep = from._wasTouchedInThisPrepareStep;
-			_numberOfItems = from._numberOfItems;
+			_barShiftStrategy = from._barShiftStrategy;
+			_barShiftMaxNumberOfItemsInOneDirection = from._barShiftMaxNumberOfItemsInOneDirection;
 			_relInnerGapX = from._relInnerGapX;
 			_relOuterGapX = from._relOuterGapX;
 			_relInnerGapY = from._relInnerGapY;
 			_relOuterGapY = from._relOuterGapY;
+
+			_isInitialized = from._isInitialized;
+			_isStepEnabled = from._isStepEnabled;
+			_wasTouchedInThisPrepareStep = from._wasTouchedInThisPrepareStep;
+			_numberOfItems = from._numberOfItems;
 			_logicalClusterSizeX = from._logicalClusterSizeX;
 			_logicalClusterSizeY = from._logicalClusterSizeY;
-			_sizeX = from._sizeX;
-			_positionX = from._positionX;
-			_sizeY = from._sizeY;
-			_positionY = from._positionY;
+			_logicalItemSizeX = from._logicalItemSizeX;
+			_logicalItemOffsetX = from._logicalItemOffsetX;
+			_logicalItemSizeY = from._logicalItemSizeY;
+			_logicalItemOffsetY = from._logicalItemOffsetY;
 		}
 
 		public void TransferFrom(IPlotGroupStyle fromb)
 		{
 			var from = (BarSizePosition3DGroupStyle)fromb;
-			_isInitialized = from._isInitialized;
-			_numberOfItems = from._numberOfItems;
+
+			_barShiftStrategy = from._barShiftStrategy;
+			_barShiftMaxNumberOfItemsInOneDirection = from._barShiftMaxNumberOfItemsInOneDirection;
 			_relInnerGapX = from._relInnerGapX;
 			_relOuterGapX = from._relOuterGapX;
 			_relInnerGapY = from._relInnerGapY;
 			_relOuterGapY = from._relOuterGapY;
+
+			_isInitialized = from._isInitialized;
+			_numberOfItems = from._numberOfItems;
 			_logicalClusterSizeX = from._logicalClusterSizeX;
 			_logicalClusterSizeY = from._logicalClusterSizeY;
-			_sizeX = from._sizeX;
-			_positionX = from._positionX;
-			_sizeY = from._sizeY;
-			_positionY = from._positionY;
+			_logicalItemSizeX = from._logicalItemSizeX;
+			_logicalItemOffsetX = from._logicalItemOffsetX;
+			_logicalItemSizeY = from._logicalItemSizeY;
+			_logicalItemOffsetY = from._logicalItemOffsetY;
 		}
 
 		public BarSizePosition3DGroupStyle()
@@ -179,44 +204,6 @@ namespace Altaxo.Graph.Plot.Groups
 			_logicalClusterSizeY = 0.5; // in case there is only one item, it takes half of the width of the x-scale
 		}
 
-		public void EndPrepare()
-		{
-			_wasTouchedInThisPrepareStep = false;
-
-			int tnumberOfItems = 1;
-			if (this._isStepEnabled)
-				tnumberOfItems = Math.Max(tnumberOfItems, _numberOfItems);
-
-			// partition the total number of items in items in x-direction and in items in y-direction
-			int numberOfItemsX, numberOfItemsY;
-
-			PartitionItems(tnumberOfItems, out numberOfItemsX, out numberOfItemsY);
-
-			_sizeX = 1.0 / (numberOfItemsX + (numberOfItemsX - 1) * _relInnerGapX + _relOuterGapX);
-			_sizeX *= _logicalClusterSizeX;
-			_positionX = 0.5 * (_sizeX * _relOuterGapX - _logicalClusterSizeX);
-
-			_sizeY = 1.0 / (numberOfItemsY + (numberOfItemsY - 1) * _relInnerGapY + _relOuterGapY);
-			_sizeY *= _logicalClusterSizeY;
-			_positionY = 0.5 * (_sizeY * _relOuterGapY - _logicalClusterSizeY);
-		}
-
-		/// <summary>
-		/// Partitions the total number of items in rows and columns. The strategy how to partition should be left to the user.
-		/// </summary>
-		/// <param name="totalNumberOfItems">The total number of items.</param>
-		/// <param name="numberOfItemsX">The number of items in x-direction.</param>
-		/// <param name="numberOfItemsY">The number of items in y-direction.</param>
-		private void PartitionItems(int totalNumberOfItems, out int numberOfItemsX, out int numberOfItemsY)
-		{
-			if (0 == totalNumberOfItems)
-			{
-				numberOfItemsX = 0; numberOfItemsY = 0;
-			}
-			numberOfItemsX = (int)Math.Ceiling(Math.Sqrt(totalNumberOfItems));
-			numberOfItemsY = (int)Math.Ceiling(totalNumberOfItems / (double)numberOfItemsX);
-		}
-
 		public void PrepareStep()
 		{
 			if (_wasTouchedInThisPrepareStep)
@@ -228,6 +215,105 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 
 			_wasTouchedInThisPrepareStep = false;
+		}
+
+		public void EndPrepare()
+		{
+			_wasTouchedInThisPrepareStep = false;
+
+			int totalNumberOfItems = 1;
+			if (this._isStepEnabled)
+				totalNumberOfItems = Math.Max(totalNumberOfItems, _numberOfItems);
+
+			// partition the total number of items in items in x-direction and in items in y-direction
+
+			PartitionItems(totalNumberOfItems, out _cachedNumberOfItemsX, out _cachedNumberOfItemsY);
+
+			_logicalItemSizeX = 1.0 / (_cachedNumberOfItemsX + (_cachedNumberOfItemsX - 1) * _relInnerGapX + _relOuterGapX);
+			_logicalItemSizeX *= _logicalClusterSizeX;
+
+			_logicalItemSizeY = 1.0 / (_cachedNumberOfItemsY + (_cachedNumberOfItemsY - 1) * _relInnerGapY + _relOuterGapY);
+			_logicalItemSizeY *= _logicalClusterSizeY;
+
+			_cachedCurrentItemIndex = 0;
+			SetPositionXY_AccordingToCachedCurrentItemIndex(); // sets the position of the first item (according to the _cachedCurrentItemIndex)
+		}
+
+		/// <summary>
+		/// Partitions the total number of items in rows and columns. The strategy how to partition is stored in _barShiftStrategy.
+		/// </summary>
+		/// <param name="totalNumberOfItems">The total number of items.</param>
+		/// <param name="numberOfItemsX">The number of items in x-direction.</param>
+		/// <param name="numberOfItemsY">The number of items in y-direction.</param>
+		private void PartitionItems(int totalNumberOfItems, out int numberOfItemsX, out int numberOfItemsY)
+		{
+			if (0 == totalNumberOfItems)
+			{
+				numberOfItemsX = 0; numberOfItemsY = 0;
+			}
+			else
+			{
+				switch (_barShiftStrategy)
+				{
+					case BarShiftStrategy3D.ManualFirstXThenY:
+						numberOfItemsX = Math.Min(totalNumberOfItems, _barShiftMaxNumberOfItemsInOneDirection);
+						numberOfItemsY = (int)Math.Ceiling(totalNumberOfItems / (double)numberOfItemsX);
+						break;
+
+					case BarShiftStrategy3D.ManualFirstYThenX:
+						numberOfItemsY = Math.Min(totalNumberOfItems, _barShiftMaxNumberOfItemsInOneDirection);
+						numberOfItemsX = (int)Math.Ceiling(totalNumberOfItems / (double)numberOfItemsY);
+						break;
+
+					case BarShiftStrategy3D.UniformFirstXThenY:
+						numberOfItemsX = (int)Math.Ceiling(Math.Sqrt(totalNumberOfItems));
+						numberOfItemsY = (int)Math.Ceiling(totalNumberOfItems / (double)numberOfItemsX);
+						break;
+
+					case BarShiftStrategy3D.UniformFirstYThenX:
+						numberOfItemsY = (int)Math.Ceiling(Math.Sqrt(totalNumberOfItems));
+						numberOfItemsX = (int)Math.Ceiling(totalNumberOfItems / (double)numberOfItemsY);
+						break;
+
+					default:
+						throw new ArgumentOutOfRangeException(nameof(_barShiftStrategy));
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sets the positions <see cref="_logicalItemOffsetX"/> and <see cref="_logicalItemOffsetY"/> according to the <see cref="_cachedCurrentItemIndex"/>.
+		/// </summary>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		private void SetPositionXY_AccordingToCachedCurrentItemIndex()
+		{
+			int itemIndexX, itemIndexY;
+
+			switch (_barShiftStrategy)
+			{
+				case BarShiftStrategy3D.ManualFirstXThenY:
+				case BarShiftStrategy3D.UniformFirstXThenY:
+					itemIndexX = _cachedCurrentItemIndex % _cachedNumberOfItemsX;
+					itemIndexY = _cachedCurrentItemIndex / _cachedNumberOfItemsX;
+					break;
+
+				case BarShiftStrategy3D.ManualFirstYThenX:
+				case BarShiftStrategy3D.UniformFirstYThenX:
+					itemIndexY = _cachedCurrentItemIndex % _cachedNumberOfItemsY;
+					itemIndexX = _cachedCurrentItemIndex / _cachedNumberOfItemsY;
+					break;
+
+				default:
+					throw new ArgumentOutOfRangeException(nameof(_barShiftStrategy));
+			}
+
+			// leftmost position is 1/2 cluster size to the left, then 1/2 outer gap to the right, and 1/2 size to the right
+			_logicalItemOffsetX = 0.5 * (_logicalItemSizeX * (1 + _relOuterGapX) - _logicalClusterSizeX); // x-position of the first item (leftmost)
+			_logicalItemOffsetX += itemIndexX * _logicalItemSizeX * (1 + _relInnerGapX);
+
+			// frontmost position is 1/2 cluster size to the front, then 1/2 outer gap to the back, and 1/2 size to the back
+			_logicalItemOffsetY = 0.5 * (_logicalItemSizeY * (1 + _relOuterGapY) - _logicalClusterSizeY); // y-position of the first item (frontmost)
+			_logicalItemOffsetY += itemIndexY * _logicalItemSizeY * (1 + _relInnerGapY);
 		}
 
 		public bool CanCarryOver
@@ -248,7 +334,10 @@ namespace Altaxo.Graph.Plot.Groups
 
 		public int Step(int step)
 		{
-			_positionX += step * _sizeX * (1 + _relInnerGapX);
+			_cachedCurrentItemIndex += step;
+
+			SetPositionXY_AccordingToCachedCurrentItemIndex();
+
 			return 0;
 		}
 
@@ -304,11 +393,17 @@ namespace Altaxo.Graph.Plot.Groups
 		/// The BarGraphPlotStyle has stored two properties relGap and relBound, which are transferred
 		/// to the group style in this process.
 		/// </summary>
-		/// <param name="relInnerGapX">Gap between to bars in a group in units of one bar width.</param>
-		/// <param name="relOuterGapX">Gap between the items of two groups in units of one bar width.</param>
-		public void Initialize(double relInnerGapX, double relOuterGapX, double relInnerGapY, double relOuterGapY)
+		/// <param name="barShiftStrategy">Strategy how to shift the bars belonging to one group.</param>
+		/// <param name="barShiftMaxNumberOfItemsInOneDirection">If barShiftStrategy is set to a manual value, this parameter designates the maximum number of items in one direction. Ignored if bar shift strategy is set to automatic.</param>
+		/// <param name="relInnerGapX">Gap x between to bars in a group in units of one bar width.</param>
+		/// <param name="relOuterGapX">Gap x between the items of two groups in units of one bar width.</param>
+		/// <param name="relInnerGapY">Gap y between to bars in a group in units of one bar width.</param>
+		/// <param name="relOuterGapY">Gap y between the items of two groups in units of one bar width.</param>
+		public void Initialize(BarShiftStrategy3D barShiftStrategy, int barShiftMaxNumberOfItemsInOneDirection, double relInnerGapX, double relOuterGapX, double relInnerGapY, double relOuterGapY)
 		{
 			_isInitialized = true;
+			_barShiftStrategy = barShiftStrategy;
+			_barShiftMaxNumberOfItemsInOneDirection = barShiftMaxNumberOfItemsInOneDirection;
 			_relInnerGapX = relInnerGapX;
 			_relOuterGapX = relOuterGapX;
 			_relInnerGapY = relInnerGapY;
@@ -316,18 +411,35 @@ namespace Altaxo.Graph.Plot.Groups
 		}
 
 		public void Apply(
+			out BarShiftStrategy3D barShiftStrategy, out int barShiftMaxNumberOfItemsInOneDirection,
 			out double relInnerGapX, out double relOuterGapX, out double sizeX, out double posX,
 			out double relInnerGapY, out double relOuterGapY, out double sizeY, out double posY)
 		{
+			barShiftStrategy = _barShiftStrategy;
+			barShiftMaxNumberOfItemsInOneDirection = _barShiftMaxNumberOfItemsInOneDirection;
 			relInnerGapX = _relInnerGapX;
 			relOuterGapX = _relOuterGapX;
-			sizeX = _sizeX;
-			posX = _positionX;
+			sizeX = _logicalItemSizeX;
+			posX = _logicalItemOffsetX;
 
 			relInnerGapY = _relInnerGapY;
 			relOuterGapY = _relOuterGapY;
-			sizeY = _sizeY;
-			posY = _positionY;
+			sizeY = _logicalItemSizeY;
+			posY = _logicalItemOffsetY;
+		}
+
+		bool IShiftLogicalXYZGroupStyle.IsConstant { get { return true; } }
+
+		void IShiftLogicalXYZGroupStyle.Apply(out double logicalShiftX, out double logicalShiftY, out double logicalShiftZ)
+		{
+			logicalShiftX = _logicalItemOffsetX;
+			logicalShiftY = _logicalItemOffsetY;
+			logicalShiftZ = 0;
+		}
+
+		void IShiftLogicalXYZGroupStyle.Apply(out Func<int, double> logicalShiftX, out Func<int, double> logicalShiftY, out Func<int, double> logicalShiftZ)
+		{
+			throw new NotImplementedException("Use this function only if IsConstant returns false");
 		}
 
 		#region Static Helpers

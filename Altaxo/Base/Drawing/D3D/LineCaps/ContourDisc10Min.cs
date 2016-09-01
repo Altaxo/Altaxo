@@ -30,7 +30,7 @@ using System.Text;
 
 namespace Altaxo.Drawing.D3D.LineCaps
 {
-	public class ContourDisc10 : ContourShapedLineCapBase
+	public class ContourDisc10Min : ContourShapedLineCapBase
 	{
 		private class Contour : ILineCapContour
 		{
@@ -121,12 +121,12 @@ namespace Altaxo.Drawing.D3D.LineCaps
 		/// <summary>
 		/// 2016-05-02 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ContourDisc10), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ContourDisc10Min), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (ContourDisc10)obj;
+				var s = (ContourDisc10Min)obj;
 				info.AddValue("MinAbsoluteSize", s._minimumAbsoluteSize);
 				info.AddValue("MinRelativeSize", s._minimumRelativeSize);
 			}
@@ -135,19 +135,19 @@ namespace Altaxo.Drawing.D3D.LineCaps
 			{
 				double abs = info.GetDouble("MinAbsoluteSize");
 				double rel = info.GetDouble("MinRelativeSize");
-				return new ContourDisc10(abs, rel);
+				return new ContourDisc10Min(abs, rel);
 			}
 		}
 
 		#endregion Serialization
 
-		public ContourDisc10()
+		public ContourDisc10Min()
 		{
 			_minimumAbsoluteSize = 8;
 			_minimumRelativeSize = 2;
 		}
 
-		public ContourDisc10(double minAbsoluteSizePt, double minRelativeSize)
+		public ContourDisc10Min(double minAbsoluteSizePt, double minRelativeSize)
 		{
 			if (!(minAbsoluteSizePt >= 0))
 				throw new ArgumentOutOfRangeException(nameof(minAbsoluteSizePt), "must be >= 0");
@@ -187,7 +187,7 @@ namespace Altaxo.Drawing.D3D.LineCaps
 			}
 			else
 			{
-				var result = (ContourDisc10)MemberwiseClone();
+				var result = (ContourDisc10Min)MemberwiseClone();
 				result._minimumAbsoluteSize = absoluteSizePt;
 				result._minimumRelativeSize = relativeSize;
 				return result;
@@ -196,13 +196,13 @@ namespace Altaxo.Drawing.D3D.LineCaps
 
 		public override double GetAbsoluteBaseInset(double thickness1, double thickness2)
 		{
-			return Math.Min(thickness1, thickness2);
+			return -Math.Min(thickness1, thickness2);
 		}
 
 		public override void AddGeometry(Action<PointD3D, VectorD3D> AddPositionAndNormal, Action<int, int, int, bool> AddIndices, ref int vertexIndexOffset, bool isStartCap, PointD3D basePoint, VectorD3D eastVector, VectorD3D northVector, VectorD3D forwardVectorNormalized, ICrossSectionOfLine lineCrossSection, PointD3D[] baseCrossSectionPositions, VectorD3D[] baseCrossSectionNormals, ref object temporaryStorageSpace)
 		{
 			double relSize = Math.Max(_minimumRelativeSize, _minimumAbsoluteSize / Math.Max(lineCrossSection.Size1, lineCrossSection.Size2));
-			double relDiscThickness = 2*Math.Min(lineCrossSection.Size1, lineCrossSection.Size2) / Math.Max(lineCrossSection.Size1, lineCrossSection.Size2);
+			double relDiscThickness = 2 * Math.Min(lineCrossSection.Size1, lineCrossSection.Size2) / Math.Max(lineCrossSection.Size1, lineCrossSection.Size2);
 
 			Add(
 				AddPositionAndNormal,

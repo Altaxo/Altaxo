@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 
 		public override void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize)
 		{
-			var symbolSizeBy2 = symbolSize / 2;
+			var radius = symbolSize / 2;
 			var buffers = g.GetPositionNormalIndexedTriangleBuffer(material);
 
 			if (null != buffers.PositionNormalIndexedTriangleBuffer)
@@ -74,7 +74,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 
 				foreach (var entry in _geometry.VerticesAndNormalsForSphere)
 				{
-					var pt = centerLocation + symbolSizeBy2 * (VectorD3D)entry.Item1;
+					var pt = centerLocation + radius * (VectorD3D)entry.Item1;
 					var nm = entry.Item2;
 					buffer.AddTriangleVertex(pt.X, pt.Y, pt.Z, nm.X, nm.Y, nm.Z);
 				}

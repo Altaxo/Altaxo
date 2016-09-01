@@ -205,7 +205,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			/// <returns>Width and height of the text packed into a <see cref="VectorD3D"/> structure.</returns>
 			public static VectorD3D MeasureString(string text, FontX3D font)
 			{
-				return FontManager3D.Instance.MeasureString(text, font, _stringFormat);
+				return FontManager3D.Instance.MeasureString(text, font);
 			}
 		}
 
@@ -449,7 +449,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				{
 					_child.Draw(g, dc, xbase, ybase, zbase);
 					FontInfo fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
-					double psize = FontManager3D.Instance.MeasureString(".", Style.FontId, this.StringFormat).X;
+					double psize = FontManager3D.Instance.MeasureString(".", Style.FontId).X;
 					g.DrawString(".", Style.FontId, Style.brush, new PointD3D((xbase + _child.SizeX / 2 - psize / 2), (ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), zbase), this.StringFormat);
 				}
 			}
@@ -584,7 +584,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			public override void Measure(MeasureContext mc, double x)
 			{
 				var fontInfo = mc.FontCache.GetFontInfo(Style.FontId);
-				var size = FontManager3D.Instance.MeasureString(_text, Style.FontId, _stringFormat);
+				var size = FontManager3D.Instance.MeasureString(_text, Style.FontId);
 				SizeX = size.X;
 				ExtendAboveBaseline = fontInfo.cyAscent;
 				ExtendBelowBaseline = fontInfo.cyDescent;
@@ -614,7 +614,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				double tab = mc.TabStop;
 
 				if (!(tab > 0))
-					tab = FontManager3D.Instance.MeasureString("MMMM", Style.BaseFontId, _stringFormat).X;
+					tab = FontManager3D.Instance.MeasureString("MMMM", Style.BaseFontId).X;
 
 				if (!(tab > 0))
 					tab = Style.BaseFontId.Size * 4;
@@ -758,7 +758,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				if (_plotNumber < layer.PlotItems.Flattened.Length)
 				{
 					var fontInfo = mc.FontCache.GetFontInfo(Style.FontId);
-					var size = FontManager3D.Instance.MeasureString("MMM", Style.FontId, _stringFormat);
+					var size = FontManager3D.Instance.MeasureString("MMM", Style.FontId);
 					SizeX = size.X;
 					ExtendAboveBaseline = fontInfo.cyAscent;
 					ExtendBelowBaseline = fontInfo.cyDescent;

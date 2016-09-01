@@ -59,6 +59,11 @@
 			<TextBox x:Name="_guiLabelTransformation" IsEnabled="True" IsReadOnly="True" />
 			<TextBox x:Name="_guiLabelColumn" IsEnabled="True" IsReadOnly="True" MinWidth="100" />
 		</StackPanel>
+		<Label Content="Label format:" Grid.Row="0" Grid.Column="2" />
+		<TextBox x:Name="_guiLabelFormat" Grid.Row="0" Grid.Column="3" />
+
+		<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles" Content="Do not shift position by shifting group styles" Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" />
+
 		<CheckBox x:Name="_guiIndependentLabelColor" Grid.Column="0" Grid.Row="2" Content="Indep. color:" Checked="EhIndependentColor_CheckChanged" Unchecked="EhIndependentColor_CheckChanged" />
 		<axogdd:MaterialComboBox x:Name="_guiLabelBrush"  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" SelectedMaterialChanged="EhLabelBrushChanged" />
 
@@ -113,5 +118,8 @@
 			<TextBlock Text="color linkage:" />
 		</StackPanel>
 		<axogc:SingleChoiceRadioStackPanel x:Name="_guiBackgroundColorLinkage" Grid.Column="1" Grid.Row="18" SelectionChanged="EhBackgroundColorLinkageChanged" />
+
+		<CheckBox x:Name="_guiIndependentSkipFrequency" Grid.Row="20" Grid.Column="0" Content="Indep. skip freq.:" />
+		<axogc:Int32UpDown x:Name="_guiSkipFrequency"  Grid.Row="20" Grid.Column="1" Minimum="1" />
 	</Grid>
 </UserControl>

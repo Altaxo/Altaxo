@@ -79,15 +79,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 		}
 
-		public bool DoNotShiftIndependentVariable
+		public bool IndependentOnShiftingGroupStyles
 		{
 			get
 			{
-				return true == _chkDoNotShift.IsChecked;
+				return true == _guiIndependentOnShiftingGroupStyles.IsChecked;
 			}
 			set
 			{
-				_chkDoNotShift.IsChecked = value;
+				_guiIndependentOnShiftingGroupStyles.IsChecked = value;
 			}
 		}
 

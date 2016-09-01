@@ -36,6 +36,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 	using Data;
 	using Drawing;
 	using Drawing.D3D;
+	using Drawing.D3D.LineCaps;
 	using Geometry;
 	using GraphicsContext;
 	using Groups;
@@ -112,15 +113,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		private double _lineWidth2Offset;
 		private double _lineWidth2Factor;
 
-		/// <summary>
-		/// When true, bar graph position group styles are not applied, i.e. the item remains where it is.
-		/// </summary>
-		private bool _doNotShiftPositionX;
-
-		/// <summary>
-		/// When true, bar graph position group styles are not applied, i.e. the item remains where it is.
-		/// </summary>
-		private bool _doNotShiftPositionY;
+		/// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
+		private bool _independentOnShiftingGroupStyles;
 
 		/// <summary>
 		/// Skip frequency.
@@ -129,13 +123,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		protected bool _independentSkipFrequency;
 
-		/// <summary>
-		/// When we deal with bar charts, this is the logical shift between real point
-		/// and the independent value where the bar is really drawn to.
-		/// </summary>
-		private double _cachedLogicalShiftOfIndependentX;
+		/// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftX;
 
-		private double _cachedLogicalShiftOfIndependentY;
+		/// <summary>Logical y shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftY;
 
 		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
 		[field: NonSerialized]
@@ -189,8 +181,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("IndependentSkipFreq", s._independentSkipFrequency);
 				info.AddValue("SkipFreq", s._skipFrequency);
 
-				info.AddValue("NotShiftPosX", s._doNotShiftPositionX);
-				info.AddValue("NotShiftPosY", s._doNotShiftPositionY);
+				info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
 			}
 
 			protected virtual ErrorBarPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -237,8 +228,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
 				s._skipFrequency = info.GetInt32("SkipFreq");
 
-				s._doNotShiftPositionX = info.GetBoolean("NotShiftPosX");
-				s._doNotShiftPositionY = info.GetBoolean("NotShiftPosY");
+				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
 
 				return s;
 			}
@@ -271,7 +261,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			_lineWidth2Offset = penWidth;
 			_lineWidth2Factor = 0;
 
-			this._strokePen = new PenX3D(color, penWidth);
+			this._strokePen = new PenX3D(color, penWidth).WithLineEndCap(new ContourDisc10Min());
 		}
 
 		public ErrorBarPlotStyle(ErrorBarPlotStyle from)
@@ -311,11 +301,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._symbolGapFactor = from._symbolGapFactor;
 				this._symbolGapOffset = from._symbolGapOffset;
 
-				this._doNotShiftPositionX = from._doNotShiftPositionX;
-				this._doNotShiftPositionY = from._doNotShiftPositionY;
+				this._independentSkipFrequency = from._independentSkipFrequency;
+				this._skipFrequency = from._skipFrequency;
+				this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 
-				this._cachedLogicalShiftOfIndependentX = from._cachedLogicalShiftOfIndependentX;
-				this._cachedLogicalShiftOfIndependentY = from._cachedLogicalShiftOfIndependentY;
+				this._cachedLogicalShiftX = from._cachedLogicalShiftX;
+				this._cachedLogicalShiftY = from._cachedLogicalShiftY;
 
 				EhSelfChanged();
 				return true;
@@ -388,28 +379,36 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		/// <summary>Controls the length of the end bar.</summary>
+		/// <summary>Controls how many items are plotted. A value of 1 means every item, a value of 2 every other item, and so on.</summary>
 		public int SkipFrequency
 		{
 			get { return _skipFrequency; }
 			set
 			{
-				var oldValue = _skipFrequency;
-				_skipFrequency = value;
-				if (oldValue != value)
-					EhSelfChanged(EventArgs.Empty);
+				if (!(_skipFrequency == value))
+				{
+					_skipFrequency = Math.Max(1, value);
+					EhSelfChanged();
+				}
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether the skip frequency is independent on other sub group styles using <see cref="SkipFrequency"/>.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if the skip frequency is independent on other sub group styles using <see cref="SkipFrequency"/>; otherwise, <c>false</c>.
+		/// </value>
 		public bool IndependentSkipFrequency
 		{
 			get { return _independentSkipFrequency; }
 			set
 			{
-				var oldValue = _independentSkipFrequency;
-				_independentSkipFrequency = value;
-				if (oldValue != value)
-					EhSelfChanged(EventArgs.Empty);
+				if (!(_independentSkipFrequency == value))
+				{
+					_independentSkipFrequency = value;
+					EhSelfChanged();
+				}
 			}
 		}
 
@@ -572,20 +571,21 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		}
 
 		/// <summary>
-		/// True when we don't want to shift the horizontal position, for instance due to the bar graph plot group.
+		/// True when we don't want to shift the position of the items, for instance due to the bar graph plot group.
 		/// </summary>
-		public bool DoNotShiftIndependentVariable
+		public bool IndependentOnShiftingGroupStyles
 		{
 			get
 			{
-				return _doNotShiftPositionX;
+				return _independentOnShiftingGroupStyles;
 			}
 			set
 			{
-				var oldValue = _doNotShiftPositionX;
-				_doNotShiftPositionX = value;
-				if (oldValue != value)
-					EhSelfChanged(EventArgs.Empty);
+				if (!(_independentOnShiftingGroupStyles == value))
+				{
+					_independentOnShiftingGroupStyles = value;
+					EhSelfChanged();
+				}
 			}
 		}
 
@@ -829,17 +829,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
 			}
 
-			// bar position
-			BarWidthPositionGroupStyle bwp = PlotGroupStyle.GetStyleToApply<BarWidthPositionGroupStyle>(externalGroups, localGroups);
-			if (null != bwp && !_doNotShiftPositionX)
+			// Shift the items ?
+			_cachedLogicalShiftX = 0;
+			_cachedLogicalShiftY = 0;
+			if (!_independentOnShiftingGroupStyles)
 			{
-				double innerGapW, outerGapW, width, lpos;
-				bwp.Apply(out innerGapW, out outerGapW, out width, out lpos);
-				_cachedLogicalShiftOfIndependentX = lpos + width / 2;
-			}
-			else
-			{
-				_cachedLogicalShiftOfIndependentX = 0;
+				var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYZGroupStyle>(externalGroups, localGroups);
+				if (null != shiftStyle)
+				{
+					double shiftX, shiftY, shiftZ;
+					shiftStyle.Apply(out shiftX, out shiftY, out shiftZ);
+					_cachedLogicalShiftX = shiftX;
+					_cachedLogicalShiftY = shiftY;
+				}
 			}
 		}
 
@@ -885,8 +887,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 					AltaxoVariant vMeanPhysical = pdata.GetPhysical(axisNumber, originalRow);
 					Logical3D logicalMean = layer.GetLogical3D(pdata, originalRow);
-					logicalMean.RX += _cachedLogicalShiftOfIndependentX;
-					logicalMean.RY += _cachedLogicalShiftOfIndependentY;
+					logicalMean.RX += _cachedLogicalShiftX;
+					logicalMean.RY += _cachedLogicalShiftY;
 
 					if (!Calc.RMath.IsInIntervalCC(logicalMean.RX, logicalClampMinimum, logicalClampMaximum))
 						continue;

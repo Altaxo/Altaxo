@@ -49,6 +49,31 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		IG3DPlotStyle
 	{
 		/// <summary>
+		/// Indicates whether the  color is dependent (can be set by the ColorGroupStyle) or not.
+		/// </summary>
+		private bool _independentColor;
+
+		/// <summary>
+		/// Pen used to draw the bar.
+		/// </summary>
+		private PenX3D _pen;
+
+		/// <summary>
+		/// If true, the thickness 1 should be equal to thickness 2 of the pen. We use the minimum of the calculated thicknesses in this case.
+		/// </summary>
+		private bool _useUniformCrossSectionThickness;
+
+		/// <summary>
+		/// The bar shift strategy, i.e. how to shift the bars that belong to one group.
+		/// </summary>
+		private BarShiftStrategy3D _barShiftStrategy;
+
+		/// <summary>
+		/// The user defined maximum number of items in one direction. Only used if the bar shift strategy is one of the manual values.
+		/// </summary>
+		private int _barShiftMaxNumberOfItemsInOneDirection;
+
+		/// <summary>
 		/// Relative gap between the bars belonging to the same x-value (relative to the width of a single bar).
 		/// A value of 0.5 means that the gap has half of the width of one bar.
 		/// </summary>
@@ -73,16 +98,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		private double _relOuterGapY = 1.0;
 
 		/// <summary>
-		/// Indicates whether the  color is dependent (can be set by the ColorGroupStyle) or not.
-		/// </summary>
-		private bool _independentColor = true; // true because the standard value is transparent
-
-		/// <summary>
-		/// Pen used to draw the bar.
-		/// </summary>
-		private PenX3D _pen;
-
-		/// <summary>
 		/// Indicates whether _baseValue is a physical value or a logical value.
 		/// </summary>
 		private bool _usePhysicalBaseValue;
@@ -93,7 +108,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		private Altaxo.Data.AltaxoVariant _baseValue = new Altaxo.Data.AltaxoVariant(0.0);
 
 		/// <summary>
-		/// If true, the bar starts at the y value of the previous plot item.
+		/// If true, the bar starts at the dependent (z) value of the previous plot item.
 		/// </summary>
 		private bool _startAtPreviousItem;
 
@@ -134,32 +149,38 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				BarGraphPlotStyle s = (BarGraphPlotStyle)obj;
-				info.AddValue("InnerGapX", s._relInnerGapX);
-				info.AddValue("OuterGapX", s._relOuterGapX);
 				info.AddValue("IndependentColor", s._independentColor);
 				info.AddValue("Pen", s._pen);
+				info.AddValue("UseUniformCrossSectionThickness", s._useUniformCrossSectionThickness);
+				info.AddEnum("BarShift", s._barShiftStrategy);
+				info.AddValue("BarShiftMaxItems", s._barShiftMaxNumberOfItemsInOneDirection);
+				info.AddValue("InnerGapX", s._relInnerGapX);
+				info.AddValue("OuterGapX", s._relOuterGapX);
+				info.AddValue("InnerGapY", s._relInnerGapY);
+				info.AddValue("OuterGapY", s._relOuterGapY);
 				info.AddValue("UsePhysicalBaseValue", s._usePhysicalBaseValue);
 				info.AddValue("BaseValue", (object)s._baseValue);
 				info.AddValue("StartAtPrevious", s._startAtPreviousItem);
 				info.AddValue("PreviousItemGap", s._previousItemZGap);
-				info.AddValue("ActualWidth", s._xSizeLogical);
-				info.AddValue("ActualPosition", s._xOffsetLogical);
 			}
 
 			protected virtual BarGraphPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				BarGraphPlotStyle s = null != o ? (BarGraphPlotStyle)o : new BarGraphPlotStyle();
+				BarGraphPlotStyle s = null != o ? (BarGraphPlotStyle)o : new BarGraphPlotStyle(info);
 
-				s._relInnerGapX = info.GetDouble("InnerGapWidth");
-				s._relOuterGapX = info.GetDouble("OuterGapWidth");
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s._pen = (PenX3D)info.GetValue("Pen", s);
+				s._useUniformCrossSectionThickness = info.GetBoolean("UseUniformCrossSectionThickness");
+				s._barShiftStrategy = (BarShiftStrategy3D)info.GetEnum("BarShift", typeof(BarShiftStrategy3D));
+				s._barShiftMaxNumberOfItemsInOneDirection = info.GetInt32("BarShiftMaxItems");
+				s._relInnerGapX = info.GetDouble("InnerGapX");
+				s._relOuterGapX = info.GetDouble("OuterGapX");
+				s._relInnerGapY = info.GetDouble("InnerGapY");
+				s._relOuterGapY = info.GetDouble("OuterGapY");
 				s._usePhysicalBaseValue = info.GetBoolean("UsePhysicalBaseValue");
 				s._baseValue = (Altaxo.Data.AltaxoVariant)info.GetValue("BaseValue", s);
 				s._startAtPreviousItem = info.GetBoolean("StartAtPrevious");
 				s._previousItemZGap = info.GetDouble("PreviousItemGap");
-				s._xSizeLogical = info.GetDouble("ActualWidth");
-				s._xOffsetLogical = info.GetDouble("ActualPosition");
 
 				return s;
 			}
@@ -173,10 +194,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		#endregion Serialization
 
-		public BarGraphPlotStyle()
-		{
-		}
-
 		public virtual bool CopyFrom(object obj)
 		{
 			if (object.ReferenceEquals(this, obj))
@@ -185,30 +202,41 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			var from = obj as BarGraphPlotStyle;
 			if (null != from)
 			{
+				this._independentColor = from._independentColor;
+				this._pen = from._pen;
+				this._useUniformCrossSectionThickness = from._useUniformCrossSectionThickness;
+
+				this._barShiftStrategy = from._barShiftStrategy;
+				this._barShiftMaxNumberOfItemsInOneDirection = from._barShiftMaxNumberOfItemsInOneDirection;
 				this._relInnerGapX = from._relInnerGapX;
 				this._relOuterGapX = from._relOuterGapX;
 				this._relInnerGapY = from._relInnerGapY;
 				this._relOuterGapY = from._relOuterGapY;
+
 				this._xSizeLogical = from._xSizeLogical;
 				this._xOffsetLogical = from._xOffsetLogical;
 				this._ySizeLogical = from._ySizeLogical;
 				this._yOffsetLogical = from._yOffsetLogical;
 
-				this._independentColor = from._independentColor;
-				this._pen = from._pen;
-				this._startAtPreviousItem = from._startAtPreviousItem;
-				this._previousItemZGap = from._previousItemZGap;
 				this._usePhysicalBaseValue = from._usePhysicalBaseValue;
 				this._baseValue = from._baseValue;
+				this._startAtPreviousItem = from._startAtPreviousItem;
+				this._previousItemZGap = from._previousItemZGap;
+
 				EhSelfChanged();
 				return true;
 			}
 			return false;
 		}
 
-		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		protected BarGraphPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
-			yield break;
+		}
+
+		public BarGraphPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			var color = GraphDocument.GetDefaultPlotColor(context);
+			_pen = new PenX3D(color, 1);
 		}
 
 		public BarGraphPlotStyle(BarGraphPlotStyle from)
@@ -224,6 +252,43 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		object ICloneable.Clone()
 		{
 			return new BarGraphPlotStyle(this);
+		}
+
+		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			yield break;
+		}
+
+		public BarShiftStrategy3D BarShiftStrategy
+		{
+			get
+			{
+				return _barShiftStrategy;
+			}
+			set
+			{
+				if (!(_barShiftStrategy == value))
+				{
+					_barShiftStrategy = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public int BarShiftMaxItemsInOneDirection
+		{
+			get
+			{
+				return _barShiftMaxNumberOfItemsInOneDirection;
+			}
+			set
+			{
+				if (!(_barShiftMaxNumberOfItemsInOneDirection == value))
+				{
+					_barShiftMaxNumberOfItemsInOneDirection = value;
+					EhSelfChanged();
+				}
+			}
 		}
 
 		public bool IsColorReceiver
@@ -261,10 +326,33 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
+		public bool UseUniformCrossSectionThickness
+		{
+			get
+			{
+				return _useUniformCrossSectionThickness;
+			}
+			set
+			{
+				if (!(_useUniformCrossSectionThickness == value))
+				{
+					_useUniformCrossSectionThickness = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
 		public double InnerGapX
 		{
 			get { return _relInnerGapX; }
-			set { _relInnerGapX = value; }
+			set
+			{
+				if (!(_relInnerGapX == value))
+				{
+					_relInnerGapX = value;
+					EhSelfChanged();
+				}
+			}
 		}
 
 		public double OuterGapX
@@ -272,14 +360,44 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			get { return _relOuterGapX; }
 			set
 			{
-				var oldValue = _relOuterGapX;
-				_relOuterGapX = value;
-				if (value != oldValue)
-					EhSelfChanged(EventArgs.Empty);
+				if (!(_relOuterGapX == value))
+				{
+					_relOuterGapX = value;
+					EhSelfChanged();
+				}
 			}
 		}
 
-		public double PreviousItemZGap
+		public double InnerGapY
+		{
+			get
+			{
+				return _relInnerGapY;
+			}
+			set
+			{
+				if (!(_relInnerGapY == value))
+				{
+					_relInnerGapY = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double OuterGapY
+		{
+			get { return _relOuterGapY; }
+			set
+			{
+				if (!(_relOuterGapY == value))
+				{
+					_relOuterGapY = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double PreviousItemGapV
 		{
 			get { return _previousItemZGap; }
 			set
@@ -371,7 +489,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 			BarSizePosition3DGroupStyle bwp = PlotGroupStyle.GetStyleToInitialize<BarSizePosition3DGroupStyle>(externalGroups, localGroups);
 			if (null != bwp)
-				bwp.Initialize(_relInnerGapX, _relOuterGapX, _relInnerGapY, _relOuterGapY);
+				bwp.Initialize(_barShiftStrategy, _barShiftMaxNumberOfItemsInOneDirection, _relInnerGapX, _relOuterGapX, _relInnerGapY, _relOuterGapY);
 
 			if (!_independentColor) // else if is used here because fill color has precedence over frame color
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._pen.Color; });
@@ -384,6 +502,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			BarSizePosition3DGroupStyle bwp = PlotGroupStyle.GetStyleToApply<BarSizePosition3DGroupStyle>(externalGroups, localGroups);
 			if (null != bwp)
 				bwp.Apply(
+					out _barShiftStrategy, out _barShiftMaxNumberOfItemsInOneDirection,
 					out _relInnerGapX, out _relOuterGapX, out _xSizeLogical, out _xOffsetLogical,
 					out _relInnerGapY, out _relOuterGapY, out _ySizeLogical, out _yOffsetLogical);
 
@@ -429,10 +548,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				j++;
 
 				double xCenterLogical = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalRowIndex));
-				double xShiftedLogical = xCenterLogical + _xOffsetLogical;
+				double xLowerLogical = xCenterLogical + _xOffsetLogical;
+				double xUpperLogical = xLowerLogical + _xSizeLogical;
 
 				double yCenterLogical = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(originalRowIndex));
-				double yShiftedLogical = yCenterLogical + _yOffsetLogical;
+				double yLowerLogical = yCenterLogical + _yOffsetLogical;
+				double yUpperLogical = yLowerLogical + _ySizeLogical;
 
 				double zCenterLogical = layer.ZAxis.PhysicalVariantToNormal(pdata.GetZPhysical(originalRowIndex));
 				double zBaseLogical = globalBaseValue;
@@ -447,10 +568,30 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					}
 				}
 
+				// calculate the size at the base
+				PointD3D lcp, ucp, clp, cup;
+				layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xLowerLogical, yCenterLogical, zBaseLogical), out lcp);
+				layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xUpperLogical, yCenterLogical, zBaseLogical), out ucp);
+				layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xCenterLogical, yLowerLogical, zBaseLogical), out clp);
+				layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(xCenterLogical, yUpperLogical, zBaseLogical), out cup);
+
+				double penWidth1 = (lcp - ucp).Length;
+				double penWidth2 = (clp - cup).Length;
+
+				if (_useUniformCrossSectionThickness)
+				{
+					pen = pen.WithUniformThickness(Math.Min(penWidth1, penWidth2));
+				}
+				else
+				{
+					pen = pen.WithThickness1(penWidth1);
+					pen = pen.WithThickness2(penWidth2);
+				}
+
 				if (useVariableColor)
 					pen = pen.WithColor(GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRowIndex), "VariableColor"));
 
-				var isoLine = layer.CoordinateSystem.GetIsoline(new Logical3D(xShiftedLogical, yShiftedLogical, zBaseLogical), new Logical3D(xShiftedLogical, yShiftedLogical, zCenterLogical));
+				var isoLine = layer.CoordinateSystem.GetIsoline(new Logical3D(xLowerLogical, yLowerLogical, zBaseLogical), new Logical3D(xLowerLogical, yLowerLogical, zCenterLogical));
 				g.DrawLine(pen, isoLine);
 			}
 		}

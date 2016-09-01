@@ -58,7 +58,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 				var s = (MultiLineLabelFormattingBase)o;
 				info.GetBaseValueEmbedded(s, typeof(MultiLineLabelFormattingBase).BaseType, parent);
 				s._relativeLineSpacing = info.GetDouble("LineSpacing");
-				s._textBlockAlignment = (StringAlignment)info.GetEnum("BlockAlignment", typeof(StringAlignment));
+				s._textBlockAlignment = (System.Drawing.StringAlignment)info.GetEnum("BlockAlignment", typeof(System.Drawing.StringAlignment));
 
 				return s;
 			}
@@ -180,7 +180,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 				var position = PointD3D.Empty;
 				for (int i = 0; i < _text.Length; ++i)
 				{
-					_stringSize[i] = g.MeasureString(_text[i], _font, PointD3D.Empty, strfmt);
+					_stringSize[i] = g.MeasureString(_text[i], _font, PointD3D.Empty);
 					bounds = bounds.WithRectangleIncluded(new RectangleD3D(position, _stringSize[i]));
 					position = position.WithYPlus(-_stringSize[i].Y * _lineSpacing);
 				}

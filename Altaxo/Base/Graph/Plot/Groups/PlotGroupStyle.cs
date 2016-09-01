@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
@@ -103,6 +104,39 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 
 			return grpStyle;
+		}
+
+		/// <summary>
+		/// Looks first in externalGroups, then in localGroups for the type of PlotGroupStyle to apply.
+		/// In contrast to <see cref="GetStyleToApply{T}(IPlotGroupStyleCollection, IPlotGroupStyleCollection)"/>, we are searching here only for an interface,
+		/// and return the first plot group style found that implements that interface.
+		/// If an instance with this interface found, this instance is returned. If found, the containig collection
+		/// is informed that this group style will be applied now by calling OnBeforeApplication.
+		/// </summary>
+		/// <typeparam name="T">Type of the interface to look for.</typeparam>
+		/// <param name="externalGroups">First collection to look for the group style.</param>
+		/// <param name="localGroups">Second collection to look for the group style.</param>
+		/// <returns>The instance of the plot group style that implements the interface (if found), or null otherwise.</returns>
+		public static T GetFirstStyleToApplyImplementingInterface<T>(
+		 IPlotGroupStyleCollection externalGroups,
+		 IPlotGroupStyleCollection localGroups
+		 )
+		{
+			IPlotGroupStyle grpStyle = null;
+			IPlotGroupStyleCollection grpColl = externalGroups;
+			grpStyle = grpColl.FirstOrDefault(style => typeof(T).IsAssignableFrom(style.GetType()));
+			if (null == grpStyle)
+			{
+				grpColl = localGroups;
+				grpStyle = grpColl.FirstOrDefault(style => typeof(T).IsAssignableFrom(style.GetType()));
+			}
+
+			if (null != grpStyle)
+			{
+				grpColl.OnBeforeApplication(grpStyle.GetType());
+			}
+
+			return (T)grpStyle;
 		}
 	}
 }

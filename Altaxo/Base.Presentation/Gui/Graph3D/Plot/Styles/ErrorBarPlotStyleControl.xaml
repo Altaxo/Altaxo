@@ -135,7 +135,7 @@
 				<CheckBox x:Name="_guiIndependentSkipFrequency" Grid.Row="14" Grid.Column="0" Content="Indep. skip freq.:" />
 				<axogc:Int32UpDown x:Name="_edSkipFrequency"  Grid.Row="14" Grid.Column="2" Minimum="1" />
 
-				<CheckBox x:Name="_chkDoNotShift" Grid.Column="0" Grid.Row="16" Content="Do not shift indep. var." />
+				<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles" Grid.Column="0" Grid.Row="16" Content="Do not shift indep. var." />
 			</Grid>
 		</GroupBox>
 	</StackPanel>

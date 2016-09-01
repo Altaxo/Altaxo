@@ -165,7 +165,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		public virtual VectorD3D MeasureItem(IGraphicsContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, PointD3D morg)
 		{
 			string text = _prefix + FormatItem(mtick) + _suffix;
-			return g.MeasureString(text, font, morg, strfmt);
+			return g.MeasureString(text, font, morg);
 		}
 
 		/// <summary>
@@ -227,7 +227,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 				_text = itemtext;
 				_font = font;
 				_strfmt = strfmt;
-				_size = g.MeasureString(_text, _font, new PointD3D(0, 0, 0), strfmt);
+				_size = g.MeasureString(_text, _font, new PointD3D(0, 0, 0));
 			}
 
 			public virtual VectorD3D Size

@@ -24,7 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,8 +43,9 @@ namespace Altaxo.Drawing.D3D
 		/// </summary>
 		protected Dictionary<string, Dictionary<char, CharacterGeometry>> _cachedCharacterOutlines = new Dictionary<string, Dictionary<char, CharacterGeometry>>();
 
-		protected Bitmap _bmp = new Bitmap(16, 16);
-		protected Graphics _graphics;
+		protected System.Drawing.Bitmap _bmp;
+		protected System.Drawing.Graphics _graphics;
+		private System.Drawing.StringFormat _stringFormat;
 
 		public static FontManager3D Instance
 		{
@@ -69,21 +69,23 @@ namespace Altaxo.Drawing.D3D
 
 		protected FontManager3D()
 		{
+			_stringFormat = (System.Drawing.StringFormat)System.Drawing.StringFormat.GenericTypographic.Clone();
+			_stringFormat.FormatFlags |= System.Drawing.StringFormatFlags.MeasureTrailingSpaces;
 		}
 
 		private void EnsureGraphicsCreated()
 		{
 			if (null == _graphics)
 			{
-				_bmp = new Bitmap(16, 16);
-				_graphics = Graphics.FromImage(_bmp);
+				_bmp = new System.Drawing.Bitmap(16, 16);
+				_graphics = System.Drawing.Graphics.FromImage(_bmp);
 			}
 		}
 
-		public virtual VectorD3D MeasureString(string text, FontX3D font, StringFormat format)
+		public virtual VectorD3D MeasureString(string text, FontX3D font)
 		{
 			EnsureGraphicsCreated();
-			var size = _graphics.MeasureString(text, Altaxo.Graph.Gdi.GdiFontManager.ToGdi(font.Font), new PointF(0, 0), format);
+			var size = _graphics.MeasureString(text, Altaxo.Graph.Gdi.GdiFontManager.ToGdi(font.Font), new System.Drawing.PointF(0, 0), _stringFormat);
 			return new VectorD3D(size.Width, size.Height, font.Depth);
 		}
 

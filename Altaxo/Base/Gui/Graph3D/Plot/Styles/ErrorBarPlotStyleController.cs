@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		bool IndependentSkipFrequency { get; set; }
 
-		bool DoNotShiftIndependentVariable { get; set; }
+		bool IndependentOnShiftingGroupStyles { get; set; }
 
 		bool UseCommonErrorColumn { get; set; }
 
@@ -174,7 +174,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 				_view.SkipFrequency = _doc.SkipFrequency;
 				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
 
-				_view.DoNotShiftIndependentVariable = _doc.DoNotShiftIndependentVariable;
+				_view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
 
 				_view.Initialize_MeaningOfValues(_meaningOfValues);
 
@@ -217,7 +217,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			_doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
 			_doc.SkipFrequency = _view.SkipFrequency;
 
-			_doc.DoNotShiftIndependentVariable = _view.DoNotShiftIndependentVariable;
+			_doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
 
 			_doc.UseCommonErrorColumn = _view.UseCommonErrorColumn;
 

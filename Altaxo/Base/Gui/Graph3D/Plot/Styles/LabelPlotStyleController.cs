@@ -155,6 +155,14 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		bool ShowPlotColorsOnlyForBackgroundBrush { set; }
 
+		int SkipFrequency { get; set; }
+
+		bool IndependentSkipFrequency { get; set; }
+
+		bool IndependentOnShiftingGroupStyles { get; set; }
+
+		string LabelFormatString { get; set; }
+
 		#region events
 
 		/// <summary>
@@ -264,6 +272,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 				_view.Background = _doc.BackgroundStyle;
 				_view.InitializeBackgroundColorLinkage(_backgroundColorLinkageChoices);
 
+				_view.SkipFrequency = _doc.SkipFrequency;
+				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
+
+				_view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
+
+				_view.LabelFormatString = _doc.LabelFormatString;
+
 				InitializeLabelColumnText();
 			}
 		}
@@ -304,6 +319,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			_doc.RotationX = _view.SelectedRotationX;
 			_doc.RotationY = _view.SelectedRotationY;
 			_doc.RotationZ = _view.SelectedRotationZ;
+
+			_doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
+			_doc.SkipFrequency = _view.SkipFrequency;
+
+			_doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
+
+			_doc.LabelFormatString = _view.LabelFormatString;
 
 			return ApplyEnd(true, disposeController);
 		}

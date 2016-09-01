@@ -119,6 +119,55 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 		}
 
+		public string LabelFormatString
+		{
+			get
+			{
+				return _guiLabelFormat.Text;
+			}
+			set
+			{
+				_guiLabelFormat.Text = value;
+			}
+		}
+
+		public bool IndependentOnShiftingGroupStyles
+		{
+			get
+			{
+				return true == _guiIndependentOnShiftingGroupStyles.IsChecked;
+			}
+			set
+			{
+				_guiIndependentOnShiftingGroupStyles.IsChecked = value;
+			}
+		}
+
+		public bool IndependentSkipFrequency
+		{
+			get
+			{
+				return _guiIndependentSkipFrequency.IsChecked == true;
+			}
+
+			set
+			{
+				_guiIndependentSkipFrequency.IsChecked = value;
+			}
+		}
+
+		public int SkipFrequency
+		{
+			get
+			{
+				return _guiSkipFrequency.Value;
+			}
+			set
+			{
+				_guiSkipFrequency.Value = value;
+			}
+		}
+
 		public new IBackgroundStyle Background
 		{
 			get

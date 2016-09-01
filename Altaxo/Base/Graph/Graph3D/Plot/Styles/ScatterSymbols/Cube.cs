@@ -40,6 +40,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 	{
 		public static Cube Instance { get; private set; } = new Cube();
 
+		public static readonly double Sqrt1By3 = Math.Sqrt(1 / 3.0);
+
 		#region Serialization
 
 		/// <summary>
@@ -62,15 +64,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 
 		public override void Paint(IGraphicsContext3D g, IMaterial material, PointD3D centerLocation, double symbolSize)
 		{
-			var symbolSizeBy2 = symbolSize * 0.5;
+			// Note: the symbolSize provided in the argument is the diameter of an imaginary sphere in which the cube has to fit in
+			// thus the cube's diagonal should be equal to the sphere's diameter
+
+			var size = symbolSize * Sqrt1By3; // size of the cube
+			var sizeBy2 = size * 0.5;
 			var buffers = g.GetPositionNormalIndexedTriangleBuffer(material);
 			if (null != buffers.PositionNormalIndexedTriangleBuffer)
 			{
 				var buf = buffers.PositionNormalIndexedTriangleBuffer;
 				var voffs = buffers.PositionNormalIndexedTriangleBuffer.VertexCount;
 				SolidCube.Add(
-					centerLocation.X - symbolSizeBy2, centerLocation.Y - symbolSizeBy2, centerLocation.Z - symbolSizeBy2,
-					symbolSize, symbolSize, symbolSize,
+					centerLocation.X - sizeBy2, centerLocation.Y - sizeBy2, centerLocation.Z - sizeBy2,
+					size, size, size,
 					(point, normal) => buf.AddTriangleVertex(point.X, point.Y, point.Z, normal.X, normal.Y, normal.Z),
 					(i1, i2, i3) => buf.AddTriangleIndices(i1 + voffs, i2 + voffs, i3 + voffs),
 					ref voffs);

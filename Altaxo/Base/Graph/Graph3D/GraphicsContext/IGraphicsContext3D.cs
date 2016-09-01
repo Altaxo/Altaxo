@@ -71,9 +71,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		void DrawLine(PenX3D pen, IPolylineD3D path);
 
-		VectorD3D MeasureString(string text, FontX3D font, PointD3D pointD3D, StringFormat strfmt);
+		VectorD3D MeasureString(string text, FontX3D font, PointD3D pointD3D);
 
-		void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point, StringFormat strfmt);
+		void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point, System.Drawing.StringFormat alignment);
 
 		#endregion Primitives rendering
 

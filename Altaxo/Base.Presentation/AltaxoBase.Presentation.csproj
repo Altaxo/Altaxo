@@ -609,6 +609,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph3D\Plot\Styles\BarGraphPlotStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph3D\Plot\Styles\ErrorBarPlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1153,6 +1157,9 @@
       <DependentUpon>DashPatternComboBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternConverters.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Styles\BarGraphPlotStyleControl.xaml.cs">
+      <DependentUpon>BarGraphPlotStyleControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph3D\Plot\Styles\ErrorBarPlotStyleControl.xaml.cs">
       <DependentUpon>ErrorBarPlotStyleControl.xaml</DependentUpon>
     </Compile>

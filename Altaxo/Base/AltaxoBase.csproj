@@ -242,12 +242,14 @@
     <Compile Include="Data\Transformations\InverseTransformation.cs" />
     <Compile Include="Data\TransformedReadableColumn.cs" />
     <Compile Include="Data\TransformedReadableColumnProxy.cs" />
+    <Compile Include="Drawing\Alignment.cs" />
     <Compile Include="Drawing\ColorManagement\ColorSetBag.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Ellipsoidal.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Octagonal.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Triangular.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Rectangular.cs" />
-    <Compile Include="Drawing\D3D\LineCaps\ContourDisc10.cs" />
+    <Compile Include="Drawing\D3D\LineCaps\ContourDisc10Min.cs" />
+    <Compile Include="Drawing\D3D\StringAlignment3D.cs" />
     <Compile Include="Drawing\DashPatterns\Custom.cs" />
     <Compile Include="Drawing\DashPatterns\DashDotDot.cs" />
     <Compile Include="Drawing\DashPatterns\DashDot.cs" />
@@ -370,6 +372,7 @@
     <Compile Include="Graph\Graph3D\Plot\Groups\ICoordinateTransformingGroupStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\BarGraphPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ErrorBarPlotStyle.cs" />
+    <Compile Include="Graph\Plot\Groups\BarShiftStrategy3D.cs" />
     <Compile Include="Graph\Plot\Groups\BarSizePosition3DGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\DashPatternGroupStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\PlotGroupStyleCollection.cs" />
@@ -491,6 +494,7 @@
     <Compile Include="Drawing\NamedColors.cs" />
     <Compile Include="Geometry\RectangleD2DExtensions.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
+    <Compile Include="Graph\Plot\Groups\IShiftLogicalXYZGroupStyle.cs" />
     <Compile Include="Graph\Scales\Boundaries\CumulativeProbabilityBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\InverseNumericalBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\IZBoundsHolder.cs" />
@@ -575,6 +579,7 @@
     <Compile Include="Gui\Drawing\ColorManagement\ColorSetController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Groups\ScatterSymbolListController.cs" />
     <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternListController.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Styles\BarGraphPlotStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\ErrorBarPlotStyleController.cs" />
     <Compile Include="Gui\Graph\Plot\Groups\ColorGroupStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Groups\PlotGroupCollectionController.cs" />

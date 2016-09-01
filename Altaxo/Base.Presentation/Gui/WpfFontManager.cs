@@ -635,9 +635,8 @@ namespace Altaxo.Gui
 			/// </summary>
 			/// <param name="text">The text to measure.</param>
 			/// <param name="font">The text font.</param>
-			/// <param name="format">The format of the text. This parameter is ignored here.</param>
 			/// <returns></returns>
-			public override VectorD3D MeasureString(string text, FontX3D font, System.Drawing.StringFormat format)
+			public override VectorD3D MeasureString(string text, FontX3D font)
 			{
 				var scale = font.Font.Size / FontSizeForCaching;
 				double offsetX = 0;

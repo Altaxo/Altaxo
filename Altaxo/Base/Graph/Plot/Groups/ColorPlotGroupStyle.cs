@@ -165,6 +165,15 @@ namespace Altaxo.Graph.Plot.Groups
 		}
 
 		/// <summary>
+		/// Initializes an external <see cref="ColorGroupStyle"/>. This constructor is for internal purposes (automatic construction) only,
+		/// please use <see cref="NewExternalGroupStyle"/> or <see cref="NewLocalGroupStyle"/> instead.
+		/// </summary>
+		public ColorGroupStyle()
+			: this(false)
+		{
+		}
+
+		/// <summary>
 		/// Creates a new group style for external use. See the remarks of the class documentation for what is the difference between instances for external use and local use.
 		/// </summary>
 		/// <returns>A new <see cref="ColorGroupStyle"/> instance for external use.</returns>

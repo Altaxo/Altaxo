@@ -135,7 +135,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// <param name="owner">The owner of this collection.</param>
 		/// <param name="plotItems">The plot items that should initially belong to this collection.</param>
 		/// <param name="clonePlotItems">If set to <c>true</c> the plot items are cloned before added to this collection. If false, the plot items are added directly to this collection.</param>
-		public PlotItemCollection(XYZPlotLayer owner, IEnumerable<IGPlotItem> plotItems, bool clonePlotItems)
+		public PlotItemCollection(XYZPlotLayer owner, PlotItemCollection plotItems, bool clonePlotItems)
 		{
 			_parent = owner;
 			_plotGroupStyles = new PlotGroupStyleCollection() { ParentObject = this };
@@ -144,6 +144,9 @@ namespace Altaxo.Graph.Graph3D.Plot
 			else
 				_plotItems = new ObservableList<IGPlotItem>(plotItems);
 			_plotItems.CollectionChanged += EhPlotItemsCollectionChanged;
+
+			// special way neccessary to handle plot groups
+			ChildCopyToMember(ref _plotGroupStyles, plotItems._plotGroupStyles);
 		}
 
 		public IGPlotItem[] Flattened

@@ -60,6 +60,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		protected StringAlignment _alignmentY;
 		protected StringAlignment _alignmentZ;
 
+		/// <summary>
+		/// The label format string (C# format).
+		/// </summary>
+		protected string _labelFormatString;
+
 		/// <summary>The x offset in EM units.</summary>
 		protected double _offsetX;
 
@@ -88,6 +93,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		protected Altaxo.Data.IReadableColumnProxy _labelColumnProxy;
 
+		/// <summary>
+		/// Skip frequency.
+		/// </summary>
+		protected int _skipFrequency;
+
+		protected bool _independentSkipFrequency;
+
+		/// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
+		private bool _independentOnShiftingGroupStyles;
+
 		// cached values:
 		[NonSerialized]
 		protected StringFormat _cachedStringFormat;
@@ -95,6 +110,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>If this function is set, the label color is determined by calling this function on the index into the data.</summary>
 		[field: NonSerialized]
 		protected Func<int, Color> _cachedColorForIndexFunction;
+
+		/// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftX;
+
+		/// <summary>Logical y shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftY;
+
+		/// <summary>Logical z shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftZ;
 
 		#region Serialization
 
@@ -113,6 +137,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			public static void SSerialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				LabelPlotStyle s = (LabelPlotStyle)obj;
+				info.AddValue("LabelFormat", s._labelFormatString);
 				info.AddValue("Font", s._font);
 				info.AddValue("IndependentColor", s._independentColor);
 				info.AddValue("Material", s._brush);
@@ -133,6 +158,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddEnum("BackgroundColorLinkage", s._backgroundColorLinkage);
 				info.AddValue("Background", s._backgroundStyle);
 				info.AddValue("LabelColumn", s._labelColumnProxy);
+
+				info.AddValue("IndependentSkipFreq", s._independentSkipFrequency);
+				info.AddValue("SkipFreq", s._skipFrequency);
+
+				info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -144,6 +174,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			{
 				LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle(info);
 
+				s._labelFormatString = info.GetString("LabelFormat");
 				s._font = (FontX3D)info.GetValue("Font", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s._brush = (IMaterial)info.GetValue("Material", s);
@@ -167,6 +198,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				if (null != s._backgroundStyle) s._backgroundStyle.ParentObject = s;
 
 				s.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)info.GetValue("LabelColumn", s);
+
+				s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
+				s._skipFrequency = info.GetInt32("SkipFreq");
+
+				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
 
 				if (nativeCall)
 				{
@@ -202,6 +238,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
+				this._labelFormatString = from._labelFormatString;
 				this._font = from._font;
 				this._independentColor = from._independentColor;
 				this._brush = from._brush;
@@ -216,6 +253,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._cachedStringFormat = (System.Drawing.StringFormat)from._cachedStringFormat.Clone();
 				this._attachedPlane = from._attachedPlane;
 				this.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)from._labelColumnProxy.Clone();
+
+				this._independentSkipFrequency = from._independentSkipFrequency;
+				this._skipFrequency = from._skipFrequency;
+				this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+
+				this._cachedLogicalShiftX = from._cachedLogicalShiftX;
+				this._cachedLogicalShiftY = from._cachedLogicalShiftY;
+				this._cachedLogicalShiftZ = from._cachedLogicalShiftZ;
 
 				EhSelfChanged(EventArgs.Empty);
 				suspendToken.Resume();
@@ -319,6 +364,22 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			LabelColumn,
 			LabelColumnDataColumnName,
 			(col) => this.LabelColumn = col);
+		}
+
+		public string LabelFormatString
+		{
+			get
+			{
+				return _labelFormatString;
+			}
+			set
+			{
+				if (!(_labelFormatString == value))
+				{
+					_labelFormatString = value;
+					EhSelfChanged();
+				}
+			}
 		}
 
 		/// <summary>The font of the label.</summary>
@@ -576,6 +637,58 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
+		/// <summary>Controls how many items are plotted. A value of 1 means every item, a value of 2 every other item, and so on.</summary>
+		public int SkipFrequency
+		{
+			get { return _skipFrequency; }
+			set
+			{
+				if (!(_skipFrequency == value))
+				{
+					_skipFrequency = Math.Max(1, value);
+					EhSelfChanged();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the skip frequency is independent on other sub group styles using <see cref="SkipFrequency"/>.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if the skip frequency is independent on other sub group styles using <see cref="SkipFrequency"/>; otherwise, <c>false</c>.
+		/// </value>
+		public bool IndependentSkipFrequency
+		{
+			get { return _independentSkipFrequency; }
+			set
+			{
+				if (!(_independentSkipFrequency == value))
+				{
+					_independentSkipFrequency = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		/// <summary>
+		/// True when we don't want to shift the position of the items, for instance due to the bar graph plot group.
+		/// </summary>
+		public bool IndependentOnShiftingGroupStyles
+		{
+			get
+			{
+				return _independentOnShiftingGroupStyles;
+			}
+			set
+			{
+				if (!(_independentOnShiftingGroupStyles == value))
+				{
+					_independentOnShiftingGroupStyles = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
 		protected void SetCachedValues()
 		{
 		}
@@ -593,7 +706,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			var xpos = (_offsetX * fontSize);
 			var ypos = (_offsetY * fontSize);
 			var zpos = (_offsetZ * fontSize);
-			var stringsize = g.MeasureString(label, _font, new PointD3D(xpos, ypos, zpos), _cachedStringFormat);
+			var stringsize = g.MeasureString(label, _font, new PointD3D(xpos, ypos, zpos));
 
 			if (this._backgroundStyle != null)
 			{
@@ -662,6 +775,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			double xpos = 0, ypos = 0, zpos = 0;
 			double xpre, ypre, zpre;
 			double xdiff, ydiff, zdiff;
+
+			bool mustUseLogicalCoordinates = null != this._attachedPlane || 0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY || 0 != _cachedLogicalShiftZ;
+
 			for (int r = 0; r < rangeList.Count; r++)
 			{
 				int lower = rangeList[r].LowerBound;
@@ -692,17 +808,34 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					}
 					// end of preparation of brushes for variable colors
 
-					xpre = ptArray[j].X;
-					ypre = ptArray[j].Y;
-					zpre = ptArray[j].Z;
-
-					if (null != this._attachedPlane)
+					if (mustUseLogicalCoordinates) // we must use logical coordinates because either there is a shift of logical coordinates, or an attached plane
 					{
 						Logical3D r3d = layer.GetLogical3D(pdata, j + offset);
-						var pp = layer.CoordinateSystem.GetPointOnPlane(this._attachedPlane, r3d);
-						xpre = pp.X;
-						ypre = pp.Y;
-						zpre = pp.Z;
+						r3d.RX += _cachedLogicalShiftX;
+						r3d.RY += _cachedLogicalShiftY;
+						r3d.RZ += _cachedLogicalShiftZ;
+
+						if (null != this._attachedPlane)
+						{
+							var pp = layer.CoordinateSystem.GetPointOnPlane(this._attachedPlane, r3d);
+							xpre = pp.X;
+							ypre = pp.Y;
+							zpre = pp.Z;
+						}
+						else
+						{
+							PointD3D pt;
+							layer.CoordinateSystem.LogicalToLayerCoordinates(r3d, out pt);
+							xpre = pt.X;
+							ypre = pt.Y;
+							zpre = pt.Z;
+						}
+					}
+					else // no shifting, thus we can use layer coordinates
+					{
+						xpre = ptArray[j].X;
+						ypre = ptArray[j].Y;
+						zpre = ptArray[j].Z;
 					}
 
 					xdiff = xpre - xpos;
@@ -844,6 +977,18 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			{
 				// but if there is a color evaluation function, then use that function with higher priority
 				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
+			}
+
+			// Shift the items ?
+			_cachedLogicalShiftX = 0;
+			_cachedLogicalShiftY = 0;
+			if (!_independentOnShiftingGroupStyles)
+			{
+				var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYZGroupStyle>(externalGroups, localGroups);
+				if (null != shiftStyle)
+				{
+					shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY, out _cachedLogicalShiftZ);
+				}
 			}
 		}
 
