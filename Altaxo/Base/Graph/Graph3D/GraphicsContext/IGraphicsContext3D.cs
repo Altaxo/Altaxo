@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using System;
@@ -73,7 +74,9 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 
 		VectorD3D MeasureString(string text, FontX3D font, PointD3D pointD3D);
 
-		void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point, System.Drawing.StringFormat alignment);
+		void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point, Alignment alignmentX, Alignment alignmentY, Alignment alignmentZ);
+
+		void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point);
 
 		#endregion Primitives rendering
 

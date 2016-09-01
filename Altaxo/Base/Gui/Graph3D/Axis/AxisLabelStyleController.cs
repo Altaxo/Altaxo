@@ -24,6 +24,7 @@
 
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph;
 using Altaxo.Graph.Graph3D;
@@ -68,13 +69,19 @@ namespace Altaxo.Gui.Graph3D.Axis
 		/// Initializes the horizontal aligment combo box.
 		/// </summary>
 		/// <param name="items">The possible choices.</param>
-		void HorizontalAlignment_Initialize(Collections.SelectableListNodeList items);
+		void AlignmentX_Initialize(Collections.SelectableListNodeList items);
 
 		/// <summary>
 		/// Initializes the vertical alignement combo box.
 		/// </summary>
 		/// <param name="items">The possible choices.</param>
-		void VerticalAlignment_Initialize(Collections.SelectableListNodeList items);
+		void AlignmentY_Initialize(Collections.SelectableListNodeList items);
+
+		/// <summary>
+		/// Initializes the depth alignment combo box.
+		/// </summary>
+		/// <param name="items">The possible choices.</param>
+		void AlignmentZ_Initialize(Collections.SelectableListNodeList items);
 
 		/// <summary>
 		/// Sets the automatic alignment check box.
@@ -148,8 +155,9 @@ namespace Altaxo.Gui.Graph3D.Axis
 	public class AxisLabelStyleController : MVCANControllerEditOriginalDocBase<AxisLabelStyle, IAxisLabelStyleView>
 	{
 		private SelectableListNodeList _labelSides;
-		private SelectableListNodeList _horizontalAlignmentChoices;
-		private SelectableListNodeList _verticalAlignmentChoices;
+		private SelectableListNodeList _alignmentChoicesX;
+		private SelectableListNodeList _alignmentChoicesY;
+		private SelectableListNodeList _alignmentChoicesZ;
 		private SelectableListNodeList _labelStyles;
 		private IMVCANController _labelFormattingSpecificController;
 
@@ -161,8 +169,9 @@ namespace Altaxo.Gui.Graph3D.Axis
 		public override void Dispose(bool isDisposing)
 		{
 			_labelSides = null;
-			_horizontalAlignmentChoices = null;
-			_verticalAlignmentChoices = null;
+			_alignmentChoicesX = null;
+			_alignmentChoicesY = null;
+			_alignmentChoicesZ = null;
 			_labelStyles = null;
 
 			base.Dispose(isDisposing);
@@ -187,8 +196,9 @@ namespace Altaxo.Gui.Graph3D.Axis
 				_labelSides.AddRange(list);
 
 				// horizontal and vertical alignment
-				_horizontalAlignmentChoices = new Collections.SelectableListNodeList(_doc.AlignmentX);
-				_verticalAlignmentChoices = new Collections.SelectableListNodeList(_doc.AlignmentY);
+				_alignmentChoicesX = new Collections.SelectableListNodeList(_doc.AlignmentX);
+				_alignmentChoicesY = new Collections.SelectableListNodeList(_doc.AlignmentY);
+				_alignmentChoicesZ = new Collections.SelectableListNodeList(_doc.AlignmentZ);
 
 				// label formatting type
 				var labelTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.Graph3D.LabelFormatting.ILabelFormatting));
@@ -205,8 +215,9 @@ namespace Altaxo.Gui.Graph3D.Axis
 			{
 				_view.LabelFont = _doc.Font;
 				_view.LabelMaterial = _doc.Brush;
-				_view.HorizontalAlignment_Initialize(_horizontalAlignmentChoices);
-				_view.VerticalAlignment_Initialize(_verticalAlignmentChoices);
+				_view.AlignmentX_Initialize(_alignmentChoicesX);
+				_view.AlignmentY_Initialize(_alignmentChoicesY);
+				_view.AlignmentZ_Initialize(_alignmentChoicesY);
 				_view.AutomaticAlignment = _doc.AutomaticAlignment;
 				_view.RotationX = _doc.RotationX;
 				_view.RotationY = _doc.RotationY;
@@ -229,8 +240,9 @@ namespace Altaxo.Gui.Graph3D.Axis
 		{
 			_doc.Font = _view.LabelFont;
 			_doc.Brush = _view.LabelMaterial;
-			_doc.AlignmentX = (StringAlignment)_horizontalAlignmentChoices.FirstSelectedNode.Tag;
-			_doc.AlignmentY = (StringAlignment)_verticalAlignmentChoices.FirstSelectedNode.Tag;
+			_doc.AlignmentX = (Alignment)_alignmentChoicesX.FirstSelectedNode.Tag;
+			_doc.AlignmentY = (Alignment)_alignmentChoicesY.FirstSelectedNode.Tag;
+			_doc.AlignmentZ = (Alignment)_alignmentChoicesZ.FirstSelectedNode.Tag;
 			_doc.AutomaticAlignment = _view.AutomaticAlignment;
 			_doc.RotationX = _view.RotationX;
 			_doc.RotationY = _view.RotationY;

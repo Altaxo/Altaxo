@@ -25,7 +25,6 @@
 using Altaxo.Data;
 using Altaxo.Geometry;
 using System;
-using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {
@@ -162,7 +161,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		/// <param name="mtick">The item to draw.</param>
 		/// <param name="morg">The location the item will be drawn.</param>
 		/// <returns>The size of the item if it would be drawn.</returns>
-		public virtual VectorD3D MeasureItem(IGraphicsContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, PointD3D morg)
+		public virtual VectorD3D MeasureItem(IGraphicsContext3D g, FontX3D font, Altaxo.Data.AltaxoVariant mtick, PointD3D morg)
 		{
 			string text = _prefix + FormatItem(mtick) + _suffix;
 			return g.MeasureString(text, font, morg);
@@ -174,13 +173,12 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		/// <param name="g">Graphics context.</param>
 		/// <param name="brush">Brush used to draw the item.</param>
 		/// <param name="font">Font used to draw the item.</param>
-		/// <param name="strfmt">String format.</param>
 		/// <param name="item">The item to draw.</param>
 		/// <param name="morg">The location where the item is drawn to.</param>
-		public virtual void DrawItem(IGraphicsContext3D g, IMaterial brush, FontX3D font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointD3D morg)
+		public virtual void DrawItem(IGraphicsContext3D g, IMaterial brush, FontX3D font, AltaxoVariant item, PointD3D morg)
 		{
 			string text = _prefix + FormatItem(item) + _suffix;
-			g.DrawString(text, font, brush, morg, strfmt);
+			g.DrawString(text, font, brush, morg);
 		}
 
 		/// <summary>
@@ -191,7 +189,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		/// <param name="strfmt">String format used.</param>
 		/// <param name="items">Array of items to be drawn.</param>
 		/// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
-		public virtual IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
+		public virtual IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, AltaxoVariant[] items)
 		{
 			string[] titems = FormatItems(items);
 			if (!string.IsNullOrEmpty(_prefix) || !string.IsNullOrEmpty(_suffix))
@@ -203,11 +201,10 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			MeasuredLabelItem[] litems = new MeasuredLabelItem[titems.Length];
 
 			FontX3D localfont = font;
-			StringFormat localstrfmt = (StringFormat)strfmt.Clone();
 
 			for (int i = 0; i < titems.Length; ++i)
 			{
-				litems[i] = new MeasuredLabelItem(g, localfont, localstrfmt, titems[i]);
+				litems[i] = new MeasuredLabelItem(g, localfont, titems[i]);
 			}
 
 			return litems;
@@ -217,16 +214,14 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		{
 			protected string _text;
 			protected FontX3D _font;
-			protected System.Drawing.StringFormat _strfmt;
 			protected VectorD3D _size;
 
 			#region IMeasuredLabelItem Members
 
-			public MeasuredLabelItem(IGraphicsContext3D g, FontX3D font, StringFormat strfmt, string itemtext)
+			public MeasuredLabelItem(IGraphicsContext3D g, FontX3D font, string itemtext)
 			{
 				_text = itemtext;
 				_font = font;
-				_strfmt = strfmt;
 				_size = g.MeasureString(_text, _font, new PointD3D(0, 0, 0));
 			}
 
@@ -240,7 +235,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
 			public virtual void Draw(IGraphicsContext3D g, IMaterial brush, PointD3D point)
 			{
-				g.DrawString(_text, _font, brush, point, _strfmt);
+				g.DrawString(_text, _font, brush, point);
 			}
 
 			#endregion IMeasuredLabelItem Members

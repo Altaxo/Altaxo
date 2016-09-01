@@ -28,7 +28,6 @@ using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
-using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {
@@ -38,7 +37,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 	public abstract class MultiLineLabelFormattingBase : LabelFormattingBase
 	{
 		private double _relativeLineSpacing = 1;
-		private System.Drawing.StringAlignment _textBlockAlignment;
+		private Alignment _textBlockAlignment;
 
 		#region Serialization
 
@@ -58,7 +57,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 				var s = (MultiLineLabelFormattingBase)o;
 				info.GetBaseValueEmbedded(s, typeof(MultiLineLabelFormattingBase).BaseType, parent);
 				s._relativeLineSpacing = info.GetDouble("LineSpacing");
-				s._textBlockAlignment = (System.Drawing.StringAlignment)info.GetEnum("BlockAlignment", typeof(System.Drawing.StringAlignment));
+				s._textBlockAlignment = (Alignment)info.GetEnum("BlockAlignment", typeof(Alignment));
 
 				return s;
 			}
@@ -102,7 +101,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			}
 		}
 
-		public System.Drawing.StringAlignment TextBlockAlignment
+		public Alignment TextBlockAlignment
 		{
 			get
 			{
@@ -122,7 +121,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		/// <param name="strfmt">String format used.</param>
 		/// <param name="items">Array of items to be drawn.</param>
 		/// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
-		public override IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
+		public override IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, AltaxoVariant[] items)
 		{
 			string[] titems = FormatItems(items);
 			if (!string.IsNullOrEmpty(_prefix) || !string.IsNullOrEmpty(_suffix))
@@ -134,17 +133,10 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			MeasuredLabelItem[] litems = new MeasuredLabelItem[titems.Length];
 
 			FontX3D localfont = font;
-			StringFormat localstrfmt = (StringFormat)strfmt.Clone();
-
-			StringAlignment horizontalAlignment = localstrfmt.Alignment;
-			StringAlignment verticalAlignment = localstrfmt.LineAlignment;
-
-			localstrfmt.Alignment = StringAlignment.Near;
-			localstrfmt.LineAlignment = StringAlignment.Near;
 
 			for (int i = 0; i < titems.Length; ++i)
 			{
-				litems[i] = new MeasuredLabelItem(g, localfont, localstrfmt, titems[i], _relativeLineSpacing, horizontalAlignment, verticalAlignment, _textBlockAlignment);
+				litems[i] = new MeasuredLabelItem(g, localfont, titems[i], _relativeLineSpacing, Alignment.Near, Alignment.Near, _textBlockAlignment);
 			}
 
 			return litems;
@@ -155,17 +147,16 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			protected string[] _text;
 			protected VectorD3D[] _stringSize;
 			protected FontX3D _font;
-			protected System.Drawing.StringFormat _strfmt;
 			protected VectorD3D _size;
 
-			protected StringAlignment _horizontalAlignment;
-			protected StringAlignment _verticalAlignment;
-			protected StringAlignment _textBlockAligment;
+			protected Alignment _horizontalAlignment;
+			protected Alignment _verticalAlignment;
+			protected Alignment _textBlockAligment;
 			protected double _lineSpacing;
 
 			#region IMeasuredLabelItem Members
 
-			public MeasuredLabelItem(IGraphicsContext3D g, FontX3D font, StringFormat strfmt, string itemtext, double lineSpacing, StringAlignment horizontalAlignment, StringAlignment verticalAlignment, StringAlignment textBlockAligment)
+			public MeasuredLabelItem(IGraphicsContext3D g, FontX3D font, string itemtext, double lineSpacing, Alignment horizontalAlignment, Alignment verticalAlignment, Alignment textBlockAligment)
 			{
 				_text = itemtext.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 				_stringSize = new VectorD3D[_text.Length];
@@ -173,7 +164,6 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 				_horizontalAlignment = horizontalAlignment;
 				_verticalAlignment = verticalAlignment;
 				_textBlockAligment = textBlockAligment;
-				_strfmt = strfmt;
 				_lineSpacing = lineSpacing;
 				_size = VectorD3D.Empty;
 				var bounds = RectangleD3D.Empty;
@@ -205,16 +195,16 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 					var posX = positionX;
 					switch (_textBlockAligment)
 					{
-						case StringAlignment.Center:
+						case Alignment.Center:
 							posX += (_size.X - _stringSize[i].X) * 0.5;
 							break;
 
-						case StringAlignment.Far:
+						case Alignment.Far:
 							posX += (_size.X - _stringSize[i].X);
 							break;
 					}
 
-					g.DrawString(_text[i], _font, brush, new PointD3D(posX, positionY, 0), _strfmt);
+					g.DrawString(_text[i], _font, brush, new PointD3D(posX, positionY, 0));
 					positionY -= _stringSize[i].Y * _lineSpacing;
 				}
 			}
@@ -224,13 +214,13 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 				switch (_horizontalAlignment)
 				{
 					default:
-					case StringAlignment.Near:
+					case Alignment.Near:
 						return 0;
 
-					case StringAlignment.Center:
+					case Alignment.Center:
 						return _size.X / 2;
 
-					case StringAlignment.Far:
+					case Alignment.Far:
 						return _size.X;
 				}
 			}
@@ -240,13 +230,13 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 				switch (_verticalAlignment)
 				{
 					default:
-					case StringAlignment.Near:
+					case Alignment.Near:
 						return 0;
 
-					case StringAlignment.Center:
+					case Alignment.Center:
 						return _size.Y / 2;
 
-					case StringAlignment.Far:
+					case Alignment.Far:
 						return _size.Y;
 				}
 			}

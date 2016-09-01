@@ -29,7 +29,6 @@ using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {
@@ -171,7 +170,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			}
 		}
 
-		public override VectorD3D MeasureItem(IGraphicsContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant mtick, PointD3D morg)
+		public override VectorD3D MeasureItem(IGraphicsContext3D g, FontX3D font, Altaxo.Data.AltaxoVariant mtick, PointD3D morg)
 		{
 			string firstpart, middelpart, exponent;
 			double mant;
@@ -184,18 +183,18 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			return new VectorD3D(size1.X + size2.X + size3.X, size1.Y, font.Depth);
 		}
 
-		public override void DrawItem(IGraphicsContext3D g, IMaterial brush, FontX3D font, System.Drawing.StringFormat strfmt, Altaxo.Data.AltaxoVariant item, PointD3D morg)
+		public override void DrawItem(IGraphicsContext3D g, IMaterial brush, FontX3D font, Altaxo.Data.AltaxoVariant item, PointD3D morg)
 		{
 			string firstpart, middelpart, exponent;
 			double mant;
 			SplitInFirstPartAndExponent((double)item, out firstpart, out mant, out middelpart, out exponent);
 
 			var size1 = g.MeasureString(_prefix + firstpart + middelpart, font, morg);
-			g.DrawString(_prefix + firstpart + middelpart, font, brush, morg, strfmt);
+			g.DrawString(_prefix + firstpart + middelpart, font, brush, morg);
 			var orginalY = morg.Y;
 			morg = morg + new VectorD3D(size1.X, size1.Y, 0);
 			var font2 = font.WithSize(font.Size * 2 / 3.0);
-			g.DrawString(exponent, font2, brush, morg, strfmt);
+			g.DrawString(exponent, font2, brush, morg);
 			if (!string.IsNullOrEmpty(_suffix))
 			{
 				var shiftX = g.MeasureString(exponent, font2, morg).X;
@@ -204,18 +203,16 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
 			if (!string.IsNullOrEmpty(_suffix))
 			{
-				g.DrawString(_suffix, font, brush, morg, strfmt);
+				g.DrawString(_suffix, font, brush, morg);
 			}
 		}
 
-		public override IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, System.Drawing.StringFormat strfmt, AltaxoVariant[] items)
+		public override IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, AltaxoVariant[] items)
 		{
 			MeasuredLabelItem[] litems = new MeasuredLabelItem[items.Length];
 
 			var localfont1 = font;
 			var localfont2 = font.WithSize(font.Size * 2 / 3);
-
-			StringFormat localstrfmt = (StringFormat)strfmt.Clone();
 
 			string[] firstp = new string[items.Length];
 			string[] middel = new string[items.Length];
@@ -261,7 +258,7 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 					else
 						mid = "\u00D710";
 				}
-				litems[i] = new MeasuredLabelItem(g, localfont1, localfont2, localstrfmt, _prefix + firstp[i] + mid, expos[i], _suffix, maxexposize);
+				litems[i] = new MeasuredLabelItem(g, localfont1, localfont2, _prefix + firstp[i] + mid, expos[i], _suffix, maxexposize);
 			}
 
 			return litems;
@@ -274,7 +271,6 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 			protected string _lastpart;
 			protected FontX3D _font1;
 			protected FontX3D _font2;
-			protected System.Drawing.StringFormat _strfmt;
 			protected VectorD3D _size1;
 			protected VectorD3D _size2;
 			protected VectorD3D _size3;
@@ -282,14 +278,13 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
 			#region IMeasuredLabelItem Members
 
-			public MeasuredLabelItem(IGraphicsContext3D g, FontX3D font1, FontX3D font2, StringFormat strfmt, string firstpart, string exponent, string lastpart, double maxexposize)
+			public MeasuredLabelItem(IGraphicsContext3D g, FontX3D font1, FontX3D font2, string firstpart, string exponent, string lastpart, double maxexposize)
 			{
 				_firstpart = firstpart;
 				_exponent = exponent;
 				_lastpart = lastpart;
 				_font1 = font1;
 				_font2 = font2;
-				_strfmt = strfmt;
 				_size1 = g.MeasureString(_firstpart, _font1, PointD3D.Empty);
 				_size2 = g.MeasureString(_exponent, _font2, new PointD3D(_size1.X, 0, 0));
 				_size3 = g.MeasureString(_lastpart, _font1, PointD3D.Empty);
@@ -306,15 +301,15 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 
 			public virtual void Draw(IGraphicsContext3D g, IMaterial brush, PointD3D point)
 			{
-				g.DrawString(_firstpart, _font1, brush, point, _strfmt);
+				g.DrawString(_firstpart, _font1, brush, point);
 
 				point = point.WithXPlus(_size1.X);
 
-				g.DrawString(_exponent, _font2, brush, point.WithYPlus(_size1.Y - _size2.Y), _strfmt);
+				g.DrawString(_exponent, _font2, brush, point.WithYPlus(_size1.Y - _size2.Y));
 
 				point = point.WithXPlus(_size2.X);
 
-				g.DrawString(_lastpart, _font1, brush, point, _strfmt);
+				g.DrawString(_lastpart, _font1, brush, point);
 			}
 
 			#endregion IMeasuredLabelItem Members

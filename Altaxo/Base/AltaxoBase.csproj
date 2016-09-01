@@ -249,7 +249,6 @@
     <Compile Include="Drawing\D3D\CrossSections\Triangular.cs" />
     <Compile Include="Drawing\D3D\CrossSections\Rectangular.cs" />
     <Compile Include="Drawing\D3D\LineCaps\ContourDisc10Min.cs" />
-    <Compile Include="Drawing\D3D\StringAlignment3D.cs" />
     <Compile Include="Drawing\DashPatterns\Custom.cs" />
     <Compile Include="Drawing\DashPatterns\DashDotDot.cs" />
     <Compile Include="Drawing\DashPatterns\DashDot.cs" />

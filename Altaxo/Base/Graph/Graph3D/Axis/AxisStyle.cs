@@ -26,7 +26,6 @@ using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {

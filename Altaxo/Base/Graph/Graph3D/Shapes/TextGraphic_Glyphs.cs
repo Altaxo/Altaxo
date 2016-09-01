@@ -24,17 +24,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
-	using Altaxo.Geometry;
 	using Drawing;
 	using Drawing.D3D;
-	using Graph.Plot.Data;
+	using Geometry;
 	using GraphicsContext;
 	using Plot;
 
@@ -138,10 +135,6 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 		private class Glyph
 		{
-			// Modification of StringFormat is necessary to avoid
-			// too big spaces between successive words
-			protected static StringFormat _stringFormat;
-
 			/// <summary>Parent of this object.</summary>
 			public StructuralGlyph Parent { get; set; }
 
@@ -183,20 +176,6 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			/// <summary>Draws the object.</summary>
 			public virtual void Draw(IGraphicsContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
-			}
-
-			/// <summary>
-			/// Returns the commonly used StringFormat for all glyphs.
-			/// </summary>
-			public virtual StringFormat StringFormat { get { return _stringFormat; } }
-
-			static Glyph()
-			{
-				_stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
-				_stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-
-				_stringFormat.LineAlignment = StringAlignment.Near;
-				_stringFormat.Alignment = StringAlignment.Near;
 			}
 
 			/// <summary>Measures the string with the appropriate generic typographic format.</summary>
@@ -450,7 +429,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 					_child.Draw(g, dc, xbase, ybase, zbase);
 					FontInfo fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
 					double psize = FontManager3D.Instance.MeasureString(".", Style.FontId).X;
-					g.DrawString(".", Style.FontId, Style.brush, new PointD3D((xbase + _child.SizeX / 2 - psize / 2), (ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), zbase), this.StringFormat);
+					g.DrawString(".", Style.FontId, Style.brush, new PointD3D((xbase + _child.SizeX / 2 - psize / 2), (ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), zbase));
 				}
 			}
 		}
@@ -479,7 +458,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 				{
 					_child.Draw(g, dc, xbase, ybase, zbase);
 					FontInfo fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
-					g.DrawString("_", Style.FontId, Style.brush, new PointD3D((xbase), (ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), zbase), this.StringFormat);
+					g.DrawString("_", Style.FontId, Style.brush, new PointD3D((xbase), (ybase - _child.ExtendAboveBaseline - fontInfo.cyAscent), zbase));
 				}
 			}
 		}
@@ -594,7 +573,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 			public override void Draw(IGraphicsContext3D g, DrawContext dc, double xbase, double ybase, double zbase)
 			{
 				var fontInfo = dc.FontCache.GetFontInfo(Style.FontId);
-				g.DrawString(_text, Style.FontId, Style.brush, new PointD3D(xbase, (ybase - fontInfo.cyDescent), zbase), _stringFormat);
+				g.DrawString(_text, Style.FontId, Style.brush, new PointD3D(xbase, (ybase - fontInfo.cyDescent), zbase));
 			}
 
 			public override string ToString()
@@ -711,20 +690,11 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
 		private class PlotSymbol : Glyph
 		{
-			// Modification of StringFormat is necessary to avoid
-			// too big spaces between successive words
-			protected new static StringFormat _stringFormat;
-
 			private int _layerNumber = -1;
 			private int _plotNumber;
 
 			static PlotSymbol()
 			{
-				_stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
-				_stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
-
-				_stringFormat.LineAlignment = StringAlignment.Near;
-				_stringFormat.Alignment = StringAlignment.Near;
 			}
 
 			public PlotSymbol(StyleContext style, int plotNumber)

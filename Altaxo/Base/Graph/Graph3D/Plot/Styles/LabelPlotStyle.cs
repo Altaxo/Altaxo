@@ -24,7 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
@@ -56,9 +55,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>The brush for the label.</summary>
 		protected IMaterial _brush;
 
-		protected StringAlignment _alignmentX;
-		protected StringAlignment _alignmentY;
-		protected StringAlignment _alignmentZ;
+		protected Alignment _alignmentX;
+		protected Alignment _alignmentY;
+		protected Alignment _alignmentZ;
 
 		/// <summary>
 		/// The label format string (C# format).
@@ -103,13 +102,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
 		private bool _independentOnShiftingGroupStyles;
 
-		// cached values:
-		[NonSerialized]
-		protected StringFormat _cachedStringFormat;
-
 		/// <summary>If this function is set, the label color is determined by calling this function on the index into the data.</summary>
 		[field: NonSerialized]
-		protected Func<int, Color> _cachedColorForIndexFunction;
+		protected Func<int, System.Drawing.Color> _cachedColorForIndexFunction;
 
 		/// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
 		private double _cachedLogicalShiftX;
@@ -179,9 +174,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s._brush = (IMaterial)info.GetValue("Material", s);
 
-				s._alignmentX = (StringAlignment)info.GetEnum("AlignmentX", typeof(StringAlignment));
-				s._alignmentY = (StringAlignment)info.GetEnum("AlignmentY", typeof(StringAlignment));
-				s._alignmentZ = (StringAlignment)info.GetEnum("AlignmentZ", typeof(StringAlignment));
+				s._alignmentX = (Alignment)info.GetEnum("AlignmentX", typeof(Alignment));
+				s._alignmentY = (Alignment)info.GetEnum("AlignmentY", typeof(Alignment));
+				s._alignmentZ = (Alignment)info.GetEnum("AlignmentZ", typeof(Alignment));
 
 				s._rotationX = info.GetDouble("RotationX");
 				s._rotationY = info.GetDouble("RotationY");
@@ -222,9 +217,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <param name="info">The deserialization information.</param>
 		protected LabelPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
-			this._cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
-			this._cachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
-			this._cachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
 			this._backgroundColorLinkage = ColorLinkage.Independent;
 		}
 
@@ -250,7 +242,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._rotationZ = from._rotationZ;
 				ChildCopyToMember(ref _backgroundStyle, from._backgroundStyle);
 				this._backgroundColorLinkage = from._backgroundColorLinkage;
-				this._cachedStringFormat = (System.Drawing.StringFormat)from._cachedStringFormat.Clone();
 				this._attachedPlane = from._attachedPlane;
 				this.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)from._labelColumnProxy.Clone();
 
@@ -293,9 +284,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			this._rotationZ = 0;
 			this._backgroundStyle = null;
 			this._backgroundColorLinkage = ColorLinkage.Independent;
-			this._cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
-			this._cachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
-			this._cachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
 			this._attachedPlane = null;
 			this.LabelColumnProxy = Altaxo.Data.ReadableColumnProxyBase.FromColumn(labelColumn);
 		}
@@ -575,7 +563,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		}
 
 		/// <summary>Horizontal alignment of the label.</summary>
-		public System.Drawing.StringAlignment AlignmentX
+		public Alignment AlignmentX
 		{
 			get
 			{
@@ -583,40 +571,43 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 			set
 			{
-				System.Drawing.StringAlignment oldValue = _alignmentX;
-				this._alignmentX = value;
-				if (value != oldValue)
+				if (!(_alignmentX == value))
 				{
-					EhSelfChanged(EventArgs.Empty);
+					_alignmentX = value;
+					EhSelfChanged();
 				}
 			}
 		}
 
 		/// <summary>Vertical aligment of the label.</summary>
-		public System.Drawing.StringAlignment AlignmentY
+		public Alignment AlignmentY
 		{
-			get { return this._alignmentY; }
+			get
+			{
+				return this._alignmentY;
+			}
 			set
 			{
-				System.Drawing.StringAlignment oldValue = _alignmentY;
-				this._alignmentY = value;
-				if (value != oldValue)
+				if (!(_alignmentY == value))
 				{
-					EhSelfChanged(EventArgs.Empty);
+					_alignmentY = value;
+					EhSelfChanged();
 				}
 			}
 		}
 
 		/// <summary>Vertical aligment of the label.</summary>
-		public System.Drawing.StringAlignment AlignmentZ
+		public Alignment AlignmentZ
 		{
-			get { return this._alignmentZ; }
+			get
+			{
+				return this._alignmentZ;
+			}
 			set
 			{
-				System.Drawing.StringAlignment oldValue = _alignmentZ;
-				this._alignmentZ = value;
-				if (value != oldValue)
+				if (!(_alignmentZ == value))
 				{
+					_alignmentZ = value;
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -714,23 +705,24 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				var y = ypos;
 				var z = zpos;
 
-				switch (_cachedStringFormat.Alignment)
+				switch (_alignmentX)
 				{
-					case StringAlignment.Center:
+					case Alignment.Center:
 						x -= stringsize.X / 2;
 						break;
 
-					case StringAlignment.Far:
+					case Alignment.Far:
 						x -= stringsize.X;
 						break;
 				}
-				switch (_cachedStringFormat.LineAlignment)
+
+				switch (_alignmentY)
 				{
-					case StringAlignment.Center:
+					case Alignment.Center:
 						y -= stringsize.Y / 2;
 						break;
 
-					case StringAlignment.Far:
+					case Alignment.Far:
 						y -= stringsize.Y;
 						break;
 				}
@@ -745,7 +737,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 
 			var brush = null != variableTextBrush ? variableTextBrush : _brush;
-			g.DrawString(label, _font, brush, new PointD3D(xpos, ypos, zpos), _cachedStringFormat);
+			g.DrawString(label, _font, brush, new PointD3D(xpos, ypos, zpos), _alignmentX, _alignmentY, _alignmentZ);
 		}
 
 		public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData)
@@ -792,7 +784,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					// Start of preparation of brushes, if a variable color is used
 					if (isUsingVariableColor)
 					{
-						Color c = _cachedColorForIndexFunction(j + offset);
+						var c = _cachedColorForIndexFunction(j + offset);
 
 						if (isUsingVariableColorForLabelText)
 						{
@@ -976,7 +968,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (this.IsColorReceiver || this.IsBackgroundColorReceiver)
 			{
 				// but if there is a color evaluation function, then use that function with higher priority
-				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
+				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, System.Drawing.Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
 			}
 
 			// Shift the items ?

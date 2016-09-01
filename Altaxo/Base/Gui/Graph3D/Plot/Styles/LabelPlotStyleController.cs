@@ -24,6 +24,7 @@
 
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph;
 using Altaxo.Graph.Graph3D;
@@ -289,9 +290,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			_doc.Font = _view.SelectedFont;
 			_doc.IndependentColor = _view.IndependentColor;
 			_doc.LabelBrush = _view.LabelBrush;
-			_doc.AlignmentX = (System.Drawing.StringAlignment)_alignmentXChoices.FirstSelectedNode.Tag;
-			_doc.AlignmentY = (System.Drawing.StringAlignment)_alignmentYChoices.FirstSelectedNode.Tag;
-			_doc.AlignmentZ = (System.Drawing.StringAlignment)_alignmentZChoices.FirstSelectedNode.Tag;
+			_doc.AlignmentX = (Alignment)_alignmentXChoices.FirstSelectedNode.Tag;
+			_doc.AlignmentY = (Alignment)_alignmentYChoices.FirstSelectedNode.Tag;
+			_doc.AlignmentZ = (Alignment)_alignmentZChoices.FirstSelectedNode.Tag;
 
 			var xOffs = _view.OffsetX;
 			if (xOffs.Unit is IRelativeUnit)

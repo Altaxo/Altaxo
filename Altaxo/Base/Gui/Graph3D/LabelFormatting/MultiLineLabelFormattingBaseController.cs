@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Collections;
+using Altaxo.Drawing;
 using Altaxo.Graph.Graph3D.LabelFormatting;
 using System;
 using System.Collections.Generic;
@@ -66,7 +67,7 @@ namespace Altaxo.Gui.Graph3D.LabelFormatting
 		public override bool Apply(bool disposeController)
 		{
 			_doc.LineSpacing = _view.LineSpacing;
-			_doc.TextBlockAlignment = (System.Drawing.StringAlignment)_textBlockAlignmentChoices.FirstSelectedNode.Tag;
+			_doc.TextBlockAlignment = (Alignment)_textBlockAlignmentChoices.FirstSelectedNode.Tag;
 
 			return ApplyEnd(true, disposeController);
 		}

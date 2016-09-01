@@ -47,13 +47,13 @@ namespace Altaxo.Gui.Graph3D.Axis
 		{
 			InitializeComponent();
 			_backgroundGlue = new BackgroundControlsGlue();
-			_backgroundGlue.CbBrush = _cbBackgroundBrush;
-			_backgroundGlue.CbStyle = _cbBackgroundStyle;
+			_backgroundGlue.CbBrush = _guiBackgroundBrush;
+			_backgroundGlue.CbStyle = _guiBackgroundStyle;
 
 			_fontGlue = new FontX3DGlue();
-			_fontGlue.GuiFontFamily = m_cbFontFamily;
-			_fontGlue.GuiFontStyle = m_cbFontStyle;
-			_fontGlue.GuiFontSize = m_cbFontSize;
+			_fontGlue.GuiFontFamily = _guiFontFamily;
+			_fontGlue.GuiFontStyle = _guiFontStyle;
+			_fontGlue.GuiFontSize = _guiFontSize;
 		}
 
 		public event Action LabelStyleChanged;
@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 		private void m_cbLabelStyle_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
 		{
 			e.Handled = true;
-			GuiHelper.SynchronizeSelectionFromGui(m_cbLabelStyle);
+			GuiHelper.SynchronizeSelectionFromGui(_guiLabelStyle);
 			if (null != LabelStyleChanged)
 				LabelStyleChanged();
 		}
@@ -104,27 +104,32 @@ namespace Altaxo.Gui.Graph3D.Axis
 			}
 		}
 
-		public void HorizontalAlignment_Initialize(Collections.SelectableListNodeList items)
+		public void AlignmentX_Initialize(Collections.SelectableListNodeList items)
 		{
-			GuiHelper.Initialize(m_cbHorizontalAlignment, items);
+			GuiHelper.Initialize(_guiAlignmentX, items);
 		}
 
-		public void VerticalAlignment_Initialize(Collections.SelectableListNodeList items)
+		public void AlignmentY_Initialize(Collections.SelectableListNodeList items)
 		{
-			GuiHelper.Initialize(m_cbVerticalAlignment, items);
+			GuiHelper.Initialize(_guiAlignmentY, items);
+		}
+
+		public void AlignmentZ_Initialize(Collections.SelectableListNodeList items)
+		{
+			GuiHelper.Initialize(_guiAlignmentZ, items);
 		}
 
 		public bool AutomaticAlignment
 		{
 			get
 			{
-				return true == _chkAutomaticAlignment.IsChecked;
+				return true == _guiAutomaticAlignment.IsChecked;
 			}
 			set
 			{
-				_chkAutomaticAlignment.IsChecked = value;
-				this.m_cbHorizontalAlignment.IsEnabled = false == _chkAutomaticAlignment.IsChecked;
-				this.m_cbVerticalAlignment.IsEnabled = false == _chkAutomaticAlignment.IsChecked;
+				_guiAutomaticAlignment.IsChecked = value;
+				this._guiAlignmentX.IsEnabled = false == _guiAutomaticAlignment.IsChecked;
+				this._guiAlignmentY.IsEnabled = false == _guiAutomaticAlignment.IsChecked;
 			}
 		}
 
@@ -202,19 +207,19 @@ namespace Altaxo.Gui.Graph3D.Axis
 
 		public void LabelStyle_Initialize(Collections.SelectableListNodeList items)
 		{
-			GuiHelper.Initialize(this.m_cbLabelStyle, items);
+			GuiHelper.Initialize(this._guiLabelStyle, items);
 		}
 
 		public string SuppressedLabelsByValue
 		{
-			get { return _edSuppressLabelValues.Text; }
-			set { _edSuppressLabelValues.Text = value; }
+			get { return _guiSuppressLabelValues.Text; }
+			set { _guiSuppressLabelValues.Text = value; }
 		}
 
 		public string SuppressedLabelsByNumber
 		{
-			get { return _edSuppressLabelsByNumber.Text; }
-			set { _edSuppressLabelsByNumber.Text = value; }
+			get { return _guiSuppressLabelsByNumber.Text; }
+			set { _guiSuppressLabelsByNumber.Text = value; }
 		}
 
 		public string PrefixText
@@ -253,18 +258,24 @@ namespace Altaxo.Gui.Graph3D.Axis
 
 		private void _chkAutomaticAlignment_CheckedChanged(object sender, RoutedEventArgs e)
 		{
-			m_cbHorizontalAlignment.IsEnabled = false == _chkAutomaticAlignment.IsChecked;
-			m_cbVerticalAlignment.IsEnabled = false == _chkAutomaticAlignment.IsChecked;
+			_guiAlignmentX.IsEnabled = false == _guiAutomaticAlignment.IsChecked;
+			_guiAlignmentY.IsEnabled = false == _guiAutomaticAlignment.IsChecked;
+			_guiAlignmentZ.IsEnabled = false == _guiAutomaticAlignment.IsChecked;
 		}
 
-		private void EhHorizontalAligment_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void EhAlignmentX_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			GuiHelper.SynchronizeSelectionFromGui(m_cbHorizontalAlignment);
+			GuiHelper.SynchronizeSelectionFromGui(_guiAlignmentX);
 		}
 
-		private void EhVerticalAligment_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void EhAlignmentY_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			GuiHelper.SynchronizeSelectionFromGui(m_cbVerticalAlignment);
+			GuiHelper.SynchronizeSelectionFromGui(_guiAlignmentY);
+		}
+
+		private void EhAlignmentZ_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiAlignmentZ);
 		}
 	}
 }

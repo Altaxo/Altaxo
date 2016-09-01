@@ -24,7 +24,6 @@
 
 using Altaxo.Geometry;
 using System;
-using System.Drawing;
 
 namespace Altaxo.Graph.Graph3D.LabelFormatting
 {

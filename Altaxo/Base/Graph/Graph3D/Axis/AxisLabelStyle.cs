@@ -23,13 +23,10 @@
 #endregion Copyright
 
 using Altaxo.Data;
-using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Graph3D.Axis
 {
@@ -49,11 +46,10 @@ namespace Altaxo.Graph.Graph3D.Axis
 	{
 		protected FontX3D _font;
 
-		protected StringAlignment _alignmentX;
-		protected StringAlignment _alignmentY;
-		protected StringAlignment _alignmentZ;
+		protected Alignment _alignmentX;
+		protected Alignment _alignmentY;
+		protected Alignment _alignmentZ;
 
-		protected StringFormat _stringFormat;
 		protected IMaterial _brush;
 
 		/// <summary>The x offset in EM units.</summary>
@@ -147,9 +143,9 @@ namespace Altaxo.Graph.Graph3D.Axis
 				s.BackgroundStyle = (Background.IBackgroundStyle)info.GetValue("Background", s);
 
 				s._automaticRotationShift = info.GetBoolean("AutoAlignment");
-				s._alignmentX = (StringAlignment)info.GetEnum("AlignmentX", typeof(StringAlignment));
-				s._alignmentY = (StringAlignment)info.GetEnum("AlignmentY", typeof(StringAlignment));
-				s._alignmentZ = (StringAlignment)info.GetEnum("AlignmentZ", typeof(StringAlignment));
+				s._alignmentX = (Alignment)info.GetEnum("AlignmentX", typeof(Alignment));
+				s._alignmentY = (Alignment)info.GetEnum("AlignmentY", typeof(Alignment));
+				s._alignmentZ = (Alignment)info.GetEnum("AlignmentZ", typeof(Alignment));
 				s._rotationX = info.GetDouble("RotationX");
 				s._rotationY = info.GetDouble("RotationY");
 				s._rotationZ = info.GetDouble("RotationZ");
@@ -167,11 +163,6 @@ namespace Altaxo.Graph.Graph3D.Axis
 				s._labelFormatting.ParentObject = s;
 
 				s._labelSide = info.GetNullableEnum<CSAxisSide>("LabelSide");
-
-				// Modification of StringFormat is necessary to avoid
-				// too big spaces between successive words
-				s._stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
-				s._stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
 				return s;
 			}
@@ -212,7 +203,6 @@ namespace Altaxo.Graph.Graph3D.Axis
 			_rotationX = 90;
 			_suppressedLabels = new SuppressedTicks() { ParentObject = this };
 			_labelFormatting = new LabelFormatting.NumericLabelFormattingAuto() { ParentObject = this };
-			SetStringFormat();
 		}
 
 		public AxisLabelStyle(AxisLabelStyle from)
@@ -233,7 +223,6 @@ namespace Altaxo.Graph.Graph3D.Axis
 				_cachedAxisStyleInfo = from._cachedAxisStyleInfo;
 
 				_font = from._font;
-				CopyHelper.Copy(ref _stringFormat, from._stringFormat);
 				_alignmentX = from._alignmentX;
 				_alignmentY = from._alignmentY;
 				_alignmentZ = from._alignmentZ;
@@ -276,14 +265,6 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 			if (null != _suppressedLabels)
 				yield return new Main.DocumentNodeAndName(_suppressedLabels, "SuppressedLabels");
-		}
-
-		private void SetStringFormat()
-		{
-			// Modification of StringFormat is necessary to avoid
-			// too big spaces between successive words
-			_stringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
-			_stringFormat.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 		}
 
 		#region Properties
@@ -552,7 +533,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 		}
 
 		/// <summary>Horizontal alignment of the label.</summary>
-		public System.Drawing.StringAlignment AlignmentX
+		public Alignment AlignmentX
 		{
 			get
 			{
@@ -560,40 +541,43 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 			set
 			{
-				System.Drawing.StringAlignment oldValue = _alignmentX;
-				this._alignmentX = value;
-				if (value != oldValue)
+				if (!(_alignmentX == value))
 				{
+					_alignmentX = value;
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
 
 		/// <summary>Vertical aligment of the label.</summary>
-		public System.Drawing.StringAlignment AlignmentY
+		public Alignment AlignmentY
 		{
-			get { return this._alignmentY; }
+			get
+			{
+				return this._alignmentY;
+			}
 			set
 			{
-				System.Drawing.StringAlignment oldValue = _alignmentY;
-				this._alignmentY = value;
-				if (value != oldValue)
+				if (!(_alignmentY == value))
 				{
+					_alignmentY = value;
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
 
 		/// <summary>Vertical aligment of the label.</summary>
-		public System.Drawing.StringAlignment AlignmentZ
+		public Alignment AlignmentZ
 		{
-			get { return this._alignmentZ; }
+			get
+			{
+				return this._alignmentZ;
+			}
 			set
 			{
-				System.Drawing.StringAlignment oldValue = _alignmentZ;
-				this._alignmentZ = value;
-				if (value != oldValue)
+				if (!(_alignmentZ == value))
 				{
+					_alignmentZ = value;
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -621,7 +605,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 			}
 		}
 
-		public RectangleD3D AdjustRectangle(RectangleD3D r, StringAlignment alignmentX, StringAlignment alignmentY, StringAlignment alignmentZ)
+		public RectangleD3D AdjustRectangle(RectangleD3D r, Alignment alignmentX, Alignment alignmentY, Alignment alignmentZ)
 		{
 			double rX = r.X;
 			double rY = r.Y;
@@ -629,40 +613,40 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 			switch (alignmentZ)
 			{
-				case StringAlignment.Near:
+				case Alignment.Near:
 					break;
 
-				case StringAlignment.Center:
+				case Alignment.Center:
 					rZ -= 0.5 * r.SizeZ;
 					break;
 
-				case StringAlignment.Far:
+				case Alignment.Far:
 					rZ -= r.SizeZ;
 					break;
 			}
 			switch (alignmentY)
 			{
-				case StringAlignment.Near:
+				case Alignment.Near:
 					break;
 
-				case StringAlignment.Center:
+				case Alignment.Center:
 					rY -= 0.5 * r.SizeY;
 					break;
 
-				case StringAlignment.Far:
+				case Alignment.Far:
 					rY -= r.SizeY;
 					break;
 			}
 			switch (alignmentX)
 			{
-				case StringAlignment.Near:
+				case Alignment.Near:
 					break;
 
-				case StringAlignment.Center:
+				case Alignment.Center:
 					rX -= 0.5 * r.SizeX;
 					break;
 
-				case StringAlignment.Far:
+				case Alignment.Far:
 					rX -= r.SizeX;
 					break;
 			}
@@ -737,7 +721,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 				relpositions = filteredRelPositions.ToArray();
 			}
 
-			IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, _stringFormat, ticks);
+			IMeasuredLabelItem[] labels = _labelFormatting.GetMeasuredItems(g, _font, ticks);
 
 			double emSize = _font.Size;
 			CSAxisSide labelSide = null != _labelSide ? _labelSide.Value : styleInfo.PreferredLabelSide;
@@ -788,7 +772,7 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 				var mrect = new RectangleD3D(morg, msize);
 				if (_automaticRotationShift)
-					mrect = AdjustRectangle(mrect, StringAlignment.Center, StringAlignment.Center, StringAlignment.Center);
+					mrect = AdjustRectangle(mrect, Alignment.Center, Alignment.Center, Alignment.Center);
 				else
 					mrect = AdjustRectangle(mrect, _alignmentX, _alignmentY, _alignmentZ);
 

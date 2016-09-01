@@ -240,7 +240,68 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext
 			return FontManager3D.Instance.MeasureString(text, font);
 		}
 
-		public virtual void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point, System.Drawing.StringFormat stringAlignment)
+		public virtual void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point, Alignment alignmentX, Alignment alignmentY, Alignment alignmentZ)
+		{
+			VectorD3D stringSize = new VectorD3D(0, 0, font.Depth); // depth is already known, for this we don't need to call MeasureString
+
+			if (alignmentX != Alignment.Near || alignmentY != Alignment.Near)
+				stringSize = FontManager3D.Instance.MeasureString(text, font);
+
+			switch (alignmentX)
+			{
+				case Alignment.Near:
+					break;
+
+				case Alignment.Center:
+					point = point.WithXPlus(-0.5 * stringSize.X);
+					break;
+
+				case Alignment.Far:
+					point = point.WithXPlus(-stringSize.X);
+					break;
+
+				default:
+					break;
+			}
+
+			switch (alignmentY)
+			{
+				case Alignment.Near:
+					break;
+
+				case Alignment.Center:
+					point = point.WithYPlus(-0.5 * stringSize.Y);
+					break;
+
+				case Alignment.Far:
+					point = point.WithYPlus(-stringSize.Y);
+					break;
+
+				default:
+					break;
+			}
+
+			switch (alignmentZ)
+			{
+				case Alignment.Near:
+					break;
+
+				case Alignment.Center:
+					point = point.WithZPlus(-0.5 * stringSize.Z);
+					break;
+
+				case Alignment.Far:
+					point = point.WithZPlus(-stringSize.Z);
+					break;
+
+				default:
+					break;
+			}
+
+			DrawString(text, font, brush, point);
+		}
+
+		public virtual void DrawString(string text, FontX3D font, IMaterial brush, PointD3D point)
 		{
 			var txt = new SolidText(text, font);
 
