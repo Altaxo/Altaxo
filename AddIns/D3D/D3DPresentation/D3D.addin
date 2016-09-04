@@ -55,8 +55,40 @@
 	<Path name = "/Altaxo/Workbench/MainMenu/Plot">
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
 			<Condition name ="SelectedDataColumns" selected="*" action="Disable">
-				<MenuItem id="PlotSurface3D" label="Plot3DSurface" icon="Icons.16x16.PlotLine"
-					description="Plot3DDescription" class="Altaxo.Worksheet.Commands.PlotSurface3D" />
+				<MenuItem id="Plot3DMenu" label="${res:XML.MainMenu.Plot3DMenu}"  type="Menu">
+					<MenuItem id="PlotSurface3D" label="Plot3DSurface" icon="Icons.16x16.PlotLine"
+						description="Plot3DDescription" class="Altaxo.Worksheet.Commands.PlotSurface3D" />
+
+					<MenuItem id="Plot3DLine" label="${res:XML.MainMenu.PlotMenu.PlotLine}" icon="Icons.16x16.PlotLine"
+						description="${res:XML.MainMenu.PlotMenu.PlotLine.Description}" class="Altaxo.Worksheet.Commands.Plot3DLine" />
+
+					<MenuItem id="Plot3DScatter" label="${res:XML.MainMenu.PlotMenu.PlotScatter}" icon="Icons.16x16.PlotScatter"
+						description="${res:XML.MainMenu.PlotMenu.PlotScatter.Description}" class="Altaxo.Worksheet.Commands.Plot3DScatter" />
+
+					<MenuItem id="Plot3DLineAndScatter" label="${res:XML.MainMenu.PlotMenu.PlotLineAndScatter}"
+						icon="Icons.16x16.PlotLineScatter" description="${res:XML.MainMenu.PlotMenu.PlotLineAndScatter.Description}"
+						class="Altaxo.Worksheet.Commands.Plot3DLineAndScatter" />
+					<MenuItem id="Plot3DLineStack" label="${res:XML.MainMenu.PlotMenu.PlotLineStack}" description="${res:XML.MainMenu.PlotMenu.PlotLineStack.Description}"
+						class="Altaxo.Worksheet.Commands.Plot3DLineStack" />
+					<MenuItem id="Plot3DLineRelStack" label="${res:XML.MainMenu.PlotMenu.PlotLineRelStack}" description="${res:XML.MainMenu.PlotMenu.PlotLineRelStack.Description}"
+						class="Altaxo.Worksheet.Commands.Plot3DLineRelativeStack" />
+					<MenuItem id="Menu3DBarChart" label="${res:XML.MainMenu.Plot.BarChartMenu}"  type="Menu">
+						<MenuItem id="Plot3DBarChartNormal" label="${res:XML.MainMenu.PlotMenu.PlotBarChartNormal}" description="${res:XML.MainMenu.PlotMenu.PlotBarChartNormal.Description}"
+							class="Altaxo.Worksheet.Commands.Plot3DBarChartNormal" />
+						<MenuItem id="Plot3DBarChartStack" label="${res:XML.MainMenu.PlotMenu.PlotBarChartStack}" description="${res:XML.MainMenu.PlotMenu.PlotBarChartStack.Description}"
+							class="Altaxo.Worksheet.Commands.Plot3DBarChartStack" />
+						<MenuItem id="Plot3DBarChartRelStack" label="${res:XML.MainMenu.PlotMenu.PlotBarChartRelStack}" description="${res:XML.MainMenu.PlotMenu.PlotBarChartRelStack.Description}"
+							class="Altaxo.Worksheet.Commands.Plot3DBarChartRelativeStack" />
+					</MenuItem>
+					<MenuItem id="Menu3DColumnChart" label="${res:XML.MainMenu.Plot.ColumnChartMenu}"  type="Menu">
+						<MenuItem id="Plot3DColumnChartNormal" label="${res:XML.MainMenu.PlotMenu.PlotColumnChartNormal}" description="${res:XML.MainMenu.PlotMenu.PlotColumnChartNormal.Description}"
+							class="Altaxo.Worksheet.Commands.Plot3DColumnChartNormal" />
+						<MenuItem id="Plot3DBarColumnChartStack" label="${res:XML.MainMenu.PlotMenu.PlotColumnChartStack}" description="${res:XML.MainMenu.PlotMenu.PlotColumnChartStack.Description}"
+							class="Altaxo.Worksheet.Commands.Plot3DColumnChartStack" />
+						<MenuItem id="Plot3DColumnChartRelStack" label="${res:XML.MainMenu.PlotMenu.PlotColumnChartRelStack}" description="${res:XML.MainMenu.PlotMenu.PlotColumnChartRelStack.Description}"
+							class="Altaxo.Worksheet.Commands.Plot3DColumnChartRelativeStack" />
+					</MenuItem>
+				</MenuItem>
 			</Condition>
 		</Condition>
 	</Path>

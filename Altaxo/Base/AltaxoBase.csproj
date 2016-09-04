@@ -288,6 +288,8 @@
     <Compile Include="Geometry\VectorD2D.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Drawing\DashPatternManagement\DashPatternListBag.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Groups\AbsoluteStackTransform.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Groups\RelativeStackTransform.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\ScatterSymbolListBag.cs" />
     <Compile Include="Drawing\StyleListBag.cs" />
     <Compile Include="Graph\Graph3D\Axis\AxisLabelStyle.cs" />
@@ -369,6 +371,7 @@
     <Compile Include="Graph\Graph3D\Plot\Groups\CoordinateTransformingStyleBase.cs" />
     <Compile Include="Drawing\DashPatternManagement\DashPatternList.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\ICoordinateTransformingGroupStyle.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Styles\VectorCartesicPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\BarGraphPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ErrorBarPlotStyle.cs" />
     <Compile Include="Graph\Plot\Groups\BarShiftStrategy3D.cs" />
@@ -579,6 +582,7 @@
     <Compile Include="Gui\Graph3D\Plot\Groups\ScatterSymbolListController.cs" />
     <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternListController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\BarGraphPlotStyleController.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Styles\VectorCartesicPlotStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\ErrorBarPlotStyleController.cs" />
     <Compile Include="Gui\Graph\Plot\Groups\ColorGroupStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Groups\PlotGroupCollectionController.cs" />
@@ -793,6 +797,7 @@
     <Compile Include="Worksheet\Commands\Analysis\FourierTransformation2DDataSource.cs" />
     <Compile Include="Worksheet\Commands\Analysis\RealFourierTransformation2DOptions.cs" />
     <Compile Include="Worksheet\Commands\DataSourceCommands.cs" />
+    <Compile Include="Worksheet\Commands\PlotCommands3D.cs" />
     <Compile Include="Worksheet\WorksheetViewLayout.cs" />
     <Content Include="AssemblyInfo.cs">
       <SubType>Code</SubType>

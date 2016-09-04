@@ -37,6 +37,7 @@ namespace Altaxo.Graph.Graph3D
 {
 	using Altaxo.Main.Properties;
 	using Axis;
+	using Data;
 	using GraphicsContext;
 	using Plot;
 	using Shapes;
@@ -326,6 +327,15 @@ namespace Altaxo.Graph.Graph3D
 			r.RX = XAxis.PhysicalVariantToNormal(acc.GetXPhysical(idx));
 			r.RY = YAxis.PhysicalVariantToNormal(acc.GetYPhysical(idx));
 			r.RZ = ZAxis.PhysicalVariantToNormal(acc.GetZPhysical(idx));
+			return r;
+		}
+
+		public Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y, AltaxoVariant z)
+		{
+			Logical3D r;
+			r.RX = XAxis.PhysicalVariantToNormal(x);
+			r.RY = YAxis.PhysicalVariantToNormal(y);
+			r.RZ = ZAxis.PhysicalVariantToNormal(z);
 			return r;
 		}
 

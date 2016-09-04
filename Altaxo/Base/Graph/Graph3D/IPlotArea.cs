@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Data;
 using Altaxo.Geometry;
 using Altaxo.Graph.Scales;
 using System;
@@ -63,6 +64,8 @@ namespace Altaxo.Graph.Graph3D
 		VectorD3D Size { get; }
 
 		Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx);
+
+		Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y, AltaxoVariant z);
 
 		/// <summary>
 		/// Returns a list of the used axis style ids for this layer.

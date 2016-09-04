@@ -35,7 +35,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 {
 	#region Interfaces
 
-	public interface IErrorBarPlotStyleView
+	public interface IVectorCartesicPlotStyleView
 	{
 		bool IndependentColor { get; set; }
 
@@ -67,7 +67,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		bool IndependentOnShiftingGroupStyles { get; set; }
 
-		bool UseCommonErrorColumn { get; set; }
+		bool UseManualVectorLength { get; set; }
+
+		double VectorLengthOffset { get; set; }
+
+		double VectorLengthFactor { get; set; }
 
 		void Initialize_MeaningOfValues(SelectableListNodeList list);
 
@@ -75,25 +79,31 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		/// Initializes the common error column.
 		/// </summary>
 		/// <param name="columnAsText">Column's name.</param>
-		void Initialize_CommonErrorColumn(string columnAsText, string toolTip, int status);
+		/// <param name="toolTip">Column's tooltip.</param>
+		/// <param name="status">Column's status display.</param>
+		void Initialize_ColumnX(string columnAsText, string toolTip, int status);
 
-		void Initialize_CommonErrorColumnTransformation(string transformationTextToShow, string transformationToolTip);
-
-		/// <summary>
-		/// Initializes the positive error column.
-		/// </summary>
-		/// <param name="positiveErrorColumnAsText">Column's name.</param>
-		void Initialize_PositiveErrorColumn(string positiveErrorColumnAsText, string positiveErrorColumnToolTip, int positiveErrorColumnStatus);
-
-		void Initialize_PositiveErrorColumnTransformation(string transformationTextToShow, string transformationToolTip);
+		void Initialize_ColumnXTransformation(string transformationTextToShow, string transformationToolTip);
 
 		/// <summary>
 		/// Initializes the positive error column.
 		/// </summary>
-		/// <param name="negativeErrorColumnAsText">Column's name.</param>
-		void Initialize_NegativeErrorColumn(string negativeErrorColumnAsText, string negativeErrorColumnToolTip, int negativeErrorColumnStatus);
+		/// <param name="columnAsText">Column's name.</param>
+		/// <param name="columnToolTip">Column's tooltip.</param>
+		/// <param name="columnStatus">Column's status display.</param>
+		void Initialize_ColumnY(string columnAsText, string columnToolTip, int columnStatus);
 
-		void Initialize_NegativeErrorColumnTransformation(string transformationTextToShow, string transformationToolTip);
+		void Initialize_ColumnYTransformation(string transformationTextToShow, string transformationToolTip);
+
+		/// <summary>
+		/// Initializes the positive error column.
+		/// </summary>
+		/// <param name="columnAsText">Column's name.</param>
+		/// <param name="columnToolTip">Column's tooltip.</param>
+		/// <param name="columnStatus">Column's status display.</param>
+		void Initialize_ColumnZ(string columnAsText, string columnToolTip, int columnStatus);
+
+		void Initialize_ColumnZTransformation(string transformationTextToShow, string transformationToolTip);
 
 		event Action<bool> UseCommonErrorColumnChanged;
 
@@ -105,9 +115,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 	#endregion Interfaces
 
-	[UserControllerForObject(typeof(ErrorBarPlotStyle))]
-	[ExpectedTypeOfView(typeof(IErrorBarPlotStyleView))]
-	public class ErrorBarPlotStyleController : MVCANControllerEditOriginalDocBase<ErrorBarPlotStyle, IErrorBarPlotStyleView>
+	[UserControllerForObject(typeof(VectorCartesicPlotStyle))]
+	[ExpectedTypeOfView(typeof(IVectorCartesicPlotStyleView))]
+	public class VectorCartesicPlotStyleController : MVCANControllerEditOriginalDocBase<VectorCartesicPlotStyle, IVectorCartesicPlotStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
@@ -151,6 +161,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 			if (_view != null)
 			{
+				_view.UseManualVectorLength = _doc.UseManualVectorLength;
+				_view.VectorLengthOffset = _doc.VectorLengthOffset;
+				_view.VectorLengthFactor = _doc.VectorLengthFactor;
+
 				_view.IndependentColor = _doc.IndependentColor;
 				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
 				_view.Pen = _doc.Pen;
@@ -180,22 +194,18 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 				// Errors
 
-				_view.UseCommonErrorColumn = _doc.UseCommonErrorColumn;
-
-				if (_doc.UseCommonErrorColumn)
-				{
-					this.InitializeCommonErrorColumnText();
-				}
-				else
-				{
-					this.InitializePositiveErrorColumnText();
-					this.InitializeNegativeErrorColumnText();
-				}
+				this.InitializeCommonErrorColumnText();
+				this.InitializePositiveErrorColumnText();
+				this.InitializeNegativeErrorColumnText();
 			}
 		}
 
 		public override bool Apply(bool disposeController)
 		{
+			_doc.UseManualVectorLength = _view.UseManualVectorLength;
+			_doc.VectorLengthOffset = _view.VectorLengthOffset;
+			_doc.VectorLengthFactor = _view.VectorLengthFactor;
+
 			_doc.IndependentColor = _view.IndependentColor;
 			_doc.Pen = _view.Pen;
 			_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
@@ -219,9 +229,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 			_doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
 
-			_doc.UseCommonErrorColumn = _view.UseCommonErrorColumn;
-
-			_doc.MeaningOfValues = (ErrorBarPlotStyle.ValueInterpretation)_meaningOfValues.FirstSelectedNode.Tag;
+			_doc.MeaningOfValues = (VectorCartesicPlotStyle.ValueInterpretation)_meaningOfValues.FirstSelectedNode.Tag;
 
 			return ApplyEnd(true, disposeController);
 		}
@@ -231,59 +239,40 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			base.AttachView();
 
 			_view.IndependentColorChanged += EhIndependentColorChanged;
-			_view.UseCommonErrorColumnChanged += EhUseCommonErrorColumnChanged;
 		}
 
 		protected override void DetachView()
 		{
 			_view.IndependentColorChanged -= EhIndependentColorChanged;
-			_view.UseCommonErrorColumnChanged -= EhUseCommonErrorColumnChanged;
 
 			base.DetachView();
 		}
 
 		private void InitializeCommonErrorColumnText()
 		{
-			var info = new Data.PlotColumnInformation(_doc.CommonErrorColumn, _doc.CommonErrorColumnDataColumnName);
+			var info = new Data.PlotColumnInformation(_doc.ColumnX, _doc.ColumnXDataColumnName);
 			info.Update(_supposedParentDataTable);
 
-			_view?.Initialize_CommonErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-			_view?.Initialize_CommonErrorColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+			_view?.Initialize_ColumnX(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
+			_view?.Initialize_ColumnXTransformation(info.TransformationTextToShow, info.TransformationToolTip);
 		}
 
 		private void InitializePositiveErrorColumnText()
 		{
-			var info = new Data.PlotColumnInformation(_doc.PositiveErrorColumn, _doc.PositiveErrorColumnDataColumnName);
+			var info = new Data.PlotColumnInformation(_doc.ColumnY, _doc.ColumnYDataColumnName);
 			info.Update(_supposedParentDataTable);
 
-			_view?.Initialize_PositiveErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-			_view?.Initialize_PositiveErrorColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+			_view?.Initialize_ColumnY(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
+			_view?.Initialize_ColumnYTransformation(info.TransformationTextToShow, info.TransformationToolTip);
 		}
 
 		private void InitializeNegativeErrorColumnText()
 		{
-			var info = new Data.PlotColumnInformation(_doc.NegativeErrorColumn, _doc.NegativeErrorColumnDataColumnName);
+			var info = new Data.PlotColumnInformation(_doc.ColumnZ, _doc.ColumnZDataColumnName);
 			info.Update(_supposedParentDataTable);
 
-			_view?.Initialize_NegativeErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-			_view?.Initialize_NegativeErrorColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
-		}
-
-		private void EhUseCommonErrorColumnChanged(bool useCommonErrorColumn)
-		{
-			_doc.UseCommonErrorColumn = useCommonErrorColumn;
-
-			_view.UseCommonErrorColumn = _doc.UseCommonErrorColumn;
-
-			if (_doc.UseCommonErrorColumn)
-			{
-				this.InitializeCommonErrorColumnText();
-			}
-			else
-			{
-				this.InitializePositiveErrorColumnText();
-				this.InitializeNegativeErrorColumnText();
-			}
+			_view?.Initialize_ColumnZ(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
+			_view?.Initialize_ColumnZTransformation(info.TransformationTextToShow, info.TransformationToolTip);
 		}
 
 		private void EhIndependentColorChanged()

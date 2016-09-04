@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	/// <summary>
 	/// Interaction logic for ErrorBarPlotStyleControl.xaml
 	/// </summary>
-	public partial class ErrorBarPlotStyleControl : UserControl, IErrorBarPlotStyleView
+	public partial class VectorCartesicPlotStyleControl : UserControl, IVectorCartesicPlotStyleView
 	{
 		private PenControlsGlue _strokePenGlue;
 
@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		public event Action<bool> UseCommonErrorColumnChanged;
 
-		public ErrorBarPlotStyleControl()
+		public VectorCartesicPlotStyleControl()
 		{
 			InitializeComponent();
 
@@ -262,6 +262,45 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 		}
 
+		public bool UseManualVectorLength
+		{
+			get
+			{
+				return _guiUseManualVectorLength.IsChecked == true;
+			}
+
+			set
+			{
+				_guiUseManualVectorLength.IsChecked = value;
+			}
+		}
+
+		public double VectorLengthOffset
+		{
+			get
+			{
+				return _guiVectorLengthOffset.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiVectorLengthOffset.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double VectorLengthFactor
+		{
+			get
+			{
+				return _guiVectorLengthFactor.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiVectorLengthFactor.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
 		public bool IndependentSkipFrequency
 		{
 			get
@@ -281,98 +320,66 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 				IndependentColorChanged();
 		}
 
-		private void EhUseCommonErrorColumnCheckedChanged(object sender, RoutedEventArgs e)
+		public void Initialize_ColumnX(string boxText, string toolTip, int status)
 		{
-			UseCommonErrorColumnChanged?.Invoke(_guiUseCommonErrorColumn.IsChecked == true);
+			this._guiColumnX.Text = boxText;
+			this._guiColumnX.ToolTip = toolTip;
+			this._guiColumnX.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
 		}
 
-		public bool UseCommonErrorColumn
-		{
-			get
-			{
-				return _guiUseCommonErrorColumn.IsChecked == true;
-			}
-			set
-			{
-				_guiUseCommonErrorColumn.IsChecked = value;
-
-				var commonVisibility = value ? Visibility.Visible : Visibility.Collapsed;
-				var posnegVisibility = value ? Visibility.Collapsed : Visibility.Visible;
-
-				_guiCommonErrorColumnLabel.Visibility = commonVisibility;
-				_guiCommonErrorColumn.Visibility = commonVisibility;
-				_guiCommonErrorColumnTransformation.Visibility = commonVisibility;
-
-				_guiPositiveErrorColumnLabel.Visibility = posnegVisibility;
-				_guiPositiveErrorColumn.Visibility = posnegVisibility;
-				_guiPositiveErrorColumnTransformation.Visibility = posnegVisibility;
-
-				_guiNegativeErrorColumnLabel.Visibility = posnegVisibility;
-				_guiNegativeErrorColumn.Visibility = posnegVisibility;
-				_guiNegativeErrorColumnTransformation.Visibility = posnegVisibility;
-			}
-		}
-
-		public void Initialize_CommonErrorColumn(string boxText, string toolTip, int status)
-		{
-			this._guiCommonErrorColumn.Text = boxText;
-			this._guiCommonErrorColumn.ToolTip = toolTip;
-			this._guiCommonErrorColumn.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
-		}
-
-		public void Initialize_CommonErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
+		public void Initialize_ColumnXTransformation(string transformationTextToShow, string transformationToolTip)
 		{
 			if (null == transformationTextToShow)
 			{
-				this._guiCommonErrorColumnTransformation.Visibility = Visibility.Collapsed;
+				this._guiColumnXTransformation.Visibility = Visibility.Collapsed;
 			}
 			else
 			{
-				this._guiCommonErrorColumnTransformation.Text = transformationTextToShow;
-				this._guiCommonErrorColumnTransformation.ToolTip = transformationToolTip;
-				this._guiCommonErrorColumnTransformation.Visibility = Visibility.Visible;
+				this._guiColumnXTransformation.Text = transformationTextToShow;
+				this._guiColumnXTransformation.ToolTip = transformationToolTip;
+				this._guiColumnXTransformation.Visibility = Visibility.Visible;
 			}
 		}
 
-		public void Initialize_PositiveErrorColumn(string boxText, string toolTip, int status)
+		public void Initialize_ColumnY(string boxText, string toolTip, int status)
 		{
-			this._guiPositiveErrorColumn.Text = boxText;
-			this._guiPositiveErrorColumn.ToolTip = toolTip;
-			this._guiPositiveErrorColumn.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
+			this._guiColumnY.Text = boxText;
+			this._guiColumnY.ToolTip = toolTip;
+			this._guiColumnY.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
 		}
 
-		public void Initialize_PositiveErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
+		public void Initialize_ColumnYTransformation(string transformationTextToShow, string transformationToolTip)
 		{
 			if (null == transformationTextToShow)
 			{
-				this._guiPositiveErrorColumnTransformation.Visibility = Visibility.Collapsed;
+				this._guiColumnYTransformation.Visibility = Visibility.Collapsed;
 			}
 			else
 			{
-				this._guiPositiveErrorColumnTransformation.Text = transformationTextToShow;
-				this._guiPositiveErrorColumnTransformation.ToolTip = transformationToolTip;
-				this._guiPositiveErrorColumnTransformation.Visibility = Visibility.Visible;
+				this._guiColumnYTransformation.Text = transformationTextToShow;
+				this._guiColumnYTransformation.ToolTip = transformationToolTip;
+				this._guiColumnYTransformation.Visibility = Visibility.Visible;
 			}
 		}
 
-		public void Initialize_NegativeErrorColumn(string boxText, string toolTip, int status)
+		public void Initialize_ColumnZ(string boxText, string toolTip, int status)
 		{
-			this._guiNegativeErrorColumn.Text = boxText;
-			this._guiNegativeErrorColumn.ToolTip = toolTip;
-			this._guiNegativeErrorColumn.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
+			this._guiColumnZ.Text = boxText;
+			this._guiColumnZ.ToolTip = toolTip;
+			this._guiColumnZ.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
 		}
 
-		public void Initialize_NegativeErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
+		public void Initialize_ColumnZTransformation(string transformationTextToShow, string transformationToolTip)
 		{
 			if (null == transformationTextToShow)
 			{
-				this._guiNegativeErrorColumnTransformation.Visibility = Visibility.Collapsed;
+				this._guiColumnZTransformation.Visibility = Visibility.Collapsed;
 			}
 			else
 			{
-				this._guiNegativeErrorColumnTransformation.Text = transformationTextToShow;
-				this._guiNegativeErrorColumnTransformation.ToolTip = transformationToolTip;
-				this._guiNegativeErrorColumnTransformation.Visibility = Visibility.Visible;
+				this._guiColumnZTransformation.Text = transformationTextToShow;
+				this._guiColumnZTransformation.ToolTip = transformationToolTip;
+				this._guiColumnZTransformation.Visibility = Visibility.Visible;
 			}
 		}
 

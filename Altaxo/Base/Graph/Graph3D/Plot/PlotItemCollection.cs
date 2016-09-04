@@ -761,15 +761,35 @@ namespace Altaxo.Graph.Graph3D.Plot
 
 		public void PaintPreprocessing(IPaintContext context)
 		{
-			foreach (var pi in _plotItems)
-				pi.PaintPreprocessing(context);
+			var coordTransStyle = _plotGroupStyles.CoordinateTransformingStyle;
+			if (null != coordTransStyle)
+			{
+				var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<IPlotArea>(this);
+				coordTransStyle.PaintPreprocessing(context, layer, this);
+			}
+			else
+			{
+				foreach (var pi in _plotItems)
+					pi.PaintPreprocessing(context);
+			}
 		}
 
 		public void Paint(IGraphicsContext3D g, IPaintContext context, Graph3D.IPlotArea layer, IGPlotItem previousPlotItem, IGPlotItem nextPlotItem)
 		{
+			var coordinateTransformingStyle = _plotGroupStyles.CoordinateTransformingStyle;
+
 			for (int i = 0; i < _plotItems.Count; ++i)
 			{
-				_plotItems[i].Paint(g, context, layer, i == 0 ? null : _plotItems[i - 1], i == _plotItems.Count - 1 ? null : _plotItems[i + 1]);
+				if (null != coordinateTransformingStyle)
+				{
+					coordinateTransformingStyle.PaintChild(g, context, layer, this, i);
+				}
+				else
+				{
+					var previousItem = i == 0 ? null : _plotItems[i - 1];
+					var nextItem = i == _plotItems.Count - 1 ? null : _plotItems[i + 1];
+					_plotItems[i].Paint(g, context, layer, previousItem, nextItem);
+				}
 			}
 		}
 

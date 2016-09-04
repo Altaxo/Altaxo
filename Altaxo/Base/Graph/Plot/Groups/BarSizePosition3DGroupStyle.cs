@@ -401,6 +401,9 @@ namespace Altaxo.Graph.Plot.Groups
 		/// <param name="relOuterGapY">Gap y between the items of two groups in units of one bar width.</param>
 		public void Initialize(BarShiftStrategy3D barShiftStrategy, int barShiftMaxNumberOfItemsInOneDirection, double relInnerGapX, double relOuterGapX, double relInnerGapY, double relOuterGapY)
 		{
+			if (barShiftMaxNumberOfItemsInOneDirection <= 0)
+				throw new ArgumentOutOfRangeException(nameof(barShiftMaxNumberOfItemsInOneDirection), "value should be >= 1");
+
 			_isInitialized = true;
 			_barShiftStrategy = barShiftStrategy;
 			_barShiftMaxNumberOfItemsInOneDirection = barShiftMaxNumberOfItemsInOneDirection;

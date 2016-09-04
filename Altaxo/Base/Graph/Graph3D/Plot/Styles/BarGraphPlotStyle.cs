@@ -71,7 +71,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>
 		/// The user defined maximum number of items in one direction. Only used if the bar shift strategy is one of the manual values.
 		/// </summary>
-		private int _barShiftMaxNumberOfItemsInOneDirection;
+		private int _barShiftMaxNumberOfItemsInOneDirection = 10;
 
 		/// <summary>
 		/// Relative gap between the bars belonging to the same x-value (relative to the width of a single bar).
@@ -283,6 +283,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 			set
 			{
+				if (value <= 0)
+					throw new ArgumentOutOfRangeException(nameof(value), "Value should be >= 0");
+
 				if (!(_barShiftMaxNumberOfItemsInOneDirection == value))
 				{
 					_barShiftMaxNumberOfItemsInOneDirection = value;

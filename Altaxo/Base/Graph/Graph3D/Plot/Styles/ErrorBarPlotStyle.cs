@@ -41,7 +41,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 	using GraphicsContext;
 	using Groups;
 
-	public class ErrorBarPlotStyle
+	#region Error bar (abstract, for implementations see below)
+
+	public abstract class ErrorBarPlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs, IG3DPlotStyle
 	{
@@ -60,11 +62,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			AbsoluteValue = 2
 		}
 
-		protected int _axisNumber;
-
 		protected bool _useCommonErrorColumn;
 
-		private INumericColumnProxy _errorColumn;
+		private INumericColumnProxy _commonErrorColumn;
 		private INumericColumnProxy _positiveErrorColumn;
 		private INumericColumnProxy _negativeErrorColumn;
 
@@ -129,6 +129,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>Logical y shift between the location of the real data point and the point where the item is finally drawn.</summary>
 		private double _cachedLogicalShiftY;
 
+		/// <summary>Logical z shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftZ;
+
 		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
 		[field: NonSerialized]
 		protected Func<int, double> _cachedSymbolSizeForIndexFunction;
@@ -146,13 +149,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			{
 				ErrorBarPlotStyle s = (ErrorBarPlotStyle)obj;
 
-				info.AddValue("AxisNumber", s._axisNumber);
 				info.AddEnum("MeaningOfValues", s._meaningOfValues);
 				info.AddValue("UseCommonColumn", s._useCommonErrorColumn);
 
 				if (s._useCommonErrorColumn)
 				{
-					info.AddValue("Error", s._errorColumn);
+					info.AddValue("CommonError", s._commonErrorColumn);
 				}
 				else
 				{
@@ -186,16 +188,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			protected virtual ErrorBarPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				ErrorBarPlotStyle s = null != o ? (ErrorBarPlotStyle)o : new ErrorBarPlotStyle(info);
+				ErrorBarPlotStyle s = (ErrorBarPlotStyle)o;
 
-				s._axisNumber = info.GetInt32("AxisNumber");
 				s._meaningOfValues = (ValueInterpretation)info.GetEnum("MeaningOfValues", typeof(ValueInterpretation));
 				s._useCommonErrorColumn = info.GetBoolean("UseCommonColumn");
 
 				if (s._useCommonErrorColumn)
 				{
-					s._errorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("Error", s);
-					if (null != s._errorColumn) s._errorColumn.ParentObject = s;
+					s._commonErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("CommonError", s);
+					if (null != s._commonErrorColumn) s._commonErrorColumn.ParentObject = s;
 				}
 				else
 				{
@@ -276,10 +277,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			var from = obj as ErrorBarPlotStyle;
 			if (null != from)
 			{
-				this._axisNumber = from._axisNumber;
 				this._meaningOfValues = from._meaningOfValues;
 				this._useCommonErrorColumn = from._useCommonErrorColumn;
-				ChildCloneToMember(ref _errorColumn, from._errorColumn);
+				ChildCloneToMember(ref _commonErrorColumn, from._commonErrorColumn);
 				ChildCloneToMember(ref _positiveErrorColumn, from._positiveErrorColumn);
 				ChildCloneToMember(ref _negativeErrorColumn, from._negativeErrorColumn);
 
@@ -307,6 +307,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 				this._cachedLogicalShiftX = from._cachedLogicalShiftX;
 				this._cachedLogicalShiftY = from._cachedLogicalShiftY;
+				this._cachedLogicalShiftZ = from._cachedLogicalShiftZ;
 
 				EhSelfChanged();
 				return true;
@@ -316,22 +317,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
+			if (null != _commonErrorColumn)
+				yield return new Main.DocumentNodeAndName(_commonErrorColumn, nameof(CommonErrorColumn));
+
 			if (null != _positiveErrorColumn)
-				yield return new Main.DocumentNodeAndName(_positiveErrorColumn, "PositiveErrorColumn");
+				yield return new Main.DocumentNodeAndName(_positiveErrorColumn, nameof(PositiveErrorColumn));
 
 			if (null != _negativeErrorColumn)
-				yield return new Main.DocumentNodeAndName(_negativeErrorColumn, "NegativeErrorColumn");
+				yield return new Main.DocumentNodeAndName(_negativeErrorColumn, nameof(NegativeErrorColumn));
 		}
 
-		public ErrorBarPlotStyle Clone()
-		{
-			return new ErrorBarPlotStyle(this);
-		}
-
-		object ICloneable.Clone()
-		{
-			return new ErrorBarPlotStyle(this);
-		}
+		public abstract object Clone();
 
 		#region Properties
 
@@ -592,13 +588,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>
 		/// True when no vertical, but horizontal error bars are shown.
 		/// </summary>
-		public int AxisNumber
-		{
-			get
-			{
-				return _axisNumber;
-			}
-		}
+		public abstract int AxisNumber { get; }
 
 		/// <summary>Pen used to draw the error bar.</summary>
 		public PenX3D Pen
@@ -629,15 +619,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				_useCommonErrorColumn = value;
 				if (value)
 				{
-					ErrorColumn = _positiveErrorColumn?.Document ?? _negativeErrorColumn?.Document;
+					CommonErrorColumn = _positiveErrorColumn?.Document ?? _negativeErrorColumn?.Document;
 					ChildSetMember(ref _positiveErrorColumn, null);
 					ChildSetMember(ref _negativeErrorColumn, null);
 				}
 				else
 				{
-					PositiveErrorColumn = _errorColumn?.Document;
-					NegativeErrorColumn = _errorColumn?.Document;
-					ChildSetMember(ref _errorColumn, null);
+					PositiveErrorColumn = _commonErrorColumn?.Document;
+					NegativeErrorColumn = _commonErrorColumn?.Document;
+					ChildSetMember(ref _commonErrorColumn, null);
 				}
 
 				EhSelfChanged();
@@ -647,23 +637,23 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>
 		/// Data that define the error in the positive direction.
 		/// </summary>
-		public INumericColumn ErrorColumn
+		public INumericColumn CommonErrorColumn
 		{
 			get
 			{
 				if (!_useCommonErrorColumn)
 					throw new InvalidOperationException("Style is set to use separate columns for positive and negative error!");
 
-				return _errorColumn?.Document;
+				return _commonErrorColumn?.Document;
 			}
 			set
 			{
 				if (_useCommonErrorColumn)
 				{
-					var oldValue = _errorColumn?.Document;
+					var oldValue = _commonErrorColumn?.Document;
 					if (!object.ReferenceEquals(value, oldValue))
 					{
-						ChildSetMember(ref _errorColumn, null == value ? null : NumericColumnProxyBase.FromColumn(value));
+						ChildSetMember(ref _commonErrorColumn, null == value ? null : NumericColumnProxyBase.FromColumn(value));
 						EhSelfChanged(EventArgs.Empty);
 					}
 				}
@@ -688,11 +678,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <value>
 		/// The name of the common error column if it is a data column. Otherwise, null.
 		/// </value>
-		public string ErrorColumnDataColumnName
+		public string CommonErrorColumnDataColumnName
 		{
 			get
 			{
-				return _errorColumn?.DocumentPath?.LastPartOrDefault;
+				return _commonErrorColumn?.DocumentPath?.LastPartOrDefault;
 			}
 		}
 
@@ -703,7 +693,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			get
 			{
-				return _useCommonErrorColumn ? _errorColumn?.Document : _positiveErrorColumn?.Document;
+				return _useCommonErrorColumn ? _commonErrorColumn?.Document : _positiveErrorColumn?.Document;
 			}
 			set
 			{
@@ -740,7 +730,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			get
 			{
-				return _useCommonErrorColumn ? _errorColumn?.Document : _negativeErrorColumn?.Document;
+				return _useCommonErrorColumn ? _commonErrorColumn?.Document : _negativeErrorColumn?.Document;
 			}
 			set
 			{
@@ -832,22 +822,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			// Shift the items ?
 			_cachedLogicalShiftX = 0;
 			_cachedLogicalShiftY = 0;
+			_cachedLogicalShiftZ = 0;
 			if (!_independentOnShiftingGroupStyles)
 			{
 				var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYZGroupStyle>(externalGroups, localGroups);
 				if (null != shiftStyle)
 				{
-					double shiftX, shiftY, shiftZ;
-					shiftStyle.Apply(out shiftX, out shiftY, out shiftZ);
-					_cachedLogicalShiftX = shiftX;
-					_cachedLogicalShiftY = shiftY;
+					shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY, out _cachedLogicalShiftZ);
 				}
 			}
 		}
 
 		public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData)
 		{
-			PaintErrorBars(_axisNumber, g, layer, pdata);
+			PaintErrorBars(AxisNumber, g, layer, pdata);
 		}
 
 		protected void PaintErrorBars(int axisNumber, IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata)
@@ -1031,12 +1019,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
-			if (null != _errorColumn)
-				Report(_errorColumn, this, "ErrorColumn");
+			if (null != _commonErrorColumn)
+				Report(_commonErrorColumn, this, nameof(CommonErrorColumn));
 			if (null != _positiveErrorColumn)
-				Report(_positiveErrorColumn, this, "PositiveErrorColumn");
+				Report(_positiveErrorColumn, this, nameof(PositiveErrorColumn));
 			if (null != _negativeErrorColumn)
-				Report(_negativeErrorColumn, this, "NegativeErrorColumn");
+				Report(_negativeErrorColumn, this, nameof(NegativeErrorColumn));
 		}
 
 		/// <summary>
@@ -1053,16 +1041,168 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			if (_useCommonErrorColumn)
 			{
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>("ErrorColumn", ErrorColumn, _errorColumn?.DocumentPath?.LastPartOrDefault, (col) => ErrorColumn = col as INumericColumn);
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(CommonErrorColumn), CommonErrorColumn, _commonErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => CommonErrorColumn = col as INumericColumn);
 			}
 			else
 			{
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>("PositiveErrorColumn", PositiveErrorColumn, _positiveErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => PositiveErrorColumn = col as INumericColumn);
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(PositiveErrorColumn), PositiveErrorColumn, _positiveErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => PositiveErrorColumn = col as INumericColumn);
 
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>("NegativeErrorColumn", NegativeErrorColumn, _negativeErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => NegativeErrorColumn = col as INumericColumn);
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(NegativeErrorColumn), NegativeErrorColumn, _negativeErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => NegativeErrorColumn = col as INumericColumn);
 			}
 		}
 
 		#endregion IDocumentNode Members
 	}
+
+	#endregion Error bar (abstract, for implementations see below)
+
+	#region Error bar x
+
+	public class ErrorBarXPlotStyle : ErrorBarPlotStyle
+	{
+		public override int AxisNumber { get { return 0; } }
+
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarXPlotStyle), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (ErrorBarXPlotStyle)o ?? new ErrorBarXPlotStyle(info);
+				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="info">The information.</param>
+		protected ErrorBarXPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info) : base(info)
+		{
+		}
+
+		public ErrorBarXPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context) : base(context)
+		{
+		}
+
+		public ErrorBarXPlotStyle(ErrorBarPlotStyle from) : base(from)
+		{
+		}
+
+		public override object Clone()
+		{
+			return new ErrorBarXPlotStyle(this);
+		}
+	}
+
+	#endregion Error bar x
+
+	#region Error bar y
+
+	public class ErrorBarYPlotStyle : ErrorBarPlotStyle
+	{
+		public override int AxisNumber { get { return 1; } }
+
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarYPlotStyle), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (ErrorBarYPlotStyle)o ?? new ErrorBarYPlotStyle(info);
+				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="info">The information.</param>
+		protected ErrorBarYPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info) : base(info)
+		{
+		}
+
+		public ErrorBarYPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context) : base(context)
+		{
+		}
+
+		public ErrorBarYPlotStyle(ErrorBarPlotStyle from) : base(from)
+		{
+		}
+
+		public override object Clone()
+		{
+			return new ErrorBarYPlotStyle(this);
+		}
+	}
+
+	#endregion Error bar y
+
+	#region Error bar z
+
+	public class ErrorBarZPlotStyle : ErrorBarPlotStyle
+	{
+		public override int AxisNumber { get { return 2; } }
+
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarZPlotStyle), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (ErrorBarZPlotStyle)o ?? new ErrorBarZPlotStyle(info);
+				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="info">The information.</param>
+		protected ErrorBarZPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info) : base(info)
+		{
+		}
+
+		public ErrorBarZPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context) : base(context)
+		{
+		}
+
+		public ErrorBarZPlotStyle(ErrorBarPlotStyle from) : base(from)
+		{
+		}
+
+		public override object Clone()
+		{
+			return new ErrorBarZPlotStyle(this);
+		}
+	}
+
+	#endregion Error bar z
 }
