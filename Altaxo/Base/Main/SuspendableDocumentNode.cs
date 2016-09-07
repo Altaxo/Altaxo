@@ -100,7 +100,8 @@ namespace Altaxo.Main
 					}
 					if (!IsSuspended)
 					{
-						OnChanged(singleArg); // Fire the changed event
+						if (!IsDisposeInProgress)
+							OnChanged(singleArg); // Fire the changed event. If disposed or dispose is in progress, simply don't call the OnChanged event
 					}
 					else // we were suspended again by the parent
 					{

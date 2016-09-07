@@ -149,8 +149,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				BarGraphPlotStyle s = (BarGraphPlotStyle)obj;
-				info.AddValue("IndependentColor", s._independentColor);
+				info.AddValue("UsePhysicalBaseValue", s._usePhysicalBaseValue);
+				info.AddValue("BaseValue", (object)s._baseValue);
+				info.AddValue("StartAtPrevious", s._startAtPreviousItem);
+				info.AddValue("PreviousItemGap", s._previousItemZGap);
+
 				info.AddValue("Pen", s._pen);
+				info.AddValue("IndependentColor", s._independentColor);
 				info.AddValue("UseUniformCrossSectionThickness", s._useUniformCrossSectionThickness);
 				info.AddEnum("BarShift", s._barShiftStrategy);
 				info.AddValue("BarShiftMaxItems", s._barShiftMaxNumberOfItemsInOneDirection);
@@ -158,18 +163,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("OuterGapX", s._relOuterGapX);
 				info.AddValue("InnerGapY", s._relInnerGapY);
 				info.AddValue("OuterGapY", s._relOuterGapY);
-				info.AddValue("UsePhysicalBaseValue", s._usePhysicalBaseValue);
-				info.AddValue("BaseValue", (object)s._baseValue);
-				info.AddValue("StartAtPrevious", s._startAtPreviousItem);
-				info.AddValue("PreviousItemGap", s._previousItemZGap);
 			}
 
 			protected virtual BarGraphPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				BarGraphPlotStyle s = null != o ? (BarGraphPlotStyle)o : new BarGraphPlotStyle(info);
 
-				s._independentColor = info.GetBoolean("IndependentColor");
+				s._usePhysicalBaseValue = info.GetBoolean("UsePhysicalBaseValue");
+				s._baseValue = (Altaxo.Data.AltaxoVariant)info.GetValue("BaseValue", s);
+				s._startAtPreviousItem = info.GetBoolean("StartAtPrevious");
+				s._previousItemZGap = info.GetDouble("PreviousItemGap");
+
 				s._pen = (PenX3D)info.GetValue("Pen", s);
+				s._independentColor = info.GetBoolean("IndependentColor");
 				s._useUniformCrossSectionThickness = info.GetBoolean("UseUniformCrossSectionThickness");
 				s._barShiftStrategy = (BarShiftStrategy3D)info.GetEnum("BarShift", typeof(BarShiftStrategy3D));
 				s._barShiftMaxNumberOfItemsInOneDirection = info.GetInt32("BarShiftMaxItems");
@@ -177,10 +183,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				s._relOuterGapX = info.GetDouble("OuterGapX");
 				s._relInnerGapY = info.GetDouble("InnerGapY");
 				s._relOuterGapY = info.GetDouble("OuterGapY");
-				s._usePhysicalBaseValue = info.GetBoolean("UsePhysicalBaseValue");
-				s._baseValue = (Altaxo.Data.AltaxoVariant)info.GetValue("BaseValue", s);
-				s._startAtPreviousItem = info.GetBoolean("StartAtPrevious");
-				s._previousItemZGap = info.GetDouble("PreviousItemGap");
 
 				return s;
 			}
@@ -202,6 +204,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			var from = obj as BarGraphPlotStyle;
 			if (null != from)
 			{
+				this._usePhysicalBaseValue = from._usePhysicalBaseValue;
+				this._baseValue = from._baseValue;
+				this._startAtPreviousItem = from._startAtPreviousItem;
+				this._previousItemZGap = from._previousItemZGap;
+
 				this._independentColor = from._independentColor;
 				this._pen = from._pen;
 				this._useUniformCrossSectionThickness = from._useUniformCrossSectionThickness;
@@ -217,11 +224,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._xOffsetLogical = from._xOffsetLogical;
 				this._ySizeLogical = from._ySizeLogical;
 				this._yOffsetLogical = from._yOffsetLogical;
-
-				this._usePhysicalBaseValue = from._usePhysicalBaseValue;
-				this._baseValue = from._baseValue;
-				this._startAtPreviousItem = from._startAtPreviousItem;
-				this._previousItemZGap = from._previousItemZGap;
 
 				EhSelfChanged();
 				return true;

@@ -44,6 +44,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 	{
 		#region Serialization
 
+		/// <summary>Initial version 2016-09-06.</summary>
+		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AbsoluteStackTransform), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{

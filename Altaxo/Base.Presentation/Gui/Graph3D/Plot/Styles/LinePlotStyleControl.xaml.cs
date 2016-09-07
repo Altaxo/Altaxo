@@ -110,20 +110,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		#endregion Event handlers
 
-		public bool EnableLineControls
-		{
-			set
-			{
-				this._guiLineBrush.IsEnabled = value;
-				this._guiLineDashStyle.IsEnabled = value;
-				this._guiLineThickness1.IsEnabled = value;
-
-				this._guiConnectCircular.IsEnabled = value;
-				this._guiLineSymbolGap.IsEnabled = value;
-				this._guiIndependentLineColor.IsEnabled = value;
-			}
-		}
-
 		#region IXYPlotLineStyleView
 
 		#region Line pen
@@ -173,15 +159,67 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		#endregion Line pen
 
-		public bool LineSymbolGap
+		public bool IndependentSymbolSize
 		{
-			set
-			{
-				this._guiLineSymbolGap.IsChecked = value;
-			}
 			get
 			{
-				return true == this._guiLineSymbolGap.IsChecked;
+				return true == _guiIndependentSymbolSize.IsChecked;
+			}
+
+			set
+			{
+				_guiIndependentSymbolSize.IsChecked = value;
+			}
+		}
+
+		public double SymbolSize
+		{
+			get
+			{
+				return _guiSymbolSize.SelectedQuantityAsValueInPoints;
+			}
+			set
+			{
+				_guiSymbolSize.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public bool UseSymbolGap
+		{
+			get
+			{
+				return _guiUseLineSymbolGap.IsChecked == true;
+			}
+
+			set
+			{
+				_guiUseLineSymbolGap.IsChecked = value;
+			}
+		}
+
+		public double SymbolGapOffset
+		{
+			get
+			{
+				return _guiSymbolGapOffset.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiSymbolGapOffset.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double SymbolGapFactor
+		{
+			get
+			{
+				return _guiSymbolGapFactor.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiSymbolGapFactor.SelectedQuantityAsValueInSIUnits = value;
 			}
 		}
 

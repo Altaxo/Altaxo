@@ -41,14 +41,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	{
 		public event Action IndependentColorChanged;
 
-		public event Action IndependentSkipFreqChanged;
-
-		public event Action IndependentSkipPointsChanged;
-
 		private PenControlsGlue _penGlue;
-
-		private bool _enableDisableAll = false;
-		private int _suppressEvents = 0;
 
 		public DropPlotStyleControl()
 		{
@@ -57,6 +50,10 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			_penGlue = new PenControlsGlue();
 			_penGlue.CbBrush = _guiPenMaterial;
 			_penGlue.CbDashStyle = _guiPenDashStyle;
+
+			_penGlue.CbLineStartCap = _cbLineStartCap;
+			_penGlue.CbLineStartCapAbsSize = _cbLineStartCapSize;
+			_penGlue.CbLineStartCapRelSize = _edLineStartCapRelSize;
 		}
 
 		public void InitializeDropLineConditions(SelectableListNodeList names)
@@ -82,7 +79,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			set { _penGlue.Pen = value; }
 		}
 
-		public int SkipPoints
+		public int SkipFrequency
 		{
 			get
 			{
@@ -94,7 +91,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 		}
 
-		public bool IndependentSkipPoints
+		public bool IndependentSkipFrequency
 		{
 			get
 			{
@@ -107,70 +104,138 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 		}
 
-		public void InitializeRelativePenWidth1(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
-		{
-			_guiPenWidth1.UnitEnvironment = env;
-			_guiPenWidth1.SelectedQuantity = x;
-		}
-
-		public void InitializeRelativePenWidth2(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
-		{
-			_guiPenWidth2.UnitEnvironment = env;
-			_guiPenWidth2.SelectedQuantity = x;
-		}
-
-		public Units.DimensionfulQuantity PenWidth1
+		public bool IndependentSymbolSize
 		{
 			get
 			{
-				return _guiPenWidth1.SelectedQuantity;
+				return true == _guiIndependentSymbolSize.IsChecked;
+			}
+
+			set
+			{
+				_guiIndependentSymbolSize.IsChecked = value;
 			}
 		}
 
-		public Units.DimensionfulQuantity PenWidth2
+		public double SymbolSize
 		{
 			get
 			{
-				return _guiPenWidth2.SelectedQuantity;
+				return _guiSymbolSize.SelectedQuantityAsValueInPoints;
+			}
+			set
+			{
+				_guiSymbolSize.SelectedQuantityAsValueInPoints = value;
 			}
 		}
 
-		public void InitializeGapAtStart(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
-		{
-			_guiGapAtStart.UnitEnvironment = env;
-			_guiGapAtStart.SelectedQuantity = x;
-		}
-
-		public Units.DimensionfulQuantity GapAtStart
+		public double LineWidth1Offset
 		{
 			get
 			{
-				return _guiGapAtStart.SelectedQuantity;
+				return _guiLineWidth1Offset.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiLineWidth1Offset.SelectedQuantityAsValueInPoints = value;
 			}
 		}
 
-		public void InitializeGapAtEnd(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
-		{
-			_guiGapAtEnd.UnitEnvironment = env;
-			_guiGapAtEnd.SelectedQuantity = x;
-		}
-
-		public Units.DimensionfulQuantity GapAtEnd
+		public double LineWidth1Factor
 		{
 			get
 			{
-				return _guiGapAtEnd.SelectedQuantity;
+				return _guiLineWidth1Factor.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiLineWidth1Factor.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public double LineWidth2Offset
+		{
+			get
+			{
+				return _guiLineWidth2Offset.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiLineWidth2Offset.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double LineWidth2Factor
+		{
+			get
+			{
+				return _guiLineWidth2Factor.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiLineWidth2Factor.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public double GapAtStartOffset
+		{
+			get
+			{
+				return _guiGapAtStartOffset.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiGapAtStartOffset.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double GapAtStartFactor
+		{
+			get
+			{
+				return _guiGapAtStartFactor.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiGapAtStartFactor.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public double GapAtEndOffset
+		{
+			get
+			{
+				return _guiGapAtEndOffset.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiGapAtEndOffset.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double GapAtEndFactor
+		{
+			get
+			{
+				return _guiGapAtEndFactor.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiGapAtEndFactor.SelectedQuantityAsValueInSIUnits = value;
 			}
 		}
 
 		private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
 		{
 			IndependentColorChanged?.Invoke();
-		}
-
-		private void EhIndependentSkipFreqChanged(object sender, RoutedEventArgs e)
-		{
-			IndependentSkipFreqChanged?.Invoke();
 		}
 
 		public bool ShowPlotColorsOnly

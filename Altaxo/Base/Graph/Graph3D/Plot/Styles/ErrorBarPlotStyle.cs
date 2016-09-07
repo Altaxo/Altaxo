@@ -101,7 +101,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// Factor used to calculate the real gap between symbol center and beginning of the bar, according to the formula:
 		/// realGap = _symbolGap * _symbolGapFactor + _symbolGapOffset;
 		/// </summary>
-		private double _symbolGapFactor = 1;
+		private double _symbolGapFactor = 1.25;
 
 		private double _endCapSizeFactor = 1;
 
@@ -161,6 +161,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					info.AddValue("PositiveError", s._positiveErrorColumn);
 					info.AddValue("NegativeError", s._negativeErrorColumn);
 				}
+				info.AddValue("IndependentSkipFreq", s._independentSkipFrequency);
+				info.AddValue("SkipFreq", s._skipFrequency);
+				info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
 
 				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
 				info.AddValue("SymbolSize", s._symbolSize);
@@ -179,11 +182,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("UseSymbolGap", s._useSymbolGap);
 				info.AddValue("SymbolGapOffset", s._symbolGapOffset);
 				info.AddValue("SymbolGapFactor", s._symbolGapFactor);
-
-				info.AddValue("IndependentSkipFreq", s._independentSkipFrequency);
-				info.AddValue("SkipFreq", s._skipFrequency);
-
-				info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
 			}
 
 			protected virtual ErrorBarPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -207,6 +205,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					if (null != s._negativeErrorColumn) s._negativeErrorColumn.ParentObject = s;
 				}
 
+				s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
+				s._skipFrequency = info.GetInt32("SkipFreq");
+				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
+
 				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
 				s._symbolSize = info.GetDouble("SymbolSize");
 
@@ -225,11 +227,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				s._useSymbolGap = info.GetBoolean("UseSymbolGap");
 				s._symbolGapOffset = info.GetDouble("SymbolGapOffset");
 				s._symbolGapFactor = info.GetDouble("SymbolGapFactor");
-
-				s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
-				s._skipFrequency = info.GetInt32("SkipFreq");
-
-				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
 
 				return s;
 			}
@@ -283,6 +280,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				ChildCloneToMember(ref _positiveErrorColumn, from._positiveErrorColumn);
 				ChildCloneToMember(ref _negativeErrorColumn, from._negativeErrorColumn);
 
+				this._independentSkipFrequency = from._independentSkipFrequency;
+				this._skipFrequency = from._skipFrequency;
+				this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+
 				this._independentSymbolSize = from._independentSymbolSize;
 				this._symbolSize = from._symbolSize;
 
@@ -300,10 +301,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._useSymbolGap = from._useSymbolGap;
 				this._symbolGapFactor = from._symbolGapFactor;
 				this._symbolGapOffset = from._symbolGapOffset;
-
-				this._independentSkipFrequency = from._independentSkipFrequency;
-				this._skipFrequency = from._skipFrequency;
-				this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 
 				this._cachedLogicalShiftX = from._cachedLogicalShiftX;
 				this._cachedLogicalShiftY = from._cachedLogicalShiftY;
@@ -355,10 +352,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			get { return _independentSymbolSize; }
 			set
 			{
-				var oldValue = _independentSymbolSize;
-				_independentSymbolSize = value;
-				if (oldValue != value)
+				if (!(_independentSymbolSize == value))
+				{
+					_independentSymbolSize = value;
 					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -368,10 +366,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			get { return _symbolSize; }
 			set
 			{
-				var oldValue = _symbolSize;
-				_symbolSize = value;
-				if (oldValue != value)
-					EhSelfChanged(EventArgs.Empty);
+				if (!Calc.RMath.IsFinite(value))
+					throw new ArgumentException(nameof(value), "Value must be a finite number");
+
+				if (!(_symbolSize == value))
+				{
+					_symbolSize = value;
+					EhSelfChanged();
+				}
 			}
 		}
 
@@ -970,7 +972,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 						{
 							double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
 							if (gap != 0)
-								isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gap), RADouble.NewAbs(0));
+								isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
 						}
 
 						if (null != isoLine) // may be null due shortening
@@ -985,7 +987,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 						{
 							double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
 							if (gap != 0)
-								isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gap), RADouble.NewAbs(0));
+								isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
 						}
 
 						if (null != isoLine) // may be null due to shortening

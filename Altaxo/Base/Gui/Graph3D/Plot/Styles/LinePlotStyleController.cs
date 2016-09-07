@@ -51,10 +51,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		PenX3D LinePen { get; set; }
 
-		/// <summary>
-		/// Initializes the LineSymbolGap check box.
-		/// </summary>
-		bool LineSymbolGap { get; set; }
+		bool IndependentSymbolSize { get; set; }
+
+		double SymbolSize { get; set; }
+
+		bool UseSymbolGap { get; set; }
+
+		double SymbolGapOffset { get; set; }
+
+		double SymbolGapFactor { get; set; }
 
 		bool ConnectCircular { get; set; }
 
@@ -65,14 +70,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		/// </summary>
 		/// <param name="list">List of possible selections.</param>
 		void InitializeLineConnect(SelectableListNodeList list);
-
-		/// <summary>
-		/// Enables / disables all controls associated with line properties with exception of the Connection style combo box.
-		/// </summary>
-		/// <value>
-		///   <c>true</c> if [enable line controls]; otherwise, <c>false</c>.
-		/// </value>
-		bool EnableLineControls { set; }
 
 		#region events
 
@@ -130,13 +127,18 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			{
 				// Line properties
 				_view.InitializeLineConnect(_lineConnectChoices);
-				_view.LineSymbolGap = _doc.LineSymbolGap;
 				_view.ConnectCircular = _doc.ConnectCircular;
 				_view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
 				_view.IndependentLineColor = _doc.IndependentLineColor;
 				_view.IndependentDashStyle = _doc.IndependentDashStyle;
 				_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
 				_view.LinePen = _doc.LinePen;
+
+				_view.IndependentSymbolSize = _doc.IndependentSymbolSize;
+				_view.SymbolSize = _doc.SymbolSize;
+				_view.UseSymbolGap = _doc.UseSymbolGap;
+				_view.SymbolGapOffset = _doc.SymbolGapOffset;
+				_view.SymbolGapFactor = _doc.SymbolGapFactor;
 			}
 		}
 
@@ -160,8 +162,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			// don't trust user input, so all into a try statement
 			try
 			{
-				// Symbol Gap
-				_doc.LineSymbolGap = _view.LineSymbolGap;
 				_doc.ConnectCircular = _view.ConnectCircular;
 				_doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
 
@@ -178,6 +178,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 					_doc.Connection = NoConnection.Instance;
 				else
 					_doc.Connection = (ILineConnectionStyle)Activator.CreateInstance(connectionType);
+
+				_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
+				_doc.SymbolSize = _view.SymbolSize;
+				_doc.UseSymbolGap = _view.UseSymbolGap;
+				_doc.SymbolGapOffset = _view.SymbolGapOffset;
+				_doc.SymbolGapFactor = _view.SymbolGapFactor;
 
 				return ApplyEnd(true, disposeController);
 			}
@@ -203,34 +209,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		#region Color management
 
-		/// <summary>
-		/// Gets or sets a value indicating whether the line is shown or not. By definition here, the line is not shown only if the connection style is "Noline".
-		/// When setting this property, this influences not the connection style in the _view, but only the IsEnabled property of all Gui items associated with the line.
-		/// </summary>
-		/// <value>
-		/// 	<c>true</c> if the line used; otherwise, <c>false</c>.
-		/// </value>
-		private bool IsLineUsed
-		{
-			get
-			{
-				var selNode = _lineConnectChoices.FirstSelectedNode;
-				return Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle.NoLine != (Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle)(selNode.Tag);
-			}
-			set
-			{
-				if (null != _view)
-					_view.EnableLineControls = value;
-			}
-		}
-
 		private void EhColorGroupStyleAddedOrRemoved()
 		{
 			if (null != _view)
 			{
 				_doc.IndependentLineColor = _view.IndependentLineColor;
-				if (IsLineUsed)
-					_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
+				_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
 			}
 		}
 

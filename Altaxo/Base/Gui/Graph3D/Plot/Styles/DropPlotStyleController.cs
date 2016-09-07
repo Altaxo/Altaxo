@@ -55,12 +55,15 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		bool IndependentColor { get; set; }
 
-		void InitializeRelativePenWidth1(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
+		bool IndependentSymbolSize { get; set; }
 
-		void InitializeRelativePenWidth2(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
+		double SymbolSize { get; set; }
 
-		DimensionfulQuantity PenWidth1 { get; }
-		DimensionfulQuantity PenWidth2 { get; }
+		double LineWidth1Offset { get; set; }
+		double LineWidth1Factor { get; set; }
+
+		double LineWidth2Offset { get; set; }
+		double LineWidth2Factor { get; set; }
 
 		/// <summary>
 		/// Intitalizes the drop line checkboxes.
@@ -68,22 +71,18 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		/// <param name="names">List of names plus the information if they are selected or not.</param>
 		void InitializeDropLineConditions(SelectableListNodeList names);
 
-		int SkipPoints { get; set; }
+		int SkipFrequency { get; set; }
 
-		bool IndependentSkipPoints { get; set; }
+		bool IndependentSkipFrequency { get; set; }
 
-		void InitializeGapAtStart(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
-
-		void InitializeGapAtEnd(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
-
-		DimensionfulQuantity GapAtStart { get; }
-		DimensionfulQuantity GapAtEnd { get; }
+		double GapAtStartOffset { get; set; }
+		double GapAtStartFactor { get; set; }
+		double GapAtEndOffset { get; set; }
+		double GapAtEndFactor { get; set; }
 
 		#region events
 
 		event Action IndependentColorChanged;
-
-		event Action IndependentSkipPointsChanged;
 
 		#endregion events
 	}
@@ -142,30 +141,28 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 			if (_view != null)
 			{
+				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
+				_view.SkipFrequency = _doc.SkipFrequency;
+				_view.InitializeDropLineConditions(_dropLineChoices);
+
 				// now we have to set all dialog elements to the right values
 				_view.IndependentColor = _doc.IndependentColor;
 				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
 				_view.Pen = _doc.Pen;
 
-				_view.SkipPoints = _doc.SkipFrequency;
+				_view.IndependentSymbolSize = _doc.IndependentSymbolSize;
+				_view.SymbolSize = _doc.SymbolSize;
 
-				var relW1 = _doc.PenWidth1.IsAbsolute ? new DimensionfulQuantity(_doc.PenWidth1.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.PenWidth1.Value * 100, _percentSymbolSizeUnit);
-				_view.InitializeRelativePenWidth1(relW1, _penWidthEnvironment);
+				_view.LineWidth1Offset = _doc.LineWidth1Offset;
+				_view.LineWidth1Factor = _doc.LineWidth1Factor;
 
-				var relW2 = _doc.PenWidth2.IsAbsolute ? new DimensionfulQuantity(_doc.PenWidth2.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.PenWidth2.Value * 100, _percentSymbolSizeUnit);
-				_view.InitializeRelativePenWidth2(relW2, _penWidthEnvironment);
+				_view.LineWidth2Offset = _doc.LineWidth2Offset;
+				_view.LineWidth2Factor = _doc.LineWidth2Factor;
 
-				_view.InitializeGapAtStart(_doc.GapAtStart.IsAbsolute ?
-					new DimensionfulQuantity(_doc.GapAtStart.Value, Units.Length.Point.Instance) :
-					new DimensionfulQuantity(_doc.GapAtStart.Value * 100, _percentGapSizeUnit),
-					_gapWidthEnvironment);
-
-				_view.InitializeGapAtEnd(_doc.GapAtEnd.IsAbsolute ?
-					new DimensionfulQuantity(_doc.GapAtEnd.Value, Units.Length.Point.Instance) :
-					new DimensionfulQuantity(_doc.GapAtEnd.Value * 100, _percentGapSizeUnit),
-					_gapWidthEnvironment);
-
-				_view.InitializeDropLineConditions(_dropLineChoices);
+				_view.GapAtStartOffset = _doc.GapAtStartOffset;
+				_view.GapAtStartFactor = _doc.GapAtStartFactor;
+				_view.GapAtEndOffset = _doc.GapAtEndOffset;
+				_view.GapAtEndFactor = _doc.GapAtEndFactor;
 			}
 		}
 
@@ -174,43 +171,30 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			// don't trust user input, so all into a try statement
 			try
 			{
-				// Symbol Color
-				_doc.Pen = _view.Pen;
-				var penWidth1 = _view.PenWidth1;
-				if (object.ReferenceEquals(penWidth1.Unit, _percentSymbolSizeUnit))
-					_doc.PenWidth1 = RADouble.NewRel(penWidth1.Value / 100);
-				else
-					_doc.PenWidth1 = RADouble.NewAbs(penWidth1.AsValueIn(Units.Length.Point.Instance));
-
-				var penWidth2 = _view.PenWidth2;
-				if (object.ReferenceEquals(penWidth2.Unit, _percentSymbolSizeUnit))
-					_doc.PenWidth2 = RADouble.NewRel(penWidth2.Value / 100);
-				else
-					_doc.PenWidth2 = RADouble.NewAbs(penWidth2.AsValueIn(Units.Length.Point.Instance));
-
-				_doc.IndependentColor = _view.IndependentColor;
-
-				// Drop line left
+				// Skip frequency
+				_doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
+				_doc.SkipFrequency = _view.SkipFrequency;
+				// Drop targets
 				_doc.DropTargets = new CSPlaneIDList(_dropLineChoices.Where(node => node.IsSelected).Select(node => (CSPlaneID)node.Tag));
 
-				// Skip points
+				// Symbol Color
+				_doc.Pen = _view.Pen;
+				_doc.IndependentColor = _view.IndependentColor;
 
-				_doc.SkipFrequency = _view.SkipPoints;
-				_doc.IndependentSkipFrequency = _view.IndependentSkipPoints;
+				_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
+				_doc.SymbolSize = _view.SymbolSize;
+
+				_doc.LineWidth1Offset = _view.LineWidth1Offset;
+				_doc.LineWidth1Factor = _view.LineWidth1Factor;
+
+				_doc.LineWidth2Offset = _view.LineWidth2Offset;
+				_doc.LineWidth2Factor = _view.LineWidth2Factor;
 
 				// gap
-
-				var gapAtStart = _view.GapAtStart;
-				if (object.ReferenceEquals(gapAtStart.Unit, _percentGapSizeUnit))
-					_doc.GapAtStart = RADouble.NewRel(gapAtStart.Value / 100);
-				else
-					_doc.GapAtStart = RADouble.NewAbs(gapAtStart.AsValueIn(Units.Length.Point.Instance));
-
-				var gapAtEnd = _view.GapAtEnd;
-				if (object.ReferenceEquals(gapAtEnd.Unit, _percentGapSizeUnit))
-					_doc.GapAtEnd = RADouble.NewRel(gapAtEnd.Value / 100);
-				else
-					_doc.GapAtEnd = RADouble.NewAbs(gapAtEnd.AsValueIn(Units.Length.Point.Instance));
+				_doc.GapAtStartOffset = _view.GapAtStartOffset;
+				_doc.GapAtStartFactor = _view.GapAtStartFactor;
+				_doc.GapAtEndOffset = _view.GapAtEndOffset;
+				_doc.GapAtEndFactor = _view.GapAtEndFactor;
 			}
 			catch (Exception ex)
 			{

@@ -225,7 +225,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			if (_isStepEnabled)
 			{
 				var idx = Math.Max(0, _listOfValues.IndexOf(value));
-				_value = _listOfValues[0];
+				_value = _listOfValues[idx];
 			}
 			else
 			{

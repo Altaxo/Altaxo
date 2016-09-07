@@ -89,18 +89,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 			int lastIdx = range.Length - 1 + (connectCircular ? 1 : 0);
 			var layerSize = layer.Size;
 
-			// special efforts are necessary to realize a line/symbol gap
-			// I decided to use a path for this
-			// and hope that not so many segments are added to the path due
-			// to the exclusion criteria that a line only appears between two symbols (rel<0.5)
-			// if the symbols do not overlap. So for a big array of points it is very likely
-			// that the symbols overlap and no line between the symbols needs to be plotted
 			if (symbolGap > 0)
 			{
 				for (int i = 0; i < lastIdx; i++)
 				{
 					var diff = linepts[i + 1] - linepts[i];
-					var rel = symbolGap / diff.Length;
+					var rel = 0.5 * symbolGap / diff.Length; // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
 					if (rel < 0.5) // a line only appears if the relative gap is smaller 1/2
 					{
 						var start = linepts[i] + rel * diff;

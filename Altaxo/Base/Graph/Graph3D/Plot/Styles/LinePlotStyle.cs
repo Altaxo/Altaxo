@@ -67,12 +67,33 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		protected bool _independentDashStyle;
 		protected PenX3D _linePen;
 		protected ILineConnectionStyle _connectionStyle;
-		protected bool _useLineSymbolGap;
-		protected double _symbolGap;
+
+		/// <summary>
+		/// true if the symbol size is independent, i.e. is not published nor updated by a group style.
+		/// </summary>
+		protected bool _independentSymbolSize;
+
+		/// <summary>Controls the length of the end bar.</summary>
+		protected double _symbolSize;
+
 		protected bool _ignoreMissingDataPoints; // treat missing points as if not present (connect lines over missing points)
 
 		/// <summary>If true, the start and the end point of the line are connected too.</summary>
 		protected bool _connectCircular;
+
+		protected bool _useSymbolGap;
+
+		/// <summary>
+		/// Offset used to calculate the real gap between symbol center and beginning of the bar, according to the formula:
+		/// realGap = _symbolGap * _symbolGapFactor + _symbolGapOffset;
+		/// </summary>
+		private double _symbolGapOffset;
+
+		/// <summary>
+		/// Factor used to calculate the real gap between symbol center and beginning of the bar, according to the formula:
+		/// realGap = _symbolGap * _symbolGapFactor + _symbolGapOffset;
+		/// </summary>
+		private double _symbolGapFactor = 1.25;
 
 		#region Serialization
 
@@ -85,26 +106,38 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				LinePlotStyle s = (LinePlotStyle)obj;
+				info.AddValue("IgnoreMissingPoints", s._ignoreMissingDataPoints);
+				info.AddValue("ConnectCircular", s._connectCircular);
+				info.AddValue("Connection", s._connectionStyle);
 				info.AddValue("Pen", s._linePen);
 				info.AddValue("IndependentDashStyle", s._independentDashStyle);
 				info.AddValue("IndependentColor", s._independentColor);
-				info.AddValue("Connection", s._connectionStyle);
-				info.AddValue("LineSymbolGap", s._useLineSymbolGap);
-				info.AddValue("IgnoreMissingPoints", s._ignoreMissingDataPoints);
-				info.AddValue("ConnectCircular", s._connectCircular);
+
+				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
+				info.AddValue("SymbolSize", s._symbolSize);
+
+				info.AddValue("UseSymbolGap", s._useSymbolGap);
+				info.AddValue("SymbolGapOffset", s._symbolGapOffset);
+				info.AddValue("SymbolGapFactor", s._symbolGapFactor);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
 
+				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
+				s._connectCircular = info.GetBoolean("ConnectCircular");
+				s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
 				s._linePen = (PenX3D)info.GetValue("Pen", s);
 				s._independentDashStyle = info.GetBoolean("IndependentDashStyle");
 				s._independentColor = info.GetBoolean("IndependentColor");
-				s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
-				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
-				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
-				s._connectCircular = info.GetBoolean("ConnectCircular");
+
+				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
+				s._symbolSize = info.GetDouble("SymbolSize");
+
+				s._useSymbolGap = info.GetBoolean("UseSymbolGap");
+				s._symbolGapOffset = info.GetDouble("SymbolGapOffset");
+				s._symbolGapFactor = info.GetDouble("SymbolGapFactor");
 				return s;
 			}
 		}
@@ -127,12 +160,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			var color = GraphDocument.GetDefaultPlotColor(context);
 
 			_linePen = new PenX3D(color, penWidth).WithLineJoin(PenLineJoin.Bevel);
-			_useLineSymbolGap = true;
+			_useSymbolGap = true;
 			_ignoreMissingDataPoints = false;
 			_connectionStyle = new LineConnectionStyles.StraightConnection();
 			_independentColor = false;
-
-			CreateEventChain();
 		}
 
 		public bool CopyFrom(object obj)
@@ -155,17 +186,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				this._useLineSymbolGap = from._useLineSymbolGap;
-				this._connectCircular = from._connectCircular;
 				this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
-
-				this._symbolGap = from._symbolGap;
-
-				this._independentColor = from._independentColor;
-				this._independentDashStyle = from._independentDashStyle;
-				this._linePen = from._linePen; // immutable
-
+				this._connectCircular = from._connectCircular;
 				this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
+
+				this._linePen = from._linePen; // immutable
+				this._independentDashStyle = from._independentDashStyle;
+				this._independentColor = from._independentColor;
+
+				this._independentSymbolSize = from._independentSymbolSize;
+				this._symbolSize = from._symbolSize;
+
+				this._useSymbolGap = from._useSymbolGap;
+				this._symbolGapOffset = from._symbolGapOffset;
+				this._symbolGapFactor = from._symbolGapFactor;
 
 				EhSelfChanged();
 				suspendToken.Resume(eventFiring);
@@ -175,7 +209,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		public LinePlotStyle(LinePlotStyle from)
 		{
 			CopyFrom(from, Main.EventFiring.Suppressed);
-			CreateEventChain();
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -186,10 +219,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		public object Clone()
 		{
 			return new LinePlotStyle(this);
-		}
-
-		protected virtual void CreateEventChain()
-		{
 		}
 
 		#endregion Construction and copying
@@ -212,18 +241,50 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		public bool LineSymbolGap
+		/// <summary>
+		/// True when the line is not drawn in the circel of diameter SymbolSize around the symbol center.
+		/// </summary>
+		public bool UseSymbolGap
+		{
+			get { return _useSymbolGap; }
+			set
+			{
+				var oldValue = _useSymbolGap;
+				_useSymbolGap = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		public double SymbolGapOffset
 		{
 			get
 			{
-				return _useLineSymbolGap;
+				return _symbolGapOffset;
 			}
 			set
 			{
-				bool oldValue = _useLineSymbolGap;
-				_useLineSymbolGap = value;
-				if (value != oldValue)
-					EhSelfChanged(EventArgs.Empty);
+				if (!(_symbolGapOffset == value))
+				{
+					_symbolGapOffset = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double SymbolGapFactor
+		{
+			get
+			{
+				return _symbolGapFactor;
+			}
+			set
+			{
+				if (!(_symbolGapFactor == value))
+				{
+					_symbolGapFactor = value;
+					EhSelfChanged();
+				}
 			}
 		}
 
@@ -307,6 +368,34 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
+		/// <summary>
+		/// true if the symbol size is independent, i.e. is not published nor updated by a group style.
+		/// </summary>
+		public bool IndependentSymbolSize
+		{
+			get { return _independentSymbolSize; }
+			set
+			{
+				var oldValue = _independentSymbolSize;
+				_independentSymbolSize = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		/// <summary>Controls the length of the end bar.</summary>
+		public double SymbolSize
+		{
+			get { return _symbolSize; }
+			set
+			{
+				var oldValue = _symbolSize;
+				_symbolSize = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
 		public bool IsVisible
 		{
 			get
@@ -334,9 +423,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				var gs = g.SaveGraphicsState();
 				g.TranslateTransform((VectorD3D)bounds.Center);
 				var halfwidth = bounds.SizeX / 2;
-				var symsize = _symbolGap;
+				var symsize = _symbolSize;
 
-				if (this.LineSymbolGap == true)
+				if (_useSymbolGap)
 				{
 					// plot a line with the length of symbolsize from
 					PaintLine(g, new PointD3D(-halfwidth, 0, 0), new PointD3D(-symsize, 0, 0));
@@ -356,7 +445,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			var linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			var rangeList = pdata.RangeList;
-			var symbolGap = _symbolGap;
+			var symbolGap = _symbolSize;
 
 			int rangelistlen = rangeList.Count;
 
@@ -366,13 +455,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				// as one range, i.e. continuously
 				// for this, we create the totalRange, which contains all ranges
 				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
-				_connectionStyle.Paint(g, pdata, totalRange, layer, _linePen, _useLineSymbolGap ? _symbolGap : 0, _connectCircular);
+				_connectionStyle.Paint(g, pdata, totalRange, layer, _linePen, _useSymbolGap ? _symbolGapOffset + _symbolGapFactor * _symbolSize : 0, _connectCircular);
 			}
 			else // we not ignore missing points, so plot all ranges separately
 			{
 				for (int i = 0; i < rangelistlen; i++)
 				{
-					_connectionStyle.Paint(g, pdata, rangeList[i], layer, _linePen, _useLineSymbolGap ? _symbolGap : 0, _connectCircular);
+					_connectionStyle.Paint(g, pdata, rangeList[i], layer, _linePen, _useSymbolGap ? _symbolGapOffset + _symbolGapFactor * _symbolSize : 0, _connectCircular);
 				}
 			}
 		}
@@ -399,14 +488,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		public bool IsColorReceiver
 		{
 			get { return !this._independentColor; }
-		}
-
-		private float SymbolSize
-		{
-			set
-			{
-				this._symbolGap = value;
-			}
 		}
 
 		#region IG3DPlotStyle Members
@@ -438,9 +519,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (!_independentDashStyle)
 				DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern c) { this._linePen = this.LinePen.WithDashPattern(c); });
 
-			if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolGap = size; }))
+			if (!_independentSymbolSize)
 			{
-				this._symbolGap = 0;
+				_symbolSize = 0;
+				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolSize = size; });
 			}
 		}
 

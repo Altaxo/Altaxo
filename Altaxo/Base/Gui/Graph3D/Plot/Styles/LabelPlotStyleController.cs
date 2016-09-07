@@ -254,11 +254,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
 				_view.SelectedFont = _doc.Font;
 				_view.IndependentColor = _doc.IndependentColor;
-				_view.LabelBrush = _doc.LabelBrush;
+				_view.LabelBrush = _doc.Material;
 				_view.Init_AlignmentX(_alignmentXChoices);
 				_view.Init_AlignmentY(_alignmentYChoices);
 				_view.Init_AlignmentZ(_alignmentZChoices);
-				_view.AttachToAxis = _doc.AttachedAxis != null;
+				_view.AttachToAxis = _doc.AttachedPlane != null;
 				_view.Init_AttachedAxis(_attachmentDirectionChoices);
 				_view.SelectedRotationX = _doc.RotationX;
 				_view.SelectedRotationY = _doc.RotationY;
@@ -289,7 +289,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			_doc.BackgroundStyle = _view.Background;
 			_doc.Font = _view.SelectedFont;
 			_doc.IndependentColor = _view.IndependentColor;
-			_doc.LabelBrush = _view.LabelBrush;
+			_doc.Material = _view.LabelBrush;
 			_doc.AlignmentX = (Alignment)_alignmentXChoices.FirstSelectedNode.Tag;
 			_doc.AlignmentY = (Alignment)_alignmentYChoices.FirstSelectedNode.Tag;
 			_doc.AlignmentZ = (Alignment)_alignmentZChoices.FirstSelectedNode.Tag;
@@ -313,9 +313,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 				_doc.OffsetZ = zOffs.AsValueIn(Units.Length.Point.Instance) / _doc.Font.Size;
 
 			if (_view.AttachToAxis && null != _attachmentDirectionChoices.FirstSelectedNode)
-				_doc.AttachedAxis = (CSPlaneID)_attachmentDirectionChoices.FirstSelectedNode.Tag;
+				_doc.AttachedPlane = (CSPlaneID)_attachmentDirectionChoices.FirstSelectedNode.Tag;
 			else
-				_doc.AttachedAxis = null;
+				_doc.AttachedPlane = null;
 
 			_doc.RotationX = _view.SelectedRotationX;
 			_doc.RotationY = _view.SelectedRotationY;
@@ -364,7 +364,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			{
 				foreach (CSPlaneInformation info in layer.CoordinateSystem.PlaneStyles)
 				{
-					_attachmentDirectionChoices.Add(new SelectableListNode(info.Name, info.Identifier, info.Identifier == _doc.AttachedAxis));
+					_attachmentDirectionChoices.Add(new SelectableListNode(info.Name, info.Identifier, info.Identifier == _doc.AttachedPlane));
 				}
 			}
 		}

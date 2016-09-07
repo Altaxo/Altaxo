@@ -36,7 +36,6 @@ namespace Altaxo.Gui.Graph3D.Common
 	using SharpDX.DXGI;
 	using System;
 	using System.ComponentModel;
-	using System.Diagnostics;
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;

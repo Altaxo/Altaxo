@@ -46,23 +46,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		Main.SuspendableDocumentNodeWithEventArgs,
 		IG3DPlotStyle
 	{
-		/// <summary>Material for the symbols.</summary>
-		protected IMaterial _material;
-
-		/// <summary>
-		/// The scatter symbol.
-		/// </summary>
-		protected IScatterSymbol _symbolShape;
-
-		/// <summary>Size of the symbols in points.</summary>
-		protected double _symbolSize;
-
-		/// <summary>Is the material color independent, i.e. not influenced by group styles.</summary>
-		protected bool _independentColor;
-
-		/// <summary>Is the size of the symbols independent, i.e. not influenced by group styles.</summary>
-		protected bool _independentSymbolSize;
-
 		/// <summary>A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
 		protected int _skipFreq;
 
@@ -70,6 +53,23 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// Indicates whether <see cref="SkipFrequency"/> is independent of other sub-styles.
 		/// </summary>
 		protected bool _independentSkipFreq;
+
+		/// <summary>
+		/// The scatter symbol.
+		/// </summary>
+		protected IScatterSymbol _symbolShape;
+
+		/// <summary>Is the size of the symbols independent, i.e. not influenced by group styles.</summary>
+		protected bool _independentSymbolSize;
+
+		/// <summary>Size of the symbols in points.</summary>
+		protected double _symbolSize;
+
+		/// <summary>Material for the symbols.</summary>
+		protected IMaterial _material;
+
+		/// <summary>Is the material color independent, i.e. not influenced by group styles.</summary>
+		protected bool _independentColor;
 
 		// cached values:
 		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
@@ -92,27 +92,31 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				ScatterPlotStyle s = (ScatterPlotStyle)obj;
+				info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
+				info.AddValue("SkipFreq", s._skipFreq);
+
 				info.AddValue("Shape", s._symbolShape);
-				info.AddValue("Material", s._material);
+				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
 				info.AddValue("SymbolSize", s._symbolSize);
 
+				info.AddValue("Material", s._material);
+
 				info.AddValue("IndependentColor", s._independentColor);
-				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
-				info.AddValue("SkipFreq", s._skipFreq);
-				info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
 			}
 
 			protected virtual ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle(info);
 
-				s._symbolShape = (IScatterSymbol)info.GetValue("Shape", s);
-				s._material = (IMaterial)info.GetValue("Material", s);
-				s._symbolSize = info.GetSingle("SymbolSize");
-				s._independentColor = info.GetBoolean("IndependentColor");
-				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
-				s._skipFreq = info.GetInt32("SkipFreq");
 				s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
+				s._skipFreq = info.GetInt32("SkipFreq");
+
+				s._symbolShape = (IScatterSymbol)info.GetValue("Shape", s);
+				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
+				s._symbolSize = info.GetSingle("SymbolSize");
+
+				s._material = (IMaterial)info.GetValue("Material", s);
+				s._independentColor = info.GetBoolean("IndependentColor");
 				return s;
 			}
 
@@ -157,14 +161,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				this._material = from._material; // immutable
-				this._symbolShape = from._symbolShape; // immutable
-				this._independentColor = from._independentColor;
-				this._independentSymbolSize = from._independentSymbolSize;
-
-				this._symbolSize = from._symbolSize;
-				this._skipFreq = from._skipFreq;
 				this._independentSkipFreq = from._independentSkipFreq;
+				this._skipFreq = from._skipFreq;
+				this._symbolShape = from._symbolShape; // immutable
+				this._independentSymbolSize = from._independentSymbolSize;
+				this._symbolSize = from._symbolSize;
+
+				this._material = from._material; // immutable
+				this._independentColor = from._independentColor;
 
 				EhSelfChanged(EventArgs.Empty);
 

@@ -47,30 +47,44 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		Main.SuspendableDocumentNodeWithEventArgs,
 		IG3DPlotStyle
 	{
-		/// <summary>Pen for the drop line.</summary>
-		protected PenX3D _pen;
-
-		/// <summary>Pen width 1 for the drop line, either absolute or relative to the size of the scatter symbol.</summary>
-		protected RADouble _penWidth1;
-
-		/// <summary>Pen width 2 for the drop line, either absolute or relative to the size of the scatter symbol.</summary>
-		protected RADouble _penWidth2;
-
-		protected RADouble _gapAtStart;
-
-		protected RADouble _gapAtEnd;
-
-		/// <summary>Target(s) for the drop line.</summary>
-		protected CSPlaneIDList _dropLine;
-
-		/// <summary>Is the material color independent, i.e. not influenced by group styles.</summary>
-		protected bool _independentColor;
+		/// <summary>A value indicating whether the skip frequency value is independent from other values.</summary>
+		protected bool _independentSkipFreq;
 
 		/// <summary>A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
 		protected int _skipFreq;
 
-		/// <summary>A value indicating whether the skip frequency value is independent from other values.</summary>
-		protected bool _independentSkipFreq;
+		/// <summary>Target(s) for the drop line.</summary>
+		protected CSPlaneIDList _dropTargets;
+
+		/// <summary>Pen for the drop line.</summary>
+		protected PenX3D _pen;
+
+		/// <summary>Is the material color independent, i.e. not influenced by group styles.</summary>
+		protected bool _independentColor;
+
+		/// <summary>
+		/// true if the symbol size is independent, i.e. is not published nor updated by a group style.
+		/// </summary>
+		private bool _independentSymbolSize;
+
+		/// <summary>Controls the width of the lines and the gap.</summary>
+		private double _symbolSize;
+
+		/// <summary>Pen width 1 for the drop line, either absolute or relative to the size of the scatter symbol.</summary>
+		protected double _lineWidth1Offset;
+
+		protected double _lineWidth1Factor;
+
+		/// <summary>Pen width 2 for the drop line, either absolute or relative to the size of the scatter symbol.</summary>
+		protected double _lineWidth2Offset;
+
+		protected double _lineWidth2Factor;
+
+		protected double _gapAtStartOffset;
+		protected double _gapAtStartFactor = 1.25;
+
+		protected double _gapAtEndOffset;
+		protected double _gapAtEndFactor;
 
 		/// <summary>The symbol size that is received from another substyle.</summary>
 		protected double _cachedSymbolSize = 10;
@@ -97,30 +111,49 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			{
 				DropPlotStyle s = (DropPlotStyle)obj;
 
-				info.AddValue("DropLine", s._dropLine);
-				info.AddValue("Pen", s._pen);
-				info.AddValue("PenWidth1", s._penWidth1);
-				info.AddValue("PenWidth2", s._penWidth2);
-				info.AddValue("IndependentColor", s._independentColor);
-				info.AddValue("SkipFreq", s._skipFreq);
 				info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
-				info.AddValue("GapAtStart", s._gapAtStart);
-				info.AddValue("GapAtEnd", s._gapAtEnd);
+				info.AddValue("SkipFreq", s._skipFreq);
+				info.AddValue("DropLine", s._dropTargets);
+
+				info.AddValue("Pen", s._pen);
+				info.AddValue("IndependentColor", s._independentColor);
+
+				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
+				info.AddValue("SymbolSize", s._symbolSize);
+				info.AddValue("LineWidth1Offset", s._lineWidth1Offset);
+				info.AddValue("LineWidth1Factor", s._lineWidth1Factor);
+				info.AddValue("LineWidth2Offset", s._lineWidth2Offset);
+				info.AddValue("LineWidth2Factor", s._lineWidth2Factor);
+				info.AddValue("GapAtStartOffset", s._gapAtStartOffset);
+				info.AddValue("GapAtStartFactor", s._gapAtStartFactor);
+				info.AddValue("GapAtEndOffset", s._gapAtEndOffset);
+				info.AddValue("GapAtEndFactor", s._gapAtEndFactor);
 			}
 
 			protected virtual DropPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				DropPlotStyle s = null != o ? (DropPlotStyle)o : new DropPlotStyle(info);
 
-				s._dropLine = (CSPlaneIDList)info.GetValue("DropLine", s);
-				s._pen = (PenX3D)info.GetValue("Pen", s);
-				s._penWidth1 = (RADouble)info.GetValue("PenWidth1", s);
-				s._penWidth2 = (RADouble)info.GetValue("PenWidth2", s);
-				s._independentColor = info.GetBoolean("IndependentColor");
-				s._skipFreq = info.GetInt32("SkipFreq");
 				s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
-				s._gapAtStart = (RADouble)info.GetValue("GapAtStart", s);
-				s._gapAtEnd = (RADouble)info.GetValue("GapAtEnd", s);
+				s._skipFreq = info.GetInt32("SkipFreq");
+				s._dropTargets = (CSPlaneIDList)info.GetValue("DropLine", s);
+
+				s._pen = (PenX3D)info.GetValue("Pen", s);
+				s._independentColor = info.GetBoolean("IndependentColor");
+
+				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
+				s._symbolSize = info.GetDouble("SymbolSize");
+
+				s._lineWidth1Offset = info.GetDouble("LineWidth1Offset");
+				s._lineWidth1Factor = info.GetDouble("LineWidth1Factor");
+
+				s._lineWidth2Offset = info.GetDouble("LineWidth2Offset");
+				s._lineWidth2Factor = info.GetDouble("LineWidth2Factor");
+
+				s._gapAtStartOffset = info.GetDouble("GapAtStartOffset");
+				s._gapAtStartFactor = info.GetDouble("GapAtStartFactor");
+				s._gapAtEndOffset = info.GetDouble("GapAtEndOffset");
+				s._gapAtEndFactor = info.GetDouble("GapAtEndFactor");
 				return s;
 			}
 
@@ -165,16 +198,24 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				this._dropLine = from._dropLine; // immutable
+				this._independentSkipFreq = from._independentSkipFreq;
+				this._skipFreq = from._skipFreq;
+				this._dropTargets = from._dropTargets; // immutable
 
 				this._pen = from._pen; // immutable
-				this._penWidth1 = from._penWidth1;
-				this._penWidth2 = from._penWidth2;
 				this._independentColor = from._independentColor;
-				this._skipFreq = from._skipFreq;
-				this._independentSkipFreq = from._independentSkipFreq;
-				this._gapAtStart = from._gapAtStart;
-				this._gapAtEnd = from._gapAtEnd;
+
+				_independentSymbolSize = from._independentSymbolSize;
+				_symbolSize = from._symbolSize;
+				_lineWidth1Offset = from._lineWidth1Offset;
+				_lineWidth1Factor = from._lineWidth1Factor;
+				_lineWidth2Offset = from._lineWidth2Offset;
+				_lineWidth2Factor = from._lineWidth2Factor;
+
+				this._gapAtStartOffset = from._gapAtStartOffset;
+				this._gapAtStartFactor = from._gapAtStartFactor;
+				this._gapAtEndOffset = from._gapAtEndOffset;
+				this._gapAtEndFactor = from._gapAtEndFactor;
 
 				EhSelfChanged(EventArgs.Empty);
 
@@ -192,7 +233,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (null == pen)
 				throw new ArgumentNullException(nameof(pen));
 
-			this._dropLine = new CSPlaneIDList(new[] { planeID });
+			this._dropTargets = new CSPlaneIDList(new[] { planeID });
 
 			// Cached values
 			SetCachedValues();
@@ -200,14 +241,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public DropPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			this._dropLine = new CSPlaneIDList(new[] { new CSPlaneID(2, 0) });
+			this._dropTargets = new CSPlaneIDList(new[] { new CSPlaneID(2, 0) });
 
 			var color = GraphDocument.GetDefaultPlotColor(context);
 			double penWidth = GraphDocument.GetDefaultPenWidth(context);
 			_pen = new PenX3D(color, penWidth);
 
-			_penWidth1 = RADouble.NewAbs(penWidth);
-			_penWidth2 = RADouble.NewAbs(penWidth);
+			_lineWidth1Offset = penWidth;
+			_lineWidth1Factor = 0;
+			_lineWidth2Offset = penWidth;
+			_lineWidth2Factor = 0;
 		}
 
 		public object Clone()
@@ -269,28 +312,163 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		public RADouble PenWidth1
+		/// <summary>
+		/// true if the symbol size is independent, i.e. is not published nor updated by a group style.
+		/// </summary>
+		public bool IndependentSymbolSize
 		{
-			get { return _penWidth1; }
+			get { return _independentSymbolSize; }
 			set
 			{
-				if (value != _penWidth1)
+				if (!(_independentSymbolSize == value))
 				{
-					_penWidth1 = value;
-					EhSelfChanged(EventArgs.Empty); // Fire Changed event
+					_independentSymbolSize = value;
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
 
-		public RADouble PenWidth2
+		/// <summary>Controls the width of the line and the line gap.</summary>
+		public double SymbolSize
 		{
-			get { return _penWidth2; }
+			get { return _symbolSize; }
 			set
 			{
-				if (value != _penWidth2)
+				if (!Calc.RMath.IsFinite(value))
+					throw new ArgumentException(nameof(value), "Value must be a finite number");
+
+				if (!(_symbolSize == value))
 				{
-					_penWidth1 = value;
-					EhSelfChanged(EventArgs.Empty); // Fire Changed event
+					_symbolSize = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double LineWidth1Offset
+		{
+			get
+			{
+				return _lineWidth1Offset;
+			}
+			set
+			{
+				if (!(_lineWidth1Offset == value))
+				{
+					_lineWidth1Offset = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double LineWidth1Factor
+		{
+			get
+			{
+				return _lineWidth1Factor;
+			}
+			set
+			{
+				if (!(_lineWidth1Factor == value))
+				{
+					_lineWidth1Factor = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double LineWidth2Offset
+		{
+			get
+			{
+				return _lineWidth2Offset;
+			}
+			set
+			{
+				if (!(_lineWidth2Offset == value))
+				{
+					_lineWidth2Offset = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double LineWidth2Factor
+		{
+			get
+			{
+				return _lineWidth2Factor;
+			}
+			set
+			{
+				if (!(_lineWidth2Factor == value))
+				{
+					_lineWidth2Factor = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double GapAtStartOffset
+		{
+			get
+			{
+				return _gapAtStartOffset;
+			}
+			set
+			{
+				if (!(_gapAtStartOffset == value))
+				{
+					_gapAtStartOffset = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double GapAtStartFactor
+		{
+			get
+			{
+				return _gapAtStartFactor;
+			}
+			set
+			{
+				if (!(_gapAtStartFactor == value))
+				{
+					_gapAtStartFactor = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double GapAtEndOffset
+		{
+			get
+			{
+				return _gapAtEndOffset;
+			}
+			set
+			{
+				if (!(_gapAtEndOffset == value))
+				{
+					_gapAtEndOffset = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double GapAtEndFactor
+		{
+			get
+			{
+				return _gapAtEndFactor;
+			}
+			set
+			{
+				if (!(_gapAtEndFactor == value))
+				{
+					_gapAtEndFactor = value;
+					EhSelfChanged();
 				}
 			}
 		}
@@ -324,32 +502,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		public RADouble GapAtStart
-		{
-			get { return _gapAtStart; }
-			set
-			{
-				if (value != _gapAtStart)
-				{
-					_gapAtStart = value;
-					EhSelfChanged(EventArgs.Empty); // Fire Changed event
-				}
-			}
-		}
-
-		public RADouble GapAtEnd
-		{
-			get { return _gapAtEnd; }
-			set
-			{
-				if (value != _gapAtEnd)
-				{
-					_gapAtEnd = value;
-					EhSelfChanged(EventArgs.Empty); // Fire Changed event
-				}
-			}
-		}
-
 		/// <summary>
 		/// Gets the cached size of the scatter symbol.
 		/// </summary>
@@ -368,16 +520,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			get
 			{
-				return _dropLine;
+				return _dropTargets;
 			}
 			set
 			{
 				if (null == value)
 					throw new ArgumentNullException(nameof(value));
 
-				if (!object.ReferenceEquals(value, _dropLine))
+				if (!object.ReferenceEquals(value, _dropTargets))
 				{
-					_dropLine = value;
+					_dropTargets = value;
 					EhSelfChanged();
 				}
 			}
@@ -429,19 +581,21 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (_skipFreq <= 0)
 				_skipFreq = 1;
 
-			var dropTargets = _dropLine.Select(id => layer.UpdateCSPlaneID(id)).ToArray();
+			var dropTargets = _dropTargets.Select(id => layer.UpdateCSPlaneID(id)).ToArray();
 
 			// paint the scatter style
 
 			PointD3D pos = PointD3D.Empty;
-			VectorD3D diff;
 
 			if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size and constant color
 			{
 				// update pen widths
-				double w1 = _penWidth1.IsRelative ? _penWidth1.Value * _cachedSymbolSize : _penWidth1.Value;
-				double w2 = _penWidth2.IsRelative ? _penWidth2.Value * _cachedSymbolSize : _penWidth2.Value;
+				double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
+				double w2 = _lineWidth2Offset + _lineWidth2Factor * _cachedSymbolSize;
 				_pen = _pen.WithThickness1(w1).WithThickness2(w2);
+
+				var gapStart = 0.5 * (_gapAtStartOffset + _gapAtStartFactor * _cachedSymbolSize);
+				var gapEnd = 0.5 * (_gapAtEndOffset + _gapAtEndFactor * _cachedSymbolSize);
 
 				int rangeidx = 0;
 				PlotRange range = pdata.RangeList[rangeidx];
@@ -459,8 +613,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					{
 						IPolylineD3D isoLine;
 						layer.CoordinateSystem.GetIsolineFromPointToPlane(r3d, id, out isoLine);
-						if (_gapAtStart.Value != 0 || _gapAtEnd.Value != 0)
-							isoLine = isoLine.ShortenedBy(RADouble.NewAbs(_gapAtStart.IsAbsolute ? _gapAtStart.Value : _gapAtStart.Value * _cachedSymbolSize), RADouble.NewAbs(_gapAtEnd.IsAbsolute ? _gapAtEnd.Value : _gapAtEnd.Value * _cachedSymbolSize));
+						if (gapStart != 0 || gapEnd != 0)
+							isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
 
 						if (null != isoLine)
 							g.DrawLine(_pen, isoLine);
@@ -479,29 +633,32 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 						var pen = _pen;
 						if (null == _cachedColorForIndexFunction)
 						{
-							double customSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
-							double w1 = _penWidth1.IsRelative ? _penWidth1.Value * _cachedSymbolSize : _penWidth1.Value;
-							double w2 = _penWidth2.IsRelative ? _penWidth2.Value * _cachedSymbolSize : _penWidth2.Value;
+							_cachedSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
+							double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
+							double w2 = _lineWidth2Offset + _lineWidth2Factor * _cachedSymbolSize;
 							pen = _pen.WithThickness1(w1).WithThickness2(w2);
 						}
 						else
 						{
-							double customSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _cachedSymbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
-							double w1 = _penWidth1.IsRelative ? _penWidth1.Value * _cachedSymbolSize : _penWidth1.Value;
-							double w2 = _penWidth2.IsRelative ? _penWidth2.Value * _cachedSymbolSize : _penWidth2.Value;
+							_cachedSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _cachedSymbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
+							double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
+							double w2 = _lineWidth2Offset + _lineWidth2Factor * _cachedSymbolSize;
 
 							var customSymbolColor = _cachedColorForIndexFunction(j + offset);
 							pen = _pen.WithThickness1(w1).WithThickness2(w2).WithColor(NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B));
 						}
 
+						var gapStart = 0.5 * (_gapAtStartOffset + _gapAtStartFactor * _cachedSymbolSize);
+						var gapEnd = 0.5 * (_gapAtEndOffset + _gapAtEndFactor * _cachedSymbolSize);
+
 						Logical3D r3d = layer.GetLogical3D(pdata, j + rangeList[r].OffsetToOriginal);
-						foreach (CSPlaneID id in _dropLine)
+						foreach (CSPlaneID id in _dropTargets)
 						{
 							IPolylineD3D isoLine;
 							layer.CoordinateSystem.GetIsolineFromPointToPlane(r3d, id, out isoLine);
 
-							if (_gapAtStart.Value != 0 || _gapAtEnd.Value != 0)
-								isoLine = isoLine.ShortenedBy(RADouble.NewAbs(_gapAtStart.IsAbsolute ? _gapAtStart.Value : _gapAtStart.Value * _cachedSymbolSize), RADouble.NewAbs(_gapAtEnd.IsAbsolute ? _gapAtEnd.Value : _gapAtEnd.Value * _cachedSymbolSize));
+							if (gapStart != 0 || gapEnd != 0)
+								isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
 							if (null != isoLine)
 								g.DrawLine(_pen, isoLine);
 						}
@@ -553,14 +710,23 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 
 			// try to get the symbol size ...
-			SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._cachedSymbolSize = size; });
-			// but if there is an symbol size evaluation function, then use this with higher priority.
-			if (!VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; }))
-				_cachedSymbolSizeForIndexFunction = null;
+			if (!_independentSymbolSize)
+			{
+				_cachedSymbolSize = 0;
+				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._cachedSymbolSize = size; });
+				// but if there is an symbol size evaluation function, then use this with higher priority.
+				if (!VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; }))
+					_cachedSymbolSizeForIndexFunction = null;
+			}
+			else
+			{
+				_cachedSymbolSize = _symbolSize;
+			}
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
 			if (!_independentSkipFreq)
 			{
+				_skipFreq = 1;
 				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this._skipFreq = c; });
 			}
 		}

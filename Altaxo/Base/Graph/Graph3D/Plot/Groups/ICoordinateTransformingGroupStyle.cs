@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 	using GraphicsContext;
 
 	/// <summary>
-	/// Plot group style, which changes plot items by transforming their coordinates, i.e. by shifting them on the x- or y-axis (or both).
+	/// Plot group style, which changes plot items by transforming their coordinates, i.e. by shifting them on the x-, y-, or z-axis.
 	/// </summary>
 	public interface ICoordinateTransformingGroupStyle : Main.IDocumentLeafNode, ICloneable
 	{
