@@ -56,6 +56,60 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			_penGlue.CbLineStartCapRelSize = _edLineStartCapRelSize;
 		}
 
+		public bool AdditionalDropTargetIsEnabled
+		{
+			get
+			{
+				return _guiEnableUserDefinedDropTarget.IsChecked == true;
+			}
+			set
+			{
+				_guiEnableUserDefinedDropTarget.IsChecked = value;
+			}
+		}
+
+		public int AdditionalDropTargetPerpendicularAxisNumber
+		{
+			get
+			{
+				return _guiUserDefinedDropTargetAxis.Value;
+			}
+			set
+			{
+				_guiUserDefinedDropTargetAxis.Value = value;
+			}
+		}
+
+		/// <summary>
+		/// Indicates whether _baseValue is a physical value or a logical value.
+		/// </summary>
+		public bool AdditionalDropTargetUsePhysicalBaseValue
+		{
+			get
+			{
+				return _guiUserDefinedUsePhysicalBaseValue.IsChecked == true;
+			}
+			set
+			{
+				_guiUserDefinedUsePhysicalBaseValue.IsChecked = value;
+			}
+		}
+
+		/// <summary>
+		/// The y-value where the item normally starts. This is either a logical value (_usePhysicalBaseValue==false) or a physical value.
+		/// </summary>
+		public Altaxo.Data.AltaxoVariant AdditionalDropTargetBaseValue
+		{
+			get
+			{
+				return _guiUserDefinedBaseValue.SelectedValue;
+			}
+			set
+			{
+				_guiUserDefinedBaseValue.SelectedValue = value;
+			}
+		}
+
 		public void InitializeDropLineConditions(SelectableListNodeList names)
 		{
 			_guiDropLines.Initialize(names);

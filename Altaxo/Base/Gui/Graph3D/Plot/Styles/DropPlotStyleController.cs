@@ -43,6 +43,20 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	/// </summary>
 	public interface IDropPlotStyleView
 	{
+		bool AdditionalDropTargetIsEnabled { get; set; }
+
+		int AdditionalDropTargetPerpendicularAxisNumber { get; set; }
+
+		/// <summary>
+		/// Indicates whether _baseValue is a physical value or a logical value.
+		/// </summary>
+		bool AdditionalDropTargetUsePhysicalBaseValue { get; set; }
+
+		/// <summary>
+		/// The y-value where the item normally starts. This is either a logical value (_usePhysicalBaseValue==false) or a physical value.
+		/// </summary>
+		Altaxo.Data.AltaxoVariant AdditionalDropTargetBaseValue { get; set; }
+
 		/// <summary>
 		/// Initializes the plot style color combobox.
 		/// </summary>
@@ -101,12 +115,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		private SelectableListNodeList _dropLineChoices;
 
-		private QuantityWithUnitGuiEnvironment _penWidthEnvironment;
-		private ChangeableRelativePercentUnit _percentSymbolSizeUnit;
-
-		private QuantityWithUnitGuiEnvironment _gapWidthEnvironment;
-		private ChangeableRelativePercentUnit _percentGapSizeUnit;
-
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
 			yield break; // no subcontrollers
@@ -127,14 +135,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 			if (initData)
 			{
-				_percentSymbolSizeUnit = new ChangeableRelativePercentUnit("% SymbolSize", "%", new DimensionfulQuantity(_doc.CachedSymbolSize, Units.Length.Point.Instance));
-				_percentSymbolSizeUnit.ReferenceQuantity = new DimensionfulQuantity(8, Units.Length.Point.Instance);
-				_penWidthEnvironment = new QuantityWithUnitGuiEnvironment(SizeEnvironment.Instance, new IUnit[] { _percentSymbolSizeUnit });
-
-				_percentGapSizeUnit = new ChangeableRelativePercentUnit("% SymbolSize", "%", new DimensionfulQuantity(_doc.CachedSymbolSize, Units.Length.Point.Instance));
-				_percentGapSizeUnit.ReferenceQuantity = new DimensionfulQuantity(100, Units.Length.Point.Instance);
-				_gapWidthEnvironment = new QuantityWithUnitGuiEnvironment(SizeEnvironment.Instance, new IUnit[] { _percentGapSizeUnit });
-
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
 
 				InitializeDropLineChoices();
@@ -144,6 +144,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
 				_view.SkipFrequency = _doc.SkipFrequency;
 				_view.InitializeDropLineConditions(_dropLineChoices);
+
+				_view.AdditionalDropTargetIsEnabled = _doc.AdditionalDropTargetIsEnabled;
+				_view.AdditionalDropTargetPerpendicularAxisNumber = _doc.AdditionalDropTargetPerpendicularAxisNumber;
+				_view.AdditionalDropTargetUsePhysicalBaseValue = _doc.AdditionalDropTargetUsePhysicalBaseValue;
+				_view.AdditionalDropTargetBaseValue = _doc.AdditionalDropTargetBaseValue;
 
 				// now we have to set all dialog elements to the right values
 				_view.IndependentColor = _doc.IndependentColor;
@@ -176,6 +181,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 				_doc.SkipFrequency = _view.SkipFrequency;
 				// Drop targets
 				_doc.DropTargets = new CSPlaneIDList(_dropLineChoices.Where(node => node.IsSelected).Select(node => (CSPlaneID)node.Tag));
+
+				_doc.AdditionalDropTargetIsEnabled = _view.AdditionalDropTargetIsEnabled;
+				_doc.AdditionalDropTargetPerpendicularAxisNumber = _view.AdditionalDropTargetPerpendicularAxisNumber;
+				_doc.AdditionalDropTargetUsePhysicalBaseValue = _view.AdditionalDropTargetUsePhysicalBaseValue;
+				_doc.AdditionalDropTargetBaseValue = _view.AdditionalDropTargetBaseValue;
 
 				// Symbol Color
 				_doc.Pen = _view.Pen;

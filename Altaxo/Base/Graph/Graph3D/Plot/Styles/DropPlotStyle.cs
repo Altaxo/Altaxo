@@ -56,6 +56,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>Target(s) for the drop line.</summary>
 		protected CSPlaneIDList _dropTargets;
 
+		protected bool _additionalDropTargetIsEnabled;
+
+		protected int _additionalDropTargetPerpendicularAxis = 2;
+
+		/// <summary>
+		/// Indicates whether _baseValue is a physical value or a logical value.
+		/// </summary>
+		private bool _additionalDropTargetUsePhysicalBaseValue;
+
+		/// <summary>
+		/// The y-value where the item normally starts. This is either a logical value (_usePhysicalBaseValue==false) or a physical value.
+		/// </summary>
+		private Altaxo.Data.AltaxoVariant _additionalDropTargetBaseValue = new Altaxo.Data.AltaxoVariant(0.0);
+
 		/// <summary>Pen for the drop line.</summary>
 		protected PenX3D _pen;
 
@@ -113,7 +127,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 				info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
 				info.AddValue("SkipFreq", s._skipFreq);
-				info.AddValue("DropLine", s._dropTargets);
+				info.AddValue("DropTargets", s._dropTargets);
+				info.AddValue("HasAdditionalDropTarget", s._additionalDropTargetIsEnabled);
+				if (s._additionalDropTargetIsEnabled)
+				{
+					info.AddValue("AdditionalDropTargetAxis", s._additionalDropTargetPerpendicularAxis);
+					info.AddValue("AdditionalDropTargetUsePhysicalValue", s._additionalDropTargetUsePhysicalBaseValue);
+					info.AddValue("AdditionalDropTargetBaseValue", (object)s._additionalDropTargetBaseValue);
+				}
 
 				info.AddValue("Pen", s._pen);
 				info.AddValue("IndependentColor", s._independentColor);
@@ -137,6 +158,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
 				s._skipFreq = info.GetInt32("SkipFreq");
 				s._dropTargets = (CSPlaneIDList)info.GetValue("DropLine", s);
+				s._additionalDropTargetIsEnabled = info.GetBoolean("HasAdditionalDropTarget");
+				if (s._additionalDropTargetIsEnabled)
+				{
+					s._additionalDropTargetPerpendicularAxis = info.GetInt32("AdditionalDropTargetAxis");
+					s._additionalDropTargetUsePhysicalBaseValue = info.GetBoolean("AdditionalDropTargetUsePhysicalValue");
+					s._additionalDropTargetBaseValue = (Altaxo.Data.AltaxoVariant)info.GetValue("AdditionalDropTargetBaseValue", s);
+				}
 
 				s._pen = (PenX3D)info.GetValue("Pen", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
@@ -201,6 +229,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._independentSkipFreq = from._independentSkipFreq;
 				this._skipFreq = from._skipFreq;
 				this._dropTargets = from._dropTargets; // immutable
+
+				this._additionalDropTargetIsEnabled = from._additionalDropTargetIsEnabled;
+				this._additionalDropTargetPerpendicularAxis = from._additionalDropTargetPerpendicularAxis;
+				this._additionalDropTargetUsePhysicalBaseValue = from._additionalDropTargetUsePhysicalBaseValue;
+				this._additionalDropTargetBaseValue = from._additionalDropTargetBaseValue;
 
 				this._pen = from._pen; // immutable
 				this._independentColor = from._independentColor;
@@ -535,6 +568,67 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
+		public bool AdditionalDropTargetIsEnabled
+		{
+			get { return _additionalDropTargetIsEnabled; }
+			set
+			{
+				if (!(_additionalDropTargetIsEnabled == value))
+				{
+					_additionalDropTargetIsEnabled = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public bool AdditionalDropTargetUsePhysicalBaseValue
+		{
+			get
+			{
+				return _additionalDropTargetUsePhysicalBaseValue;
+			}
+			set
+			{
+				if (!(_additionalDropTargetUsePhysicalBaseValue == value))
+				{
+					_additionalDropTargetUsePhysicalBaseValue = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public int AdditionalDropTargetPerpendicularAxisNumber
+		{
+			get
+			{
+				return _additionalDropTargetPerpendicularAxis;
+			}
+			set
+			{
+				if (!(_additionalDropTargetPerpendicularAxis == value))
+				{
+					_additionalDropTargetPerpendicularAxis = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public AltaxoVariant AdditionalDropTargetBaseValue
+		{
+			get
+			{
+				return _additionalDropTargetBaseValue;
+			}
+			set
+			{
+				if (!(_additionalDropTargetBaseValue == value))
+				{
+					_additionalDropTargetBaseValue = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
 		protected void SetCachedValues()
 		{
 		}
@@ -581,7 +675,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (_skipFreq <= 0)
 				_skipFreq = 1;
 
-			var dropTargets = _dropTargets.Select(id => layer.UpdateCSPlaneID(id)).ToArray();
+			var dropTargets = new List<CSPlaneID>(_dropTargets.Select(id => layer.UpdateCSPlaneID(id)));
+			if (_additionalDropTargetIsEnabled)
+			{
+				CSPlaneID userPlane;
+				if (_additionalDropTargetUsePhysicalBaseValue)
+				{
+					userPlane = new CSPlaneID(_additionalDropTargetPerpendicularAxis, layer.Scales[_additionalDropTargetPerpendicularAxis].PhysicalVariantToNormal(_additionalDropTargetBaseValue));
+				}
+				else
+				{
+					userPlane = new CSPlaneID(_additionalDropTargetPerpendicularAxis, _additionalDropTargetBaseValue);
+				}
+				dropTargets.Add(userPlane);
+			}
 
 			// paint the scatter style
 
