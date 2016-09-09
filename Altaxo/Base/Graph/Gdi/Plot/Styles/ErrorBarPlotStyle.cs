@@ -720,6 +720,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return bounds;
 		}
 
+		/// <summary>
+		/// Prepares the scale of this plot style. Since this style does not utilize a scale, this function does nothing.
+		/// </summary>
+		/// <param name="layer">The parent layer.</param>
+		public void PrepareScales(IPlotArea layer)
+		{
+		}
+
 		#endregion IG2DPlotStyle Members
 
 		#region IDocumentNode Members

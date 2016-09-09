@@ -320,6 +320,8 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			if (null != this._plotData)
 				_plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject);
+
+			_plotStyles?.PrepareScales(layer);
 		}
 
 		#region IXBoundsHolder Members

@@ -264,6 +264,8 @@ namespace Altaxo.Graph.Graph3D.Plot
 		{
 			if (null != this._plotData)
 				_plotData.CalculateCachedData(layer.XAxis.DataBoundsObject, layer.YAxis.DataBoundsObject, layer.ZAxis.DataBoundsObject);
+
+			_plotStyles.PrepareScales(layer);
 		}
 
 		#region IXBoundsHolder Members

@@ -649,6 +649,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
+		/// <summary>
+		/// Prepares the scale of this plot style. Since this style does not utilize a scale, this function does nothing.
+		/// </summary>
+		/// <param name="layer">The parent layer.</param>
+		public void PrepareScales(IPlotArea layer)
+		{
+		}
+
 		public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
 		{
 			if (this.Connection != XYPlotLineStyles.ConnectionStyle.NoLine)

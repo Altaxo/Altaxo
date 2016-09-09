@@ -611,6 +611,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			return bounds;
 		}
 
+		/// <summary>
+		/// Prepares the scale of this plot style. Since this style does not utilize a scale, this function does nothing.
+		/// </summary>
+		/// <param name="layer">The parent layer.</param>
+		public void PrepareScales(Graph3D.IPlotArea layer)
+		{
+		}
+
 		#endregion IG3DPlotStyle Members
 
 		#region IDocumentNode Members

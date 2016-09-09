@@ -307,6 +307,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
+		/// <summary>
+		/// Prepares the scales of the plot styles. This is intended to be used with plot styles which
+		/// have an internal scale, for instance <see cref="Gdi.Plot.Styles.ColumnDrivenColorPlotStyle"/> or
+		/// <see cref="Gdi.Plot.Styles.ColumnDrivenSymbolSizePlotStyle"/>, which should act on this call with updating their internal scale.
+		/// </summary>
+		/// <param name="layer">The parent layer.</param>
+		public void PrepareScales(IPlotArea layer)
+		{
+			for (int i = _innerList.Count - 1; i >= 0; i--)
+			{
+				this[i].PrepareScales(layer);
+			}
+		}
+
 		public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
 		{
 			for (int i = _innerList.Count - 1; i >= 0; i--)

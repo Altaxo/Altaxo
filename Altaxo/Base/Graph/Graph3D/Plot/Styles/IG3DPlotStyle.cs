@@ -111,5 +111,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			string, // the name of the column (last part of the column proxies document path)
 			Action<IReadableColumn> // action to set the column during Apply of the controller
 			>> GetAdditionallyUsedColumns();
+
+		/// <summary>
+		/// Prepares the scale(s) of the plot style. This is intended to be used with plot styles which
+		/// have an internal scale, for instance <see cref="Gdi.Plot.Styles.ColumnDrivenColorPlotStyle"/> or
+		/// <see cref="Gdi.Plot.Styles.ColumnDrivenSymbolSizePlotStyle"/>, which should act on this call with updating their internal scale.
+		/// </summary>
+		/// <param name="layer">The parent layer.</param>
+		void PrepareScales(IPlotArea layer);
 	}
 }

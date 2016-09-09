@@ -30,8 +30,10 @@ using System.Drawing;
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Main;
+	using Geometry;
 	using Graph.Plot.Groups;
 	using Graph.Scales;
+	using Graph3D.GraphicsContext;
 	using Plot.Data;
 	using Plot.Groups;
 
@@ -43,7 +45,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	public class ColumnDrivenSymbolSizePlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
-		IG2DPlotStyle
+		IG2DPlotStyle, Altaxo.Graph.Graph3D.Plot.Styles.IG3DPlotStyle
 	{
 		#region Members
 
@@ -431,15 +433,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <returns></returns>
 		private double GetSymbolSize(int idx)
 		{
-			double val = double.NaN;
-			var dataColumn = DataColumn;
-			if (null != dataColumn)
-			{
-				if (_doesScaleNeedsDataUpdate)
-					InternalUpdateScaleWithNewData();
-
-				val = dataColumn[idx];
-			}
+			double val = DataColumn?[idx] ?? double.NaN;
 			val = _scale.PhysicalToNormal(val);
 
 			if (val >= 0 && val <= 1)
@@ -463,7 +457,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// this is only for internal use inside one plot item
 		}
 
+		public void CollectExternalGroupStyles(Graph3D.Plot.Groups.PlotGroupStyleCollection externalGroups)
+		{
+			// this is only for internal use inside one plot item
+		}
+
 		public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+		{
+			VariableSymbolSizeGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+		}
+
+		public void CollectLocalGroupStyles(Graph3D.Plot.Groups.PlotGroupStyleCollection externalGroups, Graph3D.Plot.Groups.PlotGroupStyleCollection localGroups)
 		{
 			VariableSymbolSizeGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 		}
@@ -473,7 +477,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			VariableSymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, GetSymbolSize);
 		}
 
+		public void PrepareGroupStyles(Graph3D.Plot.Groups.PlotGroupStyleCollection externalGroups, Graph3D.Plot.Groups.PlotGroupStyleCollection localGroups, Graph3D.IPlotArea layer, Graph3D.Plot.Data.Processed3DPlotData pdata)
+		{
+			VariableSymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, GetSymbolSize);
+		}
+
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
+		{
+			// there is nothing to apply here, because it is only a provider
+		}
+
+		public void ApplyGroupStyles(Graph3D.Plot.Groups.PlotGroupStyleCollection externalGroups, Graph3D.Plot.Groups.PlotGroupStyleCollection localGroups)
 		{
 			// there is nothing to apply here, because it is only a provider
 		}
@@ -483,10 +497,48 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// this is not a visible style, thus doing nothing
 		}
 
+		public void Paint(IGraphicsContext3D g, Graph3D.IPlotArea layer, Graph3D.Plot.Data.Processed3DPlotData pdata, Graph3D.Plot.Data.Processed3DPlotData prevItemData, Graph3D.Plot.Data.Processed3DPlotData nextItemData)
+		{
+			// this is not a visible style, thus doing nothing
+		}
+
 		public RectangleF PaintSymbol(Graphics g, RectangleF bounds)
 		{
 			// this is not a visible style, thus doing nothing
 			return RectangleF.Empty;
+		}
+
+		public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
+		{
+			return RectangleD3D.Empty;
+		}
+
+		/// <summary>
+		/// Prepares the scale of this plot style.
+		/// </summary>
+		/// <param name="layer">The parent layer.</param>
+		public void PrepareScales(IPlotArea layer)
+		{
+			var dataColumn = DataColumn;
+			if (null != dataColumn)
+			{
+				if (_doesScaleNeedsDataUpdate)
+					InternalUpdateScaleWithNewData();
+			}
+		}
+
+		/// <summary>
+		/// Prepares the scale of this plot style.
+		/// </summary>
+		/// <param name="layer">The parent layer.</param>
+		public void PrepareScales(Graph3D.IPlotArea layer)
+		{
+			var dataColumn = DataColumn;
+			if (null != dataColumn)
+			{
+				if (_doesScaleNeedsDataUpdate)
+					InternalUpdateScaleWithNewData();
+			}
 		}
 
 		public object Clone()
@@ -502,6 +554,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
 			Report(_dataColumnProxy, this, "DataColumn");
+		}
+
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
+		{
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(DataColumn), DataColumn, _dataColumnProxy?.DocumentPath?.LastPartOrDefault, (col) => DataColumn = col as INumericColumn);
 		}
 	}
 }

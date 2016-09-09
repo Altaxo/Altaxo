@@ -96,5 +96,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// </summary>
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		void VisitDocumentReferences(DocNodeProxyReporter Report);
+
+		/// <summary>
+		/// Prepares the scale(s) of the plot style. This is intended to be used with plot styles which
+		/// have an internal scale, for instance <see cref="Gdi.Plot.Styles.ColumnDrivenColorPlotStyle"/> or
+		/// <see cref="Gdi.Plot.Styles.ColumnDrivenSymbolSizePlotStyle"/>, which should act on this call with updating their internal scale.
+		/// </summary>
+		/// <param name="layer">The parent layer.</param>
+		void PrepareScales(IPlotArea layer);
 	}
 }

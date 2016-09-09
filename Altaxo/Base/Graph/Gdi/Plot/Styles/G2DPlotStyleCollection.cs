@@ -375,6 +375,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return bounds;
 		}
 
+		public void PrepareScales(IPlotArea layer)
+		{
+			for (int i = 0; i < _innerList.Count; ++i)
+			{
+				this[i].PrepareScales(layer);
+			}
+		}
+
 		/// <summary>
 		/// Distibute changes made to one group style of the collection (at index <c>pivot</c> to all other members of the collection.
 		/// </summary>
