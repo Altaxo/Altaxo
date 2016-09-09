@@ -15,9 +15,9 @@
 		</Grid.RowDefinitions>
 
 		<WrapPanel Grid.Row="0">
-			<RadioButton Content="Cartesian" Tag="Cartesian" IsChecked="False" Checked="EhRadioButtonChanged" />
-			<RadioButton Content="Spherical" Tag="Spherical" IsChecked="True" Checked="EhRadioButtonChanged" />
-			<RadioButton Content="Both" Tag="Both" Checked="EhRadioButtonChanged" />
+			<RadioButton Content="Cartesian" Tag="Cartesian" IsChecked="False" Checked="EhRadioButtonChanged" Margin="4,0,0,0" />
+			<RadioButton Content="Spherical" Tag="Spherical" IsChecked="True" Checked="EhRadioButtonChanged" Margin="6,0,0,0" />
+			<RadioButton Content="Both" Tag="Both" Checked="EhRadioButtonChanged" Margin="6,0,0,0" />
 		</WrapPanel>
 		<local:Direction3DCartesianControl x:Name="_guiCartesian" Grid.Row="2" Visibility="Collapsed" SelectedValueChanged="EhCartesianValueChanged" />
 		<local:Direction3DSphericalControl x:Name="_guiSpherical" Grid.Row="3" SelectedValueChanged="EhSphericalValueChanged" />

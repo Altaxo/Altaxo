@@ -58,14 +58,13 @@ namespace Altaxo.Drawing
 			}
 		}
 
-		public StyleListManagerBaseForClasses(Func<TList, ItemDefinitionLevel, TListManagerEntry> valueCreator, TList builtinDefaultList)
+		protected StyleListManagerBaseForClasses(Func<TList, ItemDefinitionLevel, TListManagerEntry> valueCreator, TList builtinDefaultList)
 			:
 			base(valueCreator, builtinDefaultList)
 		{
-			RebuildListEntryToListDictionary();
 		}
 
-		private void RebuildListEntryToListDictionary()
+		protected void RebuildListEntryToListDictionary()
 		{
 			var dictListEntryToList = new Dictionary<TItem, TList>(new ReferenceEqualityComparer());
 			// all currently present to the dictionary

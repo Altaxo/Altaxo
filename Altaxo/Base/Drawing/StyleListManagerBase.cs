@@ -173,6 +173,31 @@ namespace Altaxo.Drawing
 			return _allLists[name];
 		}
 
+		/// <summary>
+		/// Switches the item definition level between user and project, i.e. a list that was at user level before is switched to project level,
+		/// and a list that was at project level before is switched to user level.
+		/// </summary>
+		/// <param name="name">The name of the list.</param>
+		public void SwitchItemDefinitionLevelBetweenUserAndProject(string name)
+		{
+			var entry = _allLists[name];
+
+			if (entry.Level == ItemDefinitionLevel.Project)
+			{
+				_allLists[name] = EntryValueCreator(entry.List, ItemDefinitionLevel.UserDefined);
+				OnListChanged(entry.List, ItemDefinitionLevel.Project); // we need the announcement for both: the old list entry
+				OnListChanged(entry.List, ItemDefinitionLevel.UserDefined); // and the new list entry
+			}
+			else if (entry.Level == ItemDefinitionLevel.UserDefined)
+			{
+				_allLists[name] = EntryValueCreator(entry.List, ItemDefinitionLevel.Project);
+				OnListChanged(entry.List, ItemDefinitionLevel.UserDefined); // we need the announcement for both: the old list entry
+				OnListChanged(entry.List, ItemDefinitionLevel.Project); // and the new list entry
+			}
+			else
+				throw new InvalidOperationException("The list is neither at user defined level nor at project level. Thus the levels can not be switched.");
+		}
+
 		public bool TryGetList(string name, out TListManagerEntry value)
 		{
 			return _allLists.TryGetValue(name, out value);

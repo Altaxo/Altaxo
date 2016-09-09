@@ -73,7 +73,7 @@ namespace Altaxo.Gui.Drawing
 
 		public event DropDelegate CurrentItems_Drop;
 
-		public bool StoreInUserSettings { get { return true == _guiStoreInUserSettings.IsChecked; } }
+		public bool StoreInUserSettings { get { return true == _guiStoreInUserSettings.IsChecked; } set { _guiStoreInUserSettings.IsChecked = value; } }
 
 		public event Action AvailableItem_AddToCurrent;
 

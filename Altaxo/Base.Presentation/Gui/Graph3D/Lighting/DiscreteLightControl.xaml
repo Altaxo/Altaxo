@@ -12,10 +12,10 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<WrapPanel>
-			<RadioButton x:Name="_guiNotUsed" Content="Not used" Tag="NotUsed" Margin="0,0,4,0"  Checked="EhLightTypeChanged" />
-			<RadioButton x:Name="_guiDirectional" Content="Directional" Tag="Directional" Margin="0,0,4,0"  Checked="EhLightTypeChanged" />
-			<RadioButton x:Name="_guiPoint" Content="Point" Tag="Point" Margin="0,0,4,0"  Checked="EhLightTypeChanged" />
-			<RadioButton x:Name="_guiSpot" Content="Spot" Tag="Spot" Margin="0,0,4,0" Checked="EhLightTypeChanged" />
+			<RadioButton x:Name="_guiNotUsed" Content="Not used" Tag="NotUsed" Margin="4,0,0,0"  Checked="EhLightTypeChanged" />
+			<RadioButton x:Name="_guiDirectional" Content="Directional" Tag="Directional" Margin="6,0,0,0"  Checked="EhLightTypeChanged" />
+			<RadioButton x:Name="_guiPoint" Content="Point" Tag="Point" Margin="6,0,0,0"  Checked="EhLightTypeChanged" />
+			<RadioButton x:Name="_guiSpot" Content="Spot" Tag="Spot" Margin="6,0,0,0" Checked="EhLightTypeChanged" />
 		</WrapPanel>
 		<Border x:Name="_guiControlHost" Grid.Row="1" />
 	</Grid>

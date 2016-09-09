@@ -330,7 +330,6 @@
     <Compile Include="Graph\Graph3D\GraphicsContext\IPositionUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\PositionNormalTriangleBuffers.cs" />
     <Compile Include="Graph\Graph3D\GridPartitioning.cs" />
-    <Compile Include="Graph\Graph3D\Grips\IGripManipulationHandle.cs" />
     <Compile Include="Graph\Graph3D\HitTestObject.cs" />
     <Compile Include="Graph\Graph3D\HitTestPointData.cs" />
     <Compile Include="Graph\Graph3D\HostLayer.cs" />

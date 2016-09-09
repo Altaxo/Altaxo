@@ -85,6 +85,13 @@ namespace Altaxo.Drawing
 		StyleListManagerBaseEntryValue<TList, T> GetEntryValue(string name);
 
 		/// <summary>
+		/// Switches the item definition level between user and project, i.e. a list that was at user level before is switched to project level,
+		/// and a list that was at project level before is switched to user level.
+		/// </summary>
+		/// <param name="name">The name of the list.</param>
+		void SwitchItemDefinitionLevelBetweenUserAndProject(string name);
+
+		/// <summary>
 		/// Try to find an existing list by using only the values of the items. A hint to the name of the existing list can speed up the search, but is not used otherwise.
 		/// </summary>
 		/// <param name="symbols">The items of the list.</param>

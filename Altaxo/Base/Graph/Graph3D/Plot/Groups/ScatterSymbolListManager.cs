@@ -73,6 +73,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 					InternalTryRegisterList(list, ItemDefinitionLevel.UserDefined, out dummy, false);
 				}
 			}
+
+			RebuildListEntryToListDictionary();
 		}
 
 		public static ScatterSymbolListManager Instance

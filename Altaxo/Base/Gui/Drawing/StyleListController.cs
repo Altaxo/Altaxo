@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Drawing
 
 		event DropDelegate CurrentItems_Drop;
 
-		bool StoreInUserSettings { get; }
+		bool StoreInUserSettings { get; set; }
 
 		event Action AvailableItem_AddToCurrent;
 
@@ -92,7 +92,7 @@ namespace Altaxo.Gui.Drawing
 	[ExpectedTypeOfView(typeof(IStyleListView))]
 	public class StyleListController<TManager, TList, TItem>
 		:
-		MVCANControllerEditImmutableDocBase<IStyleList<TItem>, IStyleListView>
+		MVCANControllerEditImmutableDocBase<TList, IStyleListView>
 		where TItem : Altaxo.Main.IImmutable
 		where TList : IStyleList<TItem>
 		where TManager : IStyleListManager<TList, TItem>
@@ -132,13 +132,26 @@ namespace Altaxo.Gui.Drawing
 				View_AvailableItems_Initialize();
 
 				_view.CurrentItemList_Initialize(_currentItems);
-				_view.CurrentItemListName_Initialize(_doc.Name, false, false, "Name can not be changed because list is already stored!");
+				_view.StoreInUserSettings = IsListAtUserLevel(_doc);
+				_view.CurrentItemListName_Initialize(_doc.Name, IsListAtUserOrProjectLevel(_doc), false, "Name can not be changed because list is already stored!");
 			}
+		}
+
+		private bool IsListAtUserOrProjectLevel(TList list)
+		{
+			var entry = _manager.GetEntryValue(list.Name);
+			return entry.Level == ItemDefinitionLevel.Project || entry.Level == ItemDefinitionLevel.UserDefined;
+		}
+
+		private bool IsListAtUserLevel(TList list)
+		{
+			var entry = _manager.GetEntryValue(list.Name);
+			return entry.Level == ItemDefinitionLevel.UserDefined;
 		}
 
 		public override bool Apply(bool disposeController)
 		{
-			if (false == TryToStoreList())
+			if (_currentItems_IsDirty && false == TryToStoreList())
 				return ApplyEnd(false, disposeController);
 
 			return ApplyEnd(true, disposeController);
@@ -333,7 +346,8 @@ namespace Altaxo.Gui.Drawing
 		{
 			Controller_CurrentItems_Initialize();
 			_view?.CurrentItemList_Initialize(_currentItems);
-			_view?.CurrentItemListName_Initialize(_doc.Name, false, false, "Name can't be changed because list is already stored!");
+			_view.StoreInUserSettings = IsListAtUserLevel(_doc);
+			_view?.CurrentItemListName_Initialize(_doc.Name, IsListAtUserOrProjectLevel(_doc), false, "Name can't be changed because list is already stored!");
 			_currentItems_IsDirty = false;
 		}
 
@@ -371,7 +385,26 @@ namespace Altaxo.Gui.Drawing
 		private void EhCurrentList_Store()
 		{
 			if (_currentItems_IsDirty)
+			{
 				TryToStoreList();
+			}
+			else
+			{
+				// even if no items have changed, the user should be able to promote a list from project level to user defined level
+				// or vice versa to demote a list from user defined level to project level.
+				if (IsListAtUserOrProjectLevel(_doc))
+				{
+					bool isListAtUserLevel = _manager.GetEntryValue(_doc.Name).Level == ItemDefinitionLevel.UserDefined;
+					bool shouldSwitchLevel = isListAtUserLevel ^ _view.StoreInUserSettings; // if true, we should switch the levels
+					if (shouldSwitchLevel)
+					{
+						_manager.SwitchItemDefinitionLevelBetweenUserAndProject(_doc.Name);
+						Controller_AvailableLists_Initialize();
+						View_AvailableLists_Initialize();
+						ControllerAndView_CurrentItemsAndName_Initialize();
+					}
+				}
+			}
 		}
 
 		protected virtual bool IsItemEditable(Altaxo.Main.IImmutable item)

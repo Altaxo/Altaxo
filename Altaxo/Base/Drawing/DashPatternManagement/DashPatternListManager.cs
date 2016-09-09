@@ -76,6 +76,8 @@ namespace Altaxo.Drawing.DashPatternManagement
 					InternalTryRegisterList(list, ItemDefinitionLevel.UserDefined, out dummy, false);
 				}
 			}
+
+			RebuildListEntryToListDictionary();
 		}
 
 		/// <summary>
