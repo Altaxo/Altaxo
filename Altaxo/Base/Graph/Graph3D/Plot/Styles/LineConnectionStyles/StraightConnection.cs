@@ -71,7 +71,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 		/// <param name="range">The plot range to use.</param>
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="pen">The pen to draw the line.</param>
-		/// <param name="symbolGap">The size of the symbol gap. This parameter is zero if no symbol gap is required.</param>
+		/// <param name="symbolGap">The size of the symbol gap. Argument is the original index of the data. The return value is the absolute symbol gap at this index.
+		/// This function is null if no symbol gap is required.</param>
 		/// <param name="connectCircular">If true, the end of the line is connected with the start of the line.</param>
 		public override void Paint(
 			IGraphicsContext3D g,
@@ -79,7 +80,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 			PlotRange range,
 			IPlotArea layer,
 			PenX3D pen,
-			double symbolGap,
+			Func<int, double> symbolGap,
 			bool connectCircular)
 		{
 			var linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
@@ -89,16 +90,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 			int lastIdx = range.Length - 1 + (connectCircular ? 1 : 0);
 			var layerSize = layer.Size;
 
-			if (symbolGap > 0)
+			if (symbolGap != null)
 			{
 				for (int i = 0; i < lastIdx; i++)
 				{
+					int originalIndex = range.OffsetToOriginal + i;
 					var diff = linepts[i + 1] - linepts[i];
-					var rel = 0.5 * symbolGap / diff.Length; // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
-					if (rel < 0.5) // a line only appears if the relative gap is smaller 1/2
+					double gapAtStart = symbolGap(originalIndex);
+					double gapAtEnd = i != range.Length ? symbolGap(originalIndex + 1) : symbolGap(range.OffsetToOriginal);
+					var relAtStart = 0.5 * gapAtStart / diff.Length; // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
+					var relAtEnd = 0.5 * gapAtEnd / diff.Length; // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
+					if ((relAtStart + relAtEnd) < 1) // a line only appears if sum of the gaps  is smaller than 1
 					{
-						var start = linepts[i] + rel * diff;
-						var stop = linepts[i + 1] - rel * diff;
+						var start = linepts[i] + relAtStart * diff;
+						var stop = linepts[i + 1] - relAtEnd * diff;
 
 						g.DrawLine(pen, start, stop);
 					}

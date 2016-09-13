@@ -209,7 +209,7 @@ namespace Altaxo.Worksheet.Commands
 		{
 			var result = new G3DPlotStyleCollection();
 			result.Add(new ScatterPlotStyle(context));
-			result.Add(new LinePlotStyle(context));
+			result.Add(new LinePlotStyle(context) { UseSymbolGap = true });
 			return result;
 		}
 

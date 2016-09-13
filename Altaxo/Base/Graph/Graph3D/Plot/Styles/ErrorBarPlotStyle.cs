@@ -812,13 +812,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			// symbol size
 			if (!_independentSymbolSize)
 			{
-				if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolSize = size; }))
-				{
-					this._symbolSize = 0;
-				}
+				this._symbolSize = 0;
+				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolSize = size; });
 
 				// but if there is an symbol size evaluation function, then use this with higher priority.
+				_cachedSymbolSizeForIndexFunction = null;
 				VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
+			}
+			else
+			{
+				_cachedSymbolSizeForIndexFunction = null;
 			}
 
 			// Shift the items ?

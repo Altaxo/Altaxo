@@ -633,7 +633,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Styles\DropPlotStyleControl.xaml">
+    <Page Include="Gui\Graph3D\Plot\Styles\DropLinePlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1601,8 +1601,8 @@
     <Compile Include="Gui\Graph3D\Plot\Styles\LabelPlotStyleControl.xaml.cs">
       <DependentUpon>LabelPlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Styles\DropPlotStyleControl.xaml.cs">
-      <DependentUpon>DropPlotStyleControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph3D\Plot\Styles\DropLinePlotStyleControl.xaml.cs">
+      <DependentUpon>DropLinePlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Plot\Styles\LinePlotStyleControl.xaml.cs">
       <DependentUpon>LinePlotStyleControl.xaml</DependentUpon>

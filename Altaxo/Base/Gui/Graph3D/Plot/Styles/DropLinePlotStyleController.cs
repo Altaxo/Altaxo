@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	/// <summary>
 	/// This view interface is for showing the options of the XYXYPlotScatterStyle
 	/// </summary>
-	public interface IDropPlotStyleView
+	public interface IDropLinePlotStyleView
 	{
 		bool AdditionalDropTargetIsEnabled { get; set; }
 
@@ -106,9 +106,9 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	/// <summary>
 	/// Summary description for XYPlotScatterStyleController.
 	/// </summary>
-	[UserControllerForObject(typeof(DropPlotStyle))]
-	[ExpectedTypeOfView(typeof(IDropPlotStyleView))]
-	public class DropPlotStyleController : MVCANControllerEditOriginalDocBase<DropPlotStyle, IDropPlotStyleView>
+	[UserControllerForObject(typeof(DropLinePlotStyle))]
+	[ExpectedTypeOfView(typeof(IDropLinePlotStyleView))]
+	public class DropLinePlotStyleController : MVCANControllerEditOriginalDocBase<DropLinePlotStyle, IDropLinePlotStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;

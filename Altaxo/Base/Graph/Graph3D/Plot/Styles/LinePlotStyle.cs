@@ -95,6 +95,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// </summary>
 		private double _symbolGapFactor = 1.25;
 
+		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
+		[field: NonSerialized]
+		protected Func<int, double> _cachedSymbolSizeForIndexFunction;
+
 		#region Serialization
 
 		/// <summary>
@@ -160,10 +164,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			var color = GraphDocument.GetDefaultPlotColor(context);
 
 			_linePen = new PenX3D(color, penWidth).WithLineJoin(PenLineJoin.Bevel);
-			_useSymbolGap = true;
-			_ignoreMissingDataPoints = false;
 			_connectionStyle = new LineConnectionStyles.StraightConnection();
-			_independentColor = false;
 		}
 
 		public bool CopyFrom(object obj)
@@ -446,8 +447,21 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			var linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			var rangeList = pdata.RangeList;
 			var symbolGap = _symbolSize;
-
 			int rangelistlen = rangeList.Count;
+
+			Func<int, double> symbolGapFunction = null;
+
+			if (_useSymbolGap)
+			{
+				if (null != _cachedSymbolSizeForIndexFunction && !_independentSymbolSize)
+				{
+					symbolGapFunction = (idx) => _symbolGapOffset + _symbolGapFactor * _cachedSymbolSizeForIndexFunction(idx);
+				}
+				else
+				{
+					symbolGapFunction = (idx) => _symbolGapOffset + _symbolGapFactor * _symbolSize;
+				}
+			}
 
 			if (this._ignoreMissingDataPoints)
 			{
@@ -455,13 +469,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				// as one range, i.e. continuously
 				// for this, we create the totalRange, which contains all ranges
 				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
-				_connectionStyle.Paint(g, pdata, totalRange, layer, _linePen, _useSymbolGap ? _symbolGapOffset + _symbolGapFactor * _symbolSize : 0, _connectCircular);
+				_connectionStyle.Paint(g, pdata, totalRange, layer, _linePen, symbolGapFunction, _connectCircular);
 			}
 			else // we not ignore missing points, so plot all ranges separately
 			{
 				for (int i = 0; i < rangelistlen; i++)
 				{
-					_connectionStyle.Paint(g, pdata, rangeList[i], layer, _linePen, _useSymbolGap ? _symbolGapOffset + _symbolGapFactor * _symbolSize : 0, _connectCircular);
+					_connectionStyle.Paint(g, pdata, rangeList[i], layer, _linePen, symbolGapFunction, _connectCircular);
 				}
 			}
 		}
@@ -531,6 +545,21 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			{
 				_symbolSize = 0;
 				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolSize = size; });
+			}
+
+			// symbol size
+			if (!_independentSymbolSize)
+			{
+				this._symbolSize = 0;
+				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolSize = size; });
+
+				// but if there is an symbol size evaluation function, then use this with higher priority.
+				_cachedSymbolSizeForIndexFunction = null;
+				VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
+			}
+			else
+			{
+				_cachedSymbolSizeForIndexFunction = null;
 			}
 		}
 

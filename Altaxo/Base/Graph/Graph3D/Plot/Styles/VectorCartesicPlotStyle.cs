@@ -67,7 +67,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		private bool _useManualVectorLength;
 
 		/// <summary>Constant value of the vector length. Used only if <see cref="_useManualVectorLength"/> is set to true.</summary>
-		private double _vectorLengthOffset;
+		private double _vectorLengthOffset = 2;
 
 		/// <summary>Factor that is multiplied with the cached symbol size to determine the vector length. Used only if <see cref="_useManualVectorLength"/> is set to true.</summary>
 		private double _vectorLengthFactor;
@@ -103,7 +103,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// Factor used to calculate the real gap between symbol center and beginning of the bar, according to the formula:
 		/// realGap = _symbolGap * _symbolGapFactor + _symbolGapOffset;
 		/// </summary>
-		private double _symbolGapFactor = 1;
+		private double _symbolGapFactor = 1.25;
 
 		private double _endCapSizeFactor = 1;
 
@@ -805,13 +805,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			// symbol size
 			if (!_independentSymbolSize)
 			{
-				if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolSize = size; }))
-				{
-					this._symbolSize = 0;
-				}
+				this._symbolSize = 0;
+				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolSize = size; });
 
 				// but if there is an symbol size evaluation function, then use this with higher priority.
+				_cachedSymbolSizeForIndexFunction = null;
 				VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
+			}
+			else
+			{
+				_cachedSymbolSizeForIndexFunction = null;
 			}
 
 			// Shift the items ?
@@ -933,12 +936,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 							continue;
 					}
 
-					double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
-					if (gap != 0)
+					if (_useSymbolGap)
 					{
-						isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gap), RADouble.NewAbs(0));
-						if (null == isoLine)
-							continue;
+						double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
+						if (gap != 0)
+						{
+							isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
+							if (null == isoLine)
+								continue;
+						}
 					}
 
 					g.DrawLine(strokePen, isoLine);

@@ -42,7 +42,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 	using Plot.Data;
 	using Plot.Groups;
 
-	public class DropPlotStyle
+	public class DropLinePlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
 		IG3DPlotStyle
@@ -118,12 +118,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// 2016-08-09 initial version.
 		/// </summary>
 		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DropPlotStyle), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DropLinePlotStyle), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				DropPlotStyle s = (DropPlotStyle)obj;
+				DropLinePlotStyle s = (DropLinePlotStyle)obj;
 
 				info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
 				info.AddValue("SkipFreq", s._skipFreq);
@@ -151,9 +151,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("GapAtEndFactor", s._gapAtEndFactor);
 			}
 
-			protected virtual DropPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			protected virtual DropLinePlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				DropPlotStyle s = null != o ? (DropPlotStyle)o : new DropPlotStyle(info);
+				DropLinePlotStyle s = null != o ? (DropLinePlotStyle)o : new DropLinePlotStyle(info);
 
 				s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
 				s._skipFreq = info.GetInt32("SkipFreq");
@@ -187,7 +187,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				DropPlotStyle s = SDeserialize(o, info, parent);
+				DropLinePlotStyle s = SDeserialize(o, info, parent);
 
 				// restore the cached values
 				s.SetCachedValues();
@@ -200,7 +200,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// Deserialization constructor.
 		/// </summary>
 		/// <param name="info">The deserialization information.</param>
-		protected DropPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		protected DropLinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
 		}
 
@@ -210,7 +210,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
-			var from = obj as DropPlotStyle;
+			var from = obj as DropLinePlotStyle;
 			if (null != from)
 			{
 				CopyFrom(from, Main.EventFiring.Enabled);
@@ -219,7 +219,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			return false;
 		}
 
-		public void CopyFrom(DropPlotStyle from, Main.EventFiring eventFiring)
+		public void CopyFrom(DropLinePlotStyle from, Main.EventFiring eventFiring)
 		{
 			if (object.ReferenceEquals(this, from))
 				return;
@@ -256,12 +256,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		public DropPlotStyle(DropPlotStyle from)
+		public DropLinePlotStyle(DropLinePlotStyle from)
 		{
 			CopyFrom(from, Main.EventFiring.Suppressed);
 		}
 
-		public DropPlotStyle(CSPlaneID planeID, PenX3D pen)
+		public DropLinePlotStyle(CSPlaneID planeID, PenX3D pen)
 		{
 			if (null == pen)
 				throw new ArgumentNullException(nameof(pen));
@@ -272,7 +272,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			SetCachedValues();
 		}
 
-		public DropPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		public DropLinePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			this._dropTargets = new CSPlaneIDList(new[] { new CSPlaneID(2, 0) });
 
@@ -288,7 +288,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public object Clone()
 		{
-			return new DropPlotStyle(this);
+			return new DropLinePlotStyle(this);
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()

@@ -37,13 +37,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	/// <summary>
 	/// Interaction logic for XYPlotScatterStyleControl.xaml
 	/// </summary>
-	public partial class DropPlotStyleControl : UserControl, IDropPlotStyleView
+	public partial class DropLinePlotStyleControl : UserControl, IDropLinePlotStyleView
 	{
 		public event Action IndependentColorChanged;
 
 		private PenControlsGlue _penGlue;
 
-		public DropPlotStyleControl()
+		public DropLinePlotStyleControl()
 		{
 			InitializeComponent();
 

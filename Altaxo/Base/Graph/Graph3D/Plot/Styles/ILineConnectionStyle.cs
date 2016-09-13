@@ -49,7 +49,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <param name="range">The plot range to use.</param>
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="pen">The pen to draw the line.</param>
-		/// <param name="symbolGap">The size of the symbol gap. This parameter is zero if no symbol gap is required.</param>
+		/// <param name="symbolGap">The size of the symbol gap. Argument is the original index of the data. The return value is the absolute symbol gap at this index.
+		/// This function is null if no symbol gap is required.</param>
 		/// <param name="connectCircular">If true, the end of the line is connected with the start of the line.</param>
 		void Paint(
 			IGraphicsContext3D g,
@@ -57,7 +58,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			PlotRange range,
 			IPlotArea layer,
 			PenX3D pen,
-			double symbolGap,
+			Func<int, double> symbolGap,
 			bool connectCircular);
 	}
 }

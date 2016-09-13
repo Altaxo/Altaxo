@@ -39,6 +39,22 @@ namespace Altaxo.Drawing.DashPatterns
 		/// </value>
 		public static Solid Instance { get; private set; } = new Solid();
 
+		/// <summary>
+		/// 2016-04-22 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Solid), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				return Instance;
+			}
+		}
+
 		public override double this[int index]
 		{
 			get

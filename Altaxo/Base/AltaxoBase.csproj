@@ -396,7 +396,7 @@
     <Compile Include="Graph\Graph3D\Plot\Styles\LineConnectionStyles\StraightConnection.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\LineConnectionStyles\NoConnection.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\LinePlotStyle.cs" />
-    <Compile Include="Graph\Graph3D\Plot\Styles\DropPlotStyle.cs" />
+    <Compile Include="Graph\Graph3D\Plot\Styles\DropLinePlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ScatterPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ScatterSymbols\TetrahedronDown.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ScatterSymbols\TetrahedronUp.cs" />
@@ -592,7 +592,7 @@
     <Compile Include="Gui\Drawing\StyleListController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\LabelPlotStyleController.cs" />
-    <Compile Include="Gui\Graph3D\Plot\Styles\DropPlotStyleController.cs" />
+    <Compile Include="Gui\Graph3D\Plot\Styles\DropLinePlotStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\LinePlotStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\ScatterPlotStyleController.cs" />
     <Compile Include="Gui\Graph3D\Plot\Styles\XYZPlotStyleCollectionController.cs" />
