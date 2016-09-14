@@ -373,7 +373,7 @@ namespace Altaxo.Gui
 					return tf;
 			}
 
-			// if all other things failed
+			// if all other things failed, try to get the typeface directly
 			{
 				var style = font.Style;
 				var result = new Typeface(new FontFamily(font.FontFamilyName),
@@ -381,8 +381,18 @@ namespace Altaxo.Gui
 					 style.HasFlag(FontXStyle.Bold) ? FontWeights.Bold : FontWeights.Normal,
 					 FontStretches.Normal);
 
-				return result;
+				GlyphTypeface gtf;
+				if (result.TryGetGlyphTypeface(out gtf))
+					return result; // return typeface only if it has a valid glyphTypefase
 			}
+
+			// now everything has failed, thus return the generic type face
+			var defaultFont = Current.PropertyService.BuiltinSettings.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultFont);
+
+			if (font.Equals(defaultFont))
+				throw new InvalidProgramException("Can not even create the default font!");
+
+			return CreateNewTypeface(defaultFont.GetFontWithNewStyle(font.Style));
 		}
 
 		#region Enumeration of Wpf fonts
