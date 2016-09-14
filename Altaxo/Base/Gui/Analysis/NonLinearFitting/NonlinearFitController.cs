@@ -134,24 +134,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		#region INonlinearFitViewEventSink
 
-		public void EhView_DoSimplex()
+		public void EhView_EvaluateChiSqr()
 		{
 			if (true == this._parameterController.Apply(false))
 			{
-				//        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
-
 				LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
-				Current.Gui.ShowBackgroundCancelDialog(10000, null, new System.Threading.ThreadStart(fitAdapter.DoSimplexMinimization));
-
-				this._chiSquare = fitAdapter.ResultingChiSquare;
-
-				fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
-
-				//_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
-				//_doc.FitEnsemble.DistributeParameters();
-
-				OnAfterFittingStep();
+				var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => this._chiSquare = fitAdapter.EvaluateChiSquare()));
+				fitThread.Start();
+				Current.Gui.ShowBackgroundCancelDialog(10000, null, fitThread);
+				if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
+				{
+					OnAfterFittingStep();
+				}
 			}
 			else
 			{
@@ -167,16 +162,49 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 				LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
-				Current.Gui.ShowBackgroundCancelDialog(10000, null, new System.Threading.ThreadStart(fitAdapter.Fit));
+				var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(fitAdapter.Fit));
+				fitThread.Start();
+				Current.Gui.ShowBackgroundCancelDialog(10000, null, fitThread);
+				if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
+				{
+					this._chiSquare = fitAdapter.ResultingChiSquare;
 
-				this._chiSquare = fitAdapter.ResultingChiSquare;
+					fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
 
-				fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
+					//_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
+					//_doc.FitEnsemble.DistributeParameters();
 
-				//_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
-				//_doc.FitEnsemble.DistributeParameters();
+					OnAfterFittingStep();
+				}
+			}
+			else
+			{
+				Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+			}
+		}
 
-				OnAfterFittingStep();
+		public void EhView_DoSimplex()
+		{
+			if (true == this._parameterController.Apply(false))
+			{
+				//        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
+
+				LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
+
+				var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(fitAdapter.DoSimplexMinimization));
+				fitThread.Start();
+				Current.Gui.ShowBackgroundCancelDialog(10000, null, fitThread);
+				if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
+				{
+					this._chiSquare = fitAdapter.ResultingChiSquare;
+
+					fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
+
+					//_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
+					//_doc.FitEnsemble.DistributeParameters();
+
+					OnAfterFittingStep();
+				}
 			}
 			else
 			{
@@ -191,26 +219,20 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				Current.Gui.ErrorMessageBox("Your interval specification contains errors, please correct them!");
 				return;
 			}
-			if (useInterval)
-				OnSimulationWithInterval(generateUnusedDependentVariables, _generationInterval);
-			else
-				OnSimulation(generateUnusedDependentVariables);
-		}
 
-		public void EhView_EvaluateChiSqr()
-		{
-			if (true == this._parameterController.Apply(false))
+			System.Threading.Thread simulationThread;
+			if (useInterval)
 			{
-				LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
-				this._chiSquare = fitAdapter.EvaluateChiSquare();
-				//_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
-				//_doc.FitEnsemble.DistributeParameters();
-				OnAfterFittingStep();
+				var generationInterval = _generationInterval; // use local variable for thread
+				simulationThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => OnSimulationWithInterval(generateUnusedDependentVariables, generationInterval)));
 			}
 			else
 			{
-				Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+				simulationThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => OnSimulation(generateUnusedDependentVariables)));
 			}
+
+			simulationThread.Start();
+			Current.Gui.ShowBackgroundCancelDialog(10000, null, simulationThread);
 		}
 
 		private enum SelectionChoice { SelectAsOnly, SelectAsAdditional };
@@ -282,7 +304,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		{
 			FitFunctionScript script = new FitFunctionScript();
 
-			Label_EditScript:
+		Label_EditScript:
 			object scriptAsObject = script;
 			if (Current.Gui.ShowDialog(ref scriptAsObject, "Create fit function"))
 			{
