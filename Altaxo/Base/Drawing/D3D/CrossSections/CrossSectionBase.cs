@@ -216,5 +216,26 @@ namespace Altaxo.Drawing.D3D.CrossSections
 
 			return result;
 		}
+
+		/// <summary>
+		/// Gets the vertices of a cross section from a certain vertex index to another vertex index (including the last vertex index).
+		/// </summary>
+		/// <param name="crossSection">The cross section.</param>
+		/// <param name="firstVertexIndex">The first vertex index to include. Must be greater than or equal to zero.</param>
+		/// <param name="lastIncludedVertexIndex">The last vertex index to include. Must be greater than <paramref name="firstVertexIndex"/>, but can be greater than the number of vertices of the cross section in order to describe a polygon that 'wraps around'.</param>
+		/// <returns>The vertices from the first index up to and including the last index.</returns>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		/// <exception cref="ArgumentException"></exception>
+		public static IEnumerable<PointD2D> GetVerticesFromToIncluding(ICrossSectionOfLine crossSection, int firstVertexIndex, int lastIncludedVertexIndex)
+		{
+			if (!(firstVertexIndex <= lastIncludedVertexIndex))
+				throw new ArgumentOutOfRangeException(nameof(lastIncludedVertexIndex) + " must be greater then or equal to " + nameof(firstVertexIndex));
+			if (!(firstVertexIndex >= 0))
+				throw new ArgumentException(nameof(firstVertexIndex) + "must be >=0");
+
+			int vertexCount = crossSection.NumberOfVertices;
+			for (int i = firstVertexIndex; i <= lastIncludedVertexIndex; ++i)
+				yield return crossSection.Vertices(i % vertexCount);
+		}
 	}
 }

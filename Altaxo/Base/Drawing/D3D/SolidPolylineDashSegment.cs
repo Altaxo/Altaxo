@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing.D3D.CrossSections;
 using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
@@ -74,6 +75,12 @@ namespace Altaxo.Drawing.D3D
 
 		/// <summary>The maximal distance of any vertex of the cross section from the center of the cross section.</summary>
 		private double _crossSectionMaximalDistanceFromCenter;
+
+		/// <summary>
+		/// A dictionary to mesh parts of the cross section. The key is a tuple, consisting of the first vertex index of the cross section, and the last vertex index of the cross section that should be meshed.
+		/// The value is an array with the triangle indices of the mesh (each 3 consecutive items form one triangle of the cross section part).
+		/// </summary>
+		private Dictionary<Tuple<int, int>, int[]> _crossSectionPartsTriangleIndices;
 
 		#endregion global Variables, initialized only once per line (not once per dash segment)
 
@@ -177,6 +184,7 @@ namespace Altaxo.Drawing.D3D
 			this._crossSectionVertexCount = crossSection.NumberOfVertices;
 			this._crossSectionNormalCount = crossSection.NumberOfNormals;
 			this._crossSectionMaximalDistanceFromCenter = _crossSection.GetMaximalDistanceFromCenter();
+			this._crossSectionPartsTriangleIndices = new Dictionary<Tuple<int, int>, int[]>();
 			this._lineJoin = lineJoin;
 			this._miterLimit = miterLimit;
 			this._miterLimitDotThreshold = Math.Cos(Math.PI - 2 * Math.Asin(1 / miterLimit));
@@ -684,90 +692,93 @@ namespace Altaxo.Drawing.D3D
 							}
 						}
 
+						#region Bevel plane meshing
+
 						// mesh the bevel plane now
 						if (firstIndexOfBevelVertex >= 0)
 						{
-							AddPositionAndNormal(pointAtBevelPlane, reflectionPlaneNormal);
-							int indexOfMidPoint = currIndex;
-							++currIndex;
-
-							int currentFirstIndexOfBevelVertex = firstIndexOfBevelVertex;
-
-							do
+							// find first index of the polygon on the bevel plane (the first index is not on the plane, then the next indices are on the plane, and the last index is not on the plane)
+							int firstPolygonIndex = (firstIndexOfBevelVertex - 1 + crossSectionVertexCount) % crossSectionVertexCount;
+							do // for every subsection of the cross section which is on the bevel plane, i.e. for which is the X compoment of the  _crossSectionRotatedVertices >=  crossSectionDistanceThreshold
 							{
-								int startSearchForNextBevelVertex = currentFirstIndexOfBevelVertex;
-								int pointsInThisMesh = 0;
-								int i, icurr = currentFirstIndexOfBevelVertex;
-								for (i = currentFirstIndexOfBevelVertex; i < currentFirstIndexOfBevelVertex + crossSectionVertexCount; ++i)
+								// find the last index of the polygon on the bevel plane (the first index is not on the plane, then the next indices are on the plane, and the last index is not on the plane)
+								int lastPolygonIndex;
+								for (lastPolygonIndex = firstPolygonIndex + 1; lastPolygonIndex < (firstPolygonIndex + crossSectionVertexCount); lastPolygonIndex++)
 								{
-									icurr = (i) % crossSectionVertexCount;
-									if (_crossSectionRotatedVertices[icurr].X > crossSectionDistanceThreshold)
+									if (!(_crossSectionRotatedVertices[lastPolygonIndex % crossSectionVertexCount].X >= crossSectionDistanceThreshold))
+										break;
+								}
+
+								// mesh the polygon. The trick here is the following: the real polygon on the bevel plane is the original cross section, but cut by a line (which represents in rotated coordinates _crossSectionRotatedVertices.X is equal to  crossSectionDistanceThreshold)
+								// thus every polygon on the bevel plane would be unique (depending on the orientation and angle of the line segments)
+								// thus in principle every polygon must be meshed separately, but meshing is compute intensive
+								// Solution: the meshing triangle indices are the same, whether you would use the exact polygon cut by the line, or if you would use the points of the original cross section next to the cut points.
+								// thus we store for every polygon formed as a part of the cross section, defined by the first vertex index, and the last vertex index,
+								// the triangle indices that form the polygon mesh
+								int[] indexedTriangles;
+								if (!_crossSectionPartsTriangleIndices.TryGetValue(new Tuple<int, int>(firstPolygonIndex, lastPolygonIndex), out indexedTriangles))
+								{
+									var polygon = PolygonClosedD2D.FromPoints(CrossSectionOfLine.GetVerticesFromToIncluding(_crossSection, firstPolygonIndex, lastPolygonIndex)); // polygon formed from a part of the cross section from firstPolygonIndex to (and including) lastPolygonIndex
+									indexedTriangles = Triangulate(polygon); // calculate the triangle indices that form the mesh of this polygon
+									_crossSectionPartsTriangleIndices.Add(new Tuple<int, int>(firstPolygonIndex, lastPolygonIndex), indexedTriangles); // cache those indices for later use
+								}
+
+								// now add and calculate the points on the bevel plane
+								// we do this simultaneously for the points of the end of the current segment and the points of the start of the next segment
+								for (int i = firstPolygonIndex; i <= lastPolygonIndex; ++i)
+								{
+									int icurr = i % crossSectionVertexCount;
+
+									PointD2D crossSectionPoint;
+									if (i == firstPolygonIndex) // first index, i.e. this index is not on the bevel plane, but next index is on the bevel plane
 									{
-										AddPositionAndNormal(_positionsTransformedEndCurrent[icurr], reflectionPlaneNormal);
-										++currIndex;
-										++pointsInThisMesh;
-										if (pointsInThisMesh >= 2)
-											AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
+										int inext = (i + 1) % crossSectionVertexCount;
+										double r = (crossSectionDistanceThreshold - _crossSectionRotatedVertices[icurr].X) / (_crossSectionRotatedVertices[inext].X - _crossSectionRotatedVertices[icurr].X);
+										if (!(0 <= r && r <= 1))
+											throw new InvalidProgramException("r should always be >=0 and <=1, so what's going wrong here?");
+										crossSectionPoint = (1 - r) * _crossSection.Vertices(icurr) + r * _crossSection.Vertices(inext); // this is a point on the crossSection that exactly lies on the bevel plane
+									}
+									else if (i == lastPolygonIndex) // last index, i.e. this index is not on the bevel plane, but the previous index was still on the bevel plane
+									{
+										int iprev = (i - 1 + crossSectionVertexCount) % crossSectionVertexCount;
+										double r = (crossSectionDistanceThreshold - _crossSectionRotatedVertices[iprev].X) / (_crossSectionRotatedVertices[icurr].X - _crossSectionRotatedVertices[iprev].X);
+										if (!(0 <= r && r <= 1))
+											throw new InvalidProgramException("r should always be >=0 and <=1, so what's going wrong here?");
+										crossSectionPoint = (1 - r) * _crossSection.Vertices(iprev) + r * _crossSection.Vertices(icurr); // this is a point on the crossSection that exactly lies on the bevel plane
 									}
 									else
 									{
-										break;
+										crossSectionPoint = _crossSection.Vertices(icurr); // index in the
 									}
-								}
-								startSearchForNextBevelVertex = icurr;
 
-								int iprev = (i - 1 + crossSectionVertexCount) % crossSectionVertexCount;
-								double r = (crossSectionDistanceThreshold - _crossSectionRotatedVertices[iprev].X) / (_crossSectionRotatedVertices[icurr].X - _crossSectionRotatedVertices[iprev].X);
-								if (!(0 <= r && r <= 1))
-									throw new InvalidProgramException("r should always be >=0 and <=1, so what's going wrong here?");
-
-								var additionalCrossSectionVertex = (1 - r) * _crossSection.Vertices(iprev) + r * _crossSection.Vertices(icurr);
-								tp = matrixSymmetryPlane.Transform(additionalCrossSectionVertex);
-								//tp = bevelMatrix1.Transform(tp);
-								AddPositionAndNormal(tp, reflectionPlaneNormal);
-								++currIndex;
-								AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
-
-								// now back
-								for (i = i - 1; i >= currentFirstIndexOfBevelVertex; --i)
-								{
-									icurr = (i) % crossSectionVertexCount;
-									AddPositionAndNormal(_positionsTransformedStartNext[icurr], reflectionPlaneNormal);
-									++currIndex;
-									AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
+									tp = matrixSymmetryPlane.Transform(crossSectionPoint);
+									// then the point is above the bevel plane; we need to project it to the bevel plane
+									var positionsTransformedEndCurrent = bevelMatrix1.Transform(tp);
+									var positionsTransformedStartNext = bevelMatrix2.Transform(tp);
+									AddPositionAndNormal(positionsTransformedEndCurrent, reflectionPlaneNormal); // points cut from the end of the current line segment lying on the bevel plane
+									AddPositionAndNormal(positionsTransformedStartNext, reflectionPlaneNormal); // points cut from the start of the next line segment lying on the bevel plane
 								}
 
-								iprev = icurr;
-								icurr = (i + crossSectionVertexCount) % crossSectionVertexCount;
-								r = (crossSectionDistanceThreshold - _crossSectionRotatedVertices[iprev].X) / (_crossSectionRotatedVertices[icurr].X - _crossSectionRotatedVertices[iprev].X);
-								if (!(0 <= r && r <= 1))
-									throw new InvalidProgramException("r should always be >=0 and <=1, so what's going wrong here?");
-
-								additionalCrossSectionVertex = (1 - r) * _crossSection.Vertices(iprev) + r * _crossSection.Vertices(icurr);
-								tp = matrixSymmetryPlane.Transform(additionalCrossSectionVertex);
-								AddPositionAndNormal(tp, reflectionPlaneNormal);
-								++currIndex;
-								AddIndices(currIndex - 1, currIndex - 2, indexOfMidPoint, true);
-								// and now close the bevel
-								AddIndices(indexOfMidPoint + 1, currIndex - 1, indexOfMidPoint, true);
-
-								// search for the next start of a bevel plane
-
-								previousPointIsAboveHeight = false;
-								for (i = startSearchForNextBevelVertex; i < startSearchForNextBevelVertex + crossSectionVertexCount; ++i)
+								// now add the triangle indices that form the triangle mesh on the bevel plane
+								// again, this is done simultaneously for the points of the end of the current segment and the start of the next segment
+								for (int i = 0; i < indexedTriangles.Length; i += 3)
 								{
-									icurr = i % crossSectionVertexCount;
-									bool currentPointIsAboveHeight = _crossSectionRotatedVertices[icurr].X > crossSectionDistanceThreshold;
-									if (currentPointIsAboveHeight && !previousPointIsAboveHeight)
-									{
-										currentFirstIndexOfBevelVertex = icurr;
+									AddIndices(currIndex + 2 * indexedTriangles[i], currIndex + 2 * indexedTriangles[i + 1], currIndex + 2 * indexedTriangles[i + 2], false); // indices for the points cut from the end of the current line segment lying on the bevel plane
+									AddIndices(currIndex + 1 + 2 * indexedTriangles[i], currIndex + 1 + 2 * indexedTriangles[i + 1], currIndex + 1 + 2 * indexedTriangles[i + 2], true);  // indices for the points cut from the start of the next line segment lying on the bevel plane
+								}
+
+								currIndex += 2 * (lastPolygonIndex + 1 - firstPolygonIndex); // we have added this number of points for the bevel plane
+
+								// now find the next first polygon index that is located on the bevel plane (strictly spoken, we are searching for the point before this point)
+								for (firstPolygonIndex = lastPolygonIndex; firstPolygonIndex < crossSectionVertexCount; ++firstPolygonIndex)
+								{
+									if (_crossSectionRotatedVertices[(firstPolygonIndex + 1) % crossSectionVertexCount].X >= crossSectionDistanceThreshold)
 										break;
-									}
-									previousPointIsAboveHeight = currentPointIsAboveHeight;
 								}
-							}
-							while (currentFirstIndexOfBevelVertex != firstIndexOfBevelVertex); // mesh all single bevel planes
-						}
+							} while ((firstPolygonIndex + 1) < crossSectionVertexCount); // for each subsection of the cross section
+						} // end of bevel plane meshing
+
+						#endregion Bevel plane meshing
 
 						// now mesh the side faces
 						for (int i = 0, j = 0; i < crossSectionVertexCount; ++i, ++j)
@@ -902,6 +913,58 @@ namespace Altaxo.Drawing.D3D
 			// end line segment is done now
 
 			vertexIndexOffset = currIndex;
+		}
+
+		/// <summary>
+		/// Triangulates the specified polygons. The result are indexed triangles.
+		/// </summary>
+		/// <param name="polygon">The polygon to triangulate.</param>
+		/// <returns>Instance of the <see cref="IndexedTriangles"/> class, which holds the triangle vertices as well as the indices.</returns>
+		private static int[] Triangulate(PolygonClosedD2D polygon)
+		{
+			var triangles = GetTriangles(polygon);
+			var pointList = new List<PointD2D>();
+			var pointToIndex = new Dictionary<PointD2D, int>();
+
+			for (int i = 0; i < polygon.Points.Length; ++i)
+				pointToIndex.Add(polygon.Points[i], i);
+
+			var indexList = new List<int>();
+
+			foreach (var triangle in triangles.Triangles)
+			{
+				var p0 = new PointD2D(triangle.Points[0].X, triangle.Points[0].Y);
+				var p1 = new PointD2D(triangle.Points[1].X, triangle.Points[1].Y);
+				var p2 = new PointD2D(triangle.Points[2].X, triangle.Points[2].Y);
+
+				int i0, i1, i2;
+
+				if (!pointToIndex.TryGetValue(p0, out i0))
+				{
+					throw new InvalidOperationException("Should work except when our cross section was implified by pol2Tri");
+				}
+				if (!pointToIndex.TryGetValue(p1, out i1))
+				{
+					throw new InvalidOperationException("Should work except when our cross section was implified by pol2Tri");
+				}
+				if (!pointToIndex.TryGetValue(p2, out i2))
+				{
+					throw new InvalidOperationException("Should work except when our cross section was implified by pol2Tri");
+				}
+
+				indexList.Add(i0);
+				indexList.Add(i1);
+				indexList.Add(i2);
+			}
+
+			return indexList.ToArray();
+		}
+
+		public static Poly2Tri.Polygon GetTriangles(PolygonClosedD2D polygons)
+		{
+			var mainPolygon = new Poly2Tri.Polygon(polygons.Points.Select(pt => new Poly2Tri.PolygonPoint(pt.X, pt.Y)));
+			Poly2Tri.P2T.Triangulate(mainPolygon);
+			return mainPolygon;
 		}
 	}
 }

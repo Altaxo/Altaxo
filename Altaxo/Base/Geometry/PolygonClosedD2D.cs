@@ -62,6 +62,16 @@ namespace Altaxo.Geometry
 		}
 
 		/// <summary>
+		/// Constructs a new closed polygon from the provided points. It is assumed that no point is sharp.
+		/// </summary>
+		/// <param name="points">The points that construct the polygon.</param>
+		/// <returns>The closed polygon.</returns>
+		public static PolygonClosedD2D FromPoints(IEnumerable<PointD2D> points)
+		{
+			return new PolygonClosedD2D(points.ToArray(), new HashSet<PointD2D>());
+		}
+
+		/// <summary>
 		/// Gets the points that form the closed polygon.
 		/// </summary>
 		/// <value>
