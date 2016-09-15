@@ -1158,6 +1158,9 @@ namespace Altaxo.Data
 		/// <returns>The parent data table of the DataColumnCollection, or null if it was not found.</returns>
 		public static Altaxo.Data.DataTable GetParentDataTableOf(DataColumnCollection colcol)
 		{
+			if (null == colcol)
+				return null;
+
 			if (colcol.ParentObject is DataTable)
 				return (DataTable)colcol.ParentObject;
 			else
@@ -1171,6 +1174,9 @@ namespace Altaxo.Data
 		/// <returns>The parent data table of this column, or null if it can not be found.</returns>
 		public static Altaxo.Data.DataTable GetParentDataTableOf(DataColumn column)
 		{
+			if (null == column)
+				return null;
+
 			if (column.ParentObject is DataColumnCollection)
 				return GetParentDataTableOf((DataColumnCollection)column.ParentObject);
 			else

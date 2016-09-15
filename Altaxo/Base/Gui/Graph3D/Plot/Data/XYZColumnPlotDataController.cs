@@ -393,23 +393,32 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 			{
 				// Fix docs datatable
 
-				if (_doc.DataTable == null)
+				var docDataTable = _doc.DataTable;
+				var docGroupNumber = _doc.GroupNumber;
+
+				if (docDataTable == null)
 				{
-					_doc.DataTable = DataTable.GetParentDataTableOf(_doc.XColumn as DataColumn);
-					if (null != _doc.DataTable && _doc.DataTable.DataColumns.ContainsColumn((DataColumn)_doc.XColumn))
-						_doc.GroupNumber = _doc.DataTable.DataColumns.GetColumnGroup((DataColumn)_doc.XColumn);
+					docDataTable = DataTable.GetParentDataTableOf(_doc.XColumn as DataColumn);
+					if (null != docDataTable && docDataTable.DataColumns.ContainsColumn((DataColumn)_doc.XColumn))
+						docGroupNumber = docDataTable.DataColumns.GetColumnGroup((DataColumn)_doc.XColumn);
 				}
-				if (_doc.DataTable == null)
+				if (docDataTable == null)
 				{
-					_doc.DataTable = DataTable.GetParentDataTableOf(_doc.YColumn as DataColumn);
-					if (null != _doc.DataTable && _doc.DataTable.DataColumns.ContainsColumn((DataColumn)_doc.YColumn))
-						_doc.GroupNumber = _doc.DataTable.DataColumns.GetColumnGroup((DataColumn)_doc.YColumn);
+					docDataTable = DataTable.GetParentDataTableOf(_doc.YColumn as DataColumn);
+					if (null != docDataTable && docDataTable.DataColumns.ContainsColumn((DataColumn)_doc.YColumn))
+						docGroupNumber = docDataTable.DataColumns.GetColumnGroup((DataColumn)_doc.YColumn);
 				}
-				if (_doc.DataTable == null)
+				if (docDataTable == null)
 				{
-					_doc.DataTable = DataTable.GetParentDataTableOf(_doc.ZColumn as DataColumn);
-					if (null != _doc.DataTable && _doc.DataTable.DataColumns.ContainsColumn((DataColumn)_doc.ZColumn))
-						_doc.GroupNumber = _doc.DataTable.DataColumns.GetColumnGroup((DataColumn)_doc.ZColumn);
+					docDataTable = DataTable.GetParentDataTableOf(_doc.ZColumn as DataColumn);
+					if (null != docDataTable && docDataTable.DataColumns.ContainsColumn((DataColumn)_doc.ZColumn))
+						docGroupNumber = docDataTable.DataColumns.GetColumnGroup((DataColumn)_doc.ZColumn);
+				}
+
+				if (null != docDataTable)
+				{
+					_doc.DataTable = docDataTable;
+					_doc.GroupNumber = docGroupNumber;
 				}
 
 				// initialize group 0
@@ -444,7 +453,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Data
 				}
 
 				// Group number
-				_groupNumbersAll = tg.DataColumns.GetGroupNumbersAll();
+				_groupNumbersAll = null != tg ? tg.DataColumns.GetGroupNumbersAll() : new SortedSet<int>();
 
 				// Initialize columns
 				Controller_AvailableDataColumns_Initialize();
