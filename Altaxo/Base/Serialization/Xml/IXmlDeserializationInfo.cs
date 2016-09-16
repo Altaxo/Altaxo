@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Xml
 {
@@ -122,6 +123,22 @@ namespace Altaxo.Serialization.Xml
 		object GetBaseValueEmbedded(object instance, string fullyQualifiedBasetypeName, object parent);
 
 		void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent);
+
+		/// <summary>
+		/// Gets the property dictionary. This is a dictionary where some string/value pairs could be stored, and used during or after deserialization
+		/// </summary>
+		/// <value>
+		/// The property dictionary.
+		/// </value>
+		IDictionary<string, object> PropertyDictionary { get; }
+
+		/// <summary>
+		/// Gets a property value from the property dictionary identified by the provided key string. If the property does not exist in the dictionary, the default value is returned.
+		/// </summary>
+		/// <typeparam name="T">Type of the property</typeparam>
+		/// <param name="propertyKey">The property key.</param>
+		/// <returns>If the property exists, the property value is returned; otherwise, the default value of the expected property value type is returned.</returns>
+		T GetPropertyOrDefault<T>(string propertyKey);
 
 		/// <summary>
 		/// This event is called if the deserialization process of all objects is finished and

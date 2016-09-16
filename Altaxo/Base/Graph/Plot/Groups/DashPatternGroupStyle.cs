@@ -93,7 +93,14 @@ namespace Altaxo.Graph.Plot.Groups
 
 		public DashPatternGroupStyle(DashPatternGroupStyle from)
 		{
-			this._isInitialized = from._isInitialized;
+			this._isStepEnabled = from._isStepEnabled;
+			this._value = from._value;
+			this._listOfValues = from._listOfValues;
+		}
+
+		public void TransferFrom(IPlotGroupStyle fromb)
+		{
+			DashPatternGroupStyle from = (DashPatternGroupStyle)fromb;
 			this._value = from._value;
 			this._listOfValues = from._listOfValues;
 		}
@@ -115,14 +122,6 @@ namespace Altaxo.Graph.Plot.Groups
 		#endregion ICloneable Members
 
 		#region IGroupStyle Members
-
-		public void TransferFrom(IPlotGroupStyle fromb)
-		{
-			DashPatternGroupStyle from = (DashPatternGroupStyle)fromb;
-			this._isInitialized = from._isInitialized;
-			this._value = from._value;
-			this._listOfValues = from._listOfValues;
-		}
 
 		public void BeginPrepare()
 		{

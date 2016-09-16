@@ -104,7 +104,7 @@ namespace Altaxo.Graph.Plot.Groups
 				ColorGroupStyle s = null != o ? (ColorGroupStyle)o : ColorGroupStyle.NewExternalGroupStyle();
 				s._isStepEnabled = info.GetBoolean("StepEnabled");
 				s._listOfValues = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
-				ColorSetManager.Instance.TryRegisterList(s._listOfValues, Main.ItemDefinitionLevel.Project, out s._listOfValues);
+				ColorSetManager.Instance.TryRegisterList(info, s._listOfValues, Main.ItemDefinitionLevel.Project, out s._listOfValues);
 
 				return s;
 			}
@@ -135,7 +135,7 @@ namespace Altaxo.Graph.Plot.Groups
 				IColorSet listOfValues = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", s);
 				if (null != listOfValues)
 				{
-					ColorSetManager.Instance.TryRegisterList(listOfValues, Main.ItemDefinitionLevel.Project, out s._listOfValues);
+					ColorSetManager.Instance.TryRegisterList(info, listOfValues, Main.ItemDefinitionLevel.Project, out s._listOfValues);
 				}
 
 				s._colorIndex = info.GetInt32("ColorIndex");

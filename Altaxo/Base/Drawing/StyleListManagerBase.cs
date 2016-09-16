@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Main;
+using Altaxo.Serialization.Xml;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -85,6 +86,8 @@ namespace Altaxo.Drawing
 		/// </summary>
 		protected Dictionary<string, TListManagerEntry> _allLists = new Dictionary<string, TListManagerEntry>();
 
+		private string _deserializationRenameDictionaryKey;
+
 		private Func<TList, ItemDefinitionLevel, TListManagerEntry> EntryValueCreator;
 
 		public TList BuiltinDefault { get; private set; }
@@ -97,6 +100,8 @@ namespace Altaxo.Drawing
 			EntryValueCreator = valueCreator;
 			BuiltinDefault = builtinDefaultList;
 			_allLists.Add(BuiltinDefault.Name, EntryValueCreator(BuiltinDefault, Main.ItemDefinitionLevel.Builtin));
+
+			Altaxo.Serialization.Xml.XmlStreamDeserializationInfo.InstanceCreated += this.EhDeserializationInfoCreated; // this is save because the event is a weak event
 		}
 
 		#region ListAdded event
@@ -142,6 +147,12 @@ namespace Altaxo.Drawing
 		}
 
 		#endregion ListAdded event
+
+		protected virtual void EhDeserializationInfoCreated(XmlStreamDeserializationInfo info)
+		{
+			// store in the deserialization info a rename dictionary which stores key-value pairs of original color set name and new color set name
+			info.PropertyDictionary.Add(DeserializationRenameDictionaryKey, new Dictionary<string, string>());
+		}
 
 		public IEnumerable<string> GetAllListNames()
 		{
@@ -230,6 +241,26 @@ namespace Altaxo.Drawing
 				throw new ArgumentNullException(nameof(instance));
 
 			return InternalTryRegisterList(instance, level, out storedList, true);
+		}
+
+		/// <summary>
+		/// Try to register the provided list. This function is intended to be used during deserialization. It keeps track of when a list was renamed, and stores
+		/// this information in the deserialization info to be used by the members of the list during deserialization.
+		/// </summary>
+		/// <param name="deserializationInfo">The deserialization info of the deserialization that is under way. Can be null.</param>
+		/// <param name="instance">The new list which is tried to register.</param>
+		/// <param name="level">The level on which this list is defined.</param>
+		/// <param name="storedList">On return, this is the list which is either registered, or is an already registed list with exactly the same elements.</param>
+		/// <returns>True if the list was new and thus was added to the collection; false if the list has already existed.</returns>
+		public bool TryRegisterList(Altaxo.Serialization.Xml.IXmlDeserializationInfo deserializationInfo, TList instance, Main.ItemDefinitionLevel level, out TList storedList)
+		{
+			var result = InternalTryRegisterList(instance, level, out storedList, true);
+
+			var renameDictionary = deserializationInfo?.GetPropertyOrDefault<Dictionary<string, string>>(DeserializationRenameDictionaryKey);
+			if (null != renameDictionary)
+				renameDictionary[instance.Name] = storedList.Name;
+
+			return result;
 		}
 
 		/// <summary>
@@ -371,5 +402,19 @@ namespace Altaxo.Drawing
 		public abstract TList CreateNewList(string name, IEnumerable<TItem> symbols);
 
 		public abstract TList GetParentList(TItem item);
+
+		/// <summary>
+		/// Gets a string that is used as a key in the property dictionary of the deserialization info to get the renaming dictionary.
+		/// The renaming dictionary is a dictionary that maps original list names to the new list names that some of the deserialized lists are renamed to.
+		/// </summary>
+		public string DeserializationRenameDictionaryKey
+		{
+			get
+			{
+				if (null == _deserializationRenameDictionaryKey)
+					_deserializationRenameDictionaryKey = this.GetType().FullName + "_RenameDictionary";
+				return _deserializationRenameDictionaryKey;
+			}
+		}
 	}
 }

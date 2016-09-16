@@ -36,6 +36,9 @@ namespace Altaxo.Drawing.DashPatternManagement
 {
 	public class DashPatternList : StyleListBase<IDashPattern>
 	{
+		/// <summary>First part of the key that is used during serialization to decide whether the set was already serialized before.</summary>
+		private static readonly string _serializationRegistrationKey = typeof(DashPatternList).FullName + " ";
+
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DashPatternList), 0)]
@@ -44,10 +47,13 @@ namespace Altaxo.Drawing.DashPatternManagement
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (DashPatternList)obj;
+
+				info.SetProperty(GetSerializationRegistrationKey(s), "True"); // Register a property to note that this color set is already serialized.
+
 				info.AddValue("Name", s._name);
 				info.CreateArray("Elements", s._list.Count);
 				foreach (var ele in s)
-					info.AddValue("e", ele);
+					info.AddValue("e", ele.Clone()); // Trick here: by cloning the value, it is a new instance that is not registered in the list manager, thus it has no parent, so that neither parent set nor parent name are serialized
 				info.CommitArray();
 			}
 
@@ -70,6 +76,18 @@ namespace Altaxo.Drawing.DashPatternManagement
 		public DashPatternList(string name, IEnumerable<IDashPattern> symbols)
 			: base(name, symbols.Select(instance => (IDashPattern)instance.Clone()))
 		{
+		}
+
+		/// <summary>
+		/// Gets a key that is used during serialization to decide whether or not the set was already serialized.
+		/// Use the returned key to retrieve a string from the properties of the serialization info. If the returned property string
+		/// is null, then the set needs to be serialized; otherwise, it was already serialized before.
+		/// </summary>
+		/// <param name="set">The set for which the property key should be evaluated.</param>
+		/// <returns>The property key to be used to retrieve a property from the serialization info.</returns>
+		public static string GetSerializationRegistrationKey(DashPatternList set)
+		{
+			return _serializationRegistrationKey + set.Name;
 		}
 	}
 }

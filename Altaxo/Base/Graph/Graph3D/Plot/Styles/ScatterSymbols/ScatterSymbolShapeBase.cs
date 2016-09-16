@@ -25,6 +25,7 @@
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
+using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,42 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 	/// <seealso cref="Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol" />
 	public abstract class ScatterSymbolShapeBase : IScatterSymbol
 	{
+		#region Serialization
+
+		protected static void SerializeV0(IScatterSymbol obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+		{
+			var parent = ScatterSymbolListManager.Instance.GetParentList(obj);
+			if (null != parent)
+			{
+				if (null == info.GetProperty(ScatterSymbolList.GetSerializationRegistrationKey(parent)))
+					info.AddValue("Set", parent);
+				else
+					info.AddValue("SetName", parent.Name);
+			}
+		}
+
+		protected static TItem DeserializeV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent) where TItem : ScatterSymbolShapeBase
+		{
+			if (info.CurrentElementName == "Set")
+			{
+				var originalSet = (ScatterSymbolList)info.GetValue("Set", parent);
+				ScatterSymbolList registeredSet;
+				ScatterSymbolListManager.Instance.TryRegisterList(info, originalSet, Main.ItemDefinitionLevel.Project, out registeredSet);
+				return (TItem)ScatterSymbolListManager.Instance.GetDeserializedInstanceFromInstanceAndSetName(info, instanceTemplate, originalSet.Name); // Note: here we use the name of the original set, not of the registered set. Because the original name is translated during registering into the registered name
+			}
+			else if (info.CurrentElementName == "SetName")
+			{
+				string setName = info.GetString("SetName");
+				return (TItem)ScatterSymbolListManager.Instance.GetDeserializedInstanceFromInstanceAndSetName(info, instanceTemplate, setName);
+			}
+			else // nothing of both, thus symbol belongs to nothing
+			{
+				return instanceTemplate;
+			}
+		}
+
+		#endregion Serialization
+
 		/// <summary>
 		/// Paints the symbol with the specified size at the origin of the coordinate system.
 		/// </summary>

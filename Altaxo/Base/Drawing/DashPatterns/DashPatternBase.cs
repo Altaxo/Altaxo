@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing.DashPatternManagement;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -32,6 +33,42 @@ namespace Altaxo.Drawing.DashPatterns
 {
 	public abstract class DashPatternBase : IDashPattern
 	{
+		#region Serialization
+
+		protected static void SerializeV0(IDashPattern obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+		{
+			var parent = DashPatternListManager.Instance.GetParentList(obj);
+			if (null != parent)
+			{
+				if (null == info.GetProperty(DashPatternList.GetSerializationRegistrationKey(parent)))
+					info.AddValue("Set", parent);
+				else
+					info.AddValue("SetName", parent.Name);
+			}
+		}
+
+		protected static TItem DeserializeV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent) where TItem : IDashPattern
+		{
+			if (info.CurrentElementName == "Set")
+			{
+				var originalSet = (DashPatternList)info.GetValue("Set", parent);
+				DashPatternList registeredSet;
+				DashPatternListManager.Instance.TryRegisterList(info, originalSet, Main.ItemDefinitionLevel.Project, out registeredSet);
+				return (TItem)DashPatternListManager.Instance.GetDeserializedInstanceFromInstanceAndSetName(info, instanceTemplate, originalSet.Name); // Note: here we use the name of the original set, not of the registered set. Because the original name is translated during registering into the registered name
+			}
+			else if (info.CurrentElementName == "SetName")
+			{
+				string setName = info.GetString("SetName");
+				return (TItem)DashPatternListManager.Instance.GetDeserializedInstanceFromInstanceAndSetName(info, instanceTemplate, setName);
+			}
+			else // nothing of both, thus symbol belongs to nothing
+			{
+				return instanceTemplate;
+			}
+		}
+
+		#endregion Serialization
+
 		public override int GetHashCode()
 		{
 			return this.GetType().GetHashCode();

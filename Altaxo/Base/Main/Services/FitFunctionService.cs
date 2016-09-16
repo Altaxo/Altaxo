@@ -397,10 +397,12 @@ namespace Altaxo.Main.Services
 				IFitFunction func = null;
 				try
 				{
-					Altaxo.Serialization.Xml.XmlStreamDeserializationInfo str = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
-					str.BeginReading(new FileStream(info.FileName, FileMode.Open, FileAccess.Read, FileShare.Read));
-					func = (IFitFunction)str.GetValue(null, null);
-					str.EndReading();
+					using (var str = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo())
+					{
+						str.BeginReading(new FileStream(info.FileName, FileMode.Open, FileAccess.Read, FileShare.Read));
+						func = (IFitFunction)str.GetValue(null, null);
+						str.EndReading();
+					}
 					return func;
 				}
 				catch (Exception ex)

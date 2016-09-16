@@ -134,6 +134,8 @@ namespace Altaxo.Graph.Plot.Groups
 			if (object.ReferenceEquals(this, from))
 				return;
 
+			_isStepEnabled = from._isStepEnabled;
+
 			_barShiftStrategy = from._barShiftStrategy;
 			_barShiftMaxNumberOfItemsInOneDirection = from._barShiftMaxNumberOfItemsInOneDirection;
 			_relInnerGapX = from._relInnerGapX;
@@ -141,10 +143,6 @@ namespace Altaxo.Graph.Plot.Groups
 			_relInnerGapY = from._relInnerGapY;
 			_relOuterGapY = from._relOuterGapY;
 
-			_isInitialized = from._isInitialized;
-			_isStepEnabled = from._isStepEnabled;
-			_wasTouchedInThisPrepareStep = from._wasTouchedInThisPrepareStep;
-			_numberOfItems = from._numberOfItems;
 			_logicalClusterSizeX = from._logicalClusterSizeX;
 			_logicalClusterSizeY = from._logicalClusterSizeY;
 			_logicalItemSizeX = from._logicalItemSizeX;
@@ -164,8 +162,6 @@ namespace Altaxo.Graph.Plot.Groups
 			_relInnerGapY = from._relInnerGapY;
 			_relOuterGapY = from._relOuterGapY;
 
-			_isInitialized = from._isInitialized;
-			_numberOfItems = from._numberOfItems;
 			_logicalClusterSizeX = from._logicalClusterSizeX;
 			_logicalClusterSizeY = from._logicalClusterSizeY;
 			_logicalItemSizeX = from._logicalItemSizeX;

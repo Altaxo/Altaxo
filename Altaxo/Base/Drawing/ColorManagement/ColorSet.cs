@@ -33,6 +33,9 @@ namespace Altaxo.Drawing.ColorManagement
 {
 	public class ColorSet : IColorSet
 	{
+		/// <summary>First part of the key that is used during serialization to decide whether a color set was already serialized before.</summary>
+		private static readonly string _serializationRegistrationKey = typeof(ColorSet).FullName + " ";
+
 		private NamedColor[] _innerList;
 		protected readonly string _name;
 
@@ -105,6 +108,9 @@ namespace Altaxo.Drawing.ColorManagement
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (ColorSet)obj;
+
+				info.SetProperty(GetSerializationRegistrationKey(s), "True"); // Register a property to note that this color set is already serialized.
+
 				info.AddValue("Name", s._name);
 
 				info.CreateArray("Colors", s._innerList.Length);
@@ -165,6 +171,18 @@ namespace Altaxo.Drawing.ColorManagement
 			_nameToIndexDictionary = new Lazy<Dictionary<string, int>>(BuildNameToIndexDict);
 			_colorToIndexDictionary = new Lazy<Dictionary<AxoColor, int>>(BuildColorToIndexDictionary);
 			_namecolorToIndexDictionary = new Lazy<Dictionary<ColorNameKey, int>>(BuildNameColorToIndexDictionary);
+		}
+
+		/// <summary>
+		/// Gets a key that is used during serialization to decide whether or not a color set was already serialized.
+		/// Use the returned key to retrieve a string from the properties of the serialization info. If the returned property string
+		/// is null, then the color set needs to be serialized; otherwise, it was already serialized before.
+		/// </summary>
+		/// <param name="set">The color set for which the property key should be evaluated.</param>
+		/// <returns>The property key to be used to retrieve a property from the serialization info.</returns>
+		public static string GetSerializationRegistrationKey(IColorSet set)
+		{
+			return _serializationRegistrationKey + set.Name;
 		}
 
 		private Dictionary<string, int> BuildNameToIndexDict()

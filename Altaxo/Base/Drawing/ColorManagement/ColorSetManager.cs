@@ -24,6 +24,7 @@
 
 using Altaxo.Graph;
 using Altaxo.Main;
+using Altaxo.Serialization.Xml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,9 +67,7 @@ namespace Altaxo.Drawing.ColorManagement
 				Main.Properties.PropertyLevel.Application,
 				() => new ColorSetBag(Enumerable.Empty<Tuple<IColorSet, bool>>()));
 
-			var instance = new ColorSetManager();
-
-			_instance = instance;
+			Instance = new ColorSetManager();
 		}
 
 		private ColorSetManager()
@@ -116,7 +115,30 @@ namespace Altaxo.Drawing.ColorManagement
 		/// <summary>
 		/// Gets the (single) instance of this class.
 		/// </summary>
-		public static ColorSetManager Instance { get { return _instance; } }
+		public static ColorSetManager Instance
+		{
+			get
+			{
+				return _instance;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (null != _instance)
+				{
+					Current.ProjectService.ProjectClosed -= _instance.EhProjectClosed;
+				}
+
+				_instance = value;
+
+				if (null != _instance)
+				{
+					Current.ProjectService.ProjectClosed += _instance.EhProjectClosed;
+				}
+			}
+		}
 
 		public override IColorSet CreateNewList(string name, IEnumerable<NamedColor> symbols)
 		{
@@ -243,10 +265,15 @@ namespace Altaxo.Drawing.ColorManagement
 			return new NamedColor(color, colorName, builtinColorSet);
 		}
 
-		public NamedColor GetDeserializedColorFromLevelAndSetName(AxoColor colorValue, string colorName, string colorSetName)
+		public NamedColor GetDeserializedColorFromLevelAndSetName(Altaxo.Serialization.Xml.IXmlDeserializationInfo deserializationInfo, AxoColor colorValue, string colorName, string colorSetName)
 		{
 			ColorSetManagerEntryValue foundSet;
 			NamedColor foundColor;
+
+			// first have a look in the rename dictionary - maybe our color set has been renamed during deserialization
+			var renameDictionary = deserializationInfo?.GetPropertyOrDefault<Dictionary<string, string>>(DeserializationRenameDictionaryKey);
+			if (null != renameDictionary && renameDictionary.ContainsKey(colorSetName))
+				colorSetName = renameDictionary[colorSetName];
 
 			if (_allLists.TryGetValue(colorSetName, out foundSet)) // if a set with the give name and level was found
 			{

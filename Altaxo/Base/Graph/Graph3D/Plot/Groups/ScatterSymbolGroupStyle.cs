@@ -96,7 +96,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 		public ScatterSymbolGroupStyle(ScatterSymbolGroupStyle from)
 		{
-			this._isInitialized = from._isInitialized;
+			this._isStepEnabled = from._isStepEnabled;
 			this._value = from._value;
 			this._listOfValues = from._listOfValues;
 		}
@@ -122,7 +122,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		public void TransferFrom(IPlotGroupStyle fromb)
 		{
 			ScatterSymbolGroupStyle from = (ScatterSymbolGroupStyle)fromb;
-			this._isInitialized = from._isInitialized;
 			this._value = from._value;
 			this._listOfValues = from._listOfValues;
 		}

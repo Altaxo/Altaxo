@@ -49,11 +49,12 @@ namespace Altaxo.Drawing.DashPatterns
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				SerializeV0((IDashPattern)obj, info);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				return Instance;
+				return DeserializeV0(Instance, info, parent);
 			}
 		}
 

@@ -118,14 +118,17 @@ namespace Altaxo.Serialization.Clipboard
 		/// <returns>The deserialized object, or default(T) if either the object was null or had a type that was not the expected type.</returns>
 		public static T DeserializeObjectFromString<T>(string s)
 		{
-			var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
-			info.BeginReading(s);
-			object o = info.GetValue("Object", null);
-			info.EndReading();
-
-			if ((null != o) && (o is T))
+			object readObject = null;
+			using (var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo())
 			{
-				return (T)o;
+				info.BeginReading(s);
+				readObject = info.GetValue("Object", null);
+				info.EndReading();
+			}
+
+			if ((null != readObject) && (readObject is T))
+			{
+				return (T)readObject;
 			}
 			else
 			{

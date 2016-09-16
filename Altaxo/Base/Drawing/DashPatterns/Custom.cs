@@ -56,6 +56,8 @@ namespace Altaxo.Drawing.DashPatterns
 				foreach (var v in s._customDashPattern)
 					info.AddValue("e", v);
 				info.CommitArray();
+
+				SerializeV0(s, info);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -67,7 +69,7 @@ namespace Altaxo.Drawing.DashPatterns
 					pattern[i] = info.GetDouble("e");
 				info.CloseArray(count);
 
-				return new Custom(offset, pattern);
+				return DeserializeV0(new Custom(offset, pattern), info, parent);
 			}
 		}
 

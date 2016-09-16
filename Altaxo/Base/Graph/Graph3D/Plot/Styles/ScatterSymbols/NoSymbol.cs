@@ -54,11 +54,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.ScatterSymbols
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				SerializeV0((IScatterSymbol)obj, info);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				return Instance;
+				return DeserializeV0(Instance, info, parent);
 			}
 		}
 

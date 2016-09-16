@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
 		public LineStyleGroupStyle(LineStyleGroupStyle from)
 		{
-			this._isInitialized = from._isInitialized;
+			this._isStepEnabled = from._isStepEnabled;
 			this._value = from._value;
 		}
 

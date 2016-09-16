@@ -93,40 +93,42 @@ namespace Altaxo.Main.Commands
 		public static void OpenWorksheetOrGraph(string filename)
 		{
 			object deserObject;
-			Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info;
+
 			using (System.IO.Stream myStream = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read))
 			{
-				info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
-				info.BeginReading(myStream);
-				deserObject = info.GetValue("Table", null);
-				info.EndReading();
-				myStream.Close();
+				using (var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo())
+				{
+					info.BeginReading(myStream);
+					deserObject = info.GetValue("Table", null);
+					info.EndReading();
+					myStream.Close();
+
+					if (deserObject is IProjectItem)
+					{
+						Current.Project.AddItemWithThisOrModifiedName((IProjectItem)deserObject);
+						info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
+						Current.ProjectService.OpenOrCreateViewContentForDocument((IProjectItem)deserObject);
+					}
+					else if (deserObject is Altaxo.Worksheet.TablePlusLayout)
+					{
+						Altaxo.Worksheet.TablePlusLayout tableAndLayout = deserObject as Altaxo.Worksheet.TablePlusLayout;
+						var table = tableAndLayout.Table;
+
+						Current.Project.AddItemWithThisOrModifiedName(table);
+
+						if (tableAndLayout.Layout != null)
+							Current.Project.TableLayouts.Add(tableAndLayout.Layout);
+
+						tableAndLayout.Layout.DataTable = table; // this is the table for the layout now
+
+						info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
+
+						Current.ProjectService.CreateNewWorksheet(table, tableAndLayout.Layout);
+					}
+
+					info.AnnounceDeserializationEnd(Current.Project, true); // final deserialization end
+				}
 			}
-
-			if (deserObject is IProjectItem)
-			{
-				Current.Project.AddItemWithThisOrModifiedName((IProjectItem)deserObject);
-				info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
-				Current.ProjectService.OpenOrCreateViewContentForDocument((IProjectItem)deserObject);
-			}
-			else if (deserObject is Altaxo.Worksheet.TablePlusLayout)
-			{
-				Altaxo.Worksheet.TablePlusLayout tableAndLayout = deserObject as Altaxo.Worksheet.TablePlusLayout;
-				var table = tableAndLayout.Table;
-
-				Current.Project.AddItemWithThisOrModifiedName(table);
-
-				if (tableAndLayout.Layout != null)
-					Current.Project.TableLayouts.Add(tableAndLayout.Layout);
-
-				tableAndLayout.Layout.DataTable = table; // this is the table for the layout now
-
-				info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
-
-				Current.ProjectService.CreateNewWorksheet(table, tableAndLayout.Layout);
-			}
-
-			info.AnnounceDeserializationEnd(Current.Project, true); // final deserialization end
 		}
 
 		public override void Run()

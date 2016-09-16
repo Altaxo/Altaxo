@@ -103,5 +103,63 @@ namespace Altaxo.Drawing
 			else
 				return default(TList);
 		}
+
+		public TItem GetDeserializedInstanceFromInstanceAndSetName(Altaxo.Serialization.Xml.IXmlDeserializationInfo deserializationInfo, TItem instanceTemplate, string setName)
+		{
+			// first have a look in the rename dictionary - maybe our color set has been renamed during deserialization
+			var renameDictionary = deserializationInfo?.GetPropertyOrDefault<Dictionary<string, string>>(DeserializationRenameDictionaryKey);
+			if (null != renameDictionary && renameDictionary.ContainsKey(setName))
+				setName = renameDictionary[setName];
+
+			TListManagerEntry foundSet;
+
+			if (_allLists.TryGetValue(setName, out foundSet)) // if a set with the give name and level was found
+			{
+				int idx;
+				if (0 <= (idx = foundSet.List.IndexOf(instanceTemplate)))
+					return foundSet.List[idx]; // then return this found instance
+
+				// set was found, but instance is not therein -> return an instance without set (or use the first set where the instance could be found
+				TList cset;
+				TItem citem;
+				if (TryFindListContaining(instanceTemplate, out cset, out citem))
+					return citem;
+			}
+			else // the list with the given name was not found by name
+			{
+				TList cset;
+				TItem citem;
+				if (TryFindListContaining(instanceTemplate, out cset, out citem))
+					return citem;
+			}
+
+			// the item was found in no list - thus return the item template
+			return instanceTemplate;
+		}
+
+		public bool TryFindListContaining(TItem item, out TList list, out TItem foundItem)
+		{
+			int idx;
+
+			foreach (Main.ItemDefinitionLevel level in Enum.GetValues(typeof(Main.ItemDefinitionLevel)))
+			{
+				foreach (var entry in _allLists)
+				{
+					if (entry.Value.Level != level)
+						continue;
+
+					if (0 <= (idx = entry.Value.List.IndexOf(item)))
+					{
+						list = entry.Value.List;
+						foundItem = list[idx];
+						return true;
+					}
+				}
+			}
+
+			list = default(TList);
+			foundItem = default(TItem);
+			return false;
+		}
 	}
 }

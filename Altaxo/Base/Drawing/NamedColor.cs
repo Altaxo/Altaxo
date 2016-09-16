@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing.ColorManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,14 +107,14 @@ namespace Altaxo.Drawing
 					// note: the deserialization of the built-in color set is responsible for creating a temporary project level color set,
 					// if it is an older version of a color set
 					var colorSet = (ColorManagement.IColorSet)info.GetValue("Set", null);
-					ColorManagement.ColorSetManager.Instance.TryRegisterList(colorSet, Main.ItemDefinitionLevel.Project, out colorSet);
+					ColorManagement.ColorSetManager.Instance.TryRegisterList(info, colorSet, Main.ItemDefinitionLevel.Project, out colorSet);
 					return ColorManagement.ColorSetManager.Instance.GetDeserializedColorFromBuiltinSet(colorValue, colorName, colorSet);
 				}
 				else if (info.CurrentElementName == "SetName")
 				{
 					string colorSetName = info.GetString("SetName");
 					var colorSetLevel = (Altaxo.Main.ItemDefinitionLevel)info.GetEnum("SetLevel", typeof(Altaxo.Main.ItemDefinitionLevel));
-					return ColorManagement.ColorSetManager.Instance.GetDeserializedColorFromLevelAndSetName(colorValue, colorName, colorSetName);
+					return ColorManagement.ColorSetManager.Instance.GetDeserializedColorFromLevelAndSetName(info, colorValue, colorName, colorSetName);
 				}
 				else // nothing of both, thus color belongs to nothing or to the standard color set
 				{
@@ -133,7 +134,11 @@ namespace Altaxo.Drawing
 
 				if (null != s._parent)
 				{
-					info.AddValue("SetName", s._parent.Name);
+					var colorSetName = s._parent.Name;
+					if (!object.ReferenceEquals(NamedColors.Instance, s._parent) && null == info.GetProperty(ColorSet.GetSerializationRegistrationKey(s._parent)))
+						info.AddValue("Set", s._parent);
+					else
+						info.AddValue("SetName", s._parent.Name);
 				}
 			}
 
@@ -142,10 +147,17 @@ namespace Altaxo.Drawing
 				var colorValue = AxoColor.FromInvariantString(info.GetString("Color"));
 				var colorName = info.GetString("Name");
 
-				if (info.CurrentElementName == "SetName")
+				if (info.CurrentElementName == "Set")
+				{
+					var colorSet = (Drawing.ColorManagement.IColorSet)info.GetValue("ColorSet", parent);
+					IColorSet registeredColorSet;
+					ColorSetManager.Instance.TryRegisterList(info, colorSet, Main.ItemDefinitionLevel.Project, out registeredColorSet);
+					return ColorManagement.ColorSetManager.Instance.GetDeserializedColorFromLevelAndSetName(info, colorValue, colorName, colorSet.Name); // Note: here we use the name of the original color set, not of the registered color set. Because the original name is translated during registering into the registered name
+				}
+				else if (info.CurrentElementName == "SetName")
 				{
 					string colorSetName = info.GetString("SetName");
-					return ColorManagement.ColorSetManager.Instance.GetDeserializedColorFromLevelAndSetName(colorValue, colorName, colorSetName);
+					return ColorManagement.ColorSetManager.Instance.GetDeserializedColorFromLevelAndSetName(info, colorValue, colorName, colorSetName);
 				}
 				else // nothing of both, thus color belongs to nothing or to the standard color set
 				{
