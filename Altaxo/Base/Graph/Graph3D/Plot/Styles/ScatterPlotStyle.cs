@@ -141,7 +141,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		#endregion Serialization
 
-		public bool CopyFrom(object obj)
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -174,6 +174,28 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 				suspendToken.Resume(eventFiring);
 			}
+		}
+
+		/// <summary>
+		/// Copies the member variables from another instance.
+		/// </summary>
+		/// <param name="obj">Another instance to copy the data from.</param>
+		/// <returns>True if data was copied, otherwise false.</returns>
+		public bool CopyFrom(object obj)
+		{
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new ScatterPlotStyle(this);
+		}
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			return new ScatterPlotStyle(this);
 		}
 
 		public ScatterPlotStyle(ScatterPlotStyle from)
@@ -210,11 +232,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			this._symbolSize = symbolSize;
 
 			this._skipFreq = 1;
-		}
-
-		public object Clone()
-		{
-			return new ScatterPlotStyle(this);
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()

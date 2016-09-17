@@ -25,12 +25,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
 	using Altaxo.Data;
 	using Altaxo.Main;
+	using Collections;
 	using Data;
 	using Geometry;
 	using Graph.Plot.Groups;
@@ -109,7 +111,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public G3DPlotStyleCollection(G3DPlotStyleCollection from)
 		{
-			CopyFrom(from);
+			CopyFrom(from, true);
 		}
 
 		public void CopyFrom(G3DPlotStyleCollection from)
@@ -129,7 +131,54 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		public bool CopyFrom(object obj)
+		/// <summary>
+		/// Copies all styles 1:1 from a template collection, but try to reuse the data columns from
+		/// the old styles collection. This function is used if the user has selected the <see cref="PlotGroupStrictness.Strict"/>.
+		/// </summary>
+		/// <param name="from">The template style collection to copy from.</param>
+		/// <returns>On return, this collection has exactly the same styles as the template collection, in
+		/// exactly the same order and with the same properties, except for the data of the styles. The style data
+		/// are tried to reuse from the old styles. If this is not possible, the data references will be left empty.</returns>
+		public bool CopyFromTemplateCollection(G3DPlotStyleCollection from)
+		{
+			if (object.ReferenceEquals(this, from))
+				return true;
+
+			using (var suspendToken = SuspendGetToken())
+			{
+				var oldInnerList = this._innerList;
+
+				this._innerList = new List<IG3DPlotStyle>();
+
+				for (int i = 0; i < from._innerList.Count; ++i)
+				{
+					var fromStyleType = from[i].GetType();
+
+					// try to find the same style in the old list, and use the data from this style
+					int foundIdx = oldInnerList.IndexOfFirst(item => item.GetType() == fromStyleType);
+
+					IG3DPlotStyle clonedStyle;
+
+					if (foundIdx >= 0) // if old style list has such an item, we clone that item, and then CopyFrom (but without data)
+					{
+						clonedStyle = (IG3DPlotStyle)oldInnerList[foundIdx].Clone(true); // First, clone _with_ the old data because we want to reuse them
+						clonedStyle.CopyFrom(from[i], false); // now copy the properties from the template style, but _without_ the data
+						oldInnerList.RemoveAt(foundIdx); // remove the used style now
+					}
+					else // an old style of the same type was not found
+					{
+						clonedStyle = (IG3DPlotStyle)from[i].Clone(false); // clone the style without data
+					}
+
+					Add(clonedStyle);
+				}
+				suspendToken.Resume();
+			}
+
+			return true;
+		}
+
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -140,6 +189,22 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				return true;
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// Copies the member variables from another instance.
+		/// </summary>
+		/// <param name="obj">Another instance to copy the data from.</param>
+		/// <returns>True if data was copied, otherwise false.</returns>
+		public bool CopyFrom(object obj)
+		{
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new G3DPlotStyleCollection(this);
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -158,22 +223,26 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			if (strictness == PlotGroupStrictness.Strict)
 			{
-				CopyFrom(from);
+				CopyFromTemplateCollection(from); // take the whole style collection as is from the template, but try to reuse the additionally needed data columns from the old style
 			}
 			else if (strictness == PlotGroupStrictness.Exact)
 			{
 				// note one sub style in the 'from' collection can update only one item in the 'this' collection
 				using (var suspendToken = SuspendGetToken())
 				{
-					int myidx = 0;
-					foreach (IG3DPlotStyle style in from)
+					var indicesFrom = new SortedSet<int>(System.Linq.Enumerable.Range(0, from.Count));
+
+					for (int i = 0; i < this.Count; ++i)
 					{
-						for (int i = myidx; i < this.Count; i++)
+						var thisStyleType = this[i].GetType();
+
+						// search in from for a style with the same name
+						foreach (var fromIndex in indicesFrom)
 						{
-							if (this[i].GetType() == style.GetType())
+							if (thisStyleType == from[fromIndex].GetType())
 							{
-								Replace((IG3DPlotStyle)from[i].Clone(), i, false);
-								myidx = i + 1;
+								this[i].CopyFrom(from[fromIndex], false);
+								indicesFrom.Remove(fromIndex); // this from style was used, thus remove it
 								break;
 							}
 						}

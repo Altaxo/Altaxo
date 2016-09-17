@@ -172,17 +172,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// Copy constructor.
 		/// </summary>
 		/// <param name="from">Other instance to copy the data from.</param>
-		public ColumnDrivenSymbolSizePlotStyle(ColumnDrivenSymbolSizePlotStyle from)
+		/// <param name="copyWithDataReferences">If true, data references are copyied from the template style to this style. If false, the data references of this style are left as they are.</param>
+		public ColumnDrivenSymbolSizePlotStyle(ColumnDrivenSymbolSizePlotStyle from, bool copyWithDataReferences)
 		{
-			CopyFrom(from);
+			CopyFrom(from, copyWithDataReferences);
 		}
 
 		/// <summary>
 		/// Copies the member variables from another instance.
 		/// </summary>
 		/// <param name="obj">Another instance to copy the data from.</param>
+		/// <param name="copyWithDataReferences">If true, data references are copyied from the template style to this style. If false, the data references of this style are left as they are.</param>
 		/// <returns>True if data was copied, otherwise false.</returns>
-		public bool CopyFrom(object obj)
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -192,7 +194,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (null != from)
 			{
 				InternalSetScale(null == from._scale ? null : (NumericalScale)from._scale.Clone());
-				InternalSetDataColumnProxy(null == from._dataColumnProxy ? null : (INumericColumnProxy)from._dataColumnProxy.Clone());
 
 				_symbolSizeAt0 = from._symbolSizeAt0;
 				_symbolSizeAt1 = from._symbolSizeAt1;
@@ -201,11 +202,35 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_symbolSizeInvalid = from._symbolSizeInvalid;
 
 				_numberOfSteps = from._numberOfSteps;
-				//_parent = from._parent;
+
+				if (copyWithDataReferences)
+					InternalSetDataColumnProxy(null == from._dataColumnProxy ? null : (INumericColumnProxy)from._dataColumnProxy.Clone());
 
 				copied = true;
 			}
 			return copied;
+		}
+
+		/// <summary>
+		/// Copies the member variables from another instance.
+		/// </summary>
+		/// <param name="obj">Another instance to copy the data from.</param>
+		/// <returns>True if data was copied, otherwise false.</returns>
+		public bool CopyFrom(object obj)
+		{
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new ColumnDrivenSymbolSizePlotStyle(this, copyWithDataReferences);
+		}
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			return new ColumnDrivenSymbolSizePlotStyle(this, true);
 		}
 
 		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -539,11 +564,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (_doesScaleNeedsDataUpdate)
 					InternalUpdateScaleWithNewData();
 			}
-		}
-
-		public object Clone()
-		{
-			return new ColumnDrivenSymbolSizePlotStyle(this);
 		}
 
 		/// <summary>

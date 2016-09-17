@@ -259,12 +259,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			this._strokePen = new PenX3D(color, penWidth).WithLineEndCap(new ContourArrow05());
 		}
 
-		public VectorCartesicPlotStyle(VectorCartesicPlotStyle from)
+		public VectorCartesicPlotStyle(VectorCartesicPlotStyle from, bool copyWithDataReferences)
 		{
-			CopyFrom(from);
+			CopyFrom(from, copyWithDataReferences);
 		}
 
-		public bool CopyFrom(object obj)
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -272,9 +272,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (null != from)
 			{
 				this._meaningOfValues = from._meaningOfValues;
-				ChildCloneToMember(ref _columnX, from._columnX);
-				ChildCloneToMember(ref _columnY, from._columnY);
-				ChildCloneToMember(ref _columnZ, from._columnZ);
 				this._independentSkipFrequency = from._independentSkipFrequency;
 				this._skipFrequency = from._skipFrequency;
 				this._useManualVectorLength = from._useManualVectorLength;
@@ -306,10 +303,39 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._cachedLogicalShiftX = from._cachedLogicalShiftX;
 				this._cachedLogicalShiftY = from._cachedLogicalShiftY;
 
+				if (copyWithDataReferences)
+				{
+					ChildCloneToMember(ref _columnX, from._columnX);
+					ChildCloneToMember(ref _columnY, from._columnY);
+					ChildCloneToMember(ref _columnZ, from._columnZ);
+				}
+
 				EhSelfChanged();
 				return true;
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// Copies the member variables from another instance.
+		/// </summary>
+		/// <param name="obj">Another instance to copy the data from.</param>
+		/// <returns>True if data was copied, otherwise false.</returns>
+		public bool CopyFrom(object obj)
+		{
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new VectorCartesicPlotStyle(this, copyWithDataReferences);
+		}
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			return new VectorCartesicPlotStyle(this, true);
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -322,16 +348,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			if (null != _columnZ)
 				yield return new Main.DocumentNodeAndName(_columnZ, nameof(ColumnZ));
-		}
-
-		public VectorCartesicPlotStyle Clone()
-		{
-			return new VectorCartesicPlotStyle(this);
-		}
-
-		object ICloneable.Clone()
-		{
-			return new VectorCartesicPlotStyle(this);
 		}
 
 		#region Properties

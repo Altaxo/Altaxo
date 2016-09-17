@@ -262,12 +262,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			this._strokePen = new PenX3D(color, penWidth).WithLineEndCap(new ContourDisc10Min());
 		}
 
-		public ErrorBarPlotStyle(ErrorBarPlotStyle from)
+		public ErrorBarPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences)
 		{
-			CopyFrom(from);
+			CopyFrom(from, copyWithDataReferences);
 		}
 
-		public bool CopyFrom(object obj)
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -276,9 +276,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			{
 				this._meaningOfValues = from._meaningOfValues;
 				this._useCommonErrorColumn = from._useCommonErrorColumn;
-				ChildCloneToMember(ref _commonErrorColumn, from._commonErrorColumn);
-				ChildCloneToMember(ref _positiveErrorColumn, from._positiveErrorColumn);
-				ChildCloneToMember(ref _negativeErrorColumn, from._negativeErrorColumn);
+
+				if (copyWithDataReferences)
+				{
+					ChildCloneToMember(ref _commonErrorColumn, from._commonErrorColumn);
+					ChildCloneToMember(ref _positiveErrorColumn, from._positiveErrorColumn);
+					ChildCloneToMember(ref _negativeErrorColumn, from._negativeErrorColumn);
+				}
 
 				this._independentSkipFrequency = from._independentSkipFrequency;
 				this._skipFrequency = from._skipFrequency;
@@ -312,6 +316,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			return false;
 		}
 
+		/// <summary>
+		/// Copies the member variables from another instance.
+		/// </summary>
+		/// <param name="obj">Another instance to copy the data from.</param>
+		/// <returns>True if data was copied, otherwise false.</returns>
+		public bool CopyFrom(object obj)
+		{
+			return CopyFrom(obj, true);
+		}
+
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _commonErrorColumn)
@@ -325,6 +339,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		}
 
 		public abstract object Clone();
+
+		public abstract object Clone(bool copyWithDataReferences);
 
 		#region Properties
 
@@ -1107,13 +1123,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 		}
 
-		public ErrorBarXPlotStyle(ErrorBarPlotStyle from) : base(from)
+		public ErrorBarXPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences) : base(from, copyWithDataReferences)
 		{
 		}
 
+		/// <inheritdoc/>
 		public override object Clone()
 		{
-			return new ErrorBarXPlotStyle(this);
+			return new ErrorBarXPlotStyle(this, true);
+		}
+
+		/// <inheritdoc/>
+		public override object Clone(bool copyWithDataReferences)
+		{
+			return new ErrorBarXPlotStyle(this, copyWithDataReferences);
 		}
 	}
 
@@ -1157,13 +1180,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 		}
 
-		public ErrorBarYPlotStyle(ErrorBarPlotStyle from) : base(from)
+		public ErrorBarYPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences) : base(from, copyWithDataReferences)
 		{
 		}
 
+		/// <inheritdoc/>
 		public override object Clone()
 		{
-			return new ErrorBarYPlotStyle(this);
+			return new ErrorBarYPlotStyle(this, true);
+		}
+
+		/// <inheritdoc/>
+		public override object Clone(bool copyWithDataReferences)
+		{
+			return new ErrorBarYPlotStyle(this, copyWithDataReferences);
 		}
 	}
 
@@ -1207,13 +1237,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 		}
 
-		public ErrorBarZPlotStyle(ErrorBarPlotStyle from) : base(from)
+		public ErrorBarZPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences) : base(from, copyWithDataReferences)
 		{
 		}
 
+		/// <inheritdoc/>
 		public override object Clone()
 		{
-			return new ErrorBarZPlotStyle(this);
+			return new ErrorBarZPlotStyle(this, true);
+		}
+
+		/// <inheritdoc/>
+		public override object Clone(bool copyWithDataReferences)
+		{
+			return new ErrorBarZPlotStyle(this, copyWithDataReferences);
 		}
 	}
 

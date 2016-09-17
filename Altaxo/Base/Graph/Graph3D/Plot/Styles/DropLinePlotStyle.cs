@@ -206,7 +206,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		#endregion Serialization
 
-		public bool CopyFrom(object obj)
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -256,6 +256,28 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
+		/// <summary>
+		/// Copies the member variables from another instance.
+		/// </summary>
+		/// <param name="obj">Another instance to copy the data from.</param>
+		/// <returns>True if data was copied, otherwise false.</returns>
+		public bool CopyFrom(object obj)
+		{
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new DropLinePlotStyle(this);
+		}
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			return new DropLinePlotStyle(this);
+		}
+
 		public DropLinePlotStyle(DropLinePlotStyle from)
 		{
 			CopyFrom(from, Main.EventFiring.Suppressed);
@@ -284,11 +306,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			_lineWidth1Factor = 0;
 			_lineWidth2Offset = penWidth;
 			_lineWidth2Factor = 0;
-		}
-
-		public object Clone()
-		{
-			return new DropLinePlotStyle(this);
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()

@@ -142,17 +142,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// Copy constructor.
 		/// </summary>
 		/// <param name="from">Other instance to copy the data from.</param>
-		public ColumnDrivenColorPlotStyle(ColumnDrivenColorPlotStyle from)
+		/// <param name="copyWithDataReferences">If true, data references are copyied from the template style to this style. If false, the data references of this style are left as they are.</param>
+		public ColumnDrivenColorPlotStyle(ColumnDrivenColorPlotStyle from, bool copyWithDataReferences)
 		{
-			CopyFrom(from);
+			CopyFrom(from, copyWithDataReferences);
 		}
 
-		/// <summary>
-		/// Copies the member variables from another instance.
-		/// </summary>
-		/// <param name="obj">Another instance to copy the data from.</param>
-		/// <returns>True if data was copied, otherwise false.</returns>
-		public bool CopyFrom(object obj)
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -165,11 +161,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					_appliesToFill = from._appliesToFill;
 					_appliesToStroke = from._appliesToStroke;
 					_appliesToBackground = from._appliesToBackground;
-
 					InternalSetScale(null == from._scale ? null : (NumericalScale)from._scale.Clone());
-					InternalSetDataColumnProxy(null == from._dataColumnProxy ? null : (INumericColumnProxy)from._dataColumnProxy.Clone());
-
 					_colorProvider = from._colorProvider;
+
+					if (copyWithDataReferences)
+					{
+						InternalSetDataColumnProxy(null == from._dataColumnProxy ? null : (INumericColumnProxy)from._dataColumnProxy.Clone());
+					}
 
 					//_parent = from._parent;
 
@@ -179,6 +177,28 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				return true;
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// Copies the member variables from another instance.
+		/// </summary>
+		/// <param name="obj">Another instance to copy the data from.</param>
+		/// <returns>True if data was copied, otherwise false.</returns>
+		public bool CopyFrom(object obj)
+		{
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new ColumnDrivenColorPlotStyle(this, copyWithDataReferences);
+		}
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			return new ColumnDrivenColorPlotStyle(this, true);
 		}
 
 		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -421,11 +441,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (_doesScaleNeedsDataUpdate)
 					InternalUpdateScaleWithNewData();
 			}
-		}
-
-		public object Clone()
-		{
-			return new ColumnDrivenColorPlotStyle(this);
 		}
 
 		/// <summary>

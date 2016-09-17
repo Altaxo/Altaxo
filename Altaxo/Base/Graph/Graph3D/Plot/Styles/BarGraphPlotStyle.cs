@@ -196,7 +196,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		#endregion Serialization
 
-		public virtual bool CopyFrom(object obj)
+		public virtual bool CopyFrom(object obj, bool copyWithDataReferences)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -231,6 +231,28 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			return false;
 		}
 
+		/// <summary>
+		/// Copies the member variables from another instance.
+		/// </summary>
+		/// <param name="obj">Another instance to copy the data from.</param>
+		/// <returns>True if data was copied, otherwise false.</returns>
+		public bool CopyFrom(object obj)
+		{
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new BarGraphPlotStyle(this, copyWithDataReferences);
+		}
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			return new BarGraphPlotStyle(this, true);
+		}
+
 		protected BarGraphPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
 		}
@@ -241,19 +263,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			_pen = new PenX3D(color, 1);
 		}
 
-		public BarGraphPlotStyle(BarGraphPlotStyle from)
+		public BarGraphPlotStyle(BarGraphPlotStyle from, bool copyWithDataReferences)
 		{
-			CopyFrom(from);
-		}
-
-		public BarGraphPlotStyle Clone()
-		{
-			return new BarGraphPlotStyle(this);
-		}
-
-		object ICloneable.Clone()
-		{
-			return new BarGraphPlotStyle(this);
+			CopyFrom(from, copyWithDataReferences);
 		}
 
 		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()

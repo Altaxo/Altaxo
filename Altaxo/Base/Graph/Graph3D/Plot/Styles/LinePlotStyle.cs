@@ -167,7 +167,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			_connectionStyle = new LineConnectionStyles.StraightConnection();
 		}
 
-		public bool CopyFrom(object obj)
+		public LinePlotStyle(LinePlotStyle from)
+		{
+			CopyFrom(from, Main.EventFiring.Suppressed);
+		}
+
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -207,19 +212,31 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		public LinePlotStyle(LinePlotStyle from)
+		/// <summary>
+		/// Copies the member variables from another instance.
+		/// </summary>
+		/// <param name="obj">Another instance to copy the data from.</param>
+		/// <returns>True if data was copied, otherwise false.</returns>
+		public bool CopyFrom(object obj)
 		{
-			CopyFrom(from, Main.EventFiring.Suppressed);
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new LinePlotStyle(this);
+		}
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			return new LinePlotStyle(this);
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			yield break;
-		}
-
-		public object Clone()
-		{
-			return new LinePlotStyle(this);
 		}
 
 		#endregion Construction and copying

@@ -218,7 +218,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			this._backgroundColorLinkage = ColorLinkage.Independent;
 		}
 
-		public bool CopyFrom(object obj)
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -228,7 +228,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				this.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)from._labelColumnProxy.Clone();
 				this._attachedPlane = from._attachedPlane;
 				this._independentSkipFrequency = from._independentSkipFrequency;
 				this._skipFrequency = from._skipFrequency;
@@ -258,15 +257,40 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._cachedLogicalShiftY = from._cachedLogicalShiftY;
 				this._cachedLogicalShiftZ = from._cachedLogicalShiftZ;
 
+				if (copyWithDataReferences)
+					this.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)from._labelColumnProxy.Clone();
+
 				EhSelfChanged(EventArgs.Empty);
 				suspendToken.Resume();
 			}
 			return true;
 		}
 
-		public LabelPlotStyle(LabelPlotStyle from)
+		/// <summary>
+		/// Copies the member variables from another instance.
+		/// </summary>
+		/// <param name="obj">Another instance to copy the data from.</param>
+		/// <returns>True if data was copied, otherwise false.</returns>
+		public bool CopyFrom(object obj)
 		{
-			CopyFrom(from);
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new LabelPlotStyle(this, copyWithDataReferences);
+		}
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			return new LabelPlotStyle(this, true);
+		}
+
+		public LabelPlotStyle(LabelPlotStyle from, bool copyWithDataReferences)
+		{
+			CopyFrom(from, copyWithDataReferences);
 		}
 
 		public LabelPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
@@ -864,11 +888,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <param name="layer">The parent layer.</param>
 		public void PrepareScales(Graph3D.IPlotArea layer)
 		{
-		}
-
-		public object Clone()
-		{
-			return new LabelPlotStyle(this);
 		}
 
 		#region I3DPlotStyle Members
