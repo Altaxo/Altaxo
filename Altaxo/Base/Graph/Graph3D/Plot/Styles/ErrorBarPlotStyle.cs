@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			AbsoluteValue = 2
 		}
 
-		protected bool _useCommonErrorColumn;
+		protected bool _useCommonErrorColumn = true;
 
 		private INumericColumnProxy _commonErrorColumn;
 		private INumericColumnProxy _positiveErrorColumn;
@@ -76,12 +76,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		protected bool _independentColor;
 
 		/// <summary>Pen used to draw the error bar.</summary>
-		private PenX3D _strokePen;
+		private PenX3D _pen;
 
 		/// <summary>
 		/// true if the symbol size is independent, i.e. is not published nor updated by a group style.
 		/// </summary>
 		private bool _independentSymbolSize;
+
+		/// <summary>
+		/// True if the dash pattern of the error bar line is independent on the dash pattern of the line style.
+		/// </summary>
+		private bool _independentDashPattern = true;
 
 		/// <summary>Controls the length of the end bar.</summary>
 		private double _symbolSize;
@@ -168,8 +173,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
 				info.AddValue("SymbolSize", s._symbolSize);
 
-				info.AddValue("Pen", s._strokePen);
+				info.AddValue("Pen", s._pen);
 				info.AddValue("IndependentColor", s._independentColor);
+				info.AddValue("IndependentDashPattern", s._independentDashPattern);
 
 				info.AddValue("LineWidth1Offset", s._lineWidth1Offset);
 				info.AddValue("LineWidth1Factor", s._lineWidth1Factor);
@@ -214,6 +220,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 				s.Pen = (PenX3D)info.GetValue("Pen", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
+				s._independentDashPattern = info.GetBoolean("IndependentDashPattern");
 
 				s._lineWidth1Offset = info.GetDouble("LineWidth1Offset");
 				s._lineWidth1Factor = info.GetDouble("LineWidth1Factor");
@@ -259,7 +266,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			_lineWidth2Offset = penWidth;
 			_lineWidth2Factor = 0;
 
-			this._strokePen = new PenX3D(color, penWidth).WithLineEndCap(new ContourDisc10Min());
+			this._pen = new PenX3D(color, penWidth).WithLineEndCap(new ContourDisc10Min());
 		}
 
 		public ErrorBarPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences)
@@ -291,8 +298,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._independentSymbolSize = from._independentSymbolSize;
 				this._symbolSize = from._symbolSize;
 
-				_strokePen = from._strokePen;
+				_pen = from._pen;
 				this._independentColor = from._independentColor;
+				this._independentDashPattern = from._independentDashPattern;
 
 				_lineWidth1Offset = from._lineWidth1Offset;
 				_lineWidth1Factor = from._lineWidth1Factor;
@@ -585,6 +593,22 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		}
 
 		/// <summary>
+		/// True if the dash pattern of the error bar line is independent on the dash pattern of the line style.
+		/// </summary>
+		public bool IndependentDashPattern
+		{
+			get { return _independentDashPattern; }
+			set
+			{
+				if (!(_independentDashPattern == value))
+				{
+					_independentDashPattern = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
 		/// True when we don't want to shift the position of the items, for instance due to the bar graph plot group.
 		/// </summary>
 		public bool IndependentOnShiftingGroupStyles
@@ -611,11 +635,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>Pen used to draw the error bar.</summary>
 		public PenX3D Pen
 		{
-			get { return _strokePen; }
+			get { return _pen; }
 			set
 			{
-				var oldValue = _strokePen;
-				_strokePen = value;
+				var oldValue = _pen;
+				_pen = value;
 				if (!object.ReferenceEquals(oldValue, value))
 				{
 					EhSelfChanged(EventArgs.Empty);
@@ -800,7 +824,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
 		{
 			if (!_independentColor)
-				Graph.Plot.Groups.ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._strokePen.Color; });
+				Graph.Plot.Groups.ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._pen.Color; });
 
 			if (!_independentSkipFrequency)
 				SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SkipFrequency; });
@@ -816,7 +840,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			// color
 			if (!_independentColor)
 			{
-				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { _strokePen = _strokePen.WithColor(c); });
+				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { _pen = _pen.WithColor(c); });
 
 				// but if there is a color evaluation function, then use that function with higher priority
 				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, System.Drawing.Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
@@ -838,6 +862,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			else
 			{
 				_cachedSymbolSizeForIndexFunction = null;
+			}
+
+			// dash style
+			if (!_independentDashPattern)
+			{
+				DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern dashPattern) { this._pen = this._pen.WithDashPattern(dashPattern); });
 			}
 
 			// Shift the items ?
@@ -873,7 +903,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (posErrCol == null && negErrCol == null)
 				return; // nothing to do if both error columns are null
 
-			var strokePen = _strokePen;
+			var strokePen = _pen;
 
 			foreach (PlotRange r in rangeList)
 			{

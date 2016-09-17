@@ -9,6 +9,7 @@
 						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
 						  xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.D3D"
 						  xmlns:axogddl="clr-namespace:Altaxo.Gui.Drawing.D3D.LineCaps"
+						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Drawing.D3D"
              mc:Ignorable="d"
 						 Grid.IsSharedSizeScope="True">
 	<UserControl.Resources>
@@ -116,35 +117,38 @@
 				<CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="0" Content="Independent color :" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged" />
 				<axogdd:MaterialComboBox x:Name="_guiPenColor" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4" />
 
-				<CheckBox x:Name="_guiIndependentSymbolSize" Content="Independent symbol size :"  Grid.Row="2" Grid.Column="0" />
-				<axogcd:LineCapSizeComboBox x:Name="_guiSymbolSize" Grid.Row="2" Grid.Column="2" />
+				<CheckBox x:Name="_chkIndependentDashPattern" Grid.Row="2" Grid.Column="0"  Content="Independent dash pattern :" Checked="EhIndependentDashPatternChanged" Unchecked="EhIndependentDashPatternChanged" />
+				<axog3m:DashStyleComboBox x:Name="_guiDashPattern" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" />
 
-				<Label Content="Line width 1 = " Grid.Row="4" Grid.Column="0" />
-				<axogcd:LineThicknessComboBox x:Name="_guiLineWidth1Offset" Grid.Row="4" Grid.Column="2" />
-				<Label Content="+" Grid.Row="4" Grid.Column="3" />
-				<axogc:QuantityWithUnitTextBox x:Name="_guiLineWidth1Factor"  Grid.Row="4" Grid.Column="4" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-				<Label Content="* symbolSize" Grid.Row="4" Grid.Column="5" />
+				<CheckBox x:Name="_guiIndependentSymbolSize" Content="Independent symbol size :"  Grid.Row="4" Grid.Column="0" />
+				<axogcd:LineCapSizeComboBox x:Name="_guiSymbolSize" Grid.Row="4" Grid.Column="2" />
 
-				<Label Content="Line width 2 = " Grid.Row="6" Grid.Column="0" />
-				<axogcd:LineThicknessComboBox x:Name="_guiLineWidth2Offset" Grid.Row="6" Grid.Column="2" />
+				<Label Content="Line width 1 = " Grid.Row="6" Grid.Column="0" />
+				<axogcd:LineThicknessComboBox x:Name="_guiLineWidth1Offset" Grid.Row="6" Grid.Column="2" />
 				<Label Content="+" Grid.Row="6" Grid.Column="3" />
-				<axogc:QuantityWithUnitTextBox x:Name="_guiLineWidth2Factor"  Grid.Row="6" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+				<axogc:QuantityWithUnitTextBox x:Name="_guiLineWidth1Factor"  Grid.Row="6" Grid.Column="4" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
 				<Label Content="* symbolSize" Grid.Row="6" Grid.Column="5" />
 
-				<Label Content="End cap :" Grid.Row="8" Grid.Column="0" />
-				<axogddl:LineCapComboBox x:Name="_guiLineEndCap" Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="4" />
+				<Label Content="Line width 2 = " Grid.Row="8" Grid.Column="0" />
+				<axogcd:LineThicknessComboBox x:Name="_guiLineWidth2Offset" Grid.Row="8" Grid.Column="2" />
+				<Label Content="+" Grid.Row="8" Grid.Column="3" />
+				<axogc:QuantityWithUnitTextBox x:Name="_guiLineWidth2Factor"  Grid.Row="8" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+				<Label Content="* symbolSize" Grid.Row="8" Grid.Column="5" />
 
-				<Label Content="End cap size = " Grid.Row="10" Grid.Column="0" />
-				<axogcd:LineThicknessComboBox x:Name="_guiEndCapSizeOffset" Grid.Row="10" Grid.Column="2" />
-				<Label Content="+" Grid.Row="10" Grid.Column="3" />
-				<axogc:QuantityWithUnitTextBox x:Name="_guiEndCapSizeFactor"  Grid.Row="10" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-				<Label Content="* symbolSize" Grid.Row="10" Grid.Column="5" />
+				<Label Content="End cap :" Grid.Row="10" Grid.Column="0" />
+				<axogddl:LineCapComboBox x:Name="_guiLineEndCap" Grid.Row="10" Grid.Column="2" Grid.ColumnSpan="4" />
 
-				<CheckBox x:Name="_guiUseLineSymbolGap"   Content="Use line-symbol gap = " Grid.Row="12" Grid.Column="0" />
-				<axogcd:LineThicknessComboBox x:Name="_guiSymbolGapOffset" Grid.Row="12" Grid.Column="2" />
+				<Label Content="End cap size = " Grid.Row="12" Grid.Column="0" />
+				<axogcd:LineThicknessComboBox x:Name="_guiEndCapSizeOffset" Grid.Row="12" Grid.Column="2" />
 				<Label Content="+" Grid.Row="12" Grid.Column="3" />
-				<axogc:QuantityWithUnitTextBox x:Name="_guiSymbolGapFactor"  Grid.Row="12" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+				<axogc:QuantityWithUnitTextBox x:Name="_guiEndCapSizeFactor"  Grid.Row="12" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
 				<Label Content="* symbolSize" Grid.Row="12" Grid.Column="5" />
+
+				<CheckBox x:Name="_guiUseLineSymbolGap"   Content="Use line-symbol gap = " Grid.Row="14" Grid.Column="0" />
+				<axogcd:LineThicknessComboBox x:Name="_guiSymbolGapOffset" Grid.Row="14" Grid.Column="2" />
+				<Label Content="+" Grid.Row="14" Grid.Column="3" />
+				<axogc:QuantityWithUnitTextBox x:Name="_guiSymbolGapFactor"  Grid.Row="14" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+				<Label Content="* symbolSize" Grid.Row="14" Grid.Column="5" />
 			</Grid>
 		</GroupBox>
 	</StackPanel>

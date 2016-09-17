@@ -42,6 +42,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		public event Action IndependentColorChanged;
 
+		public event Action IndependentDashPatternChanged;
+
 		public event Action<bool> UseCommonErrorColumnChanged;
 
 		public ErrorBarPlotStyleControl()
@@ -51,6 +53,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			_strokePenGlue = new PenControlsGlue();
 			_strokePenGlue.CbBrush = _guiPenColor;
 			_strokePenGlue.CbLineEndCap = _guiLineEndCap;
+			_strokePenGlue.CbDashStyle = _guiDashPattern;
 		}
 
 		#region IErrorBarPlotStyleView Members
@@ -64,6 +67,18 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			set
 			{
 				_chkIndependentColor.IsChecked = value;
+			}
+		}
+
+		public bool IndependentDashPattern
+		{
+			get
+			{
+				return true == _chkIndependentDashPattern.IsChecked;
+			}
+			set
+			{
+				_chkIndependentDashPattern.IsChecked = value;
 			}
 		}
 
@@ -102,16 +117,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 				_edSkipFrequency.Value = value;
 			}
 		}
-
-		public event EventHandler ChoosePositiveError;
-
-		public event EventHandler ChooseNegativeError;
-
-		public event EventHandler IndependentNegativeError_CheckChanged;
-
-		public event EventHandler ClearPositiveError;
-
-		public event EventHandler ClearNegativeError;
 
 		#endregion IErrorBarPlotStyleView Members
 
@@ -277,8 +282,12 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
 		{
-			if (null != IndependentColorChanged)
-				IndependentColorChanged();
+			IndependentColorChanged?.Invoke();
+		}
+
+		private void EhIndependentDashPatternChanged(object sender, RoutedEventArgs e)
+		{
+			IndependentDashPatternChanged?.Invoke();
 		}
 
 		private void EhUseCommonErrorColumnCheckedChanged(object sender, RoutedEventArgs e)

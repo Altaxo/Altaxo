@@ -39,6 +39,8 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 	{
 		bool IndependentColor { get; set; }
 
+		bool IndependentDashPattern { get; set; }
+
 		bool ShowPlotColorsOnly { set; }
 
 		PenX3D Pen { get; set; }
@@ -101,6 +103,11 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		/// Occurs when the user choice for IndependentColor of the fill brush has changed.
 		/// </summary>
 		event Action IndependentColorChanged;
+
+		/// <summary>
+		/// Occurs when the user choice for IndependentDashPattern has changed.
+		/// </summary>
+		event Action IndependentDashPatternChanged;
 	}
 
 	#endregion Interfaces
@@ -152,6 +159,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			if (_view != null)
 			{
 				_view.IndependentColor = _doc.IndependentColor;
+				_view.IndependentDashPattern = _doc.IndependentDashPattern;
 				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
 				_view.Pen = _doc.Pen;
 
@@ -197,6 +205,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		public override bool Apply(bool disposeController)
 		{
 			_doc.IndependentColor = _view.IndependentColor;
+			_doc.IndependentDashPattern = _view.IndependentDashPattern;
 			_doc.Pen = _view.Pen;
 			_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
 			_doc.SymbolSize = _view.SymbolSize;
@@ -231,12 +240,14 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			base.AttachView();
 
 			_view.IndependentColorChanged += EhIndependentColorChanged;
+			_view.IndependentDashPatternChanged += EhIndependentDashPatternChanged;
 			_view.UseCommonErrorColumnChanged += EhUseCommonErrorColumnChanged;
 		}
 
 		protected override void DetachView()
 		{
 			_view.IndependentColorChanged -= EhIndependentColorChanged;
+			_view.IndependentDashPatternChanged -= EhIndependentDashPatternChanged;
 			_view.UseCommonErrorColumnChanged -= EhUseCommonErrorColumnChanged;
 
 			base.DetachView();
@@ -292,6 +303,14 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			{
 				_doc.IndependentColor = _view.IndependentColor;
 				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+			}
+		}
+
+		private void EhIndependentDashPatternChanged()
+		{
+			if (null != _view)
+			{
+				_doc.IndependentDashPattern = _view.IndependentDashPattern;
 			}
 		}
 	}
