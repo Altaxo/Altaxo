@@ -254,8 +254,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		public virtual void OnCollectionChangeCommit()
 		{
-			if (CollectionChangeCommit != null)
-				CollectionChangeCommit(this, EventArgs.Empty);
+			CollectionChangeCommit?.Invoke(this, EventArgs.Empty);
 		}
 
 		#endregion CollectionController Members

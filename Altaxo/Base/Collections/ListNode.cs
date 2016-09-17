@@ -394,6 +394,15 @@ namespace Altaxo.Collections
 			if (Count == 0 || this[0].IsSelected)
 				return;
 
+			// save the selection
+			var selectedIndices = new HashSet<int>();
+			for (int i = 1; i < Count; ++i)
+				if (this[i].IsSelected)
+					selectedIndices.Add(i - 1); // Store already the selection as it is after the movement, thus the -1
+
+			// now move the items. Since this is an observable collection, it is high likely that
+			// the selection will be destroyed, since the Gui list is missing the selected item during the exchanging of the items
+
 			for (int i = 1; i < Count; i++)
 			{
 				if (this[i].IsSelected)
@@ -402,6 +411,12 @@ namespace Altaxo.Collections
 					if (null != docExchangeAction)
 						docExchangeAction(i, i - 1);
 				}
+			}
+
+			// Restore the selection
+			for (int i = 0; i < Count; ++i)
+			{
+				this[i].IsSelected = selectedIndices.Contains(i);
 			}
 		}
 
@@ -422,6 +437,14 @@ namespace Altaxo.Collections
 			if (Count == 0 || this[Count - 1].IsSelected)
 				return;
 
+			// save the selection
+			var selectedIndices = new HashSet<int>();
+			for (int i = 0; i < Count; ++i)
+				if (this[i].IsSelected)
+					selectedIndices.Add(i + 1); // Store already the selection as it is after the movement, thus the + 1
+
+			// now move the items. Since this is an observable collection, it is high likely that
+			// the selection will be destroyed, since the Gui list is missing the selected item during the exchanging of the items
 			for (int i = Count - 2; i >= 0; i--)
 			{
 				if (this[i].IsSelected)
@@ -430,6 +453,12 @@ namespace Altaxo.Collections
 					if (null != docExchangeAction)
 						docExchangeAction(i, i + 1);
 				}
+			}
+
+			// Restore the selection
+			for (int i = 0; i < Count; ++i)
+			{
+				this[i].IsSelected = selectedIndices.Contains(i);
 			}
 		}
 
