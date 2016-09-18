@@ -45,6 +45,7 @@ namespace Altaxo.Drawing.DashPatterns
 		/// <summary>
 		/// 2016-04-22 initial version.
 		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Drawing.D3D.DashPatterns.Custom", 0)]
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Custom), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
