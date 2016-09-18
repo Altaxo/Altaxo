@@ -462,10 +462,13 @@ namespace Altaxo.Data
 				// first relase all column scripts
 				var columnScripts = _columnScripts;
 				_columnScripts = null;
-				foreach (KeyValuePair<DataColumn, IColumnScriptText> d in columnScripts)
+				if (null != columnScripts)
 				{
-					if (d.Value != null)
-						d.Value.Dispose();
+					foreach (KeyValuePair<DataColumn, IColumnScriptText> d in columnScripts)
+					{
+						if (d.Value != null)
+							d.Value.Dispose();
+					}
 				}
 				columnScripts = null;
 
