@@ -61,7 +61,7 @@ namespace Altaxo.Drawing.D3D
 		IList<PointD3D> polylinePoints
 		)
 		{
-			if (pen.DashPattern == null)
+			if (pen.DashPattern is DashPatterns.Solid)
 			{
 				// draw without a dash pattern - we consider the whole line as one dash segment, but instead of dash caps, with line caps
 				_dashSegment.Initialize(pen.CrossSection, pen.Thickness1, pen.Thickness2, pen.LineJoin, pen.MiterLimit, pen.LineStartCap, pen.LineEndCap);

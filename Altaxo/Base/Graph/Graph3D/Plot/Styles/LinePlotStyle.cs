@@ -48,20 +48,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		IG3DPlotStyle,
 		IRoutedPropertyReceiver
 	{
-		/// <summary>
-		/// Template to make a line draw.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
-		/// <param name="overriderange">The plot range to use.</param>
-		/// <param name="layer">Graphics layer.</param>
-		/// <param name="symbolGap">The size of the symbol gap.</param>
-		public delegate void PaintOneRangeTemplate(
-			IGraphicsContext3D g,
-			Processed3DPlotData pdata,
-			PlotRange overriderange,
-			IPlotArea layer,
-			double symbolGap);
+		/// <summary>A value indicating whether the skip frequency value is independent from other values.</summary>
+		protected bool _independentSkipFreq;
+
+		/// <summary>A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
+		protected int _skipFreq = 1;
 
 		protected bool _independentColor;
 		protected bool _independentDashStyle;
@@ -82,6 +73,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		protected bool _connectCircular;
 
 		protected bool _useSymbolGap;
+
+		/// <summary>
+		/// If true, the line's west and north vector are kept as if no symbol gap exist. If false, the west and north vector
+		/// of the line after the symbol gap is calculated anew.
+		/// </summary>
+		protected bool _keepWestNorthThroughSymbolGap;
 
 		/// <summary>
 		/// Offset used to calculate the real gap between symbol center and beginning of the bar, according to the formula:
@@ -110,6 +107,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				LinePlotStyle s = (LinePlotStyle)obj;
+
+				info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
+				info.AddValue("SkipFreq", s._skipFreq);
+
 				info.AddValue("IgnoreMissingPoints", s._ignoreMissingDataPoints);
 				info.AddValue("ConnectCircular", s._connectCircular);
 				info.AddValue("Connection", s._connectionStyle);
@@ -123,11 +124,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("UseSymbolGap", s._useSymbolGap);
 				info.AddValue("SymbolGapOffset", s._symbolGapOffset);
 				info.AddValue("SymbolGapFactor", s._symbolGapFactor);
+				info.AddValue("KeepWestNorth", s._keepWestNorthThroughSymbolGap);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
+
+				s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
+				s._skipFreq = info.GetInt32("SkipFreq");
 
 				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
 				s._connectCircular = info.GetBoolean("ConnectCircular");
@@ -142,6 +147,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				s._useSymbolGap = info.GetBoolean("UseSymbolGap");
 				s._symbolGapOffset = info.GetDouble("SymbolGapOffset");
 				s._symbolGapFactor = info.GetDouble("SymbolGapFactor");
+				s._keepWestNorthThroughSymbolGap = info.GetBoolean("KeepWestNorth");
 				return s;
 			}
 		}
@@ -192,6 +198,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
+				this._independentSkipFreq = from._independentSkipFreq;
+				this._skipFreq = from._skipFreq;
+
 				this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
 				this._connectCircular = from._connectCircular;
 				this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
@@ -206,6 +215,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._useSymbolGap = from._useSymbolGap;
 				this._symbolGapOffset = from._symbolGapOffset;
 				this._symbolGapFactor = from._symbolGapFactor;
+				this._keepWestNorthThroughSymbolGap = from._keepWestNorthThroughSymbolGap;
 
 				EhSelfChanged();
 				suspendToken.Resume(eventFiring);
@@ -242,6 +252,38 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		#endregion Construction and copying
 
 		#region Properties
+
+		/// <summary>Skip frequency. A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
+		public int SkipFrequency
+		{
+			get { return _skipFreq; }
+			set
+			{
+				value = Math.Max(1, value);
+				if (!(_skipFreq == value))
+				{
+					_skipFreq = value;
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
+				}
+			}
+		}
+
+		/// <summary>A value indicating whether the skip frequency value is independent from values in other sub plot styles.</summary>
+		public bool IndependentSkipFrequency
+		{
+			get
+			{
+				return _independentSkipFreq;
+			}
+			set
+			{
+				if (!(_independentSkipFreq == value))
+				{
+					_independentSkipFreq = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
 
 		public ILineConnectionStyle Connection
 		{
@@ -302,6 +344,26 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				{
 					_symbolGapFactor = value;
 					EhSelfChanged();
+				}
+			}
+		}
+
+		/// <summary>
+		/// If true, the line's west and north vector are kept as if no symbol gap exist. If false, the west and north vector
+		/// of the line after the symbol gap is calculated anew.
+		/// </summary>
+		public bool KeepWestNorthThroughSymbolGap
+		{
+			get
+			{
+				return _keepWestNorthThroughSymbolGap;
+			}
+			set
+			{
+				if (!(_keepWestNorthThroughSymbolGap == value))
+				{
+					_keepWestNorthThroughSymbolGap = value;
+					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
@@ -552,6 +614,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
+			// SkipFrequency should be the same for all sub plot styles
+			if (!_independentSkipFreq)
+			{
+				_skipFreq = 1;
+				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this._skipFreq = c; });
+			}
+
 			if (this.IsColorReceiver)
 				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this.Color = c; });
 

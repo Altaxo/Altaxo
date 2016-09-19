@@ -38,9 +38,36 @@ namespace Altaxo.Geometry
 	{
 		private PointD3D[] _points;
 
-		public SharpPolylineD3D(PointD3D[] points)
+		protected SharpPolylineD3D(PointD3D[] points)
 		{
 			_points = points;
+		}
+
+		/// <summary>
+		/// Gets a sharp polyline from a point array which may contain consecutive dublettes, i.e. two or more consecutive points with equal coordinates.
+		/// </summary>
+		/// <param name="points">The points.</param>
+		/// <returns>An instance of <see cref="SharpPolylineD3D"/>, free from consecutive dublettes. Attention: the number of points in this polyline may differ from
+		/// the number of points that were provided!</returns>
+		public static SharpPolylineD3D FromPointsWithPossibleDublettes(IEnumerable<PointD3D> points)
+		{
+			List<PointD3D> mypoints = new List<PointD3D>();
+
+			if (null != points)
+			{
+				PointD3D prevPoint = PointD3D.Empty;
+
+				foreach (var point in points)
+				{
+					if (point != prevPoint || mypoints.Count == 0)
+					{
+						mypoints.Add(point);
+					}
+					prevPoint = point;
+				}
+			}
+
+			return new SharpPolylineD3D(mypoints.ToArray());
 		}
 
 		public PointD3D GetPoint(int idx)

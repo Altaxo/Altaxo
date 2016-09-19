@@ -113,7 +113,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 			{
 				if (linepts.Length > 1) // we don't want to have a drawing exception if number of points is only one
 				{
-					g.DrawLine(pen, new SharpPolylineD3D(linepts));
+					g.DrawLine(pen, SharpPolylineD3D.FromPointsWithPossibleDublettes(linepts));
 				}
 			}
 		}

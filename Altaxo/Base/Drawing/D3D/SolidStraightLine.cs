@@ -49,7 +49,7 @@ namespace Altaxo.Drawing.D3D
 			var westVector = westnorth.Item1;
 			var northVector = westnorth.Item2;
 
-			if (pen.DashPattern == null)
+			if (pen.DashPattern is DashPatterns.Solid)
 			{
 				// draw without a dash pattern - we consider the whole line as one dash segment, but instead of dash caps, with line caps
 				_dashSegment.Initialize(pen.CrossSection, pen.Thickness1, pen.Thickness2, pen.LineStartCap, pen.LineEndCap, westVector, northVector, line);
