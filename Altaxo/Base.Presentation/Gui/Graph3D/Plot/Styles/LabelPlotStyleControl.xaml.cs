@@ -48,8 +48,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		public event Action LabelColumnSelected;
 
-		public event Action FontSizeChanged;
-
 		public event Action LabelColorLinkageChanged;
 
 		public event Action BackgroundColorLinkageChanged;
@@ -66,8 +64,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 			Data.DefaultSeverityColumnColors.NormalColor = _guiLabelColumn.Background;
 
-			_fontControlsGlue = new FontX3DControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle, CbFontSize = _cbFontSize, CbFontDepth = _cbFontDepth };
-			_fontControlsGlue.SelectedFontChanged += EhFontSizeChanged;
+			_fontControlsGlue = new FontX3DControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle, CbFontDepth = _cbFontDepth };
 			_backgroundGlue = new BackgroundControlsGlue() { CbStyle = _cbBackgroundStyle, CbBrush = _cbBackgroundBrush };
 			_backgroundGlue.BackgroundStyleChanged += EhBackgroundStyleInstanceChanged;
 			_backgroundGlue.BackgroundBrushChanged += this.EhBackgroundBrushChanged;
@@ -77,12 +74,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		{
 			if (null != LabelColumnSelected)
 				LabelColumnSelected();
-		}
-
-		private void EhFontSizeChanged(object sender, EventArgs e)
-		{
-			if (null != FontSizeChanged)
-				FontSizeChanged();
 		}
 
 		private void EhIndependentColor_CheckChanged(object sender, RoutedEventArgs e)
@@ -168,6 +159,31 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 		}
 
+		public bool IndependentSymbolSize
+		{
+			get
+			{
+				return true == _guiIndependentSymbolSize.IsChecked;
+			}
+
+			set
+			{
+				_guiIndependentSymbolSize.IsChecked = value;
+			}
+		}
+
+		public double SymbolSize
+		{
+			get
+			{
+				return _guiSymbolSize.SelectedQuantityAsValueInPoints;
+			}
+			set
+			{
+				_guiSymbolSize.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
 		public new IBackgroundStyle Background
 		{
 			get
@@ -216,37 +232,147 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 			}
 		}
 
-		public void Init_OffsetX(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
+		public double OffsetXPoints
 		{
-			this._guiOffsetX.UnitEnvironment = environment;
-			this._guiOffsetX.SelectedQuantity = value;
+			get
+			{
+				return _guiOffsetXPoints.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiOffsetXPoints.SelectedQuantityAsValueInPoints = value;
+			}
 		}
 
-		public void Init_OffsetY(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
+		public double OffsetXEmUnits
 		{
-			this._guiOffsetY.UnitEnvironment = environment;
-			this._guiOffsetY.SelectedQuantity = value;
+			get
+			{
+				return _guiOffsetXEmUnits.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiOffsetXEmUnits.SelectedQuantityAsValueInSIUnits = value;
+			}
 		}
 
-		public void Init_OffsetZ(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
+		public double OffsetXSymbolSizeUnits
 		{
-			this._guiOffsetZ.UnitEnvironment = environment;
-			this._guiOffsetZ.SelectedQuantity = value;
+			get
+			{
+				return _guiOffsetXSymbolSizeUnits.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiOffsetXSymbolSizeUnits.SelectedQuantityAsValueInSIUnits = value;
+			}
 		}
 
-		public DimensionfulQuantity OffsetX
+		public double OffsetYPoints
 		{
-			get { return _guiOffsetX.SelectedQuantity; }
+			get
+			{
+				return _guiOffsetYPoints.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiOffsetYPoints.SelectedQuantityAsValueInPoints = value;
+			}
 		}
 
-		public DimensionfulQuantity OffsetY
+		public double OffsetYEmUnits
 		{
-			get { return _guiOffsetY.SelectedQuantity; }
+			get
+			{
+				return _guiOffsetYEmUnits.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiOffsetYEmUnits.SelectedQuantityAsValueInSIUnits = value;
+			}
 		}
 
-		public DimensionfulQuantity OffsetZ
+		public double OffsetYSymbolSizeUnits
 		{
-			get { return _guiOffsetZ.SelectedQuantity; }
+			get
+			{
+				return _guiOffsetYSymbolSizeUnits.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiOffsetYSymbolSizeUnits.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public double OffsetZPoints
+		{
+			get
+			{
+				return _guiOffsetZPoints.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiOffsetZPoints.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double OffsetZEmUnits
+		{
+			get
+			{
+				return _guiOffsetZEmUnits.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiOffsetZEmUnits.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public double OffsetZSymbolSizeUnits
+		{
+			get
+			{
+				return _guiOffsetZSymbolSizeUnits.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiOffsetZSymbolSizeUnits.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public double FontSizeOffset
+		{
+			get
+			{
+				return _guiFontSizeOffset.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiFontSizeOffset.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double FontSizeFactor
+		{
+			get
+			{
+				return _guiFontSizeFactor.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiFontSizeFactor.SelectedQuantityAsValueInSIUnits = value;
+			}
 		}
 
 		public FontX3D SelectedFont

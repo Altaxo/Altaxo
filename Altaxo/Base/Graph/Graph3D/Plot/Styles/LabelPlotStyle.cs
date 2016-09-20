@@ -67,6 +67,22 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>The font of the label.</summary>
 		protected FontX3D _font;
 
+		/// <summary>
+		/// Offset used to calculate the font size in dependence on the symbol size., according to the formula:
+		/// fontSize = <see cref="_fontSizeOffset"/> + <see cref="_fontSizeFactor"/> * <see cref="_symbolSize"/>;
+		/// </summary>
+		protected double _fontSizeOffset;
+
+		/// <summary>
+		/// Factor used to calculate the font size in dependence on the symbol size, according to the formula:
+		/// fontSize = <see cref="_fontSizeOffset"/> + <see cref="_fontSizeFactor"/> * <see cref="_symbolSize"/>;
+		/// </summary>
+		protected double _fontSizeFactor;
+
+		protected bool _independentSymbolSize;
+
+		protected double _symbolSize;
+
 		/// <summary>The brush for the label.</summary>
 		protected IMaterial _material;
 
@@ -89,13 +105,45 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		protected double _rotationZ;
 
 		/// <summary>The x offset in EM units.</summary>
-		protected double _offsetX;
+		/// Total offset is calculated according to:
+		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
+		protected double _offsetX_EmUnits;
+
+		/// <summary>The x offset int points.</summary>
+		/// Total offset is calculated according to:
+		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
+		protected double _offsetX_Points;
+
+		/// <summary>The x offset factor to be multiplied with the symbol size.
+		/// Total offset is calculated according to:
+		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
+		protected double _offsetX_SymbolSizeUnits;
 
 		/// <summary>The y offset in EM units.</summary>
-		protected double _offsetY;
+		protected double _offsetY_EmUnits;
+
+		/// <summary>The y offset int points.</summary>
+		/// Total offset is calculated according to:
+		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
+		protected double _offsetY_Points;
+
+		/// <summary>The y offset factor to be multiplied with the symbol size.
+		/// Total offset is calculated according to:
+		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
+		protected double _offsetY_SymbolSizeUnits;
 
 		/// <summary>The z offset in EM units.</summary>
-		protected double _offsetZ;
+		protected double _offsetZ_EmUnits;
+
+		/// <summary>The z offset int points.</summary>
+		/// Total offset is calculated according to:
+		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
+		protected double _offsetZ_Points;
+
+		/// <summary>The z offset factor to be multiplied with the symbol size.
+		/// Total offset is calculated according to:
+		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
+		protected double _offsetZ_SymbolSizeUnits;
 
 		protected ColorLinkage _backgroundColorLinkage;
 
@@ -114,6 +162,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		/// <summary>Logical z shift between the location of the real data point and the point where the item is finally drawn.</summary>
 		private double _cachedLogicalShiftZ;
+
+		// cached values:
+		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
+		[field: NonSerialized]
+		protected Func<int, double> _cachedSymbolSizeForIndexFunction;
 
 		#region Serialization
 
@@ -140,6 +193,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
 				info.AddValue("LabelFormat", s._labelFormatString);
 
+				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
+				info.AddValue("SymbolSize", s._symbolSize);
+
+				info.AddValue("FontSizeOffset", s._fontSizeOffset);
+				info.AddValue("FontSizeFactor", s._fontSizeFactor);
 				info.AddValue("Font", s._font);
 				info.AddValue("Material", s._material);
 				info.AddValue("IndependentColor", s._independentColor);
@@ -152,9 +210,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("RotationY", s._rotationY);
 				info.AddValue("RotationZ", s._rotationZ);
 
-				info.AddValue("OffsetX", s._offsetX);
-				info.AddValue("OffsetY", s._offsetY);
-				info.AddValue("OffsetZ", s._offsetZ);
+				info.AddValue("OffsetXPoints", s._offsetX_Points);
+				info.AddValue("OffsetXEm", s._offsetX_EmUnits);
+				info.AddValue("OffsetXSymbolSize", s._offsetX_SymbolSizeUnits);
+				info.AddValue("OffsetYPoints", s._offsetY_Points);
+				info.AddValue("OffsetYEm", s._offsetY_EmUnits);
+				info.AddValue("OffsetYSymbolSize", s._offsetY_SymbolSizeUnits);
+				info.AddValue("OffsetZPoints", s._offsetZ_Points);
+				info.AddValue("OffsetZEm", s._offsetZ_EmUnits);
+				info.AddValue("OffsetZSymbolSize", s._offsetZ_SymbolSizeUnits);
 
 				info.AddEnum("BackgroundColorLinkage", s._backgroundColorLinkage);
 				info.AddValue("Background", s._backgroundStyle);
@@ -176,6 +240,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
 				s._labelFormatString = info.GetString("LabelFormat");
 
+				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
+				s._symbolSize = info.GetDouble("SymbolSize");
+
+				s._fontSizeOffset = info.GetDouble("FontSizeOffset");
+				s._fontSizeFactor = info.GetDouble("FontSizeFactor");
+
 				s._font = (FontX3D)info.GetValue("Font", s);
 				s._material = (IMaterial)info.GetValue("Material", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
@@ -188,9 +258,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				s._rotationY = info.GetDouble("RotationY");
 				s._rotationZ = info.GetDouble("RotationZ");
 
-				s._offsetX = info.GetDouble("OffsetX");
-				s._offsetY = info.GetDouble("OffsetY");
-				s._offsetZ = info.GetDouble("OffsetZ");
+				s._offsetX_Points = info.GetDouble("OffsetXPoints");
+				s._offsetX_EmUnits = info.GetDouble("OffsetXEm");
+				s._offsetX_SymbolSizeUnits = info.GetDouble("OffsetXSymbolSize");
+
+				s._offsetY_Points = info.GetDouble("OffsetYPoints");
+				s._offsetY_EmUnits = info.GetDouble("OffsetYEm");
+				s._offsetY_SymbolSizeUnits = info.GetDouble("OffsetYSymbolSize");
+
+				s._offsetZ_Points = info.GetDouble("OffsetZPoints");
+				s._offsetZ_EmUnits = info.GetDouble("OffsetZEm");
+				s._offsetZ_SymbolSizeUnits = info.GetDouble("OffsetZSymbolSize");
 
 				s._backgroundColorLinkage = (ColorLinkage)info.GetEnum("BackgroundColorLinkage", typeof(ColorLinkage));
 
@@ -234,6 +312,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 				this._labelFormatString = from._labelFormatString;
 
+				this._independentSymbolSize = from._independentSymbolSize;
+				this._symbolSize = from._symbolSize;
+
+				this._fontSizeOffset = from._fontSizeOffset;
+				this._fontSizeFactor = from._fontSizeFactor;
+
 				this._font = from._font;
 				this._material = from._material;
 				this._independentColor = from._independentColor;
@@ -246,9 +330,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._rotationY = from._rotationY;
 				this._rotationZ = from._rotationZ;
 
-				this._offsetX = from._offsetX;
-				this._offsetY = from._offsetY;
-				this._offsetZ = from._offsetZ;
+				this._offsetX_Points = from._offsetX_Points;
+				this._offsetX_EmUnits = from._offsetX_EmUnits;
+				this._offsetX_SymbolSizeUnits = from._offsetX_SymbolSizeUnits;
+
+				this._offsetY_Points = from._offsetY_Points;
+				this._offsetY_EmUnits = from._offsetY_EmUnits;
+				this._offsetY_SymbolSizeUnits = from._offsetY_SymbolSizeUnits;
+
+				this._offsetZ_Points = from._offsetZ_Points;
+				this._offsetZ_EmUnits = from._offsetZ_EmUnits;
+				this._offsetZ_SymbolSizeUnits = from._offsetZ_SymbolSizeUnits;
 
 				this._backgroundColorLinkage = from._backgroundColorLinkage;
 				ChildCopyToMember(ref _backgroundStyle, from._backgroundStyle);
@@ -305,15 +397,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			this._independentColor = false;
 			this._material = new MaterialWithUniformColor(color);
-			this._offsetX = 0;
-			this._offsetY = 0;
-			this._offsetZ = 0;
-			this._rotationX = 0;
-			this._rotationY = 0;
-			this._rotationZ = 0;
-			this._backgroundStyle = null;
 			this._backgroundColorLinkage = ColorLinkage.Independent;
-			this._attachedPlane = null;
 			this.LabelColumnProxy = Altaxo.Data.ReadableColumnProxyBase.FromColumn(labelColumn);
 		}
 
@@ -399,6 +483,39 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
+		/// <summary>
+		/// true if the symbol size is independent, i.e. is not published nor updated by a group style.
+		/// </summary>
+		public bool IndependentSymbolSize
+		{
+			get { return _independentSymbolSize; }
+			set
+			{
+				if (!(_independentSymbolSize == value))
+				{
+					_independentSymbolSize = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>Controls the length of the end bar.</summary>
+		public double SymbolSize
+		{
+			get { return _symbolSize; }
+			set
+			{
+				if (!Calc.RMath.IsFinite(value))
+					throw new ArgumentException(nameof(value), "Value must be a finite number");
+
+				if (!(_symbolSize == value))
+				{
+					_symbolSize = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
 		/// <summary>The font of the label.</summary>
 		public FontX3D Font
 		{
@@ -414,19 +531,42 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		/// <summary>The font size of the label.</summary>
-		public double FontSize
+		/// <summary>
+		/// Offset used to calculate the font size in dependence on the symbol size., according to the formula:
+		/// fontSize = <see cref="FontSizeOffset"/> + <see cref="FontSizeFactor"/> * <see cref="_symbolSize"/>;
+		/// </summary>
+		public double FontSizeOffset
 		{
-			get { return _font.Size; }
+			get
+			{
+				return _fontSizeOffset;
+			}
 			set
 			{
-				var oldValue = _font.Size;
-				var newValue = Math.Max(0, value);
-
-				if (newValue != oldValue)
+				if (!(_fontSizeOffset == value))
 				{
-					_font = _font.WithSize(newValue);
-					EhSelfChanged(EventArgs.Empty); // Fire Changed event
+					_fontSizeOffset = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Offset used to calculate the font size in dependence on the symbol size., according to the formula:
+		/// fontSize = <see cref="FontSizeOffset"/> + <see cref="FontSizeFactor"/> * <see cref="_symbolSize"/>;
+		/// </summary>
+		public double FontSizeFactor
+		{
+			get
+			{
+				return _fontSizeFactor;
+			}
+			set
+			{
+				if (!(_fontSizeFactor == value))
+				{
+					_fontSizeFactor = value;
+					EhSelfChanged();
 				}
 			}
 		}
@@ -501,14 +641,35 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		/// <summary>The x offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
-		public double OffsetX
+		/// <summary>The x offset in points.</summary>
+		/// Total offset is calculated according to:
+		/// totalOffset = <see cref="OffsetXPoints"/> +  <see cref="OffsetXEmUnits"/> * emSize + <see cref="OffsetXSymbolSizeUnits"/> * symbolSize</summary>
+		public double OffsetXPoints
 		{
-			get { return this._offsetX; }
+			get
+			{
+				return _offsetX_Points;
+			}
 			set
 			{
-				double oldValue = this._offsetX;
-				this._offsetX = value;
+				if (!(_offsetX_Points == value))
+				{
+					_offsetX_Points = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		/// <summary>The x offset relative to font size, i.e. a value of 1 is 1*FontSize.
+		/// Total offset is calculated according to:
+		/// totalOffset = <see cref="OffsetXPoints"/> +  <see cref="OffsetXEmUnits"/> * emSize + <see cref="OffsetXSymbolSizeUnits"/> * symbolSize</summary>
+		public double OffsetXEmUnits
+		{
+			get { return this._offsetX_EmUnits; }
+			set
+			{
+				double oldValue = this._offsetX_EmUnits;
+				this._offsetX_EmUnits = value;
 				if (value != oldValue)
 				{
 					EhSelfChanged(EventArgs.Empty);
@@ -516,14 +677,52 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		/// <summary>The y offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
-		public double OffsetY
+		/// <summary>The x offset in symbol size units.</summary>
+		/// Total offset is calculated according to:
+		/// totalOffset = <see cref="OffsetXPoints"/> +  <see cref="OffsetXEmUnits"/> * emSize + <see cref="OffsetXSymbolSizeUnits"/> * symbolSize</summary>
+		public double OffsetXSymbolSizeUnits
 		{
-			get { return this._offsetY; }
+			get
+			{
+				return _offsetX_SymbolSizeUnits;
+			}
 			set
 			{
-				double oldValue = this._offsetY;
-				this._offsetY = value;
+				if (!(_offsetX_SymbolSizeUnits == value))
+				{
+					_offsetX_SymbolSizeUnits = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		/// <summary>The y offset in points.</summary>
+		/// Total offset is calculated according to:
+		/// totalOffset = <see cref="OffsetYPoints"/> +  <see cref="OffsetYEmUnits"/> * emSize + <see cref="OffsetYSymbolSizeUnits"/> * symbolSize</summary>
+		public double OffsetYPoints
+		{
+			get
+			{
+				return _offsetY_Points;
+			}
+			set
+			{
+				if (!(_offsetY_Points == value))
+				{
+					_offsetY_Points = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		/// <summary>The y offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
+		public double OffsetYEmUnits
+		{
+			get { return this._offsetY_EmUnits; }
+			set
+			{
+				double oldValue = this._offsetY_EmUnits;
+				this._offsetY_EmUnits = value;
 				if (value != oldValue)
 				{
 					EhSelfChanged(EventArgs.Empty);
@@ -531,17 +730,74 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		/// <summary>The y offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
-		public double OffsetZ
+		/// <summary>The y offset in symbol size units.</summary>
+		/// Total offset is calculated according to:
+		/// totalOffset = <see cref="OffsetYPoints"/> +  <see cref="OffsetYEmUnits"/> * emSize + <see cref="OffsetYSymbolSizeUnits"/> * symbolSize</summary>
+		public double OffsetYSymbolSizeUnits
 		{
-			get { return this._offsetZ; }
+			get
+			{
+				return _offsetY_SymbolSizeUnits;
+			}
 			set
 			{
-				double oldValue = this._offsetZ;
-				this._offsetZ = value;
+				if (!(_offsetY_SymbolSizeUnits == value))
+				{
+					_offsetY_SymbolSizeUnits = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		/// <summary>The z offset in points.</summary>
+		/// Total offset is calculated according to:
+		/// totalOffset = <see cref="OffsetZPoints"/> +  <see cref="OffsetZEmUnits"/> * emSize + <see cref="OffsetZSymbolSizeUnits"/> * symbolSize</summary>
+		public double OffsetZPoints
+		{
+			get
+			{
+				return _offsetZ_Points;
+			}
+			set
+			{
+				if (!(_offsetZ_Points == value))
+				{
+					_offsetZ_Points = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		/// <summary>The y offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
+		public double OffsetZEmUnits
+		{
+			get { return this._offsetZ_EmUnits; }
+			set
+			{
+				double oldValue = this._offsetZ_EmUnits;
+				this._offsetZ_EmUnits = value;
 				if (value != oldValue)
 				{
 					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>The z offset in symbol size units.</summary>
+		/// Total offset is calculated according to:
+		/// totalOffset = <see cref="OffsetZPoints"/> +  <see cref="OffsetZEmUnits"/> * emSize + <see cref="OffsetZSymbolSizeUnits"/> * symbolSize</summary>
+		public double OffsetZSymbolSizeUnits
+		{
+			get
+			{
+				return _offsetZ_SymbolSizeUnits;
+			}
+			set
+			{
+				if (!(_offsetZ_SymbolSizeUnits == value))
+				{
+					_offsetZ_SymbolSizeUnits = value;
+					EhSelfChanged();
 				}
 			}
 		}
@@ -720,12 +976,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <param name="label"></param>
 		/// <param name="variableTextBrush">If not null, this argument provides the text brush that should be used now. If null, then the <see cref="_material"/> is used instead.</param>
 		/// <param name="variableBackBrush"></param>
-		public void Paint(IGraphicsContext3D g, string label, IMaterial variableTextBrush, IMaterial variableBackBrush)
+		public void Paint(IGraphicsContext3D g, string label, double symbolSize, IMaterial variableTextBrush, IMaterial variableBackBrush)
 		{
-			var fontSize = this.FontSize;
-			var xpos = (_offsetX * fontSize);
-			var ypos = (_offsetY * fontSize);
-			var zpos = (_offsetZ * fontSize);
+			var fontSize = _font.Size;
+
+			var xpos = _offsetX_Points + (_offsetX_EmUnits * fontSize) + (_offsetX_SymbolSizeUnits * symbolSize / 2);
+			var ypos = _offsetY_Points + (_offsetY_EmUnits * fontSize) + (_offsetY_SymbolSizeUnits * symbolSize / 2);
+			var zpos = _offsetZ_Points + (_offsetZ_EmUnits * fontSize) + (_offsetZ_SymbolSizeUnits * symbolSize / 2);
 			var stringsize = g.MeasureString(label, _font, new PointD3D(xpos, ypos, zpos));
 
 			if (this._backgroundStyle != null)
@@ -804,11 +1061,23 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				int lower = rangeList[r].LowerBound;
 				int upper = rangeList[r].UpperBound;
 				int offset = rangeList[r].OffsetToOriginal;
-				for (int j = lower; j < upper; j+=_skipFrequency)
+				for (int j = lower; j < upper; j += _skipFrequency)
 				{
 					string label = labelColumn[j + offset].ToString();
 					if (label == null || label == string.Empty)
 						continue;
+
+					double localSymbolSize = _symbolSize;
+					if (null == _cachedColorForIndexFunction)
+					{
+						localSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
+					}
+
+					double localFontSize = _fontSizeOffset + _fontSizeFactor * localSymbolSize;
+					if (!(localFontSize > 0))
+						continue;
+
+					_font = _font.WithSize(localFontSize);
 
 					// Start of preparation of brushes, if a variable color is used
 					if (isUsingVariableColor)
@@ -868,7 +1137,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					g.TranslateTransform(xdiff, ydiff, zdiff);
 					g.RotateTransform(_rotationX, _rotationY, _rotationZ);
 
-					this.Paint(g, label, clonedTextBrush, clonedBackBrush);
+					this.Paint(g, label, localSymbolSize, clonedTextBrush, clonedBackBrush);
 
 					g.RotateTransform(-_rotationX, -_rotationY, -_rotationZ);
 				} // end for
@@ -936,27 +1205,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		public bool IsSymbolSizeProvider
-		{
-			get { return false; }
-		}
-
-		public bool IsSymbolSizeReceiver
-		{
-			get { return false; }
-		}
-
-		public float SymbolSize
-		{
-			get
-			{
-				return 0;
-			}
-			set
-			{
-			}
-		}
-
 		#region IG3DPlotStyle Members
 
 		public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
@@ -988,8 +1236,18 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this._skipFrequency = c; });
 			}
 
-			_cachedColorForIndexFunction = null;
+			// Symbol size
+			if (!_independentSymbolSize)
+			{
+				_symbolSize = 0;
+				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolSize = size; });
+				// but if there is an symbol size evaluation function, then use this with higher priority.
+				if (!VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; }))
+					_cachedSymbolSizeForIndexFunction = null;
+			}
 
+			// Color
+			_cachedColorForIndexFunction = null;
 			if (this.IsColorReceiver)
 			{
 				// try to get a constant color ...

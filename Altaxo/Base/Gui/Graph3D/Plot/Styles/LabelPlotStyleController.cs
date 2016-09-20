@@ -43,9 +43,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 	public interface ILabelPlotStyleView
 	{
-		/// <summary>Occurs when the font size changed</summary>
-		event Action FontSizeChanged;
-
 		/// <summary>
 		/// Initializes the name of the label column.
 		/// </summary>
@@ -57,6 +54,13 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		/// </summary>
 		/// <param name="text">Text for the transformation</param>
 		void Init_Transformation(string text, string toolTip);
+
+		bool IndependentSymbolSize { get; set; }
+
+		double SymbolSize { get; set; }
+
+		double FontSizeOffset { get; set; }
+		double FontSizeFactor { get; set; }
 
 		/// <summary>
 		/// Initializes/gets the font family combo box.
@@ -123,26 +127,23 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		/// </summary>
 		double SelectedRotationZ { get; set; }
 
-		/// <summary>
-		/// Initializes the content of the XOffset edit box.
-		/// </summary>
-		void Init_OffsetX(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value);
+		double OffsetXPoints { get; set; }
 
-		DimensionfulQuantity OffsetX { get; }
+		double OffsetXEmUnits { get; set; }
 
-		/// <summary>
-		/// Initializes the content of the YOffset edit box.
-		/// </summary>
-		void Init_OffsetY(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value);
+		double OffsetXSymbolSizeUnits { get; set; }
 
-		DimensionfulQuantity OffsetY { get; }
+		double OffsetYPoints { get; set; }
 
-		/// <summary>
-		/// Initializes the content of the YOffset edit box.
-		/// </summary>
-		void Init_OffsetZ(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value);
+		double OffsetYEmUnits { get; set; }
 
-		DimensionfulQuantity OffsetZ { get; }
+		double OffsetYSymbolSizeUnits { get; set; }
+
+		double OffsetZPoints { get; set; }
+
+		double OffsetZEmUnits { get; set; }
+
+		double OffsetZSymbolSizeUnits { get; set; }
 
 		/// <summary>
 		/// Initializes the content of the Independent color checkbox
@@ -201,8 +202,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		private SelectableListNodeList _attachmentDirectionChoices;
 		private SelectableListNodeList _backgroundColorLinkageChoices;
 
-		private ChangeableRelativePercentUnit _percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em font size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
-
 		/// <summary>
 		/// The data table that the column of the style should belong to.
 		/// </summary>
@@ -251,8 +250,26 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 			if (null != _view)
 			{
-				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+				// Data
+
+				_view.SkipFrequency = _doc.SkipFrequency;
+				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
+
+				_view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
+
+				_view.LabelFormatString = _doc.LabelFormatString;
+
+				InitializeLabelColumnText();
+
+				// Visual
+
+				_view.IndependentSymbolSize = _doc.IndependentSymbolSize;
+				_view.SymbolSize = _doc.SymbolSize;
+
+				_view.FontSizeOffset = _doc.FontSizeOffset;
+				_view.FontSizeFactor = _doc.FontSizeFactor;
 				_view.SelectedFont = _doc.Font;
+				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
 				_view.IndependentColor = _doc.IndependentColor;
 				_view.LabelBrush = _doc.Material;
 				_view.Init_AlignmentX(_alignmentXChoices);
@@ -264,63 +281,26 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 				_view.SelectedRotationY = _doc.RotationY;
 				_view.SelectedRotationZ = _doc.RotationZ;
 
-				_percentFontSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_doc.Font.Size, Units.Length.Point.Instance);
+				_view.OffsetXPoints = _doc.OffsetXPoints;
+				_view.OffsetXEmUnits = _doc.OffsetXEmUnits;
+				_view.OffsetXSymbolSizeUnits = _doc.OffsetXSymbolSizeUnits;
 
-				var xEnv = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentFontSizeUnit);
-				_view.Init_OffsetX(xEnv, new DimensionfulQuantity(_doc.OffsetX * 100, _percentFontSizeUnit));
-				_view.Init_OffsetY(xEnv, new DimensionfulQuantity(_doc.OffsetY * 100, _percentFontSizeUnit));
-				_view.Init_OffsetZ(xEnv, new DimensionfulQuantity(_doc.OffsetZ * 100, _percentFontSizeUnit));
+				_view.OffsetYPoints = _doc.OffsetYPoints;
+				_view.OffsetYEmUnits = _doc.OffsetYEmUnits;
+				_view.OffsetYSymbolSizeUnits = _doc.OffsetYSymbolSizeUnits;
+
+				_view.OffsetZPoints = _doc.OffsetZPoints;
+				_view.OffsetZEmUnits = _doc.OffsetZEmUnits;
+				_view.OffsetZSymbolSizeUnits = _doc.OffsetZSymbolSizeUnits;
+
 				_view.Background = _doc.BackgroundStyle;
 				_view.InitializeBackgroundColorLinkage(_backgroundColorLinkageChoices);
-
-				_view.SkipFrequency = _doc.SkipFrequency;
-				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
-
-				_view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
-
-				_view.LabelFormatString = _doc.LabelFormatString;
-
-				InitializeLabelColumnText();
 			}
 		}
 
 		public override bool Apply(bool disposeController)
 		{
-			_doc.BackgroundStyle = _view.Background;
-			_doc.Font = _view.SelectedFont;
-			_doc.IndependentColor = _view.IndependentColor;
-			_doc.Material = _view.LabelBrush;
-			_doc.AlignmentX = (Alignment)_alignmentXChoices.FirstSelectedNode.Tag;
-			_doc.AlignmentY = (Alignment)_alignmentYChoices.FirstSelectedNode.Tag;
-			_doc.AlignmentZ = (Alignment)_alignmentZChoices.FirstSelectedNode.Tag;
-
-			var xOffs = _view.OffsetX;
-			if (xOffs.Unit is IRelativeUnit)
-				_doc.OffsetX = ((IRelativeUnit)xOffs.Unit).GetRelativeValueFromValue(xOffs.Value);
-			else
-				_doc.OffsetX = xOffs.AsValueIn(Units.Length.Point.Instance) / _doc.Font.Size;
-
-			var yOffs = _view.OffsetY;
-			if (yOffs.Unit is IRelativeUnit)
-				_doc.OffsetY = ((IRelativeUnit)yOffs.Unit).GetRelativeValueFromValue(yOffs.Value);
-			else
-				_doc.OffsetY = yOffs.AsValueIn(Units.Length.Point.Instance) / _doc.Font.Size;
-
-			var zOffs = _view.OffsetZ;
-			if (zOffs.Unit is IRelativeUnit)
-				_doc.OffsetZ = ((IRelativeUnit)zOffs.Unit).GetRelativeValueFromValue(zOffs.Value);
-			else
-				_doc.OffsetZ = zOffs.AsValueIn(Units.Length.Point.Instance) / _doc.Font.Size;
-
-			if (_view.AttachToAxis && null != _attachmentDirectionChoices.FirstSelectedNode)
-				_doc.AttachedPlane = (CSPlaneID)_attachmentDirectionChoices.FirstSelectedNode.Tag;
-			else
-				_doc.AttachedPlane = null;
-
-			_doc.RotationX = _view.SelectedRotationX;
-			_doc.RotationY = _view.SelectedRotationY;
-			_doc.RotationZ = _view.SelectedRotationZ;
-
+			// Data
 			_doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
 			_doc.SkipFrequency = _view.SkipFrequency;
 
@@ -328,13 +308,49 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 			_doc.LabelFormatString = _view.LabelFormatString;
 
+			if (_view.AttachToAxis && null != _attachmentDirectionChoices.FirstSelectedNode)
+				_doc.AttachedPlane = (CSPlaneID)_attachmentDirectionChoices.FirstSelectedNode.Tag;
+			else
+				_doc.AttachedPlane = null;
+
+			_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
+			_doc.SymbolSize = _view.SymbolSize;
+
+			_doc.FontSizeOffset = _view.FontSizeOffset;
+			_doc.FontSizeFactor = _view.FontSizeFactor;
+			_doc.Font = _view.SelectedFont;
+
+			_doc.IndependentColor = _view.IndependentColor;
+			_doc.Material = _view.LabelBrush;
+
+			_doc.RotationX = _view.SelectedRotationX;
+			_doc.RotationY = _view.SelectedRotationY;
+			_doc.RotationZ = _view.SelectedRotationZ;
+
+			_doc.AlignmentX = (Alignment)_alignmentXChoices.FirstSelectedNode.Tag;
+			_doc.AlignmentY = (Alignment)_alignmentYChoices.FirstSelectedNode.Tag;
+			_doc.AlignmentZ = (Alignment)_alignmentZChoices.FirstSelectedNode.Tag;
+
+			_doc.OffsetXPoints = _view.OffsetXPoints;
+			_doc.OffsetYPoints = _view.OffsetYPoints;
+			_doc.OffsetZPoints = _view.OffsetZPoints;
+
+			_doc.OffsetXSymbolSizeUnits = _view.OffsetXSymbolSizeUnits;
+			_doc.OffsetYSymbolSizeUnits = _view.OffsetYSymbolSizeUnits;
+			_doc.OffsetZSymbolSizeUnits = _view.OffsetZSymbolSizeUnits;
+
+			_doc.OffsetXEmUnits = _view.OffsetXEmUnits;
+			_doc.OffsetYEmUnits = _view.OffsetYEmUnits;
+			_doc.OffsetZEmUnits = _view.OffsetZEmUnits;
+
+			_doc.BackgroundStyle = _view.Background;
+
 			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()
 		{
 			base.AttachView();
-			_view.FontSizeChanged += EhView_FontSizeChanged;
 
 			_view.LabelColorLinkageChanged += EhLabelColorLinkageChanged;
 			_view.BackgroundColorLinkageChanged += this.EhBackgroundColorLinkageChanged;
@@ -345,7 +361,6 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		protected override void DetachView()
 		{
-			_view.FontSizeChanged -= EhView_FontSizeChanged;
 			_view.LabelColorLinkageChanged -= EhLabelColorLinkageChanged;
 			_view.BackgroundColorLinkageChanged -= this.EhBackgroundColorLinkageChanged;
 			_view.LabelBrushChanged -= this.EhLabelBrushChanged;
@@ -505,14 +520,5 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		}
 
 		#endregion Color management
-
-		#region IXYPlotLabelStyleController Members
-
-		public void EhView_FontSizeChanged()
-		{
-			_percentFontSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_view.SelectedFont.Size, Units.Length.Point.Instance);
-		}
-
-		#endregion IXYPlotLabelStyleController Members
 	}
 }
