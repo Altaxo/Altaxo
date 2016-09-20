@@ -721,37 +721,36 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				var gapStart = 0.5 * (_gapAtStartOffset + _gapAtStartFactor * _cachedSymbolSize);
 				var gapEnd = 0.5 * (_gapAtEndOffset + _gapAtEndFactor * _cachedSymbolSize);
 
-				int rangeidx = 0;
-				PlotRange range = pdata.RangeList[rangeidx];
-				for (int j = 0; j < ptArray.Length; j += _skipFreq)
+				for (int r = 0; r < rangeList.Count; r++)
 				{
-					// syncronize range
-					while (j >= range.UpperBound)
-					{
-						rangeidx++;
-						range = pdata.RangeList[rangeidx];
-					}
+					var range = rangeList[r];
+					int lower = range.LowerBound;
+					int upper = range.UpperBound;
 
-					Logical3D r3d = layer.GetLogical3D(pdata, j + range.OffsetToOriginal);
-					foreach (CSPlaneID id in dropTargets)
+					for (int j = lower; j < upper; j += _skipFreq)
 					{
-						IPolylineD3D isoLine;
-						layer.CoordinateSystem.GetIsolineFromPointToPlane(r3d, id, out isoLine);
-						if (gapStart != 0 || gapEnd != 0)
-							isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
+						Logical3D r3d = layer.GetLogical3D(pdata, j + range.OffsetToOriginal);
+						foreach (CSPlaneID id in dropTargets)
+						{
+							IPolylineD3D isoLine;
+							layer.CoordinateSystem.GetIsolineFromPointToPlane(r3d, id, out isoLine);
+							if (gapStart != 0 || gapEnd != 0)
+								isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
 
-						if (null != isoLine)
-							g.DrawLine(_pen, isoLine);
+							if (null != isoLine)
+								g.DrawLine(_pen, isoLine);
+						}
 					}
-				}
+				} // for each range
 			}
 			else // using a variable symbol size or variable symbol color
 			{
 				for (int r = 0; r < rangeList.Count; r++)
 				{
-					int lower = rangeList[r].LowerBound;
-					int upper = rangeList[r].UpperBound;
-					int offset = rangeList[r].OffsetToOriginal;
+					var range = rangeList[r];
+					int lower = range.LowerBound;
+					int upper = range.UpperBound;
+					int offset = range.OffsetToOriginal;
 					for (int j = lower; j < upper; j += _skipFreq)
 					{
 						var pen = _pen;

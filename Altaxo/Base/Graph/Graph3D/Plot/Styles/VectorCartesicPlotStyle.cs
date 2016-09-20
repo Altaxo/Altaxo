@@ -875,7 +875,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				int upper = r.UpperBound;
 				int offset = r.OffsetToOriginal;
 
-				for (int j = lower; j < upper; j++)
+				for (int j = lower; j < upper; j+=_skipFrequency)
 				{
 					int originalRow = j + offset;
 					double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalRow);

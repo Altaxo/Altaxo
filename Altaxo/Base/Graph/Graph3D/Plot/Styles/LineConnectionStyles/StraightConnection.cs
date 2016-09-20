@@ -71,8 +71,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 		/// <param name="range">The plot range to use.</param>
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="pen">The pen to draw the line.</param>
-		/// <param name="symbolGap">The size of the symbol gap. Argument is the original index of the data. The return value is the absolute symbol gap at this index.
-		/// This function is null if no symbol gap is required.</param>
+		/// <param name="symbolGap">The size of the symbol gap. Argument is the original index of the data. The return value is the absolute symbol gap at this index. This function is null if no symbol gap is required.</param>
+		/// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
 		/// <param name="connectCircular">If true, the end of the line is connected with the start of the line.</param>
 		public override void Paint(
 			IGraphicsContext3D g,
@@ -81,6 +81,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 			IPlotArea layer,
 			PenX3D pen,
 			Func<int, double> symbolGap,
+			int skipFrequency,
 			bool connectCircular)
 		{
 			var linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
@@ -92,22 +93,41 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 
 			if (symbolGap != null)
 			{
-				for (int i = 0; i < lastIdx; i++)
+				if (skipFrequency <= 1) // skip all scatter symbol gaps -> thus skipOffset can be ignored
 				{
-					int originalIndex = range.OffsetToOriginal + i;
-					var diff = linepts[i + 1] - linepts[i];
-					double gapAtStart = symbolGap(originalIndex);
-					double gapAtEnd = i != range.Length ? symbolGap(originalIndex + 1) : symbolGap(range.OffsetToOriginal);
-					var relAtStart = 0.5 * gapAtStart / diff.Length; // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
-					var relAtEnd = 0.5 * gapAtEnd / diff.Length; // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
-					if ((relAtStart + relAtEnd) < 1) // a line only appears if sum of the gaps  is smaller than 1
+					for (int i = 0; i < lastIdx; i++)
 					{
-						var start = linepts[i] + relAtStart * diff;
-						var stop = linepts[i + 1] - relAtEnd * diff;
+						int originalIndex = range.OffsetToOriginal + i;
+						var diff = linepts[i + 1] - linepts[i];
+						double gapAtStart = symbolGap(originalIndex);
+						double gapAtEnd = i != range.Length ? symbolGap(originalIndex + 1) : symbolGap(range.OffsetToOriginal);
+						var relAtStart = 0.5 * gapAtStart / diff.Length; // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
+						var relAtEnd = 0.5 * gapAtEnd / diff.Length; // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
+						if ((relAtStart + relAtEnd) < 1) // a line only appears if sum of the gaps  is smaller than 1
+						{
+							var start = linepts[i] + relAtStart * diff;
+							var stop = linepts[i + 1] - relAtEnd * diff;
 
-						g.DrawLine(pen, start, stop);
-					}
-				} // end for
+							g.DrawLine(pen, start, stop);
+						}
+					} // end for
+				} // skipFrequency was 1
+				else // skipFrequency is > 1
+				{
+					for (int i = 0; i < lastIdx; i += skipFrequency)
+					{
+						int originalRowIndex = range.OriginalFirstPoint + i;
+
+						double gapAtStart = symbolGap(originalRowIndex);
+						double gapAtEnd = i != range.Length ? symbolGap(originalRowIndex + skipFrequency) : symbolGap(range.OffsetToOriginal);
+
+						IPolylineD3D polyline = SharpPolylineD3D.FromPointsWithPossibleDublettes(linepts.Skip(i).Take(1 + skipFrequency));
+						polyline = polyline.ShortenedBy(RADouble.NewAbs(gapAtStart / 2), RADouble.NewAbs(gapAtEnd / 2));
+
+						if (null != polyline)
+							g.DrawLine(pen, polyline);
+					} // end for
+				}
 			}
 			else // no line symbol gap required, so we can use DrawLines to draw the lines
 			{

@@ -417,10 +417,16 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 				if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size
 				{
-					for (int j = 0; j < ptArray.Length; j += _skipFreq)
+					for (int r = 0; r < rangeList.Count; r++)
 					{
-						_symbolShape.Paint(g, _material, ptArray[j], _symbolSize);
-					} // end for
+						var range = rangeList[r];
+						int lower = range.LowerBound;
+						int upper = range.UpperBound;
+						for (int j = lower; j < upper; j += _skipFreq)
+						{
+							_symbolShape.Paint(g, _material, ptArray[j], _symbolSize);
+						} // end for all points in range
+					} // end for all ranges
 				}
 				else // using a variable symbol size or variable symbol color
 				{

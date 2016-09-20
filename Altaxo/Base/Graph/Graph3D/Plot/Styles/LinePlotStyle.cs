@@ -548,13 +548,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				// as one range, i.e. continuously
 				// for this, we create the totalRange, which contains all ranges
 				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
-				_connectionStyle.Paint(g, pdata, totalRange, layer, _linePen, symbolGapFunction, _connectCircular);
+				_connectionStyle.Paint(g, pdata, totalRange, layer, _linePen, symbolGapFunction, _skipFreq, _connectCircular);
 			}
 			else // we not ignore missing points, so plot all ranges separately
 			{
 				for (int i = 0; i < rangelistlen; i++)
 				{
-					_connectionStyle.Paint(g, pdata, rangeList[i], layer, _linePen, symbolGapFunction, _connectCircular);
+					_connectionStyle.Paint(g, pdata, rangeList[i], layer, _linePen, symbolGapFunction, _skipFreq, _connectCircular);
 				}
 			}
 		}

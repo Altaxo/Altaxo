@@ -804,7 +804,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				int lower = rangeList[r].LowerBound;
 				int upper = rangeList[r].UpperBound;
 				int offset = rangeList[r].OffsetToOriginal;
-				for (int j = lower; j < upper; j++)
+				for (int j = lower; j < upper; j+=_skipFrequency)
 				{
 					string label = labelColumn[j + offset].ToString();
 					if (label == null || label == string.Empty)
@@ -981,6 +981,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
+			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
+			if (!_independentSkipFrequency)
+			{
+				_skipFrequency = 1;
+				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this._skipFrequency = c; });
+			}
+
 			_cachedColorForIndexFunction = null;
 
 			if (this.IsColorReceiver)
