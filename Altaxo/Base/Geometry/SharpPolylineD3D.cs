@@ -158,7 +158,7 @@ namespace Altaxo.Geometry
 					sum += (_points[i] - _points[i + 1]).Length;
 					if (!(sum < a2))
 					{
-						p1 = PointD3D.Interpolate(_points[i + 1], _points[i], (a1 - prevSum) / (sum - prevSum));
+						p1 = PointD3D.Interpolate(_points[i + 1], _points[i], (a2 - prevSum) / (sum - prevSum));
 						i1 = p1 != _points[i] ? i : i - 1;
 						break;
 					}
