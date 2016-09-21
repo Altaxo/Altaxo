@@ -23,8 +23,9 @@
 		<GroupBox Header="Data column">
 			<Grid>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition SharedSizeGroup="LabelColumn1" />
-					<ColumnDefinition SharedSizeGroup="EditColumn1" />
+					<ColumnDefinition  Width="Auto" SharedSizeGroup="LabelColumn1" />
+					<ColumnDefinition  Width="Auto" SharedSizeGroup="EditColumn1" />
+					<ColumnDefinition  Width="*" />
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
@@ -41,8 +42,9 @@
 		<GroupBox Header="Details:">
 			<Grid>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition />
-					<ColumnDefinition />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />

@@ -31,10 +31,11 @@
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
 			<ColumnDefinition Width="4" />
-			<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
+			<ColumnDefinition Width="Auto" SharedSizeGroup="EditColumn1" />
+			<ColumnDefinition Width="Auto" MinWidth="4" />
+			<ColumnDefinition Width="Auto" MinWidth="40" SharedSizeGroup="EditColumn2" />
 			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="*" MinWidth="40" SharedSizeGroup="EditColumn2" />
-			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />

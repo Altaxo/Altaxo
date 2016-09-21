@@ -26,6 +26,7 @@
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="4" />
+			<ColumnDefinition Width="Auto" MinWidth="100" />
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
@@ -51,6 +52,7 @@
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
+			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<CheckBox x:Name="_guiIndependentColor" Grid.Row="0" Grid.Column="0" Content="Independent color:" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged" />
 		<axoggc:MaterialComboBox x:Name="_guiPenMaterial" Grid.Row="0" Grid.Column="2" />
