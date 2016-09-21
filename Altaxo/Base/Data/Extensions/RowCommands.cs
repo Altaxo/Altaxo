@@ -112,5 +112,75 @@ namespace Altaxo.Data
 				destinationColumn[colIdx] = table[colIdx][rowIdx];
 			}
 		}
+
+		/// <summary>
+		/// Ensures that the selected columns in the source <see cref="DataColumnCollection"/> do also exist in the destination <see cref="DataColumnCollection"/>.
+		/// </summary>
+		/// <param name="sourceTable">The source table.</param>
+		/// <param name="selectedSourceDataColumns">The selected source data columns. If this parameter is null, all source columns are selected.</param>
+		/// <param name="destinationTable">The destination table.</param>
+		public static void EnsureColumnsExistInDestinationCollection(this DataColumnCollection sourceTable, IAscendingIntegerCollection selectedSourceDataColumns, DataColumnCollection destinationTable)
+		{
+			if (null == selectedSourceDataColumns || 0 == selectedSourceDataColumns.Count)
+				selectedSourceDataColumns = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, sourceTable.ColumnCount);
+
+			foreach (var colIdx in selectedSourceDataColumns)
+			{
+				var srcCol = sourceTable[colIdx];
+
+				destinationTable.EnsureExistence(
+					sourceTable.GetColumnName(srcCol),
+					srcCol.GetType(),
+					sourceTable.GetColumnKind(srcCol),
+					sourceTable.GetColumnGroup(srcCol)
+					);
+			}
+		}
+
+		/// <summary>
+		/// Copies one row of a <see cref="DataColumnCollection"/> to another row in the same or in another <see cref="DataColumnCollection"/>. The columns in the source collection are mapped to the columns in
+		/// the destination collection by name; if a column does not exist in the destination collection, this source column is silently ignored and therefore is not copied.
+		/// </summary>
+		/// <param name="sourceTable">The source <see cref="DataColumnCollection"/>.</param>
+		/// <param name="sourceRowIndex">Index of the source row.</param>
+		/// <param name="selectedSourceDataColumns">The selected source data columns. If this parameter is null, all source columns are selected for copying.</param>
+		/// <param name="destinationTable">The destination <see cref="DataColumnCollection"/>.</param>
+		/// <param name="destinationRowIndex">Index of the destination row.</param>
+		public static void CopyRowToRowByColumnName(this DataColumnCollection sourceTable, int sourceRowIndex, IAscendingIntegerCollection selectedSourceDataColumns, DataColumnCollection destinationTable, int destinationRowIndex)
+		{
+			if (null == selectedSourceDataColumns || 0 == selectedSourceDataColumns.Count)
+				selectedSourceDataColumns = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, sourceTable.ColumnCount);
+
+			foreach (var colIdx in selectedSourceDataColumns)
+			{
+				var srcColName = sourceTable.GetColumnName(colIdx);
+
+				if (!destinationTable.Contains(srcColName))
+					continue;
+
+				destinationTable[srcColName][destinationRowIndex] = sourceTable[srcColName][sourceRowIndex];
+			}
+		}
+
+		/// <summary>
+		/// Copies one row of a <see cref="DataColumnCollection"/> to another row in the same or in another <see cref="DataColumnCollection"/>.
+		/// The columns in the source collection are mapped to the columns in the destination collection by index (plus an optional offset).
+		/// </summary>
+		/// <param name="sourceTable">The source <see cref="DataColumnCollection"/>.</param>
+		/// <param name="sourceRowIndex">Index of the source row.</param>
+		/// <param name="selectedSourceDataColumns">The selected source data columns. If this parameter is null, all source columns are selected for copying.</param>
+		/// <param name="destinationTable">The destination <see cref="DataColumnCollection"/>.</param>
+		/// <param name="destinationRowIndex">Index of the destination row.</param>
+		/// <param name="destinationColumnOffset">The destination column offset. A column i in the source collection is copied to column i + <paramref name="destinationColumnOffset"/> in the destination collection.</param>
+		public static void CopyRowToRowByColumnIndex(this DataColumnCollection sourceTable, int sourceRowIndex, IAscendingIntegerCollection selectedSourceDataColumns, DataColumnCollection destinationTable, int destinationRowIndex, int destinationColumnOffset)
+		{
+			if (null == selectedSourceDataColumns || 0 == selectedSourceDataColumns.Count)
+				selectedSourceDataColumns = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, sourceTable.ColumnCount);
+
+			foreach (var srcColIdx in selectedSourceDataColumns)
+			{
+				destinationTable[srcColIdx + destinationColumnOffset][destinationRowIndex] = sourceTable[srcColIdx][sourceRowIndex];
+			}
+		}
 	}
 }
