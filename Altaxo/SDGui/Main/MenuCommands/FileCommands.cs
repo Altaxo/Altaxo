@@ -345,9 +345,20 @@ namespace Altaxo.Main.Commands
 				var wrapper = Current.Workbench.ActiveViewContent as Altaxo.Gui.IMVCControllerWrapper;
 				var viewModel = wrapper.MVCController.ModelObject as IProjectItemViewModel;
 				var doc = viewModel?.ProjectItem;
-				if (null != doc)
+				if (doc is Graph.Graph3D.GraphDocument)
 				{
+					var oldName = doc.Name;
+					string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(oldName, "GRAPH");
 					var newDoc = (IProjectItem)doc.Clone();
+					newDoc.Name = newDoc.Name = Current.Project.GraphDocumentCollection.FindNewName(newnamebase);
+					Current.Project.AddItem(newDoc);
+					Current.ProjectService.ShowDocumentView(newDoc);
+				}
+				else if (null != doc)
+				{
+					var oldName = doc.Name;
+					var newDoc = (IProjectItem)doc.Clone();
+
 					Current.Project.AddItem(newDoc);
 					Current.ProjectService.ShowDocumentView(newDoc);
 				}
