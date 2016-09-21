@@ -29,7 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph3D.Axis
+namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
 	/// <summary>
 	/// Interaction logic for AxisCreationControl.xaml

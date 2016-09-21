@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.Graph3D.Axis
+namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
 	/// <summary>
 	/// Supports the creation of a new axis by the axis creation dialog.

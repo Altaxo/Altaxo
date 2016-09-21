@@ -36,7 +36,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace Altaxo.Gui.Graph3D.Axis
+namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
 	#region Interfaces
 

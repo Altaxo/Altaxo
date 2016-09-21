@@ -29,11 +29,12 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph3D.Axis
+namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
 	using Altaxo.Collections;
 	using Altaxo.Drawing.D3D;
 	using Altaxo.Graph.Graph3D;
+	using Gui.Graph3D;
 
 	/// <summary>
 	/// Interaction logic for AxisLineStyleControl.xaml

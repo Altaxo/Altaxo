@@ -29,11 +29,12 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph3D.Axis
+namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
 	using Altaxo.Drawing.D3D;
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.Background;
+	using Gui.Graph3D;
 
 	/// <summary>
 	/// Interaction logic for XYAxisLabelStyleControl.xaml

@@ -30,7 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Gui.Graph3D.Axis
+namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
 	#region Interfaces
 
@@ -132,7 +132,6 @@ namespace Altaxo.Gui.Graph3D.Axis
 					case 3:
 						_doc.SecondUpMajorTicks = item.IsSelected;
 						break;
-
 				}
 			}
 

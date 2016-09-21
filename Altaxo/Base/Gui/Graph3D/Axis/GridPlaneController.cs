@@ -28,11 +28,12 @@ using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Axis;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Common.Drawing;
+using Altaxo.Gui.Graph3D.Material;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Gui.Graph3D.Axis
+namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
 	[ExpectedTypeOfView(typeof(IMultiChildView))]
 	[UserControllerForObject(typeof(GridPlane))]
@@ -69,7 +70,7 @@ namespace Altaxo.Gui.Graph3D.Axis
 				Current.Gui.FindAndAttachControlTo(_grid2);
 				ControlViewElement c2 = new ControlViewElement(GridName(_doc.PlaneID.InPlaneAxisNumber2), _grid2, _grid2.ViewObject);
 
-				_background = new Material.MaterialControllerSimple() { UseDocumentCopy = UseDocument.Directly, IsNoMaterialAllowed = true };
+				_background = new MaterialControllerSimple() { UseDocumentCopy = UseDocument.Directly, IsNoMaterialAllowed = true };
 				_background.InitializeDocument(_doc.Background ?? MaterialInvisible.Instance);
 				Current.Gui.FindAndAttachControlTo(_background);
 				ControlViewElement c3 = new ControlViewElement("Background", _background, _background.ViewObject);

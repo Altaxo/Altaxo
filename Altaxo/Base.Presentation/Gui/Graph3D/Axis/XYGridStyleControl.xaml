@@ -1,56 +1,56 @@
-﻿<UserControl x:Class="Altaxo.Gui.Graph3D.Axis.XYGridStyleControl"
+﻿<UserControl x:Class="Altaxo.Gui.Graph.Graph3D.Axis.XYGridStyleControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Graph3D"
              mc:Ignorable="d">
-  <UserControl.Resources>
-    <LinearGradientBrush x:Key="HorzSeparatorBrush" StartPoint="0,0" EndPoint="0,1">
-      <GradientBrush.GradientStops>
-        <GradientStopCollection>
-          <GradientStop Color="White" Offset="0.0" />
-          <GradientStop Color="Azure" Offset="0.5" />
-          <GradientStop Color="White" Offset="1" />
-        </GradientStopCollection>
-      </GradientBrush.GradientStops>
-    </LinearGradientBrush>
+	<UserControl.Resources>
+		<LinearGradientBrush x:Key="HorzSeparatorBrush" StartPoint="0,0" EndPoint="0,1">
+			<GradientBrush.GradientStops>
+				<GradientStopCollection>
+					<GradientStop Color="White" Offset="0.0" />
+					<GradientStop Color="Azure" Offset="0.5" />
+					<GradientStop Color="White" Offset="1" />
+				</GradientStopCollection>
+			</GradientBrush.GradientStops>
+		</LinearGradientBrush>
 
-    <Style x:Key="HorzSeparatorStyle" TargetType="{x:Type Rectangle}">
-      <Setter Property="Fill" Value="{StaticResource HorzSeparatorBrush}" />
-      <Setter Property="Height" Value="8" />
-    </Style>
-  </UserControl.Resources>
+		<Style x:Key="HorzSeparatorStyle" TargetType="{x:Type Rectangle}">
+			<Setter Property="Fill" Value="{StaticResource HorzSeparatorBrush}" />
+			<Setter Property="Height" Value="8" />
+		</Style>
+	</UserControl.Resources>
 
-  <GroupBox>
-    <GroupBox.Header>
-      <StackPanel Orientation="Horizontal">
-        <Label x:Name="_gridLabel" VerticalAlignment="Center" >Enable grid:</Label>
-        <CheckBox x:Name="_chkEnable" VerticalAlignment="Center" Checked="EhEnableCheckChanged" Unchecked="EhEnableCheckChanged"></CheckBox>
-      </StackPanel>
-    </GroupBox.Header>
+	<GroupBox>
+		<GroupBox.Header>
+			<StackPanel Orientation="Horizontal">
+				<Label x:Name="_gridLabel" VerticalAlignment="Center" >Enable grid:</Label>
+				<CheckBox x:Name="_chkEnable" VerticalAlignment="Center" Checked="EhEnableCheckChanged" Unchecked="EhEnableCheckChanged"></CheckBox>
+			</StackPanel>
+		</GroupBox.Header>
 
-    <Grid>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="*" />
-      </Grid.ColumnDefinitions>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
-      </Grid.RowDefinitions>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
 
-      <Rectangle Grid.Row="1" Grid.ColumnSpan="4" Style="{StaticResource HorzSeparatorStyle}" />
-      <Rectangle Grid.Row="3" Grid.ColumnSpan="4" Style="{StaticResource HorzSeparatorStyle}" />
+			<Rectangle Grid.Row="1" Grid.ColumnSpan="4" Style="{StaticResource HorzSeparatorStyle}" />
+			<Rectangle Grid.Row="3" Grid.ColumnSpan="4" Style="{StaticResource HorzSeparatorStyle}" />
 
-      <CheckBox Grid.Column="0" Grid.Row="2"  x:Name="_chkShowZeroOnly" Checked="EhShowZeroOnlyCheckChanged" Unchecked="EhShowZeroOnlyCheckChanged">At zero only</CheckBox>
-      <CheckBox Grid.Column="1" Grid.Row="2" x:Name="_chkShowMinor" Checked="EhShowMinorCheckChanged" Unchecked="EhShowMinorCheckChanged">Show minor grid</CheckBox>
+			<CheckBox Grid.Column="0" Grid.Row="2"  x:Name="_chkShowZeroOnly" Checked="EhShowZeroOnlyCheckChanged" Unchecked="EhShowZeroOnlyCheckChanged">At zero only</CheckBox>
+			<CheckBox Grid.Column="1" Grid.Row="2" x:Name="_chkShowMinor" Checked="EhShowMinorCheckChanged" Unchecked="EhShowMinorCheckChanged">Show minor grid</CheckBox>
 
-      <axogcd:ColorTypeThicknessPenControl Grid.Column="0" Grid.Row="4" x:Name="_majorStyle" />
-      <axogcd:ColorTypeThicknessPenControl Grid.Column="1" Grid.Row="4" x:Name="_minorStyle" />
-    </Grid>
-  </GroupBox>
+			<axogcd:ColorTypeThicknessPenControl Grid.Column="0" Grid.Row="4" x:Name="_majorStyle" />
+			<axogcd:ColorTypeThicknessPenControl Grid.Column="1" Grid.Row="4" x:Name="_minorStyle" />
+		</Grid>
+	</GroupBox>
 </UserControl>

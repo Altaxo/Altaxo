@@ -25,7 +25,7 @@
 using Altaxo.Graph.Graph3D.Axis;
 using System;
 
-namespace Altaxo.Gui.Graph3D.Axis
+namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
 	#region Interfaces
 

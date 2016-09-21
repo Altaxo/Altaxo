@@ -27,7 +27,7 @@ using Altaxo.Graph;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Axis;
 using Altaxo.Graph.Graph3D.CS;
-using Altaxo.Gui.Graph3D.Axis;
+using Altaxo.Gui.Graph.Graph3D.Axis;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -256,7 +256,7 @@ namespace Altaxo.Gui.Graph3D
 				_listOfScales.Add(new SelectableListNode("Z-Scale", 2, false));
 
 			// collect the AxisStyleIdentifier from the actual layer and also all possible AxisStyleIdentifier
-			_axisControl = new Dictionary<CSLineID, Axis.AxisStyleControllerConditionalGlue>();
+			_axisControl = new Dictionary<CSLineID, AxisStyleControllerConditionalGlue>();
 			_listOfAxes = new SelectableListNodeList();
 			foreach (CSLineID ids in _doc.CoordinateSystem.GetJoinedAxisStyleIdentifier(_doc.AxisStyles.AxisStyleIDs, new CSLineID[] { id }))
 			{
@@ -491,7 +491,7 @@ namespace Altaxo.Gui.Graph3D
 			if (!ApplyCurrentController(false, false))
 				return;
 
-			var creationArgs = new Axis.AxisCreationArguments();
+			var creationArgs = new AxisCreationArguments();
 
 			creationArgs.InitializeAxisInformationList(_doc.CoordinateSystem, _doc.AxisStyles);
 			creationArgs.TemplateStyle = _currentAxisID;
@@ -507,7 +507,7 @@ namespace Altaxo.Gui.Graph3D
 			var newIdentity = creationArgs.CurrentStyle;
 			var newAxisInfo = _doc.CoordinateSystem.GetAxisStyleInformation(newIdentity);
 
-			Axis.AxisCreationArguments.AddAxis(_doc.AxisStyles, creationArgs); // add the new axis to the document
+			AxisCreationArguments.AddAxis(_doc.AxisStyles, creationArgs); // add the new axis to the document
 			_axisControl.Add(newIdentity, new AxisStyleControllerConditionalGlue(newAxisInfo, _doc.AxisStyles));
 
 			SetSecondaryChoiceToUnique();
