@@ -31,7 +31,7 @@ using Altaxo.Gui.Common.Drawing.D3D;
 using Altaxo.Gui.Drawing.D3D;
 using Altaxo.Gui.Drawing.D3D.LineCaps;
 using Altaxo.Gui.Drawing.DashPatternManagement;
-using Altaxo.Gui.Graph3D.Material;
+using Altaxo.Gui.Graph.Graph3D.Material;
 using Altaxo.Gui.Graph3D.Plot.Styles;
 using System;
 using System.Collections.Generic;

@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Drawing.D3D
 	/// <summary>
 	/// Interaction logic for ColorComboBoxEx.xaml
 	/// </summary>
-	public partial class MaterialComboBox : ColorComboBoxBase, Altaxo.Gui.Graph3D.Material.IMaterialViewSimple
+	public partial class MaterialComboBox : ColorComboBoxBase, Altaxo.Gui.Graph.Graph3D.Material.IMaterialViewSimple
 	{
 		public static readonly DependencyProperty SelectedMaterialProperty;
 

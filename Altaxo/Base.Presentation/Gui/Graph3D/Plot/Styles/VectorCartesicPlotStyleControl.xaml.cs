@@ -24,6 +24,7 @@
 
 using Altaxo.Collections;
 using Altaxo.Drawing.D3D;
+using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -324,7 +325,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		{
 			this._guiColumnX.Text = boxText;
 			this._guiColumnX.ToolTip = toolTip;
-			this._guiColumnX.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
+			this._guiColumnX.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
 		}
 
 		public void Initialize_ColumnXTransformation(string transformationTextToShow, string transformationToolTip)
@@ -345,7 +346,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		{
 			this._guiColumnY.Text = boxText;
 			this._guiColumnY.ToolTip = toolTip;
-			this._guiColumnY.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
+			this._guiColumnY.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
 		}
 
 		public void Initialize_ColumnYTransformation(string transformationTextToShow, string transformationToolTip)
@@ -366,7 +367,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		{
 			this._guiColumnZ.Text = boxText;
 			this._guiColumnZ.ToolTip = toolTip;
-			this._guiColumnZ.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
+			this._guiColumnZ.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
 		}
 
 		public void Initialize_ColumnZTransformation(string transformationTextToShow, string transformationToolTip)

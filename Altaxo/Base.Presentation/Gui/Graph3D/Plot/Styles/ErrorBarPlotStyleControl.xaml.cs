@@ -24,6 +24,7 @@
 
 using Altaxo.Collections;
 using Altaxo.Drawing.D3D;
+using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -326,7 +327,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		{
 			this._guiCommonErrorColumn.Text = boxText;
 			this._guiCommonErrorColumn.ToolTip = toolTip;
-			this._guiCommonErrorColumn.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
+			this._guiCommonErrorColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
 		}
 
 		public void Initialize_CommonErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
@@ -347,7 +348,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		{
 			this._guiPositiveErrorColumn.Text = boxText;
 			this._guiPositiveErrorColumn.ToolTip = toolTip;
-			this._guiPositiveErrorColumn.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
+			this._guiPositiveErrorColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
 		}
 
 		public void Initialize_PositiveErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
@@ -368,7 +369,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		{
 			this._guiNegativeErrorColumn.Text = boxText;
 			this._guiNegativeErrorColumn.ToolTip = toolTip;
-			this._guiNegativeErrorColumn.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
+			this._guiNegativeErrorColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
 		}
 
 		public void Initialize_NegativeErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)

@@ -27,6 +27,7 @@ using Altaxo.Data;
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Gui.Graph;
+using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -250,7 +251,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		private void InitializeCommonErrorColumnText()
 		{
-			var info = new Data.PlotColumnInformation(_doc.ColumnX, _doc.ColumnXDataColumnName);
+			var info = new PlotColumnInformation(_doc.ColumnX, _doc.ColumnXDataColumnName);
 			info.Update(_supposedParentDataTable);
 
 			_view?.Initialize_ColumnX(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
@@ -259,7 +260,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		private void InitializePositiveErrorColumnText()
 		{
-			var info = new Data.PlotColumnInformation(_doc.ColumnY, _doc.ColumnYDataColumnName);
+			var info = new PlotColumnInformation(_doc.ColumnY, _doc.ColumnYDataColumnName);
 			info.Update(_supposedParentDataTable);
 
 			_view?.Initialize_ColumnY(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
@@ -268,7 +269,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		private void InitializeNegativeErrorColumnText()
 		{
-			var info = new Data.PlotColumnInformation(_doc.ColumnZ, _doc.ColumnZDataColumnName);
+			var info = new PlotColumnInformation(_doc.ColumnZ, _doc.ColumnZDataColumnName);
 			info.Update(_supposedParentDataTable);
 
 			_view?.Initialize_ColumnZ(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);

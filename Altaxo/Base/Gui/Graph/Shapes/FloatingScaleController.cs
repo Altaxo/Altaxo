@@ -34,6 +34,7 @@ using System.Text;
 namespace Altaxo.Gui.Graph.Shapes
 {
 	using Altaxo.Gui.Common;
+	using Gdi.Axis;
 	using Geometry;
 
 	public interface IFloatingScaleView

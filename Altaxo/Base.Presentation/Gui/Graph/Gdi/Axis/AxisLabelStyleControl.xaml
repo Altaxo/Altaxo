@@ -1,0 +1,113 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.Gdi.Axis.AxisLabelStyleControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+ 						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
+ 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+             mc:Ignorable="d">
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,0,2" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
+			</Style.Setters>
+		</Style>
+
+		<DataTemplate x:Key="TickItemsTemplate" DataType="{x:Type axocoll:SelectableListNode}">
+			<StackPanel Orientation="Horizontal" Margin="0,4,8,0">
+				<RadioButton Width="16" Height="16" Margin="0" IsChecked="{Binding IsSelected, Mode=TwoWay}" GroupName="LabelSideRadios" />
+				<TextBlock Text="{Binding Text}" />
+			</StackPanel>
+		</DataTemplate>
+		<Style x:Key="TickItemsControlStyle" TargetType="ItemsControl">
+			<Setter Property="ItemsPanel">
+				<Setter.Value>
+					<ItemsPanelTemplate>
+						<WrapPanel />
+					</ItemsPanelTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</UserControl.Resources>
+	<StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
+				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2" />
+				<ColumnDefinition Width="*" SharedSizeGroup="EditColumn2" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Label Grid.Column="0" Grid.Row="0" Content="Color:" />
+			<Label Grid.Column="2" Grid.Row="0" Content="LabelSide:" />
+			<Label Grid.Column="0" Grid.Row="2" Content="Font:" />
+			<Label Grid.Column="0" Grid.Row="4" Content="Font size:" />
+			<Label Grid.Column="0" Grid.Row="6" Content="Auto align:" />
+			<Label Grid.Column="0" Grid.Row="8" Content="Horz. alignment:" />
+			<Label Grid.Column="0" Grid.Row="10" Content="Vert. alignment:" />
+			<Label Grid.Column="0" Grid.Row="12" Content="Background:" />
+			<Label Grid.Column="0" Grid.Row="14" Content="Suppress values:" />
+			<Label Grid.Column="0" Grid.Row="16" Content="Supress label #:" />
+
+			<Label Grid.Column="2" Grid.Row="2" Content="Style:" />
+			<Label Grid.Column="2" Grid.Row="4" Content="Rotation:" />
+			<GroupBox Grid.Column="2" Grid.Row="6" Grid.ColumnSpan="2" Grid.RowSpan="5" Header="Offset (relative to M-size):" Margin="4,8,0,0" />
+			<Label Grid.Column="2" Grid.Row="8" Content="X:" />
+			<Label Grid.Column="2" Grid.Row="10" Content="Y:" />
+			<Label Grid.Column="2" Grid.Row="12" Content="Brush:" />
+
+			<axogcd:BrushComboBox x:Name="m_cbColor" Grid.Column="1" Grid.Row="0" />
+			<ItemsControl x:Name="_guiLabelSide" Grid.Column="3" Grid.Row="0" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}" />
+
+			<axogcd:FontFamilyComboBox x:Name="m_cbFontFamily" Grid.Column="1" Grid.Row="2" />
+			<axogcd:FontStyleComboBox x:Name="m_cbFontStyle" Grid.Column="3" Grid.Row="2" />
+			<axogcd:FontSizeComboBox x:Name="m_cbFontSize" Grid.Column="1" Grid.Row="4" />
+			<axogcd:RotationComboBox x:Name="m_edRotation" Grid.Column="3" Grid.Row="4" />
+			<CheckBox x:Name="_chkAutomaticAlignment" Grid.Column="1" Grid.Row="6" VerticalAlignment="Center" Checked="_chkAutomaticAlignment_CheckedChanged" Unchecked="_chkAutomaticAlignment_CheckedChanged" />
+			<ComboBox x:Name="m_cbHorizontalAlignment" Grid.Column="1" Grid.Row="8" SelectionChanged="EhHorizontalAligment_SelectionChanged" />
+			<axogc:QuantityWithUnitTextBox x:Name="m_edXOffset" Grid.Column="3" Grid.Row="8" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0" />
+			<ComboBox x:Name="m_cbVerticalAlignment" Grid.Column="1" Grid.Row="10" SelectionChanged="EhVerticalAligment_SelectionChanged" />
+			<axogc:QuantityWithUnitTextBox x:Name="m_edYOffset" Grid.Column="3" Grid.Row="10" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0" />
+			<ComboBox x:Name="_cbBackgroundStyle" Grid.Column="1" Grid.Row="12" />
+			<axogcd:BrushComboBox x:Name="_cbBackgroundBrush" Grid.Column="3" Grid.Row="12" />
+			<TextBox x:Name="_edSuppressLabelValues" Grid.Column="1" Grid.Row="14" />
+			<TextBox x:Name="_edSuppressLabelsByNumber" Grid.Column="1" Grid.Row="16" />
+
+			<Label Grid.Column="0" Grid.Row="18" Content="Prefix text:" />
+			<TextBox x:Name="_guiPrefixText" Grid.Column="1" Grid.Row="18" />
+			<Label Grid.Column="2" Grid.Row="18" Content="Postfix text:" />
+			<TextBox x:Name="_guiPostfixText" Grid.Column="3" Grid.Row="18" />
+
+			<Label Grid.Column="0" Grid.Row="20" Content="Label style:" />
+			<ComboBox x:Name="m_cbLabelStyle" Grid.Column="1" Grid.Row="20" Grid.ColumnSpan="3" SelectionChanged="m_cbLabelStyle_SelectionChangeCommitted" />
+		</Grid>
+		<Border x:Name="_guiLabelStyleSpecific" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="22" />
+	</StackPanel>
+</UserControl>

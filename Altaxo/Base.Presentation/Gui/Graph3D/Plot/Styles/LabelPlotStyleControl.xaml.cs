@@ -27,6 +27,7 @@ using Altaxo.Drawing.D3D;
 using Altaxo.Graph;
 using Altaxo.Graph.Graph3D.Background;
 using Altaxo.Gui.Common.Drawing;
+using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using Altaxo.Units;
 using System;
 using System.Collections.Generic;
@@ -62,7 +63,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		{
 			InitializeComponent();
 
-			Data.DefaultSeverityColumnColors.NormalColor = _guiLabelColumn.Background;
+			DefaultSeverityColumnColors.NormalColor = _guiLabelColumn.Background;
 
 			_fontControlsGlue = new FontX3DControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle, CbFontDepth = _cbFontDepth };
 			_backgroundGlue = new BackgroundControlsGlue() { CbStyle = _cbBackgroundStyle, CbBrush = _cbBackgroundBrush };
@@ -93,7 +94,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 		{
 			this._guiLabelColumn.Text = boxText;
 			this._guiLabelColumn.ToolTip = toolTip;
-			this._guiLabelColumn.Background = Data.DefaultSeverityColumnColors.GetSeverityColor(status);
+			this._guiLabelColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
 		}
 
 		public void Init_Transformation(string boxText, string toolTip)

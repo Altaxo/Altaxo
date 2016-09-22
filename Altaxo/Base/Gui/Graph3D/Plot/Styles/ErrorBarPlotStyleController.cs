@@ -27,6 +27,7 @@ using Altaxo.Data;
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Gui.Graph;
+using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -255,7 +256,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		private void InitializeCommonErrorColumnText()
 		{
-			var info = new Data.PlotColumnInformation(_doc.CommonErrorColumn, _doc.CommonErrorColumnDataColumnName);
+			var info = new PlotColumnInformation(_doc.CommonErrorColumn, _doc.CommonErrorColumnDataColumnName);
 			info.Update(_supposedParentDataTable);
 
 			_view?.Initialize_CommonErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
@@ -264,7 +265,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		private void InitializePositiveErrorColumnText()
 		{
-			var info = new Data.PlotColumnInformation(_doc.PositiveErrorColumn, _doc.PositiveErrorColumnDataColumnName);
+			var info = new PlotColumnInformation(_doc.PositiveErrorColumn, _doc.PositiveErrorColumnDataColumnName);
 			info.Update(_supposedParentDataTable);
 
 			_view?.Initialize_PositiveErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
@@ -273,7 +274,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		private void InitializeNegativeErrorColumnText()
 		{
-			var info = new Data.PlotColumnInformation(_doc.NegativeErrorColumn, _doc.NegativeErrorColumnDataColumnName);
+			var info = new PlotColumnInformation(_doc.NegativeErrorColumn, _doc.NegativeErrorColumnDataColumnName);
 			info.Update(_supposedParentDataTable);
 
 			_view?.Initialize_NegativeErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);

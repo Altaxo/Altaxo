@@ -509,23 +509,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph3D\Axis\AxisCreationControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Axis\AxisCreationControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Axis\AxisLabelStyleControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Axis\AxisLabelStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Axis\AxisLineStyleControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Axis\AxisLineStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Axis\AxisStyleControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Axis\AxisStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Axis\XYGridStyleControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Axis\XYGridStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -533,7 +533,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\CS\G3DCartesicCSControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\CS\G3DCartesicCSControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -589,11 +589,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Data\SingleColumnControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Plot\Data\SingleColumnControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Data\XYZPlotDataControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Plot\Data\XYZPlotDataControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -673,11 +673,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\AxisCreationControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Axis\AxisCreationControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\AxisLineStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Axis\AxisLineStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -825,7 +825,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\G2DCartesicCSControl.xaml">
+    <Page Include="Gui\Graph\Gdi\CS\G2DCartesicCSControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -837,19 +837,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\LabelFormatting\DateTimeLabelFormattingControl.xaml">
+    <Page Include="Gui\Graph\Gdi\LabelFormatting\DateTimeLabelFormattingControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\LabelFormatting\FreeLabelFormattingControl.xaml">
+    <Page Include="Gui\Graph\Gdi\LabelFormatting\FreeLabelFormattingControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\LabelFormatting\MultiLineLabelFormattingBaseControl.xaml">
+    <Page Include="Gui\Graph\Gdi\LabelFormatting\MultiLineLabelFormattingBaseControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\LabelFormatting\NumericLabelFormattingScientificControl.xaml">
+    <Page Include="Gui\Graph\Gdi\LabelFormatting\NumericLabelFormattingScientificControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1013,7 +1013,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\AxisStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Axis\AxisStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1025,11 +1025,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\AxisLabelStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Axis\AxisLabelStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\XYGridStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Axis\XYGridStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1514,26 +1514,26 @@
     </Compile>
     <Compile Include="Gui\GetIconExtension.cs" />
     <Compile Include="Gui\GetBitmapExtension.cs" />
-    <Compile Include="Gui\Graph3D\Axis\AxisCreationControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Axis\AxisCreationControl.xaml.cs">
       <DependentUpon>AxisCreationControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Axis\AxisLabelStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Axis\AxisLabelStyleControl.xaml.cs">
       <DependentUpon>AxisLabelStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Axis\AxisLineStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Axis\AxisLineStyleControl.xaml.cs">
       <DependentUpon>AxisLineStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Axis\AxisStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Axis\AxisStyleControl.xaml.cs">
       <DependentUpon>AxisStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Axis\XYGridStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Axis\XYGridStyleControl.xaml.cs">
       <DependentUpon>XYGridStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\BackgroundControlsGlue.cs" />
     <Compile Include="Gui\Graph3D\ColorTypeThicknessPenControl.xaml.cs">
       <DependentUpon>ColorTypeThicknessPenControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\CS\G3DCartesicCSControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\CS\G3DCartesicCSControl.xaml.cs">
       <DependentUpon>G3DCartesicCSControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\FontX3DGlue.cs" />
@@ -1579,11 +1579,11 @@
       <DependentUpon>PenAllPropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\PenControlsGlue.cs" />
-    <Compile Include="Gui\Graph3D\Plot\Data\DefaultSeverityColumnColors.cs" />
-    <Compile Include="Gui\Graph3D\Plot\Data\SingleColumnControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Plot\Data\DefaultSeverityColumnColors.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Plot\Data\SingleColumnControl.xaml.cs">
       <DependentUpon>SingleColumnControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Data\XYZPlotDataControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Plot\Data\XYZPlotDataControl.xaml.cs">
       <DependentUpon>XYZPlotDataControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Plot\G3DPlotItemControl.xaml.cs">
@@ -1631,10 +1631,10 @@
     <Compile Include="Gui\Graph\ArrangeLayersControl.xaml.cs">
       <DependentUpon>ArrangeLayersControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\AxisCreationControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Axis\AxisCreationControl.xaml.cs">
       <DependentUpon>AxisCreationControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\AxisLineStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Axis\AxisLineStyleControl.xaml.cs">
       <DependentUpon>AxisLineStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\AxisLinkControl.xaml.cs">
@@ -1748,7 +1748,7 @@
     <Compile Include="Gui\Graph\FunctionPlotDataControl.xaml.cs">
       <DependentUpon>FunctionPlotDataControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\G2DCartesicCSControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\CS\G2DCartesicCSControl.xaml.cs">
       <DependentUpon>G2DCartesicCSControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\G2DPlotItemControl.xaml.cs">
@@ -1758,16 +1758,16 @@
     <Compile Include="Gui\Graph\GraphExportOptionsControl.xaml.cs">
       <DependentUpon>GraphExportOptionsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\LabelFormatting\DateTimeLabelFormattingControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\LabelFormatting\DateTimeLabelFormattingControl.xaml.cs">
       <DependentUpon>DateTimeLabelFormattingControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\LabelFormatting\FreeLabelFormattingControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\LabelFormatting\FreeLabelFormattingControl.xaml.cs">
       <DependentUpon>FreeLabelFormattingControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\LabelFormatting\MultiLineLabelFormattingBaseControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\LabelFormatting\MultiLineLabelFormattingBaseControl.xaml.cs">
       <DependentUpon>MultiLineLabelFormattingBaseControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\LabelFormatting\NumericLabelFormattingScientificControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\LabelFormatting\NumericLabelFormattingScientificControl.xaml.cs">
       <DependentUpon>NumericLabelFormattingScientificControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Scales\Ticks\SpanTickSpacingControl.xaml.cs">
@@ -1895,7 +1895,7 @@
     <Compile Include="Gui\Graph\Shapes\TextGraphicControl.xaml.cs">
       <DependentUpon>TextGraphicControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\AxisStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Axis\AxisStyleControl.xaml.cs">
       <DependentUpon>AxisStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractMouseHandler.cs" />
@@ -1920,10 +1920,10 @@
     <Compile Include="Gui\Graph\WaterfallTransformControl.xaml.cs">
       <DependentUpon>WaterfallTransformControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\AxisLabelStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Axis\AxisLabelStyleControl.xaml.cs">
       <DependentUpon>AxisLabelStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\XYGridStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Axis\XYGridStyleControl.xaml.cs">
       <DependentUpon>XYGridStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\XYPlotDataControl.xaml.cs">

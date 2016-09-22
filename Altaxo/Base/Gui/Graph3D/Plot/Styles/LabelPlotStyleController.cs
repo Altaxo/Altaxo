@@ -32,6 +32,7 @@ using Altaxo.Graph.Graph3D.Background;
 using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Graph.Plot.Groups;
 using Altaxo.Gui.Graph;
+using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using Altaxo.Main;
 using Altaxo.Units;
 using System;
@@ -386,7 +387,7 @@ namespace Altaxo.Gui.Graph3D.Plot.Styles
 
 		private void InitializeLabelColumnText()
 		{
-			var info = new Data.PlotColumnInformation(_doc.LabelColumn, _doc.LabelColumnDataColumnName);
+			var info = new PlotColumnInformation(_doc.LabelColumn, _doc.LabelColumnDataColumnName);
 			info.Update(_supposedParentDataTable);
 
 			_view?.Init_LabelColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
