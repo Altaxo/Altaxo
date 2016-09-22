@@ -632,9 +632,9 @@
     <Compile Include="Gui\IOptionPanel.cs" />
     <Compile Include="Gui\Main\AddBasicPropertyValueController.cs" />
     <Compile Include="Gui\Main\Commands\TestAllProjectsInFolderController.cs" />
-    <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientController.cs" />
-    <Compile Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientController.cs" />
-    <Compile Include="Gui\Graph\ColorProvider\VisibleLightSpectrumController.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\ColorProvider\ColorProviderAHSBGradientController.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\ColorProvider\ColorProviderARGBGradientController.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\ColorProvider\VisibleLightSpectrumController.cs" />
     <Compile Include="Gui\Graph\Plot\Groups\GroupStylePresenceTrackers.cs" />
     <Compile Include="Gui\Data\DataTableMatrixProxyController.cs" />
     <Compile Include="Gui\Graph\Gdi\LabelFormatting\MultiLineLabelFormattingBaseController.cs" />
@@ -893,8 +893,8 @@
     <Compile Include="Gui\Common\MultiRename\MultiRenameController.cs" />
     <Compile Include="Gui\Graph\ArrangeLayersController.cs" />
     <Compile Include="Gui\Graph\Gdi\Background\BackgroundStyleController.cs" />
-    <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleController.cs" />
-    <Compile Include="Gui\Graph\ColumnDrivenColorPlotStyleController.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\ColumnDrivenSymbolSizePlotStyleController.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\ColumnDrivenColorPlotStyleController.cs" />
     <Compile Include="Gui\Graph\ExchangeTablesOfPlotItemsController.cs" />
     <Compile Include="Gui\Graph\Shapes\OpenPathShapeController.cs" />
     <Compile Include="Gui\Main\SingleFolderChoiceController.cs" />
@@ -1495,16 +1495,16 @@
     <Compile Include="Gui\Graph\AxisLinkController.cs" />
     <Compile Include="Gui\Graph\ScaleWithTicksController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\BarGraphPlotStyleController.cs" />
-    <Compile Include="Gui\Graph\ColorProviderBaseController.cs" />
-    <Compile Include="Gui\Graph\ColorProviderController.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\ColorProvider\ColorProviderBaseController.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\ColorProvider\ColorProviderController.cs" />
     <Compile Include="Gui\Graph\CoordinateSystemController.cs" />
-    <Compile Include="Gui\Graph\DensityImageLegendController.cs" />
+    <Compile Include="Gui\Graph\Gdi\Shapes\DensityImageLegendController.cs" />
     <Compile Include="Gui\Graph\DensityImagePlotItemOptionController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\DensityImagePlotStyleController.cs" />
-    <Compile Include="Gui\Graph\DensityScaleController.cs" />
+    <Compile Include="Gui\Graph\Scales\DensityScaleController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\FillToCurvePlotStyleController.cs" />
     <Compile Include="Gui\Graph\Shapes\ImageGraphicController.cs" />
-    <Compile Include="Gui\Graph\DensityImagePlotItemController.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\DensityImagePlotItemController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\ErrorBarPlotStyleController.cs" />
     <Compile Include="Gui\Graph\FitPolynomialDialogController.cs" />
     <Compile Include="Gui\Graph\FunctionPlotDataController.cs" />
@@ -1598,6 +1598,7 @@
     <Compile Include="Graph\Gdi\TranslationRotationShearxScaleTransformation2D.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Gui\Graph\ColorProvider\" />
     <Folder Include="Gui\Main\ProjectBrowser\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

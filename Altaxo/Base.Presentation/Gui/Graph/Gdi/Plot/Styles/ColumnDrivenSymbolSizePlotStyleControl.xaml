@@ -1,0 +1,78 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.Gdi.Plot.Styles.ColumnDrivenSymbolSizePlotStyleControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Scales"
+             mc:Ignorable="d">
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,8,0" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+	<StackPanel Orientation="Vertical">
+		<GroupBox Header="Scale">
+			<axoggs:DensityScaleControl x:Name="_ctrlScale" />
+		</GroupBox>
+
+		<GroupBox Header="Data column">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition  Width="Auto" SharedSizeGroup="LabelColumn1" />
+					<ColumnDefinition  Width="Auto" SharedSizeGroup="EditColumn1" />
+					<ColumnDefinition  Width="*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+				</Grid.RowDefinitions>
+				<TextBox x:Name="_edDataColumn" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" IsEnabled="False" />
+				<Button Grid.Column="0" Grid.Row="2" Content="Select.." HorizontalAlignment="Left" Click="_btSelectDataColumn_Click" />
+				<Button Grid.Column="1" Grid.Row="2" Content="Clear!" HorizontalAlignment="Right" Click="_btClearDataColumn_Click" />
+			</Grid>
+		</GroupBox>
+
+		<GroupBox Header="Details:">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+				</Grid.RowDefinitions>
+				<Label Grid.Column="0" Grid.Row="0" Content="Symbol size at 0:" />
+				<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSizeAt0" Grid.Column="1" Grid.Row="0" />
+				<Label Grid.Column="0" Grid.Row="2" Content="Symbol size at 1:" />
+				<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSizeAt1" Grid.Column="1" Grid.Row="2" />
+				<Label Grid.Column="0" Grid.Row="4" Content="Symbol size below 0:" />
+				<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSizeBelow" Grid.Column="1" Grid.Row="4" />
+				<Label Grid.Column="0" Grid.Row="6" Content="Symbol size above 1:" />
+				<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSizeAbove" Grid.Column="1" Grid.Row="6" />
+				<Label Grid.Column="0" Grid.Row="8" Content="Symbol size of invalid number:" />
+				<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSizeInvalid" Grid.Column="1" Grid.Row="8" />
+				<Label Grid.Column="0" Grid.Row="10" Content="Number of steps:" />
+				<axogc:Int32UpDown x:Name="_edNumberOfSteps" Grid.Column="1" Grid.Row="10" />
+			</Grid>
+		</GroupBox>
+	</StackPanel>
+</UserControl>

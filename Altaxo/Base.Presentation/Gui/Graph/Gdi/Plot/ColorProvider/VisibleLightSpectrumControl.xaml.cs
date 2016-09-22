@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2012 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,50 +22,60 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Graph.Gdi.Plot.ColorProvider;
-using Altaxo.Gui.Graph.Scales;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
+namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {
 	/// <summary>
-	/// Interaction logic for ColumnDrivenColorPlotStyleControl.xaml
+	/// Interaction logic for ColorProviderAHSBGradientControl.xaml
 	/// </summary>
-	public partial class DensityImagePlotStyleControl : UserControl, IDensityImagePlotStyleView
+	public partial class VisibleLightSpectrumControl : UserControl, IVisibleLightSpectrumView
 	{
-		public DensityImagePlotStyleControl()
+		public event Action ChoiceChanged;
+
+		public VisibleLightSpectrumControl()
 		{
 			InitializeComponent();
 		}
 
-		#region IDensityImagePlotStyleView
-
-		public IDensityScaleView DensityScaleView
+		public IColorProviderBaseView BaseView
 		{
-			get { return _ctrlScale; }
+			get { return _guiBaseControl; }
 		}
 
-		public IColorProviderView ColorProviderView
-		{
-			get { return _colorProviderControl; }
-		}
-
-		public bool ClipToLayer
+		public double Gamma
 		{
 			get
 			{
-				return true == _chkClipToLayer.IsChecked;
+				return _guiGamma.ValueAsDouble;
 			}
 			set
 			{
-				_chkClipToLayer.IsChecked = value;
+				_guiGamma.ValueAsDouble = value;
 			}
 		}
 
-		#endregion IDensityImagePlotStyleView
+		public double Brightness
+		{
+			get
+			{
+				return _guiBrightness.ValueAsDouble;
+			}
+			set
+			{
+				_guiBrightness.ValueAsDouble = value;
+			}
+		}
+
+		private void EhDoubleUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
+		{
+			if (null != ChoiceChanged)
+				ChoiceChanged();
+		}
 	}
 }

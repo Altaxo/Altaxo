@@ -22,50 +22,51 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Graph.Gdi.Plot.Styles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
+	using Altaxo.Data;
+	using Altaxo.Graph.Gdi.Plot.Styles;
 	using Altaxo.Graph.Scales;
 	using ColorProvider;
 	using Scales;
 
-	#region Interfaces
-
-	public interface IDensityImagePlotStyleView
+	public interface IColumnDrivenColorPlotStyleView
 	{
-		IDensityScaleView DensityScaleView { get; }
+		IDensityScaleView ScaleView { get; }
 
 		IColorProviderView ColorProviderView { get; }
 
-		/// <summary>
-		/// Initializes the content of the ClipToLayer checkbox
-		/// </summary>
-		bool ClipToLayer { get; set; }
+		event Action ChooseDataColumn;
+
+		event Action ClearDataColumn;
+
+		string DataColumnName { set; }
 	}
 
-	#endregion Interfaces
-
-	/// <summary>
-	/// Controller for the density image plot style
-	/// </summary>
-	[UserControllerForObject(typeof(DensityImagePlotStyle))]
-	[ExpectedTypeOfView(typeof(IDensityImagePlotStyleView))]
-	public class DensityImagePlotStyleController : MVCANControllerEditOriginalDocBase<DensityImagePlotStyle, IDensityImagePlotStyleView>
+	[UserControllerForObject(typeof(ColumnDrivenColorPlotStyle))]
+	[ExpectedTypeOfView(typeof(IColumnDrivenColorPlotStyleView))]
+	public class ColumnDrivenColorPlotStyleController : MVCANControllerEditOriginalDocBase<ColumnDrivenColorPlotStyle, IColumnDrivenColorPlotStyleView>
 	{
-		private IMVCANController _scaleController;
-		private IMVCANController _colorProviderController;
+		private DensityScaleController _scaleController;
+		private ColorProviderController _colorProviderController;
+
+		private INumericColumn _tempDataColumn;
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
 			yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
 			yield return new ControllerAndSetNullMethod(_colorProviderController, () => _colorProviderController = null);
+		}
+
+		public override void Dispose(bool isDisposing)
+		{
+			_tempDataColumn = null;
+			base.Dispose(isDisposing);
 		}
 
 		protected override void Initialize(bool initData)
@@ -81,11 +82,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 				_colorProviderController.InitializeDocument(_doc.ColorProvider);
 			}
 
-			if (_view != null)
+			if (null != _view)
 			{
-				_scaleController.ViewObject = _view.DensityScaleView;
+				_scaleController.ViewObject = _view.ScaleView;
 				_colorProviderController.ViewObject = _view.ColorProviderView;
-				_view.ClipToLayer = _doc.ClipToLayer;
+				_view.DataColumnName = _doc.DataColumn.FullName;
 			}
 		}
 
@@ -94,14 +95,56 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			if (!_scaleController.Apply(disposeController))
 				return false;
 
+			if (!(_scaleController.ModelObject is Altaxo.Graph.Scales.NumericalScale))
+			{
+				Current.Gui.ErrorMessageBox("Please choose a numerical scale, since only those scales are supported here");
+				return false;
+			}
+
+			_doc.Scale = (Altaxo.Graph.Scales.NumericalScale)_scaleController.ModelObject;
+
 			if (!_colorProviderController.Apply(disposeController))
 				return false;
+			_doc.ColorProvider = (Altaxo.Graph.Gdi.Plot.IColorProvider)_colorProviderController.ModelObject;
 
-			_doc.ClipToLayer = _view.ClipToLayer;
-			_doc.Scale = (NumericalScale)_scaleController.ModelObject;
-			_doc.ColorProvider = (IColorProvider)_colorProviderController.ModelObject;
+			if (null != _tempDataColumn)
+				_doc.DataColumn = _tempDataColumn;
 
 			return ApplyEnd(true, disposeController);
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			_view.ChooseDataColumn += EhChooseDataColumn;
+			_view.ClearDataColumn += EhClearDataColumn;
+		}
+
+		protected override void DetachView()
+		{
+			_view.ChooseDataColumn -= EhChooseDataColumn;
+			_view.ClearDataColumn -= EhClearDataColumn;
+			base.DetachView();
+		}
+
+		private void EhChooseDataColumn()
+		{
+			SingleColumnChoice choice = new SingleColumnChoice();
+			choice.SelectedColumn = _tempDataColumn != null ? _tempDataColumn as DataColumn : _doc.DataColumn as DataColumn;
+			object choiceAsObject = choice;
+			if (Current.Gui.ShowDialog(ref choiceAsObject, "Select data column"))
+			{
+				choice = (SingleColumnChoice)choiceAsObject;
+				if (choice.SelectedColumn is INumericColumn)
+				{
+					_tempDataColumn = (INumericColumn)choice.SelectedColumn;
+					_view.DataColumnName = _tempDataColumn.FullName;
+				}
+			}
+		}
+
+		private void EhClearDataColumn()
+		{
 		}
 	}
 }

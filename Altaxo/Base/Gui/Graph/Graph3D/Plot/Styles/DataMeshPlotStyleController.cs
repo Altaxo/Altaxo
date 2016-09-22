@@ -36,7 +36,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 	using Altaxo.Graph.Graph3D.Plot.Styles;
 	using Altaxo.Graph.Scales;
 	using Drawing.D3D;
+	using Gdi.Plot.ColorProvider;
 	using Graph;
+	using Scales;
 
 	#region Interfaces
 

@@ -22,50 +22,43 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Graph.Gdi.Plot.ColorProvider;
-using Altaxo.Gui.Graph.Scales;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
+namespace Altaxo.Gui.Graph.Gdi.Plot
 {
 	/// <summary>
-	/// Interaction logic for ColumnDrivenColorPlotStyleControl.xaml
+	/// Interaction logic for DensityImagePlotItemControl.xaml
 	/// </summary>
-	public partial class DensityImagePlotStyleControl : UserControl, IDensityImagePlotStyleView
+	public partial class DensityImagePlotItemControl : UserControl, IDensityImagePlotItemOptionView
 	{
-		public DensityImagePlotStyleControl()
+		public DensityImagePlotItemControl()
 		{
 			InitializeComponent();
 		}
 
-		#region IDensityImagePlotStyleView
-
-		public IDensityScaleView DensityScaleView
+		private void EhCopyImageToClipboard(object sender, RoutedEventArgs e)
 		{
-			get { return _ctrlScale; }
+			if (null != CopyImageToClipboard)
+				CopyImageToClipboard();
 		}
 
-		public IColorProviderView ColorProviderView
+		private void EhSaveImageToDisc(object sender, RoutedEventArgs e)
 		{
-			get { return _colorProviderControl; }
+			if (null != SaveImageToDisc)
+				SaveImageToDisc();
 		}
 
-		public bool ClipToLayer
-		{
-			get
-			{
-				return true == _chkClipToLayer.IsChecked;
-			}
-			set
-			{
-				_chkClipToLayer.IsChecked = value;
-			}
-		}
+		#region IDensityImagePlotItemOptionView
 
-		#endregion IDensityImagePlotStyleView
+		public event Action CopyImageToClipboard;
+
+		public event Action SaveImageToDisc;
+
+		#endregion IDensityImagePlotItemOptionView
 	}
 }

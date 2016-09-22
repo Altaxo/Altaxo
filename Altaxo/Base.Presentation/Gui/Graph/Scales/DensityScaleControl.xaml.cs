@@ -22,50 +22,51 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Graph.Gdi.Plot.ColorProvider;
-using Altaxo.Gui.Graph.Scales;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
+namespace Altaxo.Gui.Graph.Scales
 {
 	/// <summary>
-	/// Interaction logic for ColumnDrivenColorPlotStyleControl.xaml
+	/// Interaction logic for DensityScaleControl.xaml
 	/// </summary>
-	public partial class DensityImagePlotStyleControl : UserControl, IDensityImagePlotStyleView
+	public partial class DensityScaleControl : UserControl, IDensityScaleView
 	{
-		public DensityImagePlotStyleControl()
+		public DensityScaleControl()
 		{
 			InitializeComponent();
 		}
 
-		#region IDensityImagePlotStyleView
-
-		public IDensityScaleView DensityScaleView
+		private void EhScaleSelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
 		{
-			get { return _ctrlScale; }
+			GuiHelper.SynchronizeSelectionFromGui(_cbScales);
+			if (null != AxisTypeChanged)
+				AxisTypeChanged();
 		}
 
-		public IColorProviderView ColorProviderView
+		#region IDensityScaleView Members
+
+		public void InitializeAxisType(Altaxo.Collections.SelectableListNodeList names)
 		{
-			get { return _colorProviderControl; }
+			GuiHelper.Initialize(_cbScales, names);
 		}
 
-		public bool ClipToLayer
+		public void SetRescalingView(object guiobject)
 		{
-			get
-			{
-				return true == _chkClipToLayer.IsChecked;
-			}
-			set
-			{
-				_chkClipToLayer.IsChecked = value;
-			}
+			_boundaryHost.Child = guiobject as UIElement;
 		}
 
-		#endregion IDensityImagePlotStyleView
+		public void SetScaleView(object guiobject)
+		{
+			_scaleViewHost.Child = guiobject as UIElement;
+		}
+
+		public event Action AxisTypeChanged;
+
+		#endregion IDensityScaleView Members
 	}
 }

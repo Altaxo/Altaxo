@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Altaxo.Gui.Graph.Gdi.Plot.Styles.DensityImagePlotStyleControl"
+﻿<UserControl x:Class="Altaxo.Gui.Graph.Gdi.Plot.Styles.ColumnDrivenColorPlotStyleControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -17,16 +17,30 @@
 		</Style>
 	</UserControl.Resources>
 	<StackPanel Orientation="Vertical">
-		<GroupBox Header="Scale:">
+		<GroupBox Header="Scale">
 			<axoggs:DensityScaleControl x:Name="_ctrlScale" />
 		</GroupBox>
 
-		<GroupBox Header="Style:">
-			<axogggpc:ColorProviderControl x:Name="_colorProviderControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+		<GroupBox Header="Data column">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition SharedSizeGroup="LabelColumn1" />
+					<ColumnDefinition SharedSizeGroup="EditColumn1" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+				</Grid.RowDefinitions>
+				<TextBox x:Name="_edDataColumn" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" IsEnabled="False" />
+				<Button Grid.Column="0" Grid.Row="2" Content="Select.." HorizontalAlignment="Left" Click="_btSelectDataColumn_Click" />
+				<Button Grid.Column="1" Grid.Row="2" Content="Clear!" HorizontalAlignment="Right" Click="_btClearDataColumn_Click" />
+			</Grid>
 		</GroupBox>
 
-		<GroupBox Header="Other:">
-			<CheckBox x:Name="_chkClipToLayer" Content="Clip to layer" />
+		<GroupBox Header="Style:">
+			<axogggpc:ColorProviderControl x:Name="_colorProviderControl" />
 		</GroupBox>
 	</StackPanel>
 </UserControl>

@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+						 xmlns:axogggpc="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.ColorProvider"
+						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Scales"
 						 xmlns:axogdd3d="clr-namespace:Altaxo.Gui.Drawing.D3D"
              mc:Ignorable="d">
 	<UserControl.Resources>
@@ -21,11 +22,11 @@
 			<GroupBox.Header>
 				<CheckBox x:Name="_guiUseCustomColorScale" Content="Use custom color scale:" Margin="4" Checked="EhUseCustomColorScaleChanged" Unchecked="EhUseCustomColorScaleChanged" />
 			</GroupBox.Header>
-			<axogg:DensityScaleControl x:Name="_guiColorScale" />
+			<axoggs:DensityScaleControl x:Name="_guiColorScale" />
 		</GroupBox>
 
 		<GroupBox Header="Style:">
-			<axogg:ColorProviderControl x:Name="_colorProviderControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+			<axogggpc:ColorProviderControl x:Name="_colorProviderControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 		</GroupBox>
 
 		<GroupBox Header="Material:">

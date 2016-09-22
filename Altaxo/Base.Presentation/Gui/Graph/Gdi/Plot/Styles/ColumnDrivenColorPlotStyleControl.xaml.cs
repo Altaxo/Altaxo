@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,45 +22,44 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Gdi.Plot.ColorProvider;
 using Altaxo.Gui.Graph.Scales;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
+namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
 	/// <summary>
 	/// Interaction logic for ColumnDrivenColorPlotStyleControl.xaml
 	/// </summary>
-	public partial class DataMeshPlotStyleControl : UserControl, IDataMeshPlotStyleView
+	public partial class ColumnDrivenColorPlotStyleControl : UserControl, IColumnDrivenColorPlotStyleView
 	{
-		public DataMeshPlotStyleControl()
+		public ColumnDrivenColorPlotStyleControl()
 		{
 			InitializeComponent();
 		}
 
-		#region IDataMeshPlotStyleView
-
-		public IDensityScaleView ColorScaleView
+		private void _btSelectDataColumn_Click(object sender, RoutedEventArgs e)
 		{
-			get { return _guiColorScale; }
+			if (null != ChooseDataColumn)
+				ChooseDataColumn();
 		}
 
-		public bool IsCustomColorScaleUsed
+		private void _btClearDataColumn_Click(object sender, RoutedEventArgs e)
 		{
-			get
-			{
-				return _guiUseCustomColorScale.IsChecked == true;
-			}
-			set
-			{
-				_guiUseCustomColorScale.IsChecked = value;
-				UpdateVisibilityOfColorScale();
-			}
+			if (null != ClearDataColumn)
+				ClearDataColumn();
+		}
+
+		#region IColumnDrivenColorPlotStyleView
+
+		public IDensityScaleView ScaleView
+		{
+			get { return _ctrlScale; }
 		}
 
 		public IColorProviderView ColorProviderView
@@ -68,45 +67,15 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 			get { return _colorProviderControl; }
 		}
 
-		public bool ClipToLayer
+		public event Action ChooseDataColumn;
+
+		public event Action ClearDataColumn;
+
+		public string DataColumnName
 		{
-			get
-			{
-				return true == _chkClipToLayer.IsChecked;
-			}
-			set
-			{
-				_chkClipToLayer.IsChecked = value;
-			}
+			set { _edDataColumn.Text = value; }
 		}
 
-		public object MaterialViewObject
-		{
-			get
-			{
-				return _guiMaterial;
-			}
-		}
-
-		#endregion IDataMeshPlotStyleView
-
-		private void EhUseCustomColorScaleChanged(object sender, System.Windows.RoutedEventArgs e)
-		{
-			UpdateVisibilityOfColorScale();
-		}
-
-		private void UpdateVisibilityOfColorScale()
-		{
-			if (_guiUseCustomColorScale.IsChecked == true)
-			{
-				if (null != _guiColorScale)
-					_guiColorScale.Visibility = System.Windows.Visibility.Visible;
-			}
-			else
-			{
-				if (null != _guiColorScale)
-					_guiColorScale.Visibility = System.Windows.Visibility.Collapsed;
-			}
-		}
+		#endregion IColumnDrivenColorPlotStyleView
 	}
 }

@@ -753,31 +753,31 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\ColorProviderBaseControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\ColorProvider\ColorProviderBaseControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\ColorProviderControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\ColorProvider\ColorProviderControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\ColorProvider\ColorProviderAHSBGradientControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\ColorProvider\ColorProviderARGBGradientControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\ColorProvider\VisibleLightSpectrumControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\ColorProvider\VisibleLightSpectrumControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\ColumnDrivenColorPlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\ColumnDrivenColorPlotStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\ColumnDrivenSymbolSizePlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -797,11 +797,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\DensityImagePlotItemControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\DensityImagePlotItemControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\DensityScaleControl.xaml">
+    <Page Include="Gui\Graph\Scales\DensityScaleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1692,25 +1692,25 @@
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\BarGraphPlotStyleControl.xaml.cs">
       <DependentUpon>BarGraphPlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ColorProviderBaseControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\ColorProvider\ColorProviderBaseControl.xaml.cs">
       <DependentUpon>ColorProviderBaseControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ColorProviderControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\ColorProvider\ColorProviderControl.xaml.cs">
       <DependentUpon>ColorProviderControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ColorProvider\ColorProviderAHSBGradientControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\ColorProvider\ColorProviderAHSBGradientControl.xaml.cs">
       <DependentUpon>ColorProviderAHSBGradientControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ColorProvider\ColorProviderARGBGradientControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\ColorProvider\ColorProviderARGBGradientControl.xaml.cs">
       <DependentUpon>ColorProviderARGBGradientControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ColorProvider\VisibleLightSpectrumControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\ColorProvider\VisibleLightSpectrumControl.xaml.cs">
       <DependentUpon>VisibleLightSpectrumControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ColumnDrivenColorPlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\ColumnDrivenColorPlotStyleControl.xaml.cs">
       <DependentUpon>ColumnDrivenColorPlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ColumnDrivenSymbolSizePlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\ColumnDrivenSymbolSizePlotStyleControl.xaml.cs">
       <DependentUpon>ColumnDrivenSymbolSizePlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\HostLayerControl.xaml.cs">
@@ -1727,10 +1727,10 @@
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\DensityImagePlotStyleControl.xaml.cs">
       <DependentUpon>DensityImagePlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\DensityImagePlotItemControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\DensityImagePlotItemControl.xaml.cs">
       <DependentUpon>DensityImagePlotItemControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\DensityScaleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Scales\DensityScaleControl.xaml.cs">
       <DependentUpon>DensityScaleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\ErrorBarPlotStyleControl.xaml.cs">
@@ -2016,6 +2016,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Gui\Graph\ColorProvider\" />
+    <Folder Include="Gui\Graph\Gdi\Plot\Shapes\" />
     <Folder Include="Gui\Graph\Graph3D\Plot\Groups\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
