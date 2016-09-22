@@ -22,61 +22,59 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph.Graph3D;
-using Altaxo.Gui.Drawing.D3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph3D
+namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
 	/// <summary>
-	/// Interaction logic for ColorTypeThicknessPenControl.xaml
+	/// Interaction logic for PlotGroupCollectionControl.xaml
 	/// </summary>
-	public partial class ColorTypeThicknessPenControl : UserControl, IColorTypeThicknessPenView
+	public partial class PlotGroupCollectionControl : UserControl, IPlotGroupCollectionView, Altaxo.Gui.Graph.Graph3D.Plot.Groups.IPlotGroupCollectionView
 	{
-		private PenControlsGlue _glue;
-
-		public ColorTypeThicknessPenControl()
+		public PlotGroupCollectionControl()
 		{
 			InitializeComponent();
-
-			_glue = new PenControlsGlue(false);
-			_glue.CbBrush = _cbColor;
-			_glue.CbDashStyle = _cbLineType;
-			_glue.CbLineThickness1 = _cbThickness;
 		}
 
-		#region IColorTypeThicknessPenView
-
-		private IColorTypeThicknessPenViewEventSink _controller;
-
-		public IColorTypeThicknessPenViewEventSink Controller
+		private void EhGotoAdvanced(object sender, RoutedEventArgs e)
 		{
-			get { return _controller; }
-			set { _controller = value; }
+			if (null != GotoAdvanced)
+				GotoAdvanced();
 		}
 
-		public PenX3D DocPen
+		private void EhGotoSimple(object sender, RoutedEventArgs e)
 		{
-			get
-			{
-				return _glue.Pen;
-			}
-			set
-			{
-				_glue.Pen = value;
-			}
+			if (null != GotoSimple)
+				GotoSimple();
 		}
 
-		public void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection)
+		#region IPlotGroupCollectionView
+
+		public event Action GotoAdvanced;
+
+		public event Action GotoSimple;
+
+		public void SetSimpleView(object viewObject)
 		{
-			_glue.CbBrush.ShowPlotColorsOnly = restrictChoiceToThisCollection;
+			_controlHost.Child = null;
+			_controlHost.Child = (UIElement)viewObject;
+			_btGotoSimple.Visibility = System.Windows.Visibility.Collapsed;
+			_btGotoAdvanced.Visibility = System.Windows.Visibility.Visible;
 		}
 
-		#endregion IColorTypeThicknessPenView
+		public void SetAdvancedView(object viewObject)
+		{
+			_controlHost.Child = null;
+			_controlHost.Child = (UIElement)viewObject;
+			_btGotoAdvanced.Visibility = System.Windows.Visibility.Collapsed;
+			_btGotoSimple.Visibility = System.Windows.Visibility.Visible;
+		}
+
+		#endregion IPlotGroupCollectionView
 	}
 }

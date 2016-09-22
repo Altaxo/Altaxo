@@ -25,6 +25,8 @@
 using Altaxo.Drawing;
 using Altaxo.Graph;
 using Altaxo.Gui.Common.Drawing;
+using Altaxo.Gui.Drawing;
+using Altaxo.Gui.Graph.Gdi.Background;
 using Altaxo.Units;
 using System;
 using System.Collections.Generic;

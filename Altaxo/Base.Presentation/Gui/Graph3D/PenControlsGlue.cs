@@ -32,7 +32,8 @@ using Altaxo.Gui.Drawing.D3D;
 using Altaxo.Gui.Drawing.D3D.LineCaps;
 using Altaxo.Gui.Drawing.DashPatternManagement;
 using Altaxo.Gui.Graph.Graph3D.Material;
-using Altaxo.Gui.Graph3D.Plot.Styles;
+using Altaxo.Gui.Graph.Graph3D.Plot.Styles;
+using Altaxo.Gui.Graph3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph3D
+namespace Altaxo.Gui.Drawing.D3D
 {
 	public class PenControlsGlue : FrameworkElement
 	{

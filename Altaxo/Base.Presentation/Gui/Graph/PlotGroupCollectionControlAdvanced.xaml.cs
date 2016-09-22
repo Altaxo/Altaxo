@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for PlotGroupCollectionControl.xaml
 	/// </summary>
-	public partial class PlotGroupCollectionControlAdvanced : UserControl, IPlotGroupCollectionViewAdvanced, Altaxo.Gui.Graph3D.Plot.Groups.IPlotGroupCollectionViewAdvanced
+	public partial class PlotGroupCollectionControlAdvanced : UserControl, IPlotGroupCollectionViewAdvanced, Altaxo.Gui.Graph.Graph3D.Plot.Groups.IPlotGroupCollectionViewAdvanced
 	{
 		public event Action CoordinateTransformingGroupStyleChanged;
 

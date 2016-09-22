@@ -597,7 +597,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\G3DPlotItemControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Plot\G3DPlotItemControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -609,39 +609,39 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Styles\BarGraphPlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Plot\Styles\BarGraphPlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Styles\VectorCartesicPlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Plot\Styles\VectorCartesicPlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Styles\ErrorBarPlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Plot\Styles\ErrorBarPlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Styles\ScatterSymbolComboBox.xaml">
+    <Page Include="Gui\Graph\Graph3D\Plot\Styles\ScatterSymbolComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Plot\Styles\DataMeshPlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Styles\LabelPlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Plot\Styles\LabelPlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Styles\DropLinePlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Plot\Styles\DropLinePlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Styles\LinePlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Plot\Styles\LinePlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Plot\Styles\ScatterPlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Plot\Styles\ScatterPlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -969,7 +969,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\PlotGroupCollectionControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Groups\PlotGroupCollectionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1161,16 +1161,16 @@
       <DependentUpon>DashPatternComboBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternConverters.cs" />
-    <Compile Include="Gui\Graph3D\Plot\Styles\BarGraphPlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Plot\Styles\BarGraphPlotStyleControl.xaml.cs">
       <DependentUpon>BarGraphPlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Styles\VectorCartesicPlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Plot\Styles\VectorCartesicPlotStyleControl.xaml.cs">
       <DependentUpon>VectorCartesicPlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Styles\ErrorBarPlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Plot\Styles\ErrorBarPlotStyleControl.xaml.cs">
       <DependentUpon>ErrorBarPlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Styles\ScatterSymbolConverters.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Plot\Styles\ScatterSymbolConverters.cs" />
     <Compile Include="Gui\Drawing\StyleListComboBoxBase.cs" />
     <Compile Include="Gui\Common\Int32ListUpDown.cs" />
     <Compile Include="Gui\Common\RelayCommand.cs" />
@@ -1586,28 +1586,28 @@
     <Compile Include="Gui\Graph\Graph3D\Plot\Data\XYZPlotDataControl.xaml.cs">
       <DependentUpon>XYZPlotDataControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\G3DPlotItemControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Plot\G3DPlotItemControl.xaml.cs">
       <DependentUpon>G3DPlotItemControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\StyleListControl.xaml.cs">
       <DependentUpon>StyleListControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Styles\ScatterSymbolComboBox.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Plot\Styles\ScatterSymbolComboBox.xaml.cs">
       <DependentUpon>ScatterSymbolComboBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Styles\DataMeshPlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Plot\Styles\DataMeshPlotStyleControl.xaml.cs">
       <DependentUpon>DataMeshPlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Styles\LabelPlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Plot\Styles\LabelPlotStyleControl.xaml.cs">
       <DependentUpon>LabelPlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Styles\DropLinePlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Plot\Styles\DropLinePlotStyleControl.xaml.cs">
       <DependentUpon>DropLinePlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Styles\LinePlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Plot\Styles\LinePlotStyleControl.xaml.cs">
       <DependentUpon>LinePlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Plot\Styles\ScatterPlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Plot\Styles\ScatterPlotStyleControl.xaml.cs">
       <DependentUpon>ScatterPlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Shapes\AnchoringControl.xaml.cs">
@@ -1862,7 +1862,7 @@
     <Compile Include="Gui\Worksheet\PlotCommonColumnsControl.xaml.cs">
       <DependentUpon>PlotCommonColumnsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\PlotGroupCollectionControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\Groups\PlotGroupCollectionControl.xaml.cs">
       <DependentUpon>PlotGroupCollectionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\PlotGroupCollectionControlAdvanced.xaml.cs">
@@ -2017,7 +2017,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Gui\Graph3D\Material\" />
-    <Folder Include="Gui\Graph3D\Plot\Groups\" />
+    <Folder Include="Gui\Graph3D\Plot\" />
+    <Folder Include="Gui\Graph\Graph3D\Plot\Groups\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

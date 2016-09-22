@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Graph
 	/// <summary>
 	/// Interaction logic for XYPlotStyleCollectionControl.xaml
 	/// </summary>
-	public partial class XYPlotStyleCollectionControl : UserControl, IXYPlotStyleCollectionView, Altaxo.Gui.Graph3D.Plot.Styles.IXYZPlotStyleCollectionView
+	public partial class XYPlotStyleCollectionControl : UserControl, IXYPlotStyleCollectionView, Altaxo.Gui.Graph.Graph3D.Plot.Styles.IXYZPlotStyleCollectionView
 	{
 		public event Action RequestAddStyle;
 

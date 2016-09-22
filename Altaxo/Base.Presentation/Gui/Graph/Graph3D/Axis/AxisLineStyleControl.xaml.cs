@@ -34,6 +34,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 	using Altaxo.Collections;
 	using Altaxo.Drawing.D3D;
 	using Altaxo.Graph.Graph3D;
+	using Drawing.D3D;
 	using Gui.Graph3D;
 
 	/// <summary>

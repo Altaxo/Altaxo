@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Gui.Graph.Gdi.Background;
 using System;
 using System.Collections.Generic;
 using System.Linq;

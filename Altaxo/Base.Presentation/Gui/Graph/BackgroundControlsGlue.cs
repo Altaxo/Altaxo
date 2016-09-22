@@ -32,7 +32,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph
+namespace Altaxo.Gui.Graph.Gdi.Background
 {
 	public class BackgroundControlsGlue : FrameworkElement
 	{

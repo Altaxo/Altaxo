@@ -33,6 +33,7 @@ namespace Altaxo.Gui.Graph.Shapes
 	using Altaxo.Geometry;
 	using Altaxo.Graph.Gdi.Shapes;
 	using Altaxo.Gui.Common;
+	using Gdi.Background;
 
 	/// <summary>
 	/// Interaction logic for FloatingScaleControl.xaml

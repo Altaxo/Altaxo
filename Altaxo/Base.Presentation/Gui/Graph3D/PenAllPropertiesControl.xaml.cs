@@ -24,6 +24,7 @@
 
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D;
+using Altaxo.Gui.Drawing.D3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
