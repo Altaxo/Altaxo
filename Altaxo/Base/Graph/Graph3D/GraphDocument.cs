@@ -39,6 +39,7 @@ namespace Altaxo.Graph.Graph3D
 	using Camera;
 	using Drawing.D3D;
 	using GraphicsContext;
+	using Gui.Graph.Graph3D;
 	using Gui.Graph3D;
 
 	public class GraphDocument : GraphDocumentBase

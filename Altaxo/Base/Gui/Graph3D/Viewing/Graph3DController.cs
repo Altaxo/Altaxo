@@ -44,6 +44,7 @@ namespace Altaxo.Gui.Graph3D.Viewing
 	//using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Main;
 	using Altaxo.Serialization.Clipboard;
+	using Graph.Graph3D;
 	using System.Collections;
 	using System.Drawing;
 

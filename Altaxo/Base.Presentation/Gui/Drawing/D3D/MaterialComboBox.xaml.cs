@@ -23,8 +23,6 @@
 #endregion Copyright
 
 using Altaxo.Drawing.ColorManagement;
-using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +36,6 @@ namespace Altaxo.Gui.Drawing.D3D
 	using Altaxo.Drawing;
 	using Altaxo.Drawing.D3D;
 	using Altaxo.Drawing.D3D.Material;
-	using Altaxo.Graph.Graph3D;
 	using Altaxo.Gui.Common.Drawing;
 
 	/// <summary>

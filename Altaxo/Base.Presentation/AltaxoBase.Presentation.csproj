@@ -529,7 +529,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\ColorTypeThicknessPenControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\ColorTypeThicknessPenControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -537,27 +537,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\GraphicItemsControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\GraphicItemsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\GridPartitioningControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\GridPartitioningControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\HostLayerControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\HostLayerControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\ItemLocationByGridControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\ItemLocationByGridControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\ItemLocationDirectControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\ItemLocationDirectControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\LayerPositionControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\LayerPositionControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -585,7 +585,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\PenAllPropertiesControl.xaml">
+    <Page Include="Gui\Drawing\D3D\PenAllPropertiesControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -661,11 +661,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\XYZPlotLayerContentsControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\XYZPlotLayerContentsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\XYPlotLayerControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\XYPlotLayerControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1529,30 +1529,30 @@
     <Compile Include="Gui\Graph\Graph3D\Axis\XYGridStyleControl.xaml.cs">
       <DependentUpon>XYGridStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\BackgroundControlsGlue.cs" />
-    <Compile Include="Gui\Graph3D\ColorTypeThicknessPenControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Background\BackgroundControlsGlue.cs" />
+    <Compile Include="Gui\Graph\Graph3D\ColorTypeThicknessPenControl.xaml.cs">
       <DependentUpon>ColorTypeThicknessPenControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Graph3D\CS\G3DCartesicCSControl.xaml.cs">
       <DependentUpon>G3DCartesicCSControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\FontX3DGlue.cs" />
-    <Compile Include="Gui\Graph3D\GraphicItemsControl.xaml.cs">
+    <Compile Include="Gui\Drawing\D3D\FontX3DGlue.cs" />
+    <Compile Include="Gui\Graph\Graph3D\GraphicItemsControl.xaml.cs">
       <DependentUpon>GraphicItemsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\GridPartitioningControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\GridPartitioningControl.xaml.cs">
       <DependentUpon>GridPartitioningControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\HostLayerControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\HostLayerControl.xaml.cs">
       <DependentUpon>HostLayerControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\ItemLocationByGridControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\ItemLocationByGridControl.xaml.cs">
       <DependentUpon>ItemLocationByGridControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\ItemLocationDirectControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\ItemLocationDirectControl.xaml.cs">
       <DependentUpon>ItemLocationDirectControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\LayerPositionControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\LayerPositionControl.xaml.cs">
       <DependentUpon>LayerPositionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\Lighting\SpotLightControl.xaml.cs">
@@ -1575,10 +1575,10 @@
       <DependentUpon>MaterialComboBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\D3D\MaterialConverter.cs" />
-    <Compile Include="Gui\Graph3D\PenAllPropertiesControl.xaml.cs">
+    <Compile Include="Gui\Drawing\D3D\PenAllPropertiesControl.xaml.cs">
       <DependentUpon>PenAllPropertiesControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\PenControlsGlue.cs" />
+    <Compile Include="Gui\Drawing\D3D\PenControlsGlue.cs" />
     <Compile Include="Gui\Graph\Graph3D\Plot\Data\DefaultSeverityColumnColors.cs" />
     <Compile Include="Gui\Graph\Graph3D\Plot\Data\SingleColumnControl.xaml.cs">
       <DependentUpon>SingleColumnControl.xaml</DependentUpon>
@@ -1622,10 +1622,10 @@
     <Compile Include="Gui\Graph\Graph3D\Shapes\TextGraphicControl.xaml.cs">
       <DependentUpon>TextGraphicControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\XYZPlotLayerContentsControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\XYZPlotLayerContentsControl.xaml.cs">
       <DependentUpon>XYZPlotLayerContentsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\XYPlotLayerControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\XYPlotLayerControl.xaml.cs">
       <DependentUpon>XYPlotLayerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\ArrangeLayersControl.xaml.cs">

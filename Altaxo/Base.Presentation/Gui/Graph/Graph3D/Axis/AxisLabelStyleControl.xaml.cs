@@ -35,7 +35,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 	using Altaxo.Graph.Graph3D;
 	using Altaxo.Graph.Graph3D.Background;
 	using Background;
-	using Gui.Graph3D;
+	using Drawing.D3D;
 
 	/// <summary>
 	/// Interaction logic for XYAxisLabelStyleControl.xaml
