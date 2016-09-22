@@ -31,7 +31,7 @@ namespace Altaxo.Gui.SharpDevelop
 {
 	public class SDGraph3DViewContent : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IClipboardHandler
 	{
-		private Altaxo.Gui.Graph3D.Viewing.Graph3DController _controller;
+		private Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController _controller;
 
 		#region Constructors
 
@@ -50,11 +50,11 @@ namespace Altaxo.Gui.SharpDevelop
 		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
 		/// <param name="bDeserializationConstructor">If true, this is a special constructor used only for deserialization, where no graphdoc needs to be supplied.</param>
 		protected SDGraph3DViewContent(GraphDocument graphdoc, bool bDeserializationConstructor)
-			: this(new Altaxo.Gui.Graph3D.Viewing.Graph3DControllerWpf(graphdoc))
+			: this(new Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DControllerWpf(graphdoc))
 		{
 		}
 
-		public SDGraph3DViewContent(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public SDGraph3DViewContent(Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController ctrl)
 		{
 			_controller = ctrl;
 			ctrl.TitleNameChanged += new WeakEventHandler(this.EhTitleNameChanged, x => ctrl.TitleNameChanged -= x);
@@ -85,12 +85,12 @@ namespace Altaxo.Gui.SharpDevelop
 
 		#endregion Constructors
 
-		public static implicit operator Altaxo.Gui.Graph3D.Viewing.Graph3DController(SDGraph3DViewContent ctrl)
+		public static implicit operator Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController(SDGraph3DViewContent ctrl)
 		{
 			return ctrl._controller;
 		}
 
-		public Altaxo.Gui.Graph3D.Viewing.Graph3DController Controller
+		public Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController Controller
 		{
 			get { return _controller; }
 		}
@@ -113,7 +113,7 @@ namespace Altaxo.Gui.SharpDevelop
 		{
 			get
 			{
-				return (_controller.ViewObject as Altaxo.Gui.Graph3D.Viewing.IGraph3DView).GuiInitiallyFocusedElement;
+				return (_controller.ViewObject as Altaxo.Gui.Graph.Graph3D.Viewing.IGraph3DView).GuiInitiallyFocusedElement;
 			}
 		}
 

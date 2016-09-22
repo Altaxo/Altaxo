@@ -26,7 +26,7 @@ using Altaxo.Collections;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Graph;
-using Altaxo.Gui.Graph3D.Viewing;
+using Altaxo.Gui.Graph.Graph3D.Viewing;
 using Altaxo.Gui.Scripting;
 using Altaxo.Main;
 using Altaxo.Scripting;
@@ -45,10 +45,10 @@ namespace Altaxo.Graph.Graph3D.Commands
 	/// </summary>
 	public abstract class AbstractGraphToolsCommand : AbstractCheckableGraphControllerCommand
 	{
-		private Altaxo.Gui.Graph3D.Viewing.Graph3DController myCurrentGraphController;
-		private Altaxo.Gui.Graph3D.Viewing.GraphToolType _graphToolType;
+		private Graph3DController myCurrentGraphController;
+		private Altaxo.Gui.Graph.Graph3D.Viewing.GraphToolType _graphToolType;
 
-		protected AbstractGraphToolsCommand(Altaxo.Gui.Graph3D.Viewing.GraphToolType toolType)
+		protected AbstractGraphToolsCommand(Altaxo.Gui.Graph.Graph3D.Viewing.GraphToolType toolType)
 		{
 			_graphToolType = toolType;
 			if (null != Current.Workbench)
@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 	public class SelectPointerTool : AbstractGraphToolsCommand
 	{
 		public SelectPointerTool()
-			: base(Gui.Graph3D.Viewing.GraphToolType.ObjectPointer)
+			: base(GraphToolType.ObjectPointer)
 		{
 		}
 	}
@@ -121,7 +121,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 	public class SelectTextTool : AbstractGraphToolsCommand
 	{
 		public SelectTextTool()
-			: base(Gui.Graph3D.Viewing.GraphToolType.TextDrawing)
+			: base(GraphToolType.TextDrawing)
 		{
 		}
 	}
@@ -132,7 +132,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 	public class EllipseDrawingTool : AbstractGraphToolsCommand
 	{
 		public EllipseDrawingTool()
-			: base(Gui.Graph3D.Viewing.GraphToolType.EllipseDrawing)
+			: base(GraphToolType.EllipseDrawing)
 		{
 		}
 	}
@@ -143,7 +143,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 	public class SingleLineDrawingTool : AbstractGraphToolsCommand
 	{
 		public SingleLineDrawingTool()
-			: base(Gui.Graph3D.Viewing.GraphToolType.SingleLineDrawing)
+			: base(GraphToolType.SingleLineDrawing)
 		{
 		}
 	}

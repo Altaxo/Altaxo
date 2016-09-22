@@ -33,7 +33,7 @@ using Altaxo.Graph.Graph3D.Templates;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Graph.Plot.Groups;
 using Altaxo.Graph.Scales;
-using Altaxo.Gui.Graph3D.Viewing;
+using Altaxo.Gui.Graph.Graph3D.Viewing;
 using Altaxo.Gui.Worksheet.Viewing;
 using System;
 using System.Collections.Generic;

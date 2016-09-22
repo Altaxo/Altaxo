@@ -26,7 +26,7 @@ using Altaxo.Collections;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Graph;
-using Altaxo.Gui.Graph3D.Viewing;
+using Altaxo.Gui.Graph.Graph3D.Viewing;
 using Altaxo.Gui.Scripting;
 using Altaxo.Main;
 using Altaxo.Scripting;
@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 					as Altaxo.Gui.SharpDevelop.SDGraph3DViewContent;
 
 			if (null != ctrl)
-				Run((Altaxo.Gui.Graph3D.Viewing.Graph3DController)ctrl.MVCController);
+				Run((Graph3DController)ctrl.MVCController);
 		}
 
 		/// <summary>
@@ -184,7 +184,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 	public class ViewFront : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			ctrl.ViewFront();
 		}
@@ -192,7 +192,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 	public class ViewRight : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			ctrl.ViewRight();
 		}
@@ -200,7 +200,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 	public class ViewBack : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			ctrl.ViewBack();
 		}
@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 	public class ViewLeft : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			ctrl.ViewLeft();
 		}
@@ -216,7 +216,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 	public class ViewTop : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			ctrl.ViewTop();
 		}
@@ -224,7 +224,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 	public class ViewBottom : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			ctrl.ViewBottom();
 		}
@@ -232,7 +232,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 	public class ViewIsometricStandard : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			ctrl.ViewIsometricStandard();
 		}
@@ -240,7 +240,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 	public class ViewIsometricLeftTop : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			ctrl.ViewIsometricLeftTop();
 		}
@@ -262,7 +262,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 	{
 		private static Altaxo.Graph.Gdi.GraphExportOptions _graphExportOptionsToFile = new Graph.Gdi.GraphExportOptions();
 
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			ShowFileExportSpecificDialog(ctrl.Doc);
 		}
@@ -294,7 +294,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 			{
 				using (Stream myStream = new FileStream(saveOptions.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
 				{
-					new Altaxo.Gui.Graph3D.Common.D3D10BitmapExporter().ExportAsImageToStream(doc, graphExportOptions, myStream);
+					new Gui.Graph.Graph3D.Common.D3D10BitmapExporter().ExportAsImageToStream(doc, graphExportOptions, myStream);
 					myStream.Close();
 				} // end openfile ok
 			} // end dlgresult ok
@@ -326,7 +326,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 	/// </summary>
 	public class SaveAsMiniProject : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			Altaxo.Graph.Commands.SaveAsMiniProjectBase.Run(ctrl.Doc);
 		}
@@ -334,7 +334,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 	public class SaveGraphAsTemplate : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			System.IO.Stream myStream;
 			var saveFileDialog1 = new Microsoft.Win32.SaveFileDialog();
@@ -359,7 +359,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 	public class GraphRename : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			ctrl.Doc.ShowRenameDialog();
 		}
@@ -367,7 +367,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 	public class GraphMoveToFolder : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			Altaxo.Gui.Pads.ProjectBrowser.ProjectBrowserExtensions.MoveDocuments(new[] { ctrl.Doc });
 		}
@@ -378,7 +378,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 	/// </summary>
 	public class DuplicateGraph : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			GraphDocument newDoc = new GraphDocument(ctrl.Doc);
 			string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.Doc.Name, "GRAPH");
@@ -390,7 +390,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 	public class GraphShowProperties : AbstractGraph3DControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph3D.Viewing.Graph3DController ctrl)
+		public override void Run(Graph3DController ctrl)
 		{
 			ctrl.Doc.ShowPropertyDialog();
 		}
@@ -403,7 +403,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 	/// </summary>
 	public abstract class AbstractCheckableGraphControllerCommand : AbstractCheckableMenuCommand, System.ComponentModel.INotifyPropertyChanged
 	{
-		public Altaxo.Gui.Graph3D.Viewing.Graph3DController Controller
+		public Graph3DController Controller
 		{
 			get
 			{
@@ -456,7 +456,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 	/// </summary>
 	public abstract class AbstractCameraCommand : AbstractCheckableGraphControllerCommand
 	{
-		protected Altaxo.Gui.Graph3D.Viewing.Graph3DController _currentGraphController;
+		protected Graph3DController _currentGraphController;
 		protected Type _cameraTypeForThisCommand;
 
 		protected AbstractCameraCommand(Type cameraTypeForThisCommand)

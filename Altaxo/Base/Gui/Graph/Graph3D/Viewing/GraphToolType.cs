@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,27 +22,31 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Graph.Graph3D.Viewing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D.Commands
+namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
-	public class CopyDocumentAsComObjectToClipboard : AbstractGraph3DControllerCommand
+	public enum GraphToolType
 	{
-		public override void Run(Graph3DController ctrl)
-		{
-			var doc = ctrl.Doc;
+		None,
+		ObjectPointer,
+		ArrowLineDrawing,
+		SingleLineDrawing,
+		RectangleDrawing,
+		CurlyBraceDrawing,
+		EllipseDrawing,
+		TextDrawing,
+		ReadPlotItemData,
+		ReadXYCoordinates,
+		ZoomAxes,
+		RegularPolygonDrawing,
+		OpenCardinalSplineDrawing,
+		ClosedCardinalSplineDrawing,
 
-			var comManager = (Com.ComManager)Current.ComManager;
-
-			var dataObject = Current.ComManager.GetDocumentsDataObjectForDocument(doc);
-
-			if (null != dataObject)
-				System.Windows.Clipboard.SetDataObject(dataObject);
-		}
+		/// <summary>Edits the grid of the current layer, or if it has no childs, the grid of the parent layer.</summary>
+		EditGrid
 	}
 }

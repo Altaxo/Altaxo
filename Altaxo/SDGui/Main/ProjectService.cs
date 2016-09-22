@@ -1291,7 +1291,7 @@ namespace Altaxo.Main
 		/// Creates a new graph document and the view content..
 		/// </summary>
 		/// <returns>The view content for the newly created graph.</returns>
-		public Altaxo.Gui.Graph3D.Viewing.IGraphController CreateNewGraph3D(Altaxo.Graph.Graph3D.GraphDocument doc)
+		public Altaxo.Gui.Graph.Graph3D.Viewing.IGraphController CreateNewGraph3D(Altaxo.Graph.Graph3D.GraphDocument doc)
 		{
 			if (null == doc)
 			{
@@ -1299,7 +1299,7 @@ namespace Altaxo.Main
 						PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName), "GRAPH", ProjectFolder.RootFolderName, false);
 			}
 
-			return (Altaxo.Gui.Graph3D.Viewing.IGraphController)CreateNewViewContent_Unsynchronized(doc);
+			return (Altaxo.Gui.Graph.Graph3D.Viewing.IGraphController)CreateNewViewContent_Unsynchronized(doc);
 		}
 
 		#endregion Graph3D functions

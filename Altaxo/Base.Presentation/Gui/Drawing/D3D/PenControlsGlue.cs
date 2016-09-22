@@ -34,7 +34,6 @@ using Altaxo.Gui.Drawing.DashPatternManagement;
 using Altaxo.Gui.Graph.Graph3D;
 using Altaxo.Gui.Graph.Graph3D.Material;
 using Altaxo.Gui.Graph.Graph3D.Plot.Styles;
-using Altaxo.Gui.Graph3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;

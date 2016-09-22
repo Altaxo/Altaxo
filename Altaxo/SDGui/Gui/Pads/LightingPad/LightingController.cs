@@ -73,12 +73,12 @@ namespace Altaxo.Gui.Pads.LightingPad
 		{
 		}
 
-		private Altaxo.Gui.Graph3D.Viewing.Graph3DController ActiveViewContentAsGraph3DController
+		private Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController ActiveViewContentAsGraph3DController
 		{
 			get
 			{
 				var cnt = Current.Workbench.ActiveViewContent as IMVCControllerWrapper;
-				var ctrl = cnt?.MVCController as Altaxo.Gui.Graph3D.Viewing.Graph3DController;
+				var ctrl = cnt?.MVCController as Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController;
 				return ctrl;
 			}
 		}

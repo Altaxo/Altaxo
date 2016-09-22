@@ -561,23 +561,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Lighting\SpotLightControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Lighting\SpotLightControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Lighting\PointLightControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Lighting\PointLightControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Lighting\DirectionalLightControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Lighting\DirectionalLightControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Lighting\DiscreteLightControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Lighting\DiscreteLightControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph3D\Lighting\HemisphericAmbientLightControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Lighting\HemisphericAmbientLightControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1555,22 +1555,22 @@
     <Compile Include="Gui\Graph\Graph3D\LayerPositionControl.xaml.cs">
       <DependentUpon>LayerPositionControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Lighting\SpotLightControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Lighting\SpotLightControl.xaml.cs">
       <DependentUpon>SpotLightControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Lighting\PointLightControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Lighting\PointLightControl.xaml.cs">
       <DependentUpon>PointLightControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Lighting\DirectionalLightControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Lighting\DirectionalLightControl.xaml.cs">
       <DependentUpon>DirectionalLightControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Lighting\DiscreteLightControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Lighting\DiscreteLightControl.xaml.cs">
       <DependentUpon>DiscreteLightControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Lighting\HemisphericAmbientLightControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Lighting\HemisphericAmbientLightControl.xaml.cs">
       <DependentUpon>HemisphericAmbientLightControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Lighting\IDiscreteLightControl.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Lighting\IDiscreteLightControl.cs" />
     <Compile Include="Gui\Drawing\D3D\MaterialComboBox.xaml.cs">
       <DependentUpon>MaterialComboBox.xaml</DependentUpon>
     </Compile>
@@ -2016,8 +2016,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Gui\Graph3D\Material\" />
-    <Folder Include="Gui\Graph3D\Plot\" />
+    <Folder Include="Gui\Graph3D\" />
     <Folder Include="Gui\Graph\Graph3D\Plot\Groups\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

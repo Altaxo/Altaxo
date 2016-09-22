@@ -53,7 +53,7 @@ namespace Altaxo.Main
 		/// </summary>
 		public object BuildItem(BuildItemArgs args)
 		{
-			return new Graph3DExportBindingDescriptor(args.Codon, typeof(Altaxo.Graph.Graph3D.GraphDocument), typeof(Altaxo.Gui.Graph3D.Common.D3D10BitmapExporter));
+			return new Graph3DExportBindingDescriptor(args.Codon, typeof(Altaxo.Graph.Graph3D.GraphDocument), typeof(Altaxo.Gui.Graph.Graph3D.Common.D3D10BitmapExporter));
 		}
 
 		private class Graph3DExportBindingDescriptor : IProjectItemExportBindingDescriptor

@@ -24,7 +24,7 @@
 
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Plot;
-using Altaxo.Gui.Graph3D.Viewing;
+using Altaxo.Gui.Graph.Graph3D.Viewing;
 using ICSharpCode.Core;
 
 using System;

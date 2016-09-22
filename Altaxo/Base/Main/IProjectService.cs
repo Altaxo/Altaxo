@@ -331,7 +331,7 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="graph">The graph document.</param>
 		/// <returns>The view content for the provided graph document.</returns>
-		Altaxo.Gui.Graph3D.Viewing.IGraphController CreateNewGraph3D(Graph.Graph3D.GraphDocument graph);
+		Altaxo.Gui.Graph.Graph3D.Viewing.IGraphController CreateNewGraph3D(Graph.Graph3D.GraphDocument graph);
 
 		/// <summary>
 		/// Opens a view that shows the graph <code>graph</code>. If no view for the graph can be found,

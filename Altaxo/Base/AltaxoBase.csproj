@@ -600,10 +600,10 @@
     <Compile Include="Gui\Graph\Graph3D\Shapes\SolidShapeController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Shapes\TextGraphicController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Templates\DefaultCartesicPlotTemplateController.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\Graph3DController.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\GraphToolType.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\IGraph3DView.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\IGraphController.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\Graph3DController.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\GraphToolType.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\IGraph3DView.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\IGraphController.cs" />
     <Compile Include="Gui\Graph\Graph3D\XYZPlotLayerContentsController.cs" />
     <Compile Include="Gui\Graph\Graph3D\XYPlotLayerController.cs" />
     <Compile Include="Gui\Graph\ClipboardRenderingOptionsController.cs" />
@@ -1598,7 +1598,6 @@
     <Compile Include="Graph\Gdi\TranslationRotationShearxScaleTransformation2D.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Gui\Graph3D\Plot\" />
     <Folder Include="Gui\Main\ProjectBrowser\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

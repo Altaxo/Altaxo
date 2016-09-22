@@ -77,24 +77,24 @@
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalUIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionNormalUVIndexedTriangleBuffer.cs" />
     <Compile Include="Graph\Graph3D\GraphicsContext\D3D\PositionUVIndexedTriangleBuffer.cs" />
-    <Compile Include="Gui\Graph3D\Common\D3D10BitmapExporter.cs" />
-    <Compile Include="Gui\Graph3D\Common\D3D10GammaCorrector.cs" />
-    <Compile Include="Gui\Graph3D\Common\Disposer.cs" />
-    <Compile Include="Gui\Graph3D\Common\D3D10ImageSource.cs" />
-    <Compile Include="Gui\Graph3D\Common\IScene.cs" />
-    <Compile Include="Gui\Graph3D\Common\TextureExtensions.cs" />
-    <Compile Include="Gui\Graph3D\Common\D3D10RendererToImageSource.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\D3D10Scene.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\D3D10Scene_Lighting.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\Graph3DControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Common\D3D10BitmapExporter.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Common\D3D10GammaCorrector.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Common\Disposer.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Common\D3D10ImageSource.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Common\IScene.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Common\TextureExtensions.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Common\D3D10RendererToImageSource.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\D3D10Scene_Lighting.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\Graph3DControl.xaml.cs">
       <DependentUpon>Graph3DControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Viewing\Graph3DControllerWpf.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\MouseStateHandler.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph3D\Viewing\GraphControllerMouseHandlers\TextToolMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\Graph3DControllerWpf.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\MouseStateHandler.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\TextToolMouseHandler.cs" />
     <Compile Include="Gui\SharpDevelop\Graph3DDisplayBindingDoozer.cs" />
     <Compile Include="Gui\SharpDevelop\Graph3DExportBindingDoozer.cs" />
     <Compile Include="Gui\SharpDevelop\SDGraph3DViewContent.cs" />
@@ -108,7 +108,7 @@
     <Content Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Gui\Graph3D\Viewing\Graph3DControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Viewing\Graph3DControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

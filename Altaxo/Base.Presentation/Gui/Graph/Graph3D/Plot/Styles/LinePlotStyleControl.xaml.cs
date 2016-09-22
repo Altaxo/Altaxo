@@ -34,7 +34,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 	using Altaxo.Collections;
 	using Altaxo.Drawing.D3D;
 	using Drawing.D3D;
-	using Gui.Graph3D;
 
 	/// <summary>
 	/// Interaction logic for XYPlotLineStyleControl.xaml

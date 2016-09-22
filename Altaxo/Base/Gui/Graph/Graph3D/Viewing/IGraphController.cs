@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,27 +22,44 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Graph.Graph3D.Viewing;
+using Altaxo.Geometry;
+using Altaxo.Graph;
+using Altaxo.Graph.Graph3D;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Altaxo.Graph.Graph3D.Commands
+namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
-	public class CopyDocumentAsComObjectToClipboard : AbstractGraph3DControllerCommand
+	public interface IGraphController : IMVCANController
 	{
-		public override void Run(Graph3DController ctrl)
-		{
-			var doc = ctrl.Doc;
+		/// <summary>
+		/// This returns the GraphDocument that is managed by this controller.
+		/// </summary>
+		GraphDocument Doc { get; }
 
-			var comManager = (Com.ComManager)Current.ComManager;
+		/// <summary>
+		/// Returns the currently active layer, or null if there is no active layer.
+		/// </summary>
+		HostLayer ActiveLayer { get; }
 
-			var dataObject = Current.ComManager.GetDocumentsDataObjectForDocument(doc);
+		/// <summary>
+		/// Get / sets the currently active plot by number.
+		/// </summary>
+		int CurrentPlotNumber { get; set; }
 
-			if (null != dataObject)
-				System.Windows.Clipboard.SetDataObject(dataObject);
-		}
+		/// <summary>
+		/// check the validity of the CurrentLayerNumber and correct it
+		/// </summary>
+		/// <returns>The currently active layer.</returns>
+		HostLayer EnsureValidityOfCurrentLayerNumber();
+
+		/// <summary>
+		/// This ensures that the current plot number is valid. If there is no plot on the currently active layer,
+		/// the current plot number is set to -1.
+		/// </summary>
+		void EnsureValidityOfCurrentPlotNumber();
 	}
 }
