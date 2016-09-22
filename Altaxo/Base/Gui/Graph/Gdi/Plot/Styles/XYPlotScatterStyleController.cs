@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,29 +23,28 @@
 #endregion Copyright
 
 using Altaxo.Collections;
-using Altaxo.Drawing.D3D;
 using Altaxo.Graph;
-using Altaxo.Graph.Graph3D;
-using Altaxo.Graph.Graph3D.Plot.Styles;
-using Altaxo.Gui.Graph;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Gui.Graph.Plot.Groups;
 using Altaxo.Main;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
+namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
 	#region Interfaces
 
 	/// <summary>
 	/// This view interface is for showing the options of the XYXYPlotScatterStyle
 	/// </summary>
-	public interface IScatterPlotStyleView
+	public interface IXYPlotScatterStyleView
 	{
 		/// <summary>
-		/// Material for the scatter symbol.
+		/// Initializes the plot style color combobox.
 		/// </summary>
-		IMaterial SymbolMaterial { get; set; }
+		PenX SymbolPen { get; set; }
 
 		/// <summary>
 		/// Indicates, whether only colors of plot color sets should be shown.
@@ -63,15 +62,28 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		bool IndependentSymbolSize { get; set; }
 
 		/// <summary>
+		/// Initializes the symbol style combobox.
+		/// </summary>
+		/// <param name="list">Possible selections</param>
+		void InitializeSymbolStyle(SelectableListNodeList list);
+
+		/// <summary>
 		/// Initializes the symbol shape combobox.
 		/// </summary>
-		IScatterSymbol SymbolShape { get; set; }
+		/// <param name="list">Possible selections</param>
+		void InitializeSymbolShape(SelectableListNodeList list);
+
+		/// <summary>
+		/// Intitalizes the drop line checkboxes.
+		/// </summary>
+		/// <param name="names">List of names plus the information if they are selected or not.</param>
+		void InitializeDropLineConditions(SelectableListNodeList names);
 
 		bool IndependentColor { get; set; }
 
-		bool IndependentSkipFrequency { get; set; }
+		int SkipPoints { get; set; }
 
-		int SkipFrequency { get; set; }
+		double RelativePenWidth { get; set; }
 
 		#region events
 
@@ -86,8 +98,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 	/// Summary description for XYPlotScatterStyleController.
 	/// </summary>
 	[UserControllerForObject(typeof(ScatterPlotStyle))]
-	[ExpectedTypeOfView(typeof(IScatterPlotStyleView))]
-	public class ScatterPlotStyleController : MVCANControllerEditOriginalDocBase<ScatterPlotStyle, IScatterPlotStyleView>
+	[ExpectedTypeOfView(typeof(IXYPlotScatterStyleView))]
+	public class XYPlotScatterStyleController : MVCANControllerEditOriginalDocBase<ScatterPlotStyle, IXYPlotScatterStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
@@ -120,26 +132,27 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
 
-				var symbolTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbol));
-				_symbolShapeChoices = new SelectableListNodeList();
-				foreach (var ty in symbolTypes)
-				{
-					_symbolShapeChoices.Add(new SelectableListNode(ty.Name, ty, ty == _doc.Shape.GetType()));
-				}
+				_symbolShapeChoices = new SelectableListNodeList(_doc.Shape);
+				_symbolStyleChoices = new SelectableListNodeList(_doc.Style);
+
+				InitializeDropLineChoices();
 			}
 			if (_view != null)
 			{
 				// now we have to set all dialog elements to the right values
 				_view.IndependentColor = _doc.IndependentColor;
 				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-				_view.SymbolMaterial = _doc.Material;
+				_view.SymbolPen = _doc.Pen;
 
-				_view.SymbolShape = _doc.Shape;
+				_view.InitializeSymbolShape(_symbolShapeChoices);
+				_view.InitializeSymbolStyle(_symbolStyleChoices);
 
 				_view.IndependentSymbolSize = _doc.IndependentSymbolSize;
 				_view.SymbolSize = _doc.SymbolSize;
-				_view.SkipFrequency = _doc.SkipFrequency;
-				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
+				_view.SkipPoints = _doc.SkipFrequency;
+				_view.RelativePenWidth = _doc.RelativePenWidth;
+
+				_view.InitializeDropLineConditions(_dropLineChoices);
 			}
 		}
 
@@ -149,23 +162,29 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 			try
 			{
 				// Symbol Color
-				_doc.Material = _view.SymbolMaterial;
+				_doc.Pen = _view.SymbolPen;
 
 				_doc.IndependentColor = _view.IndependentColor;
 
 				_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
 
 				// Symbol Shape
-				_doc.Shape = _view.SymbolShape;
+				_doc.Shape = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Shape)_symbolShapeChoices.FirstSelectedNode.Tag;
+
 				// Symbol Style
+				_doc.Style = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles.Style)_symbolStyleChoices.FirstSelectedNode.Tag;
 
 				// Symbol Size
 				_doc.SymbolSize = _view.SymbolSize;
 
+				// Drop line left
+				_doc.DropLine = new CSPlaneIDList(_dropLineChoices.Where(node => node.IsSelected).Select(node => (CSPlaneID)node.Tag));
+
 				// Skip points
 
-				_doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
-				_doc.SkipFrequency = _view.SkipFrequency;
+				_doc.SkipFrequency = _view.SkipPoints;
+
+				_doc.RelativePenWidth = _view.RelativePenWidth;
 			}
 			catch (Exception ex)
 			{
@@ -186,6 +205,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		{
 			_view.IndependentColorChanged -= EhIndependentColorChanged;
 			base.DetachView();
+		}
+
+		public void InitializeDropLineChoices()
+		{
+			XYPlotLayer layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(XYPlotLayer)) as XYPlotLayer;
+
+			_dropLineChoices = new SelectableListNodeList();
+			foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyles.AxisStyleIDs, _doc.DropLine))
+			{
+				bool sel = _doc.DropLine.Contains(id);
+				CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
+				_dropLineChoices.Add(new SelectableListNode(info.Name, id, sel));
+			}
 		}
 
 		private void EhIndependentColorChanged()

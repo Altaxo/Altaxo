@@ -30,6 +30,7 @@ using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles;
 using Altaxo.Graph.Plot.Groups;
 using Altaxo.Gui.Graph;
+using Altaxo.Gui.Graph.Plot.Groups;
 using Altaxo.Main;
 using System;
 using System.Collections.Generic;

@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.Gdi.Plot.Groups.WaterfallTransformControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+ 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+             mc:Ignorable="d">
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,8,0" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" MinWidth="40" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+		</Grid.RowDefinitions>
+
+		<Label Grid.Row="0" Content="X scale:" />
+		<axogc:QuantityWithUnitTextBox  x:Name="_edXScale" Grid.Column="1" Grid.Row="0" />
+
+		<Label Grid.Row="2" Content="Y scale:" />
+		<axogc:QuantityWithUnitTextBox  x:Name="_edYScale" Grid.Column="1" Grid.Row="2" />
+
+		<Label Grid.Row="4" Content="Clip:" />
+		<CheckBox x:Name="_chkClipValues" Grid.Column="1" Grid.Row="4" VerticalAlignment="Center" />
+	</Grid>
+</UserControl>

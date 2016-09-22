@@ -28,6 +28,7 @@ using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Graph3D.Plot.Data;
+using Altaxo.Gui.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Text;

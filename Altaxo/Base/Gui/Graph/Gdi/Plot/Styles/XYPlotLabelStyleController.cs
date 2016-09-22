@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,54 +25,45 @@
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Drawing;
-using Altaxo.Drawing.D3D;
 using Altaxo.Graph;
-using Altaxo.Graph.Graph3D;
-using Altaxo.Graph.Graph3D.Background;
-using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Background;
+using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Groups;
-using Altaxo.Gui.Graph;
-using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Groups;
 using Altaxo.Main;
 using Altaxo.Units;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
+namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
 	#region Interfaces
 
-	public interface ILabelPlotStyleView
+	public interface IXYPlotLabelStyleView
 	{
+		/// <summary>Occurs when the select label column button was pressed.</summary>
+		event Action LabelColumnSelected;
+
+		/// <summary>Occurs when the font size changed</summary>
+		event Action FontSizeChanged;
+
 		/// <summary>
 		/// Initializes the name of the label column.
 		/// </summary>
 		/// <param name="labelColumnAsText">Label column's name.</param>
-		void Init_LabelColumn(string labelColumnAsText, string toolTip, int status);
-
-		/// <summary>
-		/// Initializes the transformation text.
-		/// </summary>
-		/// <param name="text">Text for the transformation</param>
-		void Init_Transformation(string text, string toolTip);
-
-		bool IndependentSymbolSize { get; set; }
-
-		double SymbolSize { get; set; }
-
-		double FontSizeOffset { get; set; }
-		double FontSizeFactor { get; set; }
+		void Init_LabelColumn(string labelColumnAsText);
 
 		/// <summary>
 		/// Initializes/gets the font family combo box.
 		/// </summary>
-		FontX3D SelectedFont { get; set; }
+		FontX SelectedFont { get; set; }
 
 		/// <summary>
 		/// Initializes/gets the content of the Color combo box.
 		/// </summary>
-		IMaterial LabelBrush { get; set; }
+		BrushX LabelBrush { get; set; }
 
 		/// <summary>
 		/// Initializes/gets the background.
@@ -89,19 +80,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		/// Initializes the horizontal aligment combo box.
 		/// </summary>
 		/// <param name="list">The possible choices.</param>
-		void Init_AlignmentX(SelectableListNodeList list);
+		void Init_HorizontalAlignment(SelectableListNodeList list);
 
 		/// <summary>
-		/// Initializes the vertical alignment combo box.
+		/// Initializes the vertical alignement combo box.
 		/// </summary>
 		/// <param name="list">The possible choices.</param>
-		void Init_AlignmentY(SelectableListNodeList list);
-
-		/// <summary>
-		/// Initializes the depth alignment combo box.
-		/// </summary>
-		/// <param name="list">The possible choices.</param>
-		void Init_AlignmentZ(SelectableListNodeList list);
+		void Init_VerticalAlignment(SelectableListNodeList list);
 
 		/// <summary>
 		/// Initializes the content of the AttachToAxis checkbox. True if the label is attached to one of the four axes.
@@ -115,37 +100,23 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		void Init_AttachedAxis(SelectableListNodeList names);
 
 		/// <summary>
-		/// Initializes the content of the RotationX edit box.
+		/// Initializes the content of the Rotation edit box.
 		/// </summary>
-		double SelectedRotationX { get; set; }
+		double SelectedRotation { get; set; }
 
 		/// <summary>
-		/// Initializes the content of the RotationY edit box.
+		/// Initializes the content of the XOffset edit box.
 		/// </summary>
-		double SelectedRotationY { get; set; }
+		void Init_XOffset(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value);
+
+		DimensionfulQuantity XOffset { get; }
 
 		/// <summary>
-		/// Initializes the content of the RotationZ edit box.
+		/// Initializes the content of the YOffset edit box.
 		/// </summary>
-		double SelectedRotationZ { get; set; }
+		void Init_YOffset(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value);
 
-		double OffsetXPoints { get; set; }
-
-		double OffsetXEmUnits { get; set; }
-
-		double OffsetXSymbolSizeUnits { get; set; }
-
-		double OffsetYPoints { get; set; }
-
-		double OffsetYEmUnits { get; set; }
-
-		double OffsetYSymbolSizeUnits { get; set; }
-
-		double OffsetZPoints { get; set; }
-
-		double OffsetZEmUnits { get; set; }
-
-		double OffsetZSymbolSizeUnits { get; set; }
+		DimensionfulQuantity YOffset { get; }
 
 		/// <summary>
 		/// Initializes the content of the Independent color checkbox
@@ -158,14 +129,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		bool ShowPlotColorsOnly { set; }
 
 		bool ShowPlotColorsOnlyForBackgroundBrush { set; }
-
-		int SkipFrequency { get; set; }
-
-		bool IndependentSkipFrequency { get; set; }
-
-		bool IndependentOnShiftingGroupStyles { get; set; }
-
-		string LabelFormatString { get; set; }
 
 		#region events
 
@@ -189,33 +152,21 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 	#endregion Interfaces
 
 	/// <summary>
-	/// Controller for label plot style.
+	/// Summary description for LinkAxisController.
 	/// </summary>
 	[UserControllerForObject(typeof(LabelPlotStyle))]
-	[ExpectedTypeOfView(typeof(ILabelPlotStyleView))]
-	public class XYPlotLabelStyleController : MVCANControllerEditOriginalDocBase<LabelPlotStyle, ILabelPlotStyleView>
+	[ExpectedTypeOfView(typeof(IXYPlotLabelStyleView))]
+	public class XYPlotLabelStyleController : MVCANControllerEditOriginalDocBase<LabelPlotStyle, IXYPlotLabelStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
-		private SelectableListNodeList _alignmentXChoices;
-		private SelectableListNodeList _alignmentYChoices;
-		private SelectableListNodeList _alignmentZChoices;
+		private SelectableListNodeList _horizontalAlignmentChoices;
+		private SelectableListNodeList _verticalAlignmentChoices;
 		private SelectableListNodeList _attachmentDirectionChoices;
 		private SelectableListNodeList _backgroundColorLinkageChoices;
 
-		/// <summary>
-		/// The data table that the column of the style should belong to.
-		/// </summary>
-		private DataTable _supposedParentDataTable;
-
-		public override bool InitializeDocument(params object[] args)
-		{
-			if (args.Length >= 2 && (args[1] is DataTable))
-				_supposedParentDataTable = (DataTable)args[1];
-
-			return base.InitializeDocument(args);
-		}
+		private ChangeableRelativePercentUnit _percentFontSizeUnit = new ChangeableRelativePercentUnit("%Em font size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -226,9 +177,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		{
 			_colorGroupStyleTracker = null;
 
-			_alignmentXChoices = null;
-			_alignmentYChoices = null;
-			_alignmentZChoices = null;
+			_horizontalAlignmentChoices = null;
+			_verticalAlignmentChoices = null;
 			_attachmentDirectionChoices = null;
 			_backgroundColorLinkageChoices = null;
 
@@ -242,9 +192,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 			if (initData)
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
-				_alignmentXChoices = new SelectableListNodeList(_doc.AlignmentX);
-				_alignmentYChoices = new SelectableListNodeList(_doc.AlignmentY);
-				_alignmentZChoices = new SelectableListNodeList(_doc.AlignmentZ);
+				_horizontalAlignmentChoices = new SelectableListNodeList(_doc.HorizontalAlignment);
+				_verticalAlignmentChoices = new SelectableListNodeList(_doc.VerticalAlignment);
 				_backgroundColorLinkageChoices = new SelectableListNodeList(_doc.BackgroundColorLinkage);
 
 				InitializeAttachmentDirectionChoices();
@@ -252,100 +201,57 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 			if (null != _view)
 			{
-				// Data
-
-				_view.SkipFrequency = _doc.SkipFrequency;
-				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
-
-				_view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
-
-				_view.LabelFormatString = _doc.LabelFormatString;
-
-				InitializeLabelColumnText();
-
-				// Visual
-
-				_view.IndependentSymbolSize = _doc.IndependentSymbolSize;
-				_view.SymbolSize = _doc.SymbolSize;
-
-				_view.FontSizeOffset = _doc.FontSizeOffset;
-				_view.FontSizeFactor = _doc.FontSizeFactor;
-				_view.SelectedFont = _doc.Font;
 				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+				_view.SelectedFont = _doc.Font;
 				_view.IndependentColor = _doc.IndependentColor;
-				_view.LabelBrush = _doc.Material;
-				_view.Init_AlignmentX(_alignmentXChoices);
-				_view.Init_AlignmentY(_alignmentYChoices);
-				_view.Init_AlignmentZ(_alignmentZChoices);
-				_view.AttachToAxis = _doc.AttachedPlane != null;
+				_view.LabelBrush = _doc.LabelBrush;
+				_view.Init_HorizontalAlignment(_horizontalAlignmentChoices);
+				_view.Init_VerticalAlignment(_verticalAlignmentChoices);
+				_view.AttachToAxis = _doc.AttachedAxis != null;
 				_view.Init_AttachedAxis(_attachmentDirectionChoices);
-				_view.SelectedRotationX = _doc.RotationX;
-				_view.SelectedRotationY = _doc.RotationY;
-				_view.SelectedRotationZ = _doc.RotationZ;
+				_view.SelectedRotation = _doc.Rotation;
 
-				_view.OffsetXPoints = _doc.OffsetXPoints;
-				_view.OffsetXEmUnits = _doc.OffsetXEmUnits;
-				_view.OffsetXSymbolSizeUnits = _doc.OffsetXSymbolSizeUnits;
+				_percentFontSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_doc.Font.Size, Units.Length.Point.Instance);
 
-				_view.OffsetYPoints = _doc.OffsetYPoints;
-				_view.OffsetYEmUnits = _doc.OffsetYEmUnits;
-				_view.OffsetYSymbolSizeUnits = _doc.OffsetYSymbolSizeUnits;
-
-				_view.OffsetZPoints = _doc.OffsetZPoints;
-				_view.OffsetZEmUnits = _doc.OffsetZEmUnits;
-				_view.OffsetZSymbolSizeUnits = _doc.OffsetZSymbolSizeUnits;
-
+				var xEnv = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentFontSizeUnit);
+				_view.Init_XOffset(xEnv, new DimensionfulQuantity(_doc.XOffset * 100, _percentFontSizeUnit));
+				_view.Init_YOffset(xEnv, new DimensionfulQuantity(_doc.YOffset * 100, _percentFontSizeUnit));
 				_view.Background = _doc.BackgroundStyle;
 				_view.InitializeBackgroundColorLinkage(_backgroundColorLinkageChoices);
+
+				InitializeLabelColumnText();
 			}
 		}
 
 		public override bool Apply(bool disposeController)
 		{
-			// Data
-			_doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
-			_doc.SkipFrequency = _view.SkipFrequency;
+			_doc.BackgroundStyle = _view.Background;
+			_doc.Font = _view.SelectedFont;
+			_doc.IndependentColor = _view.IndependentColor;
+			_doc.LabelBrush = _view.LabelBrush;
+			_doc.HorizontalAlignment = (StringAlignment)_horizontalAlignmentChoices.FirstSelectedNode.Tag;
+			_doc.VerticalAlignment = (StringAlignment)_verticalAlignmentChoices.FirstSelectedNode.Tag;
 
-			_doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
+			var xOffs = _view.XOffset;
+			if (xOffs.Unit is IRelativeUnit)
+				_doc.XOffset = ((IRelativeUnit)xOffs.Unit).GetRelativeValueFromValue(xOffs.Value);
+			else
+				_doc.XOffset = xOffs.AsValueIn(Units.Length.Point.Instance) / _doc.Font.Size;
 
-			_doc.LabelFormatString = _view.LabelFormatString;
+			var yOffs = _view.YOffset;
+			if (yOffs.Unit is IRelativeUnit)
+				_doc.YOffset = ((IRelativeUnit)yOffs.Unit).GetRelativeValueFromValue(yOffs.Value);
+			else
+				_doc.YOffset = yOffs.AsValueIn(Units.Length.Point.Instance) / _doc.Font.Size;
 
 			if (_view.AttachToAxis && null != _attachmentDirectionChoices.FirstSelectedNode)
-				_doc.AttachedPlane = (CSPlaneID)_attachmentDirectionChoices.FirstSelectedNode.Tag;
+				_doc.AttachedAxis = (CSPlaneID)_attachmentDirectionChoices.FirstSelectedNode.Tag;
 			else
-				_doc.AttachedPlane = null;
+				_doc.AttachedAxis = null;
 
-			_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
-			_doc.SymbolSize = _view.SymbolSize;
+			_doc.Rotation = _view.SelectedRotation;
 
-			_doc.FontSizeOffset = _view.FontSizeOffset;
-			_doc.FontSizeFactor = _view.FontSizeFactor;
-			_doc.Font = _view.SelectedFont;
-
-			_doc.IndependentColor = _view.IndependentColor;
-			_doc.Material = _view.LabelBrush;
-
-			_doc.RotationX = _view.SelectedRotationX;
-			_doc.RotationY = _view.SelectedRotationY;
-			_doc.RotationZ = _view.SelectedRotationZ;
-
-			_doc.AlignmentX = (Alignment)_alignmentXChoices.FirstSelectedNode.Tag;
-			_doc.AlignmentY = (Alignment)_alignmentYChoices.FirstSelectedNode.Tag;
-			_doc.AlignmentZ = (Alignment)_alignmentZChoices.FirstSelectedNode.Tag;
-
-			_doc.OffsetXPoints = _view.OffsetXPoints;
-			_doc.OffsetYPoints = _view.OffsetYPoints;
-			_doc.OffsetZPoints = _view.OffsetZPoints;
-
-			_doc.OffsetXSymbolSizeUnits = _view.OffsetXSymbolSizeUnits;
-			_doc.OffsetYSymbolSizeUnits = _view.OffsetYSymbolSizeUnits;
-			_doc.OffsetZSymbolSizeUnits = _view.OffsetZSymbolSizeUnits;
-
-			_doc.OffsetXEmUnits = _view.OffsetXEmUnits;
-			_doc.OffsetYEmUnits = _view.OffsetYEmUnits;
-			_doc.OffsetZEmUnits = _view.OffsetZEmUnits;
-
-			_doc.BackgroundStyle = _view.Background;
+			// _doc.LabelColumn  = _labelColumn; already set after dialog
 
 			return ApplyEnd(true, disposeController);
 		}
@@ -353,6 +259,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		protected override void AttachView()
 		{
 			base.AttachView();
+			_view.LabelColumnSelected += EhView_SelectLabelColumn;
+			_view.FontSizeChanged += EhView_FontSizeChanged;
 
 			_view.LabelColorLinkageChanged += EhLabelColorLinkageChanged;
 			_view.BackgroundColorLinkageChanged += this.EhBackgroundColorLinkageChanged;
@@ -363,6 +271,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 		protected override void DetachView()
 		{
+			_view.LabelColumnSelected -= EhView_SelectLabelColumn;
+			_view.FontSizeChanged -= EhView_FontSizeChanged;
 			_view.LabelColorLinkageChanged -= EhLabelColorLinkageChanged;
 			_view.BackgroundColorLinkageChanged -= this.EhBackgroundColorLinkageChanged;
 			_view.LabelBrushChanged -= this.EhLabelBrushChanged;
@@ -379,20 +289,21 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 			if (layer != null)
 			{
-				foreach (CSPlaneInformation info in layer.CoordinateSystem.PlaneStyles)
+				foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.AttachedAxis }))
 				{
-					_attachmentDirectionChoices.Add(new SelectableListNode(info.Name, info.Identifier, info.Identifier == _doc.AttachedPlane));
+					CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
+					_attachmentDirectionChoices.Add(new SelectableListNode(info.Name, id, id == _doc.AttachedAxis));
 				}
 			}
 		}
 
 		private void InitializeLabelColumnText()
 		{
-			var info = new PlotColumnInformation(_doc.LabelColumn, _doc.LabelColumnDataColumnName);
-			info.Update(_supposedParentDataTable);
-
-			_view?.Init_LabelColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-			_view?.Init_Transformation(info.TransformationTextToShow, info.TransformationToolTip);
+			if (_view != null)
+			{
+				string name = _doc.LabelColumn == null ? string.Empty : _doc.LabelColumn.FullName;
+				_view.Init_LabelColumn(name);
+			}
 		}
 
 		#region Color management
@@ -443,7 +354,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 				_doc.BackgroundStyle = _view.Background;
 				if (_doc.IsBackgroundColorProvider)
 				{
-					if (_view.LabelBrush.Color != _view.Background.Material.Color)
+					if (_view.LabelBrush.Color != _view.Background.Brush.Color)
 						InternalSetLabelColorToBackgroundColor();
 				}
 			}
@@ -457,9 +368,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 				if (_doc.IsBackgroundColorReceiver && false == _doc.IndependentColor)
 				{
-					if (_doc.BackgroundColorLinkage == ColorLinkage.Dependent && _view.Background.Material.Color != _view.LabelBrush.Color)
+					if (_doc.BackgroundColorLinkage == ColorLinkage.Dependent && _view.Background.Brush.Color != _view.LabelBrush.Color)
 						InternalSetBackgroundColorToLabelColor();
-					else if (_doc.BackgroundColorLinkage == ColorLinkage.PreserveAlpha && _view.Background.Material.Color != _view.LabelBrush.Color)
+					else if (_doc.BackgroundColorLinkage == ColorLinkage.PreserveAlpha && _view.Background.Brush.Color != _view.LabelBrush.Color)
 						InternalSetBackgroundColorRGBToLabelColor();
 				}
 			}
@@ -468,7 +379,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		private void EhUseBackgroundChanged()
 		{
 			_doc.BackgroundStyle = _view.Background;
-			var newValue = _doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsUserDefinedMaterial;
+			var newValue = _doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush;
 
 			if (true == newValue)
 			{
@@ -484,11 +395,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		/// </summary>
 		private void InternalSetBackgroundColorToLabelColor()
 		{
-			if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsUserDefinedMaterial)
+			if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush)
 			{
-				var newBrush = _doc.BackgroundStyle.Material;
-				newBrush = newBrush.WithColor(_view.LabelBrush.Color);
-				_doc.BackgroundStyle.Material = newBrush;
+				var newBrush = _doc.BackgroundStyle.Brush.Clone();
+				newBrush.Color = _view.LabelBrush.Color;
+				_doc.BackgroundStyle.Brush = newBrush;
 				_view.Background = _doc.BackgroundStyle;
 			}
 		}
@@ -498,12 +409,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		/// </summary>
 		private void InternalSetBackgroundColorRGBToLabelColor()
 		{
-			if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsUserDefinedMaterial)
+			if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush)
 			{
-				var newBrush = _doc.BackgroundStyle.Material;
+				var newBrush = _doc.BackgroundStyle.Brush.Clone();
 				var c = _view.LabelBrush.Color.NewWithAlphaValue(newBrush.Color.Color.A); ;
-				newBrush = newBrush.WithColor(c);
-				_doc.BackgroundStyle.Material = newBrush;
+				newBrush.Color = c;
+				_doc.BackgroundStyle.Brush = newBrush;
 				_view.Background = _doc.BackgroundStyle;
 			}
 		}
@@ -513,14 +424,37 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		/// </summary>
 		private void InternalSetLabelColorToBackgroundColor()
 		{
-			if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsUserDefinedMaterial)
+			if (_doc.BackgroundStyle != null && _doc.BackgroundStyle.SupportsBrush)
 			{
-				var newBrush = _view.LabelBrush;
-				newBrush = newBrush.WithColor(_view.Background.Material.Color);
+				var newBrush = _view.LabelBrush.Clone();
+				newBrush.Color = _view.Background.Brush.Color;
 				_view.LabelBrush = newBrush;
 			}
 		}
 
 		#endregion Color management
+
+		#region IXYPlotLabelStyleController Members
+
+		public void EhView_SelectLabelColumn()
+		{
+			SingleColumnChoice choice = new SingleColumnChoice();
+			choice.SelectedColumn = _doc.LabelColumn as DataColumn;
+			object choiceAsObject = choice;
+			if (Current.Gui.ShowDialog(ref choiceAsObject, "Select label column"))
+			{
+				choice = (SingleColumnChoice)choiceAsObject;
+
+				_doc.LabelColumn = choice.SelectedColumn;
+				InitializeLabelColumnText();
+			}
+		}
+
+		public void EhView_FontSizeChanged()
+		{
+			_percentFontSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_view.SelectedFont.Size, Units.Length.Point.Instance);
+		}
+
+		#endregion IXYPlotLabelStyleController Members
 	}
 }

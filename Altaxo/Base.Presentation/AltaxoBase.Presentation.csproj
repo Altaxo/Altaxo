@@ -749,7 +749,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\BarGraphPlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\BarGraphPlotStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -793,7 +793,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\DensityImagePlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\DensityImagePlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -805,7 +805,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\ErrorBarPlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\ErrorBarPlotStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -813,7 +813,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\FillToCurvePlotStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\FillToCurvePlotStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -829,7 +829,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\G2DPlotItemControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\G2DPlotItemControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1021,7 +1021,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\WaterfallTransformControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Groups\WaterfallTransformControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1041,7 +1041,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\XYPlotLabelStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\XYPlotLabelStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1049,15 +1049,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\XYPlotLineStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\XYPlotLineStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\XYPlotScatterStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\XYPlotScatterStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\XYPlotStyleCollectionControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\XYPlotStyleCollectionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1688,8 +1688,8 @@
     <Compile Include="Gui\Graph\ScaleWithTicksControl.xaml.cs">
       <DependentUpon>ScaleWithTicksControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\BackgroundControlsGlue.cs" />
-    <Compile Include="Gui\Graph\BarGraphPlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Background\BackgroundControlsGlue.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\BarGraphPlotStyleControl.xaml.cs">
       <DependentUpon>BarGraphPlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\ColorProviderBaseControl.xaml.cs">
@@ -1724,7 +1724,7 @@
     <Compile Include="Gui\Graph\XYZMeshedColumnPlotDataControl.xaml.cs">
       <DependentUpon>XYZMeshedColumnPlotDataControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\DensityImagePlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\DensityImagePlotStyleControl.xaml.cs">
       <DependentUpon>DensityImagePlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\DensityImagePlotItemControl.xaml.cs">
@@ -1733,13 +1733,13 @@
     <Compile Include="Gui\Graph\DensityScaleControl.xaml.cs">
       <DependentUpon>DensityScaleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ErrorBarPlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\ErrorBarPlotStyleControl.xaml.cs">
       <DependentUpon>ErrorBarPlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\ExchangeTablesOfPlotItemsControl.xaml.cs">
       <DependentUpon>ExchangeTablesOfPlotItemsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\FillToCurvePlotStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\FillToCurvePlotStyleControl.xaml.cs">
       <DependentUpon>FillToCurvePlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\FitPolynomialDialogControl.xaml.cs">
@@ -1751,7 +1751,7 @@
     <Compile Include="Gui\Graph\Gdi\CS\G2DCartesicCSControl.xaml.cs">
       <DependentUpon>G2DCartesicCSControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\G2DPlotItemControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\G2DPlotItemControl.xaml.cs">
       <DependentUpon>G2DPlotItemControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\GdiFontGlue.cs" />
@@ -1917,7 +1917,7 @@
       <DependentUpon>GraphViewWpf.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Viewing\GraphControllerWpf.cs" />
-    <Compile Include="Gui\Graph\WaterfallTransformControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\Groups\WaterfallTransformControl.xaml.cs">
       <DependentUpon>WaterfallTransformControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Axis\AxisLabelStyleControl.xaml.cs">
@@ -1932,19 +1932,19 @@
     <Compile Include="Gui\Graph\PlotGroupCollectionControlSimple.xaml.cs">
       <DependentUpon>PlotGroupCollectionControlSimple.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\XYPlotLabelStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotLabelStyleControl.xaml.cs">
       <DependentUpon>XYPlotLabelStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\XYPlotLayerContentsControl.xaml.cs">
       <DependentUpon>XYPlotLayerContentsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\XYPlotLineStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotLineStyleControl.xaml.cs">
       <DependentUpon>XYPlotLineStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\XYPlotScatterStyleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotScatterStyleControl.xaml.cs">
       <DependentUpon>XYPlotScatterStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\XYPlotStyleCollectionControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotStyleCollectionControl.xaml.cs">
       <DependentUpon>XYPlotStyleCollectionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GuiHelper.cs" />
@@ -2016,7 +2016,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Gui\Graph3D\" />
     <Folder Include="Gui\Graph\Graph3D\Plot\Groups\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
