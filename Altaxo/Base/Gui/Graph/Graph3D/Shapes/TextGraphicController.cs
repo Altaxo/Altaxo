@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 
-namespace Altaxo.Gui.Graph3D.Shapes
+namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
 	using Altaxo.Drawing;
 	using Altaxo.Drawing.D3D;

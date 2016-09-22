@@ -29,7 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.Graph3D.Templates
+namespace Altaxo.Gui.Graph.Graph3D.Templates
 {
 	public interface IDefaultCartesicPlotTemplateView
 	{

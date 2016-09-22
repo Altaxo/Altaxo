@@ -5,97 +5,97 @@
 						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph3D.Shapes"
+						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Graph3D.Shapes"
 						 mc:Ignorable="d"
 >
-  <UserControl.Resources>
-    <Style TargetType="Label">
-      <Style.Setters>
-        <Setter Property="Margin" Value="8,0,0,2" />
-        <Setter Property="HorizontalAlignment" Value="Right" />
-      </Style.Setters>
-    </Style>
-    <Style x:Key="CBWithMargin" TargetType="Control">
-      <Style.Setters>
-        <Setter Property="Margin" Value="8,0,0,0" />
-      </Style.Setters>
-    </Style>
-  </UserControl.Resources>
-  <Grid>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="*" />
-    </Grid.ColumnDefinitions>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="16" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
-    <Label x:Name="_guiLabelPositionX" Grid.Column="0" Grid.Row="2" Content="Pos. X:" />
-    <axogc:QuantityWithUnitTextBox x:Name="_guiPositionX"  Grid.Column="1" Grid.Row="2" />
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,0,2" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
+			</Style.Setters>
+		</Style>
+		<Style x:Key="CBWithMargin" TargetType="Control">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,0,0" />
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="16" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Label x:Name="_guiLabelPositionX" Grid.Column="0" Grid.Row="2" Content="Pos. X:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiPositionX"  Grid.Column="1" Grid.Row="2" />
 
-    <Label x:Name="_guiLabelPositionY" Grid.Column="2" Grid.Row="2" Content="Pos. Y:" />
-    <axogc:QuantityWithUnitTextBox x:Name="_guiPositionY" Grid.Column="3" Grid.Row="2" />
+		<Label x:Name="_guiLabelPositionY" Grid.Column="2" Grid.Row="2" Content="Pos. Y:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiPositionY" Grid.Column="3" Grid.Row="2" />
 
-    <Label x:Name="_guiLabelPositionZ" Grid.Column="4" Grid.Row="2" Content="Pos. Z:" />
-    <axogc:QuantityWithUnitTextBox x:Name="_guiPositionZ" Grid.Column="5" Grid.Row="2" />
+		<Label x:Name="_guiLabelPositionZ" Grid.Column="4" Grid.Row="2" Content="Pos. Z:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiPositionZ" Grid.Column="5" Grid.Row="2" />
 
-    <Label x:Name="_guiSizeLabelX" Grid.Column="0" Grid.Row="4" Content="Size X:" />
-    <axogc:QuantityWithUnitTextBox x:Name="_guiSizeX"  Grid.Column="1" Grid.Row="4" SelectedQuantityChanged="EhSizeXChanged" />
+		<Label x:Name="_guiSizeLabelX" Grid.Column="0" Grid.Row="4" Content="Size X:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiSizeX"  Grid.Column="1" Grid.Row="4" SelectedQuantityChanged="EhSizeXChanged" />
 
-    <Label x:Name="_guiSizeLabelY" Grid.Column="2" Grid.Row="4" Content="Size Y:" />
-    <axogc:QuantityWithUnitTextBox x:Name="_guiSizeY"  Grid.Column="3" Grid.Row="4"  SelectedQuantityChanged="EhSizeYChanged" />
+		<Label x:Name="_guiSizeLabelY" Grid.Column="2" Grid.Row="4" Content="Size Y:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiSizeY"  Grid.Column="3" Grid.Row="4"  SelectedQuantityChanged="EhSizeYChanged" />
 
-    <Label x:Name="_guiSizeLabelZ" Grid.Column="4" Grid.Row="4" Content="Size Z:" />
-    <axogc:QuantityWithUnitTextBox x:Name="_guiSizeZ"  Grid.Column="5" Grid.Row="4"  SelectedQuantityChanged="EhSizeZChanged" />
+		<Label x:Name="_guiSizeLabelZ" Grid.Column="4" Grid.Row="4" Content="Size Z:" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiSizeZ"  Grid.Column="5" Grid.Row="4"  SelectedQuantityChanged="EhSizeZChanged" />
 
-    <Label Grid.Column="0" Grid.Row="6" Content="Rotation X:" />
-    <axogcd:RotationComboBox  x:Name="_guiRotationX" Grid.Column="1" Grid.Row="6" />
+		<Label Grid.Column="0" Grid.Row="6" Content="Rotation X:" />
+		<axogcd:RotationComboBox  x:Name="_guiRotationX" Grid.Column="1" Grid.Row="6" />
 
-    <Label Grid.Column="2" Grid.Row="6" Content="Rotation Y:" />
-    <axogcd:RotationComboBox  x:Name="_guiRotationY" Grid.Column="3" Grid.Row="6" />
+		<Label Grid.Column="2" Grid.Row="6" Content="Rotation Y:" />
+		<axogcd:RotationComboBox  x:Name="_guiRotationY" Grid.Column="3" Grid.Row="6" />
 
-    <Label Grid.Column="4" Grid.Row="6" Content="Rotation Z:" />
-    <axogcd:RotationComboBox  x:Name="_guiRotationZ" Grid.Column="5" Grid.Row="6" />
+		<Label Grid.Column="4" Grid.Row="6" Content="Rotation Z:" />
+		<axogcd:RotationComboBox  x:Name="_guiRotationZ" Grid.Column="5" Grid.Row="6" />
 
-    <Label Grid.Column="0" Grid.Row="8" Content="Shear X:" />
-    <axogcd:ShearComboBox Grid.Column="1" Grid.Row="8" x:Name="_guiShearX" />
+		<Label Grid.Column="0" Grid.Row="8" Content="Shear X:" />
+		<axogcd:ShearComboBox Grid.Column="1" Grid.Row="8" x:Name="_guiShearX" />
 
-    <Label Grid.Column="2" Grid.Row="8" Content="Shear Y:" />
-    <axogcd:ShearComboBox Grid.Column="3" Grid.Row="8" x:Name="_guiShearY" />
+		<Label Grid.Column="2" Grid.Row="8" Content="Shear Y:" />
+		<axogcd:ShearComboBox Grid.Column="3" Grid.Row="8" x:Name="_guiShearY" />
 
-    <Label Grid.Column="4" Grid.Row="8" Content="Shear Z:" />
-    <axogcd:ShearComboBox Grid.Column="5" Grid.Row="8" x:Name="_guiShearZ" />
+		<Label Grid.Column="4" Grid.Row="8" Content="Shear Z:" />
+		<axogcd:ShearComboBox Grid.Column="5" Grid.Row="8" x:Name="_guiShearZ" />
 
-    <Label x:Name="_guiLabelScaleX" Grid.Column="0" Grid.Row="10" Content="Scale X:" />
-    <axogcd:ScaleComboBox x:Name="_guiScaleX"  Grid.Column="1" Grid.Row="10"  SelectedQuantityChanged="EhScaleXChanged" />
+		<Label x:Name="_guiLabelScaleX" Grid.Column="0" Grid.Row="10" Content="Scale X:" />
+		<axogcd:ScaleComboBox x:Name="_guiScaleX"  Grid.Column="1" Grid.Row="10"  SelectedQuantityChanged="EhScaleXChanged" />
 
-    <Label x:Name="_guiLabelScaleY" Grid.Column="2" Grid.Row="10" Content="Scale Y:" />
-    <axogcd:ScaleComboBox x:Name="_guiScaleY"  Grid.Column="3" Grid.Row="10"  SelectedQuantityChanged="EhScaleYChanged" />
+		<Label x:Name="_guiLabelScaleY" Grid.Column="2" Grid.Row="10" Content="Scale Y:" />
+		<axogcd:ScaleComboBox x:Name="_guiScaleY"  Grid.Column="3" Grid.Row="10"  SelectedQuantityChanged="EhScaleYChanged" />
 
-    <Label x:Name="_guiLabelScaleZ" Grid.Column="4" Grid.Row="10" Content="Scale Z:" />
-    <axogcd:ScaleComboBox x:Name="_guiScaleZ"  Grid.Column="5" Grid.Row="10"  SelectedQuantityChanged="EhScaleZChanged" />
+		<Label x:Name="_guiLabelScaleZ" Grid.Column="4" Grid.Row="10" Content="Scale Z:" />
+		<axogcd:ScaleComboBox x:Name="_guiScaleZ"  Grid.Column="5" Grid.Row="10"  SelectedQuantityChanged="EhScaleZChanged" />
 
-    <axoggs:AnchoringControl x:Name="_guiLocalAnchor" Title="Local anchor" Grid.Column="0" Grid.Row="12" Grid.ColumnSpan="2" />
-    <axoggs:AnchoringControl x:Name="_guiParentAnchor" Title="Parent anchor" Grid.Column="2" Grid.Row="12" Grid.ColumnSpan="2" />
-  </Grid>
+		<axoggs:AnchoringControl x:Name="_guiLocalAnchor" Title="Local anchor" Grid.Column="0" Grid.Row="12" Grid.ColumnSpan="2" />
+		<axoggs:AnchoringControl x:Name="_guiParentAnchor" Title="Parent anchor" Grid.Column="2" Grid.Row="12" Grid.ColumnSpan="2" />
+	</Grid>
 </UserControl>

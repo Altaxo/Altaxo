@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing.D3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,29 +29,29 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph3D.Shapes
+namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
 	/// <summary>
-	/// Interaction logic for LineGraphicControl.xaml
+	/// Interaction logic for ShapeGraphicControl.xaml
 	/// </summary>
-	public partial class OpenPathShapeControl : UserControl, IOpenPathShapeView
+	public partial class SolidShapeControl : UserControl, ISolidShapeView
 	{
-		public OpenPathShapeControl()
+		public SolidShapeControl()
 		{
 			InitializeComponent();
 		}
 
-		#region ILineGraphicView
+		#region ISolidShapeView
 
-		public PenX3D DocPen
+		public Altaxo.Drawing.D3D.IMaterial Material
 		{
 			get
 			{
-				return _penControl.Pen;
+				return _guiMaterial.SelectedMaterial;
 			}
 			set
 			{
-				_penControl.Pen = value;
+				_guiMaterial.SelectedMaterial = value;
 			}
 		}
 
@@ -64,6 +63,6 @@ namespace Altaxo.Gui.Graph3D.Shapes
 			}
 		}
 
-		#endregion ILineGraphicView
+		#endregion ISolidShapeView
 	}
 }

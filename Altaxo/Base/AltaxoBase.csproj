@@ -596,10 +596,10 @@
     <Compile Include="Gui\Graph\Graph3D\Plot\Styles\LinePlotStyleController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Plot\Styles\ScatterPlotStyleController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Plot\Styles\XYZPlotStyleCollectionController.cs" />
-    <Compile Include="Gui\Graph3D\Shapes\OpenPathShapeController.cs" />
-    <Compile Include="Gui\Graph3D\Shapes\SolidShapeController.cs" />
-    <Compile Include="Gui\Graph3D\Shapes\TextGraphicController.cs" />
-    <Compile Include="Gui\Graph3D\Templates\DefaultCartesicPlotTemplateController.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Shapes\OpenPathShapeController.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Shapes\SolidShapeController.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Shapes\TextGraphicController.cs" />
+    <Compile Include="Gui\Graph\Graph3D\Templates\DefaultCartesicPlotTemplateController.cs" />
     <Compile Include="Gui\Graph3D\Viewing\Graph3DController.cs" />
     <Compile Include="Gui\Graph3D\Viewing\GraphToolType.cs" />
     <Compile Include="Gui\Graph3D\Viewing\IGraph3DView.cs" />

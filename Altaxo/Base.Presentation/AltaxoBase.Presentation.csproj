@@ -645,19 +645,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Shapes\AnchoringControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Shapes\AnchoringControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Shapes\OpenPathShapeControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Shapes\OpenPathShapeControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Shapes\SolidShapeControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Shapes\SolidShapeControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml">
+    <Page Include="Gui\Graph\Graph3D\Shapes\TextGraphicControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1610,16 +1610,16 @@
     <Compile Include="Gui\Graph\Graph3D\Plot\Styles\ScatterPlotStyleControl.xaml.cs">
       <DependentUpon>ScatterPlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Shapes\AnchoringControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Shapes\AnchoringControl.xaml.cs">
       <DependentUpon>AnchoringControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Shapes\OpenPathShapeControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Shapes\OpenPathShapeControl.xaml.cs">
       <DependentUpon>OpenPathShapeControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Shapes\SolidShapeControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Shapes\SolidShapeControl.xaml.cs">
       <DependentUpon>SolidShapeControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph3D\Shapes\TextGraphicControl.xaml.cs">
+    <Compile Include="Gui\Graph\Graph3D\Shapes\TextGraphicControl.xaml.cs">
       <DependentUpon>TextGraphicControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph3D\XYZPlotLayerContentsControl.xaml.cs">

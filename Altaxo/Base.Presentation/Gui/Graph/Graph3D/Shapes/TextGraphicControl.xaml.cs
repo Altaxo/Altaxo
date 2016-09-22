@@ -33,7 +33,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph3D.Shapes
+namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
 	/// <summary>
 	/// Interaction logic for TextGraphicControl.xaml
