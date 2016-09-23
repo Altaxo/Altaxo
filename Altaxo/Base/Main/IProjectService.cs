@@ -303,28 +303,28 @@ namespace Altaxo.Main
 		/// Creates a new graph document and the view for this newly created graph document.
 		/// </summary>
 		/// <returns>The view content for the newly created graph.</returns>
-		Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph();
+		Altaxo.Gui.Graph.Gdi.Viewing.IGraphController CreateNewGraph();
 
 		/// <summary>
 		/// Creates a new graph document in a specified folder and the view for this newly created graph document.
 		/// </summary>
 		/// <param name="folderName">The folder where to create the new graph.</param>
 		/// <returns>The view content for the newly created graph.</returns>
-		Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraphInFolder(string folderName);
+		Altaxo.Gui.Graph.Gdi.Viewing.IGraphController CreateNewGraphInFolder(string folderName);
 
 		/// <summary>
 		/// Creates a new graph document and the view for this newly created graph document.
 		/// </summary>
 		/// <param name="preferredName">The preferred name the new graph document should have.</param>
 		/// <returns>The view content for the newly created graph.</returns>
-		Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(string preferredName);
+		Altaxo.Gui.Graph.Gdi.Viewing.IGraphController CreateNewGraph(string preferredName);
 
 		/// <summary>
 		/// Creates a new view content for a graph document.
 		/// </summary>
 		/// <param name="graph">The graph document.</param>
 		/// <returns>The view content for the provided graph document.</returns>
-		Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(Graph.Gdi.GraphDocument graph);
+		Altaxo.Gui.Graph.Gdi.Viewing.IGraphController CreateNewGraph(Graph.Gdi.GraphDocument graph);
 
 		/// <summary>
 		/// Creates a new view content for a graph document.
@@ -352,7 +352,7 @@ namespace Altaxo.Main
 		/// <summary>This will remove the Graph <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
 		/// <param name="ctrl">The Graph to remove.</param>
 		/// <remarks>No exception is thrown if the Form frm is not a member of the workbench views collection.</remarks>
-		void RemoveGraph(Altaxo.Gui.Graph.Viewing.IGraphController ctrl);
+		void RemoveGraph(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl);
 
 		/// <summary>
 		/// Gets an exporter that can be used to export an image of the provided project item.

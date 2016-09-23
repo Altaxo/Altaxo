@@ -26,6 +26,7 @@ using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Graph3D.Plot;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Graph;
+using Altaxo.Gui.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -109,7 +110,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
 		private void InitializeOptionView()
 		{
-			_optionsController = new DensityImagePlotItemOptionController() { UseDocumentCopy = UseDocument.Directly };
+			_optionsController = new Gdi.Plot.DensityImagePlotItemOptionController() { UseDocumentCopy = UseDocument.Directly };
 			_optionsController.InitializeDocument(_doc);
 			Current.Gui.FindAndAttachControlTo(_optionsController);
 			_innerController.AddTab("Options", _optionsController, _optionsController.ViewObject);

@@ -1008,7 +1008,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			PlotCrossPRESSValue(table, graphctrl.Doc.GetFirstXYPlotLayer());
 		}
 
-		public static Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraphWithXYLayer(Main.Properties.IReadOnlyPropertyBag context, string preferredName, string anyNameInSameFolder)
+		public static Altaxo.Gui.Graph.Gdi.Viewing.IGraphController CreateNewGraphWithXYLayer(Main.Properties.IReadOnlyPropertyBag context, string preferredName, string anyNameInSameFolder)
 		{
 			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
 				context,

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Gui.Graph.Gdi.Viewing;
 using ICSharpCode.Core;
 using System;
 using System.Collections.Generic;
@@ -87,7 +88,7 @@ namespace Altaxo.Main.Commands
 				Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
 				if (null != ctrl)
 				{
-					var doc = ((Altaxo.Gui.Graph.Viewing.GraphController)ctrl.MVCController).Doc;
+					var doc = ((GraphController)ctrl.MVCController).Doc;
 
 					var comManager = (Com.ComManager)Current.ComManager;
 					//var dataObject = comManager.GetDocumentsComObjectForDocument(doc);

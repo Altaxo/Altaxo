@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Gui.Graph.Gdi;
 using Altaxo.Main.Properties;
 using System;
 using System.Collections.Generic;
@@ -44,7 +45,7 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
 		{
 			EditingControllerCreation = (doc) =>
 			{
-				var ctrl = new Gui.Graph.DefaultLineScatterGraphDocumentController { UseDocumentCopy = Gui.UseDocument.Copy };
+				var ctrl = new DefaultLineScatterGraphDocumentController { UseDocumentCopy = Gui.UseDocument.Copy };
 				ctrl.InitializeDocument(doc);
 				return ctrl;
 			}
@@ -62,7 +63,7 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
 
 			Altaxo.Graph.Gdi.GraphDocument graph = new Altaxo.Graph.Gdi.GraphDocument();
 			TemplateBase.AddStandardPropertiesToGraph(graph, propertyContext);
-			graph.RootLayer.Location.CopyFrom(propertyContext.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize)); 	// apply the default location from the property in the path
+			graph.RootLayer.Location.CopyFrom(propertyContext.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultRootLayerSize));  // apply the default location from the property in the path
 
 			Altaxo.Graph.Gdi.XYPlotLayer layer = new Altaxo.Graph.Gdi.XYPlotLayer(graph.RootLayer, new Altaxo.Graph.Gdi.CS.G2DPolarCoordinateSystem());
 			layer.Scales[0] = new Scales.AngularDegreeScale() { TickSpacing = new Scales.Ticks.AngularDegreeTickSpacing() };

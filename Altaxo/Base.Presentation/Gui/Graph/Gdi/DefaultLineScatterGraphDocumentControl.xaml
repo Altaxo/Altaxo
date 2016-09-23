@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.Gdi.DefaultLineScatterGraphDocumentControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="4" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="8" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="2" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<TextBlock Text="Select a graph in this project to use as the default graph.&#x0a;Then press the 'Select' button to use this graph as the default graph." />
+		<ListBox x:Name="_guiGraphsInProject" SelectionMode="Single" Grid.Row="2" />
+		<Button Grid.Row="2" Grid.Column="2" Content="Select" VerticalAlignment="Center" Click="EhGraphFromProjectSelected" />
+
+		<Label x:Name="_guiPreviewTitle" Grid.Row="4" Grid.Column="0" />
+		<Border CornerRadius="4" BorderBrush="AliceBlue" BorderThickness="1" Grid.Row="6" Grid.Column="0">
+			<Image x:Name="_guiPreview" />
+		</Border>
+	</Grid>
+</UserControl>

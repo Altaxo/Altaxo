@@ -163,7 +163,7 @@ namespace Altaxo.Gui.Graph
 		{
 			if (initData)
 			{
-				if (_doc.Environment is Altaxo.Gui.Graph.Viewing.IGraphController)
+				if (_doc.Environment is Altaxo.Gui.Graph.Gdi.Viewing.IGraphController)
 				{
 					NGTreeNode node = null;
 					node = new NGTreeNode(true) { Text = "Graph", Tag = _doc.Environment };

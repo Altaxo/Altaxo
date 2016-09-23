@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Graph.Graph3D.Axis;
+using Altaxo.Gui.Graph.Scales.Ticks;
 using System;
 
 namespace Altaxo.Gui.Graph.Graph3D.Axis
@@ -67,7 +68,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 	{
 		protected IMVCAController _axisLineStyleController;
 
-		protected Altaxo.Gui.Graph.TickSpacingController _tickSpacingController;
+		protected TickSpacingController _tickSpacingController;
 
 		private Altaxo.Main.Properties.IReadOnlyPropertyBag _context;
 
@@ -96,7 +97,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
 				if (_doc.TickSpacing != null)
 				{
-					_tickSpacingController = new Altaxo.Gui.Graph.TickSpacingController() { UseDocumentCopy = UseDocument.Directly };
+					_tickSpacingController = new TickSpacingController() { UseDocumentCopy = UseDocument.Directly };
 					_tickSpacingController.InitializeDocument(_doc.TickSpacing);
 					Current.Gui.FindAndAttachControlTo(_tickSpacingController);
 				}
@@ -190,7 +191,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 					{
 						_doc.TickSpacing = new Altaxo.Graph.Scales.Ticks.LinearTickSpacing();
 					}
-					_tickSpacingController = new Altaxo.Gui.Graph.TickSpacingController() { UseDocumentCopy = UseDocument.Directly };
+					_tickSpacingController = new TickSpacingController() { UseDocumentCopy = UseDocument.Directly };
 					_tickSpacingController.InitializeDocument(_doc.TickSpacing);
 					Current.Gui.FindAndAttachControlTo(_tickSpacingController);
 					if (null != _view)

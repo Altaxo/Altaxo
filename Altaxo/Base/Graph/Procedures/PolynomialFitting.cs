@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Procedures
 		/// <param name="xarr">The array of the data point's x values.</param>
 		/// <param name="yarr">The array of the data point's y values.</param>
 		/// <returns>Null if all is ok, or error message if not.</returns>
-		public static string GetActivePlotPoints(Altaxo.Gui.Graph.Viewing.IGraphController ctrl, out double[] xarr, out double[] yarr)
+		public static string GetActivePlotPoints(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl, out double[] xarr, out double[] yarr)
 		{
 			List<double> xlist = new List<double>();
 			List<double> ylist = new List<double>();
@@ -101,7 +101,7 @@ namespace Altaxo.Graph.Procedures
 		/// <param name="ctrl">The current active graph controller.</param>
 		/// <returns>An array of two strings. The first string is the name of the x-column, the second
 		/// the name of the y-column.</returns>
-		public static string[] GetActivePlotName(Altaxo.Gui.Graph.Viewing.IGraphController ctrl)
+		public static string[] GetActivePlotName(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
 		{
 			string[] result = new string[2] { String.Empty, String.Empty };
 
@@ -172,7 +172,7 @@ namespace Altaxo.Graph.Procedures
 			return fit;
 		}
 
-		public static string Fit(Altaxo.Gui.Graph.Viewing.IGraphController ctrl, int order, double fitCurveXmin, double fitCurveXmax, bool showFormulaOnGraph)
+		public static string Fit(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl, int order, double fitCurveXmin, double fitCurveXmax, bool showFormulaOnGraph)
 		{
 			string error;
 

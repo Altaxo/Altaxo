@@ -352,7 +352,7 @@ namespace Altaxo.Worksheet.Commands
 		/// <param name="graph">The graph document to plot into.</param>
 		/// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
 		/// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
-		public static Altaxo.Gui.Graph.Viewing.IGraphController Plot(
+		public static Altaxo.Gui.Graph.Gdi.Viewing.IGraphController Plot(
 			DataTable table,
 			IAscendingIntegerCollection selectedColumns,
 			Graph.Gdi.GraphDocument graph,

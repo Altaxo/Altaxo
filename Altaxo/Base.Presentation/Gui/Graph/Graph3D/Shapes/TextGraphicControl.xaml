@@ -7,7 +7,7 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
-						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Shapes"
+						 
 						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Drawing.D3D"
 						 mc:Ignorable="d"
 						 Loaded="EhLoaded">

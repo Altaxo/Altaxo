@@ -37,7 +37,7 @@ namespace Altaxo.Graph.Procedures
 		private const string FitDocumentPropertyName = "NonlinearFitDocument";
 		private static Calc.Regression.Nonlinear.NonlinearFitDocument _lastFitDocument;
 
-		public static string Fit(Altaxo.Gui.Graph.Viewing.IGraphController ctrl)
+		public static string Fit(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
 		{
 			if (ctrl.CurrentPlotNumber < 0)
 				return "No active plot!";

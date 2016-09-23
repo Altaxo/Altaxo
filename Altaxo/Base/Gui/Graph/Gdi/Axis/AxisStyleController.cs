@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Graph.Gdi.Axis;
+using Altaxo.Gui.Graph.Scales.Ticks;
 using System;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis

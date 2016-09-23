@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.Gdi.ClipboardRenderingOptionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+ 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+ 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+             mc:Ignorable="d"
+
+>
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="8,0,8,0" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
+			</Style.Setters>
+		</Style>
+		<Style TargetType="CheckBox">
+			<Style.Setters>
+				<Setter Property="VerticalAlignment" Value="Center" />
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+	<StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
+		<Border x:Name="_guiEmbeddedOptionsViewHost">
+		</Border>
+		<Border>
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+					<ColumnDefinition Width="*" SharedSizeGroup="EditColumn1" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+				</Grid.RowDefinitions>
+				<Label Grid.Column="0" Grid.Row="0" Content="Render drop file:" />
+				<CheckBox x:Name="_guiRenderDropfile"  Grid.Column="1" Grid.Row="0" Content="               " ToolTip="If checked, the graph is rendered as a temporary file onto the disk. Please select the image format and pixel format of the file to be used." />
+				<Label Grid.Column="0" Grid.Row="2" Content="Drop file's image format:" />
+				<ComboBox x:Name="_cbImageFormat" Grid.Column="1" Grid.Row="2" SelectionChanged="EhImageFormatSelected" IsEnabled="{Binding ElementName=_guiRenderDropfile, Path=IsChecked}" />
+				<Label Grid.Column="0" Grid.Row="4" Content="Drop file's pixel format:" />
+				<ComboBox x:Name="_cbPixelFormat" Grid.Column="1" Grid.Row="4" SelectionChanged="EhPixelFormatSelected" IsEnabled="{Binding ElementName=_guiRenderDropfile, Path=IsChecked}" />
+				<Label Grid.Column="0" Grid.Row="6" Content="Render embedded graph object:" />
+				<CheckBox x:Name="_guiRenderEmbeddedObject"  Grid.Column="1" Grid.Row="6" Content="               " IsEnabled="{Binding ElementName=_guiRenderEnhancedMetafile, Path=IsChecked}" ToolTip="If checked, the graph can be pasted into another application as embedded object." />
+				<Label Grid.Column="0" Grid.Row="8" Content="Render linked graph object:" />
+				<CheckBox x:Name="_guiRenderLinkedObject"  Grid.Column="1" Grid.Row="8" Content="               " ToolTip="If checked, the graph can be pasted into another application as linked object. This is possible only if the Altaxo project already has a filename, i.e. it is saved to disk. The link will be broken if the Altaxo project file is renamed or deleted afterwards." />
+			</Grid>
+		</Border>
+	</StackPanel>
+</UserControl>

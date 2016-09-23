@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Collections;
+using Altaxo.Gui.Graph.Gdi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,9 +103,9 @@ namespace Altaxo.Graph.Gdi
 			if (doc.RootLayer.IsValidIndex(layerNumber, out layer))
 			{
 				if (layer is XYPlotLayer)
-					Altaxo.Gui.Graph.XYPlotLayerController.ShowDialog((XYPlotLayer)layer);
+					XYPlotLayerController.ShowDialog((XYPlotLayer)layer);
 				else
-					Altaxo.Gui.Graph.HostLayerController.ShowDialog(layer);
+					HostLayerController.ShowDialog(layer);
 			}
 		}
 

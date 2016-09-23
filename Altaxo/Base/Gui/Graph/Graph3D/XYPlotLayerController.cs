@@ -28,6 +28,7 @@ using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Axis;
 using Altaxo.Graph.Graph3D.CS;
 using Altaxo.Gui.Graph.Graph3D.Axis;
+using Altaxo.Gui.Graph.Scales;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -246,7 +247,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 		private void SetCoordinateSystemDependentObjects(CSLineID id)
 		{
 			// Scales
-			_axisScaleController = new Graph.ScaleWithTicksController[_doc.Scales.Count];
+			_axisScaleController = new ScaleWithTicksController[_doc.Scales.Count];
 			_listOfScales = new SelectableListNodeList();
 			if (_doc.Scales.Count > 0)
 				_listOfScales.Add(new SelectableListNode("X-Scale", 0, false));
@@ -335,7 +336,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 					}
 					if (_axisScaleController[_currentScale] == null)
 					{
-						var ctrl = new Graph.ScaleWithTicksController(scale => _doc.Scales[_currentScale] = scale, false);
+						var ctrl = new ScaleWithTicksController(scale => _doc.Scales[_currentScale] = scale, false);
 						ctrl.InitializeDocument(_doc.Scales[_currentScale]);
 						_axisScaleController[_currentScale] = ctrl;
 						Current.Gui.FindAndAttachControlTo(_axisScaleController[_currentScale]);

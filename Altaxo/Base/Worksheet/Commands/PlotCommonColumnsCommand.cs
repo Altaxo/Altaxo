@@ -91,7 +91,7 @@ namespace Altaxo.Worksheet.Commands
 		/// </summary>
 		public void Execute()
 		{
-			Altaxo.Gui.Graph.Viewing.IGraphController graphctrl;
+			Altaxo.Gui.Graph.Gdi.Viewing.IGraphController graphctrl;
 			Altaxo.Graph.Gdi.GraphDocument graph;
 
 			var commonFolderName = Main.ProjectFolder.GetCommonFolderOfNames(_tables.Select(table => table.Name));

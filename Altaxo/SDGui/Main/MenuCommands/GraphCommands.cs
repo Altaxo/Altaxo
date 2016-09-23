@@ -30,6 +30,8 @@ using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Graph;
+using Altaxo.Gui.Graph.Gdi;
+using Altaxo.Gui.Graph.Gdi.Viewing;
 using Altaxo.Gui.Scripting;
 using Altaxo.Main;
 using Altaxo.Scripting;
@@ -57,7 +59,7 @@ namespace Altaxo.Graph.Commands
 				as Altaxo.Gui.SharpDevelop.SDGraphViewContent;
 
 			if (null != ctrl)
-				Run((Altaxo.Gui.Graph.Viewing.GraphController)ctrl.MVCController);
+				Run((GraphController)ctrl.MVCController);
 		}
 
 		/// <summary>
@@ -65,7 +67,7 @@ namespace Altaxo.Graph.Commands
 		/// the worksheet controller in the parameter.
 		/// </summary>
 		/// <param name="ctrl">The worksheet controller this command is applied to.</param>
-		public abstract void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl);
+		public abstract void Run(GraphController ctrl);
 	}
 
 	/// <summary>
@@ -73,7 +75,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class Print : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.ShowPrintDialogAndPrint();
 		}
@@ -84,7 +86,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class PrintOptionsSetup : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.ShowPrintOptionsDialog();
 		}
@@ -95,7 +97,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class SetCopyPageOptions : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.ShowCopyPageOptionsDialog();
 		}
@@ -106,7 +108,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class CopyPage : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			//ctrl.Doc.CopyToClipboardAsImage();
 		}
@@ -118,7 +120,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class CopyPageAsBitmap150dpiARGB : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.CopyToClipboardAsBitmap(150, null, PixelFormat.Format32bppArgb);
 		}
@@ -130,7 +132,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class CopyPageAsBitmap150dpiRGB : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			using (var brush = new BrushX(NamedColors.White))
 				ctrl.Doc.CopyToClipboardAsBitmap(150, brush, PixelFormat.Format24bppRgb);
@@ -143,7 +145,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class CopyPageAsBitmap300dpiARGB : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.CopyToClipboardAsBitmap(300, null, PixelFormat.Format32bppArgb);
 		}
@@ -155,7 +157,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class CopyPageAsBitmap300dpiRGB : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			using (var brush = new BrushX(NamedColors.White))
 				ctrl.Doc.CopyToClipboardAsBitmap(300, brush, PixelFormat.Format24bppRgb);
@@ -164,7 +166,7 @@ namespace Altaxo.Graph.Commands
 
 	public class SaveGraphAsTemplate : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			System.IO.Stream myStream;
 			var saveFileDialog1 = new Microsoft.Win32.SaveFileDialog();
@@ -192,7 +194,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class FileExportMetafile : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.ShowFileExportMetafileDialog();
 		}
@@ -203,7 +205,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class FileExportTiff : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.ShowFileExportTiffDialog();
 		}
@@ -211,7 +213,7 @@ namespace Altaxo.Graph.Commands
 
 	public class FileExportSpecific : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.ShowFileExportSpecificDialog();
 		}
@@ -222,7 +224,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class NewLayerNormalBottomXLeftY : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.CreateNewLayerNormalBottomXLeftY();
 		}
@@ -233,7 +235,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class NewLayerLinkedTopXRightY : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.CreateNewLayerLinkedTopXRightY(ctrl.CurrentLayerNumber);
 		}
@@ -244,7 +246,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class NewLayerLinkedTopX : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.CreateNewLayerLinkedTopX(ctrl.CurrentLayerNumber);
 		}
@@ -255,7 +257,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class NewLayerLinkedRightY : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.CreateNewLayerLinkedRightY(ctrl.CurrentLayerNumber);
 		}
@@ -266,7 +268,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class NewLayerLinkedTopXRightY_XAxisStraight : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.CreateNewLayerLinkedTopXRightY_XAxisStraight(ctrl.CurrentLayerNumber);
 		}
@@ -274,7 +276,7 @@ namespace Altaxo.Graph.Commands
 
 	public class GraphRename : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.ShowRenameDialog();
 		}
@@ -282,7 +284,7 @@ namespace Altaxo.Graph.Commands
 
 	public class GraphShowProperties : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.ShowPropertyDialog();
 		}
@@ -290,7 +292,7 @@ namespace Altaxo.Graph.Commands
 
 	public class GraphMoveToFolder : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			Altaxo.Gui.Pads.ProjectBrowser.ProjectBrowserExtensions.MoveDocuments(new[] { ctrl.Doc });
 		}
@@ -298,7 +300,7 @@ namespace Altaxo.Graph.Commands
 
 	public class GraphRefresh : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.RefreshGraph();
 		}
@@ -306,7 +308,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeLayers : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Doc.ShowLayerArrangementDialog(ctrl.ActiveLayer);
 		}
@@ -314,7 +316,7 @@ namespace Altaxo.Graph.Commands
 
 	public class GroupSelectedObjects : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.GroupSelectedObjects();
 		}
@@ -322,7 +324,7 @@ namespace Altaxo.Graph.Commands
 
 	public class UngroupSelectedObjects : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.UngroupSelectedObjects();
 		}
@@ -330,7 +332,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeTop : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeTopToTop();
 		}
@@ -338,7 +340,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeBottom : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeBottomToBottom();
 		}
@@ -346,7 +348,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeTopToBottom : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeTopToBottom();
 		}
@@ -354,7 +356,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeBottomToTop : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeBottomToTop();
 		}
@@ -362,7 +364,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeLeft : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeLeftToLeft();
 		}
@@ -370,7 +372,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeRight : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeRightToRight();
 		}
@@ -378,7 +380,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeLeftToRight : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeLeftToRight();
 		}
@@ -386,7 +388,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeRightToLeft : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeRightToLeft();
 		}
@@ -394,7 +396,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeHorizontal : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeHorizontal();
 		}
@@ -402,7 +404,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeVertical : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeVertical();
 		}
@@ -410,7 +412,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeHorizontalTable : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeHorizontalTable();
 		}
@@ -418,7 +420,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeVerticalTable : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeVerticalTable();
 		}
@@ -426,7 +428,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeSameHorizontalSize : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeSameHorizontalSize();
 		}
@@ -434,7 +436,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ArrangeSameVerticalSize : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ArrangeSameVerticalSize();
 		}
@@ -442,7 +444,7 @@ namespace Altaxo.Graph.Commands
 
 	public class MoveGraphItemUp : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.MoveSelectedGraphItemsUp();
 		}
@@ -450,7 +452,7 @@ namespace Altaxo.Graph.Commands
 
 	public class MoveGraphItemDown : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.MoveSelectedGraphItemsDown();
 		}
@@ -458,7 +460,7 @@ namespace Altaxo.Graph.Commands
 
 	public class MoveGraphItemToTop : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.MoveSelectedGraphItemsToTop();
 		}
@@ -466,7 +468,7 @@ namespace Altaxo.Graph.Commands
 
 	public class MoveGraphItemToBottom : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.MoveSelectedGraphItemsToBottom();
 		}
@@ -474,7 +476,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ZoomAutomatic : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.IsAutoZoomActive = true;
 		}
@@ -482,7 +484,7 @@ namespace Altaxo.Graph.Commands
 
 	public class Zoom50Percent : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ZoomFactor = 0.5;
 		}
@@ -490,7 +492,7 @@ namespace Altaxo.Graph.Commands
 
 	public class Zoom100Percent : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ZoomFactor = 1.0;
 		}
@@ -498,7 +500,7 @@ namespace Altaxo.Graph.Commands
 
 	public class Zoom200Percent : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.ZoomFactor = 2.0;
 		}
@@ -506,7 +508,7 @@ namespace Altaxo.Graph.Commands
 
 	public class ZoomUserPercent : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			double zoom = ctrl.ZoomFactor * 100;
 			if (Current.Gui.ShowDialog(ref zoom, "Choose zoom factor (percent)", false))
@@ -518,7 +520,7 @@ namespace Altaxo.Graph.Commands
 
 	public class MarginUserPercent : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			double zoom = ctrl.Margin * 100;
 			if (Current.Gui.ShowDialog(ref zoom, "Choose margin around graph (percent)", false))
@@ -530,7 +532,7 @@ namespace Altaxo.Graph.Commands
 
 	public class Margin0Percent : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Margin = 0;
 		}
@@ -538,7 +540,7 @@ namespace Altaxo.Graph.Commands
 
 	public class Margin10Percent : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Margin = 0.1;
 		}
@@ -546,7 +548,7 @@ namespace Altaxo.Graph.Commands
 
 	public class Margin50Percent : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.Margin = 0.5;
 		}
@@ -554,7 +556,7 @@ namespace Altaxo.Graph.Commands
 
 	public class AddScale : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			var layer = ctrl.ActiveLayer;
 			var scale = new Gdi.Shapes.FloatingScale(ctrl.Doc.GetPropertyHierarchy());
@@ -571,7 +573,7 @@ namespace Altaxo.Graph.Commands
 
 	public class AddDensityImageLegend : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			var layer = ctrl.ActiveLayer as XYPlotLayer;
 			if (null == layer || ctrl.CurrentPlotNumber < 0 || !(layer.PlotItems[ctrl.CurrentPlotNumber] is DensityImagePlotItem))
@@ -591,7 +593,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class DuplicateGraph : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			GraphDocument newDoc = new GraphDocument(ctrl.Doc);
 			string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.Doc.Name, "GRAPH");
@@ -603,7 +605,7 @@ namespace Altaxo.Graph.Commands
 
 	public class LayerControl : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
 			var t1 = ctrl.ActiveLayer as XYPlotLayer;
@@ -623,7 +625,7 @@ namespace Altaxo.Graph.Commands
 
 	public class AddCurvePlot : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			ctrl.EnsureValidityOfCurrentLayerNumber();
 			var xylayer = ctrl.Doc.RootLayer.ElementAt(ctrl.CurrentLayerNumber) as XYPlotLayer;
@@ -637,7 +639,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class NewLayerLegend : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			HostLayer l;
 			ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out l);
@@ -652,7 +654,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class RescaleAxes : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			HostLayer l;
 			ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out l);
@@ -669,7 +671,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class FitPolynomial : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			FitPolynomialDialogController dlg = new FitPolynomialDialogController(2, double.NegativeInfinity, double.PositiveInfinity, false);
 			if (Current.Gui.ShowDialog(dlg, "Polynomial fit", false))
@@ -691,7 +693,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class FitNonlinear : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			string result = Altaxo.Graph.Procedures.NonlinearFitting.Fit(ctrl);
 			if (null != result)
@@ -701,7 +703,7 @@ namespace Altaxo.Graph.Commands
 
 	public class CreateMasterCurve : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			Altaxo.Graph.Procedures.MasterCurveCreation.ShowMasterCurveCreationDialog(ctrl.Doc);
 		}
@@ -709,7 +711,7 @@ namespace Altaxo.Graph.Commands
 
 	public class NewUserFunction : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			HostLayer activeLayer;
 			ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out activeLayer);
@@ -802,7 +804,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class SaveAsMiniProject : AbstractGraphControllerCommand
 	{
-		public override void Run(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public override void Run(GraphController ctrl)
 		{
 			SaveAsMiniProjectBase.Run(ctrl.Doc);
 		}
@@ -813,7 +815,7 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public abstract class AbstractCheckableGraphControllerCommand : AbstractCheckableMenuCommand, System.ComponentModel.INotifyPropertyChanged
 	{
-		public Altaxo.Gui.Graph.Viewing.GraphController Controller
+		public GraphController Controller
 		{
 			get
 			{
@@ -866,10 +868,10 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public abstract class AbstractGraphToolsCommand : AbstractCheckableGraphControllerCommand
 	{
-		private Altaxo.Gui.Graph.Viewing.GraphController myCurrentGraphController;
-		private Altaxo.Gui.Graph.Viewing.GraphToolType _graphToolType;
+		private GraphController myCurrentGraphController;
+		private GraphToolType _graphToolType;
 
-		protected AbstractGraphToolsCommand(Altaxo.Gui.Graph.Viewing.GraphToolType toolType)
+		protected AbstractGraphToolsCommand(GraphToolType toolType)
 		{
 			_graphToolType = toolType;
 			if (null != Current.Workbench)
@@ -931,7 +933,7 @@ namespace Altaxo.Graph.Commands
 	public class SelectPointerTool : AbstractGraphToolsCommand
 	{
 		public SelectPointerTool()
-			: base(Gui.Graph.Viewing.GraphToolType.ObjectPointer)
+			: base(GraphToolType.ObjectPointer)
 		{
 		}
 	}
@@ -942,7 +944,7 @@ namespace Altaxo.Graph.Commands
 	public class SelectTextTool : AbstractGraphToolsCommand
 	{
 		public SelectTextTool()
-			: base(Gui.Graph.Viewing.GraphToolType.TextDrawing)
+			: base(GraphToolType.TextDrawing)
 		{
 		}
 	}
@@ -953,7 +955,7 @@ namespace Altaxo.Graph.Commands
 	public class ReadPlotItemDataTool : AbstractGraphToolsCommand
 	{
 		public ReadPlotItemDataTool()
-			: base(Gui.Graph.Viewing.GraphToolType.ReadPlotItemData)
+			: base(GraphToolType.ReadPlotItemData)
 		{
 		}
 	}
@@ -962,7 +964,7 @@ namespace Altaxo.Graph.Commands
 	public class EditGridTool : AbstractGraphToolsCommand
 	{
 		public EditGridTool()
-			: base(Gui.Graph.Viewing.GraphToolType.EditGrid)
+			: base(GraphToolType.EditGrid)
 		{
 		}
 	}
@@ -973,7 +975,7 @@ namespace Altaxo.Graph.Commands
 	public class ReadXYCoordinatesTool : AbstractGraphToolsCommand
 	{
 		public ReadXYCoordinatesTool()
-			: base(Gui.Graph.Viewing.GraphToolType.ReadXYCoordinates)
+			: base(GraphToolType.ReadXYCoordinates)
 		{
 		}
 	}
@@ -984,7 +986,7 @@ namespace Altaxo.Graph.Commands
 	public class SingleLineDrawingTool : AbstractGraphToolsCommand
 	{
 		public SingleLineDrawingTool()
-			: base(Gui.Graph.Viewing.GraphToolType.SingleLineDrawing)
+			: base(GraphToolType.SingleLineDrawing)
 		{
 		}
 	}
@@ -995,7 +997,7 @@ namespace Altaxo.Graph.Commands
 	public class ArrowLineDrawingTool : AbstractGraphToolsCommand
 	{
 		public ArrowLineDrawingTool()
-			: base(Gui.Graph.Viewing.GraphToolType.ArrowLineDrawing)
+			: base(GraphToolType.ArrowLineDrawing)
 		{
 		}
 	}
@@ -1006,7 +1008,7 @@ namespace Altaxo.Graph.Commands
 	public class RectangleDrawingTool : AbstractGraphToolsCommand
 	{
 		public RectangleDrawingTool()
-			: base(Gui.Graph.Viewing.GraphToolType.RectangleDrawing)
+			: base(GraphToolType.RectangleDrawing)
 		{
 		}
 	}
@@ -1017,7 +1019,7 @@ namespace Altaxo.Graph.Commands
 	public class CurlyBraceDrawingTool : AbstractGraphToolsCommand
 	{
 		public CurlyBraceDrawingTool()
-			: base(Gui.Graph.Viewing.GraphToolType.CurlyBraceDrawing)
+			: base(GraphToolType.CurlyBraceDrawing)
 		{
 		}
 	}
@@ -1028,7 +1030,7 @@ namespace Altaxo.Graph.Commands
 	public class EllipseDrawingTool : AbstractGraphToolsCommand
 	{
 		public EllipseDrawingTool()
-			: base(Gui.Graph.Viewing.GraphToolType.EllipseDrawing)
+			: base(GraphToolType.EllipseDrawing)
 		{
 		}
 	}
@@ -1039,7 +1041,7 @@ namespace Altaxo.Graph.Commands
 	public class RegularPolygonDrawingTool : AbstractGraphToolsCommand
 	{
 		public RegularPolygonDrawingTool()
-			: base(Gui.Graph.Viewing.GraphToolType.RegularPolygonDrawing)
+			: base(GraphToolType.RegularPolygonDrawing)
 		{
 		}
 	}
@@ -1050,7 +1052,7 @@ namespace Altaxo.Graph.Commands
 	public class OpenCardinalSplineDrawingTool : AbstractGraphToolsCommand
 	{
 		public OpenCardinalSplineDrawingTool()
-			: base(Gui.Graph.Viewing.GraphToolType.OpenCardinalSplineDrawing)
+			: base(GraphToolType.OpenCardinalSplineDrawing)
 		{
 		}
 	}
@@ -1061,7 +1063,7 @@ namespace Altaxo.Graph.Commands
 	public class ClosedCardinalSplineDrawingTool : AbstractGraphToolsCommand
 	{
 		public ClosedCardinalSplineDrawingTool()
-			: base(Gui.Graph.Viewing.GraphToolType.ClosedCardinalSplineDrawing)
+			: base(GraphToolType.ClosedCardinalSplineDrawing)
 		{
 		}
 	}
@@ -1072,7 +1074,7 @@ namespace Altaxo.Graph.Commands
 	public class ZoomAxesTool : AbstractGraphToolsCommand
 	{
 		public ZoomAxesTool()
-			: base(Gui.Graph.Viewing.GraphToolType.ZoomAxes)
+			: base(GraphToolType.ZoomAxes)
 		{
 		}
 	}

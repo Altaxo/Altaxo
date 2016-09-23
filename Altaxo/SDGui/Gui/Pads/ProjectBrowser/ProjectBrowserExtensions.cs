@@ -342,7 +342,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// </summary>
 		/// <param name="ctrl">Project browse controller.</param>
 		/// <returns>The graph controller used to show the newly created graph.</returns>
-		public static Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(this ProjectBrowseController ctrl)
+		public static Altaxo.Gui.Graph.Gdi.Viewing.IGraphController CreateNewGraph(this ProjectBrowseController ctrl)
 		{
 			string folderName;
 			if (!ctrl.IsProjectFolderSelected(out folderName))

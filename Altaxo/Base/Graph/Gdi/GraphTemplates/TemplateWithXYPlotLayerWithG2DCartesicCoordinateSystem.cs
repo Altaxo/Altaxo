@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Collections;
+using Altaxo.Gui.Graph.Gdi;
 using Altaxo.Main.Properties;
 using System;
 using System.Collections.Generic;
@@ -44,7 +45,7 @@ typeof(object),
 {
 	EditingControllerCreation = (doc) =>
 	{
-		var ctrl = new Gui.Graph.DefaultLineScatterGraphDocumentController { UseDocumentCopy = Gui.UseDocument.Copy };
+		var ctrl = new DefaultLineScatterGraphDocumentController { UseDocumentCopy = Gui.UseDocument.Copy };
 		ctrl.InitializeDocument(doc);
 		return ctrl;
 	}

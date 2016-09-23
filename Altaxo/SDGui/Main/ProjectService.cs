@@ -24,6 +24,7 @@
 
 using Altaxo.Graph.Gdi;
 using Altaxo.Gui;
+using Altaxo.Gui.Graph.Gdi.Viewing;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Gui;
@@ -216,7 +217,7 @@ namespace Altaxo.Main
 			{
 				if (o is GraphViewLayout)
 				{
-					var ctrl = new Altaxo.Gui.Graph.Viewing.GraphControllerWpf();
+					var ctrl = new GraphControllerWpf();
 					ctrl.InitializeDocument(o as GraphViewLayout);
 					Current.Gui.FindAndAttachControlTo(ctrl);
 					Current.Workbench.ShowView(new Altaxo.Gui.SharpDevelop.SDGraphViewContent(ctrl));
@@ -1138,12 +1139,12 @@ namespace Altaxo.Main
 		/// Creates a new graph document and the view content..
 		/// </summary>
 		/// <returns>The view content for the newly created graph.</returns>
-		public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph()
+		public IGraphController CreateNewGraph()
 		{
 			return Current.Gui.Evaluate(CreateNewGraph_Unsynchronized);
 		}
 
-		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph_Unsynchronized()
+		private IGraphController CreateNewGraph_Unsynchronized()
 		{
 			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
 					PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName), "GRAPH", ProjectFolder.RootFolderName, false);
@@ -1155,12 +1156,12 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="folderName">The folder name where to create the graph.</param>
 		/// <returns>The view content for the newly created graph.</returns>
-		public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraphInFolder(string folderName)
+		public IGraphController CreateNewGraphInFolder(string folderName)
 		{
 			return Current.Gui.Evaluate(CreateNewGraphInFolder_Unsynchronized, folderName);
 		}
 
-		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraphInFolder_Unsynchronized(string folderName)
+		private IGraphController CreateNewGraphInFolder_Unsynchronized(string folderName)
 		{
 			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
 				PropertyExtensions.GetPropertyContextOfProjectFolder(folderName), null, folderName, false);
@@ -1173,12 +1174,12 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="preferredName">The preferred name the new graph document should have.</param>
 		/// <returns>The view content for the newly created graph.</returns>
-		public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(string preferredName)
+		public IGraphController CreateNewGraph(string preferredName)
 		{
 			return Current.Gui.Evaluate(CreateNewGraph_Unsynchronized, preferredName);
 		}
 
-		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph_Unsynchronized(string preferredName)
+		private IGraphController CreateNewGraph_Unsynchronized(string preferredName)
 		{
 			var folderName = Main.ProjectFolder.GetFolderPart(preferredName);
 			var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
@@ -1191,18 +1192,18 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="graph">The graph document.</param>
 		/// <returns>The view content for the provided graph document.</returns>
-		public Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph(Altaxo.Graph.Gdi.GraphDocument graph)
+		public IGraphController CreateNewGraph(Altaxo.Graph.Gdi.GraphDocument graph)
 		{
 			return Current.Gui.Evaluate(CreateNewGraph_Unsynchronized, graph);
 		}
 
-		private Altaxo.Gui.Graph.Viewing.IGraphController CreateNewGraph_Unsynchronized(Altaxo.Graph.Gdi.GraphDocument graph)
+		private IGraphController CreateNewGraph_Unsynchronized(Altaxo.Graph.Gdi.GraphDocument graph)
 		{
 			if (graph == null)
 				graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(
 					PropertyExtensions.GetPropertyContextOfProjectFolder(ProjectFolder.RootFolderName), null, ProjectFolder.RootFolderName, false);
 
-			return (Altaxo.Gui.Graph.Viewing.IGraphController)OpenOrCreateViewContentForDocument_Unsynchronized(graph);
+			return (IGraphController)OpenOrCreateViewContentForDocument_Unsynchronized(graph);
 		}
 
 		/// <summary>
@@ -1265,12 +1266,12 @@ namespace Altaxo.Main
 		/// <summary>This will remove the GraphController <paramref>ctrl</paramref> from the graph forms collection.</summary>
 		/// <param name="ctrl">The GraphController to remove.</param>
 		/// <remarks>No exception is thrown if the Form frm is not a member of the graph forms collection.</remarks>
-		public void RemoveGraph(Altaxo.Gui.Graph.Viewing.IGraphController ctrl)
+		public void RemoveGraph(IGraphController ctrl)
 		{
 			Current.Gui.Execute(RemoveGraph_Unsynchronized, ctrl);
 		}
 
-		private void RemoveGraph_Unsynchronized(Altaxo.Gui.Graph.Viewing.IGraphController ctrl)
+		private void RemoveGraph_Unsynchronized(IGraphController ctrl)
 		{
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection)
 			{

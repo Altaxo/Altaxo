@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Graph.Gdi.Viewing;
 using ICSharpCode.SharpDevelop.Gui;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace Altaxo.Gui.SharpDevelop
 {
 	public class SDGraphViewContent : AbstractViewContent, Altaxo.Gui.IMVCControllerWrapper, IClipboardHandler
 	{
-		private Altaxo.Gui.Graph.Viewing.GraphController _controller;
+		private Altaxo.Gui.Graph.Gdi.Viewing.GraphController _controller;
 
 		/*
 
@@ -95,11 +96,11 @@ namespace Altaxo.Gui.SharpDevelop
 		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
 		/// <param name="bDeserializationConstructor">If true, this is a special constructor used only for deserialization, where no graphdoc needs to be supplied.</param>
 		protected SDGraphViewContent(GraphDocument graphdoc, bool bDeserializationConstructor)
-			: this(new Altaxo.Gui.Graph.Viewing.GraphControllerWpf(graphdoc))
+			: this(new Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerWpf(graphdoc))
 		{
 		}
 
-		public SDGraphViewContent(Altaxo.Gui.Graph.Viewing.GraphController ctrl)
+		public SDGraphViewContent(Altaxo.Gui.Graph.Gdi.Viewing.GraphController ctrl)
 		{
 			_controller = ctrl;
 			ctrl.TitleNameChanged += new WeakEventHandler(this.EhTitleNameChanged, x => ctrl.TitleNameChanged -= x);
@@ -130,12 +131,12 @@ namespace Altaxo.Gui.SharpDevelop
 
 		#endregion Constructors
 
-		public static implicit operator Altaxo.Gui.Graph.Viewing.GraphController(SDGraphViewContent ctrl)
+		public static implicit operator Altaxo.Gui.Graph.Gdi.Viewing.GraphController(SDGraphViewContent ctrl)
 		{
 			return ctrl._controller;
 		}
 
-		public Altaxo.Gui.Graph.Viewing.GraphController Controller
+		public Altaxo.Gui.Graph.Gdi.Viewing.GraphController Controller
 		{
 			get { return _controller; }
 		}
@@ -158,7 +159,7 @@ namespace Altaxo.Gui.SharpDevelop
 		{
 			get
 			{
-				return (_controller.ViewObject as Altaxo.Gui.Graph.Viewing.IGraphView).GuiInitiallyFocusedElement;
+				return (_controller.ViewObject as IGraphView).GuiInitiallyFocusedElement;
 			}
 		}
 

@@ -25,6 +25,7 @@
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Geometry;
+using Altaxo.Gui.Graph.Gdi;
 using Altaxo.Main;
 using System;
 using System.Collections.Generic;
@@ -68,7 +69,7 @@ namespace Altaxo.Graph.Gdi
 			{
 				EditingControllerCreation = (doc) =>
 				{
-					var ctrl = new Gui.Graph.ItemLocationDirectController() { UseDocumentCopy = Gui.UseDocument.Copy };
+					var ctrl = new ItemLocationDirectController() { UseDocumentCopy = Gui.UseDocument.Copy };
 					ctrl.ShowPositionElements(false, false);
 					ctrl.ShowAnchorElements(false, false);
 					ctrl.InitializeDocument(doc);

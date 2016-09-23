@@ -669,7 +669,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\ArrangeLayersControl.xaml">
+    <Page Include="Gui\Graph\Gdi\ArrangeLayersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -681,11 +681,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\AxisLinkControl.xaml">
+    <Page Include="Gui\Graph\Scales\AxisLinkControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\ClipboardRenderingOptionsControl.xaml">
+    <Page Include="Gui\Graph\Gdi\ClipboardRenderingOptionsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -697,15 +697,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\DefaultLineScatterGraphDocumentControl.xaml">
+    <Page Include="Gui\Graph\Gdi\DefaultLineScatterGraphDocumentControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\EmbeddedObjectRenderingOptionsControl.xaml">
+    <Page Include="Gui\Graph\Gdi\EmbeddedObjectRenderingOptionsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\GraphicItemsControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Shapes\GraphicItemsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -713,11 +713,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\ItemLocationByGridControl.xaml">
+    <Page Include="Gui\Graph\Gdi\ItemLocationByGridControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\ItemLocationDirectControl.xaml">
+    <Page Include="Gui\Graph\Gdi\ItemLocationDirectControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -745,7 +745,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\ScaleWithTicksControl.xaml">
+    <Page Include="Gui\Graph\Scales\ScaleWithTicksControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -781,15 +781,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\HostLayerControl.xaml">
+    <Page Include="Gui\Graph\Gdi\HostLayerControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\TickSpacingControl.xaml">
+    <Page Include="Gui\Graph\Scales\Ticks\TickSpacingControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\XYZMeshedColumnPlotDataControl.xaml">
+    <Page Include="Gui\Graph\Plot\Data\XYZMeshedColumnPlotDataControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -821,7 +821,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\FunctionPlotDataControl.xaml">
+    <Page Include="Gui\Graph\Plot\Data\FunctionPlotDataControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -833,7 +833,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\GraphExportOptionsControl.xaml">
+    <Page Include="Gui\Graph\Gdi\GraphExportOptionsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -857,27 +857,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\Shapes\FloatingScaleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Shapes\FloatingScaleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\Shapes\ImageGraphicControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Shapes\ImageGraphicControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\XYPlotLayerControl.xaml">
+    <Page Include="Gui\Graph\Gdi\XYPlotLayerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\LayerPositionControl.xaml">
+    <Page Include="Gui\Graph\Gdi\LayerPositionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\Shapes\AnchoringControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Shapes\AnchoringControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\Shapes\OpenPathShapeControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Shapes\OpenPathShapeControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -885,23 +885,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\Shapes\CardinalSplinePointsControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Shapes\CardinalSplinePointsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\Shapes\ClosedCardinalSplineControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Shapes\ClosedCardinalSplineControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\Shapes\OpenCardinalSplineControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Shapes\OpenCardinalSplineControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\Shapes\RegularPolygonControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Shapes\RegularPolygonControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\Shapes\ShapeGroupControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Shapes\ShapeGroupControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -973,7 +973,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\PlotGroupCollectionControlAdvanced.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Groups\PlotGroupCollectionControlAdvanced.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -997,7 +997,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\Shapes\ClosedPathShapeControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Shapes\ClosedPathShapeControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1009,7 +1009,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\Shapes\TextGraphicControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Shapes\TextGraphicControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1017,7 +1017,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\Viewing\GraphViewWpf.xaml">
+    <Page Include="Gui\Graph\Gdi\Viewing\GraphViewWpf.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1033,11 +1033,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\XYPlotDataControl.xaml">
+    <Page Include="Gui\Graph\Plot\Data\XYPlotDataControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\PlotGroupCollectionControlSimple.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Groups\PlotGroupCollectionControlSimple.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1045,7 +1045,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\XYPlotLayerContentsControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\XYPlotLayerContentsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1628,7 +1628,7 @@
     <Compile Include="Gui\Graph\Graph3D\XYPlotLayerControl.xaml.cs">
       <DependentUpon>XYPlotLayerControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ArrangeLayersControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\ArrangeLayersControl.xaml.cs">
       <DependentUpon>ArrangeLayersControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Axis\AxisCreationControl.xaml.cs">
@@ -1637,10 +1637,10 @@
     <Compile Include="Gui\Graph\Gdi\Axis\AxisLineStyleControl.xaml.cs">
       <DependentUpon>AxisLineStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\AxisLinkControl.xaml.cs">
+    <Compile Include="Gui\Graph\Scales\AxisLinkControl.xaml.cs">
       <DependentUpon>AxisLinkControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ClipboardRenderingOptionsControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\ClipboardRenderingOptionsControl.xaml.cs">
       <DependentUpon>ClipboardRenderingOptionsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\ColorManagement\ColorSetIdentifierControl.xaml.cs">
@@ -1649,22 +1649,22 @@
     <Compile Include="Gui\Graph\ColorManagement\NamedColorChoiceControl.xaml.cs">
       <DependentUpon>NamedColorChoiceControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\DefaultLineScatterGraphDocumentControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\DefaultLineScatterGraphDocumentControl.xaml.cs">
       <DependentUpon>DefaultLineScatterGraphDocumentControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\EmbeddedObjectRenderingOptionsControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\EmbeddedObjectRenderingOptionsControl.xaml.cs">
       <DependentUpon>EmbeddedObjectRenderingOptionsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\GraphicItemsControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Shapes\GraphicItemsControl.xaml.cs">
       <DependentUpon>GraphicItemsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\GridPartitioningControl.xaml.cs">
       <DependentUpon>GridPartitioningControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ItemLocationByGridControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\ItemLocationByGridControl.xaml.cs">
       <DependentUpon>ItemLocationByGridControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ItemLocationDirectControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\ItemLocationDirectControl.xaml.cs">
       <DependentUpon>ItemLocationDirectControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Scales\Rescaling\DateTimeScaleRescaleConditionsControl.xaml.cs">
@@ -1685,7 +1685,7 @@
     <Compile Include="Gui\Graph\Scales\Ticks\NoTickSpacingControl.xaml.cs">
       <DependentUpon>NoTickSpacingControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\ScaleWithTicksControl.xaml.cs">
+    <Compile Include="Gui\Graph\Scales\ScaleWithTicksControl.xaml.cs">
       <DependentUpon>ScaleWithTicksControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Background\BackgroundControlsGlue.cs" />
@@ -1713,15 +1713,15 @@
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\ColumnDrivenSymbolSizePlotStyleControl.xaml.cs">
       <DependentUpon>ColumnDrivenSymbolSizePlotStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\HostLayerControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\HostLayerControl.xaml.cs">
       <DependentUpon>HostLayerControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\TickSpacingControl.xaml.cs">
+    <Compile Include="Gui\Graph\Scales\Ticks\TickSpacingControl.xaml.cs">
       <DependentUpon>TickSpacingControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\EditGridMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\RenderTrigger.cs" />
-    <Compile Include="Gui\Graph\XYZMeshedColumnPlotDataControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\EditGridMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\RenderTrigger.cs" />
+    <Compile Include="Gui\Graph\Plot\Data\XYZMeshedColumnPlotDataControl.xaml.cs">
       <DependentUpon>XYZMeshedColumnPlotDataControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\DensityImagePlotStyleControl.xaml.cs">
@@ -1745,7 +1745,7 @@
     <Compile Include="Gui\Graph\FitPolynomialDialogControl.xaml.cs">
       <DependentUpon>FitPolynomialDialogControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\FunctionPlotDataControl.xaml.cs">
+    <Compile Include="Gui\Graph\Plot\Data\FunctionPlotDataControl.xaml.cs">
       <DependentUpon>FunctionPlotDataControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\CS\G2DCartesicCSControl.xaml.cs">
@@ -1755,7 +1755,7 @@
       <DependentUpon>G2DPlotItemControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\GdiFontGlue.cs" />
-    <Compile Include="Gui\Graph\GraphExportOptionsControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\GraphExportOptionsControl.xaml.cs">
       <DependentUpon>GraphExportOptionsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\LabelFormatting\DateTimeLabelFormattingControl.xaml.cs">
@@ -1773,41 +1773,41 @@
     <Compile Include="Gui\Graph\Scales\Ticks\SpanTickSpacingControl.xaml.cs">
       <DependentUpon>SpanTickSpacingControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Shapes\FloatingScaleControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Shapes\FloatingScaleControl.xaml.cs">
       <DependentUpon>FloatingScaleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Shapes\ImageGraphicControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Shapes\ImageGraphicControl.xaml.cs">
       <DependentUpon>ImageGraphicControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\XYPlotLayerControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\XYPlotLayerControl.xaml.cs">
       <DependentUpon>XYPlotLayerControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\LayerPositionControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\LayerPositionControl.xaml.cs">
       <DependentUpon>LayerPositionControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Shapes\AnchoringControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Shapes\AnchoringControl.xaml.cs">
       <DependentUpon>AnchoringControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Shapes\OpenPathShapeControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Shapes\OpenPathShapeControl.xaml.cs">
       <DependentUpon>OpenPathShapeControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\ObjectPositionAndSizeGlue.cs" />
     <Compile Include="Gui\Graph\Scales\Ticks\Log10TickSpacingControl.xaml.cs">
       <DependentUpon>Log10TickSpacingControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Shapes\CardinalSplinePointsControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Shapes\CardinalSplinePointsControl.xaml.cs">
       <DependentUpon>CardinalSplinePointsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Shapes\ClosedCardinalSplineControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Shapes\ClosedCardinalSplineControl.xaml.cs">
       <DependentUpon>ClosedCardinalSplineControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Shapes\OpenCardinalSplineControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Shapes\OpenCardinalSplineControl.xaml.cs">
       <DependentUpon>OpenCardinalSplineControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Shapes\RegularPolygonControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Shapes\RegularPolygonControl.xaml.cs">
       <DependentUpon>RegularPolygonControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Shapes\ShapeGroupControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Shapes\ShapeGroupControl.xaml.cs">
       <DependentUpon>ShapeGroupControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GuiChangeLocker.cs" />
@@ -1865,7 +1865,7 @@
     <Compile Include="Gui\Graph\Gdi\Plot\Groups\PlotGroupCollectionControl.xaml.cs">
       <DependentUpon>PlotGroupCollectionControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\PlotGroupCollectionControlAdvanced.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\Groups\PlotGroupCollectionControlAdvanced.xaml.cs">
       <DependentUpon>PlotGroupCollectionControlAdvanced.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\PlottingRangeControl.xaml.cs">
@@ -1883,7 +1883,7 @@
     <Compile Include="Gui\Graph\Scales\Ticks\LinearTickSpacingControl.xaml.cs">
       <DependentUpon>LinearTickSpacingControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Shapes\ClosedPathShapeControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Shapes\ClosedPathShapeControl.xaml.cs">
       <DependentUpon>ClosedPathShapeControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\SingleColumnChoiceControl.xaml.cs">
@@ -1892,31 +1892,31 @@
     <Compile Include="Gui\Graph\SingleGraphPrintOptionsControl.xaml.cs">
       <DependentUpon>SingleGraphPrintOptionsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Shapes\TextGraphicControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Shapes\TextGraphicControl.xaml.cs">
       <DependentUpon>TextGraphicControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Axis\AxisStyleControl.xaml.cs">
       <DependentUpon>AxisStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ArrowLineDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ClosedCardinalSplineMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\CurlyBraceDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\OpenCardinalSplineMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ReadPlotItemDataMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ReadXYCoordinatesMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\RectangleDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\RegularPolygonDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\TextToolMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphControllerMouseHandlers\ZoomAxesMouseHandler.cs" />
-    <Compile Include="Gui\Graph\Viewing\GraphViewWpf.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\AbstractMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\ArrowLineDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\ClosedCardinalSplineMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\CurlyBraceDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\OpenCardinalSplineMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\ReadPlotItemDataMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\ReadXYCoordinatesMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\RectangleDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\RegularPolygonDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\TextToolMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerMouseHandlers\ZoomAxesMouseHandler.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphViewWpf.xaml.cs">
       <DependentUpon>GraphViewWpf.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Viewing\GraphControllerWpf.cs" />
+    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerWpf.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Groups\WaterfallTransformControl.xaml.cs">
       <DependentUpon>WaterfallTransformControl.xaml</DependentUpon>
     </Compile>
@@ -1926,16 +1926,16 @@
     <Compile Include="Gui\Graph\Gdi\Axis\XYGridStyleControl.xaml.cs">
       <DependentUpon>XYGridStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\XYPlotDataControl.xaml.cs">
+    <Compile Include="Gui\Graph\Plot\Data\XYPlotDataControl.xaml.cs">
       <DependentUpon>XYPlotDataControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\PlotGroupCollectionControlSimple.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\Groups\PlotGroupCollectionControlSimple.xaml.cs">
       <DependentUpon>PlotGroupCollectionControlSimple.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotLabelStyleControl.xaml.cs">
       <DependentUpon>XYPlotLabelStyleControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\XYPlotLayerContentsControl.xaml.cs">
+    <Compile Include="Gui\Graph\Gdi\Plot\XYPlotLayerContentsControl.xaml.cs">
       <DependentUpon>XYPlotLayerContentsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotLineStyleControl.xaml.cs">
