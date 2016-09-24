@@ -214,7 +214,7 @@ namespace Altaxo.Worksheet.Commands
 		public static G2DPlotStyleCollection PlotStyle_Bar(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			G2DPlotStyleCollection result = new G2DPlotStyleCollection();
-			BarGraphPlotStyle ps1 = new BarGraphPlotStyle();
+			BarGraphPlotStyle ps1 = new BarGraphPlotStyle(context);
 			result.Add(ps1);
 			return result;
 		}

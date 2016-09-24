@@ -32,6 +32,7 @@ using System.Linq;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+	using Altaxo.Data;
 	using Altaxo.Main;
 	using Drawing;
 	using Drawing.ColorManagement;
@@ -367,46 +368,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion Serialization
 
-		// (Altaxo.Main.Properties.IReadOnlyPropertyBag)null
-		protected ScatterPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-		}
+		#region Copying
 
-		internal ScatterPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, bool oldDeserializationRequiresFullConstruction)
-		{
-			double penWidth = 1;
-			double symbolSize = 8;
-			var color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
-
-			this._shape = XYPlotScatterStyles.Shape.Square;
-			this._style = XYPlotScatterStyles.Style.Solid;
-			this._dropLine = CSPlaneIDList.Empty;
-			this._pen = new PenX(color, penWidth) { ParentObject = this };
-			this._independentColor = false;
-
-			this._symbolSize = symbolSize;
-
-			this._relativePenWidth = 0.1f;
-			this._skipFreq = 1;
-			this._cachedFillPath = true; // since default is solid
-			this._cachedFillBrush = new BrushX(color) { ParentObject = this };
-			this._cachedPath = GetPath(_shape, _style, _symbolSize);
-			CreateEventChain();
-		}
-
-		public bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-			var from = obj as ScatterPlotStyle;
-			if (null != from)
-			{
-				CopyFrom(from, Main.EventFiring.Enabled);
-				return true;
-			}
-			return false;
-		}
-
+		/// <inheritdoc/>
 		public void CopyFrom(ScatterPlotStyle from, Main.EventFiring eventFiring)
 		{
 			if (object.ReferenceEquals(this, from))
@@ -433,6 +397,67 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				suspendToken.Resume(eventFiring);
 			}
+		}
+
+		/// <inheritdoc/>
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as ScatterPlotStyle;
+			if (null != from)
+			{
+				CopyFrom(from, Main.EventFiring.Enabled);
+				return true;
+			}
+			return false;
+		}
+
+		/// <inheritdoc/>
+		public bool CopyFrom(object obj)
+		{
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new ScatterPlotStyle(this);
+		}
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			return new ScatterPlotStyle(this);
+		}
+
+		#endregion Copying
+
+		// (Altaxo.Main.Properties.IReadOnlyPropertyBag)null
+		protected ScatterPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+		}
+
+		internal ScatterPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, bool oldDeserializationRequiresFullConstruction)
+		{
+			double penWidth = 1;
+			double symbolSize = 8;
+			var color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
+
+			this._shape = XYPlotScatterStyles.Shape.Square;
+			this._style = XYPlotScatterStyles.Style.Solid;
+			this._dropLine = CSPlaneIDList.Empty;
+			this._pen = new PenX(color, penWidth) { ParentObject = this };
+			this._independentColor = false;
+
+			this._symbolSize = symbolSize;
+
+			this._relativePenWidth = 0.1f;
+			this._skipFreq = 1;
+			this._cachedFillPath = true; // since default is solid
+			this._cachedFillBrush = new BrushX(color) { ParentObject = this };
+			this._cachedPath = GetPath(_shape, _style, _symbolSize);
+			CreateEventChain();
 		}
 
 		public ScatterPlotStyle(ScatterPlotStyle from)
@@ -689,11 +714,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_cachedFillBrush = new BrushX(_pen.Color) { ParentObject = this };
 			else
 				_cachedFillBrush = new BrushX(_pen.BrushHolder) { ParentObject = this };
-		}
-
-		public object Clone()
-		{
-			return new ScatterPlotStyle(this);
 		}
 
 		public static GraphicsPath GetPath(XYPlotScatterStyles.Shape sh, XYPlotScatterStyles.Style st, double sized)
@@ -1059,6 +1079,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
+		}
+
+		/// <inheritdoc/>
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
+		{
+			return null; // no additionally used columns
 		}
 
 		#endregion IDocumentNode Members

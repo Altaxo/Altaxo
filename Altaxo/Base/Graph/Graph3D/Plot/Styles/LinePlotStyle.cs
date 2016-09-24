@@ -164,33 +164,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		#region Construction and copying
 
-		public LinePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
-		{
-			var penWidth = GraphDocument.GetDefaultPenWidth(context);
-			var color = GraphDocument.GetDefaultPlotColor(context);
-
-			_linePen = new PenX3D(color, penWidth).WithLineJoin(PenLineJoin.Bevel);
-			_connectionStyle = new LineConnectionStyles.StraightConnection();
-		}
-
-		public LinePlotStyle(LinePlotStyle from)
-		{
-			CopyFrom(from, Main.EventFiring.Suppressed);
-		}
-
-		public bool CopyFrom(object obj, bool copyWithDataReferences)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-			var from = obj as LinePlotStyle;
-			if (null != from)
-			{
-				CopyFrom(from, Main.EventFiring.Enabled);
-				return true;
-			}
-			return false;
-		}
-
 		public void CopyFrom(LinePlotStyle from, Main.EventFiring eventFiring)
 		{
 			if (object.ReferenceEquals(this, from))
@@ -222,11 +195,21 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		/// <summary>
-		/// Copies the member variables from another instance.
-		/// </summary>
-		/// <param name="obj">Another instance to copy the data from.</param>
-		/// <returns>True if data was copied, otherwise false.</returns>
+		/// <inheritdoc/>
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as LinePlotStyle;
+			if (null != from)
+			{
+				CopyFrom(from, Main.EventFiring.Enabled);
+				return true;
+			}
+			return false;
+		}
+
+		/// <inheritdoc/>
 		public bool CopyFrom(object obj)
 		{
 			return CopyFrom(obj, true);
@@ -242,6 +225,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		public object Clone()
 		{
 			return new LinePlotStyle(this);
+		}
+
+		public LinePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			var penWidth = GraphDocument.GetDefaultPenWidth(context);
+			var color = GraphDocument.GetDefaultPlotColor(context);
+
+			_linePen = new PenX3D(color, penWidth).WithLineJoin(PenLineJoin.Bevel);
+			_connectionStyle = new LineConnectionStyles.StraightConnection();
+		}
+
+		public LinePlotStyle(LinePlotStyle from)
+		{
+			CopyFrom(from, Main.EventFiring.Suppressed);
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -693,6 +690,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
+		/// <inheritdoc/>
 		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
 		{
 			return null; // no additionally used columns

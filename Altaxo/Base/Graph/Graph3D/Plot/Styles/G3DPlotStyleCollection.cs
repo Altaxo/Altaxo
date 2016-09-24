@@ -93,26 +93,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		#endregion Serialization
 
-		/// <summary>
-		/// Creates an empty collection, i.e. without any styles (so the item is not visible). You must manually add styles to make the plot item visible.
-		/// </summary>
-		public G3DPlotStyleCollection()
-		{
-			_innerList = new List<IG3DPlotStyle>();
-		}
-
-		public G3DPlotStyleCollection(IG3DPlotStyle[] styles)
-		{
-			_innerList = new List<IG3DPlotStyle>();
-			for (int i = 0; i < styles.Length; ++i)
-				if (styles[i] != null)
-					this.Add(styles[i], false);
-		}
-
-		public G3DPlotStyleCollection(G3DPlotStyleCollection from)
-		{
-			CopyFrom(from, true);
-		}
+		#region Copying
 
 		public void CopyFrom(G3DPlotStyleCollection from)
 		{
@@ -206,6 +187,43 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 			return new G3DPlotStyleCollection(this);
 		}
+
+		object ICloneable.Clone()
+		{
+			return new G3DPlotStyleCollection(this);
+		}
+
+		public G3DPlotStyleCollection Clone()
+		{
+			return new G3DPlotStyleCollection(this);
+		}
+
+		#endregion Copying
+
+		#region Construction
+
+		/// <summary>
+		/// Creates an empty collection, i.e. without any styles (so the item is not visible). You must manually add styles to make the plot item visible.
+		/// </summary>
+		public G3DPlotStyleCollection()
+		{
+			_innerList = new List<IG3DPlotStyle>();
+		}
+
+		public G3DPlotStyleCollection(IG3DPlotStyle[] styles)
+		{
+			_innerList = new List<IG3DPlotStyle>();
+			for (int i = 0; i < styles.Length; ++i)
+				if (styles[i] != null)
+					this.Add(styles[i], false);
+		}
+
+		public G3DPlotStyleCollection(G3DPlotStyleCollection from)
+		{
+			CopyFrom(from, true);
+		}
+
+		#endregion Construction
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
@@ -356,16 +374,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
 			_accumulatedEventData = PlotItemStyleChangedEventArgs.Empty;
-		}
-
-		object ICloneable.Clone()
-		{
-			return new G3DPlotStyleCollection(this);
-		}
-
-		public G3DPlotStyleCollection Clone()
-		{
-			return new G3DPlotStyleCollection(this);
 		}
 
 		public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData)
@@ -537,7 +545,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
 		{
-			yield break; // no additionally used columns
+			return null; // no additionally used columns
 		}
 
 		#endregion IRoutedPropertyReceiver Members

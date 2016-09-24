@@ -28,11 +28,13 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+	using Altaxo.Data;
 	using Altaxo.Main;
 	using Drawing;
 	using Geometry;
 	using Graph.Plot.Data;
 	using Plot.Data;
+	using System.Collections.Generic;
 
 	public class FillToCurvePlotStyle
 		:
@@ -64,75 +66,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		[NonSerialized]
 		private Action<Graphics, Processed2DPlotData, PlotRange, IPlotArea, Processed2DPlotData> _cachedPaintOneRange;
-
-		#region Constructor
-
-		/// <summary>
-		/// For deserialization only. Initializes a new instance of the <see cref="FillToCurvePlotStyle"/> class.
-		/// </summary>
-		/// <param name="info">Deserialization info.</param>
-		protected FillToCurvePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
-			FillBrush = new BrushX(NamedColors.Aqua);
-		}
-
-		public FillToCurvePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
-		{
-			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
-			FillBrush = new BrushX(NamedColors.Aqua); // Exception: do not use one of the colors of the default plot color set. Instead, use a light color.
-		}
-
-		public FillToCurvePlotStyle(FillToCurvePlotStyle from)
-		{
-			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
-			CopyFrom(from, Main.EventFiring.Suppressed);
-		}
-
-		public void CopyFrom(FillToCurvePlotStyle from, Main.EventFiring eventFiring)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			using (var suspendToken = SuspendGetToken())
-			{
-				this._independentFillColor = from._independentFillColor;
-				this.FillBrush = null == from._fillBrush ? null : from._fillBrush.Clone();
-
-				this._independentFrameColor = from._independentFrameColor;
-				this._framePen = null == from._framePen ? null : from._framePen.Clone();
-
-				this._fillToPrevPlotItem = from._fillToPrevPlotItem;
-				this._fillToNextPlotItem = from._fillToNextPlotItem;
-
-				//this._parent = from._parent;
-
-				suspendToken.Resume(eventFiring);
-			}
-		}
-
-		public bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-			var from = obj as FillToCurvePlotStyle;
-			if (null != from)
-			{
-				CopyFrom(from, Main.EventFiring.Enabled);
-				return true;
-			}
-			return false;
-		}
-
-		protected override System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			if (null != _fillBrush)
-				yield return new Main.DocumentNodeAndName(_fillBrush, "FillBrush");
-			if (null != _framePen)
-				yield return new Main.DocumentNodeAndName(_framePen, "Pen");
-		}
-
-		#endregion Constructor
 
 		#region Serialization
 
@@ -217,6 +150,96 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		#endregion Serialization
+
+		#region ICloneable Members
+
+		public void CopyFrom(FillToCurvePlotStyle from, bool copyWithDataReferences, Main.EventFiring eventFiring)
+		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
+			using (var suspendToken = SuspendGetToken())
+			{
+				this._independentFillColor = from._independentFillColor;
+				this.FillBrush = null == from._fillBrush ? null : from._fillBrush.Clone();
+
+				this._independentFrameColor = from._independentFrameColor;
+				this._framePen = null == from._framePen ? null : from._framePen.Clone();
+
+				this._fillToPrevPlotItem = from._fillToPrevPlotItem;
+				this._fillToNextPlotItem = from._fillToNextPlotItem;
+
+				//this._parent = from._parent;
+
+				suspendToken.Resume(eventFiring);
+			}
+		}
+
+		/// <inheritdoc/>
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as FillToCurvePlotStyle;
+			if (null != from)
+			{
+				CopyFrom(from, copyWithDataReferences, Main.EventFiring.Enabled);
+				return true;
+			}
+			return false;
+		}
+
+		/// <inheritdoc/>
+		public bool CopyFrom(object obj)
+		{
+			return CopyFrom(obj, true);
+		}
+
+		public object Clone()
+		{
+			return new FillToCurvePlotStyle(this, true);
+		}
+
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new FillToCurvePlotStyle(this, copyWithDataReferences);
+		}
+
+		#endregion ICloneable Members
+
+		#region Constructor
+
+		/// <summary>
+		/// For deserialization only. Initializes a new instance of the <see cref="FillToCurvePlotStyle"/> class.
+		/// </summary>
+		/// <param name="info">Deserialization info.</param>
+		protected FillToCurvePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
+			FillBrush = new BrushX(NamedColors.Aqua);
+		}
+
+		public FillToCurvePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
+			FillBrush = new BrushX(NamedColors.Aqua); // Exception: do not use one of the colors of the default plot color set. Instead, use a light color.
+		}
+
+		public FillToCurvePlotStyle(FillToCurvePlotStyle from, bool copyWithDataReferences)
+		{
+			_cachedPaintOneRange = this.StraightConnection_PaintOneRange;
+			CopyFrom(from, copyWithDataReferences, Main.EventFiring.Suppressed);
+		}
+
+		protected override System.Collections.Generic.IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			if (null != _fillBrush)
+				yield return new Main.DocumentNodeAndName(_fillBrush, "FillBrush");
+			if (null != _framePen)
+				yield return new Main.DocumentNodeAndName(_framePen, "Pen");
+		}
+
+		#endregion Constructor
 
 		#region Properties
 
@@ -305,20 +328,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion Properties
 
-		#region ICloneable Members
-
-		public FillToCurvePlotStyle Clone()
-		{
-			return new FillToCurvePlotStyle(this);
-		}
-
-		object ICloneable.Clone()
-		{
-			return new FillToCurvePlotStyle(this);
-		}
-
-		#endregion ICloneable Members
-
 		#region IDocumentNode Members
 
 		/// <summary>
@@ -328,6 +337,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
+		}
+
+		/// <inheritdoc/>
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
+		{
+			return null;
 		}
 
 		#endregion IDocumentNode Members

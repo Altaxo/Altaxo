@@ -406,18 +406,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion Serialization
 
-		/// <summary>
-		/// For deserialization purposes.
-		/// </summary>
-		protected LabelPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-		{
-			this._cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
-			this._cachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
-			this._cachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
-			this._backgroundColorLinkage = ColorLinkage.Independent;
-		}
-
-		public bool CopyFrom(object obj)
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -437,7 +426,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._backgroundColorLinkage = from._backgroundColorLinkage;
 				this._cachedStringFormat = (System.Drawing.StringFormat)from._cachedStringFormat.Clone();
 				this._attachedPlane = from._attachedPlane;
-				this.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)from._labelColumnProxy.Clone();
+
+				if (copyWithDataReferences)
+				{
+					this.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)from._labelColumnProxy.Clone();
+				}
 
 				EhSelfChanged(EventArgs.Empty);
 				suspendToken.Resume();
@@ -445,14 +438,43 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return true;
 		}
 
-		public LabelPlotStyle(LabelPlotStyle from)
+		/// <inheritdoc/>
+		public bool CopyFrom(object obj)
 		{
-			CopyFrom(from);
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new LabelPlotStyle(this, copyWithDataReferences);
+		}
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			return new LabelPlotStyle(this, true);
+		}
+
+		/// <summary>
+		/// For deserialization purposes.
+		/// </summary>
+		protected LabelPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+			this._cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
+			this._cachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
+			this._cachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
+			this._backgroundColorLinkage = ColorLinkage.Independent;
 		}
 
 		public LabelPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
-			: this((Altaxo.Data.IReadableColumn)null, context)
+	: this((Altaxo.Data.IReadableColumn)null, context)
 		{
+		}
+
+		public LabelPlotStyle(LabelPlotStyle from, bool copyWithDataReferences)
+		{
+			CopyFrom(from, copyWithDataReferences);
 		}
 
 		public LabelPlotStyle(Altaxo.Data.IReadableColumn labelColumn, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
@@ -874,11 +896,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 		}
 
-		public object Clone()
-		{
-			return new LabelPlotStyle(this);
-		}
-
 		#region I2DPlotStyle Members
 
 		public bool IsColorProvider
@@ -1007,6 +1024,29 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
 			Report(_labelColumnProxy, this, "LabelColumn");
+		}
+
+		/// <summary>
+		/// Gets the name of the label column, if it is a data column. Otherwise, null is returned.
+		/// </summary>
+		/// <value>
+		/// The name of the label column if it is a data column. Otherwise, null.
+		/// </value>
+		public string LabelColumnDataColumnName
+		{
+			get
+			{
+				return _labelColumnProxy.DocumentPath.LastPartOrDefault;
+			}
+		}
+
+		public IEnumerable<Tuple<string, Altaxo.Data.IReadableColumn, string, Action<Altaxo.Data.IReadableColumn>>> GetAdditionallyUsedColumns()
+		{
+			yield return new Tuple<string, Altaxo.Data.IReadableColumn, string, Action<Altaxo.Data.IReadableColumn>>(
+				"Label",
+			LabelColumn,
+			LabelColumnDataColumnName,
+			(col) => this.LabelColumn = col);
 		}
 
 		#endregion IDocumentNode Members

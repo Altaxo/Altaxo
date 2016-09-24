@@ -30,7 +30,9 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+	using Altaxo.Data;
 	using Altaxo.Main;
+	using Collections;
 	using Data;
 	using Graph.Plot.Groups;
 	using Plot.Groups;
@@ -128,6 +130,119 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion Serialization
 
+		#region Copying
+
+		public void CopyFrom(G2DPlotStyleCollection from)
+		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
+			using (var suspendToken = SuspendGetToken())
+			{
+				Clear();
+
+				this._innerList = new List<IG2DPlotStyle>();
+				for (int i = 0; i < from._innerList.Count; ++i)
+					Add((IG2DPlotStyle)from[i].Clone());
+
+				suspendToken.Resume();
+			}
+		}
+
+		/// <summary>
+		/// Copies all styles 1:1 from a template collection, but try to reuse the data columns from
+		/// the old styles collection. This function is used if the user has selected the <see cref="PlotGroupStrictness.Strict"/>.
+		/// </summary>
+		/// <param name="from">The template style collection to copy from.</param>
+		/// <returns>On return, this collection has exactly the same styles as the template collection, in
+		/// exactly the same order and with the same properties, except for the data of the styles. The style data
+		/// are tried to reuse from the old styles. If this is not possible, the data references will be left empty.</returns>
+		public bool CopyFromTemplateCollection(G2DPlotStyleCollection from)
+		{
+			if (object.ReferenceEquals(this, from))
+				return true;
+
+			using (var suspendToken = SuspendGetToken())
+			{
+				var oldInnerList = this._innerList;
+
+				this._innerList = new List<IG2DPlotStyle>();
+
+				for (int i = 0; i < from._innerList.Count; ++i)
+				{
+					var fromStyleType = from[i].GetType();
+
+					// try to find the same style in the old list, and use the data from this style
+					int foundIdx = oldInnerList.IndexOfFirst(item => item.GetType() == fromStyleType);
+
+					IG2DPlotStyle clonedStyle;
+
+					if (foundIdx >= 0) // if old style list has such an item, we clone that item, and then CopyFrom (but without data)
+					{
+						clonedStyle = (IG2DPlotStyle)oldInnerList[foundIdx].Clone(true); // First, clone _with_ the old data because we want to reuse them
+						clonedStyle.CopyFrom(from[i], false); // now copy the properties from the template style, but _without_ the data
+						oldInnerList.RemoveAt(foundIdx); // remove the used style now
+					}
+					else // an old style of the same type was not found
+					{
+						clonedStyle = (IG2DPlotStyle)from[i].Clone(false); // clone the style without data
+					}
+
+					Add(clonedStyle);
+				}
+				suspendToken.Resume();
+			}
+
+			return true;
+		}
+
+		/// <inheritdoc/>
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as G2DPlotStyleCollection;
+			if (null != from)
+			{
+				CopyFrom(from);
+				return true;
+			}
+			return false;
+		}
+
+		/// <inheritdoc/>
+		public bool CopyFrom(object obj)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as G2DPlotStyleCollection;
+			if (null != from)
+			{
+				CopyFrom(from);
+				return true;
+			}
+			return false;
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new G2DPlotStyleCollection(this);
+		}
+
+		/// <inheritdoc/>
+		object ICloneable.Clone()
+		{
+			return new G2DPlotStyleCollection(this);
+		}
+
+		public G2DPlotStyleCollection Clone()
+		{
+			return new G2DPlotStyleCollection(this);
+		}
+
+		#endregion Copying
+
 		/// <summary>
 		/// Creates an empty collection, i.e. without any styles (so the item is not visible). You must manually add styles to make the plot item visible.
 		/// </summary>
@@ -142,6 +257,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			for (int i = 0; i < styles.Length; ++i)
 				if (styles[i] != null)
 					this.Add(styles[i], false);
+		}
+
+		public G2DPlotStyleCollection(G2DPlotStyleCollection from)
+		{
+			CopyFrom(from);
 		}
 
 		public G2DPlotStyleCollection(LineScatterPlotStyleKind kind, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
@@ -165,39 +285,37 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public G2DPlotStyleCollection(G2DPlotStyleCollection from)
+		public void SetFromTemplate(G2DPlotStyleCollection from, PlotGroupStrictness strictness)
 		{
-			CopyFrom(from);
-		}
-
-		public void CopyFrom(G2DPlotStyleCollection from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			using (var suspendToken = SuspendGetToken())
+			if (strictness == PlotGroupStrictness.Strict)
 			{
-				Clear();
-
-				this._innerList = new List<IG2DPlotStyle>();
-				for (int i = 0; i < from._innerList.Count; ++i)
-					Add((IG2DPlotStyle)from[i].Clone());
-
-				suspendToken.Resume();
+				CopyFromTemplateCollection(from); // take the whole style collection as is from the template, but try to reuse the additionally needed data columns from the old style
 			}
-		}
-
-		public bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-			var from = obj as G2DPlotStyleCollection;
-			if (null != from)
+			else if (strictness == PlotGroupStrictness.Exact)
 			{
-				CopyFrom(from);
-				return true;
+				// note one sub style in the 'from' collection can update only one item in the 'this' collection
+				using (var suspendToken = SuspendGetToken())
+				{
+					var indicesFrom = new SortedSet<int>(System.Linq.Enumerable.Range(0, from.Count));
+
+					for (int i = 0; i < this.Count; ++i)
+					{
+						var thisStyleType = this[i].GetType();
+
+						// search in from for a style with the same name
+						foreach (var fromIndex in indicesFrom)
+						{
+							if (thisStyleType == from[fromIndex].GetType())
+							{
+								this[i].CopyFrom(from[fromIndex], false);
+								indicesFrom.Remove(fromIndex); // this from style was used, thus remove it
+								break;
+							}
+						}
+					}
+					suspendToken.Resume();
+				}
 			}
-			return false;
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -212,33 +330,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public void SetFromTemplate(G2DPlotStyleCollection from, PlotGroupStrictness strictness)
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
 		{
-			if (strictness == PlotGroupStrictness.Strict)
-			{
-				CopyFrom(from);
-			}
-			else if (strictness == PlotGroupStrictness.Exact)
-			{
-				// note one sub style in the 'from' collection can update only one item in the 'this' collection
-				using (var suspendToken = SuspendGetToken())
-				{
-					int myidx = 0;
-					foreach (IG2DPlotStyle style in from)
-					{
-						for (int i = myidx; i < this.Count; i++)
-						{
-							if (this[i].GetType() == style.GetType())
-							{
-								Replace((IG2DPlotStyle)from[i].Clone(), i, false);
-								myidx = i + 1;
-								break;
-							}
-						}
-					}
-					suspendToken.Resume();
-				}
-			}
+			return null; // no additionally used columns
 		}
 
 		public IG2DPlotStyle this[int i]
@@ -345,16 +439,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		protected override void AccumulateChangeData(object sender, EventArgs e)
 		{
 			_accumulatedEventData = PlotItemStyleChangedEventArgs.Empty;
-		}
-
-		object ICloneable.Clone()
-		{
-			return new G2DPlotStyleCollection(this);
-		}
-
-		public G2DPlotStyleCollection Clone()
-		{
-			return new G2DPlotStyleCollection(this);
 		}
 
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)

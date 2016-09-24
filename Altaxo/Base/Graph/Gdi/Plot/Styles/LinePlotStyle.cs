@@ -30,6 +30,7 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+	using Altaxo.Data;
 	using Altaxo.Main;
 	using Drawing;
 	using Drawing.ColorManagement;
@@ -316,6 +317,63 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region Construction and copying
 
+		public void CopyFrom(LinePlotStyle from, Main.EventFiring eventFiring)
+		{
+			if (object.ReferenceEquals(this, from))
+				return;
+
+			using (var suspendToken = SuspendGetToken())
+			{
+				this._penHolder = null == from._penHolder ? null : (PenX)from._penHolder.Clone();
+				this._useLineSymbolGap = from._useLineSymbolGap;
+				this._symbolGap = from._symbolGap;
+				this._ignoreMissingPoints = from._ignoreMissingPoints;
+				this._fillArea = from._fillArea;
+				this._fillBrush = null == from._fillBrush ? null : (BrushX)from._fillBrush.Clone();
+				this._fillDirection = from._fillDirection;
+				this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
+				this._independentColor = from._independentColor;
+				this._fillColorLinkage = from._fillColorLinkage;
+				this._connectCircular = from._connectCircular;
+
+				//this._parent = from._parent;
+
+				suspendToken.Resume(eventFiring);
+			}
+		}
+
+		/// <inheritdoc/>
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
+		{
+			if (object.ReferenceEquals(this, obj))
+				return true;
+			var from = obj as LinePlotStyle;
+			if (null != from)
+			{
+				CopyFrom(from, Main.EventFiring.Enabled);
+				return true;
+			}
+			return false;
+		}
+
+		/// <inheritdoc/>
+		public bool CopyFrom(object obj)
+		{
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new LinePlotStyle(this);
+		}
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			return new LinePlotStyle(this);
+		}
+
 		protected LinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
 			_cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
@@ -360,44 +418,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			CreateEventChain();
 		}
 
-		public bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-			var from = obj as LinePlotStyle;
-			if (null != from)
-			{
-				CopyFrom(from, Main.EventFiring.Enabled);
-				return true;
-			}
-			return false;
-		}
-
-		public void CopyFrom(LinePlotStyle from, Main.EventFiring eventFiring)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			using (var suspendToken = SuspendGetToken())
-			{
-				this._penHolder = null == from._penHolder ? null : (PenX)from._penHolder.Clone();
-				this._useLineSymbolGap = from._useLineSymbolGap;
-				this._symbolGap = from._symbolGap;
-				this._ignoreMissingPoints = from._ignoreMissingPoints;
-				this._fillArea = from._fillArea;
-				this._fillBrush = null == from._fillBrush ? null : (BrushX)from._fillBrush.Clone();
-				this._fillDirection = from._fillDirection;
-				this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
-				this._independentColor = from._independentColor;
-				this._fillColorLinkage = from._fillColorLinkage;
-				this._connectCircular = from._connectCircular;
-
-				//this._parent = from._parent;
-
-				suspendToken.Resume(eventFiring);
-			}
-		}
-
 		public LinePlotStyle(LinePlotStyle from)
 		{
 			CopyFrom(from, Main.EventFiring.Suppressed);
@@ -411,11 +431,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			if (null != _fillBrush)
 				yield return new Main.DocumentNodeAndName(_fillBrush, "FillBrush");
-		}
-
-		public object Clone()
-		{
-			return new LinePlotStyle(this);
 		}
 
 		protected virtual void CreateEventChain()
@@ -1816,6 +1831,12 @@ out int lastIndex)
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
+		}
+
+		/// <inheritdoc/>
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
+		{
+			return null; // no additionally used columns
 		}
 
 		#endregion IDocumentNode Members

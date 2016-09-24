@@ -30,6 +30,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
+	using Altaxo.Data;
 	using Altaxo.Main;
 	using Drawing;
 	using Graph.Plot.Data;
@@ -134,7 +135,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			protected virtual BarGraphPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				BarGraphPlotStyle s = null != o ? (BarGraphPlotStyle)o : new BarGraphPlotStyle();
+				BarGraphPlotStyle s = null != o ? (BarGraphPlotStyle)o : new BarGraphPlotStyle(info);
 
 				s._relInnerGapWidth = info.GetDouble("InnerGapWidth");
 				s._relOuterGapWidth = info.GetDouble("OuterGapWidth");
@@ -185,7 +186,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			protected virtual BarGraphPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				BarGraphPlotStyle s = null != o ? (BarGraphPlotStyle)o : new BarGraphPlotStyle();
+				BarGraphPlotStyle s = null != o ? (BarGraphPlotStyle)o : new BarGraphPlotStyle(info);
 
 				s._relInnerGapWidth = info.GetDouble("InnerGapWidth");
 				s._relOuterGapWidth = info.GetDouble("OuterGapWidth");
@@ -212,11 +213,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion Serialization
 
-		public BarGraphPlotStyle()
-		{
-		}
-
-		public virtual bool CopyFrom(object obj)
+		/// <inheritdoc/>
+		public virtual bool CopyFrom(object obj, bool copyWithDataReferences)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -242,27 +240,45 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return false;
 		}
 
+		/// <inheritdoc/>
+		public virtual bool CopyFrom(object obj)
+		{
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new BarGraphPlotStyle(this, copyWithDataReferences);
+		}
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			return new BarGraphPlotStyle(this, true);
+		}
+
+		protected BarGraphPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+		}
+
+		public BarGraphPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
+		{
+			var color = GraphDocument.GetDefaultPlotColor(context);
+			_fillBrush = new BrushX(color);
+		}
+
+		public BarGraphPlotStyle(BarGraphPlotStyle from, bool copyWithDataReferences)
+		{
+			CopyFrom(from, copyWithDataReferences);
+		}
+
 		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (_framePen != null)
 				yield return new Main.DocumentNodeAndName(_framePen, "FramePen");
 			if (_fillBrush != null)
 				yield return new Main.DocumentNodeAndName(_fillBrush, "FillBrush");
-		}
-
-		public BarGraphPlotStyle(BarGraphPlotStyle from)
-		{
-			CopyFrom(from);
-		}
-
-		public BarGraphPlotStyle Clone()
-		{
-			return new BarGraphPlotStyle(this);
-		}
-
-		object ICloneable.Clone()
-		{
-			return new BarGraphPlotStyle(this);
 		}
 
 		public bool IsColorReceiver
@@ -580,6 +596,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
+		}
+
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
+		{
+			return null;
 		}
 
 		#endregion IDocumentNode Members

@@ -173,12 +173,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this._strokePen = new PenX(color, penWidth);
 		}
 
-		public ErrorBarPlotStyle(ErrorBarPlotStyle from)
+		public ErrorBarPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences)
 		{
-			CopyFrom(from);
+			CopyFrom(from, copyWithDataReferences);
 		}
 
-		public bool CopyFrom(object obj)
+		public bool CopyFrom(object obj, bool copyWithDataReferences)
 		{
 			if (object.ReferenceEquals(this, obj))
 				return true;
@@ -193,13 +193,36 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._isHorizontalStyle = from._isHorizontalStyle;
 				this._doNotShiftHorizontalPosition = from._doNotShiftHorizontalPosition;
 				ChildCloneToMember(ref _strokePen, from._strokePen);
-				ChildCloneToMember(ref _positiveErrorColumn, from._positiveErrorColumn);
-				ChildCloneToMember(ref _negativeErrorColumn, from._negativeErrorColumn);
+
+				if (copyWithDataReferences)
+				{
+					ChildCloneToMember(ref _positiveErrorColumn, from._positiveErrorColumn);
+					ChildCloneToMember(ref _negativeErrorColumn, from._negativeErrorColumn);
+				}
+
 				this._cachedLogicalShiftOfIndependent = from._cachedLogicalShiftOfIndependent;
 				EhSelfChanged();
 				return true;
 			}
 			return false;
+		}
+
+		/// <inheritdoc/>
+		public bool CopyFrom(object obj)
+		{
+			return CopyFrom(obj, true);
+		}
+
+		/// <inheritdoc/>
+		public object Clone(bool copyWithDataReferences)
+		{
+			return new ErrorBarPlotStyle(this, copyWithDataReferences);
+		}
+
+		/// <inheritdoc/>
+		public object Clone()
+		{
+			return new ErrorBarPlotStyle(this, true);
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -212,16 +235,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			if (null != _negativeErrorColumn)
 				yield return new Main.DocumentNodeAndName(_negativeErrorColumn, "NegativeErrorColumn");
-		}
-
-		public ErrorBarPlotStyle Clone()
-		{
-			return new ErrorBarPlotStyle(this);
-		}
-
-		object ICloneable.Clone()
-		{
-			return new ErrorBarPlotStyle(this);
 		}
 
 		#region Properties
@@ -741,6 +754,25 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			Report(_positiveErrorColumn, this, "PositiveErrorColumn");
 			Report(_negativeErrorColumn, this, "NegativeErrorColumn");
+		}
+
+		/// <summary>
+		/// Gets the columns used additionally by this style, e.g. the label column for a label plot style, or the error columns for an error bar plot style.
+		/// </summary>
+		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
+		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
+		public IEnumerable<Tuple<
+			string, // Column label
+			IReadableColumn, // the column as it was at the time of this call
+			string, // the name of the column (last part of the column proxies document path)
+			Action<IReadableColumn> // action to set the column during Apply of the controller
+			>> GetAdditionallyUsedColumns()
+		{
+			{
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(PositiveErrorColumn), PositiveErrorColumn, _positiveErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => PositiveErrorColumn = col as INumericColumn);
+
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(NegativeErrorColumn), NegativeErrorColumn, _negativeErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => NegativeErrorColumn = col as INumericColumn);
+			}
 		}
 
 		#endregion IDocumentNode Members
