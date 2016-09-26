@@ -53,9 +53,10 @@ namespace Altaxo.Data.Selections
 
 		#endregion Serialization
 
-		public IEnumerable<int> GetSelectedRowIndicesContinuouslyUpTo(int maxRowCount)
+		/// <inheritdoc/>
+		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex)
 		{
-			for (int r = 0; r < maxRowCount; ++r)
+			for (int r = startIndex; r < maxIndex; ++r)
 				yield return r;
 		}
 

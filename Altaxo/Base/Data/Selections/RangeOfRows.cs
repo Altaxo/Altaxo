@@ -61,10 +61,13 @@ namespace Altaxo.Data.Selections
 
 		#endregion Serialization
 
-		public IEnumerable<int> GetSelectedRowIndicesContinuouslyUpTo(int maxRowCount)
+		/// <inheritdoc/>
+		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex)
 		{
-			int end = Start + Math.Min(Count, maxRowCount - Start); // mathematical trick to avoid overflow if Count is int.MaximumValue
-			for (int r = Start; r < end; ++r)
+			int end = Start + Math.Min(Count, maxIndex - Start); // mathematical trick to avoid overflow if Count is int.MaximumValue
+			int start = Math.Max(Start, startIndex);
+
+			for (int r = start; r < end; ++r)
 				yield return r;
 		}
 

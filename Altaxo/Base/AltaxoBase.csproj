@@ -229,7 +229,9 @@
     <Compile Include="Data\IVariantToVariantTransformation.cs" />
     <Compile Include="Data\Selections\IRowSelection.cs" />
     <Compile Include="Data\Selections\AllRows.cs" />
+    <Compile Include="Data\Selections\RangeOfPhysicalValues.cs" />
     <Compile Include="Data\Selections\RangeOfRows.cs" />
+    <Compile Include="Data\Selections\IntersectionOfRowSelections.cs" />
     <Compile Include="Data\Transformations\OffsetTransformation.cs" />
     <Compile Include="Data\Transformations\ScaleTransformation.cs" />
     <Compile Include="Data\Transformations\CompoundTransformation.cs" />

@@ -700,7 +700,7 @@ namespace Altaxo.Graph.Plot.Data
 				IReadableColumn yColumn = this.YColumn;
 				IReadableColumn zColumn = this.ZColumn;
 
-				foreach (int i in _dataRowSelection.GetSelectedRowIndicesContinuouslyUpTo(_pointCount))
+				foreach (int i in _dataRowSelection.GetSelectedRowIndicesFromTo(0, _pointCount))
 				{
 					if (!xColumn.IsElementEmpty(i) && !yColumn.IsElementEmpty(i) && !zColumn.IsElementEmpty(i))
 					{
@@ -804,7 +804,7 @@ namespace Altaxo.Graph.Plot.Data
 
 			int maxRowIndex = GetMaximumRowIndexFromDataColumns();
 			int plotArrayIdx = 0;
-			foreach (int dataRowIdx in _dataRowSelection.GetSelectedRowIndicesContinuouslyUpTo(maxRowIndex))
+			foreach (int dataRowIdx in _dataRowSelection.GetSelectedRowIndicesFromTo(0, maxRowIndex))
 			{
 				if (xColumn.IsElementEmpty(dataRowIdx) || yColumn.IsElementEmpty(dataRowIdx) || zColumn.IsElementEmpty(dataRowIdx))
 				{

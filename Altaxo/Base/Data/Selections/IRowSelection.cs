@@ -32,11 +32,11 @@ namespace Altaxo.Data.Selections
 	public interface IRowSelection
 	{
 		/// <summary>
-		/// Gets the indices of the selected data rows.
+		/// Gets the selected row indices continuously, beginning with no less than the start index and less than the maximum index.
 		/// </summary>
-		/// <value>
-		/// The indices of the selected data rows.
-		/// </value>
-		IEnumerable<int> GetSelectedRowIndicesContinuouslyUpTo(int maxCount);
+		/// <param name="startIndex">The start index. Each row index that is returned has to be equal to or greater than this value.</param>
+		/// <param name="maxIndex">The maximum index.  Each row index that is returned has to be less than this value.</param>
+		/// <returns>The selected row indices, beginning with no less than the start index and less than the maximum index.</returns>
+		IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex);
 	}
 }
