@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Plot.Data
 {
+	using Altaxo.Data.Selections;
 	using Gdi.Plot.Data;
 
 	/// <summary>
@@ -41,16 +42,25 @@ namespace Altaxo.Graph.Plot.Data
 	public class XYColumnPlotData
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		IColumnPlotData,
 		System.ICloneable
 	{
+		/// <summary>Holds a reference to the underlying data table. If the Empty property of the proxy is null, the underlying table must be determined from the column proxies.</summary>
+		protected DataTableProxy _dataTable;
+
+		/// <summary>The group number of the data columns. All data columns should have this group number. Data columns having other group numbers will be marked.</summary>
+		protected int _groupNumber;
+
 		protected Altaxo.Data.IReadableColumnProxy _xColumn; // the X-Column
 		protected Altaxo.Data.IReadableColumnProxy _yColumn; // the Y-Column
 
 		/// <summary>This is here only for backward deserialization compatibility. Do not use it.</summary>
 		private Altaxo.Data.IReadableColumn _deprecatedLabelColumn; // the label column
 
-		protected int _plotRangeStart = 0;
-		protected int _plotRangeLength = int.MaxValue;
+		/// <summary>
+		/// The selection of data rows to be plotted.
+		/// </summary>
+		protected IRowSelection _dataRowSelection = AllRows.Instance;
 
 		// cached or temporary data
 		protected IPhysicalBoundaries _xBoundaries;
@@ -271,6 +281,9 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old version is not allowed");
+				/*
+
 				XYColumnPlotData s = (XYColumnPlotData)obj;
 
 				info.AddValue("XColumn", s._xColumn);
@@ -278,6 +291,8 @@ namespace Altaxo.Graph.Plot.Data
 
 				info.AddValue("XBoundaries", s._xBoundaries);
 				info.AddValue("YBoundaries", s._yBoundaries);
+
+				*/
 			}
 
 			public virtual XYColumnPlotData SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -320,11 +335,14 @@ namespace Altaxo.Graph.Plot.Data
 		#region Xml 4 und 5
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYColumnPlotData", 4)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData), 5)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Plot.Data.XYColumnPlotData", 5)]
 		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old version is not allowed");
+
+				/*
 				XYColumnPlotData s = (XYColumnPlotData)obj;
 
 				info.AddValue("XColumn", s._xColumn);
@@ -335,6 +353,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				info.AddValue("RangeStart", s._plotRangeStart);
 				info.AddValue("RangeLength", s._plotRangeLength);
+				*/
 			}
 
 			public virtual XYColumnPlotData SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -353,8 +372,11 @@ namespace Altaxo.Graph.Plot.Data
 				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
 				if (null != s._yBoundaries) s._yBoundaries.ParentObject = s;
 
-				s._plotRangeStart = info.GetInt32("RangeStart");
-				s._plotRangeLength = info.GetInt32("RangeLength");
+				int rangeStart = info.GetInt32("RangeStart");
+				int rangeLength = info.GetInt32("RangeLength");
+
+				if (rangeStart < 0 || rangeLength != int.MaxValue)
+					s._dataRowSelection = new RangeOfRows(rangeStart, rangeLength);
 
 				return s;
 			}
@@ -383,6 +405,88 @@ namespace Altaxo.Graph.Plot.Data
 
 		#endregion Xml 4 und 5
 
+		#region Xml 6
+
+		/// <summary>
+		/// 2016-09-25 Added DataTable and GroupNumber. Changed from RangeStart and RangeLength to RowSelection
+		/// </summary>
+		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData), 6)]
+		private class XmlSerializationSurrogate6 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				XYColumnPlotData s = (XYColumnPlotData)obj;
+
+				info.AddValue("DataTable", s._dataTable);
+				info.AddValue("GroupNumber", s._groupNumber);
+				info.AddValue("RowSelection", s._dataRowSelection);
+
+				info.AddValue("XColumn", s._xColumn);
+				info.AddValue("YColumn", s._yColumn);
+
+				info.AddValue("XBoundaries", s._xBoundaries);
+				info.AddValue("YBoundaries", s._yBoundaries);
+			}
+
+			public virtual XYColumnPlotData SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (XYColumnPlotData)o ?? new XYColumnPlotData(info);
+
+				s._dataTable = (DataTableProxy)info.GetValue("DataTable", s);
+				if (null != s._dataTable) s._dataTable.ParentObject = s;
+
+				s._groupNumber = info.GetInt32("GroupNumber");
+
+				s._dataRowSelection = (IRowSelection)info.GetValue("RowSelection", s);
+
+				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
+				if (null != s._xColumn) s._xColumn.ParentObject = s;
+
+				s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", s);
+				if (null != s._yColumn) s._yColumn.ParentObject = s;
+
+				s._xBoundaries = (IPhysicalBoundaries)info.GetValue("XBoundaries", s);
+				if (null != s._xBoundaries) s._xBoundaries.ParentObject = s;
+
+				s._yBoundaries = (IPhysicalBoundaries)info.GetValue("YBoundaries", s);
+				if (null != s._yBoundaries) s._yBoundaries.ParentObject = s;
+
+				return s;
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				XYColumnPlotData s = SDeserialize(o, info, parent);
+				CreateEventChain(s);
+				return s;
+			}
+
+			public virtual void CreateEventChain(XYColumnPlotData s)
+			{
+				if (null != s._xColumn)
+					s._xColumn.ParentObject = s;
+				if (null != s._yColumn)
+					s._yColumn.ParentObject = s;
+
+				if (null != s._xBoundaries)
+					s._xBoundaries.ParentObject = s;
+
+				if (null != s._yBoundaries)
+					s._yBoundaries.ParentObject = s;
+			}
+		}
+
+		#endregion Xml 6
+
+		/// <summary>
+		/// Deserialization constructor. Initializes a new instance of the <see cref="XYZColumnPlotData"/> class without any member initialization.
+		/// </summary>
+		/// <param name="info">The information.</param>
+		protected XYColumnPlotData(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+		}
+
 		#endregion Serialization
 
 		public XYColumnPlotData(Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn)
@@ -405,11 +509,13 @@ namespace Altaxo.Graph.Plot.Data
 		/// <remarks>Only clones the references to the data columns, not the columns itself.</remarks>
 		public XYColumnPlotData(XYColumnPlotData from)
 		{
+			ChildCopyToMember(ref _dataTable, from._dataTable);
+			this._groupNumber = from._groupNumber;
+
+			this._dataRowSelection = from._dataRowSelection; // immutable
+
 			ChildCopyToMember(ref _xColumn, from._xColumn);
 			ChildCopyToMember(ref _yColumn, from._yColumn);
-
-			this._plotRangeStart = from._plotRangeStart;
-			this._plotRangeLength = from._plotRangeLength;
 
 			// cached or temporary data
 
@@ -426,6 +532,9 @@ namespace Altaxo.Graph.Plot.Data
 
 		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
+			if (null != _dataTable)
+				yield return new DocumentNodeAndName(_dataTable, "DataTable");
+
 			if (null != _xColumn)
 				yield return new Main.DocumentNodeAndName(_xColumn, "XColumn");
 
@@ -449,6 +558,67 @@ namespace Altaxo.Graph.Plot.Data
 			return new XYColumnPlotData(this);
 		}
 
+		public DataTable DataTable
+		{
+			get
+			{
+				return _dataTable?.Document;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (object.ReferenceEquals(DataTable, value))
+					return;
+
+				if (ChildSetMember(ref _dataTable, new DataTableProxy(value)))
+				{
+					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
+				}
+			}
+		}
+
+		public int GroupNumber
+		{
+			get
+			{
+				return _groupNumber;
+			}
+			set
+			{
+				_groupNumber = value;
+			}
+		}
+
+		/// <summary>
+		/// The selection of data rows to be plotted.
+		/// </summary>
+		public IRowSelection DataRowSelection
+		{
+			get
+			{
+				return _dataRowSelection;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (!_dataRowSelection.Equals(value))
+				{
+					_dataRowSelection = value;
+					_isCachedDataValidX = _isCachedDataValidY = false;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the name of the x column, depending on the provided level.
+		/// </summary>
+		/// <param name="level">The level (0..2).</param>
+		/// <returns>The name of the x-column, depending on the provided level: 0: only name of the data column. 1: table name and column name. 2: table name, collection, and column name.</returns>
 		public string GetXName(int level)
 		{
 			IReadableColumn col = this._xColumn.Document;
@@ -474,6 +644,11 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
+		/// <summary>
+		/// Gets the name of the y column, depending on the provided level.
+		/// </summary>
+		/// <param name="level">The level (0..2).</param>
+		/// <returns>The name of the y-column, depending on the provided level: 0: only name of the data column. 1: table name and column name. 2: table name, collection, and column name.</returns>
 		public string GetYName(int level)
 		{
 			IReadableColumn col = this._yColumn.Document;
@@ -577,19 +752,19 @@ namespace Altaxo.Graph.Plot.Data
 		}
 
 		/// <summary>
-		/// One more than the index to the last valid plot data point. This is <b>not</b>
-		/// the number of plottable points!
+		/// Gets the columns used additionally by this style, e.g. the label column for a label plot style, or the error columns for an error bar plot style.
 		/// </summary>
-		/// <remarks>This is not neccessarily (PlotRangeStart+PlotRangeLength), but always less or equal than this. This is because
-		/// the underlying arrays can be smaller than the proposed plot range.</remarks>
-		public int PlotRangeEnd
+		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
+		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
+		public IEnumerable<Tuple<
+			string, // Column label
+			IReadableColumn, // the column as it was at the time of this call
+			string, // the name of the column (last part of the column proxies document path)
+			Action<IReadableColumn> // action to set the column during Apply of the controller
+			>> GetAdditionallyUsedColumns()
 		{
-			get
-			{
-				if (!this._isCachedDataValidX || !_isCachedDataValidY)
-					this.CalculateCachedData();
-				return this._pointCount;
-			}
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(XColumn), XColumn, _xColumn?.DocumentPath?.LastPartOrDefault, (col) => XColumn = col);
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(YColumn), YColumn, _yColumn?.DocumentPath?.LastPartOrDefault, (col) => YColumn = col);
 		}
 
 		public Altaxo.Data.IReadableColumn XColumn
@@ -611,6 +786,14 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
+		public string XColumnName
+		{
+			get
+			{
+				return _xColumn?.DocumentPath?.LastPartOrDefault;
+			}
+		}
+
 		public Altaxo.Data.IReadableColumn YColumn
 		{
 			get
@@ -627,6 +810,14 @@ namespace Altaxo.Graph.Plot.Data
 					_isCachedDataValidX = _isCachedDataValidY = false; // this influences both x and y boundaries
 					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 				}
+			}
+		}
+
+		public string YColumnName
+		{
+			get
+			{
+				return _yColumn?.DocumentPath?.LastPartOrDefault;
 			}
 		}
 
@@ -667,6 +858,38 @@ namespace Altaxo.Graph.Plot.Data
 				CalculateCachedData();
 		}
 
+		/// <summary>
+		/// Gets the maximum row index that can be deduced from the data columns. The calculation does <b>not</b> include the DataRowSelection.
+		/// </summary>
+		/// <returns>The maximum row index that can be deduced from the data columns.</returns>
+		public int GetMaximumRowIndexFromDataColumns()
+		{
+			IReadableColumn xColumn = this.XColumn;
+			IReadableColumn yColumn = this.YColumn;
+
+			int maxRowIndex;
+
+			if (xColumn == null || yColumn == null)
+			{
+				maxRowIndex = 0;
+			}
+			else
+			{
+				maxRowIndex = int.MaxValue;
+
+				if (xColumn.Count.HasValue)
+					maxRowIndex = System.Math.Min(maxRowIndex, xColumn.Count.Value);
+				if (yColumn.Count.HasValue)
+					maxRowIndex = System.Math.Min(maxRowIndex, yColumn.Count.Value);
+
+				// if both columns are indefinite long, we set the length to zero
+				if (maxRowIndex == int.MaxValue || maxRowIndex < 0)
+					maxRowIndex = 0;
+			}
+
+			return maxRowIndex;
+		}
+
 		public void CalculateCachedData()
 		{
 			if (this.IsDisposeInProgress)
@@ -687,38 +910,17 @@ namespace Altaxo.Graph.Plot.Data
 				this._xBoundaries?.Reset();
 				this._yBoundaries?.Reset();
 
-				if (!(_plotRangeStart >= 0))
-					throw new InvalidProgramException();
-				if (!(_plotRangeLength >= 0))
-					throw new InvalidProgramException();
-
-				_pointCount = _plotRangeLength == int.MaxValue ? int.MaxValue : _plotRangeStart + _plotRangeLength;
+				_pointCount = GetMaximumRowIndexFromDataColumns();
 
 				IReadableColumn xColumn = this.XColumn;
 				IReadableColumn yColumn = this.YColumn;
 
-				if (xColumn == null || yColumn == null)
+				foreach (var rowIdx in _dataRowSelection.GetSelectedRowIndicesContinuouslyUpTo(_pointCount))
 				{
-					_pointCount = 0;
-				}
-				else
-				{
-					if (xColumn.Count.HasValue)
-						_pointCount = System.Math.Min(_pointCount, xColumn.Count.Value);
-					if (yColumn.Count.HasValue)
-						_pointCount = System.Math.Min(_pointCount, yColumn.Count.Value);
-
-					// if both columns are indefinite long, we set the length to zero
-					if (_pointCount == int.MaxValue || _pointCount < 0)
-						_pointCount = 0;
-
-					for (int i = _plotRangeStart; i < _pointCount; i++)
+					if (!xColumn.IsElementEmpty(rowIdx) && !yColumn.IsElementEmpty(rowIdx))
 					{
-						if (!xColumn.IsElementEmpty(i) && !yColumn.IsElementEmpty(i))
-						{
-							_xBoundaries?.Add(xColumn, i);
-							_yBoundaries?.Add(yColumn, i);
-						}
+						_xBoundaries?.Add(xColumn, rowIdx);
+						_yBoundaries?.Add(yColumn, rowIdx);
 					}
 				}
 
@@ -732,48 +934,6 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				suspendTokenX?.Resume();
 				suspendTokenY?.Resume();
-			}
-		}
-
-		/// <summary>
-		/// Number of the first point to plot.
-		/// </summary>
-		public int PlotRangeStart
-		{
-			get { return this._plotRangeStart; }
-			set
-			{
-				var oldValue = _plotRangeStart;
-				_plotRangeStart = value < 0 ? 0 : value;
-
-				if (_plotRangeStart != oldValue)
-				{
-					_isCachedDataValidX = _isCachedDataValidY = false;
-					EhSelfChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Length of the plot range. The last point of the plot range is PlotRangeStart+PlotRangeLength-1.
-		/// This is not the number of plottable points!
-		/// </summary>
-		public int PlotRangeLength
-		{
-			get
-			{
-				return this._plotRangeLength;
-			}
-			set
-			{
-				var oldValue = _plotRangeLength;
-				_plotRangeLength = value < 0 ? 0 : value;
-
-				if (_plotRangeLength != oldValue)
-				{
-					_isCachedDataValidX = _isCachedDataValidY = false;
-					EhSelfChanged(EventArgs.Empty);
-				}
 			}
 		}
 
@@ -834,10 +994,8 @@ namespace Altaxo.Graph.Plot.Data
 			// Fill the array with values
 			// only the points where x and y are not NaNs are plotted!
 
-			int i, j;
-
 			bool bInPlotSpace = true;
-			int rangeStart = 0;
+			int plotRangeStart = 0;
 			int rangeOffset = 0;
 			rangeList = new PlotRangeList();
 			result.RangeList = rangeList;
@@ -846,15 +1004,17 @@ namespace Altaxo.Graph.Plot.Data
 			Scale yAxis = layer.YAxis;
 			Gdi.G2DCoordinateSystem coordsys = layer.CoordinateSystem;
 
-			int len = this.PlotRangeEnd;
-			for (i = this.PlotRangeStart, j = 0; i < len; i++)
+			int maxRowIndex = GetMaximumRowIndexFromDataColumns();
+
+			int plotArrayIdx = 0;
+			foreach (int dataRowIdx in _dataRowSelection.GetSelectedRowIndicesContinuouslyUpTo(maxRowIndex))
 			{
-				if (xColumn.IsElementEmpty(i) || yColumn.IsElementEmpty(i))
+				if (xColumn.IsElementEmpty(dataRowIdx) || yColumn.IsElementEmpty(dataRowIdx))
 				{
 					if (!bInPlotSpace)
 					{
 						bInPlotSpace = true;
-						rangeList.Add(new PlotRange(rangeStart, j, rangeOffset));
+						rangeList.Add(new PlotRange(plotRangeStart, plotArrayIdx, rangeOffset));
 					}
 					continue;
 				}
@@ -862,8 +1022,8 @@ namespace Altaxo.Graph.Plot.Data
 				double x_rel, y_rel;
 				double xcoord, ycoord;
 
-				x_rel = xAxis.PhysicalVariantToNormal(xColumn[i]);
-				y_rel = yAxis.PhysicalVariantToNormal(yColumn[i]);
+				x_rel = xAxis.PhysicalVariantToNormal(xColumn[dataRowIdx]);
+				y_rel = yAxis.PhysicalVariantToNormal(yColumn[dataRowIdx]);
 
 				// chop relative values to an range of about -+ 10^6
 				if (x_rel > MaxRelativeValue)
@@ -884,25 +1044,25 @@ namespace Altaxo.Graph.Plot.Data
 					if (bInPlotSpace)
 					{
 						bInPlotSpace = false;
-						rangeStart = j;
-						rangeOffset = i - j;
+						plotRangeStart = plotArrayIdx;
+						rangeOffset = dataRowIdx - plotArrayIdx;
 					}
 					_tlsBufferedPlotData.Add(new PointF((float)xcoord, (float)ycoord));
-					j++;
+					plotArrayIdx++;
 				}
 				else
 				{
 					if (!bInPlotSpace)
 					{
 						bInPlotSpace = true;
-						rangeList.Add(new PlotRange(rangeStart, j, rangeOffset));
+						rangeList.Add(new PlotRange(plotRangeStart, plotArrayIdx, rangeOffset));
 					}
 				}
-			} // end for
+			} // end foreach
 			if (!bInPlotSpace)
 			{
 				bInPlotSpace = true;
-				rangeList.Add(new PlotRange(rangeStart, j, rangeOffset)); // add the last range
+				rangeList.Add(new PlotRange(plotRangeStart, plotArrayIdx, rangeOffset)); // add the last range
 			}
 
 			result.PlotPointsInAbsoluteLayerCoordinates = _tlsBufferedPlotData.ToArray();
@@ -989,5 +1149,79 @@ namespace Altaxo.Graph.Plot.Data
 		}
 
 		#endregion Change event handling
+
+		#region Obsolete
+
+		[Obsolete]
+		public int PlotRangeStart
+		{
+			get
+			{
+				if (_dataRowSelection is AllRows)
+					return 0;
+				else if (_dataRowSelection is RangeOfRows)
+					return ((RangeOfRows)_dataRowSelection).Start;
+				else
+					throw new NotImplementedException();
+			}
+			set
+			{
+				if (_dataRowSelection is AllRows)
+					_dataRowSelection = new RangeOfRows(value, int.MaxValue);
+				else if (_dataRowSelection is RangeOfRows)
+					_dataRowSelection = new RangeOfRows(value, ((RangeOfRows)_dataRowSelection).Count);
+				else
+					throw new NotImplementedException();
+
+				if (_dataRowSelection is RangeOfRows && ((RangeOfRows)_dataRowSelection).IsSpanningAllRows)
+					_dataRowSelection = AllRows.Instance;
+			}
+		}
+
+		[Obsolete]
+		public int PlotRangeLength
+		{
+			get
+			{
+				if (_dataRowSelection is AllRows)
+					return int.MaxValue;
+				else if (_dataRowSelection is RangeOfRows)
+					return ((RangeOfRows)_dataRowSelection).Count;
+				else
+					throw new NotImplementedException();
+			}
+			set
+			{
+				if (_dataRowSelection is AllRows)
+					_dataRowSelection = new RangeOfRows(0, value);
+				else if (_dataRowSelection is RangeOfRows)
+					_dataRowSelection = new RangeOfRows(((RangeOfRows)_dataRowSelection).Start, value);
+				else
+					throw new NotImplementedException();
+
+				if (_dataRowSelection is RangeOfRows && ((RangeOfRows)_dataRowSelection).IsSpanningAllRows)
+					_dataRowSelection = AllRows.Instance;
+			}
+		}
+
+		[Obsolete]
+		public int PlotRangeEnd
+		{
+			get
+			{
+				if (_dataRowSelection is AllRows)
+					return GetMaximumRowIndexFromDataColumns();
+				else if (_dataRowSelection is RangeOfRows)
+				{
+					int maxRowIndex1 = GetMaximumRowIndexFromDataColumns();
+					long maxRowIndex2 = (_dataRowSelection as RangeOfRows).Start + (long)(_dataRowSelection as RangeOfRows).Count;
+					return (int)Math.Min(maxRowIndex1, maxRowIndex2);
+				}
+				else
+					throw new NotImplementedException();
+			}
+		}
+
+		#endregion Obsolete
 	}
 }

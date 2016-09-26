@@ -26,33 +26,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Media;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
+namespace Altaxo.Gui.Graph.Plot.Data
 {
-	public static class DefaultSeverityColumnColors
+	public class PlotColumnTag
 	{
-		public static Brush NormalColor { get; set; } = Brushes.White;
-
-		public static Brush WarningColor { get; set; } = Brushes.Yellow;
-
-		public static Brush ErrorColor { get; set; } = Brushes.LightPink;
-
-		public static Brush GetSeverityColor(int severity)
+		public PlotColumnTag(int groupNumber, int columnNumber)
 		{
-			switch (severity)
-			{
-				case 0:
-					return NormalColor;
-
-				case 1:
-					return WarningColor;
-
-				case 2:
-					return ErrorColor;
-			}
-
-			return NormalColor;
+			GroupNumber = groupNumber;
+			ColumnNumber = columnNumber;
 		}
+
+		public int GroupNumber { get; private set; }
+		public int ColumnNumber { get; private set; }
 	}
 }

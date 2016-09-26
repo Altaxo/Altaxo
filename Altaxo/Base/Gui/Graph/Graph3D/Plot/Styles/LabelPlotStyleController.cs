@@ -33,6 +33,7 @@ using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Graph.Plot.Groups;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Graph3D.Plot.Data;
+using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Groups;
 using Altaxo.Main;
 using Altaxo.Units;

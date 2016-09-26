@@ -227,6 +227,9 @@
     <Compile Include="Data\DataTableProxy.cs" />
     <Compile Include="Data\ITransformedReadableColumn.cs" />
     <Compile Include="Data\IVariantToVariantTransformation.cs" />
+    <Compile Include="Data\Selections\IRowSelection.cs" />
+    <Compile Include="Data\Selections\AllRows.cs" />
+    <Compile Include="Data\Selections\RangeOfRows.cs" />
     <Compile Include="Data\Transformations\OffsetTransformation.cs" />
     <Compile Include="Data\Transformations\ScaleTransformation.cs" />
     <Compile Include="Data\Transformations\CompoundTransformation.cs" />
@@ -373,6 +376,7 @@
     <Compile Include="Graph\Graph3D\Plot\Styles\VectorCartesicPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\BarGraphPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ErrorBarPlotStyle.cs" />
+    <Compile Include="Graph\Plot\Data\IColumnPlotData.cs" />
     <Compile Include="Graph\Plot\Groups\BarShiftStrategy3D.cs" />
     <Compile Include="Graph\Plot\Groups\BarSizePosition3DGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\DashPatternGroupStyle.cs" />
@@ -568,10 +572,11 @@
     <Compile Include="Graph\Graph3D\GuiModels\RootLayerMarkersVisibility.cs" />
     <Compile Include="Gui\Drawing\D3D\PenAllPropertiesController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Plot\DataMeshPlotItemController.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Plot\Data\PlotColumnControlState.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Plot\Data\PlotColumnInformation.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Plot\Data\PlotColumnTag.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Plot\Data\XYZColumnPlotDataController.cs" />
+    <Compile Include="Gui\Graph\Plot\Data\ColumnPlotDataControllerBase.cs" />
+    <Compile Include="Gui\Graph\Plot\Data\PlotColumnControlState.cs" />
+    <Compile Include="Gui\Graph\Plot\Data\PlotColumnInformation.cs" />
+    <Compile Include="Gui\Graph\Plot\Data\PlotColumnTag.cs" />
+    <Compile Include="Gui\Graph\Plot\Data\XYZColumnPlotDataController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Plot\G3DPlotItemController.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorSetController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Plot\Groups\ScatterSymbolListController.cs" />

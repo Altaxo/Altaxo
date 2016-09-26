@@ -120,6 +120,23 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 			}
 		}
 
+		/// <summary>
+		/// We have to override GetSuspendTokenForControllerDocument here because we want to suspend the parent plot item collection instead of the plot item.
+		/// This is because we also want to change for instance the plot groups, or distribute style changes to other plot items.
+		/// </summary>
+		/// <returns>
+		/// The suspend token.
+		/// </returns>
+		protected override ISuspendToken GetSuspendTokenForControllerDocument()
+		{
+			if (null != _doc.ParentCollection)
+				return _doc.ParentCollection.SuspendGetToken();
+			else if (null != _doc)
+				return _doc.SuspendGetToken();
+			else
+				return null;
+		}
+
 		protected override void Initialize(bool initData)
 		{
 			base.Initialize(initData);

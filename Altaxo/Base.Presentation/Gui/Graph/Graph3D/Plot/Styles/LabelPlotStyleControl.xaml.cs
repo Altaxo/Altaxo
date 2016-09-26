@@ -30,6 +30,7 @@ using Altaxo.Gui.Drawing;
 using Altaxo.Gui.Drawing.D3D;
 using Altaxo.Gui.Graph.Graph3D.Background;
 using Altaxo.Gui.Graph.Graph3D.Plot.Data;
+using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Units;
 using System;
 using System.Collections.Generic;

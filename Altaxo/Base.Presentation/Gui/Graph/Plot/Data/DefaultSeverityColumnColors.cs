@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -22,28 +22,37 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
-using Altaxo.Data;
-using Altaxo.Graph.Plot.Data;
-using Altaxo.Gui.Graph.Plot.Data;
-using Altaxo.Main;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Text;
+using System.Windows.Media;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
+namespace Altaxo.Gui.Graph.Plot.Data
 {
-	/// <summary>
-	/// Summary description for LineScatterPlotDataController.
-	/// </summary>
-	[UserControllerForObject(typeof(XYColumnPlotData))]
-	[ExpectedTypeOfView(typeof(IColumnPlotDataView))]
-	public class XYColumnPlotDataController
-		:
-		ColumnPlotDataControllerBase<XYColumnPlotData>
+	public static class DefaultSeverityColumnColors
 	{
+		public static Brush NormalColor { get; set; } = Brushes.White;
+
+		public static Brush WarningColor { get; set; } = Brushes.Yellow;
+
+		public static Brush ErrorColor { get; set; } = Brushes.LightPink;
+
+		public static Brush GetSeverityColor(int severity)
+		{
+			switch (severity)
+			{
+				case 0:
+					return NormalColor;
+
+				case 1:
+					return WarningColor;
+
+				case 2:
+					return ErrorColor;
+			}
+
+			return NormalColor;
+		}
 	}
 }

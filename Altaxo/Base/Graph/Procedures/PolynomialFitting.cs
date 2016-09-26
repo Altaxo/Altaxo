@@ -76,9 +76,9 @@ namespace Altaxo.Graph.Procedures
 			Altaxo.Data.INumericColumn xcol = (Altaxo.Data.INumericColumn)data.XColumn;
 			Altaxo.Data.INumericColumn ycol = (Altaxo.Data.INumericColumn)data.YColumn;
 
-			int end = data.PlotRangeEnd;
+			int maxRowIndex = data.GetMaximumRowIndexFromDataColumns();
 
-			for (int i = data.PlotRangeStart; i < end; i++)
+			foreach (int i in data.DataRowSelection.GetSelectedRowIndicesContinuouslyUpTo(maxRowIndex))
 			{
 				double x = xcol[i];
 				double y = ycol[i];

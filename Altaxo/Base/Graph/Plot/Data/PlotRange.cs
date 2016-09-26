@@ -93,6 +93,12 @@ namespace Altaxo.Graph.Plot.Data
 			_offsetToOriginal = 0;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PlotRange"/> class.
+		/// </summary>
+		/// <param name="lower">The lower index of the range. This index designates a location in the plot point array. It is not a row index of the original data!</param>
+		/// <param name="upper">The upper index (one more than the last used) of the plot range.  This index designates a location in the plot point array. It is not a row index of the original data!</param>
+		/// <param name="offset">The offset to the data row index. Example: if lower is 10, and offset is 5, then the plot point at lower was created from the original row 15.</param>
 		public PlotRange(int lower, int upper, int offset)
 		{
 			_lowerBound = lower;

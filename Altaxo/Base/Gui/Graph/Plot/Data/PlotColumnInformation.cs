@@ -28,7 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
+namespace Altaxo.Gui.Graph.Plot.Data
 {
 	public class PlotColumnInformation
 	{

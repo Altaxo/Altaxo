@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -25,6 +25,7 @@
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Plot.Data;
+using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Main;
 using System;
 using System.Collections;
@@ -33,11 +34,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
+namespace Altaxo.Gui.Graph.Plot.Data
 {
 	#region Interfaces
 
-	public interface IXYZColumnPlotDataView
+	public interface IColumnPlotDataView
 	{
 		/// <summary>
 		/// Initialize the list of available tables.
@@ -179,19 +180,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 
 	#endregion Interfaces
 
-	/// <summary>
-	/// Summary description for LineScatterPlotDataController.
-	/// </summary>
-	[UserControllerForObject(typeof(XYZColumnPlotData))]
-	[ExpectedTypeOfView(typeof(IXYZColumnPlotDataView))]
-	public class XYZColumnPlotDataController
+	public abstract class ColumnPlotDataControllerBase<TModel>
 		:
-		MVCANControllerEditOriginalDocBase<XYZColumnPlotData, IXYZColumnPlotDataView>, IPlotColumnDataController
+		MVCANControllerEditOriginalDocBase<TModel, IColumnPlotDataView>, IPlotColumnDataController where TModel : IColumnPlotData
 	{
+		#region Inner classes
+
 		/// <summary>
 		/// Information about one plot item column.
 		/// </summary>
-		private class PlotColumnInformationInternal : PlotColumnInformation
+		protected class PlotColumnInformationInternal : PlotColumnInformation
 		{
 			/// <summary>Label that will be shown to indicate the column's function, e.g. "X" for an x-colum.</summary>
 			public string Label { get; set; }
@@ -210,13 +208,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 			}
 		}
 
-		private class GroupInfo
+		protected class GroupInfo
 		{
 			public string GroupName;
 			public List<PlotColumnInformationInternal> Columns = new List<PlotColumnInformationInternal>();
 		}
 
-		private class DataColumnSingleNode : NGTreeNode
+		protected class DataColumnSingleNode : NGTreeNode
 		{
 			private DataTable _table;
 			private string _toolTip = null;
@@ -270,7 +268,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 			}
 		}
 
-		private class DataColumnBundleNode : NGTreeNode
+		protected class DataColumnBundleNode : NGTreeNode
 		{
 			public const int MaxNumberOfColumnsInOneNode = 200;
 
@@ -320,37 +318,43 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 			}
 		}
 
-		private List<GroupInfo> _columnGroup;
+		#endregion Inner classes
 
-		private bool _isDirty = false;
+		#region Members
 
-		private int _plotRangeFrom;
-		private int _plotRangeTo;
+		protected List<GroupInfo> _columnGroup;
 
-		private int _maxPossiblePlotRangeTo;
+		protected bool _isDirty = false;
+
+		protected int _plotRangeFrom;
+		protected int _plotRangeTo;
+
+		protected int _maxPossiblePlotRangeTo;
 
 		/// <summary>All datatables of the document</summary>
-		private SelectableListNodeList _availableTables = new SelectableListNodeList();
+		protected SelectableListNodeList _availableTables = new SelectableListNodeList();
 
 		/// <summary>All data columns in the selected data table and with the selected group number.</summary>
-		private NGTreeNode _availableDataColumns = new NGTreeNode();
+		protected NGTreeNode _availableDataColumns = new NGTreeNode();
 
 		/// <summary>Other types of columns, e.g. constant columns, equally spaced columns and so on..</summary>
-		private SelectableListNodeList _otherAvailableColumns = new SelectableListNodeList();
+		protected SelectableListNodeList _otherAvailableColumns = new SelectableListNodeList();
 
 		/// <summary>All types of available column transformations.</summary>
-		private SelectableListNodeList _availableTransformations = new SelectableListNodeList();
+		protected SelectableListNodeList _availableTransformations = new SelectableListNodeList();
 
 		/// <summary>Tuples from tables and group numbers, for which the columns in that group contain all that column names which are currently plot columns in our controller.</summary>
-		private SelectableListNodeList _matchingTables = new SelectableListNodeList();
+		protected SelectableListNodeList _matchingTables = new SelectableListNodeList();
 
-		private SortedSet<int> _groupNumbersAll;
+		protected SortedSet<int> _groupNumbersAll;
 
 		/// <summary>Tasks which updates the _fittingTables.</summary>
-		private Task _updateMatchingTablesTask;
+		protected Task _updateMatchingTablesTask;
 
 		/// <summary>TokenSource to cancel the tasks which updates the _fittingTables.</summary>
-		private CancellationTokenSource _updateMatchingTablesTaskCancellationTokenSource = new CancellationTokenSource();
+		protected CancellationTokenSource _updateMatchingTablesTaskCancellationTokenSource = new CancellationTokenSource();
+
+		#endregion Members
 
 		#region Infrastructur Dispose and GetSubControllers
 
@@ -396,23 +400,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 				var docDataTable = _doc.DataTable;
 				var docGroupNumber = _doc.GroupNumber;
 
-				if (docDataTable == null)
+				var positionDataColumns = _doc.GetAdditionallyUsedColumns().ToArray();
+
+				// find data table if not already known ...
+				foreach (var entry in positionDataColumns)
 				{
-					docDataTable = DataTable.GetParentDataTableOf(_doc.XColumn as DataColumn);
-					if (null != docDataTable && docDataTable.DataColumns.ContainsColumn((DataColumn)_doc.XColumn))
-						docGroupNumber = docDataTable.DataColumns.GetColumnGroup((DataColumn)_doc.XColumn);
-				}
-				if (docDataTable == null)
-				{
-					docDataTable = DataTable.GetParentDataTableOf(_doc.YColumn as DataColumn);
-					if (null != docDataTable && docDataTable.DataColumns.ContainsColumn((DataColumn)_doc.YColumn))
-						docGroupNumber = docDataTable.DataColumns.GetColumnGroup((DataColumn)_doc.YColumn);
-				}
-				if (docDataTable == null)
-				{
-					docDataTable = DataTable.GetParentDataTableOf(_doc.ZColumn as DataColumn);
-					if (null != docDataTable && docDataTable.DataColumns.ContainsColumn((DataColumn)_doc.ZColumn))
-						docGroupNumber = docDataTable.DataColumns.GetColumnGroup((DataColumn)_doc.ZColumn);
+					if (docDataTable == null)
+					{
+						docDataTable = DataTable.GetParentDataTableOf(entry.Item2 as DataColumn);
+						if (null != docDataTable && docDataTable.DataColumns.ContainsColumn((DataColumn)entry.Item2))
+							docGroupNumber = docDataTable.DataColumns.GetColumnGroup((DataColumn)entry.Item2);
+					}
 				}
 
 				if (null != docDataTable)
@@ -427,16 +425,28 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 					_columnGroup = new List<GroupInfo>();
 
 				if (_columnGroup.Count == 0)
-					_columnGroup.Add(new GroupInfo { GroupName = "#0: data (X-Y-Z)" });
+				{
+					if (positionDataColumns.Length == 2)
+						_columnGroup.Add(new GroupInfo { GroupName = "#0: data (X-Y)" });
+					else if (positionDataColumns.Length == 3)
+						_columnGroup.Add(new GroupInfo { GroupName = "#0: data (X-Y-Z)" });
+					else
+						_columnGroup.Add(new GroupInfo { GroupName = "#0: position data" });
+				}
 				else
+				{
 					_columnGroup[0].Columns.Clear();
+				}
 
-				_columnGroup[0].Columns.Add(new PlotColumnInformationInternal(_doc.XColumn, _doc.XColumnName) { Label = "X", ColumnSetter = (column) => _doc.XColumn = column });
-				_columnGroup[0].Columns.Add(new PlotColumnInformationInternal(_doc.YColumn, _doc.YColumnName) { Label = "Y", ColumnSetter = (column) => _doc.YColumn = column });
-				_columnGroup[0].Columns.Add(new PlotColumnInformationInternal(_doc.ZColumn, _doc.ZColumnName) { Label = "Z", ColumnSetter = (column) => _doc.ZColumn = column });
+				foreach (var entry in positionDataColumns)
+				{
+					_columnGroup[0].Columns.Add(new PlotColumnInformationInternal(entry.Item2, entry.Item3) { Label = entry.Item1, ColumnSetter = entry.Item4 });
+				}
 
-				for (int i = 0; i < 3; ++i)
-					_columnGroup[0].Columns[i].Update(_doc.DataTable);
+				foreach (var entry in _columnGroup[0].Columns)
+				{
+					entry.Update(_doc.DataTable);
+				}
 
 				_plotRangeFrom = _doc.PlotRangeStart;
 				_plotRangeTo = _doc.PlotRangeLength == int.MaxValue ? int.MaxValue : _doc.PlotRangeStart + _doc.PlotRangeLength - 1;
@@ -643,50 +653,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 					info.Label
 
 					);
-			}
-		}
-
-		/// <summary>
-		/// Sets the additional columns that are used by some of the plot styles.
-		/// </summary>
-		/// <param name="additionalColumns">The additional columns. This is an enumerable of tuples, each tuple corresponding to one plot style.
-		/// The first item of this tuple is the plot style's number and name. The second item is another enumeration of tuples.
-		/// Each tuple in this second enumeration consist of the name of the column (first item) and a function which returns the column proxy which
-		/// can be used to get or set the underlying column.</param>
-		public void SetAdditionalPlotColumns(IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> additionalColumns)
-		{
-			int groupNumber = 0;
-			foreach (var group in additionalColumns)
-			{
-				++groupNumber;
-
-				if (!(groupNumber < _columnGroup.Count))
-				{
-					_columnGroup.Add(new GroupInfo() { GroupName = group.Item1 });
-				}
-				else
-				{
-					_columnGroup[groupNumber].GroupName = group.Item1;
-					_columnGroup[groupNumber].Columns.Clear();
-				}
-
-				foreach (var col in group.Item2)
-				{
-					var columnInfo = new PlotColumnInformationInternal(col.Item2, col.Item3)
-					{
-						Label = col.Item1,
-						ColumnSetter = col.Item4
-					};
-
-					columnInfo.Update(_doc.DataTable);
-					_columnGroup[groupNumber].Columns.Add(columnInfo);
-				}
-			}
-
-			if (null != _view)
-			{
-				View_PlotColumns_Initialize();
-				View_PlotColumns_UpdateAll();
 			}
 		}
 
@@ -1274,10 +1240,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 		private void CalcMaxPossiblePlotRangeTo()
 		{
 			int len = int.MaxValue;
-			for (int i = 0; i < 3; ++i)
+
+			foreach (var entry in _columnGroup[0].Columns)
 			{
-				if (true == _columnGroup[0].Columns[i].Column?.Count.HasValue)
-					len = Math.Min(len, _columnGroup[0].Columns[i].Column.Count.Value);
+				if (true == entry.Column?.Count.HasValue)
+					len = Math.Min(len, entry.Column.Count.Value);
 			}
 
 			_maxPossiblePlotRangeTo = len - 1;
@@ -1471,5 +1438,49 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 		}
 
 		#endregion ColumnDrop hander
+
+		/// <summary>
+		/// Sets the additional columns that are used by some of the plot styles.
+		/// </summary>
+		/// <param name="additionalColumns">The additional columns. This is an enumerable of tuples, each tuple corresponding to one plot style.
+		/// The first item of this tuple is the plot style's number and name. The second item is another enumeration of tuples.
+		/// Each tuple in this second enumeration consist of the name of the column (first item) and a function which returns the column proxy which
+		/// can be used to get or set the underlying column.</param>
+		public void SetAdditionalPlotColumns(IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> additionalColumns)
+		{
+			int groupNumber = 0;
+			foreach (var group in additionalColumns)
+			{
+				++groupNumber;
+
+				if (!(groupNumber < _columnGroup.Count))
+				{
+					_columnGroup.Add(new GroupInfo() { GroupName = group.Item1 });
+				}
+				else
+				{
+					_columnGroup[groupNumber].GroupName = group.Item1;
+					_columnGroup[groupNumber].Columns.Clear();
+				}
+
+				foreach (var col in group.Item2)
+				{
+					var columnInfo = new PlotColumnInformationInternal(col.Item2, col.Item3)
+					{
+						Label = col.Item1,
+						ColumnSetter = col.Item4
+					};
+
+					columnInfo.Update(_doc.DataTable);
+					_columnGroup[groupNumber].Columns.Add(columnInfo);
+				}
+			}
+
+			if (null != _view)
+			{
+				View_PlotColumns_Initialize();
+				View_PlotColumns_UpdateAll();
+			}
+		}
 	}
 }

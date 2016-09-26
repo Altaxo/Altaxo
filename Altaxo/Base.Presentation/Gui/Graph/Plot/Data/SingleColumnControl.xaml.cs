@@ -37,7 +37,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
+namespace Altaxo.Gui.Graph.Plot.Data
 {
 	/// <summary>
 	/// Interaction logic for SingleColumnControl.xaml

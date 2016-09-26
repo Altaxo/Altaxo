@@ -39,11 +39,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 	/// <summary>
 	/// Summary description for LineScatterPlotDataController.
 	/// </summary>
-	[UserControllerForObject(typeof(XYColumnPlotData))]
+	[UserControllerForObject(typeof(XYZColumnPlotData))]
 	[ExpectedTypeOfView(typeof(IColumnPlotDataView))]
-	public class XYColumnPlotDataController
+	public class XYZColumnPlotDataController
 		:
-		ColumnPlotDataControllerBase<XYColumnPlotData>
+		ColumnPlotDataControllerBase<XYZColumnPlotData>
 	{
 	}
 }

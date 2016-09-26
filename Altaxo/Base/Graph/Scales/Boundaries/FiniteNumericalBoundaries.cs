@@ -73,8 +73,9 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 		public override bool Add(Altaxo.Data.IReadableColumn col, int idx)
 		{
+			var v = col[idx];
 			// if column is not numeric, use the index instead
-			double d = (col is Altaxo.Data.INumericColumn) ? ((Altaxo.Data.INumericColumn)col)[idx] : idx;
+			double d = v.IsNativeNumeric ? v.ToDouble() : idx; // Note: string should _not_ convert to double, even if it represents a number!
 			return Add(d);
 		}
 

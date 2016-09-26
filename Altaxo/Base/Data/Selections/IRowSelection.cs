@@ -27,17 +27,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
+namespace Altaxo.Data.Selections
 {
-	public class PlotColumnTag
+	public interface IRowSelection
 	{
-		public PlotColumnTag(int groupNumber, int columnNumber)
-		{
-			GroupNumber = groupNumber;
-			ColumnNumber = columnNumber;
-		}
-
-		public int GroupNumber { get; private set; }
-		public int ColumnNumber { get; private set; }
+		/// <summary>
+		/// Gets the indices of the selected data rows.
+		/// </summary>
+		/// <value>
+		/// The indices of the selected data rows.
+		/// </value>
+		IEnumerable<int> GetSelectedRowIndicesContinuouslyUpTo(int maxCount);
 	}
 }

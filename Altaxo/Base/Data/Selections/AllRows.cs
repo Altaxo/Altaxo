@@ -27,12 +27,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
+namespace Altaxo.Data.Selections
 {
-	public enum PlotColumnControlState
+	public class AllRows : IRowSelection
 	{
-		Normal,
-		Warning,
-		Error
+		public static AllRows Instance { get; private set; } = new AllRows();
+
+		#region Serialization
+
+		/// <summary>
+		/// 2016-09-25 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AllRows), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				return AllRows.Instance;
+			}
+		}
+
+		#endregion Serialization
+
+		public IEnumerable<int> GetSelectedRowIndicesContinuouslyUpTo(int maxRowCount)
+		{
+			for (int r = 0; r < maxRowCount; ++r)
+				yield return r;
+		}
+
+		public override int GetHashCode()
+		{
+			return this.GetType().GetHashCode();
+		}
+
+		public override bool Equals(object obj)
+		{
+			return this.GetType() == obj?.GetType();
+		}
 	}
 }

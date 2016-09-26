@@ -307,6 +307,24 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
+		/// Gets a value indicating whether this instance holds a native numeric value,
+		/// as for instance of type double or DateTime.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is native numeric; otherwise, <c>false</c>.
+		/// </value>
+		public bool IsNativeNumeric
+		{
+			get
+			{
+				if (_typeOfContent == Content.VDouble || _typeOfContent == Content.VDateTime)
+					return true; // we can create a double from a double (trivial) and from DateTime
+				else
+					return false; // it is not possible to convert the contents to a double
+			}
+		}
+
+		/// <summary>
 		/// Converts the content to a double if possible. The structure remains unchanged.
 		/// </summary>
 		/// <returns>The contents converted to a double.</returns>

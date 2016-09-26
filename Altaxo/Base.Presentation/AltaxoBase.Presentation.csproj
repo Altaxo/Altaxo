@@ -589,11 +589,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Graph\Graph3D\Plot\Data\SingleColumnControl.xaml">
+    <Page Include="Gui\Graph\Plot\Data\SingleColumnControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\Graph3D\Plot\Data\XYZPlotDataControl.xaml">
+    <Page Include="Gui\Graph\Plot\Data\ColumnPlotDataControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1030,10 +1030,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Graph\Gdi\Axis\XYGridStyleControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Gui\Graph\Plot\Data\XYPlotDataControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1579,12 +1575,12 @@
       <DependentUpon>PenAllPropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\D3D\PenControlsGlue.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Plot\Data\DefaultSeverityColumnColors.cs" />
-    <Compile Include="Gui\Graph\Graph3D\Plot\Data\SingleColumnControl.xaml.cs">
+    <Compile Include="Gui\Graph\Plot\Data\DefaultSeverityColumnColors.cs" />
+    <Compile Include="Gui\Graph\Plot\Data\SingleColumnControl.xaml.cs">
       <DependentUpon>SingleColumnControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Graph3D\Plot\Data\XYZPlotDataControl.xaml.cs">
-      <DependentUpon>XYZPlotDataControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\Plot\Data\ColumnPlotDataControl.xaml.cs">
+      <DependentUpon>ColumnPlotDataControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Graph3D\Plot\G3DPlotItemControl.xaml.cs">
       <DependentUpon>G3DPlotItemControl.xaml</DependentUpon>
@@ -1925,9 +1921,6 @@
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Axis\XYGridStyleControl.xaml.cs">
       <DependentUpon>XYGridStyleControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Graph\Plot\Data\XYPlotDataControl.xaml.cs">
-      <DependentUpon>XYPlotDataControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\Groups\PlotGroupCollectionControlSimple.xaml.cs">
       <DependentUpon>PlotGroupCollectionControlSimple.xaml</DependentUpon>

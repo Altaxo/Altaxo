@@ -29,11 +29,12 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
+namespace Altaxo.Gui.Graph.Plot.Data
 {
 	using Altaxo.Collections;
 	using Common;
 	using GongSolutions.Wpf.DragDrop;
+	using Graph.Plot.Data;
 	using System.Collections;
 	using System.IO;
 	using System.Windows.Data;
@@ -43,9 +44,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 	using System.Xml;
 
 	/// <summary>
-	/// Interaction logic for XYPlotDataControl.xaml
+	/// Interaction logic for ColumnPlotDataControl.xaml
 	/// </summary>
-	public partial class XYZPlotDataControl : UserControl, IXYZColumnPlotDataView
+	public partial class ColumnPlotDataControl : UserControl, IColumnPlotDataView
 	{
 		public event Action SelectedTableChanged;
 
@@ -107,7 +108,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 
 		private ItemsControl _guiAvailableTableColumnsCurrentlyActive;
 
-		public XYZPlotDataControl()
+		public ColumnPlotDataControl()
 		{
 			InitializeComponent();
 		}
@@ -291,9 +292,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 
 		public class AvailableDataColumns_DragSource : IDragSource
 		{
-			private XYZPlotDataControl _parentControl;
+			private ColumnPlotDataControl _parentControl;
 
-			public AvailableDataColumns_DragSource(XYZPlotDataControl ctrl)
+			public AvailableDataColumns_DragSource(ColumnPlotDataControl ctrl)
 			{
 				_parentControl = ctrl;
 			}
@@ -346,9 +347,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 
 		public class OtherAvailableColumns_DragSource : IDragSource
 		{
-			private XYZPlotDataControl _parentControl;
+			private ColumnPlotDataControl _parentControl;
 
-			public OtherAvailableColumns_DragSource(XYZPlotDataControl ctrl)
+			public OtherAvailableColumns_DragSource(ColumnPlotDataControl ctrl)
 			{
 				_parentControl = ctrl;
 			}
@@ -401,9 +402,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 
 		public class AvailableTransformations_DragSource : IDragSource
 		{
-			private XYZPlotDataControl _parentControl;
+			private ColumnPlotDataControl _parentControl;
 
-			public AvailableTransformations_DragSource(XYZPlotDataControl ctrl)
+			public AvailableTransformations_DragSource(ColumnPlotDataControl ctrl)
 			{
 				_parentControl = ctrl;
 			}
@@ -456,9 +457,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 
 		public class ColumTextBoxes_DropTarget : IDropTarget
 		{
-			private XYZPlotDataControl _parentControl;
+			private ColumnPlotDataControl _parentControl;
 
-			public ColumTextBoxes_DropTarget(XYZPlotDataControl ctrl)
+			public ColumTextBoxes_DropTarget(ColumnPlotDataControl ctrl)
 			{
 				_parentControl = ctrl;
 			}
