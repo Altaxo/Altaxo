@@ -27,25 +27,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Data.Selections
+namespace Altaxo.Gui.Data.Selections
 {
-	public interface IRowSelection
+	using Altaxo.Data.Selections;
+
+	public interface IIntersectionOfRowSelectionView
 	{
-		/// <summary>
-		/// Gets the selected row indices continuously, beginning with no less than the start index and less than the maximum index.
-		/// </summary>
-		/// <param name="startIndex">The start index. Each row index that is returned has to be equal to or greater than this value.</param>
-		/// <param name="maxIndex">The maximum index.  Each row index that is returned has to be less than this value.</param>
-		/// <returns>The selected row indices, beginning with no less than the start index and less than the maximum index.</returns>
-		IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex);
 	}
 
-	public interface IRowSelectionCollection : IEnumerable<IRowSelection>, IRowSelection
+	[UserControllerForObject(typeof(IntersectionOfRowSelections), 100)]
+	[ExpectedTypeOfView(typeof(IIntersectionOfRowSelectionView))]
+	public class IntersectionOfRowSelectionsController : MVCANControllerEditImmutableDocBase<IntersectionOfRowSelections, IIntersectionOfRowSelectionView>
 	{
-		IRowSelectionCollection WithAdditionalItem(IRowSelection item);
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
-		IRowSelectionCollection WithChangedItem(int idx, IRowSelection item);
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
 
-		IRowSelectionCollection NewWithItems(IEnumerable<IRowSelection> items);
+			if (initData)
+			{
+			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			return ApplyEnd(true, disposeController);
+		}
 	}
 }

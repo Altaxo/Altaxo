@@ -1,0 +1,53 @@
+﻿<Grid x:Class="Altaxo.Gui.Data.Selections.RowSelectionItemControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Altaxo.Gui.Data.Selections"
+						xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             mc:Ignorable="d">
+	<Grid.Resources>
+		<ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
+	</Grid.Resources>
+	<Grid.ColumnDefinitions>
+		<ColumnDefinition Width="Auto" />
+		<ColumnDefinition  Width="*" />
+		<ColumnDefinition Width="Auto" />
+		<ColumnDefinition Width="Auto" />
+		<ColumnDefinition Width="Auto" />
+		<ColumnDefinition Width="Auto" />
+		<ColumnDefinition Width="Auto" />
+	</Grid.ColumnDefinitions>
+
+	<ComboBox x:Name="_guiRowSelectionType" Grid.Column="0"
+					 axogc:EventToCommandBinding.EventName0="SelectionChanged"
+					 axogc:EventToCommandBinding.Command0="{Binding SelectionChangedCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+					 axogc:EventToCommandBinding.CommandParameter0="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
+						ToolTip="Select the type of the item here." />
+
+	<Button Grid.Column="2"
+			Content="+"
+				Command="{Binding AddNewSelectionCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+				CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
+					ToolTip="Adds a new item." />
+
+	<Button Grid.Column="3" Margin="0"
+					Content="&lt;"
+					Command="{Binding UnindentSelectionCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+					CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
+					ToolTip="Unindents this items so that is is ungrouped and moved to the parent collection." />
+	<Button Grid.Column="4" Margin="0"
+				Content="&gt;"
+					Command="{Binding IndentSelectionCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+					CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
+					ToolTip="Indents this item so that this item gets grouped in a new collection." />
+
+	<Button Grid.Column="5"
+					Command="{Binding RemoveSelectionCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+					CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
+					ToolTip="Removes this item.">
+		<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+			<Path Style="{StaticResource RemoveCrossPathStyle}" />
+		</Viewbox>
+	</Button>
+</Grid>

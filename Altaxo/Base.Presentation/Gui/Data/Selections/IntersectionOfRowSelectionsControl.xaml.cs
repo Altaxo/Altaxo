@@ -26,26 +26,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-namespace Altaxo.Data.Selections
+namespace Altaxo.Gui.Data.Selections
 {
-	public interface IRowSelection
+	/// <summary>
+	/// Interaction logic for IntersectionOfRowSelectionsControl.xaml
+	/// </summary>
+	public partial class IntersectionOfRowSelectionsControl : UserControl, IIntersectionOfRowSelectionView
 	{
-		/// <summary>
-		/// Gets the selected row indices continuously, beginning with no less than the start index and less than the maximum index.
-		/// </summary>
-		/// <param name="startIndex">The start index. Each row index that is returned has to be equal to or greater than this value.</param>
-		/// <param name="maxIndex">The maximum index.  Each row index that is returned has to be less than this value.</param>
-		/// <returns>The selected row indices, beginning with no less than the start index and less than the maximum index.</returns>
-		IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex);
-	}
-
-	public interface IRowSelectionCollection : IEnumerable<IRowSelection>, IRowSelection
-	{
-		IRowSelectionCollection WithAdditionalItem(IRowSelection item);
-
-		IRowSelectionCollection WithChangedItem(int idx, IRowSelection item);
-
-		IRowSelectionCollection NewWithItems(IEnumerable<IRowSelection> items);
+		public IntersectionOfRowSelectionsControl()
+		{
+			InitializeComponent();
+		}
 	}
 }

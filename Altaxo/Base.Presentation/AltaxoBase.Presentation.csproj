@@ -225,6 +225,26 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Data\Selections\IntersectionOfRowSelectionsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Data\Selections\AllRowsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Data\Selections\RangeOfRowsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Data\Selections\RowSelectionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Data\Selections\RowSelectionItemControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Drawing\D3D\DashStyleComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1153,6 +1173,21 @@
     </Compile>
     <Compile Include="Gui\Common\Converters\BindingConverter.cs" />
     <Compile Include="Gui\Common\Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Gui\Data\Selections\IntersectionOfRowSelectionsControl.xaml.cs">
+      <DependentUpon>IntersectionOfRowSelectionsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\Selections\AllRowsControl.xaml.cs">
+      <DependentUpon>AllRowsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\Selections\RangeOfRowsControl.xaml.cs">
+      <DependentUpon>RangeOfRowsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\Selections\RowSelectionControl.xaml.cs">
+      <DependentUpon>RowSelectionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\Selections\RowSelectionItemControl.xaml.cs">
+      <DependentUpon>RowSelectionItemControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternComboBox.xaml.cs">
       <DependentUpon>DashPatternComboBox.xaml</DependentUpon>
     </Compile>

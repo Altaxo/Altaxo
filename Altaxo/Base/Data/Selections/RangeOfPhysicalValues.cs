@@ -76,6 +76,15 @@ namespace Altaxo.Data.Selections
 
 		#endregion Serialization
 
+		public RangeOfPhysicalValues()
+		{
+			_lowerValue = 0;
+			_isLowerInclusive = true;
+			_upperValue = 1;
+			_isUpperInclusive = true;
+			_columnProxy = null;
+		}
+
 		/// <summary>
 		/// Deserialization constructor. Initializes a new instance of the <see cref="RangeOfPhysicalValues"/> class.
 		/// </summary>

@@ -23,13 +23,14 @@
 #endregion Copyright
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Altaxo.Data.Selections
 {
-	public class IntersectionOfRowSelections : IRowSelection
+	public class IntersectionOfRowSelections : IRowSelection, IRowSelectionCollection
 	{
 		private List<IRowSelection> _rowSelections = new List<IRowSelection>();
 
@@ -75,6 +76,23 @@ namespace Altaxo.Data.Selections
 		protected IntersectionOfRowSelections(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, List<IRowSelection> list)
 		{
 			_rowSelections = list;
+		}
+
+		public IntersectionOfRowSelections()
+		{
+			_rowSelections = new List<IRowSelection>();
+		}
+
+		public IntersectionOfRowSelections(IEnumerable<IRowSelection> rowSelections)
+		{
+			_rowSelections = new List<IRowSelection>(rowSelections);
+		}
+
+		public IntersectionOfRowSelections(IEnumerable<IRowSelection> rowSelectionsHead, IRowSelection selection, IEnumerable<IRowSelection> rowSelectionTail)
+		{
+			_rowSelections = new List<IRowSelection>(rowSelectionsHead);
+			_rowSelections.Add(selection);
+			_rowSelections.AddRange(rowSelectionTail);
 		}
 
 		/// <inheritdoc/>
@@ -134,6 +152,31 @@ namespace Altaxo.Data.Selections
 			{
 				_enumerators[i].Dispose();
 			}
+		}
+
+		public IRowSelectionCollection WithAdditionalItem(IRowSelection item)
+		{
+			return new IntersectionOfRowSelections(_rowSelections.Concat(new[] { item }));
+		}
+
+		public IRowSelectionCollection WithChangedItem(int idx, IRowSelection item)
+		{
+			return new IntersectionOfRowSelections(_rowSelections.Take(idx), item, _rowSelections.Skip(idx + 1));
+		}
+
+		public IEnumerator<IRowSelection> GetEnumerator()
+		{
+			return _rowSelections.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return _rowSelections.GetEnumerator();
+		}
+
+		public IRowSelectionCollection NewWithItems(IEnumerable<IRowSelection> items)
+		{
+			return new IntersectionOfRowSelections(items);
 		}
 	}
 }

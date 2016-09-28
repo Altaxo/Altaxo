@@ -67,7 +67,7 @@ namespace Altaxo.Gui.Common
 		{
 			var command = GetCommand0(sender as DependencyObject);
 			var commandParameter = GetCommandParameter0(sender as DependencyObject);
-			command.Execute(commandParameter);
+			command?.Execute(commandParameter);
 		}
 
 		public static readonly DependencyProperty EventNameProperty0 =

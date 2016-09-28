@@ -27,25 +27,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Data.Selections
+namespace Altaxo.Gui.Data.Selections
 {
-	public interface IRowSelection
+	using Altaxo.Data.Selections;
+
+	public interface IRangeOfRowsView
 	{
-		/// <summary>
-		/// Gets the selected row indices continuously, beginning with no less than the start index and less than the maximum index.
-		/// </summary>
-		/// <param name="startIndex">The start index. Each row index that is returned has to be equal to or greater than this value.</param>
-		/// <param name="maxIndex">The maximum index.  Each row index that is returned has to be less than this value.</param>
-		/// <returns>The selected row indices, beginning with no less than the start index and less than the maximum index.</returns>
-		IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex);
+		int RangeStart { get; set; }
+		int RangeEndInclusive { get; set; }
 	}
 
-	public interface IRowSelectionCollection : IEnumerable<IRowSelection>, IRowSelection
+	[UserControllerForObject(typeof(RangeOfRows), 100)]
+	[ExpectedTypeOfView(typeof(IRangeOfRowsView))]
+	public class RangeOfRowsController : MVCANControllerEditImmutableDocBase<RangeOfRows, IRangeOfRowsView>
 	{
-		IRowSelectionCollection WithAdditionalItem(IRowSelection item);
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			yield break;
+		}
 
-		IRowSelectionCollection WithChangedItem(int idx, IRowSelection item);
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
 
-		IRowSelectionCollection NewWithItems(IEnumerable<IRowSelection> items);
+			if (initData)
+			{
+			}
+			if (null != _view)
+			{
+				_view.RangeStart = _doc.Start;
+				_view.RangeEndInclusive = _doc.EndInclusive;
+			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			int start = _view.RangeStart;
+			int endIncl = _view.RangeEndInclusive;
+			int count = (endIncl - start) + 1;
+
+			_doc = new RangeOfRows(start, count);
+
+			return ApplyEnd(true, disposeController);
+		}
 	}
 }

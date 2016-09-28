@@ -549,6 +549,10 @@
     <Compile Include="Gui\Data\ExpandCyclingVariableOptionsController.cs" />
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceController.cs" />
     <Compile Include="Gui\Data\OtherColumnsController.cs" />
+    <Compile Include="Gui\Data\Selections\IntersectionOfRowSelectionsController.cs" />
+    <Compile Include="Gui\Data\Selections\AllRowsController.cs" />
+    <Compile Include="Gui\Data\Selections\RangeOfRowsController.cs" />
+    <Compile Include="Gui\Data\Selections\RowSelectionController.cs" />
     <Compile Include="Gui\Data\Transformations\VariantToVariantTransformationController.cs" />
     <Compile Include="Gui\DragDropDelegateTypes.cs" />
     <Compile Include="Gui\Drawing\D3D\MaterialController.cs" />

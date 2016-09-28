@@ -70,10 +70,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		public event Action<PlotColumnTag> Transformation_Erase;
 
-		public event Action<int> RangeFromChanged;
-
-		public event Action<int> RangeToChanged;
-
 		public event Action<int> SelectedGroupNumberChanged;
 
 		public event Action SelectedMatchingTableChanged;
@@ -177,16 +173,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			sgc.ShowTransformationSinglePrependAppendPopup(true);
 		}
 
-		private void EhPlotRangeFrom_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
-		{
-			RangeFromChanged?.Invoke(this._guiPlotRangeFrom.Value);
-		}
-
-		private void EhPlotRangeTo_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
-		{
-			RangeToChanged?.Invoke(this._guiPlotRangeTo.Value);
-		}
-
 		#region IXYColumnPlotDataView
 
 		public void AvailableTables_Initialize(SelectableListNodeList items)
@@ -246,20 +232,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		public void AvailableTransformations_Initialize(SelectableListNodeList items)
 		{
 			GuiHelper.Initialize(_guiAvailableTransformations, items);
-		}
-
-		public void PlotRangeFrom_Initialize(int from)
-		{
-			this._guiPlotRangeFrom.Minimum = 0;
-			this._guiPlotRangeFrom.Maximum = int.MaxValue;
-			this._guiPlotRangeFrom.Value = from;
-		}
-
-		public void PlotRangeTo_Initialize(int to)
-		{
-			this._guiPlotRangeTo.Minimum = 0;
-			this._guiPlotRangeTo.Maximum = int.MaxValue;
-			this._guiPlotRangeTo.Value = Math.Max(0, to);
 		}
 
 		#endregion IXYColumnPlotDataView
@@ -705,6 +677,14 @@ namespace Altaxo.Gui.Graph.Plot.Data
 				if (this._transformationAddAsAppendingCommand == null)
 					this._transformationAddAsAppendingCommand = new RelayCommand(EhTransformationAddAsAppendingCommand);
 				return _transformationAddAsAppendingCommand;
+			}
+		}
+
+		public object RowSelectionGuiControl
+		{
+			set
+			{
+				_guiPlotRange.Content = value;
 			}
 		}
 

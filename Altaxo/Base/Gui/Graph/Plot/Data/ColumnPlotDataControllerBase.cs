@@ -24,7 +24,9 @@
 
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Data.Selections;
 using Altaxo.Graph.Plot.Data;
+using Altaxo.Gui.Data.Selections;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Main;
 using System;
@@ -67,6 +69,14 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		void MatchingTables_Initialize(SelectableListNodeList items);
 
 		/// <summary>
+		/// Sets the row selection GUI control.
+		/// </summary>
+		/// <value>
+		/// The row selection GUI control.
+		/// </value>
+		object RowSelectionGuiControl { set; }
+
+		/// <summary>
 		/// Initialize the list of columns needed by the plot item. This is organized into groups, each group corresponding to
 		/// one plot style that needs data columns.
 		/// </summary>
@@ -99,10 +109,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		void GroupNumber_Initialize(IEnumerable<int> availableGroupNumbers, int groupNumber, bool isEnabled);
 
-		void PlotRangeFrom_Initialize(int from);
-
-		void PlotRangeTo_Initialize(int to);
-
 		event Action SelectedTableChanged;
 
 		event Action SelectedMatchingTableChanged;
@@ -128,10 +134,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		event Action<PlotColumnTag> Transformation_Edit;
 
 		event Action<PlotColumnTag> Transformation_Erase;
-
-		event Action<int> RangeFromChanged;
-
-		event Action<int> RangeToChanged;
 
 		event CanStartDragDelegate AvailableTableColumns_CanStartDrag;
 
@@ -326,11 +328,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		protected bool _isDirty = false;
 
-		protected int _plotRangeFrom;
-		protected int _plotRangeTo;
-
-		protected int _maxPossiblePlotRangeTo;
-
 		/// <summary>All datatables of the document</summary>
 		protected SelectableListNodeList _availableTables = new SelectableListNodeList();
 
@@ -351,6 +348,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		/// <summary>Tasks which updates the _fittingTables.</summary>
 		protected Task _updateMatchingTablesTask;
 
+		protected RowSelectionController _rowSelectionController;
+
 		/// <summary>TokenSource to cancel the tasks which updates the _fittingTables.</summary>
 		protected CancellationTokenSource _updateMatchingTablesTaskCancellationTokenSource = new CancellationTokenSource();
 
@@ -360,7 +359,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			yield break;
+			yield return new ControllerAndSetNullMethod(_rowSelectionController, () => _rowSelectionController = null);
 		}
 
 		public override void Dispose(bool isDisposing)
@@ -448,9 +447,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 					entry.Update(_doc.DataTable);
 				}
 
-				_plotRangeFrom = _doc.PlotRangeStart;
-				_plotRangeTo = _doc.PlotRangeLength == int.MaxValue ? int.MaxValue : _doc.PlotRangeStart + _doc.PlotRangeLength - 1;
-				CalcMaxPossiblePlotRangeTo();
+				_rowSelectionController = new RowSelectionController();
+				_rowSelectionController.InitializeDocument(_doc.DataRowSelection);
+				Current.Gui.FindAndAttachControlTo(_rowSelectionController);
 
 				// Initialize tables
 				string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
@@ -486,8 +485,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 				View_PlotColumns_Initialize();
 				View_PlotColumns_UpdateAll();
 
-				_view.PlotRangeFrom_Initialize(_plotRangeFrom);
-				CalcMaxPossiblePlotRangeTo();
+				_view.RowSelectionGuiControl = _rowSelectionController.ViewObject;
 
 				_view.OtherAvailableColumns_Initialize(_otherAvailableColumns);
 
@@ -504,11 +502,13 @@ namespace Altaxo.Gui.Graph.Plot.Data
 				for (int i = 0; i < _columnGroup.Count; ++i)
 					for (int j = 0; j < _columnGroup[i].Columns.Count; ++j)
 						_columnGroup[i].Columns[j].ColumnSetter(_columnGroup[i].Columns[j].Column);
-
-				_doc.PlotRangeStart = this._plotRangeFrom;
-				_doc.PlotRangeLength = this._plotRangeTo >= this._maxPossiblePlotRangeTo ? int.MaxValue : this._plotRangeTo + 1 - this._plotRangeFrom;
 			}
 			_isDirty = false;
+
+			if (!_rowSelectionController.Apply(disposeController))
+				return ApplyEnd(false, disposeController);
+
+			_doc.DataRowSelection = (IRowSelection)(_rowSelectionController.ModelObject);
 
 			return ApplyEnd(true, disposeController);
 		}
@@ -540,10 +540,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			_view.Transformation_Edit += EhView_TransformationEdit;
 
 			_view.Transformation_Erase += EhView_TransformationErase;
-
-			_view.RangeFromChanged += EhView_RangeFrom;
-
-			_view.RangeToChanged += EhView_RangeTo;
 
 			_view.SelectedGroupNumberChanged += EhGroupNumberChanged;
 
@@ -591,10 +587,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			_view.Transformation_Edit -= EhView_TransformationEdit;
 
 			_view.Transformation_Erase -= EhView_TransformationErase;
-
-			_view.RangeFromChanged -= EhView_RangeFrom;
-
-			_view.RangeToChanged -= EhView_RangeTo;
 
 			_view.SelectedGroupNumberChanged -= EhGroupNumberChanged;
 
@@ -1222,37 +1214,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		}
 
 		#endregion Transformation
-
-		#region Range
-
-		public void EhView_RangeFrom(int val)
-		{
-			SetDirty();
-			this._plotRangeFrom = val;
-		}
-
-		public void EhView_RangeTo(int val)
-		{
-			SetDirty();
-			this._plotRangeTo = val;
-		}
-
-		private void CalcMaxPossiblePlotRangeTo()
-		{
-			int len = int.MaxValue;
-
-			foreach (var entry in _columnGroup[0].Columns)
-			{
-				if (true == entry.Column?.Count.HasValue)
-					len = Math.Min(len, entry.Column.Count.Value);
-			}
-
-			_maxPossiblePlotRangeTo = len - 1;
-
-			_view?.PlotRangeTo_Initialize(Math.Min(this._plotRangeTo, _maxPossiblePlotRangeTo));
-		}
-
-		#endregion Range
 
 		#region AvailableDataColumns drag handler
 

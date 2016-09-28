@@ -26,52 +26,64 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-namespace Altaxo.Data.Selections
+namespace Altaxo.Gui.Data.Selections
 {
-	public class AllRows : IRowSelection
+	/// <summary>
+	/// Interaction logic for RangeOfRowsControl.xaml
+	/// </summary>
+	public partial class RangeOfRowsControl : UserControl, IRangeOfRowsView
 	{
-		public static AllRows Instance { get; private set; } = new AllRows();
-
-		#region Serialization
-
-		/// <summary>
-		/// 2016-09-25 initial version.
-		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AllRows), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		public RangeOfRowsControl()
 		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			InitializeComponent();
+		}
+
+		public int RangeEndInclusive
+		{
+			get
 			{
+				return _guiPlotRangeTo.Value;
 			}
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			set
 			{
-				return AllRows.Instance;
+				_guiPlotRangeTo.Minimum = 0;
+				_guiPlotRangeTo.Maximum = int.MaxValue;
+				_guiPlotRangeTo.Value = Math.Max(_guiPlotRangeFrom.Value, value);
 			}
 		}
 
-		#endregion Serialization
+		public int RangeStart
+		{
+			get
+			{
+				return _guiPlotRangeFrom.Value;
+			}
 
-		public AllRows()
+			set
+			{
+				_guiPlotRangeTo.Minimum = 0;
+				_guiPlotRangeTo.Maximum = int.MaxValue;
+				_guiPlotRangeFrom.Value = value;
+			}
+		}
+
+		private void EhPlotRangeFrom_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
 		{
 		}
 
-		/// <inheritdoc/>
-		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex)
+		private void EhPlotRangeTo_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
 		{
-			for (int r = startIndex; r < maxIndex; ++r)
-				yield return r;
-		}
-
-		public override int GetHashCode()
-		{
-			return this.GetType().GetHashCode();
-		}
-
-		public override bool Equals(object obj)
-		{
-			return this.GetType() == obj?.GetType();
 		}
 	}
 }

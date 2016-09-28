@@ -40,25 +40,17 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 
-		<Label Content="Table: " Grid.Row="0" Grid.Column="0" />
-		<Label Content="GroupNumber: " Grid.Row="0" Grid.Column="2" />
+		<StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
+			<Label Content="Table: " />
+			<ComboBox x:Name="_cbTables" SelectionChanged="EhTables_SelectionChangeCommit" ToolTip="Choose among all available tables, then select a group number." />
+		</StackPanel>
 
-		<ComboBox x:Name="_cbTables"  Grid.Row="1" Grid.Column="0" SelectionChanged="EhTables_SelectionChangeCommit" ToolTip="Choose among all available tables, then select a group number." />
-		<axogc:Int32ListUpDown x:Name="_guiGroupNumber" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" MinWidth="80" Margin="6,0,0,0"  Minimum="0" IsGotoMinimumAndMaximumVisible="False" ValueChanged="EhGroupNumber_Changed" />
+		<StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2">
+			<Label Content="GroupNumber: " />
+			<axogc:Int32ListUpDown x:Name="_guiGroupNumber" HorizontalAlignment="Left" MinWidth="80" Margin="6,0,0,0"  Minimum="0" IsGotoMinimumAndMaximumVisible="False" ValueChanged="EhGroupNumber_Changed" />
+		</StackPanel>
 
-		<GroupBox Header="Plot Range:" Grid.Row="0" Grid.RowSpan="2" Grid.Column="4" Margin="0,6,0,0"  Padding="0,4,0,0" VerticalAlignment="Top">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-				<Label Grid.Column="0" Content="From:" />
-				<axogc:Int32UpDown x:Name="_guiPlotRangeFrom" Grid.Column="1" Minimum="0" Change="1"  IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhPlotRangeFrom_Validating" />
-				<Label  Grid.Column="2" Content="To:" />
-				<axogc:Int32UpDown x:Name="_guiPlotRangeTo" Grid.Column="3" Minimum="0" Change="1" MaximumReplacementText="Maximum" ValueIfTextIsEmpty="{Binding RelativeSource={RelativeSource Self}, Path=Maximum}" IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhPlotRangeTo_Validating" />
-			</Grid>
+		<GroupBox x:Name="_guiPlotRange" Header="Plot Range:" Grid.Row="0" Grid.RowSpan="2" Grid.Column="4" Margin="0,6,0,0"  Padding="0,4,0,0" VerticalAlignment="Top">
 		</GroupBox>
 
 		<Label Content="Available columns: " Grid.Row="3" Grid.Column="0" />

@@ -35,6 +35,20 @@ namespace Altaxo.Data.Selections
 
 		public int Count { get; private set; }
 
+		/// <summary>
+		/// Gets the end of the range (the index of the last data row that will be plotted).
+		/// </summary>
+		/// <value>
+		/// The end of the range (inclusive).
+		/// </value>
+		public int EndInclusive
+		{
+			get
+			{
+				return Start + Math.Min(int.MaxValue - Start, Count - 1);
+			}
+		}
+
 		#region Serialization
 
 		/// <summary>
@@ -61,14 +75,10 @@ namespace Altaxo.Data.Selections
 
 		#endregion Serialization
 
-		/// <inheritdoc/>
-		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex)
+		public RangeOfRows()
 		{
-			int end = Start + Math.Min(Count, maxIndex - Start); // mathematical trick to avoid overflow if Count is int.MaximumValue
-			int start = Math.Max(Start, startIndex);
-
-			for (int r = start; r < end; ++r)
-				yield return r;
+			Start = 0;
+			Count = int.MaxValue;
 		}
 
 		public RangeOfRows(int start, int count)
@@ -80,6 +90,16 @@ namespace Altaxo.Data.Selections
 
 			Start = start;
 			Count = count;
+		}
+
+		/// <inheritdoc/>
+		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex)
+		{
+			int end = Start + Math.Min(Count, maxIndex - Start); // mathematical trick to avoid overflow if Count is int.MaximumValue
+			int start = Math.Max(Start, startIndex);
+
+			for (int r = start; r < end; ++r)
+				yield return r;
 		}
 
 		/// <summary>
