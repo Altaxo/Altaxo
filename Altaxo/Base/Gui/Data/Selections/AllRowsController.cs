@@ -55,8 +55,6 @@ namespace Altaxo.Gui.Data.Selections
 
 		public override bool Apply(bool disposeController)
 		{
-			_doc = AllRows.Instance;
-
 			return ApplyEnd(true, disposeController);
 		}
 	}

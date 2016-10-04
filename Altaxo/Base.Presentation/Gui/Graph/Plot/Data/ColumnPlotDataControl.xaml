@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
-						 xmlns:local="clr-namespace:Altaxo.Gui.Graph.Graph3D.Plot.Data"
+						 xmlns:local="clr-namespace:Altaxo.Gui.Graph.Plot.Data"
  						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
              mc:Ignorable="d">
 	<UserControl.Resources>

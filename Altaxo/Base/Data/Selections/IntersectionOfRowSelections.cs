@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Main;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ using System.Text;
 
 namespace Altaxo.Data.Selections
 {
-	public class IntersectionOfRowSelections : IRowSelection, IRowSelectionCollection
+	public class IntersectionOfRowSelections : Main.SuspendableDocumentNodeWithEventArgs, IRowSelection, IRowSelectionCollection
 	{
 		private List<IRowSelection> _rowSelections = new List<IRowSelection>();
 
@@ -85,14 +86,25 @@ namespace Altaxo.Data.Selections
 
 		public IntersectionOfRowSelections(IEnumerable<IRowSelection> rowSelections)
 		{
-			_rowSelections = new List<IRowSelection>(rowSelections);
+			_rowSelections = new List<IRowSelection>(rowSelections.Select(item => { var result = (IRowSelection)item.Clone(); item.ParentObject = this; return item; }));
 		}
 
 		public IntersectionOfRowSelections(IEnumerable<IRowSelection> rowSelectionsHead, IRowSelection selection, IEnumerable<IRowSelection> rowSelectionTail)
 		{
-			_rowSelections = new List<IRowSelection>(rowSelectionsHead);
-			_rowSelections.Add(selection);
-			_rowSelections.AddRange(rowSelectionTail);
+			_rowSelections = new List<IRowSelection>(rowSelectionsHead.Select(item => { var result = (IRowSelection)item.Clone(); item.ParentObject = this; return item; }));
+
+			{
+				var item = (IRowSelection)selection.Clone();
+				item.ParentObject = this;
+				_rowSelections.Add(item);
+			}
+
+			_rowSelections.AddRange(rowSelectionTail.Select(item => { var result = (IRowSelection)item.Clone(); item.ParentObject = this; return item; }));
+		}
+
+		public object Clone()
+		{
+			return new IntersectionOfRowSelections(this);
 		}
 
 		/// <inheritdoc/>
@@ -177,6 +189,14 @@ namespace Altaxo.Data.Selections
 		public IRowSelectionCollection NewWithItems(IEnumerable<IRowSelection> items)
 		{
 			return new IntersectionOfRowSelections(items);
+		}
+
+		protected override IEnumerable<DocumentNodeAndName> GetDocumentNodeChildrenWithName()
+		{
+			for (int i = 0; i < _rowSelections.Count; ++i)
+			{
+				yield return new DocumentNodeAndName(_rowSelections[i], () => _rowSelections[i] = null, string.Format("RowSelection[{i}], i"));
+			}
 		}
 	}
 }

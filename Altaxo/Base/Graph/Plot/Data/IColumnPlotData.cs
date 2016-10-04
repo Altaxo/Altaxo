@@ -61,9 +61,9 @@ namespace Altaxo.Graph.Plot.Data
 	>> GetAdditionallyUsedColumns();
 
 		[Obsolete]
-		int PlotRangeStart { get; set; }
+		int PlotRangeStart { get; }
 
 		[Obsolete]
-		int PlotRangeLength { get; set; }
+		int PlotRangeLength { get; }
 	}
 }

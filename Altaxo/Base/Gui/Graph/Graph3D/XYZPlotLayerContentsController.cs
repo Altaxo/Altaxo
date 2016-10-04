@@ -800,8 +800,8 @@ namespace Altaxo.Gui.Graph.Graph3D
 				var pi = node.Tag as XYZColumnPlotItem;
 				if (pi == null)
 					continue;
-				pi.Data.PlotRangeStart = range.Start;
-				pi.Data.PlotRangeLength = range.Count;
+
+				pi.Data.DataRowSelection = new Altaxo.Data.Selections.RangeOfRows(range.Start, range.Count);
 			}
 		}
 

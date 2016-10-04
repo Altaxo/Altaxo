@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Altaxo.Data.Selections
 {
-	public interface IRowSelection
+	public interface IRowSelection : Main.IDocumentLeafNode, ICloneable
 	{
 		/// <summary>
 		/// Gets the selected row indices continuously, beginning with no less than the start index and less than the maximum index.

@@ -173,8 +173,12 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		/// </summary>
 		/// <param name="additionalColumns">The additional columns. This is an enumerable of tuples, each tuple corresponding to one plot style.
 		/// The first item of this tuple is the plot style's number and name. The second item is another enumeration of tuples.
-		/// Each tuple in this second enumeration consist of the name of the column (first item) and a function which returns the column proxy which
-		/// can be used to get or set the underlying column.</param>
+		/// Each tuple in this second enumeration consist of
+		/// (i) the label under which the column is announced in the view (first item),
+		/// (ii) the column itself,
+		/// (iii) the name of the column (only if it is a data column; otherwise empty)
+		/// (iiii) an action to set the column if a value has been assigned to, or if the column was changed.
+		/// </param>
 		void SetAdditionalPlotColumns(
 			IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> additionalColumns
 			);
@@ -324,6 +328,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		#region Members
 
+		private const int IndexGroupRowSelection = 0;
+		private const int IndexGroupDataColumns = 1;
+
 		protected List<GroupInfo> _columnGroup;
 
 		protected bool _isDirty = false;
@@ -357,7 +364,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		#region Infrastructur Dispose and GetSubControllers
 
-		public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
 			yield return new ControllerAndSetNullMethod(_rowSelectionController, () => _rowSelectionController = null);
 		}
@@ -418,12 +425,36 @@ namespace Altaxo.Gui.Graph.Plot.Data
 					_doc.GroupNumber = docGroupNumber;
 				}
 
+				_rowSelectionController = new RowSelectionController();
+				_rowSelectionController.SupposedParentDataTable = _doc.DataTable;
+				_rowSelectionController.InitializeDocument(_doc.DataRowSelection);
+				_rowSelectionController.ItemsChanged += EhRowSelectionItemsChanged;
+				Current.Gui.FindAndAttachControlTo(_rowSelectionController);
+
 				// initialize group 0
 
 				if (null == _columnGroup)
 					_columnGroup = new List<GroupInfo>();
 
-				if (_columnGroup.Count == 0)
+				if (_columnGroup.Count <= IndexGroupRowSelection)
+					_columnGroup.Add(new GroupInfo() { GroupName = "#Plot range selection" });
+
+				var grpInfo = _columnGroup[IndexGroupRowSelection];
+				grpInfo.Columns.Clear();
+				foreach (var col in _rowSelectionController.GetAdditionalColumns())
+				{
+					var columnInfo = new PlotColumnInformationInternal(col.Item2, col.Item3)
+					{
+						PlotColumnBoxStateIfColumnIsMissing = PlotColumnControlState.Error,
+						Label = col.Item1,
+						ColumnSetter = col.Item4
+					};
+
+					columnInfo.Update(_doc.DataTable);
+					grpInfo.Columns.Add(columnInfo);
+				}
+
+				if (_columnGroup.Count <= IndexGroupDataColumns)
 				{
 					if (positionDataColumns.Length == 2)
 						_columnGroup.Add(new GroupInfo { GroupName = "#0: data (X-Y)" });
@@ -432,24 +463,17 @@ namespace Altaxo.Gui.Graph.Plot.Data
 					else
 						_columnGroup.Add(new GroupInfo { GroupName = "#0: position data" });
 				}
-				else
-				{
-					_columnGroup[0].Columns.Clear();
-				}
 
+				grpInfo = _columnGroup[IndexGroupDataColumns];
+				grpInfo.Columns.Clear();
 				foreach (var entry in positionDataColumns)
 				{
-					_columnGroup[0].Columns.Add(new PlotColumnInformationInternal(entry.Item2, entry.Item3) { Label = entry.Item1, ColumnSetter = entry.Item4 });
+					grpInfo.Columns.Add(new PlotColumnInformationInternal(entry.Item2, entry.Item3) { Label = entry.Item1, ColumnSetter = entry.Item4 });
 				}
-
-				foreach (var entry in _columnGroup[0].Columns)
+				foreach (var entry in grpInfo.Columns)
 				{
 					entry.Update(_doc.DataTable);
 				}
-
-				_rowSelectionController = new RowSelectionController();
-				_rowSelectionController.InitializeDocument(_doc.DataRowSelection);
-				Current.Gui.FindAndAttachControlTo(_rowSelectionController);
 
 				// Initialize tables
 				string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
@@ -493,6 +517,28 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 				View_AvailableTransformations_Initialize();
 			}
+		}
+
+		private void EhRowSelectionItemsChanged()
+		{
+			var grpInfo = _columnGroup[IndexGroupRowSelection];
+			grpInfo.Columns.Clear();
+
+			foreach (var col in _rowSelectionController.GetAdditionalColumns())
+			{
+				var columnInfo = new PlotColumnInformationInternal(col.Item2, col.Item3)
+				{
+					PlotColumnBoxStateIfColumnIsMissing = PlotColumnControlState.Error,
+					Label = col.Item1,
+					ColumnSetter = col.Item4
+				};
+
+				columnInfo.Update(_doc.DataTable);
+				grpInfo.Columns.Add(columnInfo);
+			}
+
+			View_PlotColumns_Initialize();
+			View_PlotColumns_UpdateAll();
 		}
 
 		public override bool Apply(bool disposeController)
@@ -1404,12 +1450,17 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		/// Sets the additional columns that are used by some of the plot styles.
 		/// </summary>
 		/// <param name="additionalColumns">The additional columns. This is an enumerable of tuples, each tuple corresponding to one plot style.
-		/// The first item of this tuple is the plot style's number and name. The second item is another enumeration of tuples.
-		/// Each tuple in this second enumeration consist of the name of the column (first item) and a function which returns the column proxy which
+		/// The first item of this tuple is the plot style's number and name.
+		/// The second item is another enumeration of tuples.
+		/// Each tuple in this second enumeration consist of
+		/// (i) the label under which the column is announced in the view (first item),
+		/// (ii) the column itself,
+		/// (iii) the name of the column (only if it is a data column; otherwise empty)
+		/// (iiii) an action to set the column if a value has been assigned to, or if the column was changed
 		/// can be used to get or set the underlying column.</param>
 		public void SetAdditionalPlotColumns(IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> additionalColumns)
 		{
-			int groupNumber = 0;
+			int groupNumber = 1;
 			foreach (var group in additionalColumns)
 			{
 				++groupNumber;
@@ -1437,6 +1488,13 @@ namespace Altaxo.Gui.Graph.Plot.Data
 				}
 			}
 
+			// Remove superfluous groups
+			while (_columnGroup.Count > (groupNumber + 1))
+			{
+				_columnGroup.RemoveAt(_columnGroup.Count - 1);
+			}
+
+			// and finally update the view
 			if (null != _view)
 			{
 				View_PlotColumns_Initialize();

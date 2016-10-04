@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Plot.Data
 		/// <summary>
 		/// The selection of data rows to be plotted.
 		/// </summary>
-		protected IRowSelection _dataRowSelection = AllRows.Instance;
+		protected IRowSelection _dataRowSelection;
 
 		protected Altaxo.Data.IReadableColumnProxy _xColumn; // the X-Column
 		protected Altaxo.Data.IReadableColumnProxy _yColumn; // the Y-Column
@@ -127,6 +127,7 @@ namespace Altaxo.Graph.Plot.Data
 				s._groupNumber = info.GetInt32("GroupNumber");
 
 				s._dataRowSelection = (IRowSelection)info.GetValue("RowSelection", s);
+				if (null != s._dataRowSelection) s._dataRowSelection.ParentObject = s;
 
 				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
 				if (null != s._xColumn) s._xColumn.ParentObject = s;
@@ -161,6 +162,7 @@ namespace Altaxo.Graph.Plot.Data
 		public XYZColumnPlotData(Altaxo.Data.DataTable dataTable, int groupNumber, Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn, Altaxo.Data.IReadableColumn zColumn)
 		{
 			DataTable = dataTable;
+			ChildSetMember(ref _dataRowSelection, new AllRows());
 			_groupNumber = groupNumber;
 			XColumn = xColumn;
 			YColumn = yColumn;
@@ -176,6 +178,8 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			ChildCopyToMember(ref _dataTable, from._dataTable);
 			this._groupNumber = from._groupNumber;
+			ChildCloneToMember(ref _dataRowSelection, from._dataRowSelection);
+
 			this._dataRowSelection = from._dataRowSelection;
 
 			ChildCopyToMember(ref _xColumn, from._xColumn);
@@ -202,6 +206,9 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			if (null != _dataTable)
 				yield return new DocumentNodeAndName(_dataTable, "DataTable");
+
+			if (null != _dataRowSelection)
+				yield return new DocumentNodeAndName(_dataRowSelection, nameof(DataRowSelection));
 
 			if (null != _xColumn)
 				yield return new Main.DocumentNodeAndName(_xColumn, "XColumn");
@@ -281,7 +288,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				if (!_dataRowSelection.Equals(value))
 				{
-					_dataRowSelection = value;
+					ChildSetMember(ref _dataRowSelection, value);
 					_isCachedDataValidX = _isCachedDataValidY = _isCachedDataValidZ = false;
 					EhSelfChanged(EventArgs.Empty);
 				}
@@ -932,18 +939,6 @@ namespace Altaxo.Graph.Plot.Data
 				else
 					throw new NotImplementedException();
 			}
-			set
-			{
-				if (_dataRowSelection is AllRows)
-					_dataRowSelection = new RangeOfRows(value, int.MaxValue);
-				else if (_dataRowSelection is RangeOfRows)
-					_dataRowSelection = new RangeOfRows(value, ((RangeOfRows)_dataRowSelection).Count);
-				else
-					throw new NotImplementedException();
-
-				if (_dataRowSelection is RangeOfRows && ((RangeOfRows)_dataRowSelection).IsSpanningAllRows)
-					_dataRowSelection = AllRows.Instance;
-			}
 		}
 
 		[Obsolete]
@@ -957,18 +952,6 @@ namespace Altaxo.Graph.Plot.Data
 					return ((RangeOfRows)_dataRowSelection).Count;
 				else
 					throw new NotImplementedException();
-			}
-			set
-			{
-				if (_dataRowSelection is AllRows)
-					_dataRowSelection = new RangeOfRows(0, value);
-				else if (_dataRowSelection is RangeOfRows)
-					_dataRowSelection = new RangeOfRows(((RangeOfRows)_dataRowSelection).Start, value);
-				else
-					throw new NotImplementedException();
-
-				if (_dataRowSelection is RangeOfRows && ((RangeOfRows)_dataRowSelection).IsSpanningAllRows)
-					_dataRowSelection = AllRows.Instance;
 			}
 		}
 

@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Altaxo.Data.Selections
 {
-	public class RangeOfRows : IRowSelection
+	public class RangeOfRows : Main.SuspendableDocumentLeafNodeWithEventArgs, IRowSelection, ICloneable
 	{
 		public int Start { get; private set; }
 
@@ -90,6 +90,11 @@ namespace Altaxo.Data.Selections
 
 			Start = start;
 			Count = count;
+		}
+
+		public object Clone()
+		{
+			return new RangeOfRows(this.Start, this.Count);
 		}
 
 		/// <inheritdoc/>

@@ -29,6 +29,7 @@ using System.Text;
 
 namespace Altaxo.Gui.Data.Selections
 {
+	using Altaxo.Data;
 	using Altaxo.Data.Selections;
 	using Altaxo.Main.Services;
 	using Collections;
@@ -79,12 +80,25 @@ namespace Altaxo.Gui.Data.Selections
 
 	[UserControllerForObject(typeof(IRowSelection), 10)]
 	[ExpectedTypeOfView(typeof(IRowSelectionView))]
-	public class RowSelectionController : MVCANControllerEditImmutableDocBase<IRowSelection, IRowSelectionView>
+	public class RowSelectionController : MVCANControllerEditCopyOfDocBase<IRowSelection, IRowSelectionView>
 	{
 		private SelectableListNodeList _rowSelectionSimpleTypes;
 		private SelectableListNodeList _rowSelectionCollectionTypes;
 
 		private List<RSEntry> _rsEntryList;
+
+		/// <summary>
+		/// The data table that the column of the style should belong to.
+		/// </summary>
+		private DataTable _supposedParentDataTable;
+
+		public override bool InitializeDocument(params object[] args)
+		{
+			if (args.Length >= 2 && (args[1] is DataTable))
+				_supposedParentDataTable = (DataTable)args[1];
+
+			return base.InitializeDocument(args);
+		}
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -144,17 +158,17 @@ namespace Altaxo.Gui.Data.Selections
 			}
 			else
 			{
-				list.Add(new RSEntry { IndentationLevel = indentLevel, RowSelection = AllRows.Instance });
+				list.Add(new RSEntry { IndentationLevel = indentLevel, RowSelection = new AllRows() });
 			}
 		}
 
-		private static void AmendRSEntryListWithDetailControllers(List<RSEntry> list)
+		private void AmendRSEntryListWithDetailControllers(List<RSEntry> list)
 		{
 			foreach (var entry in list)
 			{
 				if (entry.DetailsController == null)
 				{
-					var controller = (IMVCANController)Current.Gui.GetController(new object[] { entry.RowSelection }, typeof(IMVCANController));
+					var controller = (IMVCANController)Current.Gui.GetController(new object[] { entry.RowSelection, _supposedParentDataTable }, typeof(IMVCANController));
 					if (controller is RowSelectionController)
 						controller = null;
 
@@ -166,7 +180,7 @@ namespace Altaxo.Gui.Data.Selections
 			}
 		}
 
-		private static void AmendRSEntryListWithDetailControllers(List<RSEntry> list, int idx)
+		private void AmendRSEntryListWithDetailControllers(List<RSEntry> list, int idx)
 		{
 			var entry = list[idx];
 			{
@@ -178,7 +192,7 @@ namespace Altaxo.Gui.Data.Selections
 
 				if (entry.DetailsController == null)
 				{
-					var controller = (IMVCANController)Current.Gui.GetController(new object[] { entry.RowSelection }, typeof(IMVCANController));
+					var controller = (IMVCANController)Current.Gui.GetController(new object[] { entry.RowSelection, _supposedParentDataTable }, typeof(IMVCANController));
 					if (controller is RowSelectionController)
 						controller = null;
 
@@ -312,6 +326,8 @@ namespace Altaxo.Gui.Data.Selections
 			_rsEntryList.RemoveAt(idx);
 
 			_view.InitRowSelections(_rsEntryList, _rowSelectionSimpleTypes, _rowSelectionCollectionTypes);
+
+			OnItemsChanged();
 		}
 
 		private void EhCmdIndentSelection(int idx)
@@ -358,6 +374,8 @@ namespace Altaxo.Gui.Data.Selections
 			_rsEntryList.Insert(idx, new RSEntry { IndentationLevel = _rsEntryList[parentIndex].IndentationLevel + 1, RowSelection = new IntersectionOfRowSelections() });
 			AmendRSEntryListWithDetailControllers(_rsEntryList, idx);
 			_view.InitRowSelections(_rsEntryList, _rowSelectionSimpleTypes, _rowSelectionCollectionTypes);
+
+			OnItemsChanged();
 		}
 
 		private void EhCmdRemoveSelection(int idx)
@@ -400,11 +418,13 @@ namespace Altaxo.Gui.Data.Selections
 
 			if (_rsEntryList.Count == 0) // in case we have deleted everything
 			{
-				_rsEntryList.Add(new RSEntry() { IndentationLevel = 0, RowSelection = AllRows.Instance });
+				_rsEntryList.Add(new RSEntry() { IndentationLevel = 0, RowSelection = new AllRows() });
 				AmendRSEntryListWithDetailControllers(_rsEntryList);
 			}
 
 			_view.InitRowSelections(_rsEntryList, _rowSelectionSimpleTypes, _rowSelectionCollectionTypes);
+
+			OnItemsChanged();
 		}
 
 		private void EhCmdAddNewSelection(int idx)
@@ -422,10 +442,12 @@ namespace Altaxo.Gui.Data.Selections
 				++level;
 			}
 
-			_rsEntryList.Insert(idx + 1, new RSEntry() { IndentationLevel = level, RowSelection = AllRows.Instance }); // insert the new item just after the clicked item
+			_rsEntryList.Insert(idx + 1, new RSEntry() { IndentationLevel = level, RowSelection = new AllRows() }); // insert the new item just after the clicked item
 
 			AmendRSEntryListWithDetailControllers(_rsEntryList);
 			_view.InitRowSelections(_rsEntryList, _rowSelectionSimpleTypes, _rowSelectionCollectionTypes);
+
+			OnItemsChanged();
 		}
 
 		private void EhSelectionTypeChanged(int idx, Type type)
@@ -436,6 +458,8 @@ namespace Altaxo.Gui.Data.Selections
 			_rsEntryList[idx].RowSelection = newSel;
 			AmendRSEntryListWithDetailControllers(_rsEntryList, idx);
 			_view.ChangeRowSelection(idx, (_rsEntryList[idx].RowSelection is IRowSelectionCollection) ? _rowSelectionCollectionTypes : _rowSelectionSimpleTypes);
+
+			OnItemsChanged();
 		}
 
 		private int GetParentIndex(int idx)
@@ -516,6 +540,46 @@ namespace Altaxo.Gui.Data.Selections
 
 				_rsEntryList[i].IndentationLevel++;
 			}
+		}
+
+		/// <summary>
+		/// Gets the additional columns used by the current row selection
+		/// </summary>
+		/// <returns>
+		/// Each tuple in this enumeration consist of
+		/// (i) the label under which the column is announced in the view (first item),
+		/// (ii) the column itself,
+		/// (iii) the name of the column (only if it is a data column; otherwise empty)
+		/// (iiii) an action to set the column if a value has been assigned to, or if the column has changed.
+		/// </returns>
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionalColumns()
+		{
+			for (int i = 0; i < _rsEntryList.Count; ++i)
+			{
+				var rsEntry = _rsEntryList[i];
+				var rowSel = rsEntry.RowSelection;
+				if (rsEntry.DetailsController is IDataColumnController)
+				{
+					var controller = rsEntry.DetailsController as IDataColumnController;
+					controller.SetIndex(i);
+
+					yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(
+						"Col#" + i.ToString(),
+						controller.Column,
+						controller.ColumnName,
+						(column) => controller.SetDataColumn(column, _supposedParentDataTable)
+						);
+				}
+			}
+		}
+
+		public DataTable SupposedParentDataTable { set { _supposedParentDataTable = value; } }
+
+		public event Action ItemsChanged;
+
+		protected void OnItemsChanged()
+		{
+			ItemsChanged?.Invoke();
 		}
 	}
 }

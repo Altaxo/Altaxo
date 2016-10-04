@@ -22,59 +22,30 @@
 
 #endregion Copyright
 
+using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Data.Selections
+namespace Altaxo.Gui.Data.Selections
 {
-	public class AllRows : Main.SuspendableDocumentLeafNodeWithEventArgs, IRowSelection
+	/// <summary>
+	/// Signifies that this controller is controlling a row selection with one data column.
+	/// </summary>
+	public interface IDataColumnController
 	{
-		#region Serialization
-
 		/// <summary>
-		/// 2016-09-25 initial version.
+		/// Sets the index of this controller. Can be used in the view to show the index of the data column. The same index is shown in the
+		/// data column view again. In this way the column in the row selection can be matched with the column in the data column view.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AllRows), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
+		/// <param name="idx">The index.</param>
+		void SetIndex(int idx);
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				return new AllRows();
-			}
-		}
+		void SetDataColumn(IReadableColumn column, DataTable supposedParentDataTable);
 
-		#endregion Serialization
+		IReadableColumn Column { get; }
 
-		public AllRows()
-		{
-		}
-
-		public object Clone()
-		{
-			return new AllRows();
-		}
-
-		/// <inheritdoc/>
-		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex)
-		{
-			for (int r = startIndex; r < maxIndex; ++r)
-				yield return r;
-		}
-
-		public override int GetHashCode()
-		{
-			return this.GetType().GetHashCode();
-		}
-
-		public override bool Equals(object obj)
-		{
-			return this.GetType() == obj?.GetType();
-		}
+		string ColumnName { get; }
 	}
 }

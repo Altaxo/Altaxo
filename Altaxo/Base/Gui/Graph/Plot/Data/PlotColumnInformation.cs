@@ -50,6 +50,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		protected string _transformationBoxText;
 		protected string _transformationToolTip;
 
+		/// <summary>
+		/// Gives the plot column box state if the column is missing.
+		/// </summary>
+		protected PlotColumnControlState _plotColumnBoxStateIfColumnIsMissing = PlotColumnControlState.Normal;
+
 		protected bool _isDirty;
 
 		#region Constructors
@@ -150,6 +155,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		/// <summary>State of the column textbox. Depending on the state, the background of the textbox will assume different colors.</summary>
 		public PlotColumnControlState PlotColumnBoxState { get { return _plotColumnBoxState; } }
 
+		/// <summary>
+		/// Set the plot column box state that is used if the column is missing.
+		/// </summary>
+		public PlotColumnControlState PlotColumnBoxStateIfColumnIsMissing { set { _plotColumnBoxStateIfColumnIsMissing = value; } }
+
 		/// <summary>This text will be shown in the transformation text box.</summary>
 		public string TransformationTextToShow { get { return _transformationBoxText; } }
 
@@ -192,8 +202,21 @@ namespace Altaxo.Gui.Graph.Plot.Data
 				if (string.IsNullOrEmpty(_nameOfUnderlyingDataColumn))
 				{
 					hasChanged |= InternalSet(ref _plotColumnBoxText, string.Empty);
-					hasChanged |= InternalSet(ref _plotColumnToolTip, string.Empty);
-					hasChanged |= InternalSet(ref _plotColumnBoxState, PlotColumnControlState.Normal);
+					hasChanged |= InternalSet(ref _plotColumnBoxState, _plotColumnBoxStateIfColumnIsMissing);
+					switch (_plotColumnBoxState)
+					{
+						case PlotColumnControlState.Normal:
+							hasChanged |= InternalSet(ref _plotColumnToolTip, string.Empty);
+							break;
+
+						case PlotColumnControlState.Warning:
+							hasChanged |= InternalSet(ref _plotColumnToolTip, "Warning: it is highly recommended to set a column!");
+							break;
+
+						case PlotColumnControlState.Error:
+							hasChanged |= InternalSet(ref _plotColumnToolTip, "Error: it is mandatory to set a column!");
+							break;
+					}
 				}
 				else
 				{

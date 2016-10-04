@@ -233,6 +233,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Data\Selections\RangeOfNumericalValuesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Data\Selections\RangeOfRowsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1178,6 +1182,9 @@
     </Compile>
     <Compile Include="Gui\Data\Selections\AllRowsControl.xaml.cs">
       <DependentUpon>AllRowsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\Selections\RangeOfNumericalValuesControl.xaml.cs">
+      <DependentUpon>RangeOfNumericalValuesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Data\Selections\RangeOfRowsControl.xaml.cs">
       <DependentUpon>RangeOfRowsControl.xaml</DependentUpon>
