@@ -22,12 +22,14 @@
 
 #endregion Copyright
 
+using Altaxo.Data;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Groups;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Gui.Graph.Gdi.Plot.Groups;
 using Altaxo.Gui.Graph.Gdi.Plot.Styles;
+using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Main;
 using System;
 using System.Collections.Generic;
@@ -81,9 +83,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 		private PlotGroupStyleCollection _groupStyles;
 
 		/// <summary>Controller for the <see cref="PlotGroupStyleCollection"/> that is associated with the parent of this plot item.</summary>
-		private IMVCANController _plotGroupController;
+		private PlotGroupCollectionController _plotGroupController;
 
-		private IMVCAController _dataController;
+		private IPlotColumnDataController _dataController;
 		private IXYPlotStyleCollectionController _styleCollectionController;
 		private List<IMVCANController> _styleControllerList = new List<IMVCANController>();
 
@@ -146,8 +148,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 				if (null == _groupStyles && null != _doc.ParentCollection)
 					_groupStyles = _doc.ParentCollection.GroupStyles;
 
-				_plotGroupController = new PlotGroupCollectionController();
-				_plotGroupController.InitializeDocument(_groupStyles);
+				var plotGroupController = new PlotGroupCollectionController();
+				plotGroupController.InitializeDocument(_groupStyles);
+				plotGroupController.GroupStyleChanged += new WeakActionHandler(EhPlotGroupChanged, (handler) => plotGroupController.GroupStyleChanged -= handler);
+				_plotGroupController = plotGroupController;
 
 				// find the style collection controller
 				_styleCollectionController = (IXYPlotStyleCollectionController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style }, typeof(IXYPlotStyleCollectionController), UseDocument.Directly);
@@ -155,7 +159,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 				_styleCollectionController.StyleEditRequested += new Action<int>(_styleCollectionController_StyleEditRequested);
 
 				// Initialize the data controller
-				_dataController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataObject, _doc }, typeof(IMVCAController), UseDocument.Directly);
+				_dataController = (IPlotColumnDataController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataObject, _doc }, typeof(IPlotColumnDataController), UseDocument.Directly);
 
 				// Initialize the style controller list
 				InitializeStyleControllerList();
@@ -195,7 +199,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 			{
 				if (false == _styleControllerList[i].Apply(disposeController))
 				{
-					_view.BringTabToFront(i + 1);
+					_view.BringTabToFront(i);
 					applyResult = false;
 					goto end_of_function;
 				}
@@ -248,7 +252,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 			// set the plot style tab items
 			for (int i = 0; i < _styleControllerList.Count; ++i)
 			{
-				string title = string.Format("#{0}:{1}", (i + 1), Current.Gui.GetUserFriendlyClassName(_doc.Style[i].GetType()));
+				string title = string.Format("#{0}: {1}", (i + 1), Current.Gui.GetUserFriendlyClassName(_doc.Style[i].GetType()));
 				_view.AddTab(title, _styleControllerList[i].ViewObject);
 			}
 		}
@@ -282,6 +286,44 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 				IMVCANController ctrl = GetStyleController(_doc.Style[i]);
 				_styleControllerList.Add(ctrl);
 			}
+
+			_dataController.SetAdditionalPlotColumns(GetAdditionalColumns());
+		}
+
+		private IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> GetAdditionalColumns()
+		{
+			for (int i = 0; i < _doc.Style.Count; i++)
+			{
+				var style = _doc.Style[i];
+
+				var additionalColumns = style.GetAdditionallyUsedColumns();
+
+				if (null != additionalColumns)
+				{
+					yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>(
+						string.Format("#{0}: {1}", i + 1, Current.Gui.GetUserFriendlyClassName(style.GetType())),
+						GetAdditionallyUsedColumnsWithAmendedControllerAction(additionalColumns, i));
+				}
+			}
+		}
+
+		/// <summary>
+		/// Amends the action to set back the column during apply with another action which updates the corresponding style controller.
+		/// </summary>
+		/// <param name="originalAdditionalColumns">The original additional columns.</param>
+		/// <param name="i">The index of the style (and of the style controller).</param>
+		/// <returns>Enumeration as the original enumeration, but with an action amended which updates the style controller.</returns>
+		private IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumnsWithAmendedControllerAction(IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> originalAdditionalColumns, int i)
+		{
+			foreach (var additionalColumn in originalAdditionalColumns)
+			{
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(
+					additionalColumn.Item1,
+					additionalColumn.Item2,
+					additionalColumn.Item3,
+					(column) => { additionalColumn.Item4(column); _styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable); }
+					);
+			}
 		}
 
 		protected void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs e)
@@ -297,6 +339,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 					DistributeStyleChange(i);
 				}
 			}
+
+			_dataController.SetAdditionalPlotColumns(GetAdditionalColumns()); // update list in case it has changed
 		}
 
 		/// <summary>
@@ -313,7 +357,28 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 			for (int i = 0; i < _styleControllerList.Count; i++)
 			{
 				if (null != _styleControllerList[i])
-					_styleControllerList[i].InitializeDocument(_doc.Style[i]);
+					_styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable);
+			}
+		}
+
+		/// <summary>
+		/// Is called when the user has made a major change to the plot groups.
+		/// </summary>
+		/// <remarks>In this case probably one of the lists in the plot group has changed. Thus the first item of the plot item collection is used as
+		/// pivot element to distribute the style changes.</remarks>
+		private void EhPlotGroupChanged()
+		{
+			var parColl = _doc.ParentCollection;
+			if (null != parColl)
+			{
+				parColl.DistributeChanges(parColl[0]);
+			}
+
+			// now all style controllers must be updated
+			for (int i = 0; i < _styleControllerList.Count; i++)
+			{
+				if (null != _styleControllerList[i])
+					_styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable);
 			}
 		}
 

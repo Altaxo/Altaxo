@@ -78,7 +78,7 @@ namespace Altaxo.Graph.Procedures
 
 			int maxRowIndex = data.GetMaximumRowIndexFromDataColumns();
 
-			foreach (int i in data.DataRowSelection.GetSelectedRowIndicesFromTo(0, maxRowIndex))
+			foreach (int i in data.DataRowSelection.GetSelectedRowIndicesFromTo(0, maxRowIndex, data.DataTable?.DataColumns, maxRowIndex))
 			{
 				double x = xcol[i];
 				double y = ycol[i];

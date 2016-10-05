@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,7 +62,7 @@ namespace Altaxo.Data.Selections
 		}
 
 		/// <inheritdoc/>
-		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex)
+		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex, DataColumnCollection table, int totalRowCount)
 		{
 			for (int r = startIndex; r < maxIndex; ++r)
 				yield return r;
@@ -75,6 +76,15 @@ namespace Altaxo.Data.Selections
 		public override bool Equals(object obj)
 		{
 			return this.GetType() == obj?.GetType();
+		}
+
+		/// <summary>
+		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+		/// to change a plot so that the plot items refer to another table.
+		/// </summary>
+		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+		public void VisitDocumentReferences(DocNodeProxyReporter Report)
+		{
 		}
 	}
 }

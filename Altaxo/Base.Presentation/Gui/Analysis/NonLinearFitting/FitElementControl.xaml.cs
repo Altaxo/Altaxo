@@ -296,9 +296,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		private string GetTextShownForPlotRange()
 		{
-			var plotRange = _fitElement.GetRowRange();
-			string rangestring = "Range: " + plotRange.Start.ToString() + " to " + (plotRange.IsInfinite ? "infinity" : plotRange.Last.ToString());
-			return rangestring;
+			var plotRange = _fitElement.DataRowSelection;
+
+			if (plotRange is Altaxo.Data.Selections.RangeOfRowIndices)
+			{
+				var range = plotRange as Altaxo.Data.Selections.RangeOfRowIndices;
+				return "Range: " + range.Start.ToString() + " to " + range.LastInclusive.ToString();
+			}
+			else
+			{
+				return "Non-trivial row indices selection";
+			}
 		}
 
 		private string GetTextShownForIndependentVariable(int i)

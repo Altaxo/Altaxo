@@ -41,26 +41,11 @@ namespace Altaxo.Gui.Data.Selections
 	/// <summary>
 	/// Interaction logic for RangeOfRowsControl.xaml
 	/// </summary>
-	public partial class RangeOfRowsControl : UserControl, IRangeOfRowsView
+	public partial class RangeOfRowIndicesControl : UserControl, IRangeOfRowIndicesView
 	{
-		public RangeOfRowsControl()
+		public RangeOfRowIndicesControl()
 		{
 			InitializeComponent();
-		}
-
-		public int RangeEndInclusive
-		{
-			get
-			{
-				return _guiPlotRangeTo.Value;
-			}
-
-			set
-			{
-				_guiPlotRangeTo.Minimum = 0;
-				_guiPlotRangeTo.Maximum = int.MaxValue;
-				_guiPlotRangeTo.Value = Math.Max(_guiPlotRangeFrom.Value, value);
-			}
 		}
 
 		public int RangeStart
@@ -72,18 +57,21 @@ namespace Altaxo.Gui.Data.Selections
 
 			set
 			{
-				_guiPlotRangeTo.Minimum = 0;
-				_guiPlotRangeTo.Maximum = int.MaxValue;
 				_guiPlotRangeFrom.Value = value;
 			}
 		}
 
-		private void EhPlotRangeFrom_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
+		public int RangeEndInclusive
 		{
-		}
+			get
+			{
+				return _guiPlotRangeTo.Value;
+			}
 
-		private void EhPlotRangeTo_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
-		{
+			set
+			{
+				_guiPlotRangeTo.Value = value;
+			}
 		}
 	}
 }

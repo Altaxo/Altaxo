@@ -124,7 +124,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		public SimpleNonlinearFit(FitEvaluationFunction fitFunc, double[] parameter, Altaxo.Data.INumericColumn xCol, Altaxo.Data.INumericColumn yCol, int start, int count)
 		{
 			_fitDoc = new NonlinearFitDocument();
-			_fitEle = new FitElement(xCol, yCol, start, count);
+			_fitEle = new FitElement(null, 0, Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(start, count), xCol, yCol);
 			_fitEle.FitFunction = new DummyFitFunc(fitFunc, parameter);
 			_fitDoc.FitEnsemble.Add(_fitEle);
 			_fitDoc.SetDefaultParametersForFitElement(0);

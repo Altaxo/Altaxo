@@ -31,15 +31,15 @@ namespace Altaxo.Gui.Data.Selections
 {
 	using Altaxo.Data.Selections;
 
-	public interface IRangeOfRowsView
+	public interface IRangeOfRowIndicesView
 	{
 		int RangeStart { get; set; }
 		int RangeEndInclusive { get; set; }
 	}
 
-	[UserControllerForObject(typeof(RangeOfRows), 100)]
-	[ExpectedTypeOfView(typeof(IRangeOfRowsView))]
-	public class RangeOfRowsController : MVCANControllerEditImmutableDocBase<RangeOfRows, IRangeOfRowsView>
+	[UserControllerForObject(typeof(RangeOfRowIndices), 100)]
+	[ExpectedTypeOfView(typeof(IRangeOfRowIndicesView))]
+	public class RangeOfRowIndicesController : MVCANControllerEditImmutableDocBase<RangeOfRowIndices, IRangeOfRowIndicesView>
 	{
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Data.Selections
 			if (null != _view)
 			{
 				_view.RangeStart = _doc.Start;
-				_view.RangeEndInclusive = _doc.EndInclusive;
+				_view.RangeEndInclusive = _doc.LastInclusive;
 			}
 		}
 
@@ -64,9 +64,7 @@ namespace Altaxo.Gui.Data.Selections
 		{
 			int start = _view.RangeStart;
 			int endIncl = _view.RangeEndInclusive;
-			int count = (endIncl - start) + 1;
-
-			_doc = new RangeOfRows(start, count);
+			_doc = RangeOfRowIndices.FromStartAndEndInclusive(start, endIncl);
 
 			return ApplyEnd(true, disposeController);
 		}

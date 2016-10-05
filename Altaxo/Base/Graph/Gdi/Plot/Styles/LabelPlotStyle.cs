@@ -42,6 +42,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		Main.SuspendableDocumentNodeWithEventArgs,
 		IG2DPlotStyle
 	{
+		protected Altaxo.Data.IReadableColumnProxy _labelColumnProxy;
+
+		/// <summary>The axis where the label is attached to (if it is attached).</summary>
+		protected CSPlaneID _attachedPlane;
+
 		/// <summary>The font of the label.</summary>
 		protected FontX _font;
 
@@ -66,11 +71,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		protected Gdi.Background.IBackgroundStyle _backgroundStyle;
 
 		protected ColorLinkage _backgroundColorLinkage;
-
-		/// <summary>The axis where the label is attached to (if it is attached).</summary>
-		protected CSPlaneID _attachedPlane;
-
-		protected Altaxo.Data.IReadableColumnProxy _labelColumnProxy;
 
 		// cached values:
 		[NonSerialized]

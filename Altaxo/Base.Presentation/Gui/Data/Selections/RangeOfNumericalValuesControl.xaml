@@ -25,7 +25,7 @@
 		<ComboBox x:Name="_guiLowerInclusive" Grid.Column="2" SelectionChanged="EhLowerInclusiveChanged" Margin="4,0,0,0" FontWeight="Bold" ToolTip="Choose whether the lower boundary should be included in the range (lower boundary less than or equal value) or excluded from the range (lower boundary less than value)." />
 		<Label x:Name="_guiDataLabel" Content="Data:" Grid.Column="3" />
 		<TextBox x:Name="_guiColumnTransformation" MinWidth="40" Grid.Column="4" IsEnabled="True" IsReadOnly="True" />
-		<TextBox x:Name="_guiColumn" Grid.Column="5" IsEnabled="True" IsReadOnly="True" MinWidth="100" ToolTip="This field is read-only. Please select a data column for this field below." />
+		<TextBox x:Name="_guiColumn" Grid.Column="5" IsEnabled="True" IsReadOnly="True" MinWidth="40" ToolTip="This field is read-only. Please select a data column for this field below." />
 
 		<ComboBox x:Name="_guiUpperInclusive" Grid.Column="6" SelectionChanged="EhUpperInclusiveChanged" Margin="4,0,0,0" FontWeight="Bold" ToolTip="Choose whether the upper boundary should be included in the range (value less than or equal upper boundary) or excluded from the range (value less than upper boundary)." />
 

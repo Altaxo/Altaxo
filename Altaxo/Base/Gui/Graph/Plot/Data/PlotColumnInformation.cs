@@ -277,6 +277,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
 				hasChanged |= InternalSet(ref _transformationBoxText, _transformation.RepresentationAsOperator ?? _transformation.RepresentationAsFunction);
 				hasChanged |= InternalSet(ref _transformationToolTip, string.Format("Transforms the column data by the function f(x)={0}", _transformation.RepresentationAsFunction));
 			}
+			else // transformation is null
+			{
+				hasChanged |= InternalSet(ref _transformationBoxText, string.Empty);
+				hasChanged |= InternalSet(ref _transformationToolTip, "No transformation applied.");
+			}
 
 			_isDirty |= hasChanged;
 			_isDirty |= hasTableChanged;

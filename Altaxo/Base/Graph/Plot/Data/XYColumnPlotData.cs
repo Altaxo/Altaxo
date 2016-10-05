@@ -376,7 +376,7 @@ namespace Altaxo.Graph.Plot.Data
 				int rangeLength = info.GetInt32("RangeLength");
 
 				if (rangeStart < 0 || rangeLength != int.MaxValue)
-					s._dataRowSelection = new RangeOfRows(rangeStart, rangeLength);
+					s._dataRowSelection = RangeOfRowIndices.FromStartAndCount(rangeStart, rangeLength);
 
 				return s;
 			}
@@ -439,6 +439,7 @@ namespace Altaxo.Graph.Plot.Data
 				s._groupNumber = info.GetInt32("GroupNumber");
 
 				s._dataRowSelection = (IRowSelection)info.GetValue("RowSelection", s);
+				if (null != s._dataRowSelection) s._dataRowSelection.ParentObject = s;
 
 				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
 				if (null != s._xColumn) s._xColumn.ParentObject = s;
@@ -590,7 +591,11 @@ namespace Altaxo.Graph.Plot.Data
 			}
 			set
 			{
-				_groupNumber = value;
+				if (!(_groupNumber == value))
+				{
+					_groupNumber = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -750,8 +755,11 @@ namespace Altaxo.Graph.Plot.Data
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
+			Report(_dataTable, this, "DataTable");
 			Report(_xColumn, this, "XColumn");
 			Report(_yColumn, this, "YColumn");
+
+			_dataRowSelection.VisitDocumentReferences(Report);
 		}
 
 		/// <summary>
@@ -918,7 +926,7 @@ namespace Altaxo.Graph.Plot.Data
 				IReadableColumn xColumn = this.XColumn;
 				IReadableColumn yColumn = this.YColumn;
 
-				foreach (var rowIdx in _dataRowSelection.GetSelectedRowIndicesFromTo(0, _pointCount))
+				foreach (var rowIdx in _dataRowSelection.GetSelectedRowIndicesFromTo(0, _pointCount, _dataTable?.Document?.DataColumns, _pointCount))
 				{
 					if (!xColumn.IsElementEmpty(rowIdx) && !yColumn.IsElementEmpty(rowIdx))
 					{
@@ -1010,7 +1018,7 @@ namespace Altaxo.Graph.Plot.Data
 			int maxRowIndex = GetMaximumRowIndexFromDataColumns();
 
 			int plotArrayIdx = 0;
-			foreach (int dataRowIdx in _dataRowSelection.GetSelectedRowIndicesFromTo(0, maxRowIndex))
+			foreach (int dataRowIdx in _dataRowSelection.GetSelectedRowIndicesFromTo(0, maxRowIndex, _dataTable?.Document?.DataColumns, maxRowIndex))
 			{
 				if (xColumn.IsElementEmpty(dataRowIdx) || yColumn.IsElementEmpty(dataRowIdx))
 				{
@@ -1152,55 +1160,5 @@ namespace Altaxo.Graph.Plot.Data
 		}
 
 		#endregion Change event handling
-
-		#region Obsolete
-
-		[Obsolete]
-		public int PlotRangeStart
-		{
-			get
-			{
-				if (_dataRowSelection is AllRows)
-					return 0;
-				else if (_dataRowSelection is RangeOfRows)
-					return ((RangeOfRows)_dataRowSelection).Start;
-				else
-					throw new NotImplementedException();
-			}
-		}
-
-		[Obsolete]
-		public int PlotRangeLength
-		{
-			get
-			{
-				if (_dataRowSelection is AllRows)
-					return int.MaxValue;
-				else if (_dataRowSelection is RangeOfRows)
-					return ((RangeOfRows)_dataRowSelection).Count;
-				else
-					throw new NotImplementedException();
-			}
-		}
-
-		[Obsolete]
-		public int PlotRangeEnd
-		{
-			get
-			{
-				if (_dataRowSelection is AllRows)
-					return GetMaximumRowIndexFromDataColumns();
-				else if (_dataRowSelection is RangeOfRows)
-				{
-					int maxRowIndex1 = GetMaximumRowIndexFromDataColumns();
-					long maxRowIndex2 = (_dataRowSelection as RangeOfRows).Start + (long)(_dataRowSelection as RangeOfRows).Count;
-					return (int)Math.Min(maxRowIndex1, maxRowIndex2);
-				}
-				else
-					throw new NotImplementedException();
-			}
-		}
-
-		#endregion Obsolete
 	}
 }

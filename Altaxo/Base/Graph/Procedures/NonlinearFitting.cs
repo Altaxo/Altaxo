@@ -75,28 +75,33 @@ namespace Altaxo.Graph.Procedures
 				}
 			}
 
-			if (localdoc.FitEnsemble.Count == 0)
+			if (localdoc.FitEnsemble.Count == 0) // if there was no fit before
 			{
 				Calc.Regression.Nonlinear.FitElement fitele = new Altaxo.Calc.Regression.Nonlinear.FitElement(
+					xyPlotItem.Data.DataTable,
+					xyPlotItem.Data.GroupNumber,
+					xyPlotItem.Data.DataRowSelection,
 					xColumn,
-					yColumn,
-					xyPlotItem.XYColumnPlotData.PlotRangeStart,
-					xyPlotItem.XYColumnPlotData.PlotRangeLength);
+					yColumn);
 
 				localdoc.FitEnsemble.Add(fitele);
 			}
-			else // localdoc.FitEnsemble.Count>0
+			else // there was a fit before, thus localdoc.FitEnsemble.Count>0
 			{
 				bool hasColumnsChanged = false;
+
+				hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].DataTable, xyPlotItem.Data.DataTable));
+				hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].GroupNumber, xyPlotItem.Data.GroupNumber));
 				hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].IndependentVariables(0), xColumn));
 				hasColumnsChanged |= !(object.ReferenceEquals(localdoc.FitEnsemble[0].DependentVariables(0), yColumn));
 
 				localdoc.FitEnsemble[0].SetIndependentVariable(0, xColumn);
 				localdoc.FitEnsemble[0].SetDependentVariable(0, yColumn);
 
-				var oldRange = localdoc.FitEnsemble[0].GetRowRange();
-				if (hasColumnsChanged || oldRange.Start < xyPlotItem.XYColumnPlotData.PlotRangeStart || oldRange.Last > xyPlotItem.XYColumnPlotData.PlotRangeEnd)
-					localdoc.FitEnsemble[0].SetRowRange(xyPlotItem.XYColumnPlotData.PlotRangeStart, xyPlotItem.XYColumnPlotData.PlotRangeLength);
+				if (hasColumnsChanged) // if some of the columns has changed, take the data row selection of the plot item
+				{
+					localdoc.FitEnsemble[0].DataRowSelection = xyPlotItem.Data.DataRowSelection;
+				}
 			}
 
 			localdoc.FitContext = ctrl;

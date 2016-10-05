@@ -24,7 +24,9 @@
 
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Data.Selections;
 using System;
+using System.Linq;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -40,8 +42,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// <summary>Fitting function. Can be null if no fitting function was actually chosen.</summary>
 		private IFitFunction _fitFunction;
 
+		/// <summary>Holds a reference to the underlying data table. If the Empty property of the proxy is null, the underlying table must be determined from the column proxies.</summary>
+		protected DataTableProxy _dataTable;
+
+		/// <summary>The group number of the data columns. All data columns should have this group number. Data columns having other group numbers will be marked.</summary>
+		protected int _groupNumber;
+
 		/// <summary>Holds the range of rows of the data source that are used for the fitting procedure.</summary>
-		private ContiguousNonNegativeIntegerRange _rangeOfRows;
+		private IRowSelection _rangeOfRows;
 
 		/// <summary>Array of columns that are used as data source for the independent variables.</summary>
 		private INumericColumnProxy[] _independentVariables;
@@ -61,8 +69,85 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitElement), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.FitElement", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new InvalidOperationException("Serialization of old version now allowed");
+				/*
+				FitElement s = (FitElement)obj;
+
+				s.InternalCheckAndCorrectArraySize(true, false); // make sure the fit function has not changed unnoticed
+
+				info.AddValue("FitFunction", s._fitFunction);
+				info.AddValue("NumberOfRows", s._rangeOfRows.Count);
+				info.AddValue("FirstRow", s._rangeOfRows.Start);
+
+				info.AddArray("IndependentVariables", s._independentVariables, s._independentVariables.Length);
+				info.AddArray("DependentVariables", s._dependentVariables, s._dependentVariables.Length);
+				info.AddArray("VarianceEvaluation", s._errorEvaluation, s._errorEvaluation.Length);
+				info.AddArray("ParameterNames", s._parameterNames, s._parameterNames.Length);
+				info.AddValue("ParameterNameStart", s._parameterNameStart);
+				*/
+			}
+
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				FitElement s = o != null ? (FitElement)o : new FitElement();
+
+				s.ChildSetMemberAlt(ref s._fitFunction, (IFitFunction)info.GetValue("FitFunction", s));
+
+				int numRows = info.GetInt32("NumberOfRows");
+				int firstRow = info.GetInt32("FirstRow");
+				s._rangeOfRows = RangeOfRowIndices.FromStartAndCount(firstRow, numRows);
+				if (null != s._rangeOfRows) s._rangeOfRows.ParentObject = s;
+
+				int arraycount = info.OpenArray();
+				s._independentVariables = new INumericColumnProxy[arraycount];
+				for (int i = 0; i < arraycount; ++i)
+				{
+					s._independentVariables[i] = (INumericColumnProxy)info.GetValue("e", s);
+					if (null != s._independentVariables[i]) s._independentVariables[i].ParentObject = s;
+				}
+				info.CloseArray(arraycount);
+
+				arraycount = info.OpenArray();
+				s._dependentVariables = new INumericColumnProxy[arraycount];
+				for (int i = 0; i < arraycount; ++i)
+				{
+					s._dependentVariables[i] = (INumericColumnProxy)info.GetValue("e", s);
+					if (null != s._dependentVariables[i]) s._dependentVariables[i].ParentObject = s;
+				}
+				info.CloseArray(arraycount);
+
+				arraycount = info.OpenArray();
+				s._errorEvaluation = new IVarianceScaling[arraycount];
+				for (int i = 0; i < arraycount; ++i)
+					s._errorEvaluation[i] = (IVarianceScaling)info.GetValue("e", s);
+				info.CloseArray(arraycount);
+
+				info.GetArray("ParameterNames", out s._parameterNames);
+				for (int i = 0; i < s._parameterNames.Length; ++i)
+					if (s._parameterNames[i] == string.Empty)
+						s._parameterNames[i] = null; // serialization can not distinguish between an empty string and a null string
+
+				s._parameterNameStart = info.GetString("ParameterNameStart");
+
+				// now some afterwork
+				if (s.InternalCheckAndCorrectArraySize(false, false))
+					Current.Console.WriteLine("Error: Fitelement array size mismatch");
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// 2016-10-05 Added DataTable, GroupNumber. Changed: NunberOfRows, FirstRow now is replaced by RowSelection
+		/// </summary>
+		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitElement), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -71,8 +156,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				s.InternalCheckAndCorrectArraySize(true, false); // make sure the fit function has not changed unnoticed
 
 				info.AddValue("FitFunction", s._fitFunction);
-				info.AddValue("NumberOfRows", s._rangeOfRows.Count);
-				info.AddValue("FirstRow", s._rangeOfRows.Start);
+
+				info.AddValue("DataTable", s._dataTable);
+				info.AddValue("GroupNumber", s._groupNumber);
+				info.AddValue("RowSelection", s._rangeOfRows);
 
 				info.AddArray("IndependentVariables", s._independentVariables, s._independentVariables.Length);
 				info.AddArray("DependentVariables", s._dependentVariables, s._dependentVariables.Length);
@@ -87,9 +174,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 				s.ChildSetMemberAlt(ref s._fitFunction, (IFitFunction)info.GetValue("FitFunction", s));
 
-				int numRows = info.GetInt32("NumberOfRows");
-				int firstRow = info.GetInt32("FirstRow");
-				s._rangeOfRows = ContiguousNonNegativeIntegerRange.NewFromStartAndCount(firstRow, numRows);
+				s._dataTable = (DataTableProxy)info.GetValue("DataTable", s);
+				if (null != s._dataTable) s._dataTable.ParentObject = s;
+
+				s._groupNumber = info.GetInt32("GroupNumber");
+
+				s._rangeOfRows = (IRowSelection)info.GetValue("RowSelection", s);
+				if (null != s._rangeOfRows) s._rangeOfRows.ParentObject = s;
 
 				int arraycount = info.OpenArray();
 				s._independentVariables = new INumericColumnProxy[arraycount];
@@ -140,7 +231,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 			_errorEvaluation = new IVarianceScaling[0];
 
-			_rangeOfRows = ContiguousNonNegativeIntegerRange.NewFromStartAndCount(0, int.MaxValue);
+			_rangeOfRows = new AllRows();
 		}
 
 		public FitElement(FitElement from)
@@ -151,7 +242,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			if (null != _fitFunction)
 				_fitFunction.Changed += EhFitFunctionChanged;
 
-			_rangeOfRows = ContiguousNonNegativeIntegerRange.NewFromStartAndCount(from._rangeOfRows.Start, from._rangeOfRows.Count);
+			ChildCopyToMember(ref _dataTable, from._dataTable);
+			this._groupNumber = from._groupNumber;
+			ChildCloneToMember(ref _rangeOfRows, from._rangeOfRows);
+
 			_independentVariables = new INumericColumnProxy[from._independentVariables.Length];
 			for (int i = 0; i < _independentVariables.Length; ++i)
 			{
@@ -176,8 +270,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			_parameterNameStart = from._parameterNameStart;
 		}
 
-		public FitElement(INumericColumn xColumn, INumericColumn yColumn, int start, int count)
+		public FitElement(DataTable table, int groupNumber, IRowSelection rowSelection, INumericColumn xColumn, INumericColumn yColumn)
 		{
+			ChildSetMember(ref _dataTable, new DataTableProxy(table));
+			_groupNumber = groupNumber;
+			ChildCloneToMember(ref _rangeOfRows, rowSelection);
+
 			_independentVariables = new INumericColumnProxy[1];
 			_independentVariables[0] = NumericColumnProxyBase.FromColumn(xColumn);
 
@@ -186,8 +284,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 			_errorEvaluation = new IVarianceScaling[1];
 			_errorEvaluation[0] = new ConstantVarianceScaling();
-
-			_rangeOfRows = ContiguousNonNegativeIntegerRange.NewFromStartAndCount(start, count);
 		}
 
 		/// <summary>
@@ -221,9 +317,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		public void SetParameterName(string value, int i)
 		{
 			if (value == null)
-				throw new ArgumentNullException("value", "Parameter name must not be null");
+				throw new ArgumentNullException(nameof(value), "Parameter name must not be null");
 			if (value.Length == 0)
-				throw new ArgumentException("Parameter name is empty", "value");
+				throw new ArgumentException("Parameter name is empty", nameof(value));
 
 			string oldValue = _parameterNames[i];
 			_parameterNames[i] = value;
@@ -232,34 +328,85 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				EhSelfChanged(EventArgs.Empty);
 		}
 
-		/// <summary>
-		/// Sets the range of rows that are used for the regression.
-		/// </summary>
-		/// <param name="firstIndex">First row to be used.</param>
-		/// <param name="count">Number of rows to be used [from firstIndex to (firstIndex+count-1)].</param>
-		public void SetRowRange(int firstIndex, int count)
+		public DataTable DataTable
 		{
-			this._rangeOfRows = ContiguousNonNegativeIntegerRange.NewFromStartAndCount(firstIndex, count);
-			EhSelfChanged(EventArgs.Empty);
+			get
+			{
+				return _dataTable?.Document;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (object.ReferenceEquals(DataTable, value))
+					return;
+
+				if (ChildSetMember(ref _dataTable, new DataTableProxy(value)))
+				{
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		public int GroupNumber
+		{
+			get
+			{
+				return _groupNumber;
+			}
+			set
+			{
+				if (!(_groupNumber == value))
+				{
+					_groupNumber = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
 		}
 
 		/// <summary>
-		/// Sets the range of rows that are used for the regression.
+		/// The selection of data rows to be plotted.
 		/// </summary>
-		/// <param name="range">The row range to be set.</param>
-		public void SetRowRange(ContiguousNonNegativeIntegerRange range)
+		public IRowSelection DataRowSelection
 		{
-			this._rangeOfRows = range;
-			EhSelfChanged(EventArgs.Empty);
+			get
+			{
+				return _rangeOfRows;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (!_rangeOfRows.Equals(value))
+				{
+					ChildSetMember(ref _rangeOfRows, value);
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
 		}
 
 		/// <summary>
-		/// Gets the row range that is used for the regression.
+		/// Gets the maximum row index that can be deduced from the data columns. The calculation does <b>not</b> include the DataRowSelection.
 		/// </summary>
-		/// <returns></returns>
-		public ContiguousNonNegativeIntegerRange GetRowRange()
+		/// <returns>The maximum row index that can be deduced from the data columns.</returns>
+		public int GetMaximumRowIndexExclusiveFromDataColumns()
 		{
-			return this._rangeOfRows;
+			int maxRowIndex = int.MaxValue;
+
+			foreach (var proxy in _independentVariables.Concat(_dependentVariables))
+			{
+				var column = proxy?.Document;
+
+				if (null != column && column.Count.HasValue)
+					maxRowIndex = Math.Min(maxRowIndex, column.Count.Value);
+			}
+			// if both columns are indefinite long, we set the length to zero
+			if (maxRowIndex == int.MaxValue || maxRowIndex < 0)
+				maxRowIndex = 0;
+
+			return maxRowIndex;
 		}
 
 		/// <summary>
@@ -563,17 +710,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				}
 			}
 			if (maxLength == int.MaxValue)
-				maxLength = 0;
+				maxLength = 0; // in case non of the columns has a defined length
 
-			// here we take into account that the user limited the usage of the rows
-			maxLength = Math.Min(maxLength, this._rangeOfRows.End);
-
-			bool[] arr = Altaxo.Calc.LinearAlgebra.DataTableWrapper.GetValidNumericRows(cols, selectedCols, maxLength);
-
-			// now we must also take into account that the valid range may not start with zero
-			// so we must invalidate all rows with indices smaller than _rangeOfRows.First
-			for (int j = _rangeOfRows.Start - 1; j >= 0; j--)
-				arr[j] = false;
+			bool[] arr = Altaxo.Calc.LinearAlgebra.DataTableWrapper.GetValidNumericRows(cols, selectedCols, _rangeOfRows.GetSelectedRowIndicesFromTo(0, maxLength, _dataTable?.Document.DataColumns, maxLength), maxLength);
 
 			return Altaxo.Calc.LinearAlgebra.DataTableWrapper.GetCollectionOfValidNumericRows(arr);
 		}

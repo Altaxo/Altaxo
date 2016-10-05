@@ -303,15 +303,8 @@ namespace Altaxo.Gui.Graph.Graph3D
 			else if (item != null && item is PlotItem)
 			{
 				string name = item.GetName(2);
-				if (_showRange && item is XYZColumnPlotItem)
-				{
-					var pi1 = item as XYZColumnPlotItem;
-					return string.Format("{0} ({1}-{2})", name, pi1.Data.PlotRangeStart, pi1.Data.PlotRangeEnd);
-				}
-				else
-				{
-					return name;
-				}
+
+				return name;
 			}
 			else
 			{
@@ -801,14 +794,14 @@ namespace Altaxo.Gui.Graph.Graph3D
 				if (pi == null)
 					continue;
 
-				pi.Data.DataRowSelection = new Altaxo.Data.Selections.RangeOfRows(range.Start, range.Count);
+				pi.Data.DataRowSelection = Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(range.Start, range.Count);
 			}
 		}
 
-		private bool GetMinimumMaximumPlotRange(IEnumerable<NGTreeNode> selNodes, out int minRange, out int maxRange)
+		private bool GetMinimumMaximumPlotRange(IEnumerable<NGTreeNode> selNodes, out int minInclusive, out int maxInclusive)
 		{
-			minRange = int.MaxValue;
-			maxRange = int.MinValue;
+			minInclusive = 0;
+			maxInclusive = int.MaxValue;
 			bool result = false;
 
 			foreach (NGTreeNode node in selNodes)
@@ -816,8 +809,13 @@ namespace Altaxo.Gui.Graph.Graph3D
 				var pi = node.Tag as XYZColumnPlotItem;
 				if (pi == null)
 					continue;
-				minRange = Math.Min(minRange, pi.Data.PlotRangeStart);
-				maxRange = Math.Max(maxRange, pi.Data.PlotRangeEnd);
+
+				int min, max;
+				if (pi.Data.DataRowSelection.GetSelectedRowIndicesFromTo(minInclusive, maxInclusive, pi.Data.DataTable?.DataColumns, pi.Data.GetMaximumRowIndexFromDataColumns()).TryGetFirstAndLast(out min, out max))
+				{
+					minInclusive = Math.Max(minInclusive, min);
+					maxInclusive = Math.Min(maxInclusive, max);
+				}
 				result = true;
 			}
 			return result;

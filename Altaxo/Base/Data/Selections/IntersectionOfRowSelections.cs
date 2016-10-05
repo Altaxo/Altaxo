@@ -108,7 +108,7 @@ namespace Altaxo.Data.Selections
 		}
 
 		/// <inheritdoc/>
-		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex)
+		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex, DataColumnCollection table, int totalRowCount)
 		{
 			IEnumerator<int>[] _enumerators = new IEnumerator<int>[_rowSelections.Count];
 
@@ -118,7 +118,7 @@ namespace Altaxo.Data.Selections
 
 			for (int i = 0; i < _rowSelections.Count; ++i)
 			{
-				_enumerators[i] = _rowSelections[i].GetSelectedRowIndicesFromTo(startIndex, maxIndex).GetEnumerator();
+				_enumerators[i] = _rowSelections[i].GetSelectedRowIndicesFromTo(startIndex, maxIndex, table, totalRowCount).GetEnumerator();
 			}
 
 			for (;;)
@@ -153,7 +153,7 @@ namespace Altaxo.Data.Selections
 					for (int i = 0; i < _rowSelections.Count; ++i)
 					{
 						_enumerators[i].Dispose(); // dispose old enumerators
-						_enumerators[i] = _rowSelections[i].GetSelectedRowIndicesFromTo(maxCurrentIndex, maxIndex).GetEnumerator(); // use new enumerators which start at maxCurrentItem
+						_enumerators[i] = _rowSelections[i].GetSelectedRowIndicesFromTo(maxCurrentIndex, maxIndex, table, totalRowCount).GetEnumerator(); // use new enumerators which start at maxCurrentItem
 					}
 				}
 			}
@@ -196,6 +196,19 @@ namespace Altaxo.Data.Selections
 			for (int i = 0; i < _rowSelections.Count; ++i)
 			{
 				yield return new DocumentNodeAndName(_rowSelections[i], () => _rowSelections[i] = null, string.Format("RowSelection[{i}], i"));
+			}
+		}
+
+		/// <summary>
+		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+		/// to change a plot so that the plot items refer to another table.
+		/// </summary>
+		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+		public void VisitDocumentReferences(DocNodeProxyReporter Report)
+		{
+			for (int i = 0; i < _rowSelections.Count; ++i)
+			{
+				_rowSelections[i].VisitDocumentReferences(Report);
 			}
 		}
 	}

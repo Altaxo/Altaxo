@@ -55,7 +55,7 @@
 
 		<Label Content="Available columns: " Grid.Row="3" Grid.Column="0" />
 		<Label Content="Plot item columns: " FontWeight="Bold" Grid.Row="3" Grid.Column="2" />
-		<StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="4">
+		<StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="4" HorizontalAlignment="Right">
 			<Label Content="Tables with matching columns:" />
 			<ComboBox x:Name="_guiMatchingTables" SelectionChanged="EhMatchingTables_SelectionChangeCommit" ToolTip="Choose among those tables only, which contain columns with names like the plot columns below." />
 		</StackPanel>

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,11 +36,26 @@ namespace Altaxo.Data.Selections
 		/// Gets the selected row indices continuously, beginning with no less than the start index and less than the maximum index.
 		/// </summary>
 		/// <param name="startIndex">The start index. Each row index that is returned has to be equal to or greater than this value.</param>
-		/// <param name="maxIndex">The maximum index.  Each row index that is returned has to be less than this value.</param>
+		/// <param name="maxIndexExclusive">The maximum index.  Each row index that is returned has to be less than this value.</param>
+		/// <param name="table">The underlying data column collection. All columns that are part of the row selection should either be standalone or belong to this collection.</param>
+		/// <param name="totalRowCount">The maximum number of rows (and therefore the row index after the last inclusive row index) that could theoretically be returned, for instance if the selection is <see cref="AllRows"/>.
+		/// This parameter is neccessary because some of the selections (e.g. <see cref="RangeOfRowIndices"/>) work <b>relative</b> to the start or to the end of the maximum possible range, and therefore need this range for calculations.  </param>
 		/// <returns>The selected row indices, beginning with no less than the start index and less than the maximum index.</returns>
-		IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex);
+		IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount);
+
+		/// <summary>
+		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+		/// to change a plot so that the plot items refer to another table.
+		/// </summary>
+		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+		void VisitDocumentReferences(DocNodeProxyReporter Report);
 	}
 
+	/// <summary>
+	/// Interface to a collection of row selections. Since this is itself a row selection, it extends <see cref="IRowSelection"/> interface.
+	/// </summary>
+	/// <seealso cref="T:System.Collections.Generic.IEnumerable{Selections.IRowSelection}" />
+	/// <seealso cref="T:Altaxo.Data.Selections.IRowSelection" />
 	public interface IRowSelectionCollection : IEnumerable<IRowSelection>, IRowSelection
 	{
 		IRowSelectionCollection WithAdditionalItem(IRowSelection item);

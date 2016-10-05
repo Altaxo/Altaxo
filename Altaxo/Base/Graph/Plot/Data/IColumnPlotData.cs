@@ -59,11 +59,5 @@ namespace Altaxo.Graph.Plot.Data
 	string, // the name of the column (last part of the column proxies document path)
 	Action<IReadableColumn> // action to set the column during Apply of the controller
 	>> GetAdditionallyUsedColumns();
-
-		[Obsolete]
-		int PlotRangeStart { get; }
-
-		[Obsolete]
-		int PlotRangeLength { get; }
 	}
 }

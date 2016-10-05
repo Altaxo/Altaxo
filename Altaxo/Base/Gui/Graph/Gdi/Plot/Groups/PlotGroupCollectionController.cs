@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -61,9 +61,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 		private PlotGroupCollectionControllerAdvanced _controllerAdvanced;
 		private PlotGroupCollectionControllerSimple _controllerSimple;
 
+		public event Action GroupStyleChanged;
+
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			yield return new ControllerAndSetNullMethod(_controllerAdvanced, () => _controllerAdvanced = null);
+			yield return new ControllerAndSetNullMethod(_controllerAdvanced, () => { _controllerAdvanced = null; });
 			yield return new ControllerAndSetNullMethod(_controllerSimple, () => _controllerSimple = null);
 		}
 
@@ -92,8 +94,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 				}
 				else
 				{
-					_controllerAdvanced = new PlotGroupCollectionControllerAdvanced() { UseDocumentCopy = UseDocument.Directly };
-					_controllerAdvanced.InitializeDocument(_doc);
+					var controllerAdvanced = new PlotGroupCollectionControllerAdvanced() { UseDocumentCopy = UseDocument.Directly };
+					controllerAdvanced.InitializeDocument(_doc);
+					controllerAdvanced.GroupStyleChanged += new WeakActionHandler(EhGroupStyleChanged, (handler) => controllerAdvanced.GroupStyleChanged -= handler);
+					_controllerAdvanced = controllerAdvanced;
 				}
 			}
 
@@ -112,6 +116,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 					_view.SetAdvancedView(_controllerAdvanced.ViewObject);
 				}
 			}
+		}
+
+		private void EhGroupStyleChanged()
+		{
+			GroupStyleChanged?.Invoke();
 		}
 
 		public override bool Apply(bool disposeController)
@@ -178,9 +187,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 			_doc = (PlotGroupStyleCollection)_controllerSimple.ModelObject;
 			_controllerSimple = null;
 
-			_controllerAdvanced = new PlotGroupCollectionControllerAdvanced();
-			_controllerAdvanced.UseDocumentCopy = UseDocument.Directly;
-			_controllerAdvanced.InitializeDocument(_doc);
+			var controllerAdvanced = new PlotGroupCollectionControllerAdvanced();
+			controllerAdvanced.UseDocumentCopy = UseDocument.Directly;
+			controllerAdvanced.InitializeDocument(_doc);
+			controllerAdvanced.GroupStyleChanged += new WeakActionHandler(EhGroupStyleChanged, (handler) => controllerAdvanced.GroupStyleChanged -= handler);
+			_controllerAdvanced = controllerAdvanced;
 			Initialize(false);
 		}
 	}

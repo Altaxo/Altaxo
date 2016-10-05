@@ -35,6 +35,81 @@ namespace Altaxo.Collections
 	public static class EnumerableExtensions
 	{
 		/// <summary>
+		/// Returns the first value of the enumeration, or, if the enumeration is empty, the other value provided in the arguments.
+		/// </summary>
+		/// <typeparam name="T">Type of enumerable value.</typeparam>
+		/// <param name="org">The enumeration.</param>
+		/// <param name="otherValue">The other value.</param>
+		/// <returns>First value of the enumeration, or, if the enumeration is empty, the other value provided in the arguments.</returns>
+		public static T FirstOr<T>(this IEnumerable<T> org, T otherValue)
+		{
+			if (null == org)
+				throw new ArgumentNullException(nameof(org));
+
+			using (var it = org.GetEnumerator())
+			{
+				if (it.MoveNext())
+					return it.Current;
+				else
+					return otherValue;
+			}
+		}
+
+		/// <summary>
+		/// Returns the last value of the enumeration, or, if the enumeration is empty, the other value provided in the arguments.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="org">The enumeration.</param>
+		/// <param name="otherValue">The other value.</param>
+		/// <returns>Last value of the enumeration, or, if the enumeration is empty, the other value provided in the arguments.</returns>
+		public static T LastOr<T>(this IEnumerable<T> org, T otherValue)
+		{
+			if (null == org)
+				throw new ArgumentNullException(nameof(org));
+
+			T result = otherValue;
+
+			using (var it = org.GetEnumerator())
+			{
+				while (it.MoveNext())
+					result = it.Current;
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Returns true and the first and last value of the enumeration, or, if the enumeration is empty, returns false.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="org">The enumeration.</param>
+		/// <param name="first">if successful, the first value of the enumeration.</param>
+		/// <param name="last">If successful, the last value of the enumeration.</param>
+		/// <returns>True if successful; otherwise false.</returns>
+		public static bool TryGetFirstAndLast<T>(this IEnumerable<T> org, out T first, out T last)
+		{
+			if (null == org)
+				throw new ArgumentNullException(nameof(org));
+
+			using (var it = org.GetEnumerator())
+			{
+				if (!it.MoveNext())
+				{
+					first = last = default(T);
+					return false;
+				}
+
+				first = it.Current;
+				last = it.Current;
+
+				while (it.MoveNext())
+					last = it.Current;
+
+				return true;
+			}
+		}
+
+		/// <summary>
 		/// Takes all elements of the enumeration except the last element.
 		/// </summary>
 		/// <typeparam name="T">Type of the elements of the enumeration</typeparam>

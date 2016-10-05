@@ -237,7 +237,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Data\Selections\RangeOfRowsControl.xaml">
+    <Page Include="Gui\Data\Selections\RangeOfRowIndicesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1186,8 +1186,8 @@
     <Compile Include="Gui\Data\Selections\RangeOfNumericalValuesControl.xaml.cs">
       <DependentUpon>RangeOfNumericalValuesControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Data\Selections\RangeOfRowsControl.xaml.cs">
-      <DependentUpon>RangeOfRowsControl.xaml</DependentUpon>
+    <Compile Include="Gui\Data\Selections\RangeOfRowIndicesControl.xaml.cs">
+      <DependentUpon>RangeOfRowIndicesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Data\Selections\RowSelectionControl.xaml.cs">
       <DependentUpon>RowSelectionControl.xaml</DependentUpon>

@@ -108,10 +108,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void EhView_ChooseFitRange()
 		{
-			object range = _doc.GetRowRange();
-			if (Current.Gui.ShowDialog(ref range, "Choose fit range"))
+			var totalRows = _doc.GetMaximumRowIndexExclusiveFromDataColumns();
+
+			object rangeObj;
+			int firstIncl, lastIncl;
+			if (_doc.DataRowSelection.GetSelectedRowIndicesFromTo(0, totalRows, _doc.DataTable?.DataColumns, totalRows).TryGetFirstAndLast(out firstIncl, out lastIncl))
+				rangeObj = ContiguousNonNegativeIntegerRange.NewFromStartAndLast(firstIncl, lastIncl);
+			else
+				rangeObj = ContiguousNonNegativeIntegerRange.NewFromStartAndCount(0, int.MaxValue);
+
+			if (Current.Gui.ShowDialog(ref rangeObj, "Choose fit range"))
 			{
-				_doc.SetRowRange((ContiguousNonNegativeIntegerRange)range);
+				var range = (ContiguousNonNegativeIntegerRange)rangeObj;
+				_doc.DataRowSelection = Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(range.Start, range.Count);
 				_view.Refresh();
 			}
 		}

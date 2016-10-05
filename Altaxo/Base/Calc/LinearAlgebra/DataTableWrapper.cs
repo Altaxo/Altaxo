@@ -25,6 +25,7 @@
 using Altaxo.Collections;
 using Altaxo.Data;
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -541,13 +542,15 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="table">Array of numeric columns.</param>
 		/// <param name="selectedCols">The indizes of the columns in question into the collection.</param>
+		/// <param name="selectedRowIndices">The selected data row indices.</param>
 		/// <param name="rowCount">The minimum row count of all the selected columns.</param>
 		/// <returns>A boolean array. If an element of the array is true at a given index, that row contains valid numeric values in all columns.</returns>
-		public static bool[] GetValidNumericRows(INumericColumn[] table, IAscendingIntegerCollection selectedCols, int rowCount)
+		public static bool[] GetValidNumericRows(INumericColumn[] table, IAscendingIntegerCollection selectedCols, IEnumerable<int> selectedRowIndices, int rowCount)
 		{
 			// determine the number of valid rows
 			bool[] rowValid = new bool[rowCount];
-			for (int i = 0; i < rowCount; i++)
+
+			foreach (int i in selectedRowIndices)
 				rowValid[i] = true;
 
 			for (int i = 0; i < selectedCols.Count; i++)

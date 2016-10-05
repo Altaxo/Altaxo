@@ -230,7 +230,7 @@
     <Compile Include="Data\Selections\IRowSelection.cs" />
     <Compile Include="Data\Selections\AllRows.cs" />
     <Compile Include="Data\Selections\RangeOfNumericalValues.cs" />
-    <Compile Include="Data\Selections\RangeOfRows.cs" />
+    <Compile Include="Data\Selections\RangeOfRowIndices.cs" />
     <Compile Include="Data\Selections\IntersectionOfRowSelections.cs" />
     <Compile Include="Data\Transformations\OffsetTransformation.cs" />
     <Compile Include="Data\Transformations\ScaleTransformation.cs" />
@@ -553,7 +553,7 @@
     <Compile Include="Gui\Data\Selections\IntersectionOfRowSelectionsController.cs" />
     <Compile Include="Gui\Data\Selections\AllRowsController.cs" />
     <Compile Include="Gui\Data\Selections\RangeOfNumericalValuesController.cs" />
-    <Compile Include="Gui\Data\Selections\RangeOfRowsController.cs" />
+    <Compile Include="Gui\Data\Selections\RangeOfRowIndicesController.cs" />
     <Compile Include="Gui\Data\Selections\RowSelectionController.cs" />
     <Compile Include="Gui\Data\Transformations\VariantToVariantTransformationController.cs" />
     <Compile Include="Gui\DragDropDelegateTypes.cs" />

@@ -133,7 +133,7 @@ namespace Altaxo.Data.Selections
 		}
 
 		/// <inheritdoc/>
-		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex)
+		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex, DataColumnCollection table, int totalRowCount)
 		{
 			var column = _columnProxy?.Document;
 
@@ -282,6 +282,16 @@ namespace Altaxo.Data.Selections
 					EhSelfChanged();
 				}
 			}
+		}
+
+		/// <summary>
+		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+		/// to change a plot so that the plot items refer to another table.
+		/// </summary>
+		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
+		public void VisitDocumentReferences(DocNodeProxyReporter Report)
+		{
+			Report(this._columnProxy, this, nameof(Column));
 		}
 	}
 }

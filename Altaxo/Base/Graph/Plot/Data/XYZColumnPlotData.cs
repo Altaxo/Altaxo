@@ -268,7 +268,11 @@ namespace Altaxo.Graph.Plot.Data
 			}
 			set
 			{
-				_groupNumber = value;
+				if (!(_groupNumber == value))
+				{
+					_groupNumber = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -495,6 +499,8 @@ namespace Altaxo.Graph.Plot.Data
 			Report(_xColumn, this, "XColumn");
 			Report(_yColumn, this, "YColumn");
 			Report(_zColumn, this, "ZColumn");
+
+			_dataRowSelection.VisitDocumentReferences(Report);
 		}
 
 		/// <summary>
@@ -707,7 +713,7 @@ namespace Altaxo.Graph.Plot.Data
 				IReadableColumn yColumn = this.YColumn;
 				IReadableColumn zColumn = this.ZColumn;
 
-				foreach (int i in _dataRowSelection.GetSelectedRowIndicesFromTo(0, _pointCount))
+				foreach (int i in _dataRowSelection.GetSelectedRowIndicesFromTo(0, _pointCount, _dataTable?.Document?.DataColumns, _pointCount))
 				{
 					if (!xColumn.IsElementEmpty(i) && !yColumn.IsElementEmpty(i) && !zColumn.IsElementEmpty(i))
 					{
@@ -811,7 +817,7 @@ namespace Altaxo.Graph.Plot.Data
 
 			int maxRowIndex = GetMaximumRowIndexFromDataColumns();
 			int plotArrayIdx = 0;
-			foreach (int dataRowIdx in _dataRowSelection.GetSelectedRowIndicesFromTo(0, maxRowIndex))
+			foreach (int dataRowIdx in _dataRowSelection.GetSelectedRowIndicesFromTo(0, maxRowIndex, _dataTable?.Document?.DataColumns, maxRowIndex))
 			{
 				if (xColumn.IsElementEmpty(dataRowIdx) || yColumn.IsElementEmpty(dataRowIdx) || zColumn.IsElementEmpty(dataRowIdx))
 				{
@@ -924,37 +930,5 @@ namespace Altaxo.Graph.Plot.Data
 		}
 
 		#endregion Change event handling
-
-		#region Obsolete
-
-		[Obsolete]
-		public int PlotRangeStart
-		{
-			get
-			{
-				if (_dataRowSelection is AllRows)
-					return 0;
-				else if (_dataRowSelection is RangeOfRows)
-					return ((RangeOfRows)_dataRowSelection).Start;
-				else
-					throw new NotImplementedException();
-			}
-		}
-
-		[Obsolete]
-		public int PlotRangeLength
-		{
-			get
-			{
-				if (_dataRowSelection is AllRows)
-					return int.MaxValue;
-				else if (_dataRowSelection is RangeOfRows)
-					return ((RangeOfRows)_dataRowSelection).Count;
-				else
-					throw new NotImplementedException();
-			}
-		}
-
-		#endregion Obsolete
 	}
 }
