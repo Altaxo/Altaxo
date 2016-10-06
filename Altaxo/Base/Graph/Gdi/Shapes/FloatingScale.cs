@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Data;
 using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Graph.Gdi.Background;
@@ -612,6 +613,11 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 
 			public Logical3D GetLogical3D(I3DPhysicalVariantAccessor acc, int idx)
+			{
+				throw new NotImplementedException();
+			}
+
+			public Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y)
 			{
 				throw new NotImplementedException();
 			}

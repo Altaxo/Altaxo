@@ -293,6 +293,7 @@
     <Compile Include="Geometry\VectorD2D.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Drawing\DashPatternManagement\DashPatternListBag.cs" />
+    <Compile Include="Graph\Gdi\Plot\Styles\VectorCartesicPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\AbsoluteStackTransform.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\RelativeStackTransform.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\ScatterSymbolListBag.cs" />
@@ -501,6 +502,7 @@
     <Compile Include="Drawing\NamedColors.cs" />
     <Compile Include="Geometry\RectangleD2DExtensions.cs" />
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
+    <Compile Include="Graph\Plot\Groups\IShiftLogicalXYGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\IShiftLogicalXYZGroupStyle.cs" />
     <Compile Include="Graph\Scales\Boundaries\CumulativeProbabilityBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\InverseNumericalBoundaries.cs" />

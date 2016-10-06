@@ -83,6 +83,21 @@ namespace Altaxo.Graph.Gdi.LineCaps
 		/// <value>The value is multiplied with the pen with to get the minimum absolute size of the cap.</value>
 		public abstract double DefaultMinimumRelativeSize { get; }
 
+		public LineCapExtension WithMinimumAbsoluteAndRelativeSize(double absoluteSizePt, double relativeSize)
+		{
+			if (_minimumAbsoluteSizePt == absoluteSizePt && _minimumRelativeSize == relativeSize)
+			{
+				return this;
+			}
+			else
+			{
+				var result = (LineCapExtension)this.MemberwiseClone();
+				result._minimumAbsoluteSizePt = absoluteSizePt;
+				result._minimumRelativeSize = relativeSize;
+				return result;
+			}
+		}
+
 		public abstract void SetStartCap(Pen pen, float size);
 
 		public abstract void SetEndCap(Pen pen, float size);

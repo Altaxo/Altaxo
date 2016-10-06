@@ -551,6 +551,14 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 				return shifted;
 			}
 
+			public Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y)
+			{
+				Logical3D shifted = new Logical3D(
+					_xScale.PhysicalVariantToNormal(x),
+					_yScale.PhysicalVariantToNormal(y));
+				return shifted;
+			}
+
 			public IEnumerable<CSLineID> AxisStyleIDs
 			{
 				get { return _layer.AxisStyleIDs; }

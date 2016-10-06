@@ -116,7 +116,6 @@
   <ItemGroup>
     <Content Include="D3D.addin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </Content>
     <Fx40File Include="Shaders\Lighting.fx" />
     <Fx40File Include="Shaders\GammaCorrector.fx" />

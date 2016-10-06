@@ -36,6 +36,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 	using Altaxo.Graph.Gdi.Plot;
 	using Altaxo.Graph.Scales;
 	using Altaxo.Graph.Scales.Ticks;
+	using Data;
 	using Geometry;
 
 	[Serializable]
@@ -622,6 +623,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 				Logical3D r;
 				r.RX = XAxis.PhysicalVariantToNormal(acc.GetXPhysical(idx));
 				r.RY = YAxis.PhysicalVariantToNormal(acc.GetYPhysical(idx));
+				r.RZ = 0;
+				return r;
+			}
+
+			public Logical3D GetLogical3D(AltaxoVariant x, AltaxoVariant y)
+			{
+				Logical3D r;
+				r.RX = XAxis.PhysicalVariantToNormal(x);
+				r.RY = YAxis.PhysicalVariantToNormal(y);
 				r.RZ = 0;
 				return r;
 			}

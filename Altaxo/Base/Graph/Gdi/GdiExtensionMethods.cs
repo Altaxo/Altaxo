@@ -163,6 +163,135 @@ namespace Altaxo.Graph.Gdi
 			}
 			return r;
 		}
+
+		#region Polyline constituted by an array of PointF
+
+		public static double TotalLineLength(this PointF[] polyline)
+		{
+			if (null == polyline)
+				throw new ArgumentNullException(nameof(polyline));
+			if (polyline.Length < 2)
+				throw new ArgumentException("Polyline must have at least 2 points", nameof(polyline));
+
+			double sum = 0;
+
+			PointF prev = polyline[0];
+			PointF curr;
+			for (int i = 1; i < polyline.Length; ++i)
+			{
+				curr = polyline[i];
+				var dx = curr.X - prev.X;
+				var dy = curr.Y - prev.Y;
+				sum += Math.Sqrt(dx * dx + dy * dy);
+				prev = curr;
+			}
+
+			return sum;
+		}
+
+		public static double LengthBetween(PointF p0, PointF p1)
+		{
+			var dx = p1.X - p0.X;
+			var dy = p1.Y - p0.Y;
+			return Math.Sqrt(dx * dx + dy * dy);
+		}
+
+		/// <summary>
+		/// Interpolates between the points <paramref name="p0"/> and <paramref name="p1"/>.
+		/// </summary>
+		/// <param name="p0">The first point.</param>
+		/// <param name="p1">The second point.</param>
+		/// <param name="r">Relative way between <paramref name="p0"/> and <paramref name="p1"/> (0..1).</param>
+		/// <returns>Interpolation between <paramref name="p0"/> and <paramref name="p1"/>. The return value is <paramref name="p0"/> if <paramref name="r"/> is 0. The return value is <paramref name="p1"/>  if <paramref name="r"/> is 1.  </returns>
+		public static PointF Interpolate(PointF p0, PointF p1, double r)
+		{
+			double or = 1 - r;
+			return new PointF((float)(or * p0.X + r * p1.X), (float)(or * p0.Y + r * p1.Y));
+		}
+
+		/// <summary>
+		/// Returns a new, shortened polyline. If the shortened line would have zero or negative length, <c>null</c> is returned.
+		/// </summary>
+		/// <param name="polyline">The points of the original polyline.</param>
+		/// <param name="marginAtStart">The margin at start. Either an absolute value, or relative to the total length of the polyline.</param>
+		/// <param name="marginAtEnd">The margin at end. Either an absolute value, or relative to the total length of the polyline.</param>
+		/// <returns>A new, shortened polyline. If the shortened line would have zero or negative length, <c>null</c> is returned.</returns>
+		public static PointF[] ShortenedBy(this PointF[] polyline, RADouble marginAtStart, RADouble marginAtEnd)
+		{
+			if (null == polyline)
+				throw new ArgumentNullException(nameof(polyline));
+			if (polyline.Length < 2)
+				throw new ArgumentException("Polyline must have at least 2 points", nameof(polyline));
+
+			double totLength = TotalLineLength(polyline);
+
+			double a1 = marginAtStart.IsAbsolute ? marginAtStart.Value : marginAtStart.Value * totLength;
+			double a2 = marginAtEnd.IsAbsolute ? marginAtEnd.Value : marginAtEnd.Value * totLength;
+
+			if (!((a1 + a2) < totLength))
+				return null;
+
+			PointF? p0 = null;
+			PointF? p1 = null;
+			int i0 = 0;
+			int i1 = 0;
+
+			if (a1 <= 0)
+			{
+				p0 = Interpolate(polyline[0], polyline[1], a1 / totLength);
+			}
+			else
+			{
+				double sum = 0, prevSum = 0;
+				for (int i = 1; i < polyline.Length; ++i)
+				{
+					sum += LengthBetween(polyline[i], polyline[i - 1]);
+					if (!(sum < a1))
+					{
+						p0 = Interpolate(polyline[i - 1], polyline[i], (a1 - prevSum) / (sum - prevSum));
+						i0 = p0 != polyline[i] ? i : i + 1;
+						break;
+					}
+					prevSum = sum;
+				}
+			}
+
+			if (a2 <= 0)
+			{
+				p1 = Interpolate(polyline[polyline.Length - 2], polyline[polyline.Length - 1], 1 - a2 / totLength);
+			}
+			else
+			{
+				double sum = 0, prevSum = 0;
+				for (int i = polyline.Length - 2; i >= 0; --i)
+				{
+					sum += LengthBetween(polyline[i], polyline[i + 1]);
+					if (!(sum < a2))
+					{
+						p1 = Interpolate(polyline[i + 1], polyline[i], (a2 - prevSum) / (sum - prevSum));
+						i1 = p1 != polyline[i] ? i : i - 1;
+						break;
+					}
+					prevSum = sum;
+				}
+			}
+
+			if (p0.HasValue && p1.HasValue)
+			{
+				var plist = new List<PointF>();
+				plist.Add(p0.Value);
+				for (int i = i0; i <= i1; ++i)
+					plist.Add(polyline[i]);
+				plist.Add(p1.Value);
+				return plist.ToArray();
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		#endregion Polyline constituted by an array of PointF
 	}
 
 	/// <summary>
