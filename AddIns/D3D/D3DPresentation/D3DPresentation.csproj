@@ -115,7 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="D3D.addin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
     <Fx40File Include="Shaders\Lighting.fx" />
