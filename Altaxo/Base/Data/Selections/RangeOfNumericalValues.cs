@@ -133,16 +133,18 @@ namespace Altaxo.Data.Selections
 		}
 
 		/// <inheritdoc/>
-		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex, DataColumnCollection table, int totalRowCount)
+		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
 		{
 			var column = _columnProxy?.Document;
 
 			if (null == column)
 				yield break;
 
-			var maxIdx = column.Count.HasValue ? Math.Min(column.Count.Value, maxIndex) : maxIndex;
+			int endExclusive = Math.Min(maxIndexExclusive, totalRowCount);
+			if (column.Count.HasValue)
+				endExclusive = Math.Min(endExclusive, column.Count.Value);
 
-			for (int i = startIndex; i < maxIdx; ++i)
+			for (int i = startIndex; i < endExclusive; ++i)
 			{
 				if (column.IsElementEmpty(i))
 					continue;

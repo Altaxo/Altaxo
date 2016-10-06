@@ -121,7 +121,7 @@ namespace Altaxo.Data.Selections
 			if (0 == count)
 				return new RangeOfRowIndices { _firstRowIndexInclusive = start + 1, _lastRowIndexInclusive = start };
 
-			int endIncl = start + Math.Max(count - 1, int.MaxValue - start);
+			int endIncl = start + Math.Min(count - 1, int.MaxValue - start);
 
 			if (0 == start && (int.MaxValue == count || int.MaxValue == endIncl))
 				return new AllRows();
@@ -142,10 +142,10 @@ namespace Altaxo.Data.Selections
 		/// <inheritdoc/>
 		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex, DataColumnCollection table, int totalRowCount)
 		{
-			int start = _firstRowIndexInclusive >= 0 ? _firstRowIndexInclusive : _firstRowIndexInclusive + totalRowCount;
-			int end = _lastRowIndexInclusive >= 0 ? _lastRowIndexInclusive : _lastRowIndexInclusive + totalRowCount;
+			int start = Math.Max(startIndex, _firstRowIndexInclusive >= 0 ? _firstRowIndexInclusive : _firstRowIndexInclusive + totalRowCount);
+			int endInclusive = Math.Min(Math.Min(maxIndex - 1, totalRowCount - 1), _lastRowIndexInclusive >= 0 ? _lastRowIndexInclusive : _lastRowIndexInclusive + totalRowCount);
 
-			for (int r = start; r <= end; ++r)
+			for (int r = start; r <= endInclusive; ++r)
 				yield return r;
 		}
 

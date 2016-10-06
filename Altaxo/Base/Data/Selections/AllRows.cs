@@ -62,9 +62,11 @@ namespace Altaxo.Data.Selections
 		}
 
 		/// <inheritdoc/>
-		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex, DataColumnCollection table, int totalRowCount)
+		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
 		{
-			for (int r = startIndex; r < maxIndex; ++r)
+			int endExclusive = Math.Min(maxIndexExclusive, totalRowCount);
+
+			for (int r = startIndex; r < endExclusive; ++r)
 				yield return r;
 		}
 
