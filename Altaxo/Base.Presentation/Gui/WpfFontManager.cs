@@ -576,9 +576,14 @@ namespace Altaxo.Gui
 						{
 							string familyName = GetFontFamilyName(fam.Normal);
 							if (this.ContainsKey(familyName))
-								throw new InvalidOperationException(string.Format("Try to add family name that already exists: {0}", familyName));
-
-							this.Add(familyName, fam);
+							{
+								// throw new InvalidOperationException(string.Format("Try to add family name that already exists: {0}", familyName));
+								Current.Console.WriteLine("Warning (from WpfFontManager): Try to add family name that already exists: {0}", familyName);
+							}
+							else
+							{
+								this.Add(familyName, fam);
+							}
 						}
 					}
 				}
