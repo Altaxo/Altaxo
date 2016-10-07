@@ -138,17 +138,16 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
 
 		protected void SplitInFirstPartAndExponent(double ditem, out string firstpart, out double mant, out string middelpart, out string exponent)
 		{
-			string sitem1 = ditem.ToString("E");
-
-			if (ditem == 0)
+			if (0 == ditem || double.IsNaN(ditem) || double.IsInfinity(ditem))
 			{
-				mant = 0;
-				firstpart = 0.ToString();
+				mant = ditem;
+				firstpart = ditem.ToString();
 				middelpart = string.Empty;
 				exponent = string.Empty;
 				return;
 			}
 
+			string sitem1 = ditem.ToString("E");
 			int posOfE = sitem1.IndexOf('E');
 			if (!(posOfE > 0))
 				throw new InvalidProgramException();
