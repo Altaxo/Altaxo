@@ -700,7 +700,7 @@ namespace Altaxo.Main
 
 		private void SortItemsByDependencyProxyReporter(IProxy proxy, object owner, string propertyName, HashSet<IProjectItem> dependenciesOfItem)
 		{
-			var proxyDoc = proxy.DocumentObject as IDocumentLeafNode;
+			var proxyDoc = proxy?.DocumentObject as IDocumentLeafNode;
 
 			if (proxyDoc != null)
 			{
