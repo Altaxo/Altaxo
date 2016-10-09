@@ -30,12 +30,12 @@ namespace Altaxo.Data
 	/// <summary>
 	/// Proxy that holds instances of type <see cref="INumericColumnProxy"/>.
 	/// </summary>
-	public interface INumericColumnProxy : IDocumentLeafNode, IProxy, ICloneable
+	public interface INumericColumnProxy : IReadableColumnProxy
 	{
 		/// <summary>
 		/// Returns the holded object. Null can be returned if the object is no longer available (e.g. disposed).
 		/// </summary>
-		INumericColumn Document { get; }
+		new INumericColumn Document { get; }
 	}
 
 	/// <summary>
@@ -107,6 +107,19 @@ namespace Altaxo.Data
 		public INumericColumn Document
 		{
 			get { return _column; }
+		}
+
+		IReadableColumn IReadableColumnProxy.Document
+		{
+			get
+			{
+				return _column;
+			}
+		}
+
+		string IReadableColumnProxy.GetName(int level)
+		{
+			return _column?.FullName;
 		}
 
 		public bool IsEmpty
@@ -244,6 +257,19 @@ namespace Altaxo.Data
 			{
 				return (INumericColumn)base.DocumentObject;
 			}
+		}
+
+		IReadableColumn IReadableColumnProxy.Document
+		{
+			get
+			{
+				return (INumericColumn)base.DocumentObject;
+			}
+		}
+
+		string IReadableColumnProxy.GetName(int level)
+		{
+			return Document?.FullName;
 		}
 
 		/// <summary>

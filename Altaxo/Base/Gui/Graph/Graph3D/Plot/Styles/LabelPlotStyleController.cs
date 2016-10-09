@@ -31,6 +31,7 @@ using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Background;
 using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Graph.Plot.Groups;
+using Altaxo.Gui.Data;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Data;
@@ -194,7 +195,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 	/// </summary>
 	[UserControllerForObject(typeof(LabelPlotStyle))]
 	[ExpectedTypeOfView(typeof(ILabelPlotStyleView))]
-	public class XYPlotLabelStyleController : MVCANControllerEditOriginalDocBase<LabelPlotStyle, ILabelPlotStyleView>
+	public class XYPlotLabelStyleController : MVCANControllerEditOriginalDocBase<LabelPlotStyle, ILabelPlotStyleView>, IColumnDataExternallyControlled
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
@@ -394,6 +395,50 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 			_view?.Init_LabelColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
 			_view?.Init_Transformation(info.TransformationTextToShow, info.TransformationToolTip);
+		}
+
+		/// <summary>
+		/// Gets the additional columns that the controller's document is referring to.
+		/// </summary>
+		/// <returns>Enumeration of tuples.
+		/// Item1 is a label to be shown in the column data dialog to let the user identify the column.
+		/// Item2 is the column itself,
+		/// Item3 is the column name (last part of the full path to the column), and
+		/// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>> GetDataColumnsExternallyControlled()
+		{
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+				"LabelColumn", // label to be shown
+				_doc.LabelColumn,
+				_doc.LabelColumnDataColumnName,
+				(column, table) =>
+				{
+					_doc.LabelColumn = column;
+					this._supposedParentDataTable = table;
+					InitializeLabelColumnText();
+				});
+		}
+
+		/// <summary>
+		/// Gets the additional columns that the controller's document is referring to.
+		/// </summary>
+		/// <returns>Enumeration of tuples.
+		/// Item1 is a label to be shown in the column data dialog to let the user identify the column.
+		/// Item2 is the column itself,
+		/// Item3 is the column name (last part of the full path to the column), and
+		/// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>> GetDataColumnsControlled()
+		{
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+				"LabelColumn", // label to be shown
+				_doc.LabelColumn,
+				_doc.LabelColumnDataColumnName,
+				(column, table) =>
+				{
+					_doc.LabelColumn = column;
+					this._supposedParentDataTable = table;
+					InitializeLabelColumnText();
+				});
 		}
 
 		#region Color management

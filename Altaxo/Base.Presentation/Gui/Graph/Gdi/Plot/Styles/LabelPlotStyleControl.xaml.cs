@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,12 +24,15 @@
 
 using Altaxo.Drawing;
 using Altaxo.Graph;
-using Altaxo.Gui.Common.Drawing;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Background;
 using Altaxo.Gui.Drawing;
 using Altaxo.Gui.Graph.Gdi.Background;
+using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Units;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -40,14 +43,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 	/// <summary>
 	/// Interaction logic for XYPlotLabelStyleControl.xaml
 	/// </summary>
-	public partial class XYPlotLabelStyleControl : UserControl, IXYPlotLabelStyleView
+	public partial class LabelPlotStyleControl : UserControl, ILabelPlotStyleView
 	{
 		private FontXControlsGlue _fontControlsGlue;
+
 		private BackgroundControlsGlue _backgroundGlue;
 
 		public event Action LabelColumnSelected;
-
-		public event Action FontSizeChanged;
 
 		public event Action LabelColorLinkageChanged;
 
@@ -59,12 +61,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		public event Action UseBackgroundChanged;
 
-		public XYPlotLabelStyleControl()
+		public LabelPlotStyleControl()
 		{
 			InitializeComponent();
 
-			_fontControlsGlue = new FontXControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle, CbFontSize = _cbFontSize };
-			_fontControlsGlue.SelectedFontChanged += EhFontSizeChanged;
+			DefaultSeverityColumnColors.NormalColor = _guiLabelColumn.Background;
+
+			_fontControlsGlue = new FontXControlsGlue() { CbFontFamily = _cbFontFamily, CbFontStyle = _cbFontStyle };
 			_backgroundGlue = new BackgroundControlsGlue() { CbStyle = _cbBackgroundStyle, CbBrush = _cbBackgroundBrush };
 			_backgroundGlue.BackgroundStyleChanged += EhBackgroundStyleInstanceChanged;
 			_backgroundGlue.BackgroundBrushChanged += this.EhBackgroundBrushChanged;
@@ -74,12 +77,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		{
 			if (null != LabelColumnSelected)
 				LabelColumnSelected();
-		}
-
-		private void EhFontSizeChanged(object sender, EventArgs e)
-		{
-			if (null != FontSizeChanged)
-				FontSizeChanged();
 		}
 
 		private void EhIndependentColor_CheckChanged(object sender, RoutedEventArgs e)
@@ -95,12 +92,102 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		#region IXYPlotLabelStyleView
 
-		public void Init_LabelColumn(string labelColumnAsText)
+		public void Init_LabelColumn(string boxText, string toolTip, int status)
 		{
-			this._guiLabelColumn.Text = labelColumnAsText;
+			this._guiLabelColumn.Text = boxText;
+			this._guiLabelColumn.ToolTip = toolTip;
+			this._guiLabelColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
 		}
 
-		public new Altaxo.Graph.Gdi.Background.IBackgroundStyle Background
+		public void Init_Transformation(string boxText, string toolTip)
+		{
+			if (null == boxText)
+			{
+				this._guiLabelTransformation.Visibility = Visibility.Collapsed;
+			}
+			else
+			{
+				this._guiLabelTransformation.Text = boxText;
+				this._guiLabelTransformation.ToolTip = toolTip;
+				this._guiLabelTransformation.Visibility = Visibility.Visible;
+			}
+		}
+
+		public string LabelFormatString
+		{
+			get
+			{
+				return _guiLabelFormat.Text;
+			}
+			set
+			{
+				_guiLabelFormat.Text = value;
+			}
+		}
+
+		public bool IndependentOnShiftingGroupStyles
+		{
+			get
+			{
+				return true == _guiIndependentOnShiftingGroupStyles.IsChecked;
+			}
+			set
+			{
+				_guiIndependentOnShiftingGroupStyles.IsChecked = value;
+			}
+		}
+
+		public bool IndependentSkipFrequency
+		{
+			get
+			{
+				return _guiIndependentSkipFrequency.IsChecked == true;
+			}
+
+			set
+			{
+				_guiIndependentSkipFrequency.IsChecked = value;
+			}
+		}
+
+		public int SkipFrequency
+		{
+			get
+			{
+				return _guiSkipFrequency.Value;
+			}
+			set
+			{
+				_guiSkipFrequency.Value = value;
+			}
+		}
+
+		public bool IndependentSymbolSize
+		{
+			get
+			{
+				return true == _guiIndependentSymbolSize.IsChecked;
+			}
+
+			set
+			{
+				_guiIndependentSymbolSize.IsChecked = value;
+			}
+		}
+
+		public double SymbolSize
+		{
+			get
+			{
+				return _guiSymbolSize.SelectedQuantityAsValueInPoints;
+			}
+			set
+			{
+				_guiSymbolSize.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public new IBackgroundStyle Background
 		{
 			get
 			{
@@ -124,26 +211,108 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public void Init_XOffset(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
+		public double OffsetXPoints
 		{
-			this._guiXOffset.UnitEnvironment = environment;
-			this._guiXOffset.SelectedQuantity = value;
+			get
+			{
+				return _guiOffsetXPoints.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiOffsetXPoints.SelectedQuantityAsValueInPoints = value;
+			}
 		}
 
-		public void Init_YOffset(QuantityWithUnitGuiEnvironment environment, DimensionfulQuantity value)
+		public double OffsetXEmUnits
 		{
-			this._guiYOffset.UnitEnvironment = environment;
-			this._guiYOffset.SelectedQuantity = value;
+			get
+			{
+				return _guiOffsetXEmUnits.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiOffsetXEmUnits.SelectedQuantityAsValueInSIUnits = value;
+			}
 		}
 
-		public DimensionfulQuantity XOffset
+		public double OffsetXSymbolSizeUnits
 		{
-			get { return _guiXOffset.SelectedQuantity; }
+			get
+			{
+				return _guiOffsetXSymbolSizeUnits.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiOffsetXSymbolSizeUnits.SelectedQuantityAsValueInSIUnits = value;
+			}
 		}
 
-		public DimensionfulQuantity YOffset
+		public double OffsetYPoints
 		{
-			get { return _guiYOffset.SelectedQuantity; }
+			get
+			{
+				return _guiOffsetYPoints.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiOffsetYPoints.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double OffsetYEmUnits
+		{
+			get
+			{
+				return _guiOffsetYEmUnits.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiOffsetYEmUnits.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public double OffsetYSymbolSizeUnits
+		{
+			get
+			{
+				return _guiOffsetYSymbolSizeUnits.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiOffsetYSymbolSizeUnits.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public double FontSizeOffset
+		{
+			get
+			{
+				return _guiFontSizeOffset.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiFontSizeOffset.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double FontSizeFactor
+		{
+			get
+			{
+				return _guiFontSizeFactor.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiFontSizeFactor.SelectedQuantityAsValueInSIUnits = value;
+			}
 		}
 
 		public FontX SelectedFont
@@ -158,7 +327,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public Altaxo.Graph.Gdi.BrushX LabelBrush
+		public BrushX LabelBrush
 		{
 			get
 			{
@@ -170,14 +339,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public void Init_HorizontalAlignment(Collections.SelectableListNodeList list)
+		public void Init_AlignmentX(Collections.SelectableListNodeList list)
 		{
-			GuiHelper.Initialize(_guiHorizontalAlignment, list);
+			GuiHelper.Initialize(_guiAlignmentX, list);
 		}
 
-		public void Init_VerticalAlignment(Collections.SelectableListNodeList list)
+		public void Init_AlignmentY(Collections.SelectableListNodeList list)
 		{
-			GuiHelper.Initialize(_guiVerticalAlignment, list);
+			GuiHelper.Initialize(_guiAlignmentY, list);
 		}
 
 		public bool AttachToAxis
@@ -220,14 +389,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		#endregion IXYPlotLabelStyleView
 
-		private void EhHorizontalAlignementChanged(object sender, SelectionChangedEventArgs e)
+		private void EhAlignmentXChanged(object sender, SelectionChangedEventArgs e)
 		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiHorizontalAlignment);
+			GuiHelper.SynchronizeSelectionFromGui(_guiAlignmentX);
 		}
 
-		private void EhVerticalAlignementChanged(object sender, SelectionChangedEventArgs e)
+		private void EhAlignmentYChanged(object sender, SelectionChangedEventArgs e)
 		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiVerticalAlignment);
+			GuiHelper.SynchronizeSelectionFromGui(_guiAlignmentY);
 		}
 
 		private void EhAttachedAxisChanged(object sender, SelectionChangedEventArgs e)

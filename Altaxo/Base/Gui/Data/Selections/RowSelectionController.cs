@@ -552,7 +552,7 @@ namespace Altaxo.Gui.Data.Selections
 		/// (iii) the name of the column (only if it is a data column; otherwise empty)
 		/// (iiii) an action to set the column if a value has been assigned to, or if the column has changed.
 		/// </returns>
-		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionalColumns()
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>> GetAdditionalColumns()
 		{
 			for (int i = 0; i < _rsEntryList.Count; ++i)
 			{
@@ -563,11 +563,15 @@ namespace Altaxo.Gui.Data.Selections
 					var controller = rsEntry.DetailsController as IDataColumnController;
 					controller.SetIndex(i);
 
-					yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(
+					yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
 						"Col#" + i.ToString(),
 						controller.Column,
 						controller.ColumnName,
-						(column) => controller.SetDataColumn(column, _supposedParentDataTable)
+						(column, table) =>
+						{
+							_supposedParentDataTable = table;
+							controller.SetDataColumn(column, table);
+						}
 						);
 				}
 			}

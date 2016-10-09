@@ -26,6 +26,7 @@ using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Gui.Data;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Data;
@@ -117,7 +118,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 	[UserControllerForObject(typeof(ErrorBarPlotStyle))]
 	[ExpectedTypeOfView(typeof(IErrorBarPlotStyleView))]
-	public class ErrorBarPlotStyleController : MVCANControllerEditOriginalDocBase<ErrorBarPlotStyle, IErrorBarPlotStyleView>
+	public class ErrorBarPlotStyleController : MVCANControllerEditOriginalDocBase<ErrorBarPlotStyle, IErrorBarPlotStyleView>, IColumnDataExternallyControlled
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
@@ -281,6 +282,55 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 			_view?.Initialize_NegativeErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
 			_view?.Initialize_NegativeErrorColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+		}
+
+		/// <summary>
+		/// Gets the additional columns that the controller's document is referring to.
+		/// </summary>
+		/// <returns>Enumeration of tuples.
+		/// Item1 is a label to be shown in the column data dialog to let the user identify the column.
+		/// Item2 is the column itself,
+		/// Item3 is the column name (last part of the full path to the column), and
+		/// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>> GetDataColumnsExternallyControlled()
+		{
+			if (_doc.UseCommonErrorColumn)
+			{
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+			"CommonError", // label to be shown
+			_doc.CommonErrorColumn,
+			_doc.CommonErrorColumnDataColumnName,
+			(column, table) =>
+			{
+				_doc.CommonErrorColumn = column;
+				this._supposedParentDataTable = table;
+				InitializeCommonErrorColumnText();
+			});
+			}
+			else
+			{
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+					"PositiveError", // label to be shown
+					_doc.PositiveErrorColumn,
+					_doc.PositiveErrorColumnDataColumnName,
+					(column, table) =>
+					{
+						_doc.PositiveErrorColumn = column;
+						this._supposedParentDataTable = table;
+						this.InitializePositiveErrorColumnText();
+					});
+
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+					"NegativeError", // label to be shown
+					_doc.NegativeErrorColumn,
+					_doc.NegativeErrorColumnDataColumnName,
+					(column, table) =>
+					{
+						_doc.NegativeErrorColumn = column;
+						this._supposedParentDataTable = table;
+						this.InitializeNegativeErrorColumnText();
+					});
+			}
 		}
 
 		private void EhUseCommonErrorColumnChanged(bool useCommonErrorColumn)

@@ -100,6 +100,14 @@ namespace Altaxo.Data
 
 		#endregion "Serialization"
 
+		/// <summary>
+		/// Gets the type of the colum's items.
+		/// </summary>
+		/// <value>
+		/// The type of the item.
+		/// </value>
+		public override Type ItemType { get { return typeof(string); } }
+
 		public override int Count
 		{
 			get

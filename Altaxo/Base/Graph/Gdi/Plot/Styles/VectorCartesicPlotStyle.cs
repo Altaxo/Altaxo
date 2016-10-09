@@ -56,8 +56,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			AbsoluteValue = 1
 		}
 
-		private INumericColumnProxy _columnX;
-		private INumericColumnProxy _columnY;
+		private IReadableColumnProxy _columnX;
+		private IReadableColumnProxy _columnY;
 
 		private ValueInterpretation _meaningOfValues;
 
@@ -177,10 +177,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				s._meaningOfValues = (ValueInterpretation)info.GetEnum("MeaningOfValues", typeof(ValueInterpretation));
 
-				s._columnX = (Altaxo.Data.INumericColumnProxy)info.GetValue("ColumnX", s);
+				s._columnX = (IReadableColumnProxy)info.GetValue("ColumnX", s);
 				if (null != s._columnX) s._columnX.ParentObject = s;
 
-				s._columnY = (Altaxo.Data.INumericColumnProxy)info.GetValue("ColumnY", s);
+				s._columnY = (IReadableColumnProxy)info.GetValue("ColumnY", s);
 				if (null != s._columnY) s._columnY.ParentObject = s;
 
 				s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
@@ -346,7 +346,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Data that define the error in the positive direction.
 		/// </summary>
-		public INumericColumn ColumnX
+		public IReadableColumn ColumnX
 		{
 			get
 			{
@@ -357,7 +357,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var oldValue = _columnX?.Document;
 				if (!object.ReferenceEquals(value, oldValue))
 				{
-					ChildSetMember(ref _columnX, null == value ? null : NumericColumnProxyBase.FromColumn(value));
+					ChildSetMember(ref _columnX, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -380,7 +380,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Data that define the error in the positive direction.
 		/// </summary>
-		public INumericColumn ColumnY
+		public IReadableColumn ColumnY
 		{
 			get
 			{
@@ -391,7 +391,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var oldValue = _columnY?.Document;
 				if (!object.ReferenceEquals(value, oldValue))
 				{
-					ChildSetMember(ref _columnY, null == value ? null : NumericColumnProxyBase.FromColumn(value));
+					ChildSetMember(ref _columnY, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -759,22 +759,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
-			PaintErrorBars(g, layer, pdata);
-		}
-
-		protected void PaintErrorBars(Graphics g, IPlotArea layer, Processed2DPlotData pdata)
-		{
 			const double logicalClampMinimum = -10;
 			const double logicalClampMaximum = 11;
 
 			// Plot error bars for the dependent variable (y)
 			PlotRangeList rangeList = pdata.RangeList;
 			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			INumericColumn columnX = ColumnX;
-			INumericColumn columnY = ColumnY;
+			var columnX = ColumnX;
+			var columnY = ColumnY;
 
 			if (columnX == null || columnY == null)
 				return; // nothing to do if both error columns are null
+
+			if (!typeof(double).IsAssignableFrom(columnX.ItemType) || !typeof(double).IsAssignableFrom(columnY.ItemType))
+				return; // TODO make this an runtime paint error to be reported
 
 			var strokePen = _strokePen.Clone();
 

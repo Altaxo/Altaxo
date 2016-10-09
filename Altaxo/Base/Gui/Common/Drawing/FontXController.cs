@@ -79,7 +79,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			var newSize = _view.SelectedFontSize;
 			FontX oldFont = this._doc;
-			this._doc = oldFont.GetFontWithNewSize(newSize);
+			this._doc = oldFont.WithSize(newSize);
 		}
 
 		public override bool Apply(bool disposeController)

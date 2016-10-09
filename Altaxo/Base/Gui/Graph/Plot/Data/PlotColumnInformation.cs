@@ -33,6 +33,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
 	public class PlotColumnInformation
 	{
 		/// <summary>
+		/// The data table that is supposed to be the parent data table of the column.
+		/// </summary>
+		protected DataTable _supposedDataTable;
+
+		/// <summary>
 		/// If the underlying column is or was a data column, then here we store the data column's name.
 		/// </summary>
 		protected string _nameOfUnderlyingDataColumn;
@@ -68,6 +73,17 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		#endregion Constructors
 
 		#region Columns and transformations
+
+		/// <summary>
+		/// The data table that is supposed to be the parent data table of the column.
+		/// </summary>
+		public DataTable SupposedDataTable
+		{
+			get
+			{
+				return _supposedDataTable;
+			}
+		}
 
 		/// <summary>The column itself.</summary>
 		public IReadableColumn Column
@@ -196,6 +212,12 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		public void Update(DataTable dataTableOfPlotItem, bool hasTableChanged)
 		{
 			bool hasChanged = false;
+
+			if (!object.ReferenceEquals(_supposedDataTable, dataTableOfPlotItem))
+			{
+				_supposedDataTable = dataTableOfPlotItem;
+				hasChanged = true;
+			}
 
 			if (null == _underlyingColumn)
 			{

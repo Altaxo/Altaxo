@@ -285,7 +285,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 					case @"\g(":
 						{
 							var newContext = context.Clone();
-							newContext.SetFont(context.FontId.GetFontWithNewFamily("Symbol"));
+							newContext.SetFont(context.FontId.WithFamily("Symbol"));
 							VisitNode(childNode, newContext, parent);
 						}
 						break;
@@ -433,7 +433,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 								numberString = s1.Substring(0, s1.Length - 1);
 								if (double.TryParse(numberString, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out val))
 								{
-									newContext.BaseFontId = context.BaseFontId.GetFontWithNewSize(context.BaseFontId.Size * val / 100);
+									newContext.BaseFontId = context.BaseFontId.WithSize(context.BaseFontId.Size * val / 100);
 									newContext.ScaleFont(val / 100);
 								}
 							}
@@ -442,15 +442,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 								)
 							{
 								double newSize = val * (double)(lengthUnit.UnitInMeter / Altaxo.Serialization.LengthUnit.Point.UnitInMeter);
-								newContext.BaseFontId = context.BaseFontId.GetFontWithNewSize(newSize);
-								newContext.FontId = context.FontId.GetFontWithNewSize(newSize);
+								newContext.BaseFontId = context.BaseFontId.WithSize(newSize);
+								newContext.FontId = context.FontId.WithSize(newSize);
 							}
 							else if (double.TryParse(s1, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out val)
 								)
 							{
 								double newSize = val;
-								newContext.BaseFontId = context.BaseFontId.GetFontWithNewSize(newSize);
-								newContext.FontId = context.FontId.GetFontWithNewSize(newSize);
+								newContext.BaseFontId = context.BaseFontId.WithSize(newSize);
+								newContext.FontId = context.FontId.WithSize(newSize);
 							}
 							VisitNode(childNode.next_, newContext, parent);
 						}

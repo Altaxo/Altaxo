@@ -54,6 +54,12 @@ namespace Altaxo.Data.Transformations
 
 		#endregion Serialization
 
+		/// <inheritdoc/>
+		public Type InputValueType { get { return typeof(double); } }
+
+		/// <inheritdoc/>
+		public Type OutputValueType { get { return typeof(double); } }
+
 		public AltaxoVariant Transform(AltaxoVariant value)
 		{
 			return Math.Log(value);

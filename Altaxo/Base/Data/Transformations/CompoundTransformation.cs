@@ -69,6 +69,12 @@ namespace Altaxo.Data.Transformations
 
 		#endregion Serialization
 
+		/// <inheritdoc/>
+		public Type InputValueType { get { return _transformations[0].InputValueType; } }
+
+		/// <inheritdoc/>
+		public Type OutputValueType { get { return _transformations[_transformations.Count - 1].OutputValueType; } }
+
 		private CompoundTransformation()
 		{
 		}

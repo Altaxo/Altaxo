@@ -97,6 +97,14 @@ namespace Altaxo.Data
 				get { return Length; }
 			}
 
+			/// <summary>
+			/// Gets the type of the colum's items.
+			/// </summary>
+			/// <value>
+			/// The type of the item.
+			/// </value>
+			public Type ItemType { get { return typeof(double); } }
+
 			public double this[int i]
 			{
 				get { return _col[_participatingDataRows[i]]; }

@@ -104,17 +104,17 @@ namespace Altaxo.Drawing.D3D
 
 		public FontX3D WithSize(double newSize)
 		{
-			return new FontX3D(_font.GetFontWithNewSize(newSize), _depth);
+			return new FontX3D(_font.WithSize(newSize), _depth);
 		}
 
 		public FontX3D WithFamily(string newFamily)
 		{
-			return new FontX3D(_font.GetFontWithNewFamily(newFamily), _depth);
+			return new FontX3D(_font.WithFamily(newFamily), _depth);
 		}
 
 		public FontX3D WithStyle(FontXStyle style)
 		{
-			return new FontX3D(_font.GetFontWithNewStyle(style), _depth);
+			return new FontX3D(_font.WithStyle(style), _depth);
 		}
 
 		public FontX3D WithDepth(double newDepth)

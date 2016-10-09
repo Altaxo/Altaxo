@@ -576,7 +576,7 @@ namespace Altaxo.Graph.Gdi.Axis
 				if (newValue != oldValue)
 				{
 					FontX oldFont = _font;
-					_font = oldFont.GetFontWithNewSize(newValue);
+					_font = oldFont.WithSize(newValue);
 
 					EhSelfChanged(EventArgs.Empty);
 				}
@@ -1037,7 +1037,7 @@ namespace Altaxo.Graph.Gdi.Axis
 						var prop = (RoutedSetterProperty<string>)property;
 						try
 						{
-							var newFont = _font.GetFontWithNewFamily(prop.Value);
+							var newFont = _font.WithFamily(prop.Value);
 							_font = newFont;
 							EhSelfChanged(EventArgs.Empty);
 						}

@@ -87,6 +87,14 @@ namespace Altaxo.Data
 			return this;
 		}
 
+		/// <summary>
+		/// Gets the type of the colum's items.
+		/// </summary>
+		/// <value>
+		/// The type of the item.
+		/// </value>
+		public Type ItemType { get { return typeof(double); } }
+
 		public double StartValue { get { return _start; } }
 
 		public EquallySpacedColumn WithStartValue(double startValue)

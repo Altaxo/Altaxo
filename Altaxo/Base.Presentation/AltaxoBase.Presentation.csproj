@@ -533,6 +533,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\VectorCartesicPlotStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\Graph3D\Axis\AxisCreationControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1061,7 +1065,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\Gdi\Plot\Styles\XYPlotLabelStyleControl.xaml">
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\LabelPlotStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1199,6 +1203,9 @@
       <DependentUpon>DashPatternComboBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternConverters.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\VectorCartesicPlotStyleControl.xaml.cs">
+      <DependentUpon>VectorCartesicPlotStyleControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\Graph3D\Plot\Styles\BarGraphPlotStyleControl.xaml.cs">
       <DependentUpon>BarGraphPlotStyleControl.xaml</DependentUpon>
     </Compile>
@@ -1967,8 +1974,8 @@
     <Compile Include="Gui\Graph\Gdi\Plot\Groups\PlotGroupCollectionControlSimple.xaml.cs">
       <DependentUpon>PlotGroupCollectionControlSimple.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotLabelStyleControl.xaml.cs">
-      <DependentUpon>XYPlotLabelStyleControl.xaml</DependentUpon>
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\LabelPlotStyleControl.xaml.cs">
+      <DependentUpon>LabelPlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\XYPlotLayerContentsControl.xaml.cs">
       <DependentUpon>XYPlotLayerContentsControl.xaml</DependentUpon>

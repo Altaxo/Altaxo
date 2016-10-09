@@ -180,7 +180,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		/// (iiii) an action to set the column if a value has been assigned to, or if the column was changed.
 		/// </param>
 		void SetAdditionalPlotColumns(
-			IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> additionalColumns
+			IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>> additionalColumns
 			);
 	}
 
@@ -200,8 +200,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			/// <summary>Label that will be shown to indicate the column's function, e.g. "X" for an x-colum.</summary>
 			public string Label { get; set; }
 
-			/// <summary>Action to set the column property back in the style, if Apply of this controller is called.</summary>
-			public Action<IReadableColumn> ColumnSetter { get; set; }
+			/// <summary>Action to set the column property back in the style, if Apply of this controller is called.
+			/// First argument is the column, second argument is the supposed parent data table.</summary>
+			public Action<IReadableColumn, DataTable> ColumnSetter { get; set; }
 
 			public PlotColumnInformationInternal(IReadableColumn column, string nameOfUnderlyingDataColumn)
 				: base(column, nameOfUnderlyingDataColumn)
@@ -210,7 +211,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 			protected override void OnChanged()
 			{
-				ColumnSetter?.Invoke(Column);
+				ColumnSetter?.Invoke(Column, _supposedDataTable);
 			}
 		}
 
@@ -547,7 +548,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			{
 				for (int i = 0; i < _columnGroup.Count; ++i)
 					for (int j = 0; j < _columnGroup[i].Columns.Count; ++j)
-						_columnGroup[i].Columns[j].ColumnSetter(_columnGroup[i].Columns[j].Column);
+						_columnGroup[i].Columns[j].ColumnSetter(_columnGroup[i].Columns[j].Column, _doc.DataTable);
 			}
 			_isDirty = false;
 
@@ -1458,7 +1459,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		/// (iii) the name of the column (only if it is a data column; otherwise empty)
 		/// (iiii) an action to set the column if a value has been assigned to, or if the column was changed
 		/// can be used to get or set the underlying column.</param>
-		public void SetAdditionalPlotColumns(IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> additionalColumns)
+		public void SetAdditionalPlotColumns(IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>> additionalColumns)
 		{
 			int groupNumber = 1;
 			foreach (var group in additionalColumns)

@@ -42,6 +42,14 @@ namespace Altaxo.Data
 			return new DBNullColumn();
 		}
 
+		/// <summary>
+		/// Gets the type of the colum's items.
+		/// </summary>
+		/// <value>
+		/// The type of the item.
+		/// </value>
+		public override Type ItemType { get { return typeof(object); } }
+
 		public override int Count
 		{
 			get

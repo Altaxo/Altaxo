@@ -314,6 +314,14 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
+		/// Gets the type of the colum's items.
+		/// </summary>
+		/// <value>
+		/// The type of the item.
+		/// </value>
+		public override Type ItemType { get { return typeof(double); } }
+
+		/// <summary>
 		/// Returns the used length of the array. This is one plus the highest index of the number different from Double.NaN.
 		/// </summary>
 		/// <param name="values">The array for which the used length has to be determined.</param>

@@ -23,8 +23,8 @@
 #endregion Copyright
 
 using Altaxo.Collections;
-using Altaxo.Drawing.D3D;
-using Altaxo.Gui.Drawing.D3D;
+using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common.Drawing;
 using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Data;
 using System;
@@ -34,7 +34,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
+namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
 	/// <summary>
 	/// Interaction logic for ErrorBarPlotStyleControl.xaml
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 			_strokePenGlue = new PenControlsGlue();
 			_strokePenGlue.CbBrush = _guiPenColor;
-			_strokePenGlue.CbLineEndCap = _guiLineEndCap;
+			_strokePenGlue.CbEndCap = _guiLineEndCap;
 		}
 
 		#region IErrorBarPlotStyleView Members
@@ -68,7 +68,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		public PenX3D Pen
+		public PenX Pen
 		{
 			get
 			{
@@ -159,32 +159,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 			set
 			{
 				_guiLineWidth1Factor.SelectedQuantityAsValueInSIUnits = value;
-			}
-		}
-
-		public double LineWidth2Offset
-		{
-			get
-			{
-				return _guiLineWidth2Offset.SelectedQuantityAsValueInPoints;
-			}
-
-			set
-			{
-				_guiLineWidth2Offset.SelectedQuantityAsValueInPoints = value;
-			}
-		}
-
-		public double LineWidth2Factor
-		{
-			get
-			{
-				return _guiLineWidth2Factor.SelectedQuantityAsValueInSIUnits;
-			}
-
-			set
-			{
-				_guiLineWidth2Factor.SelectedQuantityAsValueInSIUnits = value;
 			}
 		}
 
@@ -350,27 +324,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 				this._guiColumnYTransformation.Text = transformationTextToShow;
 				this._guiColumnYTransformation.ToolTip = transformationToolTip;
 				this._guiColumnYTransformation.Visibility = Visibility.Visible;
-			}
-		}
-
-		public void Initialize_ColumnZ(string boxText, string toolTip, int status)
-		{
-			this._guiColumnZ.Text = boxText;
-			this._guiColumnZ.ToolTip = toolTip;
-			this._guiColumnZ.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
-		}
-
-		public void Initialize_ColumnZTransformation(string transformationTextToShow, string transformationToolTip)
-		{
-			if (null == transformationTextToShow)
-			{
-				this._guiColumnZTransformation.Visibility = Visibility.Collapsed;
-			}
-			else
-			{
-				this._guiColumnZTransformation.Text = transformationTextToShow;
-				this._guiColumnZTransformation.ToolTip = transformationToolTip;
-				this._guiColumnZTransformation.Visibility = Visibility.Visible;
 			}
 		}
 

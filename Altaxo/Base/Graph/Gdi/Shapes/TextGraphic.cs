@@ -727,7 +727,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 				case "FontSize":
 					{
 						var prop = (RoutedSetterProperty<double>)property;
-						this.Font = _font.GetFontWithNewSize(prop.Value);
+						this.Font = _font.WithSize(prop.Value);
 						EhSelfChanged(EventArgs.Empty);
 					}
 					break;
@@ -737,7 +737,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 						var prop = (RoutedSetterProperty<string>)property;
 						try
 						{
-							var newFont = _font.GetFontWithNewFamily(prop.Value);
+							var newFont = _font.WithFamily(prop.Value);
 							_font = newFont;
 							_isStructureInSync = false;
 							EhSelfChanged(EventArgs.Empty);

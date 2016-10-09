@@ -392,7 +392,7 @@ namespace Altaxo.Gui
 			if (font.Equals(defaultFont))
 				throw new InvalidProgramException("Can not even create the default font!");
 
-			return CreateNewTypeface(defaultFont.GetFontWithNewStyle(font.Style));
+			return CreateNewTypeface(defaultFont.WithStyle(font.Style));
 		}
 
 		#region Enumeration of Wpf fonts

@@ -24,18 +24,16 @@
 
 using Altaxo.Collections;
 using Altaxo.Data;
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph.Graph3D.Plot.Styles;
-using Altaxo.Gui.Data;
+using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Gui.Graph;
-using Altaxo.Gui.Graph.Graph3D.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
+namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
 	#region Interfaces
 
@@ -45,7 +43,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 		bool ShowPlotColorsOnly { set; }
 
-		PenX3D Pen { get; set; }
+		PenX Pen { get; set; }
 
 		bool IndependentSymbolSize { get; set; }
 
@@ -53,8 +51,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 		double LineWidth1Offset { get; set; }
 		double LineWidth1Factor { get; set; }
-		double LineWidth2Offset { get; set; }
-		double LineWidth2Factor { get; set; }
 
 		double EndCapSizeOffset { get; set; }
 		double EndCapSizeFactor { get; set; }
@@ -100,16 +96,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		void Initialize_ColumnYTransformation(string transformationTextToShow, string transformationToolTip);
 
 		/// <summary>
-		/// Initializes the positive error column.
-		/// </summary>
-		/// <param name="columnAsText">Column's name.</param>
-		/// <param name="columnToolTip">Column's tooltip.</param>
-		/// <param name="columnStatus">Column's status display.</param>
-		void Initialize_ColumnZ(string columnAsText, string columnToolTip, int columnStatus);
-
-		void Initialize_ColumnZTransformation(string transformationTextToShow, string transformationToolTip);
-
-		/// <summary>
 		/// Occurs when the user choice for IndependentColor of the fill brush has changed.
 		/// </summary>
 		event Action IndependentColorChanged;
@@ -119,7 +105,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 	[UserControllerForObject(typeof(VectorCartesicPlotStyle))]
 	[ExpectedTypeOfView(typeof(IVectorCartesicPlotStyleView))]
-	public class VectorCartesicPlotStyleController : MVCANControllerEditOriginalDocBase<VectorCartesicPlotStyle, IVectorCartesicPlotStyleView>, IColumnDataExternallyControlled
+	public class VectorCartesicPlotStyleController : MVCANControllerEditOriginalDocBase<VectorCartesicPlotStyle, IVectorCartesicPlotStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
@@ -177,9 +163,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 				_view.LineWidth1Offset = _doc.LineWidth1Offset;
 				_view.LineWidth1Factor = _doc.LineWidth1Factor;
 
-				_view.LineWidth2Offset = _doc.LineWidth2Offset;
-				_view.LineWidth2Factor = _doc.LineWidth2Factor;
-
 				_view.EndCapSizeOffset = _doc.EndCapSizeOffset;
 				_view.EndCapSizeFactor = _doc.EndCapSizeFactor;
 
@@ -194,11 +177,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 				_view.Initialize_MeaningOfValues(_meaningOfValues);
 
-				// Errors
-
 				this.InitializeColumnXText();
 				this.InitializeColumnYText();
-				this.InitializeColumnZText();
 			}
 		}
 
@@ -215,9 +195,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 			_doc.LineWidth1Offset = _view.LineWidth1Offset;
 			_doc.LineWidth1Factor = _view.LineWidth1Factor;
-
-			_doc.LineWidth2Offset = _view.LineWidth2Offset;
-			_doc.LineWidth2Factor = _view.LineWidth2Factor;
 
 			_doc.EndCapSizeOffset = _view.EndCapSizeOffset;
 			_doc.EndCapSizeFactor = _view.EndCapSizeFactor;
@@ -266,59 +243,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 			_view?.Initialize_ColumnY(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
 			_view?.Initialize_ColumnYTransformation(info.TransformationTextToShow, info.TransformationToolTip);
-		}
-
-		private void InitializeColumnZText()
-		{
-			var info = new PlotColumnInformation(_doc.ColumnZ, _doc.ColumnZDataColumnName);
-			info.Update(_supposedParentDataTable);
-
-			_view?.Initialize_ColumnZ(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-			_view?.Initialize_ColumnZTransformation(info.TransformationTextToShow, info.TransformationToolTip);
-		}
-
-		/// <summary>
-		/// Gets the additional columns that the controller's document is referring to.
-		/// </summary>
-		/// <returns>Enumeration of tuples.
-		/// Item1 is a label to be shown in the column data dialog to let the user identify the column.
-		/// Item2 is the column itself,
-		/// Item3 is the column name (last part of the full path to the column), and
-		/// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
-		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>> GetDataColumnsExternallyControlled()
-		{
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
-				"X", // label to be shown
-				_doc.ColumnX,
-				_doc.ColumnXDataColumnName,
-				(column, table) =>
-				{
-					_doc.ColumnX = column;
-					this._supposedParentDataTable = table;
-					InitializeColumnXText();
-				});
-
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
-				"Y", // label to be shown
-				_doc.ColumnY,
-				_doc.ColumnYDataColumnName,
-				(column, table) =>
-				{
-					_doc.ColumnY = column;
-					this._supposedParentDataTable = table;
-					InitializeColumnYText();
-				});
-
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
-				"Z", // label to be shown
-				_doc.ColumnZ,
-				_doc.ColumnZDataColumnName,
-				(column, table) =>
-				{
-					_doc.ColumnZ = column;
-					this._supposedParentDataTable = table;
-					InitializeColumnZText();
-				});
 		}
 
 		private void EhIndependentColorChanged()

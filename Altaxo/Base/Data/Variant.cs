@@ -374,6 +374,29 @@ namespace Altaxo.Data
 				return "";
 		}
 
+		public string ToString(string formatString, IFormatProvider provider)
+		{
+			try
+			{
+				if (this._typeOfContent == Content.VNull)
+					return "(null)";
+				else if (this._typeOfContent == Content.VDouble)
+					return this._double.ToString(formatString, provider);
+				else if (this._typeOfContent == Content.VDateTime)
+					return ((DateTime)_object).ToString(formatString, provider);
+				else if (this._typeOfContent == Content.VString)
+					return ((string)_object).ToString(provider);
+				else if (null != _object)
+					return this._object.ToString();
+				else // everything is null
+					return "";
+			}
+			catch (Exception ex)
+			{
+				return ex.Message;
+			}
+		}
+
 		/// <summary>
 		/// Converts the content to an object. This conversion is always possible. The structure remains unchanged.
 		/// </summary>

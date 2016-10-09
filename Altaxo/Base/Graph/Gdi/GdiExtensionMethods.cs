@@ -292,6 +292,56 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		#endregion Polyline constituted by an array of PointF
+
+		#region String Alignement
+
+		public static Altaxo.Drawing.Alignment ToAltaxo(System.Drawing.StringAlignment alignment)
+		{
+			Altaxo.Drawing.Alignment result;
+			switch (alignment)
+			{
+				case StringAlignment.Near:
+					result = Drawing.Alignment.Near;
+					break;
+
+				case StringAlignment.Center:
+					result = Drawing.Alignment.Center;
+					break;
+
+				case StringAlignment.Far:
+					result = Drawing.Alignment.Far;
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+			return result;
+		}
+
+		public static System.Drawing.StringAlignment ToGdi(Altaxo.Drawing.Alignment alignment)
+		{
+			System.Drawing.StringAlignment result;
+			switch (alignment)
+			{
+				case Drawing.Alignment.Near:
+					result = System.Drawing.StringAlignment.Near;
+					break;
+
+				case Drawing.Alignment.Center:
+					result = System.Drawing.StringAlignment.Center;
+					break;
+
+				case Drawing.Alignment.Far:
+					result = System.Drawing.StringAlignment.Far;
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+			return result;
+		}
+
+		#endregion String Alignement
 	}
 
 	/// <summary>

@@ -512,12 +512,12 @@ namespace Altaxo.Graph.Plot.Data
 			string, // Column label
 			IReadableColumn, // the column as it was at the time of this call
 			string, // the name of the column (last part of the column proxies document path)
-			Action<IReadableColumn> // action to set the column during Apply of the controller
+			Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
 			>> GetAdditionallyUsedColumns()
 		{
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(XColumn), XColumn, _xColumn?.DocumentPath?.LastPartOrDefault, (col) => XColumn = col);
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(YColumn), YColumn, _yColumn?.DocumentPath?.LastPartOrDefault, (col) => YColumn = col);
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(ZColumn), ZColumn, _zColumn?.DocumentPath?.LastPartOrDefault, (col) => ZColumn = col);
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(nameof(XColumn), XColumn, _xColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { XColumn = col; DataTable = table; });
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(nameof(YColumn), YColumn, _yColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { YColumn = col; DataTable = table; });
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(nameof(ZColumn), ZColumn, _zColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { ZColumn = col; DataTable = table; });
 		}
 
 		/// <summary>

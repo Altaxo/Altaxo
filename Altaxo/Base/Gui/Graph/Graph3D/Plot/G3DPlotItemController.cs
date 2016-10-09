@@ -27,6 +27,7 @@ using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Plot;
 using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Gui.Data;
 using Altaxo.Gui.Graph.Graph3D.Plot.Groups;
 using Altaxo.Gui.Graph.Graph3D.Plot.Styles;
 using Altaxo.Gui.Graph.Plot.Data;
@@ -241,20 +242,45 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 			base.DetachView();
 		}
 
+		private SuspendableObject _disablerOfActiveChildControlChanged = new SuspendableObject();
+
 		private void View_SetAllTabViews()
 		{
-			_view.ClearTabs();
-
-			// Add the data tab item
-			if (_dataController != null)
-				_view.AddTab("Data", _dataController.ViewObject);
-
-			// set the plot style tab items
-			for (int i = 0; i < _styleControllerList.Count; ++i)
+			using (var suspendToken = _disablerOfActiveChildControlChanged.SuspendGetToken()) // avoid firing a lot of events by adding the tab controls
 			{
-				string title = string.Format("#{0}: {1}", (i + 1), Current.Gui.GetUserFriendlyClassName(_doc.Style[i].GetType()));
-				_view.AddTab(title, _styleControllerList[i].ViewObject);
+				_view.ClearTabs();
+
+				// Add the data tab item
+				if (_dataController != null)
+					_view.AddTab("Data", _dataController.ViewObject);
+
+				// set the plot style tab items
+				for (int i = 0; i < _styleControllerList.Count; ++i)
+				{
+					string title = string.Format("#{0}: {1}", (i + 1), Current.Gui.GetUserFriendlyClassName(_doc.Style[i].GetType()));
+					_view.AddTab(title, _styleControllerList[i].ViewObject);
+				}
 			}
+		}
+
+		protected void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs e)
+		{
+			if (_disablerOfActiveChildControlChanged.IsSuspended)
+				return;
+
+			// test if it is the view of the normal styles
+			for (int i = 0; i < _styleControllerList.Count; i++)
+			{
+				if (_styleControllerList[i] != null && object.ReferenceEquals(_styleControllerList[i].ViewObject, e.OldInstance))
+				{
+					if (!_styleControllerList[i].Apply(false))
+						return;
+
+					DistributeStyleChange(i);
+				}
+			}
+
+			_dataController.SetAdditionalPlotColumns(GetAdditionalColumns()); // update list in case it has changed
 		}
 
 		/// <summary>
@@ -290,19 +316,21 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 			_dataController.SetAdditionalPlotColumns(GetAdditionalColumns());
 		}
 
-		private IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>> GetAdditionalColumns()
+		private IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>> GetAdditionalColumns()
 		{
-			for (int i = 0; i < _doc.Style.Count; i++)
+			for (int i = 0; i < _styleControllerList.Count; ++i)
 			{
-				var style = _doc.Style[i];
+				var styleCtrl = _styleControllerList[i] as IColumnDataExternallyControlled;
+				if (null == styleCtrl)
+					continue; // no data columns in this controller
 
-				var additionalColumns = style.GetAdditionallyUsedColumns();
+				var additionalColumns = styleCtrl.GetDataColumnsExternallyControlled();
 
 				if (null != additionalColumns)
 				{
-					yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>>>(
-						string.Format("#{0}: {1}", i + 1, Current.Gui.GetUserFriendlyClassName(style.GetType())),
-						GetAdditionallyUsedColumnsWithAmendedControllerAction(additionalColumns, i));
+					yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>(
+						string.Format("#{0}: {1}", i + 1, Current.Gui.GetUserFriendlyClassName(_doc.Style[i].GetType())),
+						additionalColumns);
 				}
 			}
 		}
@@ -324,23 +352,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 					(column) => { additionalColumn.Item4(column); _styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable); }
 					);
 			}
-		}
-
-		protected void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs e)
-		{
-			// test if it is the view of the normal styles
-			for (int i = 0; i < _styleControllerList.Count; i++)
-			{
-				if (_styleControllerList[i] != null && object.ReferenceEquals(_styleControllerList[i].ViewObject, e.OldInstance))
-				{
-					if (!_styleControllerList[i].Apply(false))
-						return;
-
-					DistributeStyleChange(i);
-				}
-			}
-
-			_dataController.SetAdditionalPlotColumns(GetAdditionalColumns()); // update list in case it has changed
 		}
 
 		/// <summary>

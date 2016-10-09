@@ -561,6 +561,7 @@
     <Compile Include="Gui\DragDropDelegateTypes.cs" />
     <Compile Include="Gui\Drawing\D3D\MaterialController.cs" />
     <Compile Include="Gui\Drawing\D3D\Material\MaterialWithUniformColorController.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\VectorCartesicPlotStyleController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Axis\AxisCreationController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Axis\AxisLabelStyleController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Axis\AxisLineStyleController.cs" />
@@ -583,6 +584,7 @@
     <Compile Include="Gui\Drawing\D3D\PenAllPropertiesController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Plot\DataMeshPlotItemController.cs" />
     <Compile Include="Gui\Graph\Plot\Data\ColumnPlotDataControllerBase.cs" />
+    <Compile Include="Gui\Data\IColumnDataExternallyControlled.cs" />
     <Compile Include="Gui\Graph\Plot\Data\PlotColumnControlState.cs" />
     <Compile Include="Gui\Graph\Plot\Data\PlotColumnInformation.cs" />
     <Compile Include="Gui\Graph\Plot\Data\PlotColumnTag.cs" />
@@ -928,7 +930,7 @@
     <Compile Include="Gui\Graph\Gdi\Plot\G2DPlotItemController.cs" />
     <Compile Include="Gui\Graph\Gdi\Axis\XYGridStyleController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Groups\PlotGroupCollectionControllerSimple.cs" />
-    <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotLabelStyleController.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\LabelPlotStyleController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotLineStyleController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotScatterStyleController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotStyleCollectionController.cs" />

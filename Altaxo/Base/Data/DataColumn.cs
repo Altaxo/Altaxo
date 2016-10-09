@@ -94,6 +94,14 @@ namespace Altaxo.Data
 		public abstract object Clone();
 
 		/// <summary>
+		/// Gets the type of the colum's items.
+		/// </summary>
+		/// <value>
+		/// The type of the item.
+		/// </value>
+		public abstract Type ItemType { get; }
+
+		/// <summary>
 		/// Returns the row count, i.e. the one more than the index to the last valid data element in the column.
 		/// </summary>
 		public abstract int Count { get; }

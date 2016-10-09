@@ -67,5 +67,13 @@ namespace Altaxo.Data
 		/// The count if this column has a defined count; otherwise null.
 		/// </value>
 		int? Count { get; }
+
+		/// <summary>
+		/// Gets the type of the colum's items.
+		/// </summary>
+		/// <value>
+		/// The type of the item.
+		/// </value>
+		Type ItemType { get; }
 	}
 }

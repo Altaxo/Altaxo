@@ -132,12 +132,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 			public void ScaleFont(double scale)
 			{
-				FontId = FontId.GetFontWithNewSize(scale * FontId.Size);
+				FontId = FontId.WithSize(scale * FontId.Size);
 			}
 
 			public void SetFontStyle(FontXStyle style)
 			{
-				FontId = FontId.GetFontWithNewStyle(style);
+				FontId = FontId.WithStyle(style);
 			}
 
 			/// <summary>
@@ -147,7 +147,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 			public void MergeFontStyle(FontXStyle style)
 			{
 				var newStyle = FontId.Style | style;
-				FontId = FontId.GetFontWithNewStyle(newStyle);
+				FontId = FontId.WithStyle(newStyle);
 			}
 		}
 

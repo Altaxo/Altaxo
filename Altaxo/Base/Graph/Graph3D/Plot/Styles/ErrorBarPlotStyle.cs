@@ -64,9 +64,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		protected bool _useCommonErrorColumn = true;
 
-		private INumericColumnProxy _commonErrorColumn;
-		private INumericColumnProxy _positiveErrorColumn;
-		private INumericColumnProxy _negativeErrorColumn;
+		private IReadableColumnProxy _commonErrorColumn;
+		private IReadableColumnProxy _positiveErrorColumn;
+		private IReadableColumnProxy _negativeErrorColumn;
 
 		private ValueInterpretation _meaningOfValues;
 
@@ -199,15 +199,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 				if (s._useCommonErrorColumn)
 				{
-					s._commonErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("CommonError", s);
+					s._commonErrorColumn = (IReadableColumnProxy)info.GetValue("CommonError", s);
 					if (null != s._commonErrorColumn) s._commonErrorColumn.ParentObject = s;
 				}
 				else
 				{
-					s._positiveErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("PositiveError", s);
+					s._positiveErrorColumn = (IReadableColumnProxy)info.GetValue("PositiveError", s);
 					if (null != s._positiveErrorColumn) s._positiveErrorColumn.ParentObject = s;
 
-					s._negativeErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("NegativeError", s);
+					s._negativeErrorColumn = (IReadableColumnProxy)info.GetValue("NegativeError", s);
 					if (null != s._negativeErrorColumn) s._negativeErrorColumn.ParentObject = s;
 				}
 
@@ -679,7 +679,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>
 		/// Data that define the error in the positive direction.
 		/// </summary>
-		public INumericColumn CommonErrorColumn
+		public IReadableColumn CommonErrorColumn
 		{
 			get
 			{
@@ -695,7 +695,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					var oldValue = _commonErrorColumn?.Document;
 					if (!object.ReferenceEquals(value, oldValue))
 					{
-						ChildSetMember(ref _commonErrorColumn, null == value ? null : NumericColumnProxyBase.FromColumn(value));
+						ChildSetMember(ref _commonErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
 						EhSelfChanged(EventArgs.Empty);
 					}
 				}
@@ -705,8 +705,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					var oldValue2 = _negativeErrorColumn?.Document;
 					if (!object.ReferenceEquals(value, oldValue1) || !object.ReferenceEquals(value, oldValue2))
 					{
-						ChildSetMember(ref _positiveErrorColumn, null == value ? null : NumericColumnProxyBase.FromColumn(value));
-						ChildSetMember(ref _negativeErrorColumn, null == value ? null : NumericColumnProxyBase.FromColumn(value));
+						ChildSetMember(ref _positiveErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
+						ChildSetMember(ref _negativeErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
 
 						EhSelfChanged(EventArgs.Empty);
 					}
@@ -731,7 +731,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>
 		/// Data that define the error in the positive direction.
 		/// </summary>
-		public INumericColumn PositiveErrorColumn
+		public IReadableColumn PositiveErrorColumn
 		{
 			get
 			{
@@ -745,7 +745,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				var oldValue = _positiveErrorColumn?.Document;
 				if (!object.ReferenceEquals(value, oldValue))
 				{
-					ChildSetMember(ref _positiveErrorColumn, null == value ? null : NumericColumnProxyBase.FromColumn(value));
+					ChildSetMember(ref _positiveErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -768,7 +768,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>
 		/// Data that define the error in the negative direction.
 		/// </summary>
-		public INumericColumn NegativeErrorColumn
+		public IReadableColumn NegativeErrorColumn
 		{
 			get
 			{
@@ -782,7 +782,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				var oldValue = _negativeErrorColumn?.Document;
 				if (!object.ReferenceEquals(value, oldValue))
 				{
-					ChildSetMember(ref _negativeErrorColumn, null == value ? null : NumericColumnProxyBase.FromColumn(value));
+					ChildSetMember(ref _negativeErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -897,8 +897,15 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			// Plot error bars for the dependent variable (y)
 			PlotRangeList rangeList = pdata.RangeList;
 			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			INumericColumn posErrCol = PositiveErrorColumn;
-			INumericColumn negErrCol = NegativeErrorColumn;
+
+			var posErrCol = PositiveErrorColumn;
+			var negErrCol = NegativeErrorColumn;
+
+			if (null != posErrCol && !typeof(double).IsAssignableFrom(posErrCol.ItemType))
+				posErrCol = null; // TODO make this an runtime paint error to be reported
+
+			if (null != negErrCol && !typeof(double).IsAssignableFrom(negErrCol.ItemType))
+				negErrCol = null; // TODO make this an runtime paint error to be reported
 
 			if (posErrCol == null && negErrCol == null)
 				return; // nothing to do if both error columns are null

@@ -60,6 +60,12 @@ namespace Altaxo.Data.Transformations
 
 		#endregion Serialization
 
+		/// <inheritdoc/>
+		public Type InputValueType { get { return typeof(double); } }
+
+		/// <inheritdoc/>
+		public Type OutputValueType { get { return typeof(double); } }
+
 		public ScaleTransformation()
 		{
 			_scale = 1;

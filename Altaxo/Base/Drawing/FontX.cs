@@ -169,7 +169,7 @@ namespace Altaxo.Drawing
 		/// </summary>
 		/// <param name="newFamilyName">New name of the font family.</param>
 		/// <returns>Font with the same size and style as the existing instance, but with the provided font family name.</returns>
-		public FontX GetFontWithNewFamily(string newFamilyName)
+		public FontX WithFamily(string newFamilyName)
 		{
 			if (FontFamilyName == newFamilyName)
 				return this;
@@ -182,7 +182,7 @@ namespace Altaxo.Drawing
 		/// </summary>
 		/// <param name="newSize">The new font size.</param>
 		/// <returns>Font with the same font family and style as the existing font, but with the provided size.</returns>
-		public FontX GetFontWithNewSize(double newSize)
+		public FontX WithSize(double newSize)
 		{
 			if (Size == newSize)
 				return this;
@@ -195,7 +195,7 @@ namespace Altaxo.Drawing
 		/// </summary>
 		/// <param name="newStyle">The new font style.</param>
 		/// <returns>Font with the same font family andsize as the existing font, but with the provided style.</returns>
-		public FontX GetFontWithNewStyle(FontXStyle newStyle)
+		public FontX WithStyle(FontXStyle newStyle)
 		{
 			if (Style == newStyle)
 				return this;

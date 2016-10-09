@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Drawing
 		{
 			if (FontX != null)
 			{
-				FontX = FontX.GetFontWithNewFamily(_cbFontFamily.SelectedFontFamily.Name);
+				FontX = FontX.WithFamily(_cbFontFamily.SelectedFontFamily.Name);
 				OnSelectedFontChanged();
 			}
 		}
@@ -149,7 +149,7 @@ namespace Altaxo.Gui.Drawing
 		{
 			if (FontX != null)
 			{
-				FontX = FontX.GetFontWithNewStyle(_cbFontStyle.SelectedFontStyle);
+				FontX = FontX.WithStyle(_cbFontStyle.SelectedFontStyle);
 				OnSelectedFontChanged();
 			}
 		}
@@ -185,7 +185,7 @@ namespace Altaxo.Gui.Drawing
 		{
 			if (FontX != null)
 			{
-				FontX = FontX.GetFontWithNewSize(_cbFontSize.SelectedQuantityAsValueInPoints);
+				FontX = FontX.WithSize(_cbFontSize.SelectedQuantityAsValueInPoints);
 				OnSelectedFontChanged();
 			}
 		}

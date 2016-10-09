@@ -37,6 +37,22 @@ namespace Altaxo.Data
 	public interface IVariantToVariantTransformation : Main.IImmutable
 	{
 		/// <summary>
+		/// Gets the type of the input value of the transformation.
+		/// </summary>
+		/// <value>
+		/// The type of the input value of the transformation.
+		/// </value>
+		Type InputValueType { get; }
+
+		/// <summary>
+		/// Gets the type of the output value of the transformation.
+		/// </summary>
+		/// <value>
+		/// The type of the output value of the transformation.
+		/// </value>
+		Type OutputValueType { get; }
+
+		/// <summary>
 		/// Transforms the specified value into another <see cref="AltaxoVariant"/> value.
 		/// </summary>
 		/// <param name="value">The value to transform.</param>

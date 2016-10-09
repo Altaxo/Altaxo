@@ -29,6 +29,14 @@ namespace Altaxo.Data
 			_transformation = transformation;
 		}
 
+		/// <summary>
+		/// Gets the type of the colum's items.
+		/// </summary>
+		/// <value>
+		/// The type of the item.
+		/// </value>
+		public Type ItemType { get { return _transformation.OutputValueType; } }
+
 		public AltaxoVariant this[int i]
 		{
 			get

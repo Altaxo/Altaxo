@@ -62,6 +62,14 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
+		/// Gets the type of the colum's items.
+		/// </summary>
+		/// <value>
+		/// The type of the item.
+		/// </value>
+		public Type ItemType { get { return typeof(double); } }
+
+		/// <summary>
 		/// Simply returns the value i.
 		/// </summary>
 		/// <param name="i">The index i.</param>

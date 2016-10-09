@@ -75,6 +75,28 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 			return _getZPhysical(originalRowIndex);
 		}
 
+		/// <summary>Gets the physical value of a given axis at a given original row index.</summary>
+		/// <param name="axisNumber">0, 1, or 2 according to X, Y, or Z axis.</param>
+		/// <param name="originalRowIndex">Index of the original data row.</param>
+		/// <returns>The physical value of the provided axis at that given original row index.</returns>
+		public virtual AltaxoVariant GetPhysical(int axisNumber, int originalRowIndex)
+		{
+			switch (axisNumber)
+			{
+				case 0:
+					return _getXPhysical(originalRowIndex);
+
+				case 1:
+					return _getYPhysical(originalRowIndex);
+
+				case 2:
+					return _getZPhysical(originalRowIndex);
+
+				default:
+					throw new ArgumentOutOfRangeException(nameof(axisNumber));
+			}
+		}
+
 		/// <summary>Gets or sets the X physical accessor.</summary>
 		/// <value>The X physical accessor. It is awaiting the original row index of the data as argument and will return the physical x data value at that row.</value>
 		public IndexedPhysicalValueAccessor XPhysicalAccessor

@@ -150,6 +150,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>The style for the background.</summary>
 		protected IBackgroundStyle _backgroundStyle;
 
+		// cached values:
+		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
+		[field: NonSerialized]
+		protected Func<int, double> _cachedSymbolSizeForIndexFunction;
+
 		/// <summary>If this function is set, the label color is determined by calling this function on the index into the data.</summary>
 		[field: NonSerialized]
 		protected Func<int, System.Drawing.Color> _cachedColorForIndexFunction;
@@ -162,11 +167,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		/// <summary>Logical z shift between the location of the real data point and the point where the item is finally drawn.</summary>
 		private double _cachedLogicalShiftZ;
-
-		// cached values:
-		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
-		[field: NonSerialized]
-		protected Func<int, double> _cachedSymbolSizeForIndexFunction;
 
 		#region Serialization
 
@@ -204,7 +204,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 				info.AddEnum("AlignmentX", s._alignmentX);
 				info.AddEnum("AlignmentY", s._alignmentY);
-				info.AddEnum("AlignmentZ", s._alignmentY);
+				info.AddEnum("AlignmentZ", s._alignmentZ);
 
 				info.AddValue("RotationX", s._rotationX);
 				info.AddValue("RotationY", s._rotationY);
@@ -231,10 +231,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 			public static object SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent, bool nativeCall)
 			{
-				LabelPlotStyle s = null != o ? (LabelPlotStyle)o : new LabelPlotStyle(info);
+				var s = (LabelPlotStyle)o ?? new LabelPlotStyle(info);
 
 				s.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)info.GetValue("LabelColumn", s);
-				s.AttachedPlane = (CSPlaneID)info.GetValue("AttachedPlane", s);
+				s._attachedPlane = (CSPlaneID)info.GetValue("AttachedPlane", s);
 				s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
 				s._skipFrequency = info.GetInt32("SkipFreq");
 				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
@@ -579,10 +579,13 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			get { return _independentColor; }
 			set
 			{
-				bool oldValue = _independentColor;
-				_independentColor = value;
-				if (value != oldValue)
+				if (!(_independentColor == value))
 				{
+					_independentColor = value;
+
+					if (true == _independentColor)
+						_cachedColorForIndexFunction = null;
+
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
@@ -1054,6 +1057,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			double xpre, ypre, zpre;
 			double xdiff, ydiff, zdiff;
 
+			bool isFormatStringContainingBraces = _labelFormatString?.IndexOf('{') >= 0;
+			var culture = System.Threading.Thread.CurrentThread.CurrentCulture;
+
 			bool mustUseLogicalCoordinates = null != this._attachedPlane || 0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY || 0 != _cachedLogicalShiftZ;
 
 			for (int r = 0; r < rangeList.Count; r++)
@@ -1063,12 +1069,26 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				int offset = rangeList[r].OffsetToOriginal;
 				for (int j = lower; j < upper; j += _skipFrequency)
 				{
-					string label = labelColumn[j + offset].ToString();
-					if (label == null || label == string.Empty)
+					string label;
+					if (string.IsNullOrEmpty(_labelFormatString))
+					{
+						label = labelColumn[j + offset].ToString();
+					}
+					else if (!isFormatStringContainingBraces)
+					{
+						label = labelColumn[j + offset].ToString(_labelFormatString, culture);
+					}
+					else
+					{
+						// the label format string can contain {0} for the label column item, {1} for the row index, {2} .. {4} for the x, y and z component of the data point
+						label = string.Format(_labelFormatString, labelColumn[j + offset], j + offset, pdata.GetPhysical(0, j + offset), pdata.GetPhysical(1, j + offset), pdata.GetPhysical(2, j + offset));
+					}
+
+					if (string.IsNullOrEmpty(label))
 						continue;
 
 					double localSymbolSize = _symbolSize;
-					if (null == _cachedColorForIndexFunction)
+					if (null != _cachedSymbolSizeForIndexFunction)
 					{
 						localSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
 					}
