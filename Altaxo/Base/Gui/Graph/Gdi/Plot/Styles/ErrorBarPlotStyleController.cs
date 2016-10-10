@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,9 +22,12 @@
 
 #endregion Copyright
 
+using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Gui.Data;
+using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
@@ -38,57 +41,100 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 	{
 		bool IndependentColor { get; set; }
 
+		bool IndependentDashPattern { get; set; }
+
 		bool ShowPlotColorsOnly { set; }
 
-		PenX StrokePen { get; set; }
+		PenX Pen { get; set; }
 
-		bool IndependentSize { get; set; }
-
-		bool LineSymbolGap { get; set; }
-
-		bool ShowEndBars { get; set; }
-
-		bool DoNotShiftIndependentVariable { get; set; }
-
-		bool IsHorizontalStyle { get; set; }
+		bool IndependentSymbolSize { get; set; }
 
 		double SymbolSize { get; set; }
 
-		bool IndependentNegativeError { get; set; }
+		double LineWidth1Offset { get; set; }
+		double LineWidth1Factor { get; set; }
 
-		string PositiveError { get; set; }
+		double EndCapSizeOffset { get; set; }
+		double EndCapSizeFactor { get; set; }
 
-		string NegativeError { get; set; }
+		bool UseSymbolGap { get; set; }
+
+		double SymbolGapOffset { get; set; }
+
+		double SymbolGapFactor { get; set; }
+
+		bool ForceVisibilityOfEndCap { get; set; }
 
 		int SkipFrequency { get; set; }
 
-		event EventHandler ChoosePositiveError;
+		bool IndependentSkipFrequency { get; set; }
 
-		event EventHandler ChooseNegativeError;
+		bool IndependentOnShiftingGroupStyles { get; set; }
 
-		event EventHandler IndependentNegativeError_CheckChanged;
+		bool UseCommonErrorColumn { get; set; }
 
-		event EventHandler ClearPositiveError;
+		void Initialize_MeaningOfValues(SelectableListNodeList list);
 
-		event EventHandler ClearNegativeError;
+		/// <summary>
+		/// Initializes the common error column.
+		/// </summary>
+		/// <param name="columnAsText">Column's name.</param>
+		void Initialize_CommonErrorColumn(string columnAsText, string toolTip, int status);
+
+		void Initialize_CommonErrorColumnTransformation(string transformationTextToShow, string transformationToolTip);
+
+		/// <summary>
+		/// Initializes the positive error column.
+		/// </summary>
+		/// <param name="positiveErrorColumnAsText">Column's name.</param>
+		void Initialize_PositiveErrorColumn(string positiveErrorColumnAsText, string positiveErrorColumnToolTip, int positiveErrorColumnStatus);
+
+		void Initialize_PositiveErrorColumnTransformation(string transformationTextToShow, string transformationToolTip);
+
+		/// <summary>
+		/// Initializes the positive error column.
+		/// </summary>
+		/// <param name="negativeErrorColumnAsText">Column's name.</param>
+		void Initialize_NegativeErrorColumn(string negativeErrorColumnAsText, string negativeErrorColumnToolTip, int negativeErrorColumnStatus);
+
+		void Initialize_NegativeErrorColumnTransformation(string transformationTextToShow, string transformationToolTip);
+
+		event Action<bool> UseCommonErrorColumnChanged;
 
 		/// <summary>
 		/// Occurs when the user choice for IndependentColor of the fill brush has changed.
 		/// </summary>
 		event Action IndependentColorChanged;
+
+		/// <summary>
+		/// Occurs when the user choice for IndependentDashPattern has changed.
+		/// </summary>
+		event Action IndependentDashPatternChanged;
 	}
 
 	#endregion Interfaces
 
 	[UserControllerForObject(typeof(ErrorBarPlotStyle))]
 	[ExpectedTypeOfView(typeof(IErrorBarPlotStyleView))]
-	public class ErrorBarPlotStyleController : MVCANControllerEditOriginalDocBase<ErrorBarPlotStyle, IErrorBarPlotStyleView>
+	public class ErrorBarPlotStyleController : MVCANControllerEditOriginalDocBase<ErrorBarPlotStyle, IErrorBarPlotStyleView>, IColumnDataExternallyControlled
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
-		private INumericColumn _tempPosErrorColumn;
-		private INumericColumn _tempNegErrorColumn;
+		private SelectableListNodeList _meaningOfValues;
+
+		/// <summary>
+		/// The data table that the column of the style should belong to.
+		/// </summary>
+		private DataTable _supposedParentDataTable;
+
+		public override bool InitializeDocument(params object[] args)
+		{
+			if (args.Length >= 2 && (args[1] is DataTable))
+				_supposedParentDataTable = (DataTable)args[1];
+
+			return base.InitializeDocument(args);
+		}
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -98,8 +144,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		public override void Dispose(bool isDisposing)
 		{
 			_colorGroupStyleTracker = null;
-			_tempPosErrorColumn = null;
-			_tempNegErrorColumn = null;
 
 			base.Dispose(isDisposing);
 		}
@@ -111,49 +155,82 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			if (initData)
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
+
+				_meaningOfValues = new SelectableListNodeList(_doc.MeaningOfValues);
 			}
 			if (_view != null)
 			{
 				_view.IndependentColor = _doc.IndependentColor;
+				_view.IndependentDashPattern = _doc.IndependentDashPattern;
 				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-				_view.StrokePen = _doc.Pen;
-				_view.IndependentSize = _doc.IndependentSymbolSize;
-				_view.LineSymbolGap = _doc.SymbolGap;
-				_view.ShowEndBars = _doc.ShowEndBars;
-				_view.DoNotShiftIndependentVariable = _doc.DoNotShiftIndependentVariable;
-				_view.IsHorizontalStyle = _doc.IsHorizontalStyle;
+				_view.Pen = _doc.Pen;
 
+				_view.IndependentSymbolSize = _doc.IndependentSymbolSize;
 				_view.SymbolSize = _doc.SymbolSize;
+
+				_view.LineWidth1Offset = _doc.LineWidth1Offset;
+				_view.LineWidth1Factor = _doc.LineWidth1Factor;
+
+				_view.EndCapSizeOffset = _doc.EndCapSizeOffset;
+				_view.EndCapSizeFactor = _doc.EndCapSizeFactor;
+
+				_view.ForceVisibilityOfEndCap = _doc.ForceVisibilityOfEndCap;
+
+				_view.UseSymbolGap = _doc.UseSymbolGap;
+				_view.SymbolGapOffset = _doc.SymbolGapOffset;
+				_view.SymbolGapFactor = _doc.SymbolGapFactor;
+
 				_view.SkipFrequency = _doc.SkipFrequency;
+				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
+
+				_view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
+
+				_view.Initialize_MeaningOfValues(_meaningOfValues);
 
 				// Errors
-				_tempPosErrorColumn = _doc.PositiveErrorColumn;
-				_tempNegErrorColumn = _doc.NegativeErrorColumn;
-				string posError = null == _tempPosErrorColumn ? string.Empty : _tempPosErrorColumn.FullName;
-				string negError = null == _tempNegErrorColumn ? string.Empty : _tempNegErrorColumn.FullName;
-				_view.IndependentNegativeError = !object.ReferenceEquals(_tempPosErrorColumn, _tempNegErrorColumn);
-				_view.PositiveError = posError;
-				_view.NegativeError = negError;
+
+				_view.UseCommonErrorColumn = _doc.UseCommonErrorColumn;
+
+				if (_doc.UseCommonErrorColumn)
+				{
+					this.InitializeCommonErrorColumnText();
+				}
+				else
+				{
+					this.InitializePositiveErrorColumnText();
+					this.InitializeNegativeErrorColumnText();
+				}
 			}
 		}
 
 		public override bool Apply(bool disposeController)
 		{
 			_doc.IndependentColor = _view.IndependentColor;
-			_doc.Pen = _view.StrokePen;
-			_doc.IndependentSymbolSize = _view.IndependentSize;
-			_doc.SymbolGap = _view.LineSymbolGap;
-			_doc.ShowEndBars = _view.ShowEndBars;
-			_doc.DoNotShiftIndependentVariable = _view.DoNotShiftIndependentVariable;
-			_doc.IsHorizontalStyle = _view.IsHorizontalStyle;
-
-			_doc.IndependentSymbolSize = _view.IndependentSize;
+			_doc.IndependentDashPattern = _view.IndependentDashPattern;
+			_doc.Pen = _view.Pen;
+			_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
 			_doc.SymbolSize = _view.SymbolSize;
+
+			_doc.LineWidth1Offset = _view.LineWidth1Offset;
+			_doc.LineWidth1Factor = _view.LineWidth1Factor;
+
+			_doc.EndCapSizeOffset = _view.EndCapSizeOffset;
+			_doc.EndCapSizeFactor = _view.EndCapSizeFactor;
+
+			_doc.ForceVisibilityOfEndCap = _view.ForceVisibilityOfEndCap;
+
+			_doc.UseSymbolGap = _view.UseSymbolGap;
+			_doc.SymbolGapOffset = _view.SymbolGapOffset;
+			_doc.SymbolGapFactor = _view.SymbolGapFactor;
+
+			_doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
 			_doc.SkipFrequency = _view.SkipFrequency;
 
-			// Errors
-			_doc.PositiveErrorColumn = _tempPosErrorColumn;
-			_doc.NegativeErrorColumn = _tempNegErrorColumn;
+			_doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
+
+			_doc.UseCommonErrorColumn = _view.UseCommonErrorColumn;
+
+			_doc.MeaningOfValues = (ErrorBarPlotStyle.ValueInterpretation)_meaningOfValues.FirstSelectedNode.Tag;
 
 			return ApplyEnd(true, disposeController);
 		}
@@ -162,82 +239,110 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		{
 			base.AttachView();
 
-			_view.ChoosePositiveError += EhView_ChoosePositiveError;
-			_view.ChooseNegativeError += EhView_ChooseNegativeError;
-			_view.IndependentNegativeError_CheckChanged += EhView_IndependentNegativeError_CheckChanged;
-			_view.ClearPositiveError += EhView_ClearPositiveError;
-			_view.ClearNegativeError += EhView_ClearNegativeError;
 			_view.IndependentColorChanged += EhIndependentColorChanged;
+			_view.IndependentDashPatternChanged += EhIndependentDashPatternChanged;
+			_view.UseCommonErrorColumnChanged += EhUseCommonErrorColumnChanged;
 		}
 
 		protected override void DetachView()
 		{
-			_view.ChoosePositiveError -= EhView_ChoosePositiveError;
-			_view.ChooseNegativeError -= EhView_ChooseNegativeError;
-			_view.IndependentNegativeError_CheckChanged -= EhView_IndependentNegativeError_CheckChanged;
-			_view.ClearPositiveError -= EhView_ClearPositiveError;
-			_view.ClearNegativeError -= EhView_ClearNegativeError;
 			_view.IndependentColorChanged -= EhIndependentColorChanged;
+			_view.IndependentDashPatternChanged -= EhIndependentDashPatternChanged;
+			_view.UseCommonErrorColumnChanged -= EhUseCommonErrorColumnChanged;
 
 			base.DetachView();
 		}
 
-		private void EhView_ChoosePositiveError(object sender, EventArgs e)
+		private void InitializeCommonErrorColumnText()
 		{
-			SingleColumnChoice choice = new SingleColumnChoice();
-			choice.SelectedColumn = _tempPosErrorColumn != null ? _tempPosErrorColumn as DataColumn : _doc.PositiveErrorColumn as DataColumn;
-			object choiceAsObject = choice;
-			if (Current.Gui.ShowDialog(ref choiceAsObject, "Select error column"))
+			var info = new PlotColumnInformation(_doc.CommonErrorColumn, _doc.CommonErrorColumnDataColumnName);
+			info.Update(_supposedParentDataTable);
+
+			_view?.Initialize_CommonErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
+			_view?.Initialize_CommonErrorColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+		}
+
+		private void InitializePositiveErrorColumnText()
+		{
+			var info = new PlotColumnInformation(_doc.PositiveErrorColumn, _doc.PositiveErrorColumnDataColumnName);
+			info.Update(_supposedParentDataTable);
+
+			_view?.Initialize_PositiveErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
+			_view?.Initialize_PositiveErrorColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+		}
+
+		private void InitializeNegativeErrorColumnText()
+		{
+			var info = new PlotColumnInformation(_doc.NegativeErrorColumn, _doc.NegativeErrorColumnDataColumnName);
+			info.Update(_supposedParentDataTable);
+
+			_view?.Initialize_NegativeErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
+			_view?.Initialize_NegativeErrorColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+		}
+
+		/// <summary>
+		/// Gets the additional columns that the controller's document is referring to.
+		/// </summary>
+		/// <returns>Enumeration of tuples.
+		/// Item1 is a label to be shown in the column data dialog to let the user identify the column.
+		/// Item2 is the column itself,
+		/// Item3 is the column name (last part of the full path to the column), and
+		/// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>> GetDataColumnsExternallyControlled()
+		{
+			if (_doc.UseCommonErrorColumn)
 			{
-				choice = (SingleColumnChoice)choiceAsObject;
-				if (choice.SelectedColumn is INumericColumn)
-				{
-					_tempPosErrorColumn = (INumericColumn)choice.SelectedColumn;
-					_view.PositiveError = _tempPosErrorColumn.FullName;
-					if (!_view.IndependentNegativeError)
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+			"CommonError", // label to be shown
+			_doc.CommonErrorColumn,
+			_doc.CommonErrorColumnDataColumnName,
+			(column, table) =>
+			{
+				_doc.CommonErrorColumn = column;
+				this._supposedParentDataTable = table;
+				InitializeCommonErrorColumnText();
+			});
+			}
+			else
+			{
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+					"PositiveError", // label to be shown
+					_doc.PositiveErrorColumn,
+					_doc.PositiveErrorColumnDataColumnName,
+					(column, table) =>
 					{
-						_tempNegErrorColumn = (INumericColumn)choice.SelectedColumn;
-						_view.NegativeError = _tempNegErrorColumn.FullName;
-					}
-				}
+						_doc.PositiveErrorColumn = column;
+						this._supposedParentDataTable = table;
+						this.InitializePositiveErrorColumnText();
+					});
+
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+					"NegativeError", // label to be shown
+					_doc.NegativeErrorColumn,
+					_doc.NegativeErrorColumnDataColumnName,
+					(column, table) =>
+					{
+						_doc.NegativeErrorColumn = column;
+						this._supposedParentDataTable = table;
+						this.InitializeNegativeErrorColumnText();
+					});
 			}
 		}
 
-		private void EhView_ClearPositiveError(object sender, EventArgs e)
+		private void EhUseCommonErrorColumnChanged(bool useCommonErrorColumn)
 		{
-			_tempPosErrorColumn = null;
-			_view.PositiveError = string.Empty;
-		}
+			_doc.UseCommonErrorColumn = useCommonErrorColumn;
 
-		private void EhView_ChooseNegativeError(object sender, EventArgs e)
-		{
-			SingleColumnChoice choice = new SingleColumnChoice();
-			choice.SelectedColumn = _tempNegErrorColumn != null ? _tempNegErrorColumn as DataColumn : _doc.NegativeErrorColumn as DataColumn;
-			object choiceAsObject = choice;
-			if (Current.Gui.ShowDialog(ref choiceAsObject, "Select negative error column"))
+			_view.UseCommonErrorColumn = _doc.UseCommonErrorColumn;
+
+			if (_doc.UseCommonErrorColumn)
 			{
-				choice = (SingleColumnChoice)choiceAsObject;
-
-				if (choice.SelectedColumn is INumericColumn)
-				{
-					_tempNegErrorColumn = (INumericColumn)choice.SelectedColumn;
-					_view.NegativeError = null != _tempNegErrorColumn ? _tempNegErrorColumn.FullName : string.Empty;
-				}
+				this.InitializeCommonErrorColumnText();
 			}
-		}
-
-		private void EhView_ClearNegativeError(object sender, EventArgs e)
-		{
-			_tempNegErrorColumn = null;
-			_view.NegativeError = string.Empty;
-		}
-
-		private void EhView_IndependentNegativeError_CheckChanged(object sender, EventArgs e)
-		{
-			if (false == _view.IndependentNegativeError && null == _tempNegErrorColumn)
+			else
 			{
-				_tempNegErrorColumn = _tempPosErrorColumn;
-				_view.NegativeError = null != _tempNegErrorColumn ? _tempNegErrorColumn.FullName : string.Empty;
+				this.InitializePositiveErrorColumnText();
+				this.InitializeNegativeErrorColumnText();
 			}
 		}
 
@@ -247,6 +352,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			{
 				_doc.IndependentColor = _view.IndependentColor;
 				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+			}
+		}
+
+		private void EhIndependentDashPatternChanged()
+		{
+			if (null != _view)
+			{
+				_doc.IndependentDashPattern = _view.IndependentDashPattern;
 			}
 		}
 	}

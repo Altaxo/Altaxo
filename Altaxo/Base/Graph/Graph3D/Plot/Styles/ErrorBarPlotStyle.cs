@@ -112,6 +112,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		private double _endCapSizeOffset;
 
+		/// <summary>
+		/// If true, the end cap is shown even if the line is not shown, because the line length is zero.
+		/// This can happen if the user defined gap is larger than the error.
+		/// </summary>
+		private bool _forceVisibilityOfEndCap;
+
 		private double _lineWidth1Offset;
 		private double _lineWidth1Factor;
 
@@ -188,6 +194,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("UseSymbolGap", s._useSymbolGap);
 				info.AddValue("SymbolGapOffset", s._symbolGapOffset);
 				info.AddValue("SymbolGapFactor", s._symbolGapFactor);
+				info.AddValue("ForceVisibilityOfEndCap", s._forceVisibilityOfEndCap);
 			}
 
 			protected virtual ErrorBarPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -234,6 +241,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				s._useSymbolGap = info.GetBoolean("UseSymbolGap");
 				s._symbolGapOffset = info.GetDouble("SymbolGapOffset");
 				s._symbolGapFactor = info.GetDouble("SymbolGapFactor");
+
+				if (info.CurrentElementName == "ForceVisibilityOfEndCap")
+					s._forceVisibilityOfEndCap = info.GetBoolean("ForceVisibilityOfEndCap");
 
 				return s;
 			}
@@ -578,6 +588,23 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		}
 
 		/// <summary>
+		/// If true, the end cap is shown even if the line is not shown, because the line length is zero.
+		/// This can e.g. happen if the user defined gap is larger than the error.
+		/// </summary>
+		public bool ForceVisibilityOfEndCap
+		{
+			get { return _forceVisibilityOfEndCap; }
+			set
+			{
+				if (!(_forceVisibilityOfEndCap == value))
+				{
+					_forceVisibilityOfEndCap = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
 		/// True if the color of the label is not dependent on the color of the parent plot style.
 		/// </summary>
 		public bool IndependentColor
@@ -638,10 +665,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			get { return _pen; }
 			set
 			{
-				var oldValue = _pen;
-				_pen = value;
-				if (!object.ReferenceEquals(oldValue, value))
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (!object.ReferenceEquals(_pen, value))
 				{
+					_pen = value;
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}

@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Drawing.D3D
 			_glue.CbLineEndCapAbsSize = _cbLineEndCapSize;
 			_glue.CbLineEndCapRelSize = _edLineEndCapRelSize;
 
-			_glue.CbDashStyle = _cbDashStyle;
+			_glue.CbDashPattern = _cbDashStyle;
 
 			_glue.CbDashStartCap = _cbDashStartCap;
 			_glue.CbDashStartCapAbsSize = _cbDashStartCapSize;

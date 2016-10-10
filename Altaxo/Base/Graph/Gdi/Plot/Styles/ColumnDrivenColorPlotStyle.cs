@@ -52,7 +52,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Data which are converted to scatter size.
 		/// </summary>
-		private INumericColumnProxy _dataColumnProxy;
+		private IReadableColumnProxy _dataColumnProxy;
 
 		/// <summary>True if the data in the data column changed, but the scale was not updated up to now.</summary>
 		[NonSerialized]
@@ -105,7 +105,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				var s = (ColumnDrivenColorPlotStyle)o ?? new ColumnDrivenColorPlotStyle();
 
-				s._dataColumnProxy = (Altaxo.Data.INumericColumnProxy)info.GetValue("DataColumn", s);
+				s._dataColumnProxy = (IReadableColumnProxy)info.GetValue("DataColumn", s);
 				if (null != s._dataColumnProxy) s._dataColumnProxy.ParentObject = s;
 
 				s._scale = (NumericalScale)info.GetValue("Scale", s);
@@ -166,7 +166,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 					if (copyWithDataReferences)
 					{
-						InternalSetDataColumnProxy(null == from._dataColumnProxy ? null : (INumericColumnProxy)from._dataColumnProxy.Clone());
+						InternalSetDataColumnProxy(null == from._dataColumnProxy ? null : (IReadableColumnProxy)from._dataColumnProxy.Clone());
 					}
 
 					//_parent = from._parent;
@@ -215,7 +215,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// Sets the data column proxy and creates the necessary event links.
 		/// </summary>
 		/// <param name="proxy"></param>
-		protected void InternalSetDataColumnProxy(INumericColumnProxy proxy)
+		protected void InternalSetDataColumnProxy(IReadableColumnProxy proxy)
 		{
 			ChildSetMember(ref _dataColumnProxy, proxy);
 		}
@@ -271,7 +271,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Gets/sets the data column that provides the data that is used to calculate the symbol size.
 		/// </summary>
-		public Altaxo.Data.INumericColumn DataColumn
+		public Altaxo.Data.IReadableColumn DataColumn
 		{
 			get
 			{
@@ -279,8 +279,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				if (ChildSetMember(ref _dataColumnProxy, NumericColumnProxyBase.FromColumn(value)))
+				if (ChildSetMember(ref _dataColumnProxy, ReadableColumnProxyBase.FromColumn(value)))
 					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Gets the name of the data column, if it is a data column. Otherwise, null is returned.
+		/// </summary>
+		/// <value>
+		/// The name of the label column if it is a data column. Otherwise, null.
+		/// </value>
+		public string DataColumnName
+		{
+			get
+			{
+				return _dataColumnProxy?.DocumentPath?.LastPartOrDefault;
 			}
 		}
 
@@ -348,9 +362,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <returns>The calculated color for the provided index.</returns>
 		private Color GetColor(int idx)
 		{
-			double val = DataColumn?[idx] ?? double.NaN;
-			val = _scale.PhysicalToNormal(val);
-			return _colorProvider.GetColor(val);
+			var dataColumn = DataColumn;
+			if (null != dataColumn)
+			{
+				return _colorProvider.GetColor(_scale.PhysicalToNormal(dataColumn[idx]));
+			}
+			else
+			{
+				return _colorProvider.GetColor(double.NaN);
+			}
 		}
 
 		public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
@@ -455,7 +475,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
 		{
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(DataColumn), DataColumn, _dataColumnProxy?.DocumentPath?.LastPartOrDefault, (col) => DataColumn = col as INumericColumn);
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(DataColumn), DataColumn, _dataColumnProxy?.DocumentPath?.LastPartOrDefault, (col) => DataColumn = col as IReadableColumn);
 		}
 	}
 }

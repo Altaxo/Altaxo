@@ -1,4 +1,4 @@
-﻿<local:EditableImageComboBox x:Class="Altaxo.Gui.Drawing.D3D.DashStyleComboBox"
+﻿<local:EditableImageComboBox x:Class="Altaxo.Gui.Drawing.DashPatternComboBox"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Altaxo.Gui.Common.Drawing"

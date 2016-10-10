@@ -38,13 +38,35 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	using Drawing;
 	using Geometry;
 
-	public class ErrorBarPlotStyle
+	#region Error bar (abstract, for implementations see below)
+
+	public abstract class ErrorBarPlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
 		IG2DPlotStyle
 	{
-		private INumericColumnProxy _positiveErrorColumn;
-		private INumericColumnProxy _negativeErrorColumn;
+		/// <summary>
+		/// Designates how to interpret the values of the error columns.
+		/// </summary>
+		public enum ValueInterpretation
+		{
+			/// <summary>The error columns are absolute errors, i.e. absolute deviations from the nominal value.</summary>
+			AbsoluteError = 0,
+
+			/// <summary>The error columns are relative errors, i.e. deviations relativ to the nominal value. If e.g. the nominal value is 20, and the relative error is 0.1, then the absolute error is 2.</summary>
+			RelativeError = 1,
+
+			/// <summary>The error columns are interpretet as minimum and maximum. This setting is usefullonly for separate positive and negative error columns.</summary>
+			AbsoluteValue = 2
+		}
+
+		protected bool _useCommonErrorColumn = true;
+
+		private IReadableColumnProxy _commonErrorColumn;
+		private IReadableColumnProxy _positiveErrorColumn;
+		private IReadableColumnProxy _negativeErrorColumn;
+
+		private ValueInterpretation _meaningOfValues;
 
 		/// <summary>
 		/// True if the color of the label is not dependent on the color of the parent plot style.
@@ -52,17 +74,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		protected bool _independentColor;
 
 		/// <summary>Pen used to draw the error bar.</summary>
-		private PenX _strokePen;
-
-		/// <summary>
-		/// True when to plot horizontal error bars.
-		/// </summary>
-		private bool _isHorizontalStyle;
+		private PenX _pen;
 
 		/// <summary>
 		/// true if the symbol size is independent, i.e. is not published nor updated by a group style.
 		/// </summary>
 		private bool _independentSymbolSize;
+
+		/// <summary>
+		/// True if the dash pattern of the error bar line is independent on the dash pattern of the line style.
+		/// </summary>
+		private bool _independentDashPattern = true;
 
 		/// <summary>Controls the length of the end bar.</summary>
 		private double _symbolSize;
@@ -70,28 +92,48 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// True when the line is not drawn in the circel of diameter SymbolSize around the symbol center.
 		/// </summary>
-		private bool _symbolGap;
+		private bool _useSymbolGap;
 
 		/// <summary>
-		/// If true, the bars are capped by an end bar.
+		/// Offset used to calculate the real gap between symbol center and beginning of the bar, according to the formula:
+		/// realGap = _symbolGap * _symbolGapFactor + _symbolGapOffset;
 		/// </summary>
-		private bool _showEndBars = true;
+		private double _symbolGapOffset;
 
 		/// <summary>
-		/// When true, bar graph position group styles are not applied, i.e. the item remains where it is.
+		/// Factor used to calculate the real gap between symbol center and beginning of the bar, according to the formula:
+		/// realGap = _symbolGap * _symbolGapFactor + _symbolGapOffset;
 		/// </summary>
-		private bool _doNotShiftHorizontalPosition;
+		private double _symbolGapFactor = 1.25;
+
+		private double _endCapSizeFactor = 1;
+
+		private double _endCapSizeOffset;
+
+		/// <summary>
+		/// If true, the end cap is shown even if the line is not shown, because the line length is zero.
+		/// This can happen if the user defined gap is larger than the error.
+		/// </summary>
+		private bool _forceVisibilityOfEndCap;
+
+		private double _lineWidth1Offset;
+		private double _lineWidth1Factor;
+
+		/// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
+		private bool _independentOnShiftingGroupStyles;
 
 		/// <summary>
 		/// Skip frequency.
 		/// </summary>
-		protected int _skipFreq;
+		protected int _skipFrequency;
 
-		/// <summary>
-		/// When we deal with bar charts, this is the logical shift between real point
-		/// and the independent value where the bar is really drawn to.
-		/// </summary>
-		private double _cachedLogicalShiftOfIndependent;
+		protected bool _independentSkipFrequency;
+
+		/// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftX;
+
+		/// <summary>Logical y shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftY;
 
 		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
 		[field: NonSerialized]
@@ -103,50 +145,162 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarPlotStyle), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.ErrorBarPlotStyle", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old version");
+
+				/*
 				ErrorBarPlotStyle s = (ErrorBarPlotStyle)obj;
 
 				info.AddValue("PositiveError", s._positiveErrorColumn);
 				info.AddValue("NegativeError", s._negativeErrorColumn);
 
 				info.AddValue("IndependentColor", s._independentColor);
-				info.AddValue("Pen", s._strokePen);
+				info.AddValue("Pen", s._pen);
 
 				info.AddValue("Axis", s._isHorizontalStyle ? 0 : 1);
 				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
 				info.AddValue("SymbolSize", s._symbolSize);
 				info.AddValue("SymbolGap", s._symbolGap);
-				info.AddValue("SkipFreq", s._skipFreq);
+				info.AddValue("SkipFreq", s._skipFrequency);
 
 				info.AddValue("ShowEndBars", s._showEndBars);
 				info.AddValue("NotShiftHorzPos", s._doNotShiftHorizontalPosition);
+				*/
 			}
 
 			protected virtual ErrorBarPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				ErrorBarPlotStyle s = null != o ? (ErrorBarPlotStyle)o : new ErrorBarPlotStyle(info);
+				ErrorBarPlotStyle s; // = null != o ? (ErrorBarPlotStyle)o : new ErrorBarPlotStyle(info);
 
-				s._positiveErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("PositiveError", s);
-				if (null != s._positiveErrorColumn) s._positiveErrorColumn.ParentObject = s;
+				var positiveErrorColumn = (Altaxo.Data.IReadableColumnProxy)info.GetValue("PositiveError", null);
 
-				s._negativeErrorColumn = (Altaxo.Data.INumericColumnProxy)info.GetValue("NegativeError", s);
-				if (null != s._negativeErrorColumn) s._negativeErrorColumn.ParentObject = s;
+				var negativeErrorColumn = (Altaxo.Data.IReadableColumnProxy)info.GetValue("NegativeError", null);
 
-				s._independentColor = info.GetBoolean("IndependentColor");
+				var independentColor = info.GetBoolean("IndependentColor");
 
-				s.Pen = (PenX)info.GetValue("Pen", s);
+				var pen = (PenX)info.GetValue("Pen", null);
 
-				s._isHorizontalStyle = (0 == info.GetInt32("Axis"));
+				var isHorizontalStyle = (0 == info.GetInt32("Axis"));
+
+				if (isHorizontalStyle)
+					s = new ErrorBarXPlotStyle(info, positiveErrorColumn, negativeErrorColumn);
+				else
+					s = new ErrorBarYPlotStyle(info, positiveErrorColumn, negativeErrorColumn);
+
+				s.IndependentColor = independentColor;
+
 				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
 				s._symbolSize = info.GetDouble("SymbolSize");
-				s._symbolGap = info.GetBoolean("SymbolGap");
-				s._skipFreq = info.GetInt32("SkipFreq");
-				s._showEndBars = info.GetBoolean("ShowEndBars");
-				s._doNotShiftHorizontalPosition = info.GetBoolean("NotShiftHorzPos");
+				s._useSymbolGap = info.GetBoolean("SymbolGap");
+				s._skipFrequency = info.GetInt32("SkipFreq");
+				if (info.GetBoolean("ShowEndBars"))
+					pen.EndCap = new LineCaps.SymBarLineCap();
+				s._independentOnShiftingGroupStyles = info.GetBoolean("NotShiftHorzPos");
+
+				s.Pen = pen;
+
+				s._forceVisibilityOfEndCap = true;
+
+				return s;
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				ErrorBarPlotStyle s = SDeserialize(o, info, parent);
+
+				return s;
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarPlotStyle), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				ErrorBarPlotStyle s = (ErrorBarPlotStyle)obj;
+
+				info.AddEnum("MeaningOfValues", s._meaningOfValues);
+				info.AddValue("UseCommonColumn", s._useCommonErrorColumn);
+
+				if (s._useCommonErrorColumn)
+				{
+					info.AddValue("CommonError", s._commonErrorColumn);
+				}
+				else
+				{
+					info.AddValue("PositiveError", s._positiveErrorColumn);
+					info.AddValue("NegativeError", s._negativeErrorColumn);
+				}
+				info.AddValue("IndependentSkipFreq", s._independentSkipFrequency);
+				info.AddValue("SkipFreq", s._skipFrequency);
+				info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
+
+				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
+				info.AddValue("SymbolSize", s._symbolSize);
+
+				info.AddValue("Pen", s._pen);
+				info.AddValue("IndependentColor", s._independentColor);
+				info.AddValue("IndependentDashPattern", s._independentDashPattern);
+
+				info.AddValue("LineWidth1Offset", s._lineWidth1Offset);
+				info.AddValue("LineWidth1Factor", s._lineWidth1Factor);
+
+				info.AddValue("EndCapSizeOffset", s._endCapSizeOffset);
+				info.AddValue("EndCapSizeFactor", s._endCapSizeFactor);
+
+				info.AddValue("UseSymbolGap", s._useSymbolGap);
+				info.AddValue("SymbolGapOffset", s._symbolGapOffset);
+				info.AddValue("SymbolGapFactor", s._symbolGapFactor);
+				info.AddValue("ForceVisibilityOfEndCap", s._forceVisibilityOfEndCap);
+			}
+
+			protected virtual ErrorBarPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				ErrorBarPlotStyle s = (ErrorBarPlotStyle)o;
+
+				s._meaningOfValues = (ValueInterpretation)info.GetEnum("MeaningOfValues", typeof(ValueInterpretation));
+				s._useCommonErrorColumn = info.GetBoolean("UseCommonColumn");
+
+				if (s._useCommonErrorColumn)
+				{
+					s._commonErrorColumn = (IReadableColumnProxy)info.GetValue("CommonError", s);
+					if (null != s._commonErrorColumn) s._commonErrorColumn.ParentObject = s;
+				}
+				else
+				{
+					s._positiveErrorColumn = (IReadableColumnProxy)info.GetValue("PositiveError", s);
+					if (null != s._positiveErrorColumn) s._positiveErrorColumn.ParentObject = s;
+
+					s._negativeErrorColumn = (IReadableColumnProxy)info.GetValue("NegativeError", s);
+					if (null != s._negativeErrorColumn) s._negativeErrorColumn.ParentObject = s;
+				}
+
+				s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
+				s._skipFrequency = info.GetInt32("SkipFreq");
+				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
+
+				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
+				s._symbolSize = info.GetDouble("SymbolSize");
+
+				s.Pen = (PenX)info.GetValue("Pen", s);
+				s._independentColor = info.GetBoolean("IndependentColor");
+				s._independentDashPattern = info.GetBoolean("IndependentDashPattern");
+
+				s._lineWidth1Offset = info.GetDouble("LineWidth1Offset");
+				s._lineWidth1Factor = info.GetDouble("LineWidth1Factor");
+
+				s._endCapSizeOffset = info.GetDouble("EndCapSizeOffset");
+				s._endCapSizeFactor = info.GetDouble("EndCapSizeFactor");
+
+				s._useSymbolGap = info.GetBoolean("UseSymbolGap");
+				s._symbolGapOffset = info.GetDouble("SymbolGapOffset");
+				s._symbolGapFactor = info.GetDouble("SymbolGapFactor");
+
+				s._forceVisibilityOfEndCap = info.GetBoolean("ForceVisibilityOfEndCap");
 
 				return s;
 			}
@@ -165,12 +319,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 		}
 
+		protected ErrorBarPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy posColumnProxy, IReadableColumnProxy negColumnProxy)
+		{
+			ChildSetMember(ref _positiveErrorColumn, posColumnProxy);
+			ChildSetMember(ref _negativeErrorColumn, negColumnProxy);
+			_useCommonErrorColumn = null == negColumnProxy;
+		}
+
 		public ErrorBarPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			var penWidth = GraphDocument.GetDefaultPenWidth(context);
 			var color = GraphDocument.GetDefaultPlotColor(context);
 
-			this._strokePen = new PenX(color, penWidth);
+			_lineWidth1Offset = penWidth;
+			_lineWidth1Factor = 0;
+
+			this._pen = new PenX(color, penWidth);
 		}
 
 		public ErrorBarPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences)
@@ -185,22 +349,40 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var from = obj as ErrorBarPlotStyle;
 			if (null != from)
 			{
-				this._independentSymbolSize = from._independentSymbolSize;
-				this._symbolSize = from._symbolSize;
-				this._symbolGap = from._symbolGap;
-				this._independentColor = from._independentColor;
-				this._showEndBars = from._showEndBars;
-				this._isHorizontalStyle = from._isHorizontalStyle;
-				this._doNotShiftHorizontalPosition = from._doNotShiftHorizontalPosition;
-				ChildCloneToMember(ref _strokePen, from._strokePen);
+				this._meaningOfValues = from._meaningOfValues;
+				this._useCommonErrorColumn = from._useCommonErrorColumn;
 
 				if (copyWithDataReferences)
 				{
+					ChildCloneToMember(ref _commonErrorColumn, from._commonErrorColumn);
 					ChildCloneToMember(ref _positiveErrorColumn, from._positiveErrorColumn);
 					ChildCloneToMember(ref _negativeErrorColumn, from._negativeErrorColumn);
 				}
 
-				this._cachedLogicalShiftOfIndependent = from._cachedLogicalShiftOfIndependent;
+				this._independentSkipFrequency = from._independentSkipFrequency;
+				this._skipFrequency = from._skipFrequency;
+				this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+
+				this._independentSymbolSize = from._independentSymbolSize;
+				this._symbolSize = from._symbolSize;
+
+				ChildCopyToMember(ref _pen, from._pen);
+				this._independentColor = from._independentColor;
+				this._independentDashPattern = from._independentDashPattern;
+
+				_lineWidth1Offset = from._lineWidth1Offset;
+				_lineWidth1Factor = from._lineWidth1Factor;
+
+				this._endCapSizeFactor = from._endCapSizeFactor;
+				this._endCapSizeOffset = from._endCapSizeOffset;
+
+				this._useSymbolGap = from._useSymbolGap;
+				this._symbolGapFactor = from._symbolGapFactor;
+				this._symbolGapOffset = from._symbolGapOffset;
+
+				this._cachedLogicalShiftX = from._cachedLogicalShiftX;
+				this._cachedLogicalShiftY = from._cachedLogicalShiftY;
+
 				EhSelfChanged();
 				return true;
 			}
@@ -213,22 +395,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return CopyFrom(obj, true);
 		}
 
-		/// <inheritdoc/>
-		public object Clone(bool copyWithDataReferences)
-		{
-			return new ErrorBarPlotStyle(this, copyWithDataReferences);
-		}
-
-		/// <inheritdoc/>
-		public object Clone()
-		{
-			return new ErrorBarPlotStyle(this, true);
-		}
-
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			if (null != _strokePen)
-				yield return new Main.DocumentNodeAndName(_strokePen, "Pen");
+			if (null != _pen)
+				yield return new Main.DocumentNodeAndName(_pen, "Pen");
 
 			if (null != _positiveErrorColumn)
 				yield return new Main.DocumentNodeAndName(_positiveErrorColumn, "PositiveErrorColumn");
@@ -237,7 +407,27 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				yield return new Main.DocumentNodeAndName(_negativeErrorColumn, "NegativeErrorColumn");
 		}
 
+		public abstract object Clone();
+
+		public abstract object Clone(bool copyWithDataReferences);
+
 		#region Properties
+
+		public ValueInterpretation MeaningOfValues
+		{
+			get
+			{
+				return _meaningOfValues;
+			}
+			set
+			{
+				if (!(_meaningOfValues == value))
+				{
+					_meaningOfValues = value;
+					EhSelfChanged();
+				}
+			}
+		}
 
 		/// <summary>
 		/// true if the symbol size is independent, i.e. is not published nor updated by a group style.
@@ -247,10 +437,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return _independentSymbolSize; }
 			set
 			{
-				var oldValue = _independentSymbolSize;
-				_independentSymbolSize = value;
-				if (oldValue != value)
+				if (!(_independentSymbolSize == value))
+				{
+					_independentSymbolSize = value;
 					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -260,38 +451,175 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return _symbolSize; }
 			set
 			{
-				var oldValue = _symbolSize;
-				_symbolSize = value;
-				if (oldValue != value)
-					EhSelfChanged(EventArgs.Empty);
+				if (!Calc.RMath.IsFinite(value))
+					throw new ArgumentException(nameof(value), "Value must be a finite number");
+
+				if (!(_symbolSize == value))
+				{
+					_symbolSize = value;
+					EhSelfChanged();
+				}
 			}
 		}
 
-		/// <summary>Controls the length of the end bar.</summary>
+		/// <summary>Controls how many items are plotted. A value of 1 means every item, a value of 2 every other item, and so on.</summary>
 		public int SkipFrequency
 		{
-			get { return _skipFreq; }
+			get { return _skipFrequency; }
 			set
 			{
-				var oldValue = _skipFreq;
-				_skipFreq = value;
-				if (oldValue != value)
-					EhSelfChanged(EventArgs.Empty);
+				if (!(_skipFrequency == value))
+				{
+					_skipFrequency = Math.Max(1, value);
+					EhSelfChanged();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the skip frequency is independent on other sub group styles using <see cref="SkipFrequency"/>.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if the skip frequency is independent on other sub group styles using <see cref="SkipFrequency"/>; otherwise, <c>false</c>.
+		/// </value>
+		public bool IndependentSkipFrequency
+		{
+			get { return _independentSkipFrequency; }
+			set
+			{
+				if (!(_independentSkipFrequency == value))
+				{
+					_independentSkipFrequency = value;
+					EhSelfChanged();
+				}
 			}
 		}
 
 		/// <summary>
 		/// True when the line is not drawn in the circel of diameter SymbolSize around the symbol center.
 		/// </summary>
-		public bool SymbolGap
+		public bool UseSymbolGap
 		{
-			get { return _symbolGap; }
+			get { return _useSymbolGap; }
 			set
 			{
-				var oldValue = _symbolGap;
-				_symbolGap = value;
+				var oldValue = _useSymbolGap;
+				_useSymbolGap = value;
 				if (oldValue != value)
 					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		public double SymbolGapOffset
+		{
+			get
+			{
+				return _symbolGapOffset;
+			}
+			set
+			{
+				if (!(_symbolGapOffset == value))
+				{
+					_symbolGapOffset = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double SymbolGapFactor
+		{
+			get
+			{
+				return _symbolGapFactor;
+			}
+			set
+			{
+				if (!(_symbolGapFactor == value))
+				{
+					_symbolGapFactor = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double LineWidth1Offset
+		{
+			get
+			{
+				return _lineWidth1Offset;
+			}
+			set
+			{
+				if (!(_lineWidth1Offset == value))
+				{
+					_lineWidth1Offset = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double LineWidth1Factor
+		{
+			get
+			{
+				return _lineWidth1Factor;
+			}
+			set
+			{
+				if (!(_lineWidth1Factor == value))
+				{
+					_lineWidth1Factor = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double EndCapSizeOffset
+		{
+			get
+			{
+				return _endCapSizeOffset;
+			}
+			set
+			{
+				if (!(_endCapSizeOffset == value))
+				{
+					_endCapSizeOffset = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double EndCapSizeFactor
+		{
+			get
+			{
+				return _endCapSizeFactor;
+			}
+			set
+			{
+				if (!(_endCapSizeFactor == value))
+				{
+					_endCapSizeFactor = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		/// <summary>
+		/// If true, the end cap is shown even if the line is not shown, because the line length is zero.
+		/// This can e.g. happen if the user defined gap is larger than the error.
+		/// </summary>
+		public bool ForceVisibilityOfEndCap
+		{
+			get { return _forceVisibilityOfEndCap; }
+			set
+			{
+				if (!(_forceVisibilityOfEndCap == value))
+				{
+					_forceVisibilityOfEndCap = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -311,110 +639,211 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		/// <summary>
-		/// If true, the bars are capped by an end bar.
+		/// True if the dash pattern of the error bar line is independent on the dash pattern of the line style.
 		/// </summary>
-		public bool ShowEndBars
+		public bool IndependentDashPattern
 		{
-			get
-			{
-				return _showEndBars;
-			}
+			get { return _independentDashPattern; }
 			set
 			{
-				var oldValue = _showEndBars;
-				_showEndBars = value;
-				if (oldValue != value)
+				if (!(_independentDashPattern == value))
+				{
+					_independentDashPattern = value;
 					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
 		/// <summary>
-		/// True when we don't want to shift the horizontal position, for instance due to the bar graph plot group.
+		/// True when we don't want to shift the position of the items, for instance due to the bar graph plot group.
 		/// </summary>
-		public bool DoNotShiftIndependentVariable
+		public bool IndependentOnShiftingGroupStyles
 		{
 			get
 			{
-				return _doNotShiftHorizontalPosition;
+				return _independentOnShiftingGroupStyles;
 			}
 			set
 			{
-				var oldValue = _doNotShiftHorizontalPosition;
-				_doNotShiftHorizontalPosition = value;
-				if (oldValue != value)
-					EhSelfChanged(EventArgs.Empty);
+				if (!(_independentOnShiftingGroupStyles == value))
+				{
+					_independentOnShiftingGroupStyles = value;
+					EhSelfChanged();
+				}
 			}
 		}
 
 		/// <summary>
 		/// True when no vertical, but horizontal error bars are shown.
 		/// </summary>
-		public bool IsHorizontalStyle
-		{
-			get
-			{
-				return _isHorizontalStyle;
-			}
-			set
-			{
-				var oldValue = _isHorizontalStyle;
-				_isHorizontalStyle = value;
-				if (oldValue != value)
-					EhSelfChanged(EventArgs.Empty);
-			}
-		}
+		public abstract int AxisNumber { get; }
 
 		/// <summary>Pen used to draw the error bar.</summary>
 		public PenX Pen
 		{
-			get { return _strokePen; }
+			get { return _pen; }
 			set
 			{
-				var oldValue = _strokePen;
-				_strokePen = value;
-				if (!object.ReferenceEquals(oldValue, value))
+				if (!(_pen.Equals(value)))
 				{
-					_strokePen.ParentObject = this;
+					ChildCopyToMember(ref _pen, value);
 					EhSelfChanged(EventArgs.Empty);
 				}
+			}
+		}
+
+		public bool UseCommonErrorColumn
+		{
+			get
+			{
+				return _useCommonErrorColumn;
+			}
+			set
+			{
+				if (value == _useCommonErrorColumn)
+					return;
+
+				_useCommonErrorColumn = value;
+				if (value)
+				{
+					CommonErrorColumn = _positiveErrorColumn?.Document ?? _negativeErrorColumn?.Document;
+					ChildSetMember(ref _positiveErrorColumn, null);
+					ChildSetMember(ref _negativeErrorColumn, null);
+				}
+				else
+				{
+					PositiveErrorColumn = _commonErrorColumn?.Document;
+					NegativeErrorColumn = _commonErrorColumn?.Document;
+					ChildSetMember(ref _commonErrorColumn, null);
+				}
+
+				EhSelfChanged();
 			}
 		}
 
 		/// <summary>
 		/// Data that define the error in the positive direction.
 		/// </summary>
-		public INumericColumn PositiveErrorColumn
+		public IReadableColumn CommonErrorColumn
 		{
-			get { return _positiveErrorColumn?.Document; }
+			get
+			{
+				if (!_useCommonErrorColumn)
+					throw new InvalidOperationException("Style is set to use separate columns for positive and negative error!");
+
+				return _commonErrorColumn?.Document;
+			}
 			set
 			{
+				if (_useCommonErrorColumn)
+				{
+					var oldValue = _commonErrorColumn?.Document;
+					if (!object.ReferenceEquals(value, oldValue))
+					{
+						ChildSetMember(ref _commonErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
+						EhSelfChanged(EventArgs.Empty);
+					}
+				}
+				else
+				{
+					var oldValue1 = _positiveErrorColumn?.Document;
+					var oldValue2 = _negativeErrorColumn?.Document;
+					if (!object.ReferenceEquals(value, oldValue1) || !object.ReferenceEquals(value, oldValue2))
+					{
+						ChildSetMember(ref _positiveErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
+						ChildSetMember(ref _negativeErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
+
+						EhSelfChanged(EventArgs.Empty);
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the name of the common error column, if it is a data column. Otherwise, null is returned.
+		/// </summary>
+		/// <value>
+		/// The name of the common error column if it is a data column. Otherwise, null.
+		/// </value>
+		public string CommonErrorColumnDataColumnName
+		{
+			get
+			{
+				return _commonErrorColumn?.DocumentPath?.LastPartOrDefault;
+			}
+		}
+
+		/// <summary>
+		/// Data that define the error in the positive direction.
+		/// </summary>
+		public IReadableColumn PositiveErrorColumn
+		{
+			get
+			{
+				return _useCommonErrorColumn ? _commonErrorColumn?.Document : _positiveErrorColumn?.Document;
+			}
+			set
+			{
+				if (_useCommonErrorColumn)
+					throw new InvalidOperationException("Style is set to use a common column for positive and negative error!");
+
 				var oldValue = _positiveErrorColumn?.Document;
 				if (!object.ReferenceEquals(value, oldValue))
 				{
-					_positiveErrorColumn.Dispose();
-
-					_positiveErrorColumn = null == value ? null : NumericColumnProxyBase.FromColumn(value);
-
+					ChildSetMember(ref _positiveErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}
 		}
 
 		/// <summary>
+		/// Gets the name of the positive error column, if it is a data column. Otherwise, null is returned.
+		/// </summary>
+		/// <value>
+		/// The name of the positive error column if it is a data column. Otherwise, null.
+		/// </value>
+		public string PositiveErrorColumnDataColumnName
+		{
+			get
+			{
+				return _positiveErrorColumn?.DocumentPath?.LastPartOrDefault;
+			}
+		}
+
+		/// <summary>
 		/// Data that define the error in the negative direction.
 		/// </summary>
-		public INumericColumn NegativeErrorColumn
+		public IReadableColumn NegativeErrorColumn
 		{
-			get { return _negativeErrorColumn?.Document; }
+			get
+			{
+				return _useCommonErrorColumn ? _commonErrorColumn?.Document : _negativeErrorColumn?.Document;
+			}
 			set
 			{
+				if (_useCommonErrorColumn)
+					throw new InvalidOperationException("Style is set to use a common column for positive and negative error!");
+
 				var oldValue = _negativeErrorColumn?.Document;
 				if (!object.ReferenceEquals(value, oldValue))
 				{
-					_negativeErrorColumn.Dispose();
-					_negativeErrorColumn = null == value ? null : NumericColumnProxyBase.FromColumn(value);
+					ChildSetMember(ref _negativeErrorColumn, null == value ? null : ReadableColumnProxyBase.FromColumn(value));
 					EhSelfChanged(EventArgs.Empty);
 				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the name of the negative error column, if it is a data column. Otherwise, null is returned.
+		/// </summary>
+		/// <value>
+		/// The name of the negative error column if it is a data column. Otherwise, null.
+		/// </value>
+		public string NegativeErrorColumnDataColumnName
+		{
+			get
+			{
+				return _negativeErrorColumn?.DocumentPath?.LastPartOrDefault;
 			}
 		}
 
@@ -439,10 +868,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public void PrepareGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
 		{
 			if (!_independentColor)
-				Graph.Plot.Groups.ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._strokePen.Color; });
+				Graph.Plot.Groups.ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._pen.Color; });
 
-			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SkipFrequency; });
+			if (!_independentSkipFrequency)
+				SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SkipFrequency; });
 
 			// note: symbol size and barposition are only applied, but not prepared
 			// this item can not be used as provider of a symbol size
@@ -455,68 +884,80 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// color
 			if (!_independentColor)
 			{
-				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this._strokePen.Color = c; });
+				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this._pen.Color = c; });
 
 				// but if there is a color evaluation function, then use that function with higher priority
 				VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc) { _cachedColorForIndexFunction = evalFunc; });
 			}
 
-			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this.SkipFrequency = c; });
+			if (!_independentSkipFrequency)
+				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this.SkipFrequency = c; });
 
 			// symbol size
 			if (!_independentSymbolSize)
 			{
-				if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolSize = size; }))
-				{
-					this._symbolSize = 0;
-				}
+				this._symbolSize = 0;
+				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolSize = size; });
 
 				// but if there is an symbol size evaluation function, then use this with higher priority.
+				_cachedSymbolSizeForIndexFunction = null;
 				VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
-			}
-
-			// bar position
-			BarWidthPositionGroupStyle bwp = PlotGroupStyle.GetStyleToApply<BarWidthPositionGroupStyle>(externalGroups, localGroups);
-			if (null != bwp && !_doNotShiftHorizontalPosition)
-			{
-				double innerGapW, outerGapW, width, lpos;
-				bwp.Apply(out innerGapW, out outerGapW, out width, out lpos);
-				_cachedLogicalShiftOfIndependent = lpos + width / 2;
 			}
 			else
 			{
-				_cachedLogicalShiftOfIndependent = 0;
+				_cachedSymbolSizeForIndexFunction = null;
+			}
+
+			// dash style
+			if (!_independentDashPattern)
+			{
+				DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern dashPattern) { this._pen.DashPattern1 = dashPattern; });
+			}
+
+			// Shift the items ?
+			_cachedLogicalShiftX = 0;
+			_cachedLogicalShiftY = 0;
+			if (!_independentOnShiftingGroupStyles)
+			{
+				var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYGroupStyle>(externalGroups, localGroups);
+				if (null != shiftStyle)
+				{
+					shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY);
+				}
 			}
 		}
 
 		public void Paint(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
-			if (_isHorizontalStyle)
-				PaintXErrorBars(g, layer, pdata);
-			else
-				PaintYErrorBars(g, layer, pdata);
+			PaintErrorBars(AxisNumber, g, layer, pdata);
 		}
 
-		protected void PaintYErrorBars(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
+		protected void PaintErrorBars(int axisNumber, System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
 		{
 			const double logicalClampMinimum = -10;
 			const double logicalClampMaximum = 11;
 
 			// Plot error bars for the dependent variable (y)
 			PlotRangeList rangeList = pdata.RangeList;
-			PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			INumericColumn posErrCol = PositiveErrorColumn;
-			INumericColumn negErrCol = NegativeErrorColumn;
+			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
+			var posErrCol = PositiveErrorColumn;
+			var negErrCol = NegativeErrorColumn;
+
+			if (null != posErrCol && !typeof(double).IsAssignableFrom(posErrCol.ItemType))
+				posErrCol = null; // TODO make this an runtime paint error to be reported
+
+			if (null != negErrCol && !typeof(double).IsAssignableFrom(negErrCol.ItemType))
+				negErrCol = null; // TODO make this an runtime paint error to be reported
 
 			if (posErrCol == null && negErrCol == null)
 				return; // nothing to do if both error columns are null
+
+			var strokePen = _pen.Clone();
 
 			System.Drawing.Drawing2D.GraphicsPath errorBarPath = new System.Drawing.Drawing2D.GraphicsPath();
 
 			Region oldClippingRegion = g.Clip;
 			Region newClip = (Region)oldClippingRegion.Clone();
-			var strokePen = _cachedColorForIndexFunction == null ? _strokePen : _strokePen.Clone();
 
 			foreach (PlotRange r in rangeList)
 			{
@@ -524,207 +965,153 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				int upper = r.UpperBound;
 				int offset = r.OffsetToOriginal;
 
-				for (int j = lower; j < upper; j++)
+				for (int j = lower; j < upper; j += _skipFrequency)
 				{
-					double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
+					int originalRow = j + offset;
+					double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalRow);
+					strokePen.Width = (_lineWidth1Offset + _lineWidth1Factor * symbolSize);
+
 					if (null != _cachedColorForIndexFunction)
 						strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(j + offset), "VariableColor");
+					if (null != strokePen.EndCap)
+						strokePen.EndCap = strokePen.EndCap.WithMinimumAbsoluteAndRelativeSize(symbolSize * _endCapSizeFactor + _endCapSizeOffset, 1 + 1E-6);
 
-					AltaxoVariant y = pdata.GetYPhysical(j + offset);
-					Logical3D lm = layer.GetLogical3D(pdata, j + offset);
-					lm.RX += _cachedLogicalShiftOfIndependent;
+					AltaxoVariant vMeanPhysical = pdata.GetPhysical(axisNumber, originalRow);
+					Logical3D logicalMean = layer.GetLogical3D(pdata, originalRow);
+					logicalMean.RX += _cachedLogicalShiftX;
+					logicalMean.RY += _cachedLogicalShiftY;
 
-					if (!Calc.RMath.IsInIntervalCC(lm.RX, logicalClampMinimum, logicalClampMaximum))
+					if (!Calc.RMath.IsInIntervalCC(logicalMean.RX, logicalClampMinimum, logicalClampMaximum))
 						continue;
-					if (!Calc.RMath.IsInIntervalCC(lm.RY, logicalClampMinimum, logicalClampMaximum))
+					if (!Calc.RMath.IsInIntervalCC(logicalMean.RY, logicalClampMinimum, logicalClampMaximum))
 						continue;
 
-					Logical3D lh = lm;
-					Logical3D ll = lm;
-					bool lhvalid = false;
-					bool llvalid = false;
-					if (posErrCol != null)
+					var vMeanLogical = logicalMean.GetR(axisNumber);
+
+					Logical3D logicalPos = logicalMean;
+					Logical3D logicalNeg = logicalMean;
+					bool logicalPosValid = false;
+					bool logicalNegValid = false;
+
+					switch (_meaningOfValues)
 					{
-						var ry = layer.YAxis.PhysicalVariantToNormal(y + Math.Abs(posErrCol[j + offset]));
-						ry = Calc.RMath.ClampToInterval(ry, logicalClampMinimum, logicalClampMaximum);
-						lh.RY = ry;
-						lhvalid = !lh.IsNaN && lh.RY != lm.RY;
-					}
-					if (negErrCol != null)
-					{
-						var ry = layer.YAxis.PhysicalVariantToNormal(y - Math.Abs(negErrCol[j + offset]));
-						ry = Calc.RMath.ClampToInterval(ry, logicalClampMinimum, logicalClampMaximum);
-						ll.RY = ry;
-						llvalid = !ll.IsNaN && ll.RY != lm.RY;
-					}
-					if (!(lhvalid || llvalid))
+						case ValueInterpretation.AbsoluteError:
+							{
+								if (posErrCol != null)
+								{
+									var vPosLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(vMeanPhysical + Math.Abs(posErrCol[originalRow]));
+									vPosLogical = Calc.RMath.ClampToInterval(vPosLogical, logicalClampMinimum, logicalClampMaximum);
+									logicalPos.SetR(axisNumber, vPosLogical);
+									logicalPosValid = !logicalPos.IsNaN && vPosLogical != vMeanLogical;
+								}
+
+								if (negErrCol != null)
+								{
+									var vNegLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(vMeanPhysical - Math.Abs(negErrCol[originalRow]));
+									vNegLogical = Calc.RMath.ClampToInterval(vNegLogical, logicalClampMinimum, logicalClampMaximum);
+									logicalNeg.SetR(axisNumber, vNegLogical);
+									logicalNegValid = !logicalNeg.IsNaN && vNegLogical != vMeanLogical;
+								}
+							}
+							break;
+
+						case ValueInterpretation.RelativeError:
+							{
+								if (posErrCol != null)
+								{
+									var vPosLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(vMeanPhysical * (1 + Math.Abs(posErrCol[originalRow])));
+									vPosLogical = Calc.RMath.ClampToInterval(vPosLogical, logicalClampMinimum, logicalClampMaximum);
+									logicalPos.SetR(axisNumber, vPosLogical);
+									logicalPosValid = !logicalPos.IsNaN && vPosLogical != vMeanLogical;
+								}
+
+								if (negErrCol != null)
+								{
+									var vNegLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(vMeanPhysical * (1 - Math.Abs(negErrCol[originalRow])));
+									vNegLogical = Calc.RMath.ClampToInterval(vNegLogical, logicalClampMinimum, logicalClampMaximum);
+									logicalNeg.SetR(axisNumber, vNegLogical);
+									logicalNegValid = !logicalNeg.IsNaN && vNegLogical != vMeanLogical;
+								}
+							}
+							break;
+
+						case ValueInterpretation.AbsoluteValue:
+							{
+								if (posErrCol != null)
+								{
+									var vPosLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(posErrCol[originalRow]);
+									vPosLogical = Calc.RMath.ClampToInterval(vPosLogical, logicalClampMinimum, logicalClampMaximum);
+									logicalPos.SetR(axisNumber, vPosLogical);
+									logicalPosValid = !logicalPos.IsNaN && vPosLogical != vMeanLogical;
+								}
+
+								if (negErrCol != null)
+								{
+									var vNegLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(negErrCol[originalRow]);
+									vNegLogical = Calc.RMath.ClampToInterval(vNegLogical, logicalClampMinimum, logicalClampMaximum);
+									logicalNeg.SetR(axisNumber, vNegLogical);
+									logicalNegValid = !logicalNeg.IsNaN && vNegLogical != vMeanLogical;
+								}
+
+								if (object.ReferenceEquals(negErrCol, posErrCol))
+								{
+									logicalNegValid = false; // then we need only to plot the positive column, since both colums are identical
+								}
+							}
+							break;
+					} // end switch
+
+					if (!(logicalPosValid || logicalNegValid))
 						continue; // nothing to do for this point if both pos and neg logical point are invalid.
 
-					// now paint the error bar
-					if (_symbolGap) // if symbol gap, then clip the painting, exclude a rectangle of size symbolSize x symbolSize
-					{
-						double xlm, ylm;
-						layer.CoordinateSystem.LogicalToLayerCoordinates(lm, out xlm, out ylm);
-						newClip.Union(oldClippingRegion);
-						newClip.Exclude(new RectangleF((float)(xlm - symbolSize / 2), (float)(ylm - symbolSize / 2), (float)(symbolSize), (float)(symbolSize)));
-						g.Clip = newClip;
-					}
-
-					if (lhvalid && llvalid)
+					if (logicalNegValid)
 					{
 						errorBarPath.Reset();
-						layer.CoordinateSystem.GetIsoline(errorBarPath, ll, lm);
-						layer.CoordinateSystem.GetIsoline(errorBarPath, lm, lh);
-						g.DrawPath(strokePen, errorBarPath);
-					}
-					else if (llvalid)
-					{
-						layer.CoordinateSystem.DrawIsoline(g, strokePen, ll, lm);
-					}
-					else if (lhvalid)
-					{
-						layer.CoordinateSystem.DrawIsoline(g, strokePen, lm, lh);
-					}
-
-					// now the end bars
-					if (_showEndBars)
-					{
-						if (lhvalid)
+						layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalNeg);
+						PointF[] shortenedPathPoints = null;
+						if (_useSymbolGap)
 						{
-							PointD2D outDir;
-							layer.CoordinateSystem.GetNormalizedDirection(lm, lh, 1, new Logical3D(1, 0), out outDir);
-							outDir = outDir * (symbolSize / 2);
-							double xlay, ylay;
-							layer.CoordinateSystem.LogicalToLayerCoordinates(lh, out xlay, out ylay);
-							// Draw a line from x,y to
-							g.DrawLine(strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
+							double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
+							if (gap != 0)
+							{
+								errorBarPath.Flatten();
+								var pathPoints = errorBarPath.PathPoints;
+								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
+							}
 						}
 
-						if (llvalid)
-						{
-							PointD2D outDir;
-							layer.CoordinateSystem.GetNormalizedDirection(lm, ll, 1, new Logical3D(1, 0), out outDir);
-							outDir = outDir * (symbolSize / 2);
-							double xlay, ylay;
-							layer.CoordinateSystem.LogicalToLayerCoordinates(ll, out xlay, out ylay);
-							// Draw a line from x,y to
-							g.DrawLine(strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
-						}
-					}
-				}
-			}
-
-			g.Clip = oldClippingRegion;
-		}
-
-		protected void PaintXErrorBars(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
-		{
-			// Plot error bars for the independent variable (x)
-			PlotRangeList rangeList = pdata.RangeList;
-			PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			INumericColumn posErrCol = _positiveErrorColumn.Document;
-			INumericColumn negErrCol = _negativeErrorColumn.Document;
-
-			if (posErrCol == null && negErrCol == null)
-				return; // nothing to do if both error columns are null
-
-			System.Drawing.Drawing2D.GraphicsPath errorBarPath = new System.Drawing.Drawing2D.GraphicsPath();
-
-			Region oldClippingRegion = g.Clip;
-			Region newClip = (Region)oldClippingRegion.Clone();
-
-			var strokePen = _cachedColorForIndexFunction == null ? _strokePen : _strokePen.Clone();
-
-			foreach (PlotRange r in rangeList)
-			{
-				int lower = r.LowerBound;
-				int upper = r.UpperBound;
-				int offset = r.OffsetToOriginal;
-
-				for (int j = lower; j < upper; j++)
-				{
-					double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
-					if (null != _cachedColorForIndexFunction)
-						strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(j + offset), "VariableColor");
-
-					AltaxoVariant x = pdata.GetXPhysical(j + offset);
-					Logical3D lm = layer.GetLogical3D(pdata, j + offset);
-					lm.RX += _cachedLogicalShiftOfIndependent;
-					if (lm.IsNaN)
-						continue;
-
-					Logical3D lh = lm;
-					Logical3D ll = lm;
-					bool lhvalid = false;
-					bool llvalid = false;
-					if (posErrCol != null)
-					{
-						lh.RX = layer.XAxis.PhysicalVariantToNormal(x + Math.Abs(posErrCol[j + offset]));
-						lhvalid = !lh.IsNaN;
-					}
-					if (negErrCol != null)
-					{
-						ll.RX = layer.XAxis.PhysicalVariantToNormal(x - Math.Abs(negErrCol[j + offset]));
-						llvalid = !ll.IsNaN;
-					}
-					if (!(lhvalid || llvalid))
-						continue; // nothing to do for this point if both pos and neg logical point are invalid.
-
-					// now paint the error bar
-					if (_symbolGap) // if symbol gap, then clip the painting, exclude a rectangle of size symbolSize x symbolSize
-					{
-						double xlm, ylm;
-						layer.CoordinateSystem.LogicalToLayerCoordinates(lm, out xlm, out ylm);
-						newClip.Union(oldClippingRegion);
-						newClip.Exclude(new RectangleF((float)(xlm - symbolSize / 2), (float)(ylm - symbolSize / 2), (float)(symbolSize), (float)(symbolSize)));
-						g.Clip = newClip;
+						if (null != shortenedPathPoints)
+							g.DrawLines(_pen, shortenedPathPoints);
+						else
+							g.DrawPath(strokePen, errorBarPath);
 					}
 
-					if (lhvalid && llvalid)
+					if (logicalPosValid)
 					{
 						errorBarPath.Reset();
-						layer.CoordinateSystem.GetIsoline(errorBarPath, ll, lm);
-						layer.CoordinateSystem.GetIsoline(errorBarPath, lm, lh);
-						g.DrawPath(strokePen, errorBarPath);
-					}
-					else if (llvalid)
-					{
-						layer.CoordinateSystem.DrawIsoline(g, strokePen, ll, lm);
-					}
-					else if (lhvalid)
-					{
-						layer.CoordinateSystem.DrawIsoline(g, strokePen, lm, lh);
-					}
+						layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalPos);
+						PointF[] shortenedPathPoints = null;
 
-					// now the end bars
-					if (_showEndBars)
-					{
-						if (lhvalid)
+						if (_useSymbolGap)
 						{
-							PointD2D outDir;
-							layer.CoordinateSystem.GetNormalizedDirection(lm, lh, 1, new Logical3D(0, 1), out outDir);
-							outDir = outDir * (symbolSize / 2);
-							double xlay, ylay;
-							layer.CoordinateSystem.LogicalToLayerCoordinates(lh, out xlay, out ylay);
-							// Draw a line from x,y to
-							g.DrawLine(strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
+							double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
+							if (gap != 0)
+							{
+								errorBarPath.Flatten();
+								var pathPoints = errorBarPath.PathPoints;
+								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
+							}
 						}
 
-						if (llvalid)
-						{
-							PointD2D outDir;
-							layer.CoordinateSystem.GetNormalizedDirection(lm, ll, 1, new Logical3D(0, 1), out outDir);
-							outDir = outDir * (symbolSize / 2);
-							double xlay, ylay;
-							layer.CoordinateSystem.LogicalToLayerCoordinates(ll, out xlay, out ylay);
-							// Draw a line from x,y to
-							g.DrawLine(strokePen, (float)(xlay - outDir.X), (float)(ylay - outDir.Y), (float)(xlay + outDir.X), (float)(ylay + outDir.Y));
-						}
+						if (null != shortenedPathPoints)
+							g.DrawLines(_pen, shortenedPathPoints);
+						else
+							g.DrawPath(strokePen, errorBarPath);
 					}
 				}
-			}
 
-			g.Clip = oldClippingRegion;
+				g.Clip = oldClippingRegion;
+			}
 		}
 
 		public System.Drawing.RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
@@ -752,8 +1139,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
 		public void VisitDocumentReferences(DocNodeProxyReporter Report)
 		{
-			Report(_positiveErrorColumn, this, "PositiveErrorColumn");
-			Report(_negativeErrorColumn, this, "NegativeErrorColumn");
+			if (null != _commonErrorColumn)
+				Report(_commonErrorColumn, this, nameof(CommonErrorColumn));
+			if (null != _positiveErrorColumn)
+				Report(_positiveErrorColumn, this, nameof(PositiveErrorColumn));
+			if (null != _negativeErrorColumn)
+				Report(_negativeErrorColumn, this, nameof(NegativeErrorColumn));
 		}
 
 		/// <summary>
@@ -768,6 +1159,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			Action<IReadableColumn> // action to set the column during Apply of the controller
 			>> GetAdditionallyUsedColumns()
 		{
+			if (_useCommonErrorColumn)
+			{
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(CommonErrorColumn), CommonErrorColumn, _commonErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => CommonErrorColumn = col as INumericColumn);
+			}
+			else
 			{
 				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(PositiveErrorColumn), PositiveErrorColumn, _positiveErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => PositiveErrorColumn = col as INumericColumn);
 
@@ -777,4 +1173,136 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion IDocumentNode Members
 	}
+
+	#endregion Error bar (abstract, for implementations see below)
+
+	#region Error bar x
+
+	public class ErrorBarXPlotStyle : ErrorBarPlotStyle
+	{
+		public override int AxisNumber { get { return 0; } }
+
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarXPlotStyle), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (ErrorBarXPlotStyle)o ?? new ErrorBarXPlotStyle(info);
+				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="info">The information.</param>
+		protected ErrorBarXPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info) : base(info)
+		{
+		}
+
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="info">The information.</param>
+		public ErrorBarXPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy posErrorColumn, IReadableColumnProxy negErrorColumn) : base(info, posErrorColumn, negErrorColumn)
+		{
+		}
+
+		public ErrorBarXPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context) : base(context)
+		{
+		}
+
+		public ErrorBarXPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences) : base(from, copyWithDataReferences)
+		{
+		}
+
+		/// <inheritdoc/>
+		public override object Clone()
+		{
+			return new ErrorBarXPlotStyle(this, true);
+		}
+
+		/// <inheritdoc/>
+		public override object Clone(bool copyWithDataReferences)
+		{
+			return new ErrorBarXPlotStyle(this, copyWithDataReferences);
+		}
+	}
+
+	#endregion Error bar x
+
+	#region Error bar y
+
+	public class ErrorBarYPlotStyle : ErrorBarPlotStyle
+	{
+		public override int AxisNumber { get { return 1; } }
+
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ErrorBarYPlotStyle), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (ErrorBarYPlotStyle)o ?? new ErrorBarYPlotStyle(info);
+				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+				return s;
+			}
+		}
+
+		#endregion Serialization
+
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="info">The information.</param>
+		protected ErrorBarYPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info) : base(info)
+		{
+		}
+
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="info">The information.</param>
+		public ErrorBarYPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy posErrorColumn, IReadableColumnProxy negErrorColumn) : base(info, posErrorColumn, negErrorColumn)
+		{
+		}
+
+		public ErrorBarYPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context) : base(context)
+		{
+		}
+
+		public ErrorBarYPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences) : base(from, copyWithDataReferences)
+		{
+		}
+
+		/// <inheritdoc/>
+		public override object Clone()
+		{
+			return new ErrorBarYPlotStyle(this, true);
+		}
+
+		/// <inheritdoc/>
+		public override object Clone(bool copyWithDataReferences)
+		{
+			return new ErrorBarYPlotStyle(this, copyWithDataReferences);
+		}
+	}
+
+	#endregion Error bar y
 }

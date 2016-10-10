@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 			_penGlue = new PenControlsGlue();
 			_penGlue.CbBrush = _guiPenMaterial;
-			_penGlue.CbDashStyle = _guiPenDashStyle;
+			_penGlue.CbDashPattern = _guiPenDashStyle;
 
 			_penGlue.CbLineStartCap = _cbLineStartCap;
 			_penGlue.CbLineStartCapAbsSize = _cbLineStartCapSize;

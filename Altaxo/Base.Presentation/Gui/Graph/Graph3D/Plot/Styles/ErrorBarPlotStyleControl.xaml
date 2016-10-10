@@ -10,6 +10,7 @@
 						  xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.D3D"
 						  xmlns:axogddl="clr-namespace:Altaxo.Gui.Drawing.D3D.LineCaps"
 						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Drawing.D3D"
+						 xmlns:axogdp="clr-namespace:Altaxo.Gui.Drawing"
              mc:Ignorable="d"
 						 Grid.IsSharedSizeScope="True">
 	<UserControl.Resources>
@@ -118,7 +119,7 @@
 				<axogdd:MaterialComboBox x:Name="_guiPenColor" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4" />
 
 				<CheckBox x:Name="_chkIndependentDashPattern" Grid.Row="2" Grid.Column="0"  Content="Independent dash pattern :" Checked="EhIndependentDashPatternChanged" Unchecked="EhIndependentDashPatternChanged" />
-				<axog3m:DashStyleComboBox x:Name="_guiDashPattern" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" />
+				<axogdp:DashPatternComboBox x:Name="_guiDashPattern" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" />
 
 				<CheckBox x:Name="_guiIndependentSymbolSize" Content="Independent symbol size :"  Grid.Row="4" Grid.Column="0" />
 				<axogcd:LineCapSizeComboBox x:Name="_guiSymbolSize" Grid.Row="4" Grid.Column="2" />
@@ -149,6 +150,8 @@
 				<Label Content="+" Grid.Row="14" Grid.Column="3" />
 				<axogc:QuantityWithUnitTextBox x:Name="_guiSymbolGapFactor"  Grid.Row="14" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
 				<Label Content="* symbolSize" Grid.Row="14" Grid.Column="5" />
+
+				<CheckBox x:Name="_guiForceVisibilityOfEndCap" Content="Force visibility of end cap even if line-symbol gap is larger than error" Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="6" ToolTip="If checked, the end cap will be shown even if the line length is zero, because the line-symbol gap is larger than the error itself." />
 			</Grid>
 		</GroupBox>
 	</StackPanel>

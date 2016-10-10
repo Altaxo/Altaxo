@@ -67,6 +67,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 		double SymbolGapFactor { get; set; }
 
+		bool ForceVisibilityOfEndCap { get; set; }
+
 		int SkipFrequency { get; set; }
 
 		bool IndependentSkipFrequency { get; set; }
@@ -179,6 +181,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 				_view.EndCapSizeOffset = _doc.EndCapSizeOffset;
 				_view.EndCapSizeFactor = _doc.EndCapSizeFactor;
 
+				_view.ForceVisibilityOfEndCap = _doc.ForceVisibilityOfEndCap;
+
 				_view.UseSymbolGap = _doc.UseSymbolGap;
 				_view.SymbolGapOffset = _doc.SymbolGapOffset;
 				_view.SymbolGapFactor = _doc.SymbolGapFactor;
@@ -222,6 +226,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
 			_doc.EndCapSizeOffset = _view.EndCapSizeOffset;
 			_doc.EndCapSizeFactor = _view.EndCapSizeFactor;
+
+			_doc.ForceVisibilityOfEndCap = _view.ForceVisibilityOfEndCap;
 
 			_doc.UseSymbolGap = _view.UseSymbolGap;
 			_doc.SymbolGapOffset = _view.SymbolGapOffset;

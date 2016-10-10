@@ -393,8 +393,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		public LabelPlotStyle(Altaxo.Data.IReadableColumn labelColumn, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			this._font = GraphDocument.GetDefaultFont(context);
-			var color = GraphDocument.GetDefaultPlotColor(context);
+			this._fontSizeOffset = _font.Size;
 
+			var color = GraphDocument.GetDefaultPlotColor(context);
 			this._independentColor = false;
 			this._material = new MaterialWithUniformColor(color);
 			this._backgroundColorLinkage = ColorLinkage.Independent;

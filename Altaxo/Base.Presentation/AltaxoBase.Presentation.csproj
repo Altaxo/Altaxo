@@ -249,7 +249,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Drawing\D3D\DashStyleComboBox.xaml">
+    <Page Include="Gui\Drawing\DashPatternComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1228,8 +1228,8 @@
     <Compile Include="Gui\Common\SimpleImmutableObjectControl.xaml.cs">
       <DependentUpon>SimpleImmutableObjectControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Drawing\D3D\DashStyleComboBox.xaml.cs">
-      <DependentUpon>DashStyleComboBox.xaml</DependentUpon>
+    <Compile Include="Gui\Drawing\DashPatternComboBox.xaml.cs">
+      <DependentUpon>DashPatternComboBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\Drawing\D3D\FontX3DControl.xaml.cs">
       <DependentUpon>FontX3DControl.xaml</DependentUpon>

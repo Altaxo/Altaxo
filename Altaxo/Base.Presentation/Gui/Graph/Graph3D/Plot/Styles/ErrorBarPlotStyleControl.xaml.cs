@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 			_strokePenGlue = new PenControlsGlue();
 			_strokePenGlue.CbBrush = _guiPenColor;
 			_strokePenGlue.CbLineEndCap = _guiLineEndCap;
-			_strokePenGlue.CbDashStyle = _guiDashPattern;
+			_strokePenGlue.CbDashPattern = _guiDashPattern;
 		}
 
 		#region IErrorBarPlotStyleView Members
@@ -267,6 +267,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 			set
 			{
 				_guiSymbolGapFactor.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public bool ForceVisibilityOfEndCap
+		{
+			get
+			{
+				return _guiForceVisibilityOfEndCap.IsChecked == true;
+			}
+			set
+			{
+				_guiForceVisibilityOfEndCap.IsChecked = value;
 			}
 		}
 

@@ -33,6 +33,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 	using Altaxo.Graph.Gdi.Plot.Styles;
 	using Altaxo.Graph.Scales;
 	using ColorProvider;
+	using Data;
+	using Graph.Plot.Data;
 	using Scales;
 
 	public interface IColumnDrivenColorPlotStyleView
@@ -41,21 +43,38 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		IColorProviderView ColorProviderView { get; }
 
-		event Action ChooseDataColumn;
+		/// <summary>
+		/// Initializes the name of the label column.
+		/// </summary>
+		/// <param name="columnAsText">Label column's name.</param>
+		void Init_DataColumn(string columnAsText, string toolTip, int status);
 
-		event Action ClearDataColumn;
-
-		string DataColumnName { set; }
+		/// <summary>
+		/// Initializes the transformation text.
+		/// </summary>
+		/// <param name="text">Text for the transformation</param>
+		void Init_DataColumnTransformation(string text, string toolTip);
 	}
 
 	[UserControllerForObject(typeof(ColumnDrivenColorPlotStyle))]
 	[ExpectedTypeOfView(typeof(IColumnDrivenColorPlotStyleView))]
-	public class ColumnDrivenColorPlotStyleController : MVCANControllerEditOriginalDocBase<ColumnDrivenColorPlotStyle, IColumnDrivenColorPlotStyleView>
+	public class ColumnDrivenColorPlotStyleController : MVCANControllerEditOriginalDocBase<ColumnDrivenColorPlotStyle, IColumnDrivenColorPlotStyleView>, IColumnDataExternallyControlled
 	{
 		private DensityScaleController _scaleController;
 		private ColorProviderController _colorProviderController;
 
-		private INumericColumn _tempDataColumn;
+		/// <summary>
+		/// The data table that the column of the style should belong to.
+		/// </summary>
+		private DataTable _supposedParentDataTable;
+
+		public override bool InitializeDocument(params object[] args)
+		{
+			if (args.Length >= 2 && (args[1] is DataTable))
+				_supposedParentDataTable = (DataTable)args[1];
+
+			return base.InitializeDocument(args);
+		}
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -65,7 +84,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		public override void Dispose(bool isDisposing)
 		{
-			_tempDataColumn = null;
 			base.Dispose(isDisposing);
 		}
 
@@ -86,7 +104,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			{
 				_scaleController.ViewObject = _view.ScaleView;
 				_colorProviderController.ViewObject = _view.ColorProviderView;
-				_view.DataColumnName = _doc.DataColumn.FullName;
+				InitializeDataColumnText();
 			}
 		}
 
@@ -107,44 +125,38 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 				return false;
 			_doc.ColorProvider = (Altaxo.Graph.Gdi.Plot.IColorProvider)_colorProviderController.ModelObject;
 
-			if (null != _tempDataColumn)
-				_doc.DataColumn = _tempDataColumn;
-
 			return ApplyEnd(true, disposeController);
 		}
 
-		protected override void AttachView()
+		private void InitializeDataColumnText()
 		{
-			base.AttachView();
-			_view.ChooseDataColumn += EhChooseDataColumn;
-			_view.ClearDataColumn += EhClearDataColumn;
+			var info = new PlotColumnInformation(_doc.DataColumn, _doc.DataColumnName);
+			info.Update(_supposedParentDataTable);
+
+			_view?.Init_DataColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
+			_view?.Init_DataColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
 		}
 
-		protected override void DetachView()
+		/// <summary>
+		/// Gets the additional columns that the controller's document is referring to.
+		/// </summary>
+		/// <returns>Enumeration of tuples.
+		/// Item1 is a label to be shown in the column data dialog to let the user identify the column.
+		/// Item2 is the column itself,
+		/// Item3 is the column name (last part of the full path to the column), and
+		/// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>> GetDataColumnsExternallyControlled()
 		{
-			_view.ChooseDataColumn -= EhChooseDataColumn;
-			_view.ClearDataColumn -= EhClearDataColumn;
-			base.DetachView();
-		}
-
-		private void EhChooseDataColumn()
-		{
-			SingleColumnChoice choice = new SingleColumnChoice();
-			choice.SelectedColumn = _tempDataColumn != null ? _tempDataColumn as DataColumn : _doc.DataColumn as DataColumn;
-			object choiceAsObject = choice;
-			if (Current.Gui.ShowDialog(ref choiceAsObject, "Select data column"))
-			{
-				choice = (SingleColumnChoice)choiceAsObject;
-				if (choice.SelectedColumn is INumericColumn)
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+				"Color", // label to be shown
+				_doc.DataColumn,
+				_doc.DataColumnName,
+				(column, table) =>
 				{
-					_tempDataColumn = (INumericColumn)choice.SelectedColumn;
-					_view.DataColumnName = _tempDataColumn.FullName;
-				}
-			}
-		}
-
-		private void EhClearDataColumn()
-		{
+					_doc.DataColumn = column;
+					this._supposedParentDataTable = table;
+					InitializeDataColumnText();
+				});
 		}
 	}
 }

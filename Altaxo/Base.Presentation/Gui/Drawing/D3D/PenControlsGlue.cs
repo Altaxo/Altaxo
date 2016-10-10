@@ -126,8 +126,7 @@ namespace Altaxo.Gui.Drawing.D3D
 
 			if (null != CbCrossSection) InitializeCrossSectionCombobox();
 
-			if (null != CbDashStyle) CbDashStyle.SelectedDashStyle = _pen.DashPattern;
-			if (null != CbDashPattern) CbDashPattern.SelectedItem = _pen.DashPattern;
+			if (null != CbDashPattern) CbDashPattern.SelectedDashPattern = _pen.DashPattern;
 
 			if (null != CbLineStartCap) CbLineStartCap.SelectedLineCap = _pen.LineStartCap;
 			if (null != CbLineStartCapAbsSize) CbLineStartCapAbsSize.SelectedQuantityAsValueInPoints = null != _pen.LineStartCap ? _pen.LineStartCap.MinimumAbsoluteSizePt : 0;
@@ -310,7 +309,7 @@ namespace Altaxo.Gui.Drawing.D3D
 
 				_cbDashPattern = value;
 				if (_pen != null && _cbDashPattern != null)
-					_cbDashPattern.SelectedItem = _pen.DashPattern;
+					_cbDashPattern.SelectedDashPattern = _pen.DashPattern;
 
 				if (_cbDashPattern != null)
 					dpd.AddValueChanged(_cbDashPattern, EhDashPattern_SelectionChangeCommitted);
@@ -322,49 +321,13 @@ namespace Altaxo.Gui.Drawing.D3D
 			if (_pen != null)
 			{
 				var oldPen = _pen;
-				_pen = _pen.WithDashPattern(_cbDashPattern.SelectedItem);
+				_pen = _pen.WithDashPattern(_cbDashPattern.SelectedDashPattern);
 				if (!object.ReferenceEquals(_pen, oldPen))
 					OnPenChanged();
 			}
 		}
 
 		#endregion Dash pattern
-
-		#region Dash style
-
-		private DashStyleComboBox _cbDashStyle;
-
-		public DashStyleComboBox CbDashStyle
-		{
-			get { return _cbDashStyle; }
-			set
-			{
-				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(DashStyleComboBox.SelectedDashStyleProperty, typeof(DashStyleComboBox));
-
-				if (_cbDashStyle != null)
-					dpd.RemoveValueChanged(_cbDashStyle, EhDashStyle_SelectionChangeCommitted);
-
-				_cbDashStyle = value;
-				if (_pen != null && _cbDashStyle != null)
-					_cbDashStyle.SelectedDashStyle = _pen.DashPattern;
-
-				if (_cbDashStyle != null)
-					dpd.AddValueChanged(_cbDashStyle, EhDashStyle_SelectionChangeCommitted);
-			}
-		}
-
-		private void EhDashStyle_SelectionChangeCommitted(object sender, EventArgs e)
-		{
-			if (_pen != null)
-			{
-				var oldPen = _pen;
-				_pen = _pen.WithDashPattern(_cbDashStyle.SelectedDashStyle);
-				if (!object.ReferenceEquals(_pen, oldPen))
-					OnPenChanged();
-			}
-		}
-
-		#endregion Dash style
 
 		/*
 

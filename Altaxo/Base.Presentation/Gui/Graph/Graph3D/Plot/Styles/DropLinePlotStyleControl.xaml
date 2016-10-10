@@ -7,6 +7,7 @@
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
  						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Drawing.D3D"
+ 						 xmlns:axogdp="clr-namespace:Altaxo.Gui.Drawing"
  						 xmlns:axogddl="clr-namespace:Altaxo.Gui.Drawing.D3D.LineCaps"
              mc:Ignorable="d">
 
@@ -102,7 +103,7 @@
 		<axoggc:MaterialComboBox x:Name="_guiPenMaterial"  Grid.Row="6" Grid.Column="2" />
 
 		<Label  Grid.Row="8" Grid.Column="0" Content="Style:" />
-		<axoggc:DashStyleComboBox x:Name="_guiPenDashStyle" Grid.Row="8" Grid.Column="2" />
+		<axogdp:DashPatternComboBox x:Name="_guiPenDashStyle" Grid.Row="8" Grid.Column="2" />
 
 		<Label Grid.Row="10" Grid.Column="0" Content="CrossSection" />
 		<ComboBox x:Name="_guiCrossSection"  Grid.Row="10" Grid.Column="2" />

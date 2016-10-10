@@ -176,7 +176,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		private SelectableListNodeList _alignmentXChoices;
 		private SelectableListNodeList _alignmentYChoices;
-		private SelectableListNodeList _alignmentZChoices;
 		private SelectableListNodeList _attachmentDirectionChoices;
 		private SelectableListNodeList _backgroundColorLinkageChoices;
 
@@ -204,7 +203,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 			_alignmentXChoices = null;
 			_alignmentYChoices = null;
-			_alignmentZChoices = null;
 			_attachmentDirectionChoices = null;
 			_backgroundColorLinkageChoices = null;
 

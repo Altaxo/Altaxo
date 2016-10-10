@@ -21,22 +21,10 @@
 		</GroupBox>
 
 		<GroupBox Header="Data column">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition  Width="Auto" SharedSizeGroup="LabelColumn1" />
-					<ColumnDefinition  Width="Auto" SharedSizeGroup="EditColumn1" />
-					<ColumnDefinition  Width="*" />
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="4" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="4" />
-				</Grid.RowDefinitions>
-				<TextBox x:Name="_edDataColumn" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" IsEnabled="False" />
-				<Button Grid.Column="0" Grid.Row="2" Content="Select.." HorizontalAlignment="Left" Click="_btSelectDataColumn_Click" />
-				<Button Grid.Column="1" Grid.Row="2" Content="Clear!" HorizontalAlignment="Right" Click="_btClearDataColumn_Click" />
-			</Grid>
+			<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="6">
+				<TextBox x:Name="_guiDataColumnTransformation" IsEnabled="True" IsReadOnly="True" />
+				<TextBox x:Name="_guiDataColumn" IsEnabled="True" IsReadOnly="True" MinWidth="100" />
+			</StackPanel>
 		</GroupBox>
 
 		<GroupBox Header="Details:">

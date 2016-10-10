@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Scales;
 using System;
 using System.Collections.Generic;
@@ -42,16 +43,25 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			InitializeComponent();
 		}
 
-		private void _btSelectDataColumn_Click(object sender, RoutedEventArgs e)
+		public void Init_DataColumn(string boxText, string toolTip, int status)
 		{
-			if (null != ChooseDataColumn)
-				ChooseDataColumn();
+			this._guiDataColumn.Text = boxText;
+			this._guiDataColumn.ToolTip = toolTip;
+			this._guiDataColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
 		}
 
-		private void _btClearDataColumn_Click(object sender, RoutedEventArgs e)
+		public void Init_DataColumnTransformation(string boxText, string toolTip)
 		{
-			if (null != ClearDataColumn)
-				ClearDataColumn();
+			if (null == boxText)
+			{
+				this._guiDataColumnTransformation.Visibility = Visibility.Collapsed;
+			}
+			else
+			{
+				this._guiDataColumnTransformation.Text = boxText;
+				this._guiDataColumnTransformation.ToolTip = toolTip;
+				this._guiDataColumnTransformation.Visibility = Visibility.Visible;
+			}
 		}
 
 		#region IColumnDrivenSymbolSizePlotStyleView
@@ -59,15 +69,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		public IDensityScaleView ScaleView
 		{
 			get { return _ctrlScale; }
-		}
-
-		public event Action ChooseDataColumn;
-
-		public event Action ClearDataColumn;
-
-		public string DataColumnName
-		{
-			set { _edDataColumn.Text = value; }
 		}
 
 		public double SymbolSizeAt0

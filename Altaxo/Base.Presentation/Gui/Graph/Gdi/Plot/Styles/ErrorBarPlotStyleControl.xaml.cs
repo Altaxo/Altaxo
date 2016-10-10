@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,10 @@
 
 #endregion Copyright
 
+using Altaxo.Collections;
+using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common.Drawing;
+using Altaxo.Gui.Graph.Plot.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,50 +40,22 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 	/// </summary>
 	public partial class ErrorBarPlotStyleControl : UserControl, IErrorBarPlotStyleView
 	{
-		private Altaxo.Gui.Common.Drawing.PenControlsGlue _strokePenGlue;
+		private PenControlsGlue _strokePenGlue;
 
 		public event Action IndependentColorChanged;
+
+		public event Action IndependentDashPatternChanged;
+
+		public event Action<bool> UseCommonErrorColumnChanged;
 
 		public ErrorBarPlotStyleControl()
 		{
 			InitializeComponent();
 
-			_strokePenGlue = new Common.Drawing.PenControlsGlue();
-			_strokePenGlue.CbBrush = _cbPenColor;
-			_strokePenGlue.CbLineThickness = _cbThickness;
-			_strokePenGlue.CbDashStyle = _cbDashStyle;
-		}
-
-		private void _btSelectErrorColumn_Click(object sender, RoutedEventArgs e)
-		{
-			if (null != ChoosePositiveError)
-				ChoosePositiveError(this, EventArgs.Empty);
-		}
-
-		private void _btClearPosError_Click(object sender, RoutedEventArgs e)
-		{
-			if (null != ClearPositiveError)
-				ClearPositiveError(this, EventArgs.Empty);
-		}
-
-		private void _chkIndepNegErrorColumn_CheckedChanged(object sender, RoutedEventArgs e)
-		{
-			if (null != IndependentNegativeError_CheckChanged)
-				IndependentNegativeError_CheckChanged(this, EventArgs.Empty);
-
-			_btSelectNegErrorColumn.IsEnabled = true == _chkIndepNegErrorColumn.IsChecked;
-		}
-
-		private void _btSelectNegErrorColumn_Click(object sender, RoutedEventArgs e)
-		{
-			if (null != ChooseNegativeError)
-				ChooseNegativeError(this, EventArgs.Empty);
-		}
-
-		private void btClearNegError_Click(object sender, RoutedEventArgs e)
-		{
-			if (null != ClearNegativeError)
-				ClearNegativeError(this, EventArgs.Empty);
+			_strokePenGlue = new PenControlsGlue();
+			_strokePenGlue.CbBrush = _guiPenColor;
+			_strokePenGlue.CbEndCap = _guiLineEndCap;
+			_strokePenGlue.CbDashPattern = _guiDashPattern;
 		}
 
 		#region IErrorBarPlotStyleView Members
@@ -96,7 +72,19 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public Altaxo.Graph.Gdi.PenX StrokePen
+		public bool IndependentDashPattern
+		{
+			get
+			{
+				return true == _chkIndependentDashPattern.IsChecked;
+			}
+			set
+			{
+				_chkIndependentDashPattern.IsChecked = value;
+			}
+		}
+
+		public PenX Pen
 		{
 			get
 			{
@@ -108,79 +96,15 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public bool IndependentSize
+		public bool IndependentOnShiftingGroupStyles
 		{
 			get
 			{
-				return true == _chkIndependentSize.IsChecked;
+				return true == _guiIndependentOnShiftingGroupStyles.IsChecked;
 			}
 			set
 			{
-				_chkIndependentSize.IsChecked = value;
-			}
-		}
-
-		public bool LineSymbolGap
-		{
-			get
-			{
-				return true == _chkLineSymbolGap.IsChecked;
-			}
-			set
-			{
-				_chkLineSymbolGap.IsChecked = value;
-			}
-		}
-
-		public bool ShowEndBars
-		{
-			get
-			{
-				return true == _chkShowEndBars.IsChecked;
-			}
-			set
-			{
-				_chkShowEndBars.IsChecked = value;
-			}
-		}
-
-		public bool DoNotShiftIndependentVariable
-		{
-			get
-			{
-				return true == _chkDoNotShift.IsChecked;
-			}
-			set
-			{
-				_chkDoNotShift.IsChecked = value;
-			}
-		}
-
-		public bool IsHorizontalStyle
-		{
-			get
-			{
-				return true == _chkIsHorizontal.IsChecked;
-			}
-			set
-			{
-				_chkIsHorizontal.IsChecked = value;
-			}
-		}
-
-		public void InitializeSymbolSizeList(string[] names, int selection)
-		{
-		}
-
-		public double SymbolSize
-		{
-			get
-			{
-				return _cbSymbolSize.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				_cbSymbolSize.SelectedQuantityAsValueInPoints = value;
+				_guiIndependentOnShiftingGroupStyles.IsChecked = value;
 			}
 		}
 
@@ -196,53 +120,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public bool IndependentNegativeError
-		{
-			get
-			{
-				return true == _chkIndepNegErrorColumn.IsChecked;
-			}
-			set
-			{
-				_chkIndepNegErrorColumn.IsChecked = value;
-				_btSelectNegErrorColumn.IsEnabled = value;
-			}
-		}
-
-		public string PositiveError
-		{
-			get
-			{
-				return _edErrorColumn.Text;
-			}
-			set
-			{
-				_edErrorColumn.Text = value;
-			}
-		}
-
-		public string NegativeError
-		{
-			get
-			{
-				return _edNegErrorColumn.Text;
-			}
-			set
-			{
-				_edNegErrorColumn.Text = value;
-			}
-		}
-
-		public event EventHandler ChoosePositiveError;
-
-		public event EventHandler ChooseNegativeError;
-
-		public event EventHandler IndependentNegativeError_CheckChanged;
-
-		public event EventHandler ClearPositiveError;
-
-		public event EventHandler ClearNegativeError;
-
 		#endregion IErrorBarPlotStyleView Members
 
 		public bool ShowPlotColorsOnly
@@ -250,10 +127,255 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			set { _strokePenGlue.ShowPlotColorsOnly = value; }
 		}
 
+		public bool IndependentSymbolSize
+		{
+			get
+			{
+				return true == _guiIndependentSymbolSize.IsChecked;
+			}
+
+			set
+			{
+				_guiIndependentSymbolSize.IsChecked = value;
+			}
+		}
+
+		public double SymbolSize
+		{
+			get
+			{
+				return _guiSymbolSize.SelectedQuantityAsValueInPoints;
+			}
+			set
+			{
+				_guiSymbolSize.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double LineWidth1Offset
+		{
+			get
+			{
+				return _guiLineWidth1Offset.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiLineWidth1Offset.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double LineWidth1Factor
+		{
+			get
+			{
+				return _guiLineWidth1Factor.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiLineWidth1Factor.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public double EndCapSizeOffset
+		{
+			get
+			{
+				return _guiEndCapSizeOffset.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiEndCapSizeOffset.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double EndCapSizeFactor
+		{
+			get
+			{
+				return _guiEndCapSizeFactor.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiEndCapSizeFactor.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public bool UseSymbolGap
+		{
+			get
+			{
+				return _guiUseLineSymbolGap.IsChecked == true;
+			}
+
+			set
+			{
+				_guiUseLineSymbolGap.IsChecked = value;
+			}
+		}
+
+		public double SymbolGapOffset
+		{
+			get
+			{
+				return _guiSymbolGapOffset.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiSymbolGapOffset.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double SymbolGapFactor
+		{
+			get
+			{
+				return _guiSymbolGapFactor.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiSymbolGapFactor.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public bool ForceVisibilityOfEndCap
+		{
+			get
+			{
+				return _guiForceVisibilityOfEndCap.IsChecked == true;
+			}
+			set
+			{
+				_guiForceVisibilityOfEndCap.IsChecked = value;
+			}
+		}
+
+		public bool IndependentSkipFrequency
+		{
+			get
+			{
+				return _guiIndependentSkipFrequency.IsChecked == true;
+			}
+
+			set
+			{
+				_guiIndependentSkipFrequency.IsChecked = value;
+			}
+		}
+
 		private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
 		{
-			if (null != IndependentColorChanged)
-				IndependentColorChanged();
+			IndependentColorChanged?.Invoke();
+		}
+
+		private void EhIndependentDashPatternChanged(object sender, RoutedEventArgs e)
+		{
+			IndependentDashPatternChanged?.Invoke();
+		}
+
+		private void EhUseCommonErrorColumnCheckedChanged(object sender, RoutedEventArgs e)
+		{
+			UseCommonErrorColumnChanged?.Invoke(_guiUseCommonErrorColumn.IsChecked == true);
+		}
+
+		public bool UseCommonErrorColumn
+		{
+			get
+			{
+				return _guiUseCommonErrorColumn.IsChecked == true;
+			}
+			set
+			{
+				_guiUseCommonErrorColumn.IsChecked = value;
+
+				var commonVisibility = value ? Visibility.Visible : Visibility.Collapsed;
+				var posnegVisibility = value ? Visibility.Collapsed : Visibility.Visible;
+
+				_guiCommonErrorColumnLabel.Visibility = commonVisibility;
+				_guiCommonErrorColumn.Visibility = commonVisibility;
+				_guiCommonErrorColumnTransformation.Visibility = commonVisibility;
+
+				_guiPositiveErrorColumnLabel.Visibility = posnegVisibility;
+				_guiPositiveErrorColumn.Visibility = posnegVisibility;
+				_guiPositiveErrorColumnTransformation.Visibility = posnegVisibility;
+
+				_guiNegativeErrorColumnLabel.Visibility = posnegVisibility;
+				_guiNegativeErrorColumn.Visibility = posnegVisibility;
+				_guiNegativeErrorColumnTransformation.Visibility = posnegVisibility;
+			}
+		}
+
+		public void Initialize_CommonErrorColumn(string boxText, string toolTip, int status)
+		{
+			this._guiCommonErrorColumn.Text = boxText;
+			this._guiCommonErrorColumn.ToolTip = toolTip;
+			this._guiCommonErrorColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+		}
+
+		public void Initialize_CommonErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
+		{
+			if (null == transformationTextToShow)
+			{
+				this._guiCommonErrorColumnTransformation.Visibility = Visibility.Collapsed;
+			}
+			else
+			{
+				this._guiCommonErrorColumnTransformation.Text = transformationTextToShow;
+				this._guiCommonErrorColumnTransformation.ToolTip = transformationToolTip;
+				this._guiCommonErrorColumnTransformation.Visibility = Visibility.Visible;
+			}
+		}
+
+		public void Initialize_PositiveErrorColumn(string boxText, string toolTip, int status)
+		{
+			this._guiPositiveErrorColumn.Text = boxText;
+			this._guiPositiveErrorColumn.ToolTip = toolTip;
+			this._guiPositiveErrorColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+		}
+
+		public void Initialize_PositiveErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
+		{
+			if (null == transformationTextToShow)
+			{
+				this._guiPositiveErrorColumnTransformation.Visibility = Visibility.Collapsed;
+			}
+			else
+			{
+				this._guiPositiveErrorColumnTransformation.Text = transformationTextToShow;
+				this._guiPositiveErrorColumnTransformation.ToolTip = transformationToolTip;
+				this._guiPositiveErrorColumnTransformation.Visibility = Visibility.Visible;
+			}
+		}
+
+		public void Initialize_NegativeErrorColumn(string boxText, string toolTip, int status)
+		{
+			this._guiNegativeErrorColumn.Text = boxText;
+			this._guiNegativeErrorColumn.ToolTip = toolTip;
+			this._guiNegativeErrorColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
+		}
+
+		public void Initialize_NegativeErrorColumnTransformation(string transformationTextToShow, string transformationToolTip)
+		{
+			if (null == transformationTextToShow)
+			{
+				this._guiNegativeErrorColumnTransformation.Visibility = Visibility.Collapsed;
+			}
+			else
+			{
+				this._guiNegativeErrorColumnTransformation.Text = transformationTextToShow;
+				this._guiNegativeErrorColumnTransformation.ToolTip = transformationToolTip;
+				this._guiNegativeErrorColumnTransformation.Visibility = Visibility.Visible;
+			}
+		}
+
+		public void Initialize_MeaningOfValues(SelectableListNodeList list)
+		{
+			_guiMeaningOfValues.Initialize(list);
 		}
 	}
 }

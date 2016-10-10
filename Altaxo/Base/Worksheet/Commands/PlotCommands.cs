@@ -129,7 +129,7 @@ namespace Altaxo.Worksheet.Commands
 							break;
 
 						case ColumnKind.Err:
-							ErrorBarPlotStyle errStyle = new ErrorBarPlotStyle(context);
+							ErrorBarPlotStyle errStyle = new ErrorBarYPlotStyle(context);
 							errStyle.PositiveErrorColumn = col as INumericColumn;
 							errStyle.NegativeErrorColumn = col as INumericColumn;
 							ps.Add(errStyle);
@@ -143,7 +143,7 @@ namespace Altaxo.Worksheet.Commands
 							}
 							else
 							{
-								unpairedPositiveError = new ErrorBarPlotStyle(context);
+								unpairedPositiveError = new ErrorBarYPlotStyle(context);
 								unpairedPositiveError.PositiveErrorColumn = col as INumericColumn;
 								ps.Add(unpairedPositiveError);
 							}
@@ -157,7 +157,7 @@ namespace Altaxo.Worksheet.Commands
 							}
 							else
 							{
-								unpairedNegativeError = new ErrorBarPlotStyle(context);
+								unpairedNegativeError = new ErrorBarYPlotStyle(context);
 								unpairedNegativeError.NegativeErrorColumn = col as INumericColumn;
 								ps.Add(unpairedNegativeError);
 							}

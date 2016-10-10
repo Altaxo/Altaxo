@@ -24,6 +24,7 @@
 
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -119,6 +120,7 @@ namespace Altaxo.Gui.Common.Drawing
 			if (null != CbBrush) CbBrush.SelectedBrush = _pen.BrushHolder;
 			if (null != CbLineThickness) CbLineThickness.SelectedQuantityAsValueInPoints = _pen.Width;
 			if (null != CbDashStyle) CbDashStyle.SelectedDashStyle = _pen.DashStyleEx;
+			if (null != CbDashPattern) CbDashPattern.SelectedDashPattern = _pen.DashPattern1;
 			if (null != CbDashCap) CbDashCap.SelectedDashCap = _pen.DashCap;
 			if (null != CbStartCap) CbStartCap.SelectedLineCap = _pen.StartCap;
 			if (null != CbStartCapAbsSize) CbStartCapAbsSize.SelectedQuantityAsValueInPoints = _pen.StartCap.MinimumAbsoluteSizePt;
@@ -244,6 +246,36 @@ namespace Altaxo.Gui.Common.Drawing
 			if (_pen != null)
 			{
 				_pen.DashStyleEx = _cbDashStyle.SelectedDashStyle;
+				OnPenChanged();
+			}
+		}
+
+		private DashPatternComboBox _cbDashPattern;
+
+		public DashPatternComboBox CbDashPattern
+		{
+			get { return _cbDashPattern; }
+			set
+			{
+				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(DashPatternComboBox.SelectedDashStyleProperty, typeof(DashPatternComboBox));
+
+				if (_cbDashPattern != null)
+					dpd.RemoveValueChanged(_cbDashStyle, EhDashPattern_SelectionChangeCommitted);
+
+				_cbDashPattern = value;
+				if (_pen != null && _cbDashPattern != null)
+					_cbDashPattern.SelectedDashPattern = _pen.DashPattern1;
+
+				if (_cbDashPattern != null)
+					dpd.AddValueChanged(_cbDashStyle, EhDashPattern_SelectionChangeCommitted);
+			}
+		}
+
+		private void EhDashPattern_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+			if (_pen != null)
+			{
+				_pen.DashPattern1 = _cbDashPattern.SelectedDashPattern;
 				OnPenChanged();
 			}
 		}

@@ -89,8 +89,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// </summary>
 		protected bool _independentColor;
 
-		protected Alignment _alignmentX;
-		protected Alignment _alignmentY;
+		protected Alignment _alignmentX = Alignment.Center;
+		protected Alignment _alignmentY = Alignment.Center;
 
 		/// <summary>The rotation of the label.</summary>
 		protected double _rotation;
@@ -660,8 +660,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			this._backgroundColorLinkage = ColorLinkage.Independent;
 
 			this._cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
-			this._cachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
-			this._cachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
 		}
 
 		public LabelPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
@@ -677,16 +675,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public LabelPlotStyle(Altaxo.Data.IReadableColumn labelColumn, Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			this._font = GraphDocument.GetDefaultFont(context);
-			var color = GraphDocument.GetDefaultPlotColor(context);
+			this._fontSizeOffset = _font.Size;
 
+			var color = GraphDocument.GetDefaultPlotColor(context);
 			this._independentColor = false;
 			this._brush = new BrushX(color) { ParentObject = this };
 			this._backgroundColorLinkage = ColorLinkage.Independent;
 			this.LabelColumnProxy = Altaxo.Data.ReadableColumnProxyBase.FromColumn(labelColumn);
 
 			this._cachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
-			this._cachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
-			this._cachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -1063,7 +1060,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (!(_alignmentX == value))
 				{
 					_alignmentX = value;
-					this._cachedStringFormat.Alignment = GdiExtensionMethods.ToGdi(value);
 					EhSelfChanged();
 				}
 			}
@@ -1081,7 +1077,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (!(_alignmentY == value))
 				{
 					_alignmentY = value;
-					this._cachedStringFormat.LineAlignment = GdiExtensionMethods.ToGdi(value);
 					EhSelfChanged();
 				}
 			}
@@ -1218,6 +1213,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			if (this._labelColumnProxy.Document == null)
 				return;
+
+			_cachedStringFormat.Alignment = GdiExtensionMethods.ToGdi(_alignmentX);
+			_cachedStringFormat.LineAlignment = GdiExtensionMethods.ToGdi(_alignmentY);
 
 			if (null != _attachedPlane)
 				_attachedPlane = layer.UpdateCSPlaneID(_attachedPlane);

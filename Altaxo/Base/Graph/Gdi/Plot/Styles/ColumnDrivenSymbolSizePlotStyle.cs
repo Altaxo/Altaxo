@@ -52,7 +52,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Data which are converted to scatter size.
 		/// </summary>
-		private INumericColumnProxy _dataColumnProxy;
+		private IReadableColumnProxy _dataColumnProxy;
 
 		/// <summary>True if the data in the data column changed, but the scale was not updated up to now.</summary>
 		[NonSerialized]
@@ -122,7 +122,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				var s = (ColumnDrivenSymbolSizePlotStyle)o ?? new ColumnDrivenSymbolSizePlotStyle(info);
 
-				s._dataColumnProxy = (Altaxo.Data.INumericColumnProxy)info.GetValue("DataColumn", s);
+				s._dataColumnProxy = (IReadableColumnProxy)info.GetValue("DataColumn", s);
 				if (null != s._dataColumnProxy) s._dataColumnProxy.ParentObject = s;
 
 				s._scale = (NumericalScale)info.GetValue("Scale", s);
@@ -156,7 +156,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public ColumnDrivenSymbolSizePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			InternalSetScale(new LinearScale());
-			InternalSetDataColumnProxy(NumericColumnProxyBase.FromColumn(new Altaxo.Data.EquallySpacedColumn(0, 0.25)));
+			InternalSetDataColumnProxy(ReadableColumnProxyBase.FromColumn(new Altaxo.Data.EquallySpacedColumn(0, 0.25)));
 
 			var symbolSizeBase = GraphDocument.GetDefaultSymbolSize(context);
 
@@ -204,7 +204,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_numberOfSteps = from._numberOfSteps;
 
 				if (copyWithDataReferences)
-					InternalSetDataColumnProxy(null == from._dataColumnProxy ? null : (INumericColumnProxy)from._dataColumnProxy.Clone());
+					InternalSetDataColumnProxy(null == from._dataColumnProxy ? null : (IReadableColumnProxy)from._dataColumnProxy.Clone());
 
 				copied = true;
 			}
@@ -267,7 +267,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// Sets the data column proxy and creates the necessary event links.
 		/// </summary>
 		/// <param name="proxy"></param>
-		protected void InternalSetDataColumnProxy(INumericColumnProxy proxy)
+		protected void InternalSetDataColumnProxy(IReadableColumnProxy proxy)
 		{
 			if (ChildSetMember(ref _dataColumnProxy, proxy))
 				EhChildChanged(_dataColumnProxy, EventArgs.Empty);
@@ -304,7 +304,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Gets/sets the data column that provides the data that is used to calculate the symbol size.
 		/// </summary>
-		public Altaxo.Data.INumericColumn DataColumn
+		public IReadableColumn DataColumn
 		{
 			get
 			{
@@ -315,8 +315,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (object.ReferenceEquals(DataColumn, value))
 					return;
 
-				if (ChildSetMember(ref _dataColumnProxy, NumericColumnProxyBase.FromColumn(value)))
+				if (ChildSetMember(ref _dataColumnProxy, ReadableColumnProxyBase.FromColumn(value)))
 					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Gets the name of the data column, if it is a data column. Otherwise, null is returned.
+		/// </summary>
+		/// <value>
+		/// The name of the label column if it is a data column. Otherwise, null.
+		/// </value>
+		public string DataColumnName
+		{
+			get
+			{
+				return _dataColumnProxy?.DocumentPath?.LastPartOrDefault;
 			}
 		}
 
@@ -458,23 +472,30 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <returns></returns>
 		private double GetSymbolSize(int idx)
 		{
-			double val = DataColumn?[idx] ?? double.NaN;
-			val = _scale.PhysicalToNormal(val);
+			var dataColumn = this.DataColumn;
 
-			if (val >= 0 && val <= 1)
+			if (null != dataColumn)
 			{
-				if (_numberOfSteps > 0)
-					val = val < 1 ? (Math.Floor(val * _numberOfSteps) + 0.5) / _numberOfSteps : (_numberOfSteps - 0.5) / _numberOfSteps;
+				var val = _scale.PhysicalToNormal(dataColumn[idx]);
 
-				return _symbolSizeAt0 + val * (_symbolSizeAt1 - _symbolSizeAt0);
+				if (val >= 0 && val <= 1)
+				{
+					if (_numberOfSteps > 0)
+						val = val < 1 ? (Math.Floor(val * _numberOfSteps) + 0.5) / _numberOfSteps : (_numberOfSteps - 0.5) / _numberOfSteps;
+
+					return _symbolSizeAt0 + val * (_symbolSizeAt1 - _symbolSizeAt0);
+				}
+				else if (val < 0)
+					return _symbolSizeBelow;
+				else if (val > 1)
+					return _symbolSizeAbove;
+				else
+					return _symbolSizeInvalid;
 			}
-
-			if (val < 0)
-				return _symbolSizeBelow;
-			if (val > 1)
-				return _symbolSizeAbove;
-
-			return _symbolSizeInvalid;
+			else
+			{
+				return _symbolSizeInvalid;
+			}
 		}
 
 		public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
@@ -578,7 +599,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
 		{
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(DataColumn), DataColumn, _dataColumnProxy?.DocumentPath?.LastPartOrDefault, (col) => DataColumn = col as INumericColumn);
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(DataColumn), DataColumn, _dataColumnProxy?.DocumentPath?.LastPartOrDefault, (col) => DataColumn = col as IReadableColumn);
 		}
 	}
 }

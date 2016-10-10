@@ -84,20 +84,20 @@
 		<CheckBox x:Name="_guiIndependentSymbolSize" Content="Indep. symbol size :"  Grid.Row="8" Grid.Column="4" VerticalAlignment="Center" Margin="4,0,0,0" />
 		<axogcd:LineCapSizeComboBox x:Name="_guiSymbolSize" Grid.Row="8" Grid.Column="5" />
 
-		<Label Content="Font size = " Grid.Row="10" Grid.Column="0" />
-		<axogcd:LineThicknessComboBox x:Name="_guiFontSizeOffset" Grid.Row="10" Grid.Column="1" />
-		<Label Content="+" Grid.Row="10" Grid.Column="2" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiFontSizeFactor"  Grid.Row="10" Grid.Column="3" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-		<Label Content="* symbolSize" Grid.Row="10" Grid.Column="4" />
+		<Label Content="Font:"  Grid.Row="10" Grid.Column="0" />
+		<axogcd:FontFamilyComboBox x:Name="_cbFontFamily" Grid.Row="10" Grid.Column="1" />
 
-		<Label Content="Font:"  Grid.Row="12" Grid.Column="0" />
-		<axogcd:FontFamilyComboBox x:Name="_cbFontFamily" Grid.Row="12" Grid.Column="1" />
+		<Label Content="Style:"  Grid.Row="10" Grid.Column="2" />
+		<axogcd:FontStyleComboBox x:Name="_cbFontStyle"  Grid.Row="10" Grid.Column="3" />
 
-		<Label Content="Style:"  Grid.Row="12" Grid.Column="2" />
-		<axogcd:FontStyleComboBox x:Name="_cbFontStyle"  Grid.Row="12" Grid.Column="3" />
+		<Label  Content="Font depth:" Grid.Row="10" Grid.Column="4" />
+		<axogcd:FontSizeComboBox x:Name="_cbFontDepth"  Grid.Row="10" Grid.Column="5" />
 
-		<Label  Content="Font depth:" Grid.Row="12" Grid.Column="4" />
-		<axogcd:FontSizeComboBox x:Name="_cbFontDepth"  Grid.Row="12" Grid.Column="5" />
+		<Label Content="Font size = " Grid.Row="12" Grid.Column="0" />
+		<axogcd:FontSizeComboBox x:Name="_guiFontSizeOffset" Grid.Row="12" Grid.Column="1" />
+		<Label Content="+" Grid.Row="12" Grid.Column="2" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiFontSizeFactor"  Grid.Row="12" Grid.Column="3" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<Label Content="* symbolSize" Grid.Row="12" Grid.Column="4" />
 
 		<Label  Content="RotationX:" Grid.Row="14" Grid.Column="0" />
 		<axogcd:RotationComboBox x:Name="_guiRotationX"  Grid.Row="14" Grid.Column="1" />
