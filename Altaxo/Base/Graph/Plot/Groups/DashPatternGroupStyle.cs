@@ -48,6 +48,34 @@ namespace Altaxo.Graph.Plot.Groups
 		#region Serialization
 
 		/// <summary>
+		/// Deserializes the old Altaxo.Graph.Gdi.Plot.Groups.LineStyleGroupStyle (Version 0).
+		/// </summary>
+		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Groups.LineStyleGroupStyle", 0)]
+		private class XmlSerializationSurrogateForLineStyleGroupStyleVersion0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new InvalidOperationException("Serialization of old version");
+				/*
+				LineStyleGroupStyle s = (LineStyleGroupStyle)obj;
+				info.AddValue("StepEnabled", s._isStepEnabled);
+				*/
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				DashPatternGroupStyle s = null != o ? (DashPatternGroupStyle)o : new DashPatternGroupStyle();
+				s._isStepEnabled = info.GetBoolean("StepEnabled");
+
+				s._listOfValues = DashPatternListManager.Instance.BuiltinDefault;
+				s.SetValueCoercedToGroup(DashPatternListManager.Instance.BuiltinDefault[0]);
+
+				return s;
+			}
+		}
+
+		/// <summary>
 		/// 2016-08-24 Initial version.
 		/// </summary>
 		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
