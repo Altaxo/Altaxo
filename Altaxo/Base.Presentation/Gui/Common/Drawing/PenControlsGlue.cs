@@ -119,8 +119,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			if (null != CbBrush) CbBrush.SelectedBrush = _pen.BrushHolder;
 			if (null != CbLineThickness) CbLineThickness.SelectedQuantityAsValueInPoints = _pen.Width;
-			if (null != CbDashStyle) CbDashStyle.SelectedDashStyle = _pen.DashStyleEx;
-			if (null != CbDashPattern) CbDashPattern.SelectedDashPattern = _pen.DashPattern1;
+			if (null != CbDashPattern) CbDashPattern.SelectedDashPattern = _pen.DashPattern;
 			if (null != CbDashCap) CbDashCap.SelectedDashCap = _pen.DashCap;
 			if (null != CbStartCap) CbStartCap.SelectedLineCap = _pen.StartCap;
 			if (null != CbStartCapAbsSize) CbStartCapAbsSize.SelectedQuantityAsValueInPoints = _pen.StartCap.MinimumAbsoluteSizePt;
@@ -220,36 +219,6 @@ namespace Altaxo.Gui.Common.Drawing
 
 		#region Dash
 
-		private DashStyleComboBox _cbDashStyle;
-
-		public DashStyleComboBox CbDashStyle
-		{
-			get { return _cbDashStyle; }
-			set
-			{
-				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(DashStyleComboBox.SelectedDashStyleProperty, typeof(DashStyleComboBox));
-
-				if (_cbDashStyle != null)
-					dpd.RemoveValueChanged(_cbDashStyle, EhDashStyle_SelectionChangeCommitted);
-
-				_cbDashStyle = value;
-				if (_pen != null && _cbDashStyle != null)
-					_cbDashStyle.SelectedDashStyle = _pen.DashStyleEx;
-
-				if (_cbDashStyle != null)
-					dpd.AddValueChanged(_cbDashStyle, EhDashStyle_SelectionChangeCommitted);
-			}
-		}
-
-		private void EhDashStyle_SelectionChangeCommitted(object sender, EventArgs e)
-		{
-			if (_pen != null)
-			{
-				_pen.DashStyleEx = _cbDashStyle.SelectedDashStyle;
-				OnPenChanged();
-			}
-		}
-
 		private DashPatternComboBox _cbDashPattern;
 
 		public DashPatternComboBox CbDashPattern
@@ -260,14 +229,14 @@ namespace Altaxo.Gui.Common.Drawing
 				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(DashPatternComboBox.SelectedDashStyleProperty, typeof(DashPatternComboBox));
 
 				if (_cbDashPattern != null)
-					dpd.RemoveValueChanged(_cbDashStyle, EhDashPattern_SelectionChangeCommitted);
+					dpd.RemoveValueChanged(_cbDashPattern, EhDashPattern_SelectionChangeCommitted);
 
 				_cbDashPattern = value;
 				if (_pen != null && _cbDashPattern != null)
-					_cbDashPattern.SelectedDashPattern = _pen.DashPattern1;
+					_cbDashPattern.SelectedDashPattern = _pen.DashPattern;
 
 				if (_cbDashPattern != null)
-					dpd.AddValueChanged(_cbDashStyle, EhDashPattern_SelectionChangeCommitted);
+					dpd.AddValueChanged(_cbDashPattern, EhDashPattern_SelectionChangeCommitted);
 			}
 		}
 
@@ -275,7 +244,7 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			if (_pen != null)
 			{
-				_pen.DashPattern1 = _cbDashPattern.SelectedDashPattern;
+				_pen.DashPattern = _cbDashPattern.SelectedDashPattern;
 				OnPenChanged();
 			}
 		}

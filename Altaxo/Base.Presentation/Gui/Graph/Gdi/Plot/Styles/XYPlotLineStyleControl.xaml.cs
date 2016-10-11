@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			_linePenGlue = new Common.Drawing.PenControlsGlue(false);
 			_linePenGlue.PenChanged += new EventHandler(EhLinePenChanged);
 			_linePenGlue.CbBrush = _guiLineBrush;
-			_linePenGlue.CbDashStyle = _guiLineDashStyle;
+			_linePenGlue.CbDashPattern = _guiLineDashStyle;
 			_linePenGlue.CbLineThickness = _guiLineWidth;
 		}
 

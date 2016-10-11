@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Gdi
 		protected IDashPattern _dashPattern;
 		protected float _cachedDashOffset;
 		protected float[] _cachedDashPattern;
-		protected DashStyle _dashStyle;
+		protected DashStyle _cachedDashStyle;
 		protected LineCapExtension _endCap;
 		protected LineJoin _lineJoin;
 		protected float _miterLimit;
@@ -163,10 +163,10 @@ namespace Altaxo.Graph.Gdi
 			if (pen.PenType != PenType.SolidColor) c |= Configured.Brush;
 			if (pen.Alignment != PenAlignment.Center) c |= Configured.Alignment;
 			if (pen.CompoundArray != null && pen.CompoundArray.Length > 0) c |= Configured.CompoundArray;
-			if (pen.DashStyle != DashStyle.Solid) c |= Configured.DashStyle;
-			if (pen.DashStyle != DashStyle.Solid && pen.DashCap != DashCap.Flat) c |= Configured.DashCap;
-			if (pen.DashStyle != DashStyle.Solid && pen.DashOffset != 0) c |= Configured.DashOffset;
-			if (pen.DashStyle == DashStyle.Custom && pen.DashPattern != null) c |= Configured.DashPattern;
+			if (pen._cachedDashStyle != DashStyle.Solid) c |= Configured.DashStyle;
+			if (pen._cachedDashStyle != DashStyle.Solid && pen.DashCap != DashCap.Flat) c |= Configured.DashCap;
+			if (pen._cachedDashStyle != DashStyle.Solid && pen._cachedDashOffset != 0) c |= Configured.DashOffset;
+			if (pen._cachedDashStyle == DashStyle.Custom && pen._cachedDashPattern != null) c |= Configured.DashPattern;
 			if (!pen.EndCap.IsDefaultStyle) c |= Configured.EndCap;
 			if (!pen.StartCap.IsDefaultStyle) c |= Configured.StartCap;
 			if (pen.LineJoin != LineJoin.Miter) c |= Configured.LineJoin;
@@ -259,9 +259,9 @@ namespace Altaxo.Graph.Gdi
 					s._compoundArray = new float[0];
 
 				if (0 != (cp & PenX.Configured.DashStyle))
-					s._dashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
+					s._cachedDashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
 				else
-					s._dashStyle = DashStyle.Solid;
+					s._cachedDashStyle = DashStyle.Solid;
 
 				if (0 != (cp & PenX.Configured.DashCap))
 					s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
@@ -277,6 +277,8 @@ namespace Altaxo.Graph.Gdi
 					info.GetArray(out s._cachedDashPattern);
 				else
 					s._cachedDashPattern = null;
+
+				s.SetDashPatternFromCachedDashPropertiesAfterOldDeserialization();
 
 				if (0 != (cp & PenX.Configured.EndCap))
 				{
@@ -412,9 +414,9 @@ namespace Altaxo.Graph.Gdi
 					s._compoundArray = new float[0];
 
 				if (0 != (cp & PenX.Configured.DashStyle))
-					s._dashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
+					s._cachedDashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
 				else
-					s._dashStyle = DashStyle.Solid;
+					s._cachedDashStyle = DashStyle.Solid;
 
 				if (0 != (cp & PenX.Configured.DashCap))
 					s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
@@ -430,6 +432,8 @@ namespace Altaxo.Graph.Gdi
 					info.GetArray(out s._cachedDashPattern);
 				else
 					s._cachedDashPattern = null;
+
+				s.SetDashPatternFromCachedDashPropertiesAfterOldDeserialization();
 
 				if (0 != (cp & PenX.Configured.EndCap))
 				{
@@ -481,11 +485,13 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>
 		/// 2012-03-07: New in version 3: StartCap and EndCap now have a RelativeSize property. The 'StartCapSize' and 'EndCapSize' property was renamed to 'StartCapAbsSize' and 'EndCapAbsSize'.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenX), 3)]
-		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.PenX", 3)]
+		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old version");
+				/*
 				PenX s = (PenX)obj;
 				Configured cp = PenX._GetConfiguredPropertiesVariable(s);
 				if (s.Cached) cp |= PenX.Configured.InCachedMode;
@@ -509,6 +515,166 @@ namespace Altaxo.Graph.Gdi
 					info.AddValue("DashOffset", s.DashOffset);
 				if (0 != (cp & PenX.Configured.DashPattern))
 					info.AddArray("DashPattern", s.DashPattern, s.DashPattern.Length);
+				if (0 != (cp & PenX.Configured.EndCap))
+				{
+					info.AddValue("EndCap", s.EndCap.Name);
+					info.AddValue("EndCapAbsSize", s._endCap.MinimumAbsoluteSizePt);
+					info.AddValue("EndCapRelSize", s._endCap.MinimumRelativeSize);
+				}
+				if (0 != (cp & PenX.Configured.LineJoin))
+					info.AddEnum("LineJoin", s.LineJoin);
+				if (0 != (cp & PenX.Configured.MiterLimit))
+					info.AddValue("MiterLimit", s.MiterLimit);
+				if (0 != (cp & PenX.Configured.StartCap))
+				{
+					info.AddValue("StartCap", s.StartCap.Name);
+					info.AddValue("StartCapAbsSize", s._startCap.MinimumAbsoluteSizePt);
+					info.AddValue("StartCapRelSize", s._startCap.MinimumRelativeSize);
+				}
+				if (0 != (cp & PenX.Configured.Transform))
+					info.AddArray("Transform", s.Transform.Elements, s.Transform.Elements.Length);
+				if (0 != (cp & PenX.Configured.Width))
+					info.AddValue("Width", s.Width);
+				*/
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				PenX s = null != o ? (PenX)o : new PenX();
+
+				s._configuredProperties = (Configured)info.GetInt32("Configured");
+				Configured cp = s._configuredProperties;
+
+				if (0 != (cp & PenX.Configured.PenType))
+					s._penType = (PenType)info.GetEnum("Type", typeof(PenType));
+				else
+					s._penType = PenType.SolidColor;
+
+				if (0 != (cp & PenX.Configured.Alignment))
+					s._alignment = (PenAlignment)info.GetEnum("Alignment", typeof(PenAlignment));
+				else
+					s._alignment = PenAlignment.Center;
+
+				if (0 != (cp & PenX.Configured.Brush))
+					s._brush = (BrushX)info.GetValue("Brush", s);
+				else
+					s._brush = new BrushX(NamedColors.Black);
+
+				s._brush.ParentObject = s;
+
+				if (0 != (cp & PenX.Configured.Color))
+					s._color = (NamedColor)info.GetValue("Color", s);
+				else
+					s._color = NamedColors.Black;
+
+				if (0 != (cp & PenX.Configured.CompoundArray))
+					info.GetArray(out s._compoundArray);
+				else
+					s._compoundArray = new float[0];
+
+				if (0 != (cp & PenX.Configured.DashStyle))
+					s._cachedDashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
+				else
+					s._cachedDashStyle = DashStyle.Solid;
+
+				if (0 != (cp & PenX.Configured.DashCap))
+					s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
+				else
+					s._dashCap = DashCap.Flat;
+
+				if (0 != (cp & PenX.Configured.DashOffset))
+					s._cachedDashOffset = (float)info.GetSingle("DashOffset");
+				else
+					s._cachedDashOffset = 0;
+
+				if (0 != (cp & PenX.Configured.DashPattern))
+					info.GetArray(out s._cachedDashPattern);
+				else
+					s._cachedDashPattern = null;
+
+				s.SetDashPatternFromCachedDashPropertiesAfterOldDeserialization();
+
+				if (0 != (cp & PenX.Configured.EndCap))
+				{
+					string name = info.GetString("EndCap");
+					var absSize = info.GetDouble("EndCapAbsSize");
+					var relSize = info.GetDouble("EndCapRelSize");
+					s._endCap = LineCapExtension.FromNameAndAbsAndRelSize(name, absSize, relSize);
+				}
+				else
+					s._endCap = LineCapExtension.Flat;
+
+				if (0 != (cp & PenX.Configured.LineJoin))
+					s._lineJoin = (LineJoin)info.GetEnum("LineJoin", typeof(LineJoin));
+				else
+					s._lineJoin = LineJoin.Miter;
+
+				if (0 != (cp & PenX.Configured.MiterLimit))
+					s._miterLimit = info.GetSingle("MiterLimit");
+				else
+					s._miterLimit = 10;
+
+				if (0 != (cp & PenX.Configured.StartCap))
+				{
+					string name = info.GetString("StartCap");
+					var absSize = info.GetDouble("StartCapAbsSize");
+					var relSize = info.GetDouble("StartCapRelSize");
+					s._startCap = LineCapExtension.FromNameAndAbsAndRelSize(name, absSize, relSize);
+				}
+				else
+					s._startCap = LineCapExtension.Flat;
+
+				if (0 != (cp & PenX.Configured.Transform))
+				{
+					float[] el;
+					info.GetArray(out el);
+					s._transformation = new Matrix(el[0], el[1], el[2], el[3], el[4], el[5]);
+				}
+				else
+					s._transformation = new Matrix();
+
+				if (0 != (cp & PenX.Configured.Width))
+					s._width = info.GetDouble("Width");
+				else
+					s._width = 1;
+
+				s.ParentObject = (Main.IDocumentNode)parent;
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// 2016-10-10: New in version 4: use Altaxo.Drawing.IDashPattern instead of all the dashpattern properties.
+		///
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenX), 4)]
+		private class XmlSerializationSurrogate4 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				PenX s = (PenX)obj;
+				Configured cp = PenX._GetConfiguredPropertiesVariable(s);
+				if (s.Cached) cp |= PenX.Configured.InCachedMode;
+
+				info.AddValue("Configured", (int)cp);
+				if (0 != (cp & PenX.Configured.PenType))
+					info.AddEnum("Type", s.PenType);
+				if (0 != (cp & PenX.Configured.Alignment))
+					info.AddEnum("Alignment", s.Alignment);
+				if (0 != (cp & PenX.Configured.Brush))
+					info.AddValue("Brush", s.BrushHolder);
+				if (0 != (cp & PenX.Configured.Color))
+					info.AddValue("Color", s.Color);
+				if (0 != (cp & PenX.Configured.CompoundArray))
+					info.AddArray("CompoundArray", s.CompoundArray, s.CompoundArray.Length);
+
+				if (null != s._dashPattern && !Drawing.DashPatterns.Solid.Instance.Equals(s._dashPattern))
+				{
+					info.AddValue("DashPattern", s._dashPattern);
+					if (0 != (cp & PenX.Configured.DashCap))
+						info.AddEnum("DashCap", s.DashCap);
+				}
+
 				if (0 != (cp & PenX.Configured.EndCap))
 				{
 					info.AddValue("EndCap", s.EndCap.Name);
@@ -565,25 +731,16 @@ namespace Altaxo.Graph.Gdi
 				else
 					s._compoundArray = new float[0];
 
-				if (0 != (cp & PenX.Configured.DashStyle))
-					s._dashStyle = (DashStyle)info.GetEnum("DashStyle", typeof(DashStyle));
-				else
-					s._dashStyle = DashStyle.Solid;
+				var dashPattern = (IDashPattern)info.GetValue("DashPattern", null);
+				if (!Drawing.DashPatterns.Solid.Instance.Equals(dashPattern))
+				{
+					if (0 != (cp & PenX.Configured.DashCap))
+						s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
+					else
+						s._dashCap = DashCap.Flat;
+				}
 
-				if (0 != (cp & PenX.Configured.DashCap))
-					s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
-				else
-					s._dashCap = DashCap.Flat;
-
-				if (0 != (cp & PenX.Configured.DashOffset))
-					s._cachedDashOffset = (float)info.GetSingle("DashOffset");
-				else
-					s._cachedDashOffset = 0;
-
-				if (0 != (cp & PenX.Configured.DashPattern))
-					info.GetArray(out s._cachedDashPattern);
-				else
-					s._cachedDashPattern = null;
+				s.SetCachedDashProperties();
 
 				if (0 != (cp & PenX.Configured.EndCap))
 				{
@@ -697,22 +854,24 @@ namespace Altaxo.Graph.Gdi
 				this._brush = new BrushX(pen._brush);
 
 			this._color = pen.Color;
-			this._dashPattern = pen._dashPattern; // immutable
 
 			if (null != pen._compoundArray)
 				this._compoundArray = (float[])pen.CompoundArray.Clone();
 			else
 				this._compoundArray = null;
 
-			this._dashCap = pen.DashCap;
-			this._cachedDashOffset = pen.DashOffset;
+			this._dashPattern = pen._dashPattern; // immutable
+			this._dashCap = pen._dashCap;
+
+			this._cachedDashStyle = pen._cachedDashStyle;
 
 			if (null != pen._cachedDashPattern)
-				this._cachedDashPattern = (float[])pen.DashPattern.Clone();
+				this._cachedDashPattern = (float[])pen._cachedDashPattern.Clone();
 			else
 				this._cachedDashPattern = null;
 
-			this._dashStyle = pen.DashStyle;
+			this._cachedDashOffset = pen._cachedDashOffset;
+
 			this._endCap = pen.EndCap;
 			this._lineJoin = pen.LineJoin;
 			this._miterLimit = pen.MiterLimit;
@@ -835,7 +994,7 @@ namespace Altaxo.Graph.Gdi
 			if (0 != (cp & PenX.Configured.CompoundArray))
 				pen.CompoundArray = this._compoundArray;
 			if (0 != (cp & PenX.Configured.DashStyle))
-				pen.DashStyle = this._dashStyle;
+				pen.DashStyle = this._cachedDashStyle;
 			if (0 != (cp & PenX.Configured.DashCap))
 				pen.DashCap = this._dashCap;
 			if (0 != (cp & PenX.Configured.DashOffset))
@@ -914,7 +1073,7 @@ namespace Altaxo.Graph.Gdi
 				cp = SetProp(cp, PenX.Configured.CompoundArray, !AreEqual(p1._compoundArray, p2._compoundArray));
 
 			if (0 != (cp & PenX.Configured.DashStyle))
-				cp = SetProp(cp, PenX.Configured.DashStyle, p1._dashStyle != p2._dashStyle);
+				cp = SetProp(cp, PenX.Configured.DashStyle, p1._cachedDashStyle != p2._cachedDashStyle);
 
 			if (0 != (cp & PenX.Configured.DashCap))
 				cp = SetProp(cp, PenX.Configured.DashCap, p1._dashCap != p2._dashCap);
@@ -1155,23 +1314,7 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-		public float DashOffset
-		{
-			get { return _cachedDashOffset; }
-			set
-			{
-				bool bChanged = (_cachedDashOffset != value);
-				_cachedDashOffset = value;
-				if (bChanged)
-				{
-					_SetProp(Configured.DashOffset, 0 != value);
-					_SetPenVariable(null);
-					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
-				}
-			}
-		}
-
-		public Altaxo.Drawing.IDashPattern DashPattern1
+		public Altaxo.Drawing.IDashPattern DashPattern
 		{
 			get
 			{
@@ -1184,100 +1327,116 @@ namespace Altaxo.Graph.Gdi
 
 				if (!object.ReferenceEquals(_dashPattern, value))
 				{
-					bool configuredDashStyle;
-					bool configuredDashPattern;
-					DashStyle dashStyle;
-					float[] dashPattern = null;
-					float dashOffset = 0;
-
-					if (value is Drawing.DashPatterns.Solid)
-					{
-						configuredDashStyle = false;
-						configuredDashPattern = false;
-						dashStyle = DashStyle.Solid;
-					}
-					else if (value is Drawing.DashPatterns.Dash)
-					{
-						configuredDashStyle = true;
-						configuredDashPattern = false;
-						dashStyle = DashStyle.Dash;
-					}
-					else if (value is Drawing.DashPatterns.Dot)
-					{
-						configuredDashStyle = true;
-						configuredDashPattern = false;
-						dashStyle = DashStyle.Dot;
-					}
-					else if (value is Drawing.DashPatterns.DashDot)
-					{
-						configuredDashStyle = true;
-						configuredDashPattern = false;
-						dashStyle = DashStyle.DashDot;
-					}
-					else if (value is Drawing.DashPatterns.DashDotDot)
-					{
-						configuredDashStyle = true;
-						configuredDashPattern = false;
-						dashStyle = DashStyle.DashDotDot;
-					}
-					else
-					{
-						configuredDashStyle = true;
-						configuredDashPattern = true;
-						dashStyle = DashStyle.Custom;
-						dashPattern = value.Select(x => (float)x).ToArray();
-						dashOffset = (float)value.DashOffset;
-					}
-
-					if (
-						configuredDashStyle != _configuredProperties.HasFlag(Configured.DashStyle) ||
-						configuredDashPattern != _configuredProperties.HasFlag(Configured.DashPattern) ||
-						dashStyle != _dashStyle ||
-						dashOffset != _cachedDashOffset ||
-						!object.ReferenceEquals(dashPattern, _cachedDashPattern))
-					{
-						_SetProp(Configured.DashStyle, configuredDashStyle);
-						_SetProp(Configured.DashPattern, configuredDashPattern);
-						_dashStyle = dashStyle;
-						_cachedDashPattern = dashPattern;
-						_cachedDashOffset = dashOffset;
-
-						_SetPenVariable(null);
-						EhSelfChanged(EventArgs.Empty); // Fire the Changed event
-					}
+					SetCachedDashProperties();
+					_SetPenVariable(null);
+					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
 				}
 			}
 		}
 
-		public float[] DashPattern
+		private void SetCachedDashProperties()
 		{
-			get { return _cachedDashPattern; }
-			set
-			{
-				_SetProp(Configured.DashPattern, null != value && value.Length > 0);
+			var value = _dashPattern;
 
-				if (!(_dashStyle == DashStyle.Custom && null == value))
-					_cachedDashPattern = value;
-				_SetPenVariable(null);
-				EhSelfChanged(EventArgs.Empty); // Fire the Changed event
+			bool configuredDashStyle;
+			bool configuredDashPattern;
+			DashStyle dashStyle;
+			float[] dashPattern = null;
+			float dashOffset = 0;
+
+			if (value is Drawing.DashPatterns.Solid)
+			{
+				configuredDashStyle = false;
+				configuredDashPattern = false;
+				dashStyle = DashStyle.Solid;
+			}
+			else if (value is Drawing.DashPatterns.Dash)
+			{
+				configuredDashStyle = true;
+				configuredDashPattern = false;
+				dashStyle = DashStyle.Dash;
+			}
+			else if (value is Drawing.DashPatterns.Dot)
+			{
+				configuredDashStyle = true;
+				configuredDashPattern = false;
+				dashStyle = DashStyle.Dot;
+			}
+			else if (value is Drawing.DashPatterns.DashDot)
+			{
+				configuredDashStyle = true;
+				configuredDashPattern = false;
+				dashStyle = DashStyle.DashDot;
+			}
+			else if (value is Drawing.DashPatterns.DashDotDot)
+			{
+				configuredDashStyle = true;
+				configuredDashPattern = false;
+				dashStyle = DashStyle.DashDotDot;
+			}
+			else
+			{
+				configuredDashStyle = true;
+				configuredDashPattern = true;
+				dashStyle = DashStyle.Custom;
+				dashPattern = value.Select(x => (float)x).ToArray();
+				dashOffset = (float)value.DashOffset;
+			}
+
+			if (
+				configuredDashStyle != _configuredProperties.HasFlag(Configured.DashStyle) ||
+				configuredDashPattern != _configuredProperties.HasFlag(Configured.DashPattern) ||
+				dashStyle != _cachedDashStyle ||
+				dashOffset != _cachedDashOffset ||
+				!object.ReferenceEquals(dashPattern, _cachedDashPattern))
+			{
+				_SetProp(Configured.DashStyle, configuredDashStyle);
+				_SetProp(Configured.DashPattern, configuredDashPattern);
+				_cachedDashStyle = dashStyle;
+				_cachedDashPattern = dashPattern;
+				_cachedDashOffset = dashOffset;
 			}
 		}
 
-		public DashStyle DashStyle
+		/// <summary>
+		/// Sets the <see cref="_dashPattern"/> member after deserialization of old versions (before 2016-10-10).
+		/// </summary>
+		private void SetDashPatternFromCachedDashPropertiesAfterOldDeserialization()
 		{
-			get { return _dashStyle; }
-			set
+			if (!_configuredProperties.HasFlag(Configured.DashStyle))
 			{
-				bool bChanged = (_dashStyle != value);
-				_dashStyle = value;
-				if (bChanged)
+				_dashPattern = DashPatternListManager.Instance.BuiltinDefaultSolid;
+			}
+			else // DashStyle is configured
+			{
+				switch (_cachedDashStyle)
 				{
-					if (_dashStyle == DashStyle.Custom && null == _cachedDashPattern)
-						_cachedDashPattern = new float[] { 4, 4 }; // Ensure that at least a DashPattern is present if DashStyle is Custom
+					case DashStyle.Solid:
+						_dashPattern = DashPatternListManager.Instance.BuiltinDefaultSolid;
+						break;
 
-					_SetProp(Configured.DashStyle, DashStyle.Solid != value);
-					_SetPenVariable(null);
-					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
+					case DashStyle.Dash:
+						_dashPattern = DashPatternListManager.Instance.BuiltinDefaultDash;
+						break;
+
+					case DashStyle.Dot:
+						_dashPattern = DashPatternListManager.Instance.BuiltinDefaultDot;
+						break;
+
+					case DashStyle.DashDot:
+						_dashPattern = DashPatternListManager.Instance.BuiltinDefaultDashDot;
+						break;
+
+					case DashStyle.DashDotDot:
+						_dashPattern = DashPatternListManager.Instance.BuiltinDefaultDashDotDot;
+						break;
+
+					case DashStyle.Custom:
+						_dashPattern = new Drawing.DashPatterns.Custom(_cachedDashPattern.Select(x => (double)x), _cachedDashOffset);
+						break;
+
+					default:
+						throw new NotImplementedException();
 				}
 			}
 		}
@@ -1293,36 +1452,6 @@ namespace Altaxo.Graph.Gdi
 					return false;
 
 			return true;
-		}
-
-		public DashStyleEx DashStyleEx
-		{
-			get
-			{
-				if (_dashStyle != DashStyle.Custom)
-					return new DashStyleEx(_dashStyle);
-				else
-					return new DashStyleEx(_cachedDashPattern);
-			}
-			set
-			{
-				bool bChanged = (_dashStyle != value.KnownStyle);
-				if (value.KnownStyle == DashStyle.Custom)
-				{
-					bChanged |= !IsEqual(value.CustomStyle, this._cachedDashPattern);
-				}
-
-				if (bChanged)
-				{
-					_dashStyle = value.KnownStyle;
-					_cachedDashPattern = null == value.CustomStyle ? null : (float[])value.CustomStyle.Clone();
-
-					_SetProp(Configured.DashStyle, DashStyle.Solid != value.KnownStyle);
-					_SetProp(Configured.DashPattern, null != value.CustomStyle && value.CustomStyle.Length > 0);
-					_SetPenVariable(null);
-					EhSelfChanged(EventArgs.Empty); // Fire the Changed event
-				}
-			}
 		}
 
 		public LineCapExtension EndCap

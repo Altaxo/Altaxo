@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			_framePenGlue.PenChanged += new EventHandler(EhFramePenChanged);
 			_framePenGlue.CbBrush = _guiFramePen;
 			_framePenGlue.CbLineThickness = _guiFramePenWidth;
-			_framePenGlue.CbDashStyle = _guiFrameDashStyle;
+			_framePenGlue.CbDashPattern = _guiFrameDashStyle;
 		}
 
 		private void EhIndependentFrameColorChanged(object sender, RoutedEventArgs e)

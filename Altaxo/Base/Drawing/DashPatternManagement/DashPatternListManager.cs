@@ -88,6 +88,26 @@ namespace Altaxo.Drawing.DashPatternManagement
 		/// </value>
 		public IDashPattern BuiltinDefaultSolid { get { return this.BuiltinDefault[0]; } }
 
+		/// <summary>
+		/// Gets the built-in default dash pattern belonging to the BuildinDefault list.
+		/// </summary>
+		public IDashPattern BuiltinDefaultDash { get { return this.BuiltinDefault[1]; } }
+
+		/// <summary>
+		/// Gets the built-in default dot dash pattern belonging to the BuildinDefault list.
+		/// </summary>
+		public IDashPattern BuiltinDefaultDot { get { return this.BuiltinDefault[2]; } }
+
+		/// <summary>
+		/// Gets the built-in default dash-dot pattern belonging to the BuildinDefault list.
+		/// </summary>
+		public IDashPattern BuiltinDefaultDashDot { get { return this.BuiltinDefault[3]; } }
+
+		/// <summary>
+		/// Gets the built-in default dash-dot-dot pattern belonging to the BuildinDefault list.
+		/// </summary>
+		public IDashPattern BuiltinDefaultDashDotDot { get { return this.BuiltinDefault[4]; } }
+
 		public static DashPatternListManager Instance
 		{
 			get

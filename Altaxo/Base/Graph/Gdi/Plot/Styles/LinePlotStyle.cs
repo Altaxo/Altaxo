@@ -570,25 +570,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public void SetToNextLineStyle(System.Drawing.Drawing2D.DashStyle template)
-		{
-			SetToNextLineStyle(template, 1);
-		}
-
-		public void SetToNextLineStyle(System.Drawing.Drawing2D.DashStyle template, int step)
-		{
-			// this.CopyFrom(template,true);
-
-			// note a exception: since the last dashstyle is "Custom", not only the next dash
-			// style has to be defined, but also the overnect to avoid the selection of "Custom"
-
-			int len = System.Enum.GetValues(typeof(DashStyle)).Length;
-			int next = step + (int)template;
-			this.LinePen.DashStyle = (DashStyle)Calc.BasicFunctions.PMod(next, len - 1);
-
-			EhSelfChanged(EventArgs.Empty); // Fire Changed event
-		}
-
 		public PenX LinePen
 		{
 			get { return _penHolder; }
@@ -1793,7 +1774,7 @@ out int lastIndex)
 			else if (this._fillColorLinkage == ColorLinkage.Dependent && this._fillBrush != null)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._fillBrush.Color; });
 
-			LineStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashStyle; });
+			DashPatternGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashPattern; });
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
@@ -1812,7 +1793,7 @@ out int lastIndex)
 					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { _fillBrush.Color = c.NewWithAlphaValue(_fillBrush.Color.Color.A); });
 			}
 
-			LineStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (DashStyle c) { this.LinePen.DashStyle = c; });
+			DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern c) { this.LinePen.DashPattern = c; });
 
 			if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolGap = size; }))
 			{

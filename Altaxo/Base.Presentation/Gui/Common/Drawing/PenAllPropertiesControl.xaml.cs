@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Common.Drawing
 			_glue = new PenControlsGlue(true);
 			_glue.CbBrush = _cbBrush;
 			_glue.CbLineThickness = _cbThickness;
-			_glue.CbDashStyle = _cbDashStyle;
+			_glue.CbDashPattern = _cbDashStyle;
 			_glue.CbDashCap = _cbDashCap;
 			_glue.CbStartCap = _cbStartCap;
 			_glue.CbStartCapAbsSize = _cbStartCapSize;

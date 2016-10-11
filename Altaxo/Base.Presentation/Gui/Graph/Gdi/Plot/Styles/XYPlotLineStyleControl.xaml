@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogd="clr-namespace:Altaxo.Gui.Drawing"
              mc:Ignorable="d">
 
 	<UserControl.Resources>
@@ -59,7 +60,7 @@
 		<CheckBox x:Name="_guiIndependentLineColor" Grid.Column="0" Grid.Row="6" Content="Indep. color:" Checked="EhIndependentLineColorChanged" Unchecked="EhIndependentLineColorChanged" />
 		<axogcd:BrushComboBox x:Name="_guiLineBrush" Grid.Column="1" Grid.Row="6" />
 		<Label Grid.Column="0" Grid.Row="8" Content="Style:" />
-		<axogcd:DashStyleComboBox x:Name="_guiLineDashStyle" Grid.Column="1" Grid.Row="8" />
+		<axogd:DashPatternComboBox x:Name="_guiLineDashStyle" Grid.Column="1" Grid.Row="8" />
 		<Label Grid.Column="0" Grid.Row="10" Content="Thickness:" />
 		<axogcd:LineThicknessComboBox x:Name="_guiLineWidth" Grid.Column="1" Grid.Row="10" />
 		<CheckBox x:Name="_guiUseFill"  Grid.Row="12" Content="Fill area" Checked="EhUseFillChanged" Unchecked="EhUseFillChanged" />

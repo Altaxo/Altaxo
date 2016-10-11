@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 			_glue = new PenControlsGlue(false);
 			_glue.CbBrush = _cbColor;
-			_glue.CbDashStyle = _cbLineType;
+			_glue.CbDashPattern = _cbLineType;
 			_glue.CbLineThickness = _cbThickness;
 		}
 

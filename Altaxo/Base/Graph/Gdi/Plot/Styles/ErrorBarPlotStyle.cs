@@ -911,7 +911,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// dash style
 			if (!_independentDashPattern)
 			{
-				DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern dashPattern) { this._pen.DashPattern1 = dashPattern; });
+				DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern dashPattern) { this._pen.DashPattern = dashPattern; });
 			}
 
 			// Shift the items ?
