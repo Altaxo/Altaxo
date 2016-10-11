@@ -1374,7 +1374,6 @@
     <Compile Include="Graph\Gdi\Plot\Groups\AbsoluteStackTransform.cs" />
     <Compile Include="Graph\Gdi\Plot\Groups\CoordinateTransformingStyleBase.cs" />
     <Compile Include="Graph\Gdi\Plot\Groups\ICoordinateTransformingGroupStyle.cs" />
-    <Compile Include="Graph\Gdi\Plot\Groups\LineStyleGroupStyle.cs" />
     <Compile Include="Graph\Gdi\Plot\Groups\PlotGroupStyleCollection.cs" />
     <Compile Include="Graph\Gdi\Plot\Groups\RelativeStackTransform.cs" />
     <Compile Include="Graph\Gdi\Plot\Groups\SymbolShapeStyleGroupStyle.cs" />

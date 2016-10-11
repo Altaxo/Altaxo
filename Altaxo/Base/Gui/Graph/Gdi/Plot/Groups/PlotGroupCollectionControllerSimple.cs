@@ -106,8 +106,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
 			if (_doc.ContainsType(typeof(ColorGroupStyle)))
 				_doc.RemoveType(typeof(ColorGroupStyle));
-			if (_doc.ContainsType(typeof(LineStyleGroupStyle)))
-				_doc.RemoveType(typeof(LineStyleGroupStyle));
+			if (_doc.ContainsType(typeof(DashPatternGroupStyle)))
+				_doc.RemoveType(typeof(DashPatternGroupStyle));
 			if (_doc.ContainsType(typeof(SymbolShapeStyleGroupStyle)))
 				_doc.RemoveType(typeof(SymbolShapeStyleGroupStyle));
 
@@ -118,14 +118,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 			if (linestyle)
 			{
 				if (serial && color)
-					_doc.Add(new LineStyleGroupStyle(), typeof(ColorGroupStyle));
+					_doc.Add(new DashPatternGroupStyle(), typeof(ColorGroupStyle));
 				else
-					_doc.Add(new LineStyleGroupStyle());
+					_doc.Add(new DashPatternGroupStyle());
 			}
 			if (symbol)
 			{
 				if (serial && linestyle)
-					_doc.Add(new SymbolShapeStyleGroupStyle(), typeof(LineStyleGroupStyle));
+					_doc.Add(new SymbolShapeStyleGroupStyle(), typeof(DashPatternGroupStyle));
 				else if (serial && color)
 					_doc.Add(new SymbolShapeStyleGroupStyle(), typeof(ColorGroupStyle));
 				else
@@ -170,7 +170,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 					return false;
 
 				isGroupedByColor = plotGroupStyles.ContainsType(typeof(ColorGroupStyle));
-				isGroupedByLineStyle = plotGroupStyles.ContainsType(typeof(LineStyleGroupStyle));
+				isGroupedByLineStyle = plotGroupStyles.ContainsType(typeof(DashPatternGroupStyle));
 				isGroupedBySymbolStyle = plotGroupStyles.ContainsType(typeof(SymbolShapeStyleGroupStyle));
 
 				if (plotGroupStyles.Count != (isGroupedByColor ? 1 : 0) + (isGroupedByLineStyle ? 1 : 0) + (isGroupedBySymbolStyle ? 1 : 0))
@@ -180,7 +180,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 				if (isGroupedByColor)
 					list.Add(typeof(ColorGroupStyle));
 				if (isGroupedByLineStyle)
-					list.Add(typeof(LineStyleGroupStyle));
+					list.Add(typeof(DashPatternGroupStyle));
 				if (isGroupedBySymbolStyle)
 					list.Add(typeof(SymbolShapeStyleGroupStyle));
 

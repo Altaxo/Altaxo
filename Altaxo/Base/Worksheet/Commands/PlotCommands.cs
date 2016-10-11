@@ -230,7 +230,7 @@ namespace Altaxo.Worksheet.Commands
 				PlotGroupStyleCollection c = new PlotGroupStyleCollection();
 				IPlotGroupStyle s1 = ColorGroupStyle.NewExternalGroupStyle();
 				c.Add(s1);
-				IPlotGroupStyle s2 = new LineStyleGroupStyle();
+				IPlotGroupStyle s2 = new DashPatternGroupStyle();
 				c.Add(s2, s1.GetType());
 				return c;
 			}
@@ -286,7 +286,7 @@ namespace Altaxo.Worksheet.Commands
 				PlotGroupStyleCollection c = new PlotGroupStyleCollection();
 				IPlotGroupStyle s1 = ColorGroupStyle.NewExternalGroupStyle();
 				c.Add(s1);
-				IPlotGroupStyle s2 = new LineStyleGroupStyle();
+				IPlotGroupStyle s2 = new DashPatternGroupStyle();
 				c.Add(s2, s1.GetType());
 				IPlotGroupStyle s3 = new SymbolShapeStyleGroupStyle();
 				c.Add(s3, s2.GetType());

@@ -146,7 +146,7 @@ namespace Altaxo.Graph.Gdi.Plot
 							if (0 != (plotGroups[foundidx].PlotGroup._plotGroupStyle & Version0PlotGroupStyle.Line))
 							{
 								prev = curr;
-								curr = new LineStyleGroupStyle();
+								curr = new DashPatternGroupStyle();
 								newColl.GroupStyles.Add(curr, serial ? (prev == null ? null : prev.GetType()) : null);
 							}
 							if (0 != (plotGroups[foundidx].PlotGroup._plotGroupStyle & Version0PlotGroupStyle.Symbol))

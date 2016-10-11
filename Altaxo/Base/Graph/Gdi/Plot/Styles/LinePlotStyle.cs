@@ -1764,7 +1764,7 @@ out int lastIndex)
 		public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
 			ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
-			LineStyleGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+			DashPatternGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 		}
 
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
