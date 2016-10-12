@@ -55,8 +55,11 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		protected int _skipFreq = 1;
 
 		protected bool _independentColor;
+
 		protected bool _independentDashStyle;
+
 		protected PenX3D _linePen;
+
 		protected ILineConnectionStyle _connectionStyle;
 
 		/// <summary>
@@ -299,17 +302,18 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		}
 
 		/// <summary>
-		/// True when the line is not drawn in the circel of diameter SymbolSize around the symbol center.
+		/// True when the line is not drawn in the circle of diameter SymbolSize around the symbol center.
 		/// </summary>
 		public bool UseSymbolGap
 		{
 			get { return _useSymbolGap; }
 			set
 			{
-				var oldValue = _useSymbolGap;
-				_useSymbolGap = value;
-				if (oldValue != value)
+				if (!(_useSymbolGap == value))
+				{
+					_useSymbolGap = value;
 					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 

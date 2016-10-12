@@ -28,7 +28,9 @@ using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles;
 using Altaxo.Graph.Plot.Groups;
+using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Plot.Groups;
 using Altaxo.Main;
 using System;
@@ -39,22 +41,31 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 	#region Interfaces
 
 	/// <summary>
-	/// This view interface is for showing the options of the XYXYPlotLineStyle
+	/// This view interface is for showing the options of the XYZPlotLineStyle
 	/// </summary>
-	public interface IXYPlotLineStyleView
+	public interface ILinePlotStyleView
 	{
 		bool ShowPlotColorsOnlyForLinePen { set; }
 
 		bool IndependentLineColor { get; set; }
 
+		bool IndependentDashStyle { get; set; }
+
 		PenX LinePen { get; set; }
 
-		/// <summary>
-		/// Initializes the LineSymbolGap check box.
-		/// </summary>
-		bool LineSymbolGap { get; set; }
+		bool IndependentSymbolSize { get; set; }
+
+		double SymbolSize { get; set; }
+
+		bool UseSymbolGap { get; set; }
+
+		double SymbolGapOffset { get; set; }
+
+		double SymbolGapFactor { get; set; }
 
 		bool ConnectCircular { get; set; }
+
+		bool IgnoreMissingDataPoints { get; set; }
 
 		/// <summary>
 		/// Initializes the Line connection combobox.
@@ -62,13 +73,20 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		/// <param name="list">List of possible selections.</param>
 		void InitializeLineConnect(SelectableListNodeList list);
 
-		/// <summary>
-		/// Enables / disables all controls associated with line properties with exception of the Connection style combo box.
-		/// </summary>
-		/// <value>
-		///   <c>true</c> if [enable line controls]; otherwise, <c>false</c>.
-		/// </value>
-		bool EnableLineControls { set; }
+		#region events
+
+		/// <summary>Occurs when the user choice for IndependentColor of the frame pen has changed.</summary>
+		event Action IndependentLineColorChanged;
+
+		/// <summary>Occurs when the user checked or unchecked the "use frame" checkbox.</summary>
+		event Action UseLineChanged;
+
+		/// <summary>Occurs when the  frame pen has changed by user interaction.</summary>
+		event Action LinePenChanged;
+
+		#endregion events
+
+		#region Fill
 
 		/// <summary>
 		/// Gets/sets the fill area check box.
@@ -92,27 +110,15 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		/// <param name="list">List of possible selections.</param>
 		void InitializeFillDirection(SelectableListNodeList list);
 
-		#region events
-
 		/// <summary>Occurs when the user choice for IndependentColor of the fill brush has changed.</summary>
 		event Action IndependentFillColorChanged;
 
-		/// <summary>Occurs when the user choice for IndependentColor of the frame pen has changed.</summary>
-		event Action IndependentLineColorChanged;
-
-		/// <summary>Occurs when the user checked or unchecked the "use fill" checkbox.</summary>
 		event Action UseFillChanged;
-
-		/// <summary>Occurs when the user checked or unchecked the "use frame" checkbox.</summary>
-		event Action UseLineChanged;
 
 		/// <summary>Occurs when the fill brush has changed by user interaction.</summary>
 		event Action FillBrushChanged;
 
-		/// <summary>Occurs when the  frame pen has changed by user interaction.</summary>
-		event Action LinePenChanged;
-
-		#endregion events
+		#endregion Fill
 	}
 
 	#endregion Interfaces
@@ -121,13 +127,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 	/// Summary description for XYPlotLineStyleController.
 	/// </summary>
 	[UserControllerForObject(typeof(LinePlotStyle))]
-	[ExpectedTypeOfView(typeof(IXYPlotLineStyleView))]
-	public class XYPlotLineStyleController : MVCANControllerEditOriginalDocBase<LinePlotStyle, IXYPlotLineStyleView>
+	[ExpectedTypeOfView(typeof(ILinePlotStyleView))]
+	public class LinePlotStyleController : MVCANControllerEditOriginalDocBase<LinePlotStyle, ILinePlotStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
 		private SelectableListNodeList _lineConnectChoices;
+
 		private SelectableListNodeList _areaFillDirectionChoices;
 		private SelectableListNodeList _fillColorLinkageChoices;
 
@@ -154,7 +161,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			if (initData)
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
-				_lineConnectChoices = new SelectableListNodeList(_doc.Connection);
+				InitializeLineConnectionChoices();
 				_fillColorLinkageChoices = new SelectableListNodeList(_doc.FillColorLinkage);
 				InitializeFillDirectionChoices();
 			}
@@ -163,11 +170,18 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			{
 				// Line properties
 				_view.InitializeLineConnect(_lineConnectChoices);
-				_view.LineSymbolGap = _doc.LineSymbolGap;
 				_view.ConnectCircular = _doc.ConnectCircular;
+				_view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
 				_view.IndependentLineColor = _doc.IndependentLineColor;
+				_view.IndependentDashStyle = _doc.IndependentDashStyle;
 				_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
-				_view.LinePen = null != _doc.LinePen ? _doc.LinePen : new PenX(NamedColors.Transparent);
+				_view.LinePen = _doc.LinePen;
+
+				_view.IndependentSymbolSize = _doc.IndependentSymbolSize;
+				_view.SymbolSize = _doc.SymbolSize;
+				_view.UseSymbolGap = _doc.UseSymbolGap;
+				_view.SymbolGapOffset = _doc.SymbolGapOffset;
+				_view.SymbolGapFactor = _doc.SymbolGapFactor;
 
 				// Fill area
 				_view.UseFill = _doc.FillArea;
@@ -178,22 +192,48 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			}
 		}
 
+		private void InitializeLineConnectionChoices()
+		{
+			if (null == _lineConnectChoices)
+				_lineConnectChoices = new SelectableListNodeList();
+			else
+				_lineConnectChoices.Clear();
+
+			var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ILineConnectionStyle));
+
+			foreach (var t in types)
+			{
+				_lineConnectChoices.Add(new SelectableListNode(t.Name, t, t == _doc.Connection.GetType()));
+			}
+		}
+
 		public override bool Apply(bool disposeController)
 		{
 			// don't trust user input, so all into a try statement
 			try
 			{
-				// Symbol Gap
-				_doc.LineSymbolGap = _view.LineSymbolGap;
+				_doc.ConnectCircular = _view.ConnectCircular;
+				_doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
 
 				// Pen
 				_doc.IndependentLineColor = _view.IndependentLineColor;
-				_doc.LinePen.CopyFrom(_view.LinePen);
+				_doc.IndependentDashStyle = _view.IndependentDashStyle;
+				_doc.LinePen = _view.LinePen;
 
 				// Line Connect
+
 				var selNode = _lineConnectChoices.FirstSelectedNode;
-				_doc.Connection = (Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle)(selNode.Tag);
-				_doc.ConnectCircular = _view.ConnectCircular;
+				var connectionType = (Type)(selNode.Tag);
+				if (connectionType == typeof(NoConnection))
+					_doc.Connection = NoConnection.Instance;
+				else
+					_doc.Connection = (ILineConnectionStyle)Activator.CreateInstance(connectionType);
+
+				_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
+				_doc.SymbolSize = _view.SymbolSize;
+				_doc.UseSymbolGap = _view.UseSymbolGap;
+				_doc.SymbolGapOffset = _view.SymbolGapOffset;
+				_doc.SymbolGapFactor = _view.SymbolGapFactor;
 
 				// Fill Area
 				_doc.FillArea = _view.UseFill;
@@ -221,27 +261,23 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		protected override void AttachView()
 		{
 			base.AttachView();
+
+			_view.IndependentLineColorChanged += EhIndependentLineColorChanged;
+			_view.UseLineChanged += EhUseLineChanged;
 			_view.UseFillChanged += EhUseFillChanged;
 			_view.IndependentFillColorChanged += EhIndependentFillColorChanged;
-
-			_view.UseLineChanged += EhUseLineChanged;
-			_view.IndependentLineColorChanged += EhIndependentLineColorChanged;
-
 			_view.FillBrushChanged += EhFillBrushChanged;
 			_view.LinePenChanged += EhLinePenChanged;
 		}
 
 		protected override void DetachView()
 		{
+			_view.IndependentLineColorChanged -= EhIndependentLineColorChanged;
+			_view.UseLineChanged -= EhUseLineChanged;
 			_view.UseFillChanged -= EhUseFillChanged;
 			_view.IndependentFillColorChanged -= EhIndependentFillColorChanged;
-
-			_view.UseLineChanged -= EhUseLineChanged;
-			_view.IndependentLineColorChanged -= EhIndependentLineColorChanged;
-
 			_view.FillBrushChanged -= EhFillBrushChanged;
 			_view.LinePenChanged -= EhLinePenChanged;
-
 			base.DetachView();
 		}
 
@@ -273,12 +309,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			get
 			{
 				var selNode = _lineConnectChoices.FirstSelectedNode;
-				return Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle.NoLine != (Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle)(selNode.Tag);
+				return !NoConnection.Instance.Equals(selNode.Tag);
 			}
 			set
 			{
-				if (null != _view)
-					_view.EnableLineControls = value;
+				//if(null!=_view)	_view.EnableLineControls = value;
 			}
 		}
 

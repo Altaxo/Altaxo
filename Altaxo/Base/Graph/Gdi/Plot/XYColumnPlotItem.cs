@@ -69,7 +69,7 @@ namespace Altaxo.Graph.Gdi.Plot
 				XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data", null);
 				XYLineScatterPlotStyle lsps = (XYLineScatterPlotStyle)info.GetValue("Style", null);
 				if (lsps.XYPlotLineStyle != null)
-					lsps.XYPlotLineStyle.LineSymbolGap = lsps.LineSymbolGap; // this has changed and is now hosted in the LineStyle itself
+					lsps.XYPlotLineStyle.UseSymbolGap = lsps.LineSymbolGap; // this has changed and is now hosted in the LineStyle itself
 
 				G2DPlotStyleCollection ps = new G2DPlotStyleCollection(new IG2DPlotStyle[] { lsps.XYPlotLineStyle, lsps.ScatterStyle, lsps.XYPlotLabelStyle });
 				if (lsps.XYPlotLabelStyle != null)

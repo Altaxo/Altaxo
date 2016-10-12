@@ -533,6 +533,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\LinePlotStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\Gdi\Plot\Styles\VectorCartesicPlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1073,10 +1077,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\Gdi\Plot\Styles\XYPlotLineStyleControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Gui\Graph\Gdi\Plot\Styles\XYPlotScatterStyleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1203,6 +1203,9 @@
       <DependentUpon>DashPatternComboBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternConverters.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\LinePlotStyleControl.xaml.cs">
+      <DependentUpon>LinePlotStyleControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\VectorCartesicPlotStyleControl.xaml.cs">
       <DependentUpon>VectorCartesicPlotStyleControl.xaml</DependentUpon>
     </Compile>
@@ -1979,9 +1982,6 @@
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\XYPlotLayerContentsControl.xaml.cs">
       <DependentUpon>XYPlotLayerContentsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotLineStyleControl.xaml.cs">
-      <DependentUpon>XYPlotLineStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotScatterStyleControl.xaml.cs">
       <DependentUpon>XYPlotScatterStyleControl.xaml</DependentUpon>

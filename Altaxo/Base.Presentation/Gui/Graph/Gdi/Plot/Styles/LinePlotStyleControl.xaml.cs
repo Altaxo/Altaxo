@@ -32,91 +32,57 @@ using System.Windows.Controls;
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Collections;
+	using Altaxo.Graph.Gdi;
+	using Common.Drawing;
 
 	/// <summary>
 	/// Interaction logic for XYPlotLineStyleControl.xaml
 	/// </summary>
-	public partial class XYPlotLineStyleControl : UserControl, IXYPlotLineStyleView
+	public partial class LinePlotStyleControl : UserControl, ILinePlotStyleView
 	{
-		private Altaxo.Gui.Common.Drawing.PenControlsGlue _linePenGlue;
-
-		public event Action IndependentFillColorChanged;
+		private PenControlsGlue _linePenGlue;
 
 		public event Action IndependentLineColorChanged;
 
-		public event Action UseFillChanged;
-
 		public event Action UseLineChanged;
-
-		public event Action FillBrushChanged;
 
 		public event Action LinePenChanged;
 
-		public XYPlotLineStyleControl()
+		public LinePlotStyleControl()
 		{
 			InitializeComponent();
 
-			_linePenGlue = new Common.Drawing.PenControlsGlue(false);
+			_linePenGlue = new PenControlsGlue(false);
 			_linePenGlue.PenChanged += new EventHandler(EhLinePenChanged);
 			_linePenGlue.CbBrush = _guiLineBrush;
 			_linePenGlue.CbDashPattern = _guiLineDashStyle;
-			_linePenGlue.CbLineThickness = _guiLineWidth;
+			_linePenGlue.CbLineThickness = _guiLineThickness1;
 		}
 
 		#region Event handlers
 
-		private void EhUseFillChanged(object sender, RoutedEventArgs e)
+		private void EhIndependentDashStyleChanged(object sender, RoutedEventArgs e)
 		{
-			if (null != UseFillChanged)
-				UseFillChanged();
-		}
-
-		private void EhIndependentFillColorChanged()
-		{
-			if (null != IndependentFillColorChanged)
-				IndependentFillColorChanged();
-		}
-
-		private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if (null != FillBrushChanged)
-				FillBrushChanged();
 		}
 
 		private void EhUseLineConnectChanged(object sender, RoutedEventArgs e)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_guiLineConnect);
-			if (null != _guiLineConnect.SelectedItem && null != UseLineChanged) // null for SelectedItem can happen when the DataSource is chaning
-				UseLineChanged();
+			if (null != _guiLineConnect.SelectedItem) // null for SelectedItem can happen when the DataSource is chaning
+				UseLineChanged?.Invoke();
 		}
 
 		private void EhIndependentLineColorChanged(object sender, RoutedEventArgs e)
 		{
-			if (null != IndependentLineColorChanged)
-				IndependentLineColorChanged();
+			IndependentLineColorChanged?.Invoke();
 		}
 
 		private void EhLinePenChanged(object sender, EventArgs e)
 		{
-			if (null != LinePenChanged)
-				LinePenChanged();
+			LinePenChanged?.Invoke();
 		}
 
 		#endregion Event handlers
-
-		public bool EnableLineControls
-		{
-			set
-			{
-				this._guiLineBrush.IsEnabled = value;
-				this._guiLineDashStyle.IsEnabled = value;
-				this._guiLineWidth.IsEnabled = value;
-
-				this._guiConnectCircular.IsEnabled = value;
-				this._guiLineSymbolGap.IsEnabled = value;
-				this._guiIndependentLineColor.IsEnabled = value;
-			}
-		}
 
 		#region IXYPlotLineStyleView
 
@@ -134,12 +100,24 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			}
 		}
 
+		public bool IndependentDashStyle
+		{
+			get
+			{
+				return true == _guiIndependentDashStyle.IsChecked;
+			}
+			set
+			{
+				_guiIndependentDashStyle.IsChecked = value;
+			}
+		}
+
 		public bool ShowPlotColorsOnlyForLinePen
 		{
 			set { _linePenGlue.ShowPlotColorsOnly = value; }
 		}
 
-		public Altaxo.Graph.Gdi.PenX LinePen
+		public PenX LinePen
 		{
 			get
 			{
@@ -155,7 +133,96 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		#endregion Line pen
 
-		#region Area fill
+		public bool IndependentSymbolSize
+		{
+			get
+			{
+				return true == _guiIndependentSymbolSize.IsChecked;
+			}
+
+			set
+			{
+				_guiIndependentSymbolSize.IsChecked = value;
+			}
+		}
+
+		public double SymbolSize
+		{
+			get
+			{
+				return _guiSymbolSize.SelectedQuantityAsValueInPoints;
+			}
+			set
+			{
+				_guiSymbolSize.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public bool UseSymbolGap
+		{
+			get
+			{
+				return _guiUseLineSymbolGap.IsChecked == true;
+			}
+
+			set
+			{
+				_guiUseLineSymbolGap.IsChecked = value;
+			}
+		}
+
+		public double SymbolGapOffset
+		{
+			get
+			{
+				return _guiSymbolGapOffset.SelectedQuantityAsValueInPoints;
+			}
+
+			set
+			{
+				_guiSymbolGapOffset.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public double SymbolGapFactor
+		{
+			get
+			{
+				return _guiSymbolGapFactor.SelectedQuantityAsValueInSIUnits;
+			}
+
+			set
+			{
+				_guiSymbolGapFactor.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public void InitializeLineConnect(SelectableListNodeList list)
+		{
+			GuiHelper.Initialize(_guiLineConnect, list);
+		}
+
+		public bool ConnectCircular
+		{
+			get { return true == _guiConnectCircular.IsChecked; }
+			set { _guiConnectCircular.IsChecked = value; }
+		}
+
+		public bool IgnoreMissingDataPoints
+		{
+			get { return true == _guiIgnoreMissingPoints.IsChecked; }
+			set { _guiIgnoreMissingPoints.IsChecked = value; }
+		}
+
+		#endregion IXYPlotLineStyleView
+
+		#region Filling
+
+		public event Action IndependentFillColorChanged;
+
+		public event Action UseFillChanged;
+
+		public event Action FillBrushChanged;
 
 		public bool UseFill
 		{
@@ -196,28 +263,24 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		#endregion Area fill
-
-		public bool LineSymbolGap
-		{
-			set
-			{
-				this._guiLineSymbolGap.IsChecked = value;
-			}
-			get
-			{
-				return true == this._guiLineSymbolGap.IsChecked;
-			}
-		}
-
-		public void InitializeLineConnect(SelectableListNodeList list)
-		{
-			GuiHelper.Initialize(_guiLineConnect, list);
-		}
-
 		public void InitializeFillDirection(SelectableListNodeList list)
 		{
 			GuiHelper.Initialize(_guiFillDirection, list);
+		}
+
+		private void EhUseFillChanged(object sender, RoutedEventArgs e)
+		{
+			UseFillChanged?.Invoke();
+		}
+
+		private void EhIndependentFillColorChanged()
+		{
+			IndependentFillColorChanged?.Invoke();
+		}
+
+		private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			FillBrushChanged?.Invoke();
 		}
 
 		private void EhFillDirectionChanged(object sender, SelectionChangedEventArgs e)
@@ -225,12 +288,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			GuiHelper.SynchronizeSelectionFromGui(_guiFillDirection);
 		}
 
-		public bool ConnectCircular
-		{
-			get { return true == _guiConnectCircular.IsChecked; }
-			set { _guiConnectCircular.IsChecked = value; }
-		}
-
-		#endregion IXYPlotLineStyleView
+		#endregion Filling
 	}
 }

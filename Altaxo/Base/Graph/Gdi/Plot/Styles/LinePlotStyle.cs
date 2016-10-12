@@ -67,34 +67,53 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		[Serializable]
-		public enum ConnectionStyle
-		{
-			NoLine,
-			Straight,
-			Segment2,
-			Segment3,
-			Spline,
-			Bezier,
-			StepHorz,
-			StepVert,
-			StepHorzCenter,
-			StepVertCenter
-		}
-
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyles.ConnectionStyle", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConnectionStyle), 1)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.XYPlotLineStyles.ConnectionStyle", 1)]
 		public class ConnectionStyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				info.SetNodeContent(obj.ToString());
+				throw new InvalidOperationException("Serialization of old version");
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				string val = info.GetNodeContent();
-				return System.Enum.Parse(typeof(ConnectionStyle), val, true);
+				switch (val)
+				{
+					case "NoLine":
+						return LineConnectionStyles.NoConnection.Instance;
+
+					case "Straight":
+						return LineConnectionStyles.StraightConnection.Instance;
+
+					case "Segment2":
+						return LineConnectionStyles.Segment2Connection.Instance;
+
+					case "Segment3":
+						return LineConnectionStyles.Segment3Connection.Instance;
+
+					case "Spline":
+						return LineConnectionStyles.SplineConnection.Instance;
+
+					case "Bezier":
+						return LineConnectionStyles.BezierConnection.Instance;
+
+					case "StepHorz":
+						return LineConnectionStyles.StepHorizontalConnection.Instance;
+
+					case "StepVert":
+						return LineConnectionStyles.StepVerticalConnection.Instance;
+
+					case "StepHorzCenter":
+						return LineConnectionStyles.StepHorizontalCenteredConnection.Instance;
+
+					case "StepVertCenter":
+						return LineConnectionStyles.StepVerticalCenteredConnection.Instance;
+
+					default:
+						throw new NotImplementedException();
+				}
 			}
 		}
 	}
@@ -138,21 +157,59 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			IPlotArea layer,
 			CSPlaneID fillDirection);
 
+		/// <summary>A value indicating whether the skip frequency value is independent from other values.</summary>
+		protected bool _independentSkipFreq;
+
+		/// <summary>A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
+		protected int _skipFreq = 1;
+
 		protected bool _independentColor;
-		protected PenX _penHolder;
-		protected XYPlotLineStyles.ConnectionStyle _connectionStyle;
-		protected bool _useLineSymbolGap;
+
+		protected bool _independentDashStyle;
+
+		protected PenX _linePen;
+
+		protected ILineConnectionStyle _connectionStyle;
+
+		/// <summary>
+		/// true if the symbol size is independent, i.e. is not published nor updated by a group style.
+		/// </summary>
+		protected bool _independentSymbolSize;
+
+		/// <summary>Controls the length of the end bar.</summary>
+		protected double _symbolSize;
+
+		protected bool _ignoreMissingDataPoints; // treat missing points as if not present (connect lines over missing points)
+
+		/// <summary>If true, the start and the end point of the line are connected too.</summary>
+		protected bool _connectCircular;
+
+		protected bool _useSymbolGap;
+
 		protected double _symbolGap;
-		protected bool _ignoreMissingPoints; // treat missing points as if not present (connect lines over missing points)
+
+		/// <summary>
+		/// Offset used to calculate the real gap between symbol center and beginning of the bar, according to the formula:
+		/// realGap = _symbolGap * _symbolGapFactor + _symbolGapOffset;
+		/// </summary>
+		private double _symbolGapOffset;
+
+		/// <summary>
+		/// Factor used to calculate the real gap between symbol center and beginning of the bar, according to the formula:
+		/// realGap = _symbolGap * _symbolGapFactor + _symbolGapOffset;
+		/// </summary>
+		private double _symbolGapFactor = 1.25;
+
+		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
+		[field: NonSerialized]
+		protected Func<int, double> _cachedSymbolSizeForIndexFunction;
+
 		protected bool _fillArea;
 		protected BrushX _fillBrush; // brush to fill the area under the line
 		protected CSPlaneID _fillDirection; // the direction to fill
 
 		/// <summary>Designates if the fill color is independent or dependent.</summary>
 		protected ColorLinkage _fillColorLinkage = ColorLinkage.PreserveAlpha;
-
-		/// <summary>If true, the start and the end point of the line are connected too.</summary>
-		protected bool _connectCircular;
 
 		// cached values
 		[NonSerialized]
@@ -170,10 +227,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				LinePlotStyle s = (LinePlotStyle)obj;
-				info.AddValue("Pen", s._penHolder);
+				info.AddValue("Pen", s._linePen);
 				info.AddValue("Connection", s._connectionStyle);
-				info.AddValue("LineSymbolGap", s._useLineSymbolGap);
-				info.AddValue("IgnoreMissingPoints", s._ignoreMissingPoints);
+				info.AddValue("LineSymbolGap", s._useSymbolGap);
+				info.AddValue("IgnoreMissingPoints", s._ignoreMissingDataPoints);
 				info.AddValue("FillArea", s._fillArea);
 				info.AddValue("FillBrush", s._fillBrush);
 				info.AddValue("FillDirection", s._fillDirection);
@@ -190,10 +247,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
 
-				s._penHolder = (PenX)info.GetValue("Pen", s);
-				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", s);
-				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
-				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
+				s._linePen = (PenX)info.GetValue("Pen", s);
+				s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
+				s._useSymbolGap = info.GetBoolean("LineSymbolGap");
+				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
 				s._fillArea = info.GetBoolean("FillArea");
 				s._fillBrush = (BrushX)info.GetValue("FillBrush", s);
 				XYPlotLineStyles.FillDirection fillDir = (XYPlotLineStyles.FillDirection)info.GetValue("FillDirection", s);
@@ -246,7 +303,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinePlotStyle), 3)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.LinePlotStyle", 3)]
 		private class XmlSerializationSurrogate3 : XmlSerializationSurrogate0
 		{
 			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -265,10 +322,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
 
-				s._penHolder = (PenX)info.GetValue("Pen", s);
-				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", s);
-				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
-				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
+				s._linePen = (PenX)info.GetValue("Pen", s);
+				s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
+				s._useSymbolGap = info.GetBoolean("LineSymbolGap");
+				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
 				s._fillArea = info.GetBoolean("FillArea");
 				s._fillBrush = (BrushX)info.GetValue("FillBrush", s);
 				s._fillDirection = (CSPlaneID)info.GetValue("FillDirection", s);
@@ -283,7 +340,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <para>Date: 2012-10-10</para>
 		/// Change: instead _independentFillColor being a boolean value, it is now a ColorLinkage enumeration value
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinePlotStyle), 4)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Styles.LinePlotStyle", 4)]
 		private class XmlSerializationSurrogate4 : XmlSerializationSurrogate0
 		{
 			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -299,16 +356,80 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				LinePlotStyle s = null != o ? (LinePlotStyle)o : new LinePlotStyle(info);
 
-				s._penHolder = (PenX)info.GetValue("Pen", s);
-				s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection", s);
-				s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
-				s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
+				s._linePen = (PenX)info.GetValue("Pen", s);
+				s.Connection = (ILineConnectionStyle)info.GetValue("Connection", s);
+				s._useSymbolGap = info.GetBoolean("LineSymbolGap");
+				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
 				s._fillArea = info.GetBoolean("FillArea");
 				s._fillBrush = (BrushX)info.GetValue("FillBrush", s);
 				s._fillDirection = (CSPlaneID)info.GetValue("FillDirection", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s._fillColorLinkage = (ColorLinkage)info.GetEnum("FillColorLinkage", typeof(ColorLinkage));
 				s._connectCircular = info.GetBoolean("ConnectCircular");
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// 2016-10-12 Major changes.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinePlotStyle), 5)]
+		private class XmlSerializationSurrogate5
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (LinePlotStyle)obj;
+
+				info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
+				info.AddValue("SkipFreq", s._skipFreq);
+
+				info.AddValue("IgnoreMissingPoints", s._ignoreMissingDataPoints);
+				info.AddValue("ConnectCircular", s._connectCircular);
+				info.AddValue("Connection", s._connectionStyle);
+
+				info.AddValue("Pen", s._linePen);
+				info.AddValue("IndependentDashStyle", s._independentDashStyle);
+				info.AddValue("IndependentColor", s._independentColor);
+
+				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
+				info.AddValue("SymbolSize", s._symbolSize);
+
+				info.AddValue("UseSymbolGap", s._useSymbolGap);
+				info.AddValue("SymbolGapOffset", s._symbolGapOffset);
+				info.AddValue("SymbolGapFactor", s._symbolGapFactor);
+
+				info.AddValue("FillArea", s._fillArea);
+				info.AddValue("FillBrush", s._fillBrush);
+				info.AddValue("FillDirection", s._fillDirection);
+				info.AddEnum("FillColorLinkage", s._fillColorLinkage);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				LinePlotStyle s = (LinePlotStyle)o ?? new LinePlotStyle(info);
+
+				s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
+				s._skipFreq = info.GetInt32("SkipFreq");
+
+				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
+				s._connectCircular = info.GetBoolean("ConnectCircular");
+				s._connectionStyle = (ILineConnectionStyle)info.GetValue("Connection", s);
+
+				s._linePen = (PenX)info.GetValue("Pen", s);
+				s._independentDashStyle = info.GetBoolean("IndependentDashStyle");
+				s._independentColor = info.GetBoolean("IndependentColor");
+
+				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
+				s._symbolSize = info.GetDouble("SymbolSize");
+
+				s._useSymbolGap = info.GetBoolean("UseSymbolGap");
+				s._symbolGapOffset = info.GetDouble("SymbolGapOffset");
+				s._symbolGapFactor = info.GetDouble("SymbolGapFactor");
+
+				s._fillArea = info.GetBoolean("FillArea");
+				s._fillBrush = (BrushX)info.GetValue("FillBrush", s);
+				s._fillDirection = (CSPlaneID)info.GetValue("FillDirection", s);
+				s._fillColorLinkage = (ColorLinkage)info.GetEnum("FillColorLinkage", typeof(ColorLinkage));
 				return s;
 			}
 		}
@@ -324,19 +445,30 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				this._penHolder = null == from._penHolder ? null : (PenX)from._penHolder.Clone();
-				this._useLineSymbolGap = from._useLineSymbolGap;
-				this._symbolGap = from._symbolGap;
-				this._ignoreMissingPoints = from._ignoreMissingPoints;
+				this._independentSkipFreq = from._independentSkipFreq;
+				this._skipFreq = from._skipFreq;
+
+				this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+				this._connectCircular = from._connectCircular;
+				this._connectionStyle = from._connectionStyle;
+
+				this._linePen = null == from._linePen ? null : (PenX)from._linePen.Clone();
+				this._independentDashStyle = from._independentDashStyle;
+				this._independentColor = from._independentColor;
+
+				this._independentSymbolSize = from._independentSymbolSize;
+				this._symbolSize = from._symbolSize;
+
+				this._useSymbolGap = from._useSymbolGap;
+				this._symbolGapOffset = from._symbolGapOffset;
+				this._symbolGapFactor = from._symbolGapFactor;
+
 				this._fillArea = from._fillArea;
 				this._fillBrush = null == from._fillBrush ? null : (BrushX)from._fillBrush.Clone();
 				this._fillDirection = from._fillDirection;
-				this.Connection = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
-				this._independentColor = from._independentColor;
 				this._fillColorLinkage = from._fillColorLinkage;
-				this._connectCircular = from._connectCircular;
 
-				//this._parent = from._parent;
+				EhSelfChanged();
 
 				suspendToken.Resume(eventFiring);
 			}
@@ -385,13 +517,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var penWidth = 1;
 			var color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
 
-			_penHolder = new PenX(color, penWidth) { LineJoin = LineJoin.Bevel };
-			_useLineSymbolGap = true;
-			_ignoreMissingPoints = false;
+			_linePen = new PenX(color, penWidth) { LineJoin = LineJoin.Bevel };
+			_useSymbolGap = true;
+			_ignoreMissingDataPoints = false;
 			_fillArea = false;
 			_fillBrush = new BrushX(color);
 			_fillDirection = null;
-			_connectionStyle = XYPlotLineStyles.ConnectionStyle.Straight;
+			_connectionStyle = LineConnectionStyles.StraightConnection.Instance;
 			_cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
 			_cachedFillOneRange = StraightConnection_FillOneRange;
 			_independentColor = false;
@@ -404,13 +536,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var penWidth = GraphDocument.GetDefaultPenWidth(context);
 			var color = GraphDocument.GetDefaultPlotColor(context);
 
-			_penHolder = new PenX(color, penWidth) { LineJoin = LineJoin.Bevel };
-			_useLineSymbolGap = true;
-			_ignoreMissingPoints = false;
+			_linePen = new PenX(color, penWidth) { LineJoin = LineJoin.Bevel };
+			_useSymbolGap = true;
+			_ignoreMissingDataPoints = false;
 			_fillArea = false;
 			_fillBrush = new BrushX(color);
 			_fillDirection = null;
-			_connectionStyle = XYPlotLineStyles.ConnectionStyle.Straight;
+			_connectionStyle = LineConnectionStyles.StraightConnection.Instance;
 			_cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
 			_cachedFillOneRange = StraightConnection_FillOneRange;
 			_independentColor = false;
@@ -426,8 +558,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			if (null != _penHolder)
-				yield return new Main.DocumentNodeAndName(_penHolder, "Pen");
+			if (null != _linePen)
+				yield return new Main.DocumentNodeAndName(_linePen, "Pen");
 
 			if (null != _fillBrush)
 				yield return new Main.DocumentNodeAndName(_fillBrush, "FillBrush");
@@ -435,8 +567,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		protected virtual void CreateEventChain()
 		{
-			if (null != _penHolder)
-				_penHolder.ParentObject = this;
+			if (null != _linePen)
+				_linePen.ParentObject = this;
 
 			if (null != _fillBrush)
 				_fillBrush.ParentObject = this;
@@ -446,80 +578,137 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region Properties
 
-		public XYPlotLineStyles.ConnectionStyle Connection
+		/// <summary>Skip frequency. A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
+		public int SkipFrequency
+		{
+			get { return _skipFreq; }
+			set
+			{
+				value = Math.Max(1, value);
+				if (!(_skipFreq == value))
+				{
+					_skipFreq = value;
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
+				}
+			}
+		}
+
+		/// <summary>A value indicating whether the skip frequency value is independent from values in other sub plot styles.</summary>
+		public bool IndependentSkipFrequency
+		{
+			get
+			{
+				return _independentSkipFreq;
+			}
+			set
+			{
+				if (!(_independentSkipFreq == value))
+				{
+					_independentSkipFreq = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		public ILineConnectionStyle Connection
 		{
 			get { return _connectionStyle; }
 			set
 			{
-				_connectionStyle = value;
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
 
-				switch (_connectionStyle)
+				if (!(_connectionStyle.Equals(value)))
 				{
-					case XYPlotLineStyles.ConnectionStyle.NoLine:
-						_cachedPaintOneRange = NoConnection_PaintOneRange;
-						_cachedFillOneRange = NoConnection_FillOneRange;
-						break;
-
-					default:
-					case XYPlotLineStyles.ConnectionStyle.Straight:
-						_cachedPaintOneRange = StraightConnection_PaintOneRange;
-						_cachedFillOneRange = StraightConnection_FillOneRange;
-						break;
-
-					case XYPlotLineStyles.ConnectionStyle.Segment2:
-						_cachedPaintOneRange = Segment2Connection_PaintOneRange;
-						_cachedFillOneRange = Segment2Connection_FillOneRange;
-						break;
-
-					case XYPlotLineStyles.ConnectionStyle.Segment3:
-						_cachedPaintOneRange = Segment3Connection_PaintOneRange;
-						_cachedFillOneRange = Segment3Connection_FillOneRange;
-						break;
-
-					case XYPlotLineStyles.ConnectionStyle.Spline:
-						_cachedPaintOneRange = SplineConnection_PaintOneRange;
-						_cachedFillOneRange = SplineConnection_FillOneRange;
-						break;
-
-					case XYPlotLineStyles.ConnectionStyle.Bezier:
-						_cachedPaintOneRange = BezierConnection_PaintOneRange;
-						_cachedFillOneRange = BezierConnection_FillOneRange;
-						break;
-
-					case XYPlotLineStyles.ConnectionStyle.StepHorz:
-						_cachedPaintOneRange = StepHorzConnection_PaintOneRange;
-						_cachedFillOneRange = StepHorzConnection_FillOneRange;
-						break;
-
-					case XYPlotLineStyles.ConnectionStyle.StepVert:
-						_cachedPaintOneRange = StepVertConnection_PaintOneRange;
-						_cachedFillOneRange = StepVertConnection_FillOneRange;
-						break;
-
-					case XYPlotLineStyles.ConnectionStyle.StepHorzCenter:
-						_cachedPaintOneRange = StepHorzCenterConnection_PaintOneRange;
-						_cachedFillOneRange = StepHorzCenterConnection_FillOneRange;
-						break;
-
-					case XYPlotLineStyles.ConnectionStyle.StepVertCenter:
-						_cachedPaintOneRange = StepVertCenterConnection_PaintOneRange;
-						_cachedFillOneRange = StepVertCenterConnection_FillOneRange;
-						break;
-				} // end switch
-				EhSelfChanged(EventArgs.Empty); // Fire Changed event
+					_connectionStyle = value;
+					EhSelfChanged();
+				}
 			}
 		}
 
-		public bool LineSymbolGap
+		/// <summary>
+		/// True when the line is not drawn in the circle of diameter SymbolSize around the symbol center.
+		/// </summary>
+		public bool UseSymbolGap
 		{
 			get
 			{
-				return _useLineSymbolGap;
+				return _useSymbolGap;
 			}
 			set
 			{
-				bool oldValue = _useLineSymbolGap;
-				_useLineSymbolGap = value;
+				if (!(_useSymbolGap == value))
+				{
+					_useSymbolGap = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		public double SymbolGapOffset
+		{
+			get
+			{
+				return _symbolGapOffset;
+			}
+			set
+			{
+				if (!(_symbolGapOffset == value))
+				{
+					_symbolGapOffset = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public double SymbolGapFactor
+		{
+			get
+			{
+				return _symbolGapFactor;
+			}
+			set
+			{
+				if (!(_symbolGapFactor == value))
+				{
+					_symbolGapFactor = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public bool ConnectCircular
+		{
+			get
+			{
+				return _connectCircular;
+			}
+			set
+			{
+				bool oldValue = _connectCircular;
+				_connectCircular = value;
+				if (value != oldValue)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether to ignore missing data points. If the value is set to true,
+		/// the line is plotted even if there is a gap in the data points.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if missing data points should be ignored; otherwise, if <c>false</c>, no line is plotted between a gap in the data.
+		/// </value>
+		public bool IgnoreMissingDataPoints
+		{
+			get
+			{
+				return _ignoreMissingDataPoints;
+			}
+			set
+			{
+				bool oldValue = _ignoreMissingDataPoints;
+				_ignoreMissingDataPoints = value;
 				if (value != oldValue)
 					EhSelfChanged(EventArgs.Empty);
 			}
@@ -540,6 +729,62 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
+		public bool IndependentDashStyle
+		{
+			get
+			{
+				return _independentDashStyle;
+			}
+			set
+			{
+				bool oldValue = _independentDashStyle;
+				_independentDashStyle = value;
+				if (value != oldValue)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		public PenX LinePen
+		{
+			get { return _linePen; }
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (ChildCopyToMember(ref _linePen, value))
+					EhSelfChanged();
+			}
+		}
+
+		/// <summary>
+		/// true if the symbol size is independent, i.e. is not published nor updated by a group style.
+		/// </summary>
+		public bool IndependentSymbolSize
+		{
+			get { return _independentSymbolSize; }
+			set
+			{
+				var oldValue = _independentSymbolSize;
+				_independentSymbolSize = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		/// <summary>Controls the length of the end bar.</summary>
+		public double SymbolSize
+		{
+			get { return _symbolSize; }
+			set
+			{
+				var oldValue = _symbolSize;
+				_symbolSize = value;
+				if (oldValue != value)
+					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
 		public ColorLinkage FillColorLinkage
 		{
 			get
@@ -553,26 +798,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (value != oldValue)
 					EhSelfChanged(EventArgs.Empty);
 			}
-		}
-
-		public bool ConnectCircular
-		{
-			get
-			{
-				return _connectCircular;
-			}
-			set
-			{
-				bool oldValue = _connectCircular;
-				_connectCircular = value;
-				if (value != oldValue)
-					EhSelfChanged(EventArgs.Empty);
-			}
-		}
-
-		public PenX LinePen
-		{
-			get { return _penHolder; }
 		}
 
 		public bool FillArea
@@ -624,7 +849,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			get
 			{
-				if (_connectionStyle != XYPlotLineStyles.ConnectionStyle.NoLine)
+				if (!LineConnectionStyles.NoConnection.Instance.Equals(_connectionStyle))
 					return true;
 				if (_fillArea)
 					return true;
@@ -639,9 +864,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public virtual void PaintLine(Graphics g, PointF beg, PointF end)
 		{
-			if (null != _penHolder)
+			if (null != _linePen)
 			{
-				g.DrawLine(_penHolder, beg, end);
+				g.DrawLine(_linePen, beg, end);
 			}
 		}
 
@@ -655,14 +880,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
 		{
-			if (this.Connection != XYPlotLineStyles.ConnectionStyle.NoLine)
+			if (!LineConnectionStyles.NoConnection.Instance.Equals(_connectionStyle))
 			{
 				GraphicsState gs = g.Save();
 				g.TranslateTransform(bounds.X + 0.5f * bounds.Width, bounds.Y + 0.5f * bounds.Height);
 				float halfwidth = bounds.Width / 2;
 				float symsize = (float)(_symbolGap);
 
-				if (this.LineSymbolGap == true)
+				if (this.UseSymbolGap == true)
 				{
 					// plot a line with the length of symbolsize from
 					PaintLine(g, new PointF(-halfwidth, 0), new PointF(-symsize, 0));
@@ -685,7 +910,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			float symbolGap = (float)(_symbolGap);
 
 			// ensure that brush and pen are cached
-			if (null != _penHolder) _penHolder.Cached = true;
+			if (null != _linePen) _linePen.Cached = true;
 
 			if (_fillArea)
 			{
@@ -697,7 +922,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			int rangelistlen = rangeList.Count;
 
-			if (this._ignoreMissingPoints)
+			if (this._ignoreMissingDataPoints)
 			{
 				// in case we ignore the missing points, all ranges can be plotted
 				// as one range, i.e. continuously
@@ -722,7 +947,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			int rangelistlen = rangeList.Count;
 
-			if (this._ignoreMissingPoints)
+			if (this._ignoreMissingDataPoints)
 			{
 				// in case we ignore the missing points, all ranges can be plotted
 				// as one range, i.e. continuously
@@ -793,7 +1018,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// to the exclusion criteria that a line only appears between two symbols (rel<0.5)
 			// if the symbols do not overlap. So for a big array of points it is very likely
 			// that the symbols overlap and no line between the symbols needs to be plotted
-			if (this._useLineSymbolGap && symbolGap > 0)
+			if (this._useSymbolGap && symbolGap > 0)
 			{
 				float xdiff, ydiff, rel, startx, starty, stopx, stopy;
 				for (int i = 0; i < lastIdx; i++)
@@ -812,14 +1037,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						gp.StartFigure();
 					}
 				} // end for
-				g.DrawPath(this._penHolder, gp);
+				g.DrawPath(this._linePen, gp);
 				gp.Reset();
 			}
 			else // no line symbol gap required, so we can use DrawLines to draw the lines
 			{
 				if (linepts.Length > 1) // we don't want to have a drawing exception if number of points is only one
 				{
-					g.DrawLines(this._penHolder, linepts);
+					g.DrawLines(this._linePen, linepts);
 				}
 			}
 		} // end function PaintOneRange
@@ -883,7 +1108,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			// unfortuately, there is no easy way to support line/symbol gaps
 			// thats why I ignore this value and draw a curve through the points
-			g.DrawCurve(this._penHolder, linepts);
+			g.DrawCurve(this._linePen, linepts);
 		} // end function PaintOneRange (Spline)
 
 		public void SplineConnection_FillOneRange(GraphicsPath gp,
@@ -952,7 +1177,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			// unfortuately, there is no easy way to support line/symbol gaps
 			// thats why I ignore this value and draw a curve through the points
-			g.DrawBeziers(this._penHolder, linepts);
+			g.DrawBeziers(this._linePen, linepts);
 		} // end function PaintOneRange BezierLineStyle
 
 		public void BezierConnection_FillOneRange(GraphicsPath gp,
@@ -1022,7 +1247,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				gp.Reset();
 			}
 
-			if (this._useLineSymbolGap && symbolGap > 0)
+			if (this._useSymbolGap && symbolGap > 0)
 			{
 				int end = range.UpperBound - 1;
 				float symbolGapSquared = symbolGap * symbolGap;
@@ -1053,12 +1278,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					if (xrel1 < xrel2 || yrel1 < yrel2)
 						gp.StartFigure();
 				}
-				g.DrawPath(this._penHolder, gp);
+				g.DrawPath(this._linePen, gp);
 				gp.Reset();
 			}
 			else
 			{
-				g.DrawLines(this._penHolder, linepts);
+				g.DrawLines(this._linePen, linepts);
 			}
 		} // end function PaintOneRange StepHorzLineStyle
 
@@ -1143,7 +1368,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				gp.Reset();
 			}
 
-			if (this._useLineSymbolGap && symbolGap > 0)
+			if (this._useSymbolGap && symbolGap > 0)
 			{
 				int end = range.UpperBound - 1;
 				float symbolGapSquared = symbolGap * symbolGap;
@@ -1174,12 +1399,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					if (xrel1 < xrel2 || yrel1 < yrel2)
 						gp.StartFigure();
 				}
-				g.DrawPath(this._penHolder, gp);
+				g.DrawPath(this._linePen, gp);
 				gp.Reset();
 			}
 			else
 			{
-				g.DrawLines(this._penHolder, linepts);
+				g.DrawLines(this._linePen, linepts);
 			}
 		} // end function PaintOneRange StepVertLineStyle
 
@@ -1266,7 +1491,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				gp.Reset();
 			}
 
-			if (this._useLineSymbolGap && symbolGap > 0)
+			if (this._useSymbolGap && symbolGap > 0)
 			{
 				int end = linepts.Length - 1;
 				float symbolGapSquared = symbolGap * symbolGap;
@@ -1292,12 +1517,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						}
 					}
 				} // for loop
-				g.DrawPath(this._penHolder, gp);
+				g.DrawPath(this._linePen, gp);
 				gp.Reset();
 			}
 			else
 			{
-				g.DrawLines(this._penHolder, linepts);
+				g.DrawLines(this._linePen, linepts);
 			}
 		} // end function PaintOneRange StepVertMiddleLineStyle
 
@@ -1386,7 +1611,7 @@ IPlotArea layer,
 				gp.Reset();
 			}
 
-			if (this._useLineSymbolGap && symbolGap > 0)
+			if (this._useSymbolGap && symbolGap > 0)
 			{
 				int end = linepts.Length - 1;
 				float symbolGapSquared = symbolGap * symbolGap;
@@ -1412,12 +1637,12 @@ IPlotArea layer,
 						}
 					}
 				} // for loop
-				g.DrawPath(this._penHolder, gp);
+				g.DrawPath(this._linePen, gp);
 				gp.Reset();
 			}
 			else
 			{
-				g.DrawLines(this._penHolder, linepts);
+				g.DrawLines(this._linePen, linepts);
 			}
 		} // end function PaintOneRange StepHorzMiddleLineStyle
 
@@ -1510,7 +1735,7 @@ IPlotArea layer,
 			// to the exclusion criteria that a line only appears between two symbols (rel<0.5)
 			// if the symbols do not overlap. So for a big array of points it is very likely
 			// that the symbols overlap and no line between the symbols needs to be plotted
-			if (this._useLineSymbolGap && symbolGap > 0)
+			if (this._useSymbolGap && symbolGap > 0)
 			{
 				float xdiff, ydiff, rel, startx, starty, stopx, stopy;
 				for (i = 0; i < lastIdx; i += 2)
@@ -1529,7 +1754,7 @@ IPlotArea layer,
 						gp.StartFigure();
 					}
 				} // end for
-				g.DrawPath(this._penHolder, gp);
+				g.DrawPath(this._linePen, gp);
 				gp.Reset();
 			}
 			else // no line symbol gap required, so we can use DrawLines to draw the lines
@@ -1539,7 +1764,7 @@ IPlotArea layer,
 					gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i + 1].X, linepts[i + 1].Y);
 					gp.StartFigure();
 				} // end for
-				g.DrawPath(this._penHolder, gp);
+				g.DrawPath(this._linePen, gp);
 				gp.Reset();
 			}
 		} // end function PaintOneRange Segment2LineStyle
@@ -1630,7 +1855,7 @@ IPlotArea layer,
 			// that the symbols overlap and no line between the symbols needs to be plotted
 			lastIdx = range.Length - 1;
 
-			if (this._useLineSymbolGap && symbolGap > 0)
+			if (this._useSymbolGap && symbolGap > 0)
 			{
 				float xdiff, ydiff, rel, startx, starty, stopx, stopy;
 				for (i = 0; i < lastIdx; i++)
@@ -1652,7 +1877,7 @@ IPlotArea layer,
 						}
 					}
 				} // end for
-				g.DrawPath(this._penHolder, gp);
+				g.DrawPath(this._linePen, gp);
 				gp.Reset();
 			}
 			else // no line symbol gap required, so we can use DrawLines to draw the lines
@@ -1663,7 +1888,7 @@ IPlotArea layer,
 					gp.AddLine(linepts[i + 1].X, linepts[i + 1].Y, linepts[i + 2].X, linepts[i + 2].Y);
 					gp.StartFigure();
 				} // end for
-				g.DrawPath(this._penHolder, gp);
+				g.DrawPath(this._linePen, gp);
 				gp.Reset();
 			}
 		} // end function PaintOneRange Segment3LineStyle
@@ -1734,25 +1959,17 @@ out int lastIndex)
 		{
 			get
 			{
-				return this._penHolder.Color;
+				return this._linePen.Color;
 			}
 			set
 			{
-				this._penHolder.Color = value;
+				this._linePen.Color = value;
 			}
 		}
 
 		public bool IsColorReceiver
 		{
 			get { return !this._independentColor; }
-		}
-
-		private float SymbolSize
-		{
-			set
-			{
-				this._symbolGap = value;
-			}
 		}
 
 		#region IG2DPlotStyle Members
@@ -1831,7 +2048,7 @@ out int lastIndex)
 				case "StrokeWidth":
 					{
 						var prop = (RoutedSetterProperty<double>)property;
-						this._penHolder.Width = (float)prop.Value;
+						this._linePen.Width = (float)prop.Value;
 						EhSelfChanged(EventArgs.Empty);
 					}
 					break;
@@ -1845,7 +2062,7 @@ out int lastIndex)
 				case "StrokeWidth":
 					{
 						var prop = (RoutedGetterProperty<double>)property;
-						prop.Merge(this._penHolder.Width);
+						prop.Merge(this._linePen.Width);
 					}
 					break;
 			}

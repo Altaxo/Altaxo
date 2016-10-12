@@ -126,7 +126,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 
 						if (null != polyline)
 							g.DrawLine(pen, polyline);
-					} // end for
+					} // end for.
 				}
 			}
 			else // no line symbol gap required, so we can use DrawLines to draw the lines
