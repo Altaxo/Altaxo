@@ -186,8 +186,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		protected bool _useSymbolGap;
 
-		protected double _symbolGap;
-
 		/// <summary>
 		/// Offset used to calculate the real gap between symbol center and beginning of the bar, according to the formula:
 		/// realGap = _symbolGap * _symbolGapFactor + _symbolGapOffset;
@@ -210,13 +208,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		/// <summary>Designates if the fill color is independent or dependent.</summary>
 		protected ColorLinkage _fillColorLinkage = ColorLinkage.PreserveAlpha;
-
-		// cached values
-		[NonSerialized]
-		protected PaintOneRangeTemplate _cachedPaintOneRange; // subroutine to paint a single range
-
-		[NonSerialized]
-		protected FillPathOneRangeTemplate _cachedFillOneRange; // subroutine to get a fill path
 
 		#region Serialization
 
@@ -374,7 +365,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// 2016-10-12 Major changes.
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinePlotStyle), 5)]
-		private class XmlSerializationSurrogate5
+		private class XmlSerializationSurrogate5 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -508,8 +499,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		protected LinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
 		{
-			_cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
-			_cachedFillOneRange = StraightConnection_FillOneRange;
+			_connectionStyle = LineConnectionStyles.StraightConnection.Instance;
 		}
 
 		internal LinePlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, bool oldDeserializationRequiresFullConstruction)
@@ -524,8 +514,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_fillBrush = new BrushX(color);
 			_fillDirection = null;
 			_connectionStyle = LineConnectionStyles.StraightConnection.Instance;
-			_cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
-			_cachedFillOneRange = StraightConnection_FillOneRange;
 			_independentColor = false;
 
 			CreateEventChain();
@@ -543,8 +531,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_fillBrush = new BrushX(color);
 			_fillDirection = null;
 			_connectionStyle = LineConnectionStyles.StraightConnection.Instance;
-			_cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
-			_cachedFillOneRange = StraightConnection_FillOneRange;
 			_independentColor = false;
 
 			CreateEventChain();
@@ -885,7 +871,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				GraphicsState gs = g.Save();
 				g.TranslateTransform(bounds.X + 0.5f * bounds.Width, bounds.Y + 0.5f * bounds.Height);
 				float halfwidth = bounds.Width / 2;
-				float symsize = (float)(_symbolGap);
+				float symsize = (float)(_symbolSize);
 
 				if (this.UseSymbolGap == true)
 				{
@@ -907,7 +893,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			PlotRangeList rangeList = pdata.RangeList;
-			float symbolGap = (float)(_symbolGap);
+			float symbolGap = (float)(_symbolSize);
+			int rangelistlen = rangeList.Count;
+
+			Func<int, double> symbolGapFunction = null;
+
+			if (_useSymbolGap)
+			{
+				if (null != _cachedSymbolSizeForIndexFunction && !_independentSymbolSize)
+				{
+					symbolGapFunction = (idx) => _symbolGapOffset + _symbolGapFactor * _cachedSymbolSizeForIndexFunction(idx);
+				}
+				else
+				{
+					symbolGapFunction = (idx) => _symbolGapOffset + _symbolGapFactor * _symbolSize;
+				}
+			}
 
 			// ensure that brush and pen are cached
 			if (null != _linePen) _linePen.Cached = true;
@@ -920,21 +921,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_fillDirection = layer.UpdateCSPlaneID(_fillDirection);
 			}
 
-			int rangelistlen = rangeList.Count;
-
 			if (this._ignoreMissingDataPoints)
 			{
 				// in case we ignore the missing points, all ranges can be plotted
 				// as one range, i.e. continuously
 				// for this, we create the totalRange, which contains all ranges
 				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
-				_cachedPaintOneRange(g, pdata, totalRange, layer, symbolGap);
+				_connectionStyle.Paint(g, pdata, totalRange, layer, _linePen, symbolGapFunction, _skipFreq, _connectCircular, this);
 			}
 			else // we not ignore missing points, so plot all ranges separately
 			{
 				for (int i = 0; i < rangelistlen; i++)
 				{
-					_cachedPaintOneRange(g, pdata, rangeList[i], layer, symbolGap);
+					_connectionStyle.Paint(g, pdata, rangeList[i], layer, _linePen, symbolGapFunction, _skipFreq, _connectCircular, this);
 				}
 			}
 		}
@@ -953,13 +952,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// as one range, i.e. continuously
 				// for this, we create the totalRange, which contains all ranges
 				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
-				_cachedFillOneRange(gp, pdata, totalRange, layer, fillDirection);
+				_connectionStyle.FillOneRange(gp, pdata, totalRange, layer, fillDirection, _connectCircular, this);
 			}
 			else // we not ignore missing points, so plot all ranges separately
 			{
 				for (int i = 0; i < rangelistlen; i++)
 				{
-					_cachedFillOneRange(gp, pdata, rangeList[i], layer, fillDirection);
+					_connectionStyle.FillOneRange(gp, pdata, rangeList[i], layer, fillDirection, _connectCircular, this);
 				}
 			}
 		}
@@ -1991,13 +1990,47 @@ out int lastIndex)
 			else if (this._fillColorLinkage == ColorLinkage.Dependent && this._fillBrush != null)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._fillBrush.Color; });
 
-			DashPatternGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashPattern; });
+			if (!_independentDashStyle)
+				DashPatternGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashPattern; });
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
+			// SkipFrequency should be the same for all sub plot styles
+			if (!_independentSkipFreq)
+			{
+				_skipFreq = 1;
+				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this._skipFreq = c; });
+			}
+
 			if (this.IsColorReceiver)
 				ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { this.Color = c; });
+
+			if (!_independentDashStyle)
+				DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern c) { this._linePen.DashPattern = c; });
+
+			if (!_independentSymbolSize)
+			{
+				_symbolSize = 0;
+				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolSize = size; });
+			}
+
+			// symbol size
+			if (!_independentSymbolSize)
+			{
+				this._symbolSize = 0;
+				SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolSize = size; });
+
+				// but if there is an symbol size evaluation function, then use this with higher priority.
+				_cachedSymbolSizeForIndexFunction = null;
+				VariableSymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, double> evalFunc) { _cachedSymbolSizeForIndexFunction = evalFunc; });
+			}
+			else
+			{
+				_cachedSymbolSizeForIndexFunction = null;
+			}
+
+			// Fill Area
 
 			if (this._fillArea && ColorLinkage.Independent != _fillColorLinkage)
 			{
@@ -2008,13 +2041,6 @@ out int lastIndex)
 					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { _fillBrush.Color = c; });
 				else if (ColorLinkage.PreserveAlpha == _fillColorLinkage)
 					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { _fillBrush.Color = c.NewWithAlphaValue(_fillBrush.Color.Color.A); });
-			}
-
-			DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern c) { this.LinePen.DashPattern = c; });
-
-			if (!SymbolSizeGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (double size) { this._symbolGap = size; }))
-			{
-				this._symbolGap = 0;
 			}
 		}
 

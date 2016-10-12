@@ -157,7 +157,7 @@ namespace Altaxo.Gui.Drawing
 
 			var _valueBinding = new Binding();
 			_valueBinding.Source = this;
-			_valueBinding.Path = new PropertyPath(_nameOfValueProp);
+			_valueBinding.Path = new PropertyPath(nameof(SelectedDashPattern));
 			_valueConverter = new CC(this);
 			_valueBinding.Converter = _valueConverter;
 			_valueBinding.ValidationRules.Add(new ValidationWithErrorString(_valueConverter.EhValidateText));
@@ -168,8 +168,6 @@ namespace Altaxo.Gui.Drawing
 
 		#region Dependency property
 
-		private const string _nameOfValueProp = "SelectedDashStyle";
-
 		public IDashPattern SelectedDashPattern
 		{
 			get { return (IDashPattern)GetValue(SelectedDashStyleProperty); }
@@ -177,7 +175,7 @@ namespace Altaxo.Gui.Drawing
 		}
 
 		public static readonly DependencyProperty SelectedDashStyleProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(IDashPattern), typeof(DashPatternComboBox),
+				DependencyProperty.Register(nameof(SelectedDashPattern), typeof(IDashPattern), typeof(DashPatternComboBox),
 				new FrameworkPropertyMetadata(new Solid(), OnSelectedDashStyleChanged, EhDashPatternCoerce));
 
 		private static object EhDashPatternCoerce(DependencyObject obj, object baseValue)

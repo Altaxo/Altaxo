@@ -74,7 +74,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="range">The plot range to use.</param>
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="fillDirection">Designates a bound to fill to.</param>
-		/// <param name="linePoints">The points that mark the line.</param>
 		/// <param name="linePlotStyle">The line plot style.</param>
 		void FillOneRange(
 			GraphicsPath gp,
@@ -82,7 +81,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			PlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
-			PointF[] linePoints,
+			bool connectCircular,
 			LinePlotStyle linePlotStyle);
 	}
 }

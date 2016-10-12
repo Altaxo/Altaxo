@@ -96,7 +96,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <param name="overriderange">The plot range to use.</param>
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="fillDirection">Designates a bound to fill to.</param>
-		/// <param name="linePoints">The points that mark the line.</param>
 		/// <param name="linePlotStyle">The line plot style.</param>
 		public override void FillOneRange(
 			GraphicsPath gp,
@@ -104,7 +103,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			PlotRange overriderange,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
-			PointF[] linePoints,
+			bool connectCircular,
 			LinePlotStyle linePlotStyle)
 		{
 		}

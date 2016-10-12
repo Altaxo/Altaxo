@@ -92,13 +92,14 @@
 
 		<!-- Filling -->
 
-		<CheckBox x:Name="_guiUseFill"  Grid.Row="20" Content="Fill area" Checked="EhUseFillChanged" Unchecked="EhUseFillChanged" />
-		<GroupBox Header="Color linkage:" Grid.Row="22">
+		<CheckBox x:Name="_guiUseFill"  Grid.Row="20" Content="Fill area with:" Checked="EhUseFillChanged" Unchecked="EhUseFillChanged" />
+		<axogcd:BrushComboBox x:Name="_guiFillBrush" Grid.Row="20" Grid.Column="2" SelectedBrushChanged="EhFillBrushChanged" />
+
+		<Label Grid.Row="22" Grid.Column="0"  Content="Fill direction:" />
+		<ComboBox x:Name="_guiFillDirection" Grid.Row="22" Grid.Column="2" SelectionChanged="EhFillDirectionChanged" />
+
+		<GroupBox Header="Color linkage:" Grid.Row="24" Grid.ColumnSpan="3">
 			<axogc:SingleChoiceRadioStackPanel x:Name="_guiFillColorLinkage" Orientation="Vertical" SelectionChanged="EhIndependentFillColorChanged" />
 		</GroupBox>
-		<Label Grid.Column="0" Grid.Row="24" Content="Fill brush:" />
-		<axogcd:BrushComboBox x:Name="_guiFillBrush" Grid.Column="1" Grid.Row="24" SelectedBrushChanged="EhFillBrushChanged" />
-		<Label Grid.Column="0" Grid.Row="26" Content="Fill direction:" />
-		<ComboBox x:Name="_guiFillDirection" Grid.Column="1" Grid.Row="268" SelectionChanged="EhFillDirectionChanged" />
 	</Grid>
 </UserControl>
