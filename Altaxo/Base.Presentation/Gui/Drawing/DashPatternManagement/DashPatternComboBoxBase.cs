@@ -31,7 +31,6 @@ using Altaxo.Graph;
 using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Gui.Common;
-using Altaxo.Gui.Common.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,56 +43,13 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
-	public partial class DashPatternComboBox : DashPatternComboBoxBase
+	/// <summary>
+	/// Only to go from a class with type parameters to a class without type parameter, because Xaml can not handle class with type parameters.
+	/// </summary>
+	public abstract class DashPatternComboBoxBase : Altaxo.Gui.Drawing.StyleListComboBoxBase<DashPatternListManager, DashPatternList, IDashPattern>
 	{
-		private DashPatternToItemNameConverter _itemToItemNameConverter;
-
-		#region Constructors
-
-		public DashPatternComboBox()
-			: base(DashPatternListManager.Instance)
+		public DashPatternComboBoxBase(DashPatternListManager manager) : base(manager)
 		{
-			UpdateTreeViewTreeNodes();
-
-			InitializeComponent();
-
-			_itemToItemNameConverter = new DashPatternToItemNameConverter(GuiComboBox);
-
-			UpdateComboBoxSourceSelection(SelectedItem);
-			UpdateTreeViewSelection();
-
-			var valueBinding = new Binding();
-			valueBinding.Source = this;
-			valueBinding.Path = new PropertyPath("SelectedItem");
-			valueBinding.Converter = _itemToItemNameConverter;
-			//valueBinding.ValidationRules.Add(new ValidationWithErrorString(_itemToItemNameConverter.EhValidateText));
-			GuiComboBox.SetBinding(ComboBox.TextProperty, valueBinding);
 		}
-
-		#endregion Constructors
-
-		#region Implementation of abstract base class members
-
-		protected override TreeView GuiTreeView { get { return _guiTreeView; } }
-
-		protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
-
-		protected override IEnumerable<object> ConvertComboBoxSourceItems(IEnumerable<object> source)
-		{
-			foreach (var item in source)
-			{
-				if (item is IDashPattern)
-					yield return new ImageComboBoxItem(_guiComboBox, item);
-				else
-					yield return item;
-			}
-		}
-
-		public override string GetDisplayName(IDashPattern item)
-		{
-			return (string)_itemToItemNameConverter.Convert(item, typeof(string), null, System.Globalization.CultureInfo.InvariantCulture);
-		}
-
-		#endregion Implementation of abstract base class members
 	}
 }

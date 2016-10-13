@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Drawing.D3D
 
 			if (null != CbCrossSection) InitializeCrossSectionCombobox();
 
-			if (null != CbDashPattern) CbDashPattern.SelectedDashPattern = _pen.DashPattern;
+			if (null != CbDashPattern) CbDashPattern.SelectedItem = _pen.DashPattern;
 
 			if (null != CbLineStartCap) CbLineStartCap.SelectedLineCap = _pen.LineStartCap;
 			if (null != CbLineStartCapAbsSize) CbLineStartCapAbsSize.SelectedQuantityAsValueInPoints = null != _pen.LineStartCap ? _pen.LineStartCap.MinimumAbsoluteSizePt : 0;
@@ -309,7 +309,7 @@ namespace Altaxo.Gui.Drawing.D3D
 
 				_cbDashPattern = value;
 				if (_pen != null && _cbDashPattern != null)
-					_cbDashPattern.SelectedDashPattern = _pen.DashPattern;
+					_cbDashPattern.SelectedItem = _pen.DashPattern;
 
 				if (_cbDashPattern != null)
 					dpd.AddValueChanged(_cbDashPattern, EhDashPattern_SelectionChangeCommitted);
@@ -321,7 +321,7 @@ namespace Altaxo.Gui.Drawing.D3D
 			if (_pen != null)
 			{
 				var oldPen = _pen;
-				_pen = _pen.WithDashPattern(_cbDashPattern.SelectedDashPattern);
+				_pen = _pen.WithDashPattern(_cbDashPattern.SelectedItem);
 				if (!object.ReferenceEquals(_pen, oldPen))
 					OnPenChanged();
 			}

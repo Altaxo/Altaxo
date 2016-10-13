@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:axog="clr-namespace:Altaxo.Graph;assembly=AltaxoBase"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:base="clr-namespace:Altaxo.Gui.Drawing"
 						 xmlns:local="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
              mc:Ignorable="d">
@@ -139,13 +140,10 @@
 		</Grid.ColumnDefinitions>
 		<Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Stroke="Gray" StrokeThickness="0.5" Fill="White" RadiusX="2" RadiusY="2" />
 		<TextBlock Grid.Row="0" Grid.Column="0" FontSize="8" FontStyle="Italic" Margin="4,2,4,2" Text="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=local:DashPatternComboBox}, Converter={StaticResource ItemToListNameConverter}}"></TextBlock>
-		<ComboBox x:Name="_guiComboBox"
+		<local:InnerDashPatternComboBox x:Name="_guiComboBox"
 							Grid.Row="1" Grid.Column="0"
-							IsEditable="True"
-							ItemTemplate="{StaticResource CombinedTemplate}"
-							DropDownOpened="EhComboBox_DropDownOpened"
-							DropDownClosed="EhComboBox_DropDownClosed">
-		</ComboBox>
+							IsEditable="True">
+		</local:InnerDashPatternComboBox>
 		<ToggleButton Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" IsChecked="{Binding IsTreeDropDownOpen, RelativeSource={RelativeSource AncestorType=local:DashPatternComboBox}, Mode=TwoWay}" Content="{StaticResource ColorGroupButtonContent}" />
 		<Popup x:Name="_treePopup"
 					 AllowsTransparency="true"

@@ -170,8 +170,8 @@ namespace Altaxo.Gui.Drawing
 
 		static StyleListComboBoxBase()
 		{
-			SelectedItemProperty = DependencyProperty.Register("SelectedItem", typeof(TItem), typeof(StyleListComboBoxBase<TManager, TList, TItem>), new FrameworkPropertyMetadata(null, EhSelectedItemChanged, EhSelectedItemCoerce));
-			IsTreeDropDownOpenProperty = DependencyProperty.Register("IsTreeDropDownOpen", typeof(bool), typeof(StyleListComboBoxBase<TManager, TList, TItem>), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(EhIsTreeDropDownOpenChanged)));
+			SelectedItemProperty = DependencyProperty.Register(nameof(SelectedItem), typeof(TItem), typeof(StyleListComboBoxBase<TManager, TList, TItem>), new FrameworkPropertyMetadata(null, EhSelectedItemChanged, EhSelectedItemCoerce));
+			IsTreeDropDownOpenProperty = DependencyProperty.Register(nameof(IsTreeDropDownOpen), typeof(bool), typeof(StyleListComboBoxBase<TManager, TList, TItem>), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(EhIsTreeDropDownOpenChanged)));
 		}
 
 		protected StyleListComboBoxBase(TManager manager)
@@ -512,11 +512,20 @@ namespace Altaxo.Gui.Drawing
 					else
 						source = source.Concat(_comboBoxSeparator2).Concat(known);
 				}
-				GuiComboBox.ItemsSource = source;
+				GuiComboBox.ItemsSource = ConvertComboBoxSourceItems(source);
 				return true;
 			}
-
 			return false;
+		}
+
+		/// <summary>
+		/// Function that converts the items intended to set the ItemsSource of the ComboBox to something else.
+		/// </summary>
+		/// <param name="source">The source.</param>
+		/// <returns></returns>
+		protected virtual IEnumerable<object> ConvertComboBoxSourceItems(IEnumerable<object> source)
+		{
+			return source;
 		}
 
 		protected List<object> GetFilteredList(IList<TItem> originalList, string filterString)

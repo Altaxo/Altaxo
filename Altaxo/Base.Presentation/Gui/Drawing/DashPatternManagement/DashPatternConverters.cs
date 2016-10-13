@@ -24,11 +24,14 @@
 
 using Altaxo.Drawing;
 using Altaxo.Drawing.DashPatternManagement;
+using Altaxo.Drawing.DashPatterns;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
@@ -154,7 +157,44 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 	{
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			return null;
+			const double height = 1;
+			const double width = 2;
+			const double lineWidth = height / 5;
+
+			var val = (IDashPattern)value;
+
+			DashStyle dashStyle;
+
+			if (val is Solid)
+				dashStyle = DashStyles.Solid;
+			else if (val is Dash)
+				dashStyle = DashStyles.Dash;
+			else if (val is Dot)
+				dashStyle = DashStyles.Dot;
+			else if (val is DashDot)
+				dashStyle = DashStyles.DashDot;
+			else if (val is DashDotDot)
+				dashStyle = DashStyles.DashDotDot;
+			else
+				dashStyle = new DashStyle(val, 0);
+
+			// draws a transparent outline to fix the borders
+			var drawingGroup = new DrawingGroup();
+
+			var geometryDrawing = new GeometryDrawing();
+			geometryDrawing.Geometry = new RectangleGeometry(new Rect(0, 0, width, height));
+			geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
+			drawingGroup.Children.Add(geometryDrawing);
+
+			geometryDrawing = new GeometryDrawing() { Geometry = new LineGeometry(new Point(0, height / 2), new Point(width, height / 2)) };
+			geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth) { DashStyle = dashStyle };
+			drawingGroup.Children.Add(geometryDrawing);
+
+			var geometryImage = new DrawingImage(drawingGroup);
+
+			// Freeze the DrawingImage for performance benefits.
+			geometryImage.Freeze();
+			return geometryImage;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

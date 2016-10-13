@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Drawing.D3D"
-						 xmlns:axogdp="clr-namespace:Altaxo.Gui.Drawing"
+						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<LinearGradientBrush x:Key="HorzSeparatorBrush" StartPoint="0,0" EndPoint="0,1">
@@ -43,7 +43,7 @@
 		<Label  Grid.Column="0" Grid.Row="0">Pen brush:</Label>
 		<axog3m:MaterialComboBox Grid.Column="1" Grid.Row="0" x:Name="_cbColor" />
 		<Label  Grid.Column="0" Grid.Row="2">Style:</Label>
-		<axogdp:DashPatternComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbLineType" />
+		<axogdd:DashPatternComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbLineType" />
 		<Label  Grid.Column="0" Grid.Row="4">Thickness:</Label>
 		<axogcd:LineThicknessComboBox Grid.Column="1" Grid.Row="4" x:Name="_cbThickness" />
 	</Grid>

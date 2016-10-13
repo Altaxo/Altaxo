@@ -731,13 +731,16 @@ namespace Altaxo.Graph.Gdi
 				else
 					s._compoundArray = new float[0];
 
-				var dashPattern = (IDashPattern)info.GetValue("DashPattern", null);
-				if (!Drawing.DashPatterns.Solid.Instance.Equals(dashPattern))
+				if (info.CurrentElementName == "DashPattern")
 				{
-					if (0 != (cp & PenX.Configured.DashCap))
-						s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
-					else
-						s._dashCap = DashCap.Flat;
+					var dashPattern = (IDashPattern)info.GetValue("DashPattern", null);
+					if (!Drawing.DashPatterns.Solid.Instance.Equals(dashPattern))
+					{
+						if (0 != (cp & PenX.Configured.DashCap))
+							s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
+						else
+							s._dashCap = DashCap.Flat;
+					}
 				}
 
 				s.SetCachedDashProperties();
@@ -1327,6 +1330,7 @@ namespace Altaxo.Graph.Gdi
 
 				if (!object.ReferenceEquals(_dashPattern, value))
 				{
+					_dashPattern = value;
 					SetCachedDashProperties();
 					_SetPenVariable(null);
 					EhSelfChanged(EventArgs.Empty); // Fire the Changed event

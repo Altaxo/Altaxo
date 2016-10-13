@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axogd="clr-namespace:Altaxo.Gui.Drawing"
+						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
              mc:Ignorable="d">
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -25,7 +25,7 @@
 		<Label Grid.Column="2" HorizontalAlignment="Right">Pen brush:</Label>
 		<axogcd:BrushComboBox x:Name="_cbBrush" Grid.Column="3" IsEnabled="{Binding ElementName=_chkDoShowThis, Path=IsChecked}" />
 		<Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">Pen style:</Label>
-		<axogd:DashPatternComboBox x:Name="_cbDashStyle" Grid.Column="1" Grid.Row="2"  IsEnabled="{Binding ElementName=_chkDoShowThis, Path=IsChecked}" />
+		<axogdd:DashPatternComboBox x:Name="_cbDashStyle" Grid.Column="1" Grid.Row="2"  IsEnabled="{Binding ElementName=_chkDoShowThis, Path=IsChecked}" />
 		<Label Grid.Column="2" Grid.Row="2" HorizontalAlignment="Right">Thickness:</Label>
 		<axogcd:LineThicknessComboBox x:Name="_cbThickness" Grid.Column="3" Grid.Row="2" IsEnabled="{Binding ElementName=_chkDoShowThis, Path=IsChecked}" />
 	</Grid>

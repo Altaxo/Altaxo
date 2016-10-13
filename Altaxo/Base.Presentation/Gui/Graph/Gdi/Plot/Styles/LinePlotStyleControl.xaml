@@ -77,7 +77,7 @@
 		<CheckBox x:Name="_guiIndependentLineColor" Grid.Column="0" Grid.Row="8" Content="Indep. color:" Checked="EhIndependentLineColorChanged" Unchecked="EhIndependentLineColorChanged" />
 		<axogcd:BrushComboBox x:Name="_guiLineBrush" Grid.Column="2" Grid.Row="8" />
 		<CheckBox x:Name="_guiIndependentDashStyle" Grid.Column="0" Grid.Row="10" Content="Indep. dash style:" Checked="EhIndependentDashStyleChanged" Unchecked="EhIndependentDashStyleChanged" />
-		<axogdp:DashPatternComboBox x:Name="_guiLineDashStyle" Grid.Column="2" Grid.Row="10" />
+		<axogdd:DashPatternComboBox x:Name="_guiLineDashStyle" Grid.Column="2" Grid.Row="10" />
 		<Label Grid.Column="0" Grid.Row="12" Content="Thickness:" />
 		<axogcd:LineThicknessComboBox x:Name="_guiLineThickness1" Grid.Column="2" Grid.Row="12" />
 

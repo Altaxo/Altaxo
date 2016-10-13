@@ -35,12 +35,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace Altaxo.Gui.Drawing
+namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
 	/// <summary>
-	/// Interaction logic for DashPatternComboBox.xaml
+	/// InnerDashPatternComboBox manages dashpatterns, but without the list manager.
 	/// </summary>
-	public partial class DashPatternComboBox : EditableImageComboBox
+	public partial class InnerDashPatternComboBox : EditableImageComboBox
 	{
 		#region Converter
 
@@ -140,7 +140,7 @@ namespace Altaxo.Gui.Drawing
 		private static Dictionary<string, IDashPattern> _knownStylesDict = new Dictionary<string, IDashPattern>();
 		private static IDashPattern[] _knownStylesList;
 
-		static DashPatternComboBox()
+		static InnerDashPatternComboBox()
 		{
 			_knownStylesList = new IDashPattern[] { new Solid(), new Dash(), new Dot(), new DashDot(), new DashDotDot() };
 
@@ -148,34 +148,33 @@ namespace Altaxo.Gui.Drawing
 				_knownStylesDict.Add(e.GetType().Name, e);
 		}
 
-		public DashPatternComboBox()
+		public InnerDashPatternComboBox()
 		{
 			InitializeComponent();
 
-			foreach (var e in _knownStylesList)
-				Items.Add(new ImageComboBoxItem(this, e));
-
 			var _valueBinding = new Binding();
 			_valueBinding.Source = this;
-			_valueBinding.Path = new PropertyPath(nameof(SelectedDashPattern));
+			_valueBinding.Path = new PropertyPath(_nameOfValueProp);
 			_valueConverter = new CC(this);
 			_valueBinding.Converter = _valueConverter;
 			_valueBinding.ValidationRules.Add(new ValidationWithErrorString(_valueConverter.EhValidateText));
 			this.SetBinding(ComboBox.TextProperty, _valueBinding);
 
-			_img.Source = GetImage(SelectedDashPattern);
+			_img.Source = GetImage(SelectedDashStyle);
 		}
 
 		#region Dependency property
 
-		public IDashPattern SelectedDashPattern
+		private const string _nameOfValueProp = "SelectedDashStyle";
+
+		public IDashPattern SelectedDashStyle
 		{
 			get { return (IDashPattern)GetValue(SelectedDashStyleProperty); }
 			set { SetValue(SelectedDashStyleProperty, value); }
 		}
 
 		public static readonly DependencyProperty SelectedDashStyleProperty =
-				DependencyProperty.Register(nameof(SelectedDashPattern), typeof(IDashPattern), typeof(DashPatternComboBox),
+				DependencyProperty.Register(_nameOfValueProp, typeof(IDashPattern), typeof(InnerDashPatternComboBox),
 				new FrameworkPropertyMetadata(new Solid(), OnSelectedDashStyleChanged, EhDashPatternCoerce));
 
 		private static object EhDashPatternCoerce(DependencyObject obj, object baseValue)
@@ -188,7 +187,7 @@ namespace Altaxo.Gui.Drawing
 
 		private static void OnSelectedDashStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((DashPatternComboBox)obj).EhSelectedDashStyleChanged(obj, args);
+			((InnerDashPatternComboBox)obj).EhSelectedDashStyleChanged(obj, args);
 		}
 
 		#endregion Dependency property

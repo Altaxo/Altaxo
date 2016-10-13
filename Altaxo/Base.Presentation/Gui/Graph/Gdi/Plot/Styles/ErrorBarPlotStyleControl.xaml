@@ -10,7 +10,7 @@
 						  xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.D3D"
 						  xmlns:axogddl="clr-namespace:Altaxo.Gui.Drawing.D3D.LineCaps"
 						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Drawing.D3D"
-						 xmlns:axogdp="clr-namespace:Altaxo.Gui.Drawing"
+						 xmlns:axogddpm="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
              mc:Ignorable="d"
 						 Grid.IsSharedSizeScope="True">
 	<UserControl.Resources>
@@ -119,7 +119,7 @@
 				<axogcd:BrushComboBox x:Name="_guiPenColor" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4" />
 
 				<CheckBox x:Name="_chkIndependentDashPattern" Grid.Row="2" Grid.Column="0"  Content="Independent dash pattern :" Checked="EhIndependentDashPatternChanged" Unchecked="EhIndependentDashPatternChanged" />
-				<axogdp:DashPatternComboBox x:Name="_guiDashPattern" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" />
+				<axogddpm:DashPatternComboBox x:Name="_guiDashPattern" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" />
 
 				<CheckBox x:Name="_guiIndependentSymbolSize" Content="Independent symbol size :"  Grid.Row="4" Grid.Column="0" />
 				<axogcd:LineCapSizeComboBox x:Name="_guiSymbolSize" Grid.Row="4" Grid.Column="2" />

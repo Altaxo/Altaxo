@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axogd="clr-namespace:Altaxo.Gui.Drawing"
+						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -53,7 +53,7 @@
 		<axogcd:LineThicknessComboBox x:Name="_guiFramePenWidth" Grid.Column="1" Grid.Row="4" />
 
 		<Label Content="Frame line style:" Grid.Column="0" Grid.Row="6" />
-		<axogd:DashPatternComboBox x:Name="_guiFrameDashStyle" Grid.Column="1" Grid.Row="6" />
+		<axogdd:DashPatternComboBox x:Name="_guiFrameDashStyle" Grid.Column="1" Grid.Row="6" />
 
 		<Label Grid.Column="0" Grid.Row="8" Content="Fill to previous:" />
 		<CheckBox x:Name="_chkFillPrevious" Grid.Column="1" Grid.Row="8" />

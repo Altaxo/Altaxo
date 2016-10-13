@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogd="clr-namespace:Altaxo.Gui.Drawing"
+						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
 						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
              mc:Ignorable="d">
 	<Grid>
@@ -39,7 +39,7 @@
 		<axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="0" x:Name="_cbThickness" />
 
 		<Label Grid.Column="0" Grid.Row="2">Style:</Label>
-		<axogd:DashPatternComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbDashStyle" />
+		<axogdd:DashPatternComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbDashStyle" />
 		<Label Grid.Column="2" Grid.Row="2">Dash cap:</Label>
 		<axogcd:DashCapComboBox Grid.Column="3" Grid.Row="2" x:Name="_cbDashCap" />
 
