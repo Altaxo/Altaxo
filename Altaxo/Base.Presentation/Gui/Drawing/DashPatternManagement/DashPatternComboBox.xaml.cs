@@ -78,6 +78,24 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 
 		protected override ComboBox GuiComboBox { get { return _guiComboBox; } }
 
+		protected override IDashPattern GuiComboBoxSelectedValue
+		{
+			get
+			{
+				return _guiComboBox.SelectedDashStyle;
+			}
+
+			set
+			{
+				_guiComboBox.SelectedDashStyle = value;
+			}
+		}
+
+		/// <summary>
+		/// Function that converts the <see cref="IDashPattern"/> items to <see cref="ImageComboBoxItem"/> items (the separators are not converted).
+		/// </summary>
+		/// <param name="source">The source items.</param>
+		/// <returns>Mixture of <see cref="ImageComboBoxItem"/> and separators.</returns>
 		protected override IEnumerable<object> ConvertComboBoxSourceItems(IEnumerable<object> source)
 		{
 			foreach (var item in source)
@@ -95,5 +113,20 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 		}
 
 		#endregion Implementation of abstract base class members
+
+		#region Tree View
+
+		/// <summary>
+		/// Provides public access to the <see cref="DataTemplateSelector"/> that selected the data template for different nodes of the TreeView.
+		/// </summary>
+		public DataTemplateSelector TreeViewItemTemplateSelector
+		{
+			get
+			{
+				return new TreeViewDataTemplateSelector(this);
+			}
+		}
+
+		#endregion Tree View
 	}
 }

@@ -221,7 +221,7 @@ namespace Altaxo.Gui.Drawing
 				StoreAsLastUsedItem(_lastLocalUsedItems, newItem);
 			}
 
-			if (!object.ReferenceEquals(newItem, GuiComboBox.SelectedValue))
+			if (!object.ReferenceEquals(newItem, GuiComboBoxSelectedValue))
 				this.UpdateComboBoxSourceSelection(newItem);
 
 			if (!object.ReferenceEquals(_styleListManager.GetParentList(oldItem), _styleListManager.GetParentList(newItem)) && !object.ReferenceEquals(_styleListManager.GetParentList(newItem), GuiTreeView.SelectedValue))
@@ -467,13 +467,13 @@ namespace Altaxo.Gui.Drawing
 
 		protected void UpdateComboBoxSourceSelection(TItem item)
 		{
-			if (null != item && object.ReferenceEquals(item, GuiComboBox.SelectedValue))
+			if (null != item && object.ReferenceEquals(item, GuiComboBoxSelectedValue))
 				return;
 
 			_filterString = string.Empty;
 			FillComboBoxWithFilteredItems(_filterString, false);
-			GuiComboBox.SelectedValue = default(TItem); // make sure that combobox really changes the selected item, because it can not rely on Equals
-			GuiComboBox.SelectedValue = item;
+			GuiComboBoxSelectedValue = default(TItem); // make sure that combobox really changes the selected item, because it can not rely on Equals
+			GuiComboBoxSelectedValue = item;
 		}
 
 		private List<object> _comboBoxSeparator1 = new List<object> { new Separator() { Name = "ThisIsASeparatorForTheComboBox", Tag = "Last used items" } };
@@ -528,6 +528,27 @@ namespace Altaxo.Gui.Drawing
 			return source;
 		}
 
+		/// <summary>g
+		/// Gets or sets the selected value of the <see cref="GuiComboBox"/>.
+		/// If using an implementation a <see cref="ComboBox"/> that get/sets the items
+		/// via another property that the SelectedValue property, you can override this function to get/set
+		/// the selected values of this <see cref="ComboBox"/>.
+		/// </summary>
+		/// <value>
+		/// The selected value of the <see cref="GuiComboBox"/>.
+		/// </value>
+		protected virtual TItem GuiComboBoxSelectedValue
+		{
+			get
+			{
+				return (TItem)GuiComboBox.SelectedValue;
+			}
+			set
+			{
+				GuiComboBox.SelectedValue = value;
+			}
+		}
+
 		protected List<object> GetFilteredList(IList<TItem> originalList, string filterString)
 		{
 			var result = new List<object>();
@@ -548,16 +569,16 @@ namespace Altaxo.Gui.Drawing
 		{
 			if (_filterString.Length > 0)
 			{
-				var selItem = GuiComboBox.SelectedValue;
+				var selItem = GuiComboBoxSelectedValue;
 				_filterString = string.Empty;
 				FillComboBoxWithFilteredItems(_filterString, false);
-				GuiComboBox.SelectedValue = selItem;
+				GuiComboBoxSelectedValue = selItem;
 			}
 
-			if (GuiComboBox.SelectedValue == null)
-				GuiComboBox.SelectedValue = SelectedItem;
+			if (GuiComboBoxSelectedValue == null)
+				GuiComboBoxSelectedValue = SelectedItem;
 			else
-				this.SelectedItem = (TItem)GuiComboBox.SelectedValue;
+				this.SelectedItem = GuiComboBoxSelectedValue;
 		}
 
 		#endregion ComboBox event handling

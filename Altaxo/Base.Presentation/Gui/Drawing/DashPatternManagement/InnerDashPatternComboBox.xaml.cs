@@ -201,6 +201,19 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 			}
 		}
 
+		protected override void OnSelectionChanged(SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count == 1)
+			{
+				var item = e.AddedItems[0] as ImageComboBoxItem;
+				if (null != item)
+					SelectedDashStyle = item.Value as IDashPattern;
+				e.Handled = true;
+			}
+
+			base.OnSelectionChanged(e);
+		}
+
 		public override ImageSource GetItemImage(object item)
 		{
 			var val = (IDashPattern)item;
