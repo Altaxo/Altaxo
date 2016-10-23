@@ -50,13 +50,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// Relative gap between the bars belonging to the same x-value (relative to the width of a single bar).
 		/// A value of 0.5 means that the gap has half of the width of one bar.
 		/// </summary>
-		private double _relInnerGapWidth = 0.5;
+		private double _relInnerGapX = 0.5;
 
 		/// <summary>
 		/// Relative gap between the bars between two consecutive x-values (relative to the width of a single bar).
 		/// A value of 1 means that the gap has the same width than one bar.
 		/// </summary>
-		private double _relOuterGapWidth = 1.0;
+		private double _relOuterGapX = 1.0;
 
 		/// <summary>
 		/// Indicates whether the fill color is dependent (can be set by the ColorGroupStyle) or not.
@@ -101,12 +101,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Actual width of the item in logical coordinates.
 		/// </summary>
-		private double _width;
+		private double _xSizeLogical;
 
 		/// <summary>
 		/// Actual position of the item in logical coordinates relative to the logical x coordinate of the item's point.
 		/// </summary>
-		private double _position;
+		private double _xOffsetLogical;
 
 		/// <summary>If this function is set, the color is determined by calling this function on the index into the data.</summary>
 		[field: NonSerialized]
@@ -120,8 +120,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				BarGraphPlotStyle s = (BarGraphPlotStyle)obj;
-				info.AddValue("InnerGapWidth", s._relInnerGapWidth);
-				info.AddValue("OuterGapWidth", s._relOuterGapWidth);
+				info.AddValue("InnerGapWidth", s._relInnerGapX);
+				info.AddValue("OuterGapWidth", s._relOuterGapX);
 				info.AddValue("IndependentColor", s._independentFillColor);
 				info.AddValue("FillBrush", s._fillBrush);
 				info.AddValue("FramePen", s._framePen);
@@ -129,16 +129,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddValue("BaseValue", (object)s._baseValue);
 				info.AddValue("StartAtPrevious", s._startAtPreviousItem);
 				info.AddValue("PreviousItemGap", s._previousItemYGap);
-				info.AddValue("ActualWidth", s._width);
-				info.AddValue("ActaulPosition", s._position);
+				info.AddValue("ActualWidth", s._xSizeLogical);
+				info.AddValue("ActaulPosition", s._xOffsetLogical);
 			}
 
 			protected virtual BarGraphPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				BarGraphPlotStyle s = null != o ? (BarGraphPlotStyle)o : new BarGraphPlotStyle(info);
 
-				s._relInnerGapWidth = info.GetDouble("InnerGapWidth");
-				s._relOuterGapWidth = info.GetDouble("OuterGapWidth");
+				s._relInnerGapX = info.GetDouble("InnerGapWidth");
+				s._relOuterGapX = info.GetDouble("OuterGapWidth");
 				s._independentFillColor = info.GetBoolean("IndependentColor");
 				s.FillBrush = (BrushX)info.GetValue("FillBrush", s);
 				s.FramePen = (PenX)info.GetValue("FramePen", s);
@@ -146,8 +146,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._baseValue = (Altaxo.Data.AltaxoVariant)info.GetValue("BaseValue", s);
 				s._startAtPreviousItem = info.GetBoolean("StartAtPrevious");
 				s._previousItemYGap = info.GetDouble("PreviousItemGap");
-				s._width = info.GetDouble("ActualWidth");
-				s._position = info.GetDouble("ActualPosition");
+				s._xSizeLogical = info.GetDouble("ActualWidth");
+				s._xOffsetLogical = info.GetDouble("ActualPosition");
 
 				return s;
 			}
@@ -170,8 +170,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				BarGraphPlotStyle s = (BarGraphPlotStyle)obj;
-				info.AddValue("InnerGapWidth", s._relInnerGapWidth);
-				info.AddValue("OuterGapWidth", s._relOuterGapWidth);
+				info.AddValue("InnerGapWidth", s._relInnerGapX);
+				info.AddValue("OuterGapWidth", s._relOuterGapX);
 				info.AddValue("IndependentFillColor", s._independentFillColor);
 				info.AddValue("FillBrush", s._fillBrush);
 				info.AddValue("IndependentFrameColor", s._independentFrameColor);
@@ -180,16 +180,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddValue("BaseValue", (object)s._baseValue);
 				info.AddValue("StartAtPrevious", s._startAtPreviousItem);
 				info.AddValue("PreviousItemGap", s._previousItemYGap);
-				info.AddValue("ActualWidth", s._width);
-				info.AddValue("ActaulPosition", s._position);
+				info.AddValue("ActualWidth", s._xSizeLogical);
+				info.AddValue("ActaulPosition", s._xOffsetLogical);
 			}
 
 			protected virtual BarGraphPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				BarGraphPlotStyle s = null != o ? (BarGraphPlotStyle)o : new BarGraphPlotStyle(info);
 
-				s._relInnerGapWidth = info.GetDouble("InnerGapWidth");
-				s._relOuterGapWidth = info.GetDouble("OuterGapWidth");
+				s._relInnerGapX = info.GetDouble("InnerGapWidth");
+				s._relOuterGapX = info.GetDouble("OuterGapWidth");
 				s._independentFillColor = info.GetBoolean("IndependentFillColor");
 				s.FillBrush = (BrushX)info.GetValue("FillBrush", s);
 				s._independentFrameColor = info.GetBoolean("IndependentFrameColor");
@@ -198,8 +198,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._baseValue = (Altaxo.Data.AltaxoVariant)info.GetValue("BaseValue", s);
 				s._startAtPreviousItem = info.GetBoolean("StartAtPrevious");
 				s._previousItemYGap = info.GetDouble("PreviousItemGap");
-				s._width = info.GetDouble("ActualWidth");
-				s._position = info.GetDouble("ActualPosition");
+				s._xSizeLogical = info.GetDouble("ActualWidth");
+				s._xOffsetLogical = info.GetDouble("ActualPosition");
 
 				return s;
 			}
@@ -222,10 +222,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var from = obj as BarGraphPlotStyle;
 			if (null != from)
 			{
-				this._relInnerGapWidth = from._relInnerGapWidth;
-				this._relOuterGapWidth = from._relOuterGapWidth;
-				this._width = from._width;
-				this._position = from._position;
+				this._relInnerGapX = from._relInnerGapX;
+				this._relOuterGapX = from._relOuterGapX;
+				this._xSizeLogical = from._xSizeLogical;
+				this._xOffsetLogical = from._xOffsetLogical;
 				this._independentFillColor = from._independentFillColor;
 				ChildCloneToMember(ref _fillBrush, from._fillBrush);
 				this._independentFrameColor = from._independentFrameColor;
@@ -345,17 +345,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public double InnerGap
 		{
-			get { return _relInnerGapWidth; }
-			set { _relInnerGapWidth = value; }
+			get { return _relInnerGapX; }
+			set { _relInnerGapX = value; }
 		}
 
 		public double OuterGap
 		{
-			get { return _relOuterGapWidth; }
+			get { return _relOuterGapX; }
 			set
 			{
-				var oldValue = _relOuterGapWidth;
-				_relOuterGapWidth = value;
+				var oldValue = _relOuterGapX;
+				_relOuterGapX = value;
 				if (value != oldValue)
 					EhSelfChanged(EventArgs.Empty);
 			}
@@ -428,23 +428,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			if (null != pdata)
 			{
-				double minLogical = double.MaxValue;
-				double maxLogical = double.MinValue;
+				double minLogicalX = double.MaxValue;
+				double maxLogicalX = double.MinValue;
 				foreach (int originalRowIndex in pdata.RangeList.OriginalRowIndices())
 				{
-					double logicalX = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalRowIndex));
 					numberOfItems++;
-					if (logicalX < minLogical)
-						minLogical = logicalX;
-					if (logicalX > maxLogical)
-						maxLogical = logicalX;
+
+					double logicalX = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalRowIndex));
+					if (logicalX < minLogicalX)
+						minLogicalX = logicalX;
+					if (logicalX > maxLogicalX)
+						maxLogicalX = logicalX;
 				}
 
-				BarWidthPositionGroupStyle.IntendToApply(externalGroups, localGroups, numberOfItems, minLogical, maxLogical);
+				BarWidthPositionGroupStyle.IntendToApply(externalGroups, localGroups, numberOfItems, minLogicalX, maxLogicalX);
 			}
 			BarWidthPositionGroupStyle bwp = PlotGroupStyle.GetStyleToInitialize<BarWidthPositionGroupStyle>(externalGroups, localGroups);
 			if (null != bwp)
-				bwp.Initialize(_relInnerGapWidth, _relOuterGapWidth);
+				bwp.Initialize(_relInnerGapX, _relOuterGapX);
 
 			if (!_independentFillColor && null != _fillBrush)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._fillBrush.Color; });
@@ -458,7 +459,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			BarWidthPositionGroupStyle bwp = PlotGroupStyle.GetStyleToApply<BarWidthPositionGroupStyle>(externalGroups, localGroups);
 			if (null != bwp)
-				bwp.Apply(out _relInnerGapWidth, out _relOuterGapWidth, out _width, out _position);
+				bwp.Apply(out _relInnerGapX, out _relOuterGapX, out _xSizeLogical, out _xOffsetLogical);
 
 			if (!_independentFillColor)
 			{
@@ -518,8 +519,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				j++;
 
 				double xcn = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalRowIndex));
-				double xln = xcn + _position;
-				double xrn = xln + _width;
+				double xln = xcn + _xOffsetLogical;
+				double xrn = xln + _xSizeLogical;
 
 				double ycn = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(originalRowIndex));
 				double ynbase = globalBaseValue;
