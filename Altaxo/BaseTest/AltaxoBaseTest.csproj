@@ -164,6 +164,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\CS\G2DCartesicCoordinateSystem_Test.cs" />
+    <Compile Include="Graph\Gdi\Plot\Styles\ScatterSymbols\TestSquare.cs" />
     <Compile Include="Graph\Graph3D\Camera\TestPerspectiveCamera.cs" />
     <Compile Include="Graph\Scales\Rescaling\LinearScaleRescaleConditions_Test.cs" />
     <Compile Include="Graph\Scales\TickSpacing\LinearTickSpacing_Test.cs" />

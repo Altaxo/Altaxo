@@ -293,7 +293,12 @@
     <Compile Include="Geometry\VectorD2D.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Drawing\DashPatternManagement\DashPatternListBag.cs" />
+    <Compile Include="Graph\Gdi\Plot\Groups\ScatterSymbolGroupStyle.cs" />
+    <Compile Include="Graph\Gdi\Plot\Groups\ScatterSymbolList.cs" />
+    <Compile Include="Graph\Gdi\Plot\Groups\ScatterSymbolListBag.cs" />
+    <Compile Include="Graph\Gdi\Plot\Groups\ScatterSymbolListManager.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\ILineConnectionStyle.cs" />
+    <Compile Include="Graph\Gdi\Plot\Styles\IScatterSymbol.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\LineConnectionStyles\LineConnectionStyleBase.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\LineConnectionStyles\BezierConnection.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\LineConnectionStyles\StepConnectionBase.cs" />
@@ -306,6 +311,8 @@
     <Compile Include="Graph\Gdi\Plot\Styles\LineConnectionStyles\Segment2Connection.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\LineConnectionStyles\StraightConnection.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\LineConnectionStyles\NoConnection.cs" />
+    <Compile Include="Graph\Gdi\Plot\Styles\ScatterPlotStyleNew.cs" />
+    <Compile Include="Graph\Gdi\Plot\Styles\ScatterSymbols\Square.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\VectorCartesicPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\AbsoluteStackTransform.cs" />
     <Compile Include="Graph\Graph3D\Plot\Groups\RelativeStackTransform.cs" />
