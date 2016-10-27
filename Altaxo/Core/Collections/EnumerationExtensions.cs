@@ -46,6 +46,14 @@ namespace Altaxo.Collections
 			}
 		}
 
+		public static T WithFlag<T>(this System.Enum type, T flag, bool value)
+		{
+			if (value)
+				return WithSetFlag(type, flag);
+			else
+				return WithClearedFlag(type, flag);
+		}
+
 		public static T WithSetFlag<T>(this System.Enum type, T value)
 		{
 			try

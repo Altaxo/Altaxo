@@ -23,43 +23,59 @@
 #endregion Copyright
 
 using Altaxo.Drawing;
-using Altaxo.Graph.Gdi.Plot.Styles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Gdi.Plot.Groups
+namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
-	public class ScatterSymbolListBag : StyleListBag<ScatterSymbolList, IScatterSymbol>
+	public class BackslashInset : InsetBase
 	{
-		public ScatterSymbolListBag(IEnumerable<ScatterSymbolList> lists)
-			: base(lists)
-		{
-		}
+		private const double Sqrt05 = 0.707106781186547524400844;
 
-		protected ScatterSymbolListBag(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
-			: base(info)
-		{
-		}
+		#region Serialization
 
 		/// <summary>
-		/// 2016-08-22 Initial version
+		/// 2016-10-27 initial version.
 		/// </summary>
-		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterSymbolListBag), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BackslashInset), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (ScatterSymbolListBag)obj;
-				s.Serialize(info);
+				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				return new ScatterSymbolListBag(info);
+				var s = (BackslashInset)o ?? new BackslashInset();
+				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
+				return s;
 			}
+		}
+
+		#endregion Serialization
+
+		private ClipperLib.IntPoint GetPoint(double w, double h)
+		{
+			return new ClipperLib.IntPoint((int)(Sqrt05 * (w + h) * ClipperScalingDouble), (int)(Sqrt05 * (h - w) * ClipperScalingDouble));
+		}
+
+		public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
+		{
+			var w = relativeWidth;
+			var h = 1;
+
+			var list = new List<ClipperLib.IntPoint>(4)
+				{
+				GetPoint(-h, -w),
+				GetPoint(h, -w),
+				GetPoint(h, w),
+				GetPoint(-h, w)
+			};
+
+			return new List<List<ClipperLib.IntPoint>>(1) { list };
 		}
 	}
 }

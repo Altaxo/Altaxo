@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -38,24 +36,42 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	using Drawing.ColorManagement;
 	using Graph.Plot.Data;
 	using Graph.Plot.Groups;
+	using Graph2D.Plot.Groups;
+	using Graph2D.Plot.Styles;
+	using Graph2D.Plot.Styles.ScatterSymbols;
 	using Plot.Data;
 	using Plot.Groups;
-	using ScatterSymbols;
 
 	public class ScatterPlotStyleNew
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
 		IG2DPlotStyle
 	{
-		protected IScatterSymbol _shape;
-		protected bool _independentColor;
-		protected NamedColor _color1;
+		/// <summary>A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
+		protected int _skipFreq;
 
-		protected double _symbolSize;
+		/// <summary>
+		/// Indicates whether <see cref="SkipFrequency"/> is independent of other sub-styles.
+		/// </summary>
+		protected bool _independentSkipFreq;
+
+		/// <summary>
+		/// The scatter symbol.
+		/// </summary>
+		protected IScatterSymbol _symbolShape;
+
+		/// <summary>Is the size of the symbols independent, i.e. not influenced by group styles.</summary>
 		protected bool _independentSymbolSize;
 
+		/// <summary>Size of the symbols in points.</summary>
+		protected double _symbolSize;
+
+		protected NamedColor _color1;
+
+		/// <summary>Is the material color independent, i.e. not influenced by group styles.</summary>
+		protected bool _independentColor;
+
 		protected double _relativePenWidth;
-		protected int _skipFreq;
 
 		// cached values:
 		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
@@ -76,7 +92,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				this._shape = from._shape;
+				this._symbolShape = from._symbolShape;
 				this._color1 = from._color1;
 				this._independentColor = from._independentColor;
 				this._independentSymbolSize = from._independentSymbolSize;
@@ -136,7 +152,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			double symbolSize = 8;
 			var color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
 
-			this._shape = ScatterSymbolListManager.Instance.BuiltinDefault[0];
+			this._symbolShape = ScatterSymbolListManager.Instance.BuiltinDefault[0];
 			this._color1 = NamedColors.Black;
 			this._independentColor = false;
 
@@ -155,7 +171,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public ScatterPlotStyleNew(IScatterSymbol shape, double size, double penWidth, NamedColor penColor)
 		{
-			_shape = shape;
+			_symbolShape = shape;
 			_color1 = penColor;
 			_symbolSize = size;
 
@@ -171,7 +187,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			double symbolSize = GraphDocument.GetDefaultSymbolSize(context);
 			var color = GraphDocument.GetDefaultPlotColor(context);
 
-			this._shape = ScatterSymbolListManager.Instance.BuiltinDefault[0];
+			this._symbolShape = ScatterSymbolListManager.Instance.BuiltinDefault[0];
 			_color1 = color;
 			this._independentColor = false;
 			this._symbolSize = symbolSize;
@@ -192,15 +208,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public IScatterSymbol Shape
 		{
-			get { return this._shape; }
+			get { return this._symbolShape; }
 			set
 			{
 				if (null == value)
 					throw new ArgumentNullException(nameof(value));
 
-				if (!object.ReferenceEquals(_shape, value))
+				if (!object.ReferenceEquals(_symbolShape, value))
 				{
-					this._shape = value;
+					this._symbolShape = value;
 
 					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
@@ -211,7 +227,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			get
 			{
-				return !(_shape is ScatterSymbols.NoSymbol);
+				return !(_symbolShape is NoSymbol);
 			}
 		}
 
@@ -308,6 +324,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
+		public bool IndependentSkipFrequency
+		{
+			get
+			{
+				return _independentSkipFreq;
+			}
+			set
+			{
+				if (!(_independentSkipFreq == value))
+				{
+					_independentSkipFreq = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
 		#region I2DPlotItem Members
 
 		public bool IsColorProvider
@@ -327,7 +359,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			get
 			{
-				return !(this._shape is ScatterSymbols.NoSymbol) && !this._independentSymbolSize;
+				return !(this._symbolShape is NoSymbol) && !this._independentSymbolSize;
 			}
 		}
 
@@ -335,7 +367,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			get
 			{
-				return !(this._shape is ScatterSymbols.NoSymbol) && !this._independentSymbolSize;
+				return !(this._symbolShape is NoSymbol) && !this._independentSymbolSize;
 			}
 		}
 
@@ -343,21 +375,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public static PointF[] ToPointFArray(List<ClipperLib.IntPoint> list, double symbolSize)
 		{
-			var scale = ScatterSymbolBase.InverseClipperScaling * symbolSize / 2;
+			var scale = ScatterSymbolBase.InverseClipperScalingToSymbolSize1 * symbolSize;
 			return list.Select(
 				intPoint =>
-				new PointF((float)(scale * intPoint.X), (float)(scale * intPoint.Y))).ToArray();
+				new PointF((float)(scale * intPoint.X), (float)(-scale * intPoint.Y))).ToArray();
 		}
 
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
-			if (this._shape is ScatterSymbols.NoSymbol)
+			if (this._symbolShape is NoSymbol)
 				return;
 
 			List<List<ClipperLib.IntPoint>> insetPolygon = null;
 			List<List<ClipperLib.IntPoint>> framePolygon = null;
 			List<List<ClipperLib.IntPoint>> fillPolygon = null;
-			_shape.CalculatePolygons(out framePolygon, out insetPolygon, out fillPolygon);
+			_symbolShape.CalculatePolygons(out framePolygon, out insetPolygon, out fillPolygon);
 
 			var path = new GraphicsPath();
 
@@ -379,7 +411,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (null != insetPolygon)
 				{
 					insetPath = new GraphicsPath();
-					insetBrush = new SolidBrush(_shape.Inset.Color);
+					insetBrush = new SolidBrush(_symbolShape.PlotColorInfluence.HasFlag(PlotColorInfluence.InsetColor) ? _color1 : _symbolShape.Inset.Color);
 					foreach (var list in insetPolygon)
 						insetPath.AddPolygon(ToPointFArray(list, _symbolSize));
 				}
@@ -389,7 +421,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (null != fillPolygon)
 				{
 					fillPath = new GraphicsPath();
-					fillBrush = new SolidBrush(_color1);
+					fillBrush = new SolidBrush(_symbolShape.PlotColorInfluence.HasFlag(PlotColorInfluence.FillColor) ? _color1 : _symbolShape.FillColor);
 
 					foreach (var list in fillPolygon)
 						fillPath.AddPolygon(ToPointFArray(list, _symbolSize));
@@ -400,7 +432,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				if (null != framePolygon)
 				{
 					framePath = new GraphicsPath();
-					frameBrush = new SolidBrush(_shape.Frame.Color);
+					frameBrush = new SolidBrush(_symbolShape.PlotColorInfluence.HasFlag(PlotColorInfluence.FrameColor) ? _color1 : _symbolShape.Frame.Color);
 					foreach (var list in framePolygon)
 						framePath.AddPolygon(ToPointFArray(list, _symbolSize));
 				}
@@ -438,7 +470,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
 		{
-			if (_shape is ScatterSymbols.NoSymbol)
+			if (_symbolShape is NoSymbol)
 				return bounds;
 			/*
 			GraphicsState gs = g.Save();
@@ -469,14 +501,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (this.IsSymbolSizeProvider)
 				SymbolSizeGroupStyle.AddExternalGroupStyle(externalGroups);
 
-			SymbolShapeStyleGroupStyle.AddExternalGroupStyle(externalGroups);
+			ScatterSymbolGroupStyle.AddExternalGroupStyle(externalGroups);
 		}
 
 		public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
 			ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 			SymbolSizeGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
-			SymbolShapeStyleGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+			ScatterSymbolGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 			SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group style only)
 		}
 
@@ -485,7 +517,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (this.IsColorProvider)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this.Color; });
 
-			ScatterSymbolGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this._shape; });
+			ScatterSymbolGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this._symbolShape; });
 
 			if (this.IsSymbolSizeProvider)
 				SymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SymbolSize; });
@@ -519,7 +551,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this.SkipFrequency = c; });
+			if (!this._independentSkipFreq)
+				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this.SkipFrequency = c; });
 		}
 
 		#endregion IPlotStyle Members

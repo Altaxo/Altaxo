@@ -537,6 +537,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\ScatterPlotStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\ScatterSymbolComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\Gdi\Plot\Styles\VectorCartesicPlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1210,6 +1218,13 @@
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\LinePlotStyleControl.xaml.cs">
       <DependentUpon>LinePlotStyleControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\ScatterPlotStyleControl.xaml.cs">
+      <DependentUpon>ScatterPlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\ScatterSymbolComboBox.xaml.cs">
+      <DependentUpon>ScatterSymbolComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\ScatterSymbolConverters.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\VectorCartesicPlotStyleControl.xaml.cs">
       <DependentUpon>VectorCartesicPlotStyleControl.xaml</DependentUpon>
     </Compile>

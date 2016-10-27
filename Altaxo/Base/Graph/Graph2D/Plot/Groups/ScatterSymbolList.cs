@@ -23,14 +23,14 @@
 #endregion Copyright
 
 using Altaxo.Drawing;
-using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Graph2D.Plot.Styles;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Gdi.Plot.Groups
+namespace Altaxo.Graph.Graph2D.Plot.Groups
 {
 	public class ScatterSymbolList : StyleListBase<IScatterSymbol>
 	{

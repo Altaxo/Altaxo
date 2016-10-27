@@ -23,6 +23,9 @@
 #endregion Copyright
 
 using Altaxo.Geometry;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

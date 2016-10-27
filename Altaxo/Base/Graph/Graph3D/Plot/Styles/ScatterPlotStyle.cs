@@ -550,6 +550,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		{
 		}
 
+		/// <inheritdoc/>
 		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
 		{
 			return null; // no additionally used columns

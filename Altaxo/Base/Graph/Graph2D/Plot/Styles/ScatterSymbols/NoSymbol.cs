@@ -23,29 +23,58 @@
 #endregion Copyright
 
 using Altaxo.Drawing;
-using Altaxo.Geometry;
+using ClipperLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Gdi.Plot.Styles
+namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	/// <summary>
-	/// Represents a symbol shape for a 3D scatter plot. Instances of this class have to be immutable. They still need to be cloneable,
-	/// because in a list of scatter symbols we need unique instances.
-	/// </summary>
-	/// <seealso cref="Altaxo.Main.IImmutable" />
-	public interface IScatterSymbol : Main.IImmutable, ICloneable
+	public class NoSymbol : IScatterSymbol
 	{
-		ScatterSymbols.IScatterSymbolFrame Frame { get; }
-		ScatterSymbols.IScatterSymbolInset Inset { get; }
+		public NamedColor FillColor
+		{
+			get
+			{
+				return NamedColors.Transparent;
+			}
+		}
 
-		NamedColor FillColor { get; }
+		public IScatterSymbolFrame Frame
+		{
+			get
+			{
+				return null;
+			}
+		}
 
-		void CalculatePolygons(
-		out List<List<ClipperLib.IntPoint>> framePolygon,
-		out List<List<ClipperLib.IntPoint>> insetPolygon,
-		out List<List<ClipperLib.IntPoint>> fillPolygon);
+		public IScatterSymbolInset Inset
+		{
+			get
+			{
+				return null;
+			}
+		}
+
+		public PlotColorInfluence PlotColorInfluence
+		{
+			get
+			{
+				return PlotColorInfluence.None;
+			}
+		}
+
+		public void CalculatePolygons(out List<List<IntPoint>> framePolygon, out List<List<IntPoint>> insetPolygon, out List<List<IntPoint>> fillPolygon)
+		{
+			framePolygon = null;
+			insetPolygon = null;
+			fillPolygon = null;
+		}
+
+		public object Clone()
+		{
+			return this.MemberwiseClone();
+		}
 	}
 }

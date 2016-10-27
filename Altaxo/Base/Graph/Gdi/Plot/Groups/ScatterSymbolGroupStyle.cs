@@ -30,7 +30,8 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 {
 	using Drawing;
 	using Graph.Plot.Groups;
-	using Styles;
+	using Graph2D.Plot.Groups;
+	using Graph2D.Plot.Styles;
 
 	public class ScatterSymbolGroupStyle
 		:
