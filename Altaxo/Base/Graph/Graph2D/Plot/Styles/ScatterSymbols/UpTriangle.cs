@@ -34,7 +34,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	public class UpTriangle : ScatterSymbolBase
+	public class UpTriangle : ClosedSymbolBase
 	{
 		#region Serialization
 
@@ -76,7 +76,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			var list = new List<ClipperLib.IntPoint>(3);
 			for (int i = 0; i < 3; ++i)
 			{
-				var phi = (4 * Math.PI * i - Math.PI) / 6.0;
+				var phi = Math.PI * ((4 * i - 1) / 6.0);
 				list.Add(new IntPoint((int)(ClipperScalingInt * Math.Cos(phi)), (int)(ClipperScalingInt * Math.Sin(phi))));
 			}
 

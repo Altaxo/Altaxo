@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -341,6 +342,79 @@ namespace Altaxo.Graph.Gdi.CS
 			bool isLogical0 = (id.LogicalValueOtherFirst == 0) ^ ((id.ParallelAxisNumber == 1 && _isXreverse) || (id.ParallelAxisNumber == 0 && _isYreverse));
 
 			return _axisNamesOuterLines[isHorizontal ? 0 : 1, isLogical0 ? 0 : 1];
+		}
+
+		private Matrix2x2 VectorTransformation
+		{
+			get
+			{
+				if (_isXYInterchanged)
+					return new Matrix2x2(
+						0, _isXreverse ? -1 : 1,
+						_isYreverse ? -1 : 1, 0);
+				else
+					return new Matrix2x2(
+						_isXreverse ? -1 : 1, 0,
+						0, _isYreverse ? -1 : 1);
+			}
+		}
+
+		public override string GetNameOfPlane(CSPlaneID planeId)
+		{
+			string name = "";
+			if (planeId.UsePhysicalValue)
+			{
+				switch (planeId.PerpendicularAxisNumber)
+				{
+					case 0:
+						name = string.Format("X = {0}", planeId.PhysicalValue);
+						break;
+
+					case 1:
+						name = string.Format("Y = {0}", planeId.PhysicalValue);
+						break;
+
+					case 2:
+						name = string.Format("Z = {0}", planeId.PhysicalValue);
+						break;
+
+					default:
+						throw new NotImplementedException();
+				}
+			}
+			else // use logical value
+			{
+				var uv = GetUntransformedAxisPlaneVector(planeId);
+				var tv = VectorTransformation.Transform(uv);
+
+				var lv = planeId.LogicalValue;
+
+				if (tv.X == -1 || tv.Y == -1)
+					lv = 1 - lv;
+				if (Math.Abs(tv.X) == 1) // perpendicular vector in x-direction
+				{
+					if (lv == 0)
+						name = "Left";
+					else if (lv == 1)
+						name = "Right";
+					else
+						name = string.Format("{0}% between left and right", lv * 100);
+				}
+				else if (Math.Abs(tv.Y) == 1) // perpendicular vector in y-direction
+				{
+					if (lv == 0)
+						name = "Bottom";
+					else if (lv == 1)
+						name = "Top";
+					else
+						name = string.Format("{0}% between bottom and top", lv * 100);
+				}
+				else
+				{
+					throw new NotImplementedException();
+				}
+			}
+			return name;
 		}
 
 		/// <summary>

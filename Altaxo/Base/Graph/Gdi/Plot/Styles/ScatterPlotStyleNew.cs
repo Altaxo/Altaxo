@@ -375,7 +375,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public static PointF[] ToPointFArray(List<ClipperLib.IntPoint> list, double symbolSize)
 		{
-			var scale = ScatterSymbolBase.InverseClipperScalingToSymbolSize1 * symbolSize;
+			var scale = SymbolBase.InverseClipperScalingToSymbolSize1 * symbolSize;
 			return list.Select(
 				intPoint =>
 				new PointF((float)(scale * intPoint.X), (float)(-scale * intPoint.Y))).ToArray();

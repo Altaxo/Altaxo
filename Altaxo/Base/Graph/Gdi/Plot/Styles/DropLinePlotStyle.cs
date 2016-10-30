@@ -28,24 +28,22 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace Altaxo.Graph.Graph3D.Plot.Styles
+namespace Altaxo.Graph.Gdi.Plot.Styles
 {
 	using Altaxo.Data;
 	using Altaxo.Main;
 	using Drawing;
-	using Drawing.D3D;
-	using Drawing.D3D.Material;
 	using Geometry;
 	using Graph.Plot.Data;
 	using Graph.Plot.Groups;
-	using GraphicsContext;
 	using Plot.Data;
 	using Plot.Groups;
+	using System.Drawing.Drawing2D;
 
 	public class DropLinePlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
-		IG3DPlotStyle
+		IG2DPlotStyle
 	{
 		/// <summary>A value indicating whether the skip frequency value is independent from other values.</summary>
 		protected bool _independentSkipFreq;
@@ -58,7 +56,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		protected bool _additionalDropTargetIsEnabled;
 
-		protected int _additionalDropTargetPerpendicularAxis = 2;
+		protected int _additionalDropTargetPerpendicularAxis = 0;
 
 		/// <summary>
 		/// Indicates whether _baseValue is a physical value or a logical value.
@@ -71,7 +69,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		private Altaxo.Data.AltaxoVariant _additionalDropTargetBaseValue = new Altaxo.Data.AltaxoVariant(0.0);
 
 		/// <summary>Pen for the drop line.</summary>
-		protected PenX3D _pen;
+		protected PenX _pen;
 
 		/// <summary>Is the material color independent, i.e. not influenced by group styles.</summary>
 		protected bool _independentColor;
@@ -88,11 +86,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		protected double _lineWidth1Offset;
 
 		protected double _lineWidth1Factor;
-
-		/// <summary>Pen width 2 for the drop line, either absolute or relative to the size of the scatter symbol.</summary>
-		protected double _lineWidth2Offset;
-
-		protected double _lineWidth2Factor;
 
 		protected double _gapAtStartOffset;
 		protected double _gapAtStartFactor = 1.25;
@@ -143,8 +136,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				info.AddValue("SymbolSize", s._symbolSize);
 				info.AddValue("LineWidth1Offset", s._lineWidth1Offset);
 				info.AddValue("LineWidth1Factor", s._lineWidth1Factor);
-				info.AddValue("LineWidth2Offset", s._lineWidth2Offset);
-				info.AddValue("LineWidth2Factor", s._lineWidth2Factor);
 				info.AddValue("GapAtStartOffset", s._gapAtStartOffset);
 				info.AddValue("GapAtStartFactor", s._gapAtStartFactor);
 				info.AddValue("GapAtEndOffset", s._gapAtEndOffset);
@@ -166,7 +157,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					s._additionalDropTargetBaseValue = (Altaxo.Data.AltaxoVariant)info.GetValue("AdditionalDropTargetBaseValue", s);
 				}
 
-				s._pen = (PenX3D)info.GetValue("Pen", s);
+				s._pen = (PenX)info.GetValue("Pen", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
 
 				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
@@ -174,9 +165,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 				s._lineWidth1Offset = info.GetDouble("LineWidth1Offset");
 				s._lineWidth1Factor = info.GetDouble("LineWidth1Factor");
-
-				s._lineWidth2Offset = info.GetDouble("LineWidth2Offset");
-				s._lineWidth2Factor = info.GetDouble("LineWidth2Factor");
 
 				s._gapAtStartOffset = info.GetDouble("GapAtStartOffset");
 				s._gapAtStartFactor = info.GetDouble("GapAtStartFactor");
@@ -235,15 +223,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				this._additionalDropTargetUsePhysicalBaseValue = from._additionalDropTargetUsePhysicalBaseValue;
 				this._additionalDropTargetBaseValue = from._additionalDropTargetBaseValue;
 
-				this._pen = from._pen; // immutable
+				ChildCopyToMember(ref _pen, from._pen);
+
 				this._independentColor = from._independentColor;
 
 				_independentSymbolSize = from._independentSymbolSize;
 				_symbolSize = from._symbolSize;
 				_lineWidth1Offset = from._lineWidth1Offset;
 				_lineWidth1Factor = from._lineWidth1Factor;
-				_lineWidth2Offset = from._lineWidth2Offset;
-				_lineWidth2Factor = from._lineWidth2Factor;
 
 				this._gapAtStartOffset = from._gapAtStartOffset;
 				this._gapAtStartFactor = from._gapAtStartFactor;
@@ -283,7 +270,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			CopyFrom(from, Main.EventFiring.Suppressed);
 		}
 
-		public DropLinePlotStyle(CSPlaneID planeID, PenX3D pen)
+		public DropLinePlotStyle(CSPlaneID planeID, PenX pen)
 		{
 			if (null == pen)
 				throw new ArgumentNullException(nameof(pen));
@@ -296,32 +283,30 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public DropLinePlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			this._dropTargets = new CSPlaneIDList(new[] { new CSPlaneID(2, 0) });
+			this._dropTargets = new CSPlaneIDList(new[] { new CSPlaneID(1, 0) });
 
 			var color = GraphDocument.GetDefaultPlotColor(context);
 			double penWidth = GraphDocument.GetDefaultPenWidth(context);
-			_pen = new PenX3D(color, penWidth);
+			_pen = new PenX(color, penWidth);
 
 			_lineWidth1Offset = penWidth;
 			_lineWidth1Factor = 0;
-			_lineWidth2Offset = penWidth;
-			_lineWidth2Factor = 0;
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			yield break;
+			yield return new DocumentNodeAndName(_pen, () => _pen = null, "Pen");
 		}
 
 		public bool IsVisible
 		{
 			get
 			{
-				return _pen.Material.IsVisible;
+				return _pen.IsVisible;
 			}
 		}
 
-		public PenX3D Pen
+		public PenX Pen
 		{
 			get { return this._pen; }
 			set
@@ -340,10 +325,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public NamedColor Color
 		{
-			get { return this._pen.Material.Color; }
+			get { return this._pen.Color; }
 			set
 			{
-				Pen = _pen.WithColor(value);
+				_pen.Color = value;
 			}
 		}
 
@@ -422,38 +407,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 				if (!(_lineWidth1Factor == value))
 				{
 					_lineWidth1Factor = value;
-					EhSelfChanged();
-				}
-			}
-		}
-
-		public double LineWidth2Offset
-		{
-			get
-			{
-				return _lineWidth2Offset;
-			}
-			set
-			{
-				if (!(_lineWidth2Offset == value))
-				{
-					_lineWidth2Offset = value;
-					EhSelfChanged();
-				}
-			}
-		}
-
-		public double LineWidth2Factor
-		{
-			get
-			{
-				return _lineWidth2Factor;
-			}
-			set
-			{
-				if (!(_lineWidth2Factor == value))
-				{
-					_lineWidth2Factor = value;
 					EhSelfChanged();
 				}
 			}
@@ -683,7 +636,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		#endregion I3DPlotItem Members
 
-		public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData)
+		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
 			PlotRangeList rangeList = pdata.RangeList;
 			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
@@ -710,14 +663,14 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			// paint the scatter style
 
 			PointD3D pos = PointD3D.Empty;
+			var gpath = new GraphicsPath();
 
 			if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size and constant color
 			{
-				var pen = _pen;
 				// update pen widths
+				var pen = _pen.Clone();
 				double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
-				double w2 = _lineWidth2Offset + _lineWidth2Factor * _cachedSymbolSize;
-				pen = pen.WithThickness1(w1).WithThickness2(w2);
+				pen.Width = w1;
 
 				var gapStart = 0.5 * (_gapAtStartOffset + _gapAtStartFactor * _cachedSymbolSize);
 				var gapEnd = 0.5 * (_gapAtEndOffset + _gapAtEndFactor * _cachedSymbolSize);
@@ -733,13 +686,20 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 						Logical3D r3d = layer.GetLogical3D(pdata, j + range.OffsetToOriginal);
 						foreach (CSPlaneID id in dropTargets)
 						{
-							IPolylineD3D isoLine;
-							layer.CoordinateSystem.GetIsolineFromPointToPlane(r3d, id, out isoLine);
+							gpath.Reset();
+							layer.CoordinateSystem.GetIsolineFromPointToPlane(gpath, r3d, id);
+							PointF[] shortenedPathPoints = null;
 							if (gapStart != 0 || gapEnd != 0)
-								isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
+							{
+								gpath.Flatten();
+								var pathPoints = gpath.PathPoints;
+								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
+							}
 
-							if (null != isoLine)
-								g.DrawLine(pen, isoLine);
+							if (null != shortenedPathPoints)
+								g.DrawLines(pen, shortenedPathPoints);
+							else
+								g.DrawPath(pen, gpath);
 						}
 					}
 				} // for each range
@@ -754,22 +714,21 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					int offset = range.OffsetToOriginal;
 					for (int j = lower; j < upper; j += _skipFreq)
 					{
-						var pen = _pen;
+						var pen = _pen.Clone();
 						if (null == _cachedColorForIndexFunction)
 						{
 							_cachedSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
 							double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
-							double w2 = _lineWidth2Offset + _lineWidth2Factor * _cachedSymbolSize;
-							pen = _pen.WithThickness1(w1).WithThickness2(w2);
+							pen.Width = w1;
 						}
 						else
 						{
 							_cachedSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _cachedSymbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
 							double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
-							double w2 = _lineWidth2Offset + _lineWidth2Factor * _cachedSymbolSize;
 
 							var customSymbolColor = _cachedColorForIndexFunction(j + offset);
-							pen = _pen.WithThickness1(w1).WithThickness2(w2).WithColor(NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B));
+							pen.Width = w1;
+							pen.Color = NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B);
 						}
 
 						var gapStart = 0.5 * (_gapAtStartOffset + _gapAtStartFactor * _cachedSymbolSize);
@@ -778,29 +737,36 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 						Logical3D r3d = layer.GetLogical3D(pdata, j + rangeList[r].OffsetToOriginal);
 						foreach (CSPlaneID id in _dropTargets)
 						{
-							IPolylineD3D isoLine;
-							layer.CoordinateSystem.GetIsolineFromPointToPlane(r3d, id, out isoLine);
-
+							gpath.Reset();
+							layer.CoordinateSystem.GetIsolineFromPointToPlane(gpath, r3d, id);
+							PointF[] shortenedPathPoints = null;
 							if (gapStart != 0 || gapEnd != 0)
-								isoLine = isoLine.ShortenedBy(RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
-							if (null != isoLine)
-								g.DrawLine(pen, isoLine);
+							{
+								gpath.Flatten();
+								var pathPoints = gpath.PathPoints;
+								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
+							}
+
+							if (null != shortenedPathPoints)
+								g.DrawLines(pen, shortenedPathPoints);
+							else
+								g.DrawPath(pen, gpath);
 						}
 					}
 				}
 			}
 		}
 
-		public RectangleD3D PaintSymbol(IGraphicsContext3D g, RectangleD3D bounds)
+		public RectangleF PaintSymbol(Graphics g, RectangleF bounds)
 		{
-			return RectangleD3D.Empty;
+			return RectangleF.Empty;
 		}
 
 		/// <summary>
 		/// Prepares the scale of this plot style. Since this style does not utilize a scale, this function does nothing.
 		/// </summary>
 		/// <param name="layer">The parent layer.</param>
-		public void PrepareScales(Graph3D.IPlotArea layer)
+		public void PrepareScales(IPlotArea layer)
 		{
 		}
 
@@ -820,7 +786,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group style only)
 		}
 
-		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed3DPlotData pdata)
+		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
 		{
 			if (this.IsColorProvider)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this.Color; });

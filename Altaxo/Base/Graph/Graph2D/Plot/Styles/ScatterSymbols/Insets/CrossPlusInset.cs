@@ -23,22 +23,21 @@
 #endregion Copyright
 
 using Altaxo.Drawing;
-using ClipperLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
+namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
-	public class ConstantThicknessFrame : FrameBase
+	public class CrossPlusInset : InsetBase
 	{
 		#region Serialization
 
 		/// <summary>
 		/// 2016-10-27 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConstantThicknessFrame), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossPlusInset), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -48,7 +47,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = (ConstantThicknessFrame)o ?? new ConstantThicknessFrame();
+				var s = (CrossPlusInset)o ?? new CrossPlusInset();
 				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 				return s;
 			}
@@ -56,14 +55,28 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
 
 		#endregion Serialization
 
-		public override List<List<IntPoint>> GetCopyOfClipperPolygon(double relativeWidth, List<List<IntPoint>> outerPolygon)
+		public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
 		{
-			var delta = (-2 * relativeWidth) * ClosedSymbolBase.ClipperScalingInt;
-			var clipper = new ClipperOffset();
-			clipper.AddPaths(outerPolygon, JoinType.jtMiter, EndType.etClosedPolygon);
-			var result = new List<List<IntPoint>>();
-			clipper.Execute(ref result, delta);
-			return result;
+			var w = relativeWidth * ClipperScalingDouble;
+			var h = ClipperScalingInt;
+
+			var list = new List<ClipperLib.IntPoint>(12)
+				{
+				new ClipperLib.IntPoint(-w, -h),
+				new ClipperLib.IntPoint(w, -h),
+				new ClipperLib.IntPoint(w, -w),
+				new ClipperLib.IntPoint(h, -w),
+				new ClipperLib.IntPoint(h, w),
+				new ClipperLib.IntPoint(w, w),
+				new ClipperLib.IntPoint(w, h),
+				new ClipperLib.IntPoint(-w, h),
+				new ClipperLib.IntPoint(-w, w),
+				new ClipperLib.IntPoint(-h, w),
+				new ClipperLib.IntPoint(-h, -w),
+				new ClipperLib.IntPoint(-w, -w),
+			};
+
+			return new List<List<ClipperLib.IntPoint>>(1) { list };
 		}
 	}
 }

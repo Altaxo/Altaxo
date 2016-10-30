@@ -301,6 +301,79 @@ namespace Altaxo.Graph.Gdi.CS
 				return _axisNamesNormal[isX ? 0 : 1, isUp ? 0 : 1];
 		}
 
+		private Matrix2x2 VectorTransformation
+		{
+			get
+			{
+				if (_isXYInterchanged)
+					return new Matrix2x2(
+						0, _isXreverse ? -1 : 1,
+						_isYreverse ? -1 : 1, 0);
+				else
+					return new Matrix2x2(
+						_isXreverse ? -1 : 1, 0,
+						0, _isYreverse ? -1 : 1);
+			}
+		}
+
+		public override string GetNameOfPlane(CSPlaneID planeId)
+		{
+			string name = "";
+			if (planeId.UsePhysicalValue)
+			{
+				switch (planeId.PerpendicularAxisNumber)
+				{
+					case 0:
+						name = string.Format("X = {0}", planeId.PhysicalValue);
+						break;
+
+					case 1:
+						name = string.Format("Y = {0}", planeId.PhysicalValue);
+						break;
+
+					case 2:
+						name = string.Format("Z = {0}", planeId.PhysicalValue);
+						break;
+
+					default:
+						throw new NotImplementedException();
+				}
+			}
+			else
+			{
+				var uv = GetUntransformedAxisPlaneVector(planeId);
+				var tv = VectorTransformation.Transform(uv);
+
+				var lv = planeId.LogicalValue;
+
+				if (tv.X == -1 || tv.Y == -1)
+					lv = 1 - lv;
+				if (Math.Abs(tv.X) == 1) // vector in x-direction
+				{
+					if (lv == 0)
+						name = "Zero degrees";
+					else if (lv == 1)
+						name = "360 degrees";
+					else
+						name = string.Format("{0}% between 0 and 360 degrees", lv * 100);
+				}
+				else if (Math.Abs(tv.Y) == 1) // vector in y-direction
+				{
+					if (lv == 0)
+						name = "Inner circle";
+					else if (lv == 1)
+						name = "Outer circle";
+					else
+						name = string.Format("{0}% between inner and outer circle", lv * 100);
+				}
+				else
+				{
+					throw new NotImplementedException();
+				}
+			}
+			return name;
+		}
+
 		/// <summary>
 		/// Calculates from two logical values (values between 0 and 1) the coordinates of the point. Returns true if the conversion
 		/// is possible, otherwise false.

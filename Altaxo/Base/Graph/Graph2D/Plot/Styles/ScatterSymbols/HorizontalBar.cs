@@ -23,67 +23,68 @@
 #endregion Copyright
 
 using Altaxo.Drawing;
+using Altaxo.Geometry;
+using ClipperLib;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
+namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	public class TimesInset : InsetBase
+	public class HorizontalBar : OpenSymbolBase
 	{
-		private const double Sqrt05 = 0.707106781186547524400844;
-
 		#region Serialization
 
 		/// <summary>
 		/// 2016-10-27 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TimesInset), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HorizontalBar), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+
+				SerializeSetV0((IScatterSymbol)obj, info);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = (TimesInset)o ?? new TimesInset();
+				var s = (HorizontalBar)o ?? new HorizontalBar();
 				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
-				return s;
+
+				return DeserializeSetV0(s, info, parent);
 			}
 		}
 
 		#endregion Serialization
 
-		private ClipperLib.IntPoint GetPoint(double w, double h)
+		public HorizontalBar()
 		{
-			return new ClipperLib.IntPoint((int)(Sqrt05 * (w + h) * ClipperScalingDouble), (int)(Sqrt05 * (h - w) * ClipperScalingDouble));
 		}
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
+		public HorizontalBar(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
+			: base(fillColor, isFillColorInfluencedByPlotColor)
 		{
-			var w = relativeWidth;
-			var h = 1;
+		}
 
-			var list = new List<ClipperLib.IntPoint>(12)
-				{
-				GetPoint(-w, -h),
-				GetPoint(w, -h),
-				GetPoint(w, -w),
-				GetPoint(h, -w),
-				GetPoint(h, w),
-				GetPoint(w, w),
-				GetPoint(w, h),
-				GetPoint(-w, h),
-				GetPoint(-w, w),
-				GetPoint(-h, w),
-				GetPoint(-h, -w),
-				GetPoint(-w, -w),
-			};
+		public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon()
+		{
+			var h = ClipperScalingInt;
+			var w = (int)Math.Round(0.25 + _relativeStructureWidth * ClipperScalingInt);
 
-			return new List<List<ClipperLib.IntPoint>>(1) { list };
+			return new List<List<ClipperLib.IntPoint>>(1)
+			{
+			new List<ClipperLib.IntPoint>(4)
+			{
+				new ClipperLib.IntPoint( -h, -w),
+				new ClipperLib.IntPoint( h, -w),
+				new ClipperLib.IntPoint( h, w),
+				new ClipperLib.IntPoint( -h, w)
+			}};
 		}
 	}
 }

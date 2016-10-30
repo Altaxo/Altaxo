@@ -381,8 +381,7 @@ namespace Altaxo.Main
 		{
 			foreach (var tuple in GetDocumentNodeChildrenWithName())
 			{
-				var child = tuple.DocumentNode;
-				child.EhParentTunnelingEventHappened(this, originalSource, e);
+				tuple.DocumentNode?.EhParentTunnelingEventHappened(this, originalSource, e);
 			}
 		}
 

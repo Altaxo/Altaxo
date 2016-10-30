@@ -1081,7 +1081,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						}
 
 						if (null != shortenedPathPoints)
-							g.DrawLines(_pen, shortenedPathPoints);
+							g.DrawLines(strokePen, shortenedPathPoints);
 						else
 							g.DrawPath(strokePen, errorBarPath);
 					}
@@ -1104,7 +1104,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						}
 
 						if (null != shortenedPathPoints)
-							g.DrawLines(_pen, shortenedPathPoints);
+							g.DrawLines(strokePen, shortenedPathPoints);
 						else
 							g.DrawPath(strokePen, errorBarPath);
 					}

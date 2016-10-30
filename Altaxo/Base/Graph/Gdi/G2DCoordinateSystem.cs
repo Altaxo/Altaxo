@@ -132,6 +132,13 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>The name of the axis side for the axis line given by the identifier.</returns>
 		public abstract string GetAxisSideName(CSLineID id, CSAxisSide side);
 
+		public abstract string GetNameOfPlane(CSPlaneID planeId);
+
+		public CSPlaneInformation GetPlaneInformation(CSPlaneID planeID)
+		{
+			return new CSPlaneInformation(planeID) { Name = GetNameOfPlane(planeID) };
+		}
+
 		protected virtual void ClearCachedObjects()
 		{
 			this._axisStyleInformation = null;
@@ -547,14 +554,19 @@ namespace Altaxo.Graph.Gdi
 			return result;
 		}
 
-		public CSPlaneInformation GetPlaneInformation(CSPlaneID planeID)
+		public static VectorD2D GetUntransformedAxisPlaneVector(CSPlaneID id)
 		{
-			CSLineID lineID = (CSLineID)planeID;
-			CSAxisInformation lineInfo = GetAxisStyleInformation(lineID);
+			switch (id.PerpendicularAxisNumber)
+			{
+				case 0: // perpendicular axis is X
+					return new VectorD2D(1, 0);
 
-			CSPlaneInformation result = new CSPlaneInformation(planeID);
-			result.Name = lineInfo.NameOfAxisStyle;
-			return result;
+				case 1: // perpendicular axis is Y
+					return new VectorD2D(0, 1);
+
+				default:
+					throw new NotImplementedException();
+			}
 		}
 
 		public IEnumerable<CSLineID> GetJoinedAxisStyleIdentifier(IEnumerable<CSLineID> list1, IEnumerable<CSLineID> list2)

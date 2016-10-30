@@ -31,8 +31,30 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	public class NoSymbol : IScatterSymbol
+	public class NoSymbol : SymbolBase, IScatterSymbol
 	{
+		#region Serialization
+
+		/// <summary>
+		/// 2016-10-27 initial version.
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NoSymbol), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				SerializeSetV0((IScatterSymbol)obj, info);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (NoSymbol)o ?? new NoSymbol();
+				return DeserializeSetV0(s, info, parent);
+			}
+		}
+
+		#endregion Serialization
+
 		public NamedColor FillColor
 		{
 			get

@@ -794,44 +794,67 @@ namespace Altaxo.Graph.Graph3D.CS
 
 		public override string GetNameOfPlane(CSPlaneID planeId)
 		{
-			var uv = GetUntransformedAxisPlaneVector(planeId);
-			var tv = VectorTransformation.Transform(uv);
-
-			var lv = planeId.LogicalValue;
-
-			if (tv.X == -1 || tv.Y == -1 || tv.Z == -1)
-				lv = 1 - lv;
 			string name = "";
-			if (Math.Abs(tv.X) == 1)
+			if (planeId.UsePhysicalValue)
 			{
-				if (lv == 0)
-					name = "Left";
-				else if (lv == 1)
-					name = "Right";
-				else
-					name = string.Format("{0}% between left and right", lv * 100);
-			}
-			else if (Math.Abs(tv.Y) == 1)
-			{
-				if (lv == 0)
-					name = "Front";
-				else if (lv == 1)
-					name = "Back";
-				else
-					name = string.Format("{0}% between front and back", lv * 100);
-			}
-			else if (Math.Abs(tv.Z) == 1)
-			{
-				if (lv == 0)
-					name = "Bottom";
-				else if (lv == 1)
-					name = "Top";
-				else
-					name = string.Format("{0}% between bottom and top", lv * 100);
+				switch (planeId.PerpendicularAxisNumber)
+				{
+					case 0:
+						name = string.Format("X = {0}", planeId.PhysicalValue);
+						break;
+
+					case 1:
+						name = string.Format("Y = {0}", planeId.PhysicalValue);
+						break;
+
+					case 2:
+						name = string.Format("Z = {0}", planeId.PhysicalValue);
+						break;
+
+					default:
+						throw new NotImplementedException();
+				}
 			}
 			else
 			{
-				throw new NotImplementedException();
+				var uv = GetUntransformedAxisPlaneVector(planeId);
+				var tv = VectorTransformation.Transform(uv);
+
+				var lv = planeId.LogicalValue;
+
+				if (tv.X == -1 || tv.Y == -1 || tv.Z == -1)
+					lv = 1 - lv;
+				if (Math.Abs(tv.X) == 1)
+				{
+					if (lv == 0)
+						name = "Left";
+					else if (lv == 1)
+						name = "Right";
+					else
+						name = string.Format("{0}% between left and right", lv * 100);
+				}
+				else if (Math.Abs(tv.Y) == 1)
+				{
+					if (lv == 0)
+						name = "Front";
+					else if (lv == 1)
+						name = "Back";
+					else
+						name = string.Format("{0}% between front and back", lv * 100);
+				}
+				else if (Math.Abs(tv.Z) == 1)
+				{
+					if (lv == 0)
+						name = "Bottom";
+					else if (lv == 1)
+						name = "Top";
+					else
+						name = string.Format("{0}% between bottom and top", lv * 100);
+				}
+				else
+				{
+					throw new NotImplementedException();
+				}
 			}
 
 			return name;

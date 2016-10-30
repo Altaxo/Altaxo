@@ -1,0 +1,145 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.Gdi.Plot.Styles.DropLinePlotStyleControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+ 						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Drawing.D3D"
+ 						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
+ 						 xmlns:axogddl="clr-namespace:Altaxo.Gui.Drawing.D3D.LineCaps"
+             mc:Ignorable="d">
+
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="6,0,0,0" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
+				<Setter Property="VerticalAlignment" Value="Center" />
+			</Style.Setters>
+		</Style>
+		<Style TargetType="CheckBox">
+			<Style.Setters>
+				<Setter Property="Margin" Value="6,0,6,0" />
+				<Setter Property="HorizontalAlignment" Value="Left" />
+				<Setter Property="VerticalAlignment" Value="Center" />
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+			<ColumnDefinition Width="4" />
+			<ColumnDefinition Width="Auto" MinWidth="50" SharedSizeGroup="EditColumn1" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" MinWidth="50" SharedSizeGroup="EditColumn2" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+		</Grid.RowDefinitions>
+
+		<GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"  Header="Drop targets:">
+			<axogc:EnumFlagControl  x:Name="_guiDropLines" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+		</GroupBox>
+
+		<GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+			<GroupBox.Header>
+				<CheckBox x:Name="_guiEnableUserDefinedDropTarget" Content="User defined drop target" />
+			</GroupBox.Header>
+			<Grid x:Name="_guiUserDefinedDropTargetGrid" IsEnabled="{Binding ElementName=_guiEnableUserDefinedDropTarget, Path=IsChecked}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+					<ColumnDefinition Width="4" />
+					<ColumnDefinition Width="Auto" MinWidth="50" SharedSizeGroup="EditColumn1" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="4" />
+				</Grid.RowDefinitions>
+				<Label Content="Number of axis perpendicular to plane:" Grid.Row="0" Grid.Column="0" />
+				<axogc:Int32UpDown x:Name="_guiUserDefinedDropTargetAxis" Grid.Row="0" Grid.Column="2" Minimum="0" Maximum="2" Value="2" />
+				<CheckBox x:Name="_guiUserDefinedUsePhysicalBaseValue" Content="Use physical base value" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" />
+				<Label Content="Base value (logical or physical):" Grid.Row="4" Grid.Column="0" />
+				<axogc:NumericDoubleTextBox x:Name="_guiUserDefinedBaseValue" Grid.Row="4" Grid.Column="2" />
+			</Grid>
+		</GroupBox>
+
+		<CheckBox x:Name="_guiIndependentSkipFreq" Grid.Row="4"  Grid.Column="0" Content="Indep. skip freq.:" />
+		<axogc:Int32UpDown x:Name="_guiSkipFrequency" Grid.Row="4" Grid.Column="2"  Minimum="1" />
+
+		<CheckBox x:Name="_guiIndependentColor" Grid.Row="6" Grid.Column="0"  Content="Indep. color:" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged" />
+		<axogcd:BrushComboBox x:Name="_guiPenMaterial"  Grid.Row="6" Grid.Column="2" />
+
+		<Label  Grid.Row="8" Grid.Column="0" Content="Style:" />
+		<axogdd:DashPatternComboBox x:Name="_guiPenDashStyle" Grid.Row="8" Grid.Column="2" />
+
+		<Label Grid.Row="10" Grid.Column="0" Content="CrossSection" />
+		<ComboBox x:Name="_guiCrossSection"  Grid.Row="10" Grid.Column="2" />
+
+		<Label Content="Line start cap:" Grid.Row="12" Grid.Column="0" />
+		<axogcd:LineCapComboBox Grid.Row="12" Grid.Column="2"  IsForEndCap="False" x:Name="_cbLineStartCap" />
+		<Label Content="Min. abs. size:" Grid.Row="10" Grid.Column="4" />
+		<axogcd:LineCapSizeComboBox x:Name="_cbLineStartCapSize" Grid.Row="12" Grid.Column="4"  ToolTip="Minimum absolute cap size" />
+		<Label Content="Min. rel. size:" Grid.Row="10" Grid.Column="5" />
+		<axogc:QuantityWithUnitTextBox x:Name="_edLineStartCapRelSize" Grid.Row="12" Grid.Column ="5" Margin="4,0,0,0" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
+
+		<CheckBox x:Name="_guiIndependentSymbolSize" Content="Independent symbol size :"  Grid.Row="14" Grid.Column="0" />
+		<axogcd:LineCapSizeComboBox x:Name="_guiSymbolSize" Grid.Row="14" Grid.Column="2" />
+
+		<Label Content="Line width 1 = " Grid.Row="16" Grid.Column="0" />
+		<axogcd:LineThicknessComboBox x:Name="_guiLineWidth1Offset" Grid.Row="16" Grid.Column="2" />
+		<Label Content="+" Grid.Row="16" Grid.Column="3" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiLineWidth1Factor"  Grid.Row="16" Grid.Column="4" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<Label Content="* symbolSize" Grid.Row="16" Grid.Column="5" />
+
+		<Label Content="Line width 2 = " Grid.Row="18" Grid.Column="0" />
+		<axogcd:LineThicknessComboBox x:Name="_guiLineWidth2Offset" Grid.Row="18" Grid.Column="2" />
+		<Label Content="+" Grid.Row="18" Grid.Column="3" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiLineWidth2Factor"  Grid.Row="18" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<Label Content="* symbolSize" Grid.Row="18" Grid.Column="5" />
+
+		<Label Content="Line gap at start = " Grid.Row="20" Grid.Column="0" />
+		<axogcd:LineThicknessComboBox x:Name="_guiGapAtStartOffset" Grid.Row="20" Grid.Column="2" />
+		<Label Content="+" Grid.Row="20" Grid.Column="3" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiGapAtStartFactor"  Grid.Row="20" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<Label Content="* symbolSize" Grid.Row="20" Grid.Column="5" />
+
+		<Label Content="Line gap at end = " Grid.Row="22" Grid.Column="0" />
+		<axogcd:LineThicknessComboBox x:Name="_guiGapAtEndOffset" Grid.Row="22" Grid.Column="2" />
+		<Label Content="+" Grid.Row="22" Grid.Column="3" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiGapAtEndFactor"  Grid.Row="22" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<Label Content="* symbolSize" Grid.Row="22" Grid.Column="5" />
+	</Grid>
+</UserControl>

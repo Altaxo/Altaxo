@@ -32,23 +32,8 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	public abstract class ScatterSymbolBase : IScatterSymbol
+	public abstract class ClosedSymbolBase : SymbolBase, IScatterSymbol
 	{
-		/// <summary>
-		/// Used to create clipper polynoms for the outer symbol shape, frame and inset. The outer symbol shape
-		/// must fit in a circle of radius 1 (diameter: 2). Translated to clipper values this means that the outer symbol shape
-		/// must fit in a circle of this <see cref="ClipperScalingDouble"/>.</summary>
-		public const double ClipperScalingDouble = 1073741824.49;
-
-		/// <summary>
-		/// Used to create clipper polynoms for the outer symbol shape, frame and inset. The outer symbol shape
-		/// must fit in a circle of radius 1 (diameter: 2). Translated to clipper values this means that the outer symbol shape
-		/// must fit in a circle of this <see cref="ClipperScalingInt"/>.</summary>
-		public const int ClipperScalingInt = 1073741824;
-
-		/// <summary>By multiplying the clipper polynom points with this factor, you will get a symbol size of 1.</summary>
-		public const double InverseClipperScalingToSymbolSize1 = 0.5 / 1073741824.0;
-
 		private PlotColorInfluence _plotColorInfluence = PlotColorInfluence.FillColor;
 		protected NamedColor _fillColor;
 
@@ -58,47 +43,15 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
 		#region Serialization
 
-		protected static void SerializeSetV0(IScatterSymbol obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-		{
-			var parent = ScatterSymbolListManager.Instance.GetParentList(obj);
-			if (null != parent)
-			{
-				if (null == info.GetProperty(ScatterSymbolList.GetSerializationRegistrationKey(parent)))
-					info.AddValue("Set", parent);
-				else
-					info.AddValue("SetName", parent.Name);
-			}
-		}
-
-		protected static TItem DeserializeSetV0<TItem>(TItem instanceTemplate, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent) where TItem : IScatterSymbol
-		{
-			if (info.CurrentElementName == "Set")
-			{
-				var originalSet = (ScatterSymbolList)info.GetValue("Set", parent);
-				ScatterSymbolList registeredSet;
-				ScatterSymbolListManager.Instance.TryRegisterList(info, originalSet, Main.ItemDefinitionLevel.Project, out registeredSet);
-				return (TItem)ScatterSymbolListManager.Instance.GetDeserializedInstanceFromInstanceAndSetName(info, instanceTemplate, originalSet.Name); // Note: here we use the name of the original set, not of the registered set. Because the original name is translated during registering into the registered name
-			}
-			else if (info.CurrentElementName == "SetName")
-			{
-				string setName = info.GetString("SetName");
-				return (TItem)ScatterSymbolListManager.Instance.GetDeserializedInstanceFromInstanceAndSetName(info, instanceTemplate, setName);
-			}
-			else // nothing of both, thus symbol belongs to nothing
-			{
-				return instanceTemplate;
-			}
-		}
-
 		/// <summary>
 		/// 2016-10-27 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterSymbolBase), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ClosedSymbolBase), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (ScatterSymbolBase)obj;
+				var s = (ClosedSymbolBase)obj;
 				info.AddEnum("PlotColorInfluence", s._plotColorInfluence);
 				info.AddValue("StructureScale", s._relativeStructureWidth);
 				info.AddValue("Fill", s._fillColor);
@@ -108,7 +61,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = (ScatterSymbolBase)o;
+				var s = (ClosedSymbolBase)o;
 				s._plotColorInfluence = (PlotColorInfluence)info.GetEnum("PlotColorInfluence", typeof(PlotColorInfluence));
 				s._relativeStructureWidth = info.GetDouble("StructureScale");
 				s._fillColor = (NamedColor)info.GetValue("Fill", null);
@@ -127,11 +80,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 		/// <returns>Polygon(s) of the outer symbol shape.</returns>
 		public abstract List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon();
 
-		protected ScatterSymbolBase()
+		protected ClosedSymbolBase()
 		{
 		}
 
-		protected ScatterSymbolBase(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
+		protected ClosedSymbolBase(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
 		{
 			_fillColor = fillColor;
 			_plotColorInfluence = isFillColorInfluencedByPlotColor ? PlotColorInfluence.FillColor : PlotColorInfluence.None;
@@ -144,7 +97,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
 		public NamedColor FillColor { get { return _fillColor; } }
 
-		public ScatterSymbolBase WithFillColor(NamedColor value)
+		public ClosedSymbolBase WithFillColor(NamedColor value)
 		{
 			if (_fillColor == value)
 			{
@@ -152,7 +105,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			}
 			else
 			{
-				var result = (ScatterSymbolBase)this.MemberwiseClone();
+				var result = (ClosedSymbolBase)this.MemberwiseClone();
 				result._fillColor = value;
 				return result;
 			}
@@ -160,7 +113,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
 		public PlotColorInfluence PlotColorInfluence { get { return _plotColorInfluence; } }
 
-		public ScatterSymbolBase WithPlotColorInfluence(PlotColorInfluence value)
+		public ClosedSymbolBase WithPlotColorInfluence(PlotColorInfluence value)
 		{
 			if (_plotColorInfluence == value)
 			{
@@ -168,7 +121,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			}
 			else
 			{
-				var result = (ScatterSymbolBase)this.MemberwiseClone();
+				var result = (ClosedSymbolBase)this.MemberwiseClone();
 				result._plotColorInfluence = value;
 				return result;
 			}
@@ -176,7 +129,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
 		public double RelativeStructureWidth { get { return _relativeStructureWidth; } }
 
-		public ScatterSymbolBase WithRelativeStructureWidth(double value)
+		public ClosedSymbolBase WithRelativeStructureWidth(double value)
 		{
 			if (!(value >= 0) || !(value < 0.5))
 				throw new ArgumentOutOfRangeException(nameof(value), "Provided value must be >=0 and <0.5");
@@ -188,7 +141,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			else
 			{
 				{
-					var result = (ScatterSymbolBase)this.MemberwiseClone();
+					var result = (ClosedSymbolBase)this.MemberwiseClone();
 					result._relativeStructureWidth = value;
 					return result;
 				}
@@ -200,12 +153,12 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			get { return _frame; }
 		}
 
-		public ScatterSymbolBase WithFrame(IScatterSymbolFrame frame)
+		public ClosedSymbolBase WithFrame(IScatterSymbolFrame frame)
 		{
 			return WithFrame(frame, true);
 		}
 
-		public ScatterSymbolBase WithFrame(IScatterSymbolFrame frame, bool isInfluencedByPlotColor)
+		public ClosedSymbolBase WithFrame(IScatterSymbolFrame frame, bool isInfluencedByPlotColor)
 		{
 			if (object.ReferenceEquals(_frame, frame) && _plotColorInfluence.HasFlag(PlotColorInfluence.FrameColor) == isInfluencedByPlotColor)
 			{
@@ -213,7 +166,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			}
 			else
 			{
-				var result = (ScatterSymbolBase)this.MemberwiseClone();
+				var result = (ClosedSymbolBase)this.MemberwiseClone();
 				result._frame = frame;
 				result._plotColorInfluence = result._plotColorInfluence.WithFlag(PlotColorInfluence.FrameColor, isInfluencedByPlotColor);
 				return result;
@@ -222,12 +175,12 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
 		public IScatterSymbolInset Inset { get { return _inset; } }
 
-		public ScatterSymbolBase WithInset(IScatterSymbolInset inset)
+		public ClosedSymbolBase WithInset(IScatterSymbolInset inset)
 		{
 			return WithInset(inset, true);
 		}
 
-		public ScatterSymbolBase WithInset(IScatterSymbolInset inset, bool isInfluencedByPlotColor)
+		public ClosedSymbolBase WithInset(IScatterSymbolInset inset, bool isInfluencedByPlotColor)
 		{
 			if (object.ReferenceEquals(_inset, inset) && _plotColorInfluence.HasFlag(PlotColorInfluence.InsetColor) == isInfluencedByPlotColor)
 			{
@@ -235,7 +188,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			}
 			else
 			{
-				var result = (ScatterSymbolBase)this.MemberwiseClone();
+				var result = (ClosedSymbolBase)this.MemberwiseClone();
 				result._inset = inset;
 				result._plotColorInfluence = result._plotColorInfluence.WithFlag(PlotColorInfluence.InsetColor, isInfluencedByPlotColor);
 				return result;
@@ -311,6 +264,32 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			{
 				fillPolygon = innerFramePolygon ?? outerPolygon;
 			}
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (!(this.GetType() == obj?.GetType()))
+				return false;
+
+			var from = (ClosedSymbolBase)obj;
+
+			return
+				this._plotColorInfluence == from._plotColorInfluence &&
+				this._relativeStructureWidth == from._relativeStructureWidth &&
+				this._fillColor == from._fillColor &&
+				Equals(this._frame, from._frame) &&
+				Equals(this._inset, from.Inset);
+		}
+
+		public override int GetHashCode()
+		{
+			return
+				this.GetType().GetHashCode() +
+				(int)this._plotColorInfluence +
+				this._relativeStructureWidth.GetHashCode() +
+				this._fillColor.GetHashCode() +
+				(this._frame?.GetHashCode() ?? 0) +
+				(this._inset?.GetHashCode() ?? 0);
 		}
 	}
 }

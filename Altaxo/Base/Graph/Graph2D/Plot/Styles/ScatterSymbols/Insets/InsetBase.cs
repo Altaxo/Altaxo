@@ -32,8 +32,8 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
 	public abstract class InsetBase : IScatterSymbolInset
 	{
-		protected const double ClipperScalingDouble = ScatterSymbolBase.ClipperScalingDouble;
-		protected const int ClipperScalingInt = ScatterSymbolBase.ClipperScalingInt;
+		protected const double ClipperScalingDouble = SymbolBase.ClipperScalingDouble;
+		protected const int ClipperScalingInt = SymbolBase.ClipperScalingInt;
 
 		protected NamedColor _color = NamedColors.White;
 

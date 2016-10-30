@@ -533,6 +533,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\DropLinePlotStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\Gdi\Plot\Styles\LinePlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1214,6 +1218,9 @@
     <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternConverters.cs" />
     <Compile Include="Gui\Drawing\DashPatternManagement\InnerDashPatternComboBox.xaml.cs">
       <DependentUpon>InnerDashPatternComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\DropLinePlotStyleControl.xaml.cs">
+      <DependentUpon>DropLinePlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\LinePlotStyleControl.xaml.cs">
       <DependentUpon>LinePlotStyleControl.xaml</DependentUpon>

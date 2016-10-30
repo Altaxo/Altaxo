@@ -34,7 +34,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	public class Square : ScatterSymbolBase
+	public class Square : ClosedSymbolBase
 	{
 		private const double Sqrt1By2 = 0.70710678118654752440084436210485;
 

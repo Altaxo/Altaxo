@@ -23,47 +23,76 @@
 #endregion Copyright
 
 using Altaxo.Drawing;
+using Altaxo.Geometry;
 using ClipperLib;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
+namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
-	public class ConstantThicknessFrame : FrameBase
+	public class CrossPlus : OpenSymbolBase
 	{
 		#region Serialization
 
 		/// <summary>
 		/// 2016-10-27 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConstantThicknessFrame), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossPlus), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				info.AddBaseValueEmbedded(obj, obj.GetType().BaseType);
+
+				SerializeSetV0((IScatterSymbol)obj, info);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = (ConstantThicknessFrame)o ?? new ConstantThicknessFrame();
+				var s = (CrossPlus)o ?? new CrossPlus();
 				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
-				return s;
+
+				return DeserializeSetV0(s, info, parent);
 			}
 		}
 
 		#endregion Serialization
 
-		public override List<List<IntPoint>> GetCopyOfClipperPolygon(double relativeWidth, List<List<IntPoint>> outerPolygon)
+		public CrossPlus()
 		{
-			var delta = (-2 * relativeWidth) * ClosedSymbolBase.ClipperScalingInt;
-			var clipper = new ClipperOffset();
-			clipper.AddPaths(outerPolygon, JoinType.jtMiter, EndType.etClosedPolygon);
-			var result = new List<List<IntPoint>>();
-			clipper.Execute(ref result, delta);
-			return result;
+		}
+
+		public CrossPlus(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
+			: base(fillColor, isFillColorInfluencedByPlotColor)
+		{
+		}
+
+		public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon()
+		{
+			var w = _relativeStructureWidth * ClipperScalingDouble;
+			var h = ClipperScalingInt;
+
+			var list = new List<ClipperLib.IntPoint>(12)
+				{
+				new ClipperLib.IntPoint(-w, -h),
+				new ClipperLib.IntPoint(w, -h),
+				new ClipperLib.IntPoint(w, -w),
+				new ClipperLib.IntPoint(h, -w),
+				new ClipperLib.IntPoint(h, w),
+				new ClipperLib.IntPoint(w, w),
+				new ClipperLib.IntPoint(w, h),
+				new ClipperLib.IntPoint(-w, h),
+				new ClipperLib.IntPoint(-w, w),
+				new ClipperLib.IntPoint(-h, w),
+				new ClipperLib.IntPoint(-h, -w),
+				new ClipperLib.IntPoint(-w, -w),
+			};
+
+			return new List<List<ClipperLib.IntPoint>>(1) { list };
 		}
 	}
 }
