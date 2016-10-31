@@ -95,7 +95,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 			if (linePlotStyle.FillArea)
 			{
-				FillOneRange(gp, pdata, range, layer, linePlotStyle.FillDirection, linepts, linePlotStyle);
+				FillOneRange(gp, pdata, range, layer, linePlotStyle.FillDirection, linepts);
 				g.FillPath(linePlotStyle.FillBrush, gp);
 				gp.Reset();
 			}
@@ -135,24 +135,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			}
 		}
 
-		/// <summary>
-		/// Template to get a fill path.
-		/// </summary>
-		/// <param name="gp">Graphics path to fill with data.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
-		/// <param name="range">The plot range to use.</param>
-		/// <param name="layer">Graphics layer.</param>
-		/// <param name="fillDirection">Designates a bound to fill to.</param>
-		/// <param name="linePoints">The points that mark the line.</param>
-		/// <param name="linePlotStyle">The line plot style.</param>
+		/// <inheritdoc/>
 		public override void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
 			PlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
-			bool connectCircular,
-			LinePlotStyle linePlotStyle
+			bool ignoreMissingDataPoints,
+			bool connectCircular
 		)
 		{
 			if (range.Length < 2)
@@ -161,7 +152,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			int lastIdx;
 			int numberOfPointsPerOriginalPoint;
 			PointF[] linepts = GetSubPoints(pdata, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
-			FillOneRange(gp, pdata, range, layer, fillDirection, linepts, linePlotStyle);
+			FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
 		}
 
 		/// <summary>
@@ -173,15 +164,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="fillDirection">Designates a bound to fill to.</param>
 		/// <param name="linePoints">The points that mark the line.</param>
-		/// <param name="linePlotStyle">The line plot style.</param>
 		public virtual void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
 			PlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
-			PointF[] linePoints,
-			LinePlotStyle linePlotStyle
+			PointF[] linePoints
 		)
 		{
 			Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);

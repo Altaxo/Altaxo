@@ -952,13 +952,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// as one range, i.e. continuously
 				// for this, we create the totalRange, which contains all ranges
 				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
-				_connectionStyle.FillOneRange(gp, pdata, totalRange, layer, fillDirection, _connectCircular, this);
+				_connectionStyle.FillOneRange(gp, pdata, totalRange, layer, fillDirection, _ignoreMissingDataPoints, _connectCircular);
 			}
 			else // we not ignore missing points, so plot all ranges separately
 			{
 				for (int i = 0; i < rangelistlen; i++)
 				{
-					_connectionStyle.FillOneRange(gp, pdata, rangeList[i], layer, fillDirection, _connectCircular, this);
+					_connectionStyle.FillOneRange(gp, pdata, rangeList[i], layer, fillDirection, _ignoreMissingDataPoints, _connectCircular);
 				}
 			}
 		}

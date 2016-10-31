@@ -1,0 +1,100 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.Gdi.Plot.Styles.DropAreaPlotStyleControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+ 						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Drawing.D3D"
+						 xmlns:axogdp="clr-namespace:Altaxo.Gui.Drawing"
+						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
+             mc:Ignorable="d">
+
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Style.Setters>
+				<Setter Property="Margin" Value="6,0,0,0" />
+				<Setter Property="HorizontalAlignment" Value="Right" />
+				<Setter Property="VerticalAlignment" Value="Center" />
+			</Style.Setters>
+		</Style>
+		<Style TargetType="CheckBox">
+			<Style.Setters>
+				<Setter Property="Margin" Value="6,0,6,0" />
+				<Setter Property="HorizontalAlignment" Value="Left" />
+				<Setter Property="VerticalAlignment" Value="Center" />
+			</Style.Setters>
+		</Style>
+	</UserControl.Resources>
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
+			<ColumnDefinition Width="4" />
+			<ColumnDefinition Width="Auto" SharedSizeGroup="EditColumn1" />
+			<ColumnDefinition Width="Auto" MinWidth="4" />
+			<ColumnDefinition Width="Auto" MinWidth="40" SharedSizeGroup="EditColumn2" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="0" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+		</Grid.RowDefinitions>
+
+		<Label Grid.Column="0" Grid.Row="0" Content="Line connection:" />
+		<ComboBox x:Name="_guiLineConnect" Grid.Column="2" Grid.Row="0" SelectionChanged="EhUseLineConnectChanged" />
+		<CheckBox x:Name="_guiConnectCircular" Grid.Column="2" Grid.Row="2" Content="Circular connection" />
+		<CheckBox x:Name="_guiIgnoreMissingPoints" Grid.Column="2" Grid.Row="6" Content="Ignore data gaps" />
+
+		<Label Grid.Row="8" Grid.Column="0"  Content="Fill direction:" />
+		<ComboBox x:Name="_guiFillDirection" Grid.Row="8" Grid.Column="2" SelectionChanged="EhFillDirectionChanged" />
+
+		<Label Content="Fill color:" Grid.Row="10" Grid.Column="0" />
+		<axogcd:BrushComboBox x:Name="_guiFillBrush" Grid.Row="10" Grid.Column="2" SelectedBrushChanged="EhFillBrushChanged" />
+
+		<GroupBox Header="Fill color linkage:" Grid.Row="12" Grid.ColumnSpan="3">
+			<axogc:SingleChoiceRadioStackPanel x:Name="_guiFillColorLinkage" Orientation="Vertical" SelectionChanged="EhFillColorLinkageChanged" />
+		</GroupBox>
+
+		<Label Content="Frame pen:" Grid.Row="14" Grid.Column="0" />
+		<axogcd:BrushComboBox x:Name="_guiFrameBrush"  Grid.Row="14" Grid.Column="2" />
+
+		<GroupBox Header="Frame color linkage:" Grid.Row="16" Grid.ColumnSpan="3">
+			<axogc:SingleChoiceRadioStackPanel x:Name="_guiFrameColorLinkage" Orientation="Vertical" SelectionChanged="EhFrameColorLinkageChanged" />
+		</GroupBox>
+
+		<Label Content="Dash style:" Grid.Row="18" Grid.Column="0" />
+		<axogdd:DashPatternComboBox x:Name="_guiFrameDashStyle" Grid.Row="18" Grid.Column="2" />
+
+		<Label Grid.Column="0" Grid.Row="20" Content="Thickness:" />
+		<axogcd:LineThicknessComboBox  Grid.Row="20" x:Name="_guiFrameThickness1" Grid.Column="2" />
+	</Grid>
+</UserControl>

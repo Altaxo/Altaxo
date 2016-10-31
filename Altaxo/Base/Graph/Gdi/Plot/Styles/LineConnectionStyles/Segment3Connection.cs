@@ -95,7 +95,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 			if (linePlotStyle.FillArea)
 			{
-				FillOneRange(gp, pdata, range, layer, linePlotStyle.FillDirection, linepts, linePlotStyle, lastIdx);
+				FillOneRange(gp, pdata, range, layer, linePlotStyle.FillDirection, linepts, lastIdx);
 				g.FillPath(linePlotStyle.FillBrush, gp);
 				gp.Reset();
 			}
@@ -164,24 +164,15 @@ out int lastIndex)
 			return linepts;
 		}
 
-		/// <summary>
-		/// Template to get a fill path.
-		/// </summary>
-		/// <param name="gp">Graphics path to fill with data.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
-		/// <param name="range">The plot range to use.</param>
-		/// <param name="layer">Graphics layer.</param>
-		/// <param name="fillDirection">Designates a bound to fill to.</param>
-		/// <param name="linePoints">The points that mark the line.</param>
-		/// <param name="linePlotStyle">The line plot style.</param>
+		/// <inheritdoc/>
 		public override void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
 			PlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
-			bool connectCircular,
-			LinePlotStyle linePlotStyle
+			bool ignoreMissingDataPoints,
+			bool connectCircular
 		)
 		{
 			if (range.Length < 2)
@@ -189,7 +180,7 @@ out int lastIndex)
 
 			int lastIdx;
 			PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, out lastIdx);
-			FillOneRange(gp, pdata, range, layer, fillDirection, linepts, linePlotStyle);
+			FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
 		}
 
 		/// <summary>
@@ -201,15 +192,14 @@ out int lastIndex)
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="fillDirection">Designates a bound to fill to.</param>
 		/// <param name="linePoints">The points that mark the line.</param>
-		/// <param name="linePlotStyle">The line plot style.</param>
 		public void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
 			PlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
-			PointF[] linePoints,
-			LinePlotStyle linePlotStyle
+			PointF[] linePoints
+
 		)
 		{
 			if (range.Length < 2)
@@ -217,7 +207,7 @@ out int lastIndex)
 
 			int lastIdx;
 			PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, out lastIdx);
-			FillOneRange(gp, pdata, range, layer, fillDirection, linepts, linePlotStyle, lastIdx);
+			FillOneRange(gp, pdata, range, layer, fillDirection, linepts, lastIdx);
 		}
 
 		/// <summary>
@@ -229,7 +219,6 @@ out int lastIndex)
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="fillDirection">Designates a bound to fill to.</param>
 		/// <param name="linePoints">The points that mark the line.</param>
-		/// <param name="linePlotStyle">The line plot style.</param>
 		public void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
@@ -237,7 +226,6 @@ out int lastIndex)
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			PointF[] linepts,
-			LinePlotStyle linePlotStyle,
 			int lastIdx
 			)
 		{

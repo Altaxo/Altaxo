@@ -295,6 +295,7 @@
     <Compile Include="Drawing\DashPatternManagement\DashPatternListBag.cs" />
     <Compile Include="Graph\Gdi\Plot\Groups\ScatterSymbolGroupStyle.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\DropLinePlotStyle.cs" />
+    <Compile Include="Graph\Gdi\Plot\Styles\DropAreaPlotStyle.cs" />
     <Compile Include="Graph\Graph2D\Plot\Groups\ScatterSymbolList.cs" />
     <Compile Include="Graph\Graph2D\Plot\Groups\ScatterSymbolListBag.cs" />
     <Compile Include="Graph\Graph2D\Plot\Groups\ScatterSymbolListManager.cs" />
@@ -621,6 +622,7 @@
     <Compile Include="Gui\Drawing\D3D\MaterialController.cs" />
     <Compile Include="Gui\Drawing\D3D\Material\MaterialWithUniformColorController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\DropLinePlotStyleController.cs" />
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\DropAreaPlotStyleController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\ScatterPlotStyleController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\VectorCartesicPlotStyleController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Axis\AxisCreationController.cs" />

@@ -74,7 +74,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <param name="symbolGap">The size of the symbol gap. Argument is the original index of the data. The return value is the absolute symbol gap at this index.
 		/// This function is null if no symbol gap is required.</param>
 		/// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
-		/// <param name="linePlotStyle">The line plot style.</param>
 		public override void Paint(
 			Graphics g,
 			Processed2DPlotData pdata,
@@ -88,23 +87,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		{
 		}
 
-		/// <summary>
-		/// Template to get a fill path.
-		/// </summary>
-		/// <param name="gp">Graphics path to fill with data.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
-		/// <param name="overriderange">The plot range to use.</param>
-		/// <param name="layer">Graphics layer.</param>
-		/// <param name="fillDirection">Designates a bound to fill to.</param>
-		/// <param name="linePlotStyle">The line plot style.</param>
+		/// <inheritdoc/>
 		public override void FillOneRange(
-			GraphicsPath gp,
+		GraphicsPath gp,
 			Processed2DPlotData pdata,
-			PlotRange overriderange,
+			PlotRange rangeRaw,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
-			bool connectCircular,
-			LinePlotStyle linePlotStyle)
+			bool ignoreMissingDataPoints,
+			bool connectCircular
+		)
 		{
 		}
 	}

@@ -71,18 +71,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// </summary>
 		/// <param name="gp">Graphics path to fill with data.</param>
 		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
-		/// <param name="overriderange">The plot range to use.</param>
+		/// <param name="range">The plot range to use.</param>
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="fillDirection">Designates a bound to fill to.</param>
-		/// <param name="linePlotStyle">The line plot style.</param>
+		/// <param name="ignoreMissingDataPoints">If true, missing data points are ignored.</param>
+		/// <param name="connectCircular">If true, the line is connected circular, and the area is the polygon inside of that circular connection.</param>
 		public abstract void FillOneRange(
 			GraphicsPath gp,
 			Processed2DPlotData pdata,
-			PlotRange overriderange,
+			PlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
-			bool connectCircular,
-			LinePlotStyle linePlotStyle);
+			bool ignoreMissingDataPoints,
+			bool connectCircular
+			);
 
 		public override int GetHashCode()
 		{

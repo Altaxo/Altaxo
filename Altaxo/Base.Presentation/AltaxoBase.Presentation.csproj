@@ -537,6 +537,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\Gdi\Plot\Styles\DropAreaPlotStyleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\Gdi\Plot\Styles\LinePlotStyleControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1221,6 +1225,9 @@
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\DropLinePlotStyleControl.xaml.cs">
       <DependentUpon>DropLinePlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\DropAreaPlotStyleControl.xaml.cs">
+      <DependentUpon>DropAreaPlotStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\LinePlotStyleControl.xaml.cs">
       <DependentUpon>LinePlotStyleControl.xaml</DependentUpon>
