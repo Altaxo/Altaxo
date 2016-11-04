@@ -112,6 +112,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 					int originalIndexEnd = range.OffsetToOriginal + ((i + skipFrequency) < range.Length ? (i + skipFrequency) : (connectCircular ? 0 : range.Length - 1));
 
 					int copyLength = Math.Min(subPointsLength, linepts.Length - numberOfPointsPerOriginalPoint * i);
+					if (copyLength < 2)
+						continue; // happens probably at the end of the range if there are not enough points to draw
+
 					if (subPoints.Length != copyLength)
 						subPoints = new PointF[copyLength];
 

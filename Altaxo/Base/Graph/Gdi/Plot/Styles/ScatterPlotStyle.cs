@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Graph.Gdi.Plot.Styles.XYPlotScatterStyles;
-using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -38,185 +36,50 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	using Drawing.ColorManagement;
 	using Graph.Plot.Data;
 	using Graph.Plot.Groups;
+	using Graph2D.Plot.Groups;
+	using Graph2D.Plot.Styles;
+	using Graph2D.Plot.Styles.ScatterSymbols;
 	using Plot.Data;
 	using Plot.Groups;
 
-	namespace XYPlotScatterStyles
-	{
-		[Serializable]
-		public enum Shape
-		{
-			NoSymbol,
-			Square,
-			Circle,
-			UpTriangle,
-			DownTriangle,
-			Diamond,
-			CrossPlus,
-			CrossTimes,
-			Star,
-			BarHorz,
-			BarVert
-		}
-
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyles.Shape", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Shape), 1)]
-		public class ShapeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.SetNodeContent(obj.ToString());
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				string val = info.GetNodeContent();
-				return System.Enum.Parse(typeof(Shape), val, true);
-			}
-		}
-
-		[Serializable]
-		public enum Style
-		{
-			Solid,
-			Open,
-			DotCenter,
-			Hollow,
-			Plus,
-			Times,
-			BarHorz,
-			BarVert
-		}
-
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyles.Style", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Style), 1)]
-		public class StyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.SetNodeContent(obj.ToString());
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				string val = info.GetNodeContent();
-				return System.Enum.Parse(typeof(Style), val, true);
-			}
-		}
-
-		public class ShapeAndStyle
-		{
-			public Shape Shape;
-			public Style Style;
-
-			public ShapeAndStyle()
-			{
-				this.Shape = Shape.NoSymbol;
-				this.Style = Style.Solid;
-			}
-
-			public ShapeAndStyle(Shape shape, Style style)
-			{
-				this.Shape = shape;
-				this.Style = style;
-			}
-
-			public static ShapeAndStyle Empty
-			{
-				get
-				{
-					return new ShapeAndStyle(Shape.NoSymbol, Style.Solid);
-				}
-			}
-
-			public void SetToNextStyle(ShapeAndStyle template)
-			{
-				SetToNextStyle(template, 1);
-			}
-
-			public void SetToNextStyle(ShapeAndStyle template, int steps)
-			{
-				int wraps;
-				SetToNextStyle(template, steps, out wraps);
-			}
-
-			public void SetToNextStyle(ShapeAndStyle template, int step, out int wraps)
-			{
-				this.Shape = template.Shape;
-				this.Style = template.Style;
-
-				if (template.Shape == Shape.NoSymbol)
-				{
-					wraps = 0;
-					return;
-				}
-
-				// first increase the shape value,
-				// if this is not possible set shape to first shape, and increase the
-				// style value
-				// note that the first member of the shape enum is NoSymbol, which should not be
-				// used here
-
-				int nshapes = System.Enum.GetValues(typeof(XYPlotScatterStyles.Shape)).Length - 1;
-				int nstyles = System.Enum.GetValues(typeof(XYPlotScatterStyles.Style)).Length;
-
-				int current = ((int)template.Style) * nshapes + ((int)template.Shape) - 1;
-
-				int next = Calc.BasicFunctions.PMod(current + step, nshapes * nstyles);
-				wraps = Calc.BasicFunctions.NumberOfWraps(nshapes * nstyles, current, step);
-
-				int nstyle = Calc.BasicFunctions.PMod(next / nshapes, nstyles);
-				int nshape = Calc.BasicFunctions.PMod(next, nshapes);
-
-				Shape = (XYPlotScatterStyles.Shape)(nshape + 1);
-				Style = (XYPlotScatterStyles.Style)nstyle;
-			}
-		}
-
-		[Flags]
-		[Serializable]
-		public enum DropLine
-		{
-			NoDrop = 0,
-			Top = 1,
-			Bottom = 2,
-			Left = 4,
-			Right = 8,
-			All = Top | Bottom | Left | Right
-		}
-
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyles.DropLine", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DropLine), 1)]
-		public class DropLineXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				info.SetNodeContent(obj.ToString());
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				string val = info.GetNodeContent();
-				return System.Enum.Parse(typeof(DropLine), val, true);
-			}
-		}
-	} // end of class XYPlotScatterStyles
-
-	public class ScatterPlotStyle
+	public partial class ScatterPlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
 		IG2DPlotStyle
 	{
-		protected XYPlotScatterStyles.Shape _shape;
-		protected XYPlotScatterStyles.Style _style;
-		protected CSPlaneIDList _dropLine;
-		protected PenX _pen;
+		/// <summary>
+		/// Indicates whether <see cref="SkipFrequency"/> is independent of other sub-styles.
+		/// </summary>
+		protected bool _independentSkipFreq;
+
+		/// <summary>A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
+		protected int _skipFreq;
+
+		/// <summary>
+		/// The scatter symbol.
+		/// </summary>
+		protected IScatterSymbol _symbolShape;
+
+		/// <summary>Is the size of the symbols independent, i.e. not influenced by group styles.</summary>
+		protected bool _independentSymbolSize;
+
+		/// <summary>Size of the symbols in points.</summary>
+		protected double _symbolSize;
+
+		protected double _relativePenWidth;
+
+		/// <summary>Is the material color independent, i.e. not influenced by group styles.</summary>
 		protected bool _independentColor;
 
-		protected double _symbolSize;
-		protected bool _independentSymbolSize;
-		protected double _relativePenWidth;
-		protected int _skipFreq;
+		/// <summary>
+		/// The color supposed to be the plot color. Depending on the influence flag, this color influences different parts of the symbol.
+		/// </summary>
+		protected NamedColor _color;
+
+		private PlotColorInfluence? _overridePlotColorInfluence;
+		protected NamedColor? _overrideFillColor;
+		protected NamedColor? _overrideFrameColor;
+		protected NamedColor? _overrideInsetColor;
 
 		// cached values:
 		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
@@ -226,147 +89,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>If this function is set, the symbol color is determined by calling this function on the index into the data.</summary>
 		[field: NonSerialized]
 		protected Func<int, Color> _cachedColorForIndexFunction;
-
-		[NonSerialized]
-		protected GraphicsPath _cachedPath;
-
-		[NonSerialized]
-		protected bool _cachedFillPath;
-
-		[NonSerialized]
-		protected BrushX _cachedFillBrush;
-
-		#region Serialization
-
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyle", 0)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyle", 1)] // by accident this was never different from 0
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new NotSupportedException("Serialization of old versions is not supported, probably a programming error");
-				/*
-				XYPlotScatterStyle s = (XYPlotScatterStyle)obj;
-				info.AddValue("Shape", s._shape);
-				info.AddValue("Style", s._style);
-				info.AddValue("DropLine", s._dropLine);
-				info.AddValue("Pen", s._pen);
-				info.AddValue("SymbolSize", s._symbolSize);
-				info.AddValue("RelativePenWidth", s._relativePenWidth);
-				*/
-			}
-
-			protected virtual ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle(info);
-
-				s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", typeof(XYPlotScatterStyles.Shape));
-				s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", typeof(XYPlotScatterStyles.Style));
-				XYPlotScatterStyles.DropLine dropLine = (XYPlotScatterStyles.DropLine)info.GetValue("DropLine", s);
-				s._pen = (PenX)info.GetValue("Pen", s);
-				s._symbolSize = info.GetSingle("SymbolSize");
-				s._relativePenWidth = info.GetSingle("RelativePenWidth");
-				s._dropLine = new CSPlaneIDList(GetCSPlaneIds(dropLine));
-
-				return s;
-			}
-
-			private static IEnumerable<CSPlaneID> GetCSPlaneIds(XYPlotScatterStyles.DropLine dropLine)
-			{
-				if (0 != (dropLine & XYPlotScatterStyles.DropLine.Bottom))
-					yield return CSPlaneID.Bottom;
-				if (0 != (dropLine & XYPlotScatterStyles.DropLine.Top))
-					yield return CSPlaneID.Top;
-				if (0 != (dropLine & XYPlotScatterStyles.DropLine.Left))
-					yield return CSPlaneID.Left;
-				if (0 != (dropLine & XYPlotScatterStyles.DropLine.Right))
-					yield return CSPlaneID.Right;
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				ScatterPlotStyle s = SDeserialize(o, info, parent);
-
-				// restore the cached values
-				s.SetCachedValues();
-				s.CreateEventChain();
-
-				return s;
-			}
-		}
-
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotScatterStyle", 2)]
-		private class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
-		{
-			public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				throw new NotSupportedException("Serialization of old versions is not supported, probably a programming error");
-				/*
-				base.Serialize(obj, info);
-				XYPlotScatterStyle s = (XYPlotScatterStyle)obj;
-				info.AddValue("IndependentColor", s._independentColor);
-				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
-				info.AddValue("SkipFreq", s._skipFreq);
-				*/
-			}
-
-			protected override ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				ScatterPlotStyle s = base.SDeserialize(o, info, parent);
-				s._independentColor = info.GetBoolean("IndependentColor");
-				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
-				s._skipFreq = info.GetInt32("SkipFreq");
-				return s;
-			}
-		}
-
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterPlotStyle), 3)]
-		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				ScatterPlotStyle s = (ScatterPlotStyle)obj;
-				info.AddValue("Shape", s._shape);
-				info.AddValue("Style", s._style);
-				info.AddValue("DropLine", s._dropLine);
-				info.AddValue("Pen", s._pen);
-				info.AddValue("SymbolSize", s._symbolSize);
-				info.AddValue("RelativePenWidth", s._relativePenWidth);
-
-				info.AddValue("IndependentColor", s._independentColor);
-				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
-				info.AddValue("SkipFreq", s._skipFreq);
-			}
-
-			protected virtual ScatterPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				ScatterPlotStyle s = null != o ? (ScatterPlotStyle)o : new ScatterPlotStyle(info);
-
-				s._shape = (XYPlotScatterStyles.Shape)info.GetValue("Shape", s);
-				s._style = (XYPlotScatterStyles.Style)info.GetValue("Style", s);
-				s._dropLine = (CSPlaneIDList)info.GetValue("DropLine", s);
-				s._pen = (PenX)info.GetValue("Pen", s);
-				s._symbolSize = info.GetSingle("SymbolSize");
-				s._relativePenWidth = info.GetSingle("RelativePenWidth");
-				s._independentColor = info.GetBoolean("IndependentColor");
-				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
-				s._skipFreq = info.GetInt32("SkipFreq");
-				return s;
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				ScatterPlotStyle s = SDeserialize(o, info, parent);
-
-				// restore the cached values
-				s.SetCachedValues();
-				s.CreateEventChain();
-
-				return s;
-			}
-		}
-
-		#endregion Serialization
 
 		#region Copying
 
@@ -378,20 +100,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				this._shape = from._shape;
-				this._style = from._style;
-				this._dropLine = from._dropLine; // immutable
-				ChildCopyToMember(ref _pen, from._pen);
-				this._independentColor = from._independentColor;
-				this._independentSymbolSize = from._independentSymbolSize;
-
-				this._symbolSize = from._symbolSize;
-				this._relativePenWidth = from._relativePenWidth;
+				this._independentSkipFreq = from._independentSkipFreq;
 				this._skipFreq = from._skipFreq;
 
-				this._cachedPath = null == from._cachedPath ? null : (GraphicsPath)from._cachedPath.Clone();
-				this._cachedFillPath = from._cachedFillPath;
-				ChildCopyToMember(ref _cachedFillBrush, from._cachedFillBrush);
+				this._symbolShape = from._symbolShape;
+
+				this._independentSymbolSize = from._independentSymbolSize;
+				this._symbolSize = from._symbolSize;
+				this._relativePenWidth = from._relativePenWidth;
+
+				this._independentColor = from._independentColor;
+				this._color = from._color;
+
+				this._overridePlotColorInfluence = from._overridePlotColorInfluence;
+				this._overrideFillColor = from._overrideFillColor;
+				this._overrideFrameColor = from._overrideFrameColor;
+				this._overrideInsetColor = from._overrideInsetColor;
 
 				EhSelfChanged(EventArgs.Empty);
 
@@ -440,46 +164,35 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		internal ScatterPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, bool oldDeserializationRequiresFullConstruction)
 		{
-			double penWidth = 1;
 			double symbolSize = 8;
 			var color = ColorSetManager.Instance.BuiltinDarkPlotColors[0];
 
-			this._shape = XYPlotScatterStyles.Shape.Square;
-			this._style = XYPlotScatterStyles.Style.Solid;
-			this._dropLine = CSPlaneIDList.Empty;
-			this._pen = new PenX(color, penWidth) { ParentObject = this };
+			this._symbolShape = ScatterSymbolListManager.Instance.BuiltinDefault[0];
+			this._color = NamedColors.Black;
 			this._independentColor = false;
 
 			this._symbolSize = symbolSize;
 
 			this._relativePenWidth = 0.1f;
 			this._skipFreq = 1;
-			this._cachedFillPath = true; // since default is solid
-			this._cachedFillBrush = new BrushX(color) { ParentObject = this };
-			this._cachedPath = GetPath(_shape, _style, _symbolSize);
-			CreateEventChain();
 		}
 
 		public ScatterPlotStyle(ScatterPlotStyle from)
 		{
 			CopyFrom(from, Main.EventFiring.Suppressed);
-			CreateEventChain();
 		}
 
-		public ScatterPlotStyle(XYPlotScatterStyles.Shape shape, XYPlotScatterStyles.Style style, double size, double penWidth, NamedColor penColor)
+		public ScatterPlotStyle(IScatterSymbol shape, double size, double penWidth, NamedColor penColor)
 		{
-			_shape = shape;
-			_style = style;
-			_dropLine = CSPlaneIDList.Empty;
-			_pen = new PenX(penColor, (float)penWidth);
+			if (null == shape)
+				throw new ArgumentNullException(nameof(shape));
+
+			_symbolShape = shape;
+			_color = penColor;
 			_symbolSize = size;
 
 			_relativePenWidth = penWidth / size;
 			_skipFreq = 1;
-
-			// Cached values
-			SetCachedValues();
-			CreateEventChain();
 		}
 
 		public ScatterPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
@@ -488,97 +201,33 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			double symbolSize = GraphDocument.GetDefaultSymbolSize(context);
 			var color = GraphDocument.GetDefaultPlotColor(context);
 
-			this._shape = XYPlotScatterStyles.Shape.Square;
-			this._style = XYPlotScatterStyles.Style.Solid;
-			this._dropLine = CSPlaneIDList.Empty;
-			this._pen = new PenX(color, penWidth) { ParentObject = this };
+			this._symbolShape = ScatterSymbolListManager.Instance.BuiltinDefault[0];
+			_color = color;
 			this._independentColor = false;
-
 			this._symbolSize = symbolSize;
 
-			this._relativePenWidth = 0.1f;
+			this._relativePenWidth = penWidth / symbolSize;
 			this._skipFreq = 1;
-			this._cachedFillPath = true; // since default is solid
-			this._cachedFillBrush = new BrushX(color) { ParentObject = this };
-			this._cachedPath = GetPath(_shape, _style, _symbolSize);
-			CreateEventChain();
-		}
-
-		protected void CreateEventChain()
-		{
-			if (null != _pen)
-				_pen.ParentObject = this;
 		}
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			if (null != _pen)
-				yield return new Main.DocumentNodeAndName(_pen, "Pen");
-
-			if (null != _cachedFillBrush)
-				yield return new Main.DocumentNodeAndName(_cachedFillBrush, "CachedFillBrush");
+			yield break;
 		}
 
-		public XYPlotScatterStyles.Shape Shape
+		public IScatterSymbol Shape
 		{
-			get { return this._shape; }
-			set
-			{
-				if (value != this._shape)
-				{
-					this._shape = value;
-
-					// ensure that a pen is set if Shape is other than nosymbol
-					if (value != XYPlotScatterStyles.Shape.NoSymbol && null == this._pen)
-						_pen = new PenX(NamedColors.Black);
-
-					SetCachedValues();
-
-					EhSelfChanged(EventArgs.Empty); // Fire Changed event
-				}
-			}
-		}
-
-		public XYPlotScatterStyles.Style Style
-		{
-			get { return this._style; }
-			set
-			{
-				if (value != this._style)
-				{
-					this._style = value;
-					SetCachedValues();
-
-					EhSelfChanged(EventArgs.Empty); // Fire Changed event
-				}
-			}
-		}
-
-		public XYPlotScatterStyles.ShapeAndStyle ShapeAndStyle
-		{
-			get
-			{
-				return new ShapeAndStyle(this._shape, this._style);
-			}
-			set
-			{
-				this.Style = value.Style;
-				this.Shape = value.Shape;
-			}
-		}
-
-		public CSPlaneIDList DropLine
-		{
-			get { return _dropLine; }
+			get { return this._symbolShape; }
 			set
 			{
 				if (null == value)
 					throw new ArgumentNullException(nameof(value));
 
-				if (!object.ReferenceEquals(value, _dropLine))
+				if (!object.ReferenceEquals(_symbolShape, value))
 				{
-					_dropLine = value;
-					EhSelfChanged();
+					this._symbolShape = value;
+
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 			}
 		}
@@ -587,43 +236,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			get
 			{
-				if (_shape != XYPlotScatterStyles.Shape.NoSymbol)
-					return true;
-				if (_dropLine.Count != 0)
-					return true;
-
-				return false;
-			}
-		}
-
-		public PenX Pen
-		{
-			get { return this._pen; }
-			set
-			{
-				// ensure pen can be only set to null if NoSymbol
-				if (value != null || XYPlotScatterStyles.Shape.NoSymbol == this._shape)
-				{
-					if (ChildCopyToMember(ref _pen, value))
-					{
-						SetCachedValues();
-						EhSelfChanged(EventArgs.Empty); // Fire Changed event
-					}
-				}
+				return !(_symbolShape is NoSymbol);
 			}
 		}
 
 		public NamedColor Color
 		{
-			get { return this._pen.Color; }
+			get { return _color; }
 			set
 			{
-				var oldValue = this._pen.Color;
-				this._pen.Color = value;
-				SetCachedValues();
-
-				if (value != oldValue)
+				if (!(_color == value))
+				{
+					_color = value;
 					EhSelfChanged(EventArgs.Empty); // Fire Changed event
+				}
 			}
 		}
 
@@ -635,10 +261,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				bool oldValue = _independentColor;
-				_independentColor = value;
-				if (value != oldValue)
+				if (!(_independentColor == value))
+				{
+					_independentColor = value;
 					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -647,11 +274,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return _symbolSize; }
 			set
 			{
-				if (value != _symbolSize)
+				if (!(value >= 0))
+					throw new ArgumentOutOfRangeException(nameof(value), "Must be >= 0");
+
+				if (!(_symbolSize == value))
 				{
 					_symbolSize = value;
-					_cachedPath = GetPath(this._shape, this._style, this._symbolSize);
-					_pen.Width = (float)(_symbolSize * _relativePenWidth);
 					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 			}
@@ -665,12 +293,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				if (!(value >= 0 && value <= float.MaxValue))
+				if (!(value >= 0 && value <= 0.5))
 					throw new ArgumentOutOfRangeException("Out of range: RelativePenWidth = " + value.ToString());
 
-				_relativePenWidth = value;
-				_pen.Width = (float)(_symbolSize * _relativePenWidth);
-				EhSelfChanged(EventArgs.Empty);
+				if (!(_relativePenWidth == value))
+				{
+					_relativePenWidth = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -682,10 +312,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				bool oldValue = _independentSymbolSize;
-				_independentSymbolSize = value;
-				if (value != oldValue)
+				if (!(_independentSymbolSize == value))
+				{
+					_independentSymbolSize = value;
 					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -694,7 +325,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return _skipFreq; }
 			set
 			{
-				if (value != _skipFreq)
+				if (!(_skipFreq == value))
 				{
 					_skipFreq = value;
 					EhSelfChanged(EventArgs.Empty); // Fire Changed event
@@ -702,125 +333,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		protected void SetCachedValues()
+		public bool IndependentSkipFrequency
 		{
-			_cachedPath = GetPath(this._shape, this._style, this._symbolSize);
-
-			_cachedFillPath = _style == XYPlotScatterStyles.Style.Solid || _style == XYPlotScatterStyles.Style.Open || _style == XYPlotScatterStyles.Style.DotCenter;
-
-			if (this._style != XYPlotScatterStyles.Style.Solid)
-				_cachedFillBrush = new BrushX(NamedColors.White) { ParentObject = this };
-			else if (this._pen.PenType == PenType.SolidColor)
-				_cachedFillBrush = new BrushX(_pen.Color) { ParentObject = this };
-			else
-				_cachedFillBrush = new BrushX(_pen.BrushHolder) { ParentObject = this };
-		}
-
-		public static GraphicsPath GetPath(XYPlotScatterStyles.Shape sh, XYPlotScatterStyles.Style st, double sized)
-		{
-			float sizeh = (float)(sized / 2);
-			float size = (float)sized;
-			GraphicsPath gp = new GraphicsPath();
-
-			switch (sh)
+			get
 			{
-				case XYPlotScatterStyles.Shape.Square:
-					gp.AddRectangle(new RectangleF(-sizeh, -sizeh, size, size));
-					gp.StartFigure();
-					break;
-
-				case XYPlotScatterStyles.Shape.Circle:
-					gp.AddEllipse(-sizeh, -sizeh, size, size);
-					gp.StartFigure();
-					break;
-
-				case XYPlotScatterStyles.Shape.UpTriangle:
-					gp.AddLine(0, -sizeh, 0.3301270189f * size, 0.5f * sizeh);
-					gp.AddLine(0.43301270189f * size, 0.5f * sizeh, -0.43301270189f * size, 0.5f * sizeh);
-					gp.CloseFigure();
-					break;
-
-				case XYPlotScatterStyles.Shape.DownTriangle:
-					gp.AddLine(-0.43301270189f * sizeh, -0.5f * sizeh, 0.43301270189f * size, -0.5f * sizeh);
-					gp.AddLine(0.43301270189f * size, -0.5f * sizeh, 0, sizeh);
-					gp.CloseFigure();
-					break;
-
-				case XYPlotScatterStyles.Shape.Diamond:
-					gp.AddLine(0, -sizeh, sizeh, 0);
-					gp.AddLine(sizeh, 0, 0, sizeh);
-					gp.AddLine(0, sizeh, -sizeh, 0);
-					gp.CloseFigure();
-					break;
-
-				case XYPlotScatterStyles.Shape.CrossPlus:
-					gp.AddLine(-sizeh, 0, sizeh, 0);
-					gp.StartFigure();
-					gp.AddLine(0, sizeh, 0, -sizeh);
-					gp.StartFigure();
-					break;
-
-				case XYPlotScatterStyles.Shape.CrossTimes:
-					gp.AddLine(-sizeh, -sizeh, sizeh, sizeh);
-					gp.StartFigure();
-					gp.AddLine(-sizeh, sizeh, sizeh, -sizeh);
-					gp.StartFigure();
-					break;
-
-				case XYPlotScatterStyles.Shape.Star:
-					gp.AddLine(-sizeh, 0, sizeh, 0);
-					gp.StartFigure();
-					gp.AddLine(0, sizeh, 0, -sizeh);
-					gp.StartFigure();
-					gp.AddLine(-sizeh, -sizeh, sizeh, sizeh);
-					gp.StartFigure();
-					gp.AddLine(-sizeh, sizeh, sizeh, -sizeh);
-					gp.StartFigure();
-					break;
-
-				case XYPlotScatterStyles.Shape.BarHorz:
-					gp.AddLine(-sizeh, 0, sizeh, 0);
-					gp.StartFigure();
-					break;
-
-				case XYPlotScatterStyles.Shape.BarVert:
-					gp.AddLine(0, -sizeh, 0, sizeh);
-					gp.StartFigure();
-					break;
+				return _independentSkipFreq;
 			}
-
-			switch (st)
+			set
 			{
-				case XYPlotScatterStyles.Style.DotCenter:
-					gp.AddEllipse(-0.125f * sizeh, -0.125f * sizeh, 0.125f * size, 0.125f * size);
-					gp.StartFigure();
-					break;
-
-				case XYPlotScatterStyles.Style.Plus:
-					gp.AddLine(-sizeh, 0, sizeh, 0);
-					gp.StartFigure();
-					gp.AddLine(0, sizeh, 0, -sizeh);
-					gp.StartFigure();
-					break;
-
-				case XYPlotScatterStyles.Style.Times:
-					gp.AddLine(-sizeh, -sizeh, sizeh, sizeh);
-					gp.StartFigure();
-					gp.AddLine(-sizeh, sizeh, sizeh, -sizeh);
-					gp.StartFigure();
-					break;
-
-				case XYPlotScatterStyles.Style.BarHorz:
-					gp.AddLine(-sizeh, 0, sizeh, 0);
-					gp.StartFigure();
-					break;
-
-				case XYPlotScatterStyles.Style.BarVert:
-					gp.AddLine(0, -sizeh, 0, sizeh);
-					gp.StartFigure();
-					break;
+				if (!(_independentSkipFreq == value))
+				{
+					_independentSkipFreq = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
-			return gp;
 		}
 
 		#region I2DPlotItem Members
@@ -842,7 +368,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			get
 			{
-				return this._shape != XYPlotScatterStyles.Shape.NoSymbol && !this._independentSymbolSize;
+				return !(this._symbolShape is NoSymbol) && !this._independentSymbolSize;
 			}
 		}
 
@@ -850,54 +376,32 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			get
 			{
-				return this._shape != XYPlotScatterStyles.Shape.NoSymbol && !this._independentSymbolSize;
+				return !(this._symbolShape is NoSymbol) && !this._independentSymbolSize;
 			}
 		}
 
 		#endregion I2DPlotItem Members
 
-		public void Paint(Graphics g)
+		public static PointF[] ToPointFArray(List<ClipperLib.IntPoint> list, double symbolSize)
 		{
-			if (_cachedFillPath)
-				g.FillPath(_cachedFillBrush, _cachedPath);
-
-			g.DrawPath(_pen, _cachedPath);
-		}
-
-		public void Paint(Graphics g, double symbolSize)
-		{
-			// create the path on-the-fly
-			using (var path = GetPath(_shape, _style, (float)symbolSize))
-			{
-				if (_cachedFillPath)
-					g.FillPath(_cachedFillBrush, path);
-
-				g.DrawPath(_pen, path);
-			}
-		}
-
-		public void Paint(Graphics g, double symbolSize, Color color)
-		{
-			// create the path on-the-fly
-			using (var path = GetPath(_shape, _style, (float)symbolSize))
-			{
-				if (_cachedFillPath)
-				{
-					using (var brush = new SolidBrush(color))
-					{
-						g.FillPath(brush, path);
-					}
-				}
-
-				using (var pen = new Pen(color, (float)_pen.Width))
-				{
-					g.DrawPath(pen, path);
-				}
-			}
+			var scale = SymbolBase.InverseClipperScalingToSymbolSize1 * symbolSize;
+			return list.Select(
+				intPoint =>
+				new PointF((float)(scale * intPoint.X), (float)(-scale * intPoint.Y))).ToArray();
 		}
 
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
+			if (this._symbolShape is NoSymbol)
+				return;
+
+			List<List<ClipperLib.IntPoint>> insetPolygon = null;
+			List<List<ClipperLib.IntPoint>> framePolygon = null;
+			List<List<ClipperLib.IntPoint>> fillPolygon = null;
+			_symbolShape.CalculatePolygons(out framePolygon, out insetPolygon, out fillPolygon);
+
+			var path = new GraphicsPath();
+
 			PlotRangeList rangeList = pdata.RangeList;
 			PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
 
@@ -905,96 +409,87 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (_skipFreq <= 0)
 				_skipFreq = 1;
 
-			// paint the drop style
-			if (this.DropLine.Count > 0)
-			{
-				var dropTargets = _dropLine.Select(id => layer.UpdateCSPlaneID(id)).ToArray();
+			float xpos = 0, ypos = 0;
+			float xdiff, ydiff;
 
-				int rangeidx = 0;
-				PlotRange range = pdata.RangeList[rangeidx];
+			if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size
+			{
+				// calculate the path only once
+				GraphicsPath insetPath = null;
+				SolidBrush insetBrush = null;
+				if (null != insetPolygon)
+				{
+					insetPath = new GraphicsPath();
+					insetBrush = new SolidBrush(_symbolShape.PlotColorInfluence.HasFlag(PlotColorInfluence.InsetColor) ? _color : _symbolShape.Inset.Color);
+					foreach (var list in insetPolygon)
+						insetPath.AddPolygon(ToPointFArray(list, _symbolSize));
+				}
+
+				GraphicsPath fillPath = null;
+				SolidBrush fillBrush = null;
+				if (null != fillPolygon)
+				{
+					fillPath = new GraphicsPath();
+					fillBrush = new SolidBrush(_symbolShape.PlotColorInfluence.HasFlag(PlotColorInfluence.FillColor) ? _color : _symbolShape.FillColor);
+
+					foreach (var list in fillPolygon)
+						fillPath.AddPolygon(ToPointFArray(list, _symbolSize));
+				}
+
+				GraphicsPath framePath = null;
+				SolidBrush frameBrush = null;
+				if (null != framePolygon)
+				{
+					framePath = new GraphicsPath();
+					frameBrush = new SolidBrush(_symbolShape.PlotColorInfluence.HasFlag(PlotColorInfluence.FrameColor) ? _color : _symbolShape.Frame.Color);
+					foreach (var list in framePolygon)
+						framePath.AddPolygon(ToPointFArray(list, _symbolSize));
+				}
+
+				// end of path calculations
+
+				// save the graphics stat since we have to translate the origin
+				System.Drawing.Drawing2D.GraphicsState gs = g.Save();
+
 				for (int j = 0; j < ptArray.Length; j += _skipFreq)
 				{
-					// syncronize range
-					while (j >= range.UpperBound)
-					{
-						rangeidx++;
-						range = pdata.RangeList[rangeidx];
-					}
+					xdiff = ptArray[j].X - xpos;
+					ydiff = ptArray[j].Y - ypos;
+					xpos = ptArray[j].X;
+					ypos = ptArray[j].Y;
+					g.TranslateTransform(xdiff, ydiff);
 
-					Logical3D r3d = layer.GetLogical3D(pdata, j + range.OffsetToOriginal);
-					foreach (CSPlaneID id in dropTargets)
-						layer.CoordinateSystem.DrawIsolineFromPointToPlane(g, this._pen, r3d, id);
-				}
-			} // end paint the drop style
+					if (null != insetPath)
+						g.FillPath(insetBrush, insetPath);
 
-			// paint the scatter style
-			if (this.Shape != XYPlotScatterStyles.Shape.NoSymbol)
+					if (null != fillPath)
+						g.FillPath(fillBrush, fillPath);
+
+					if (null != framePath)
+						g.FillPath(frameBrush, framePath);
+				} // end for
+
+				g.Restore(gs); // Restore the graphics state
+			}
+			else // using a variable symbol size or variable symbol color
 			{
-				float xpos = 0, ypos = 0;
-				float xdiff, ydiff;
-
-				if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size
-				{
-					// save the graphics stat since we have to translate the origin
-					System.Drawing.Drawing2D.GraphicsState gs = g.Save();
-
-					for (int j = 0; j < ptArray.Length; j += _skipFreq)
-					{
-						xdiff = ptArray[j].X - xpos;
-						ydiff = ptArray[j].Y - ypos;
-						xpos = ptArray[j].X;
-						ypos = ptArray[j].Y;
-						g.TranslateTransform(xdiff, ydiff);
-						this.Paint(g);
-					} // end for
-
-					g.Restore(gs); // Restore the graphics state
-				}
-				else // using a variable symbol size or variable symbol color
-				{
-					for (int r = 0; r < rangeList.Count; r++)
-					{
-						int lower = rangeList[r].LowerBound;
-						int upper = rangeList[r].UpperBound;
-						int offset = rangeList[r].OffsetToOriginal;
-						for (int j = lower; j < upper; j += _skipFreq)
-						{
-							xdiff = ptArray[j].X - xpos;
-							ydiff = ptArray[j].Y - ypos;
-							xpos = ptArray[j].X;
-							ypos = ptArray[j].Y;
-							g.TranslateTransform(xdiff, ydiff);
-
-							if (null == _cachedColorForIndexFunction)
-							{
-								double symbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
-								this.Paint(g, symbolSize);
-							}
-							else
-							{
-								double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
-								Color color = _cachedColorForIndexFunction(j + offset);
-								this.Paint(g, symbolSize, color);
-							}
-						}
-					}
-				}
+				throw new NotImplementedException();
 			}
 		}
 
 		public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
 		{
-			if (Shape != XYPlotScatterStyles.Shape.NoSymbol)
-			{
-				GraphicsState gs = g.Save();
-				g.TranslateTransform(bounds.X + 0.5f * bounds.Width, bounds.Y + 0.5f * bounds.Height);
-				Paint(g);
-				g.Restore(gs);
+			if (_symbolShape is NoSymbol)
+				return bounds;
+			/*
+			GraphicsState gs = g.Save();
+			g.TranslateTransform(bounds.X + 0.5f * bounds.Width, bounds.Y + 0.5f * bounds.Height);
+			Paint(g);
+			g.Restore(gs);
 
-				if (this.SymbolSize > bounds.Height)
-					bounds.Inflate(0, (float)(this.SymbolSize - bounds.Height));
-			}
-
+			if (this.SymbolSize > bounds.Height)
+				bounds.Inflate(0, (float)(this.SymbolSize - bounds.Height));
+			*/
 			return bounds;
 		}
 
@@ -1015,14 +510,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (this.IsSymbolSizeProvider)
 				SymbolSizeGroupStyle.AddExternalGroupStyle(externalGroups);
 
-			SymbolShapeStyleGroupStyle.AddExternalGroupStyle(externalGroups);
+			ScatterSymbolGroupStyle.AddExternalGroupStyle(externalGroups);
 		}
 
 		public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
 			ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 			SymbolSizeGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
-			SymbolShapeStyleGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+			ScatterSymbolGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 			SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group style only)
 		}
 
@@ -1031,7 +526,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (this.IsColorProvider)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this.Color; });
 
-			SymbolShapeStyleGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.ShapeAndStyle; });
+			ScatterSymbolGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this._symbolShape; });
 
 			if (this.IsSymbolSizeProvider)
 				SymbolSizeGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SymbolSize; });
@@ -1051,7 +546,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					_cachedColorForIndexFunction = null;
 			}
 
-			SymbolShapeStyleGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (ShapeAndStyle c) { this.ShapeAndStyle = c; });
+			ScatterSymbolGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IScatterSymbol c) { this.Shape = c; });
 
 			// per Default, set the symbol size evaluation function to null
 			_cachedSymbolSizeForIndexFunction = null;
@@ -1065,7 +560,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this.SkipFrequency = c; });
+			if (!this._independentSkipFreq)
+				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this.SkipFrequency = c; });
 		}
 
 		#endregion IPlotStyle Members

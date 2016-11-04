@@ -212,11 +212,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return m_LineStyle; }
 		}
 
-		public XYPlotScatterStyles.ShapeAndStyle XYPlotScatterStyle
-		{
-			get { return new XYPlotScatterStyles.ShapeAndStyle(m_ScatterStyle.Shape, m_ScatterStyle.Style); }
-		}
-
 		public ScatterPlotStyle ScatterStyle
 		{
 			get { return m_ScatterStyle; }

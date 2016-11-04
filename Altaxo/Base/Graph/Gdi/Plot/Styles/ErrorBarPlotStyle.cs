@@ -125,7 +125,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Skip frequency.
 		/// </summary>
-		protected int _skipFrequency;
+		protected int _skipFrequency = 1;
 
 		protected bool _independentSkipFrequency;
 
@@ -201,7 +201,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					pen.EndCap = new LineCaps.SymBarLineCap();
 				s._independentOnShiftingGroupStyles = info.GetBoolean("NotShiftHorzPos");
 
-				s.Pen = pen;
+				if (null == pen) throw new ArgumentNullException(nameof(pen));
+				s.ChildSetMember(ref s._pen, pen);
 
 				s._forceVisibilityOfEndCap = true;
 
@@ -286,7 +287,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
 				s._symbolSize = info.GetDouble("SymbolSize");
 
-				s.Pen = (PenX)info.GetValue("Pen", s);
+				s.ChildSetMember(ref s._pen, (PenX)info.GetValue("Pen", s));
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s._independentDashPattern = info.GetBoolean("IndependentDashPattern");
 
@@ -334,7 +335,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_lineWidth1Offset = penWidth;
 			_lineWidth1Factor = 0;
 
-			this._pen = new PenX(color, penWidth);
+			this._pen = new PenX(color, penWidth) { ParentObject = this };
 		}
 
 		public ErrorBarPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences)
@@ -684,7 +685,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			get { return _pen; }
 			set
 			{
-				if (!(_pen.Equals(value)))
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (!object.Equals(_pen, value))
 				{
 					ChildCopyToMember(ref _pen, value);
 					EhSelfChanged(EventArgs.Empty);
@@ -936,6 +940,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			const double logicalClampMinimum = -10;
 			const double logicalClampMaximum = 11;
+
+			_skipFrequency = Math.Max(1, _skipFrequency);
 
 			// Plot error bars for the dependent variable (y)
 			PlotRangeList rangeList = pdata.RangeList;

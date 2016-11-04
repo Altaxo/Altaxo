@@ -1093,10 +1093,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Graph\Gdi\Plot\Styles\XYPlotScatterStyleControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Gui\Graph\Gdi\Plot\Styles\XYPlotStyleCollectionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2012,9 +2008,6 @@
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\XYPlotLayerContentsControl.xaml.cs">
       <DependentUpon>XYPlotLayerContentsControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotScatterStyleControl.xaml.cs">
-      <DependentUpon>XYPlotScatterStyleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotStyleCollectionControl.xaml.cs">
       <DependentUpon>XYPlotStyleCollectionControl.xaml</DependentUpon>

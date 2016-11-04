@@ -34,8 +34,6 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
 	public class Circle : ClosedSymbolBase
 	{
-		private const double Sqrt1By2 = 0.70710678118654752440084436210485;
-
 		#region Serialization
 
 		/// <summary>
@@ -73,7 +71,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
 		public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon()
 		{
-			double radius = ClipperScalingDouble * 0.797884560802865; // we decrease the radius a little, so that the size of this symbol "feels" roughly the same as for the square
+			double radius = ClipperScalingDouble * 0.797884560802865; // we decrease the radius a little, so that the size of this symbol "feels" roughly the same as for the square (has same area)
 			var list = new List<ClipperLib.IntPoint>(360);
 			for (int i = 0; i < 360; ++i)
 			{

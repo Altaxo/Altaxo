@@ -436,8 +436,7 @@ namespace Altaxo.Main
 
 			foreach (var tuple in GetDocumentNodeChildrenWithName())
 			{
-				if (null != tuple.DocumentNode)
-					tuple.DocumentNode.SetDisposeInProgress();
+				tuple.DocumentNode?.SetDisposeInProgress();
 			}
 		}
 
@@ -453,7 +452,7 @@ namespace Altaxo.Main
 						if (null != (setMemberToNullAction = tuple.SetMemberToNullAction))
 							setMemberToNullAction(); // set the node to null in the parent __before__ we dispose the node
 
-						tuple.DocumentNode.Dispose();
+						tuple.DocumentNode?.Dispose();
 					}
 				}
 				base.Dispose(isDisposing);

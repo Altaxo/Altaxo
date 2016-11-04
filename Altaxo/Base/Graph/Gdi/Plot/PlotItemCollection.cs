@@ -152,7 +152,7 @@ namespace Altaxo.Graph.Gdi.Plot
 							if (0 != (plotGroups[foundidx].PlotGroup._plotGroupStyle & Version0PlotGroupStyle.Symbol))
 							{
 								prev = curr;
-								curr = new SymbolShapeStyleGroupStyle();
+								curr = new ScatterSymbolGroupStyle();
 								newColl.GroupStyles.Add(curr, serial ? (prev == null ? null : prev.GetType()) : null);
 							}
 						}

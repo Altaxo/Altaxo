@@ -629,7 +629,7 @@ namespace Altaxo.Graph.Plot.Data
 		/// <returns>The name of the x-column, depending on the provided level: 0: only name of the data column. 1: table name and column name. 2: table name, collection, and column name.</returns>
 		public string GetXName(int level)
 		{
-			IReadableColumn col = this._xColumn.Document;
+			IReadableColumn col = this.XColumn;
 			if (col is Altaxo.Data.DataColumn)
 			{
 				Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
@@ -646,9 +646,13 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				return col.FullName;
 			}
-			else
+			else if (_xColumn != null)
 			{
 				return _xColumn.GetName(level) + " (broken)";
+			}
+			else
+			{
+				return " (broken)";
 			}
 		}
 
@@ -659,7 +663,7 @@ namespace Altaxo.Graph.Plot.Data
 		/// <returns>The name of the y-column, depending on the provided level: 0: only name of the data column. 1: table name and column name. 2: table name, collection, and column name.</returns>
 		public string GetYName(int level)
 		{
-			IReadableColumn col = this._yColumn.Document;
+			IReadableColumn col = this.YColumn;
 			if (col is Altaxo.Data.DataColumn)
 			{
 				Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
@@ -676,9 +680,13 @@ namespace Altaxo.Graph.Plot.Data
 			{
 				return col.FullName;
 			}
-			else
+			else if (_yColumn != null)
 			{
 				return _yColumn.GetName(level) + " (broken)";
+			}
+			else
+			{
+				return " (broken)";
 			}
 		}
 

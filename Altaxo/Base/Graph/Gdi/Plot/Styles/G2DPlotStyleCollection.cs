@@ -108,23 +108,25 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				int count = info.OpenArray();
-				IG2DPlotStyle[] array = new IG2DPlotStyle[count];
-				for (int i = 0; i < count; i++)
-					array[i] = (IG2DPlotStyle)info.GetValue("e", null);
-				info.CloseArray(count);
+				var s = (G2DPlotStyleCollection)o ?? new G2DPlotStyleCollection();
 
-				if (o == null)
+				int count = info.OpenArray();
+				for (int i = 0; i < count; i++)
 				{
-					return new G2DPlotStyleCollection(array);
+					var item = info.GetValue("e", null);
+					if (item is object[])
+					{
+						foreach (var itemInner in (object[])item)
+							s.Add((IG2DPlotStyle)itemInner, false);
+					}
+					else
+					{
+						s.Add((IG2DPlotStyle)item, false);
+					}
 				}
-				else
-				{
-					G2DPlotStyleCollection s = (G2DPlotStyleCollection)o;
-					for (int i = 0; i < count; i++)
-						s.Add(array[i]);
-					return s;
-				}
+
+				info.CloseArray(count);
+				return s;
 			}
 		}
 

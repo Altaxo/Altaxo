@@ -239,6 +239,7 @@ namespace Altaxo.Graph.Gdi
 			if (a1 <= 0)
 			{
 				p0 = Interpolate(polyline[0], polyline[1], a1 / totLength);
+				i0 = 1;
 			}
 			else
 			{
@@ -259,6 +260,7 @@ namespace Altaxo.Graph.Gdi
 			if (a2 <= 0)
 			{
 				p1 = Interpolate(polyline[polyline.Length - 2], polyline[polyline.Length - 1], 1 - a2 / totLength);
+				i1 = polyline.Length - 2;
 			}
 			else
 			{

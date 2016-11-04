@@ -50,12 +50,35 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
 		#region Serialization
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.Groups.SymbolShapeStyleGroupStyle", 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new InvalidOperationException("Serialization of old versions not allowed.");
+				/*
+				SymbolShapeStyleGroupStyle s = (SymbolShapeStyleGroupStyle)obj;
+				info.AddValue("StepEnabled", s._isStepEnabled);
+				*/
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				ScatterSymbolGroupStyle s = null != o ? (ScatterSymbolGroupStyle)o : new ScatterSymbolGroupStyle();
+				s._isStepEnabled = info.GetBoolean("StepEnabled");
+				s._listOfValues = ScatterSymbolListManager.Instance.OldSolid;
+				s._value = s._listOfValues[0];
+
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// 2016-08-24 Initial version.
 		/// </summary>
 		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterSymbolGroupStyle), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterSymbolGroupStyle), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{

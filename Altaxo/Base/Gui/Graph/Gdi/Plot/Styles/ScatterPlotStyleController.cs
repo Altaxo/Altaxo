@@ -82,9 +82,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 	/// <summary>
 	/// Summary description for XYPlotScatterStyleController.
 	/// </summary>
-	[UserControllerForObject(typeof(ScatterPlotStyleNew))]
+	[UserControllerForObject(typeof(ScatterPlotStyle))]
 	[ExpectedTypeOfView(typeof(IScatterPlotStyleView))]
-	public class ScatterPlotStyleController : MVCANControllerEditOriginalDocBase<ScatterPlotStyleNew, IScatterPlotStyleView>
+	public class ScatterPlotStyleController : MVCANControllerEditOriginalDocBase<ScatterPlotStyle, IScatterPlotStyleView>
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;

@@ -129,6 +129,7 @@ namespace Altaxo.Geometry
 			if (a1 <= 0)
 			{
 				p0 = PointD3D.Interpolate(_points[0], _points[1], a1 / totLength);
+				i0 = 1;
 			}
 			else
 			{
@@ -149,6 +150,7 @@ namespace Altaxo.Geometry
 			if (a2 <= 0)
 			{
 				p1 = PointD3D.Interpolate(_points[_points.Length - 2], _points[_points.Length - 1], 1 - a2 / totLength);
+				i1 = _points.Length - 2;
 			}
 			else
 			{

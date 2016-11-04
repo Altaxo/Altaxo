@@ -296,6 +296,7 @@
     <Compile Include="Graph\Gdi\Plot\Groups\ScatterSymbolGroupStyle.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\DropLinePlotStyle.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\DropAreaPlotStyle.cs" />
+    <Compile Include="Graph\Gdi\Plot\Styles\ScatterPlotStyle_Serialization.cs" />
     <Compile Include="Graph\Graph2D\Plot\Groups\ScatterSymbolList.cs" />
     <Compile Include="Graph\Graph2D\Plot\Groups\ScatterSymbolListBag.cs" />
     <Compile Include="Graph\Graph2D\Plot\Groups\ScatterSymbolListManager.cs" />
@@ -313,7 +314,7 @@
     <Compile Include="Graph\Gdi\Plot\Styles\LineConnectionStyles\Segment2Connection.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\LineConnectionStyles\StraightConnection.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\LineConnectionStyles\NoConnection.cs" />
-    <Compile Include="Graph\Gdi\Plot\Styles\ScatterPlotStyleNew.cs" />
+    <Compile Include="Graph\Gdi\Plot\Styles\ScatterPlotStyle.cs" />
     <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\VerticalBar.cs" />
     <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\HorizontalBar.cs" />
     <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\OpenSymbolBase.cs" />
@@ -995,7 +996,6 @@
     <Compile Include="Gui\Graph\Gdi\Plot\Groups\PlotGroupCollectionControllerSimple.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\LabelPlotStyleController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\LinePlotStyleController.cs" />
-    <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotScatterStyleController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\XYPlotStyleCollectionController.cs" />
     <Compile Include="Gui\GuiLengthUnits.cs" />
     <Compile Include="Gui\IRefreshable.cs" />
@@ -1439,7 +1439,6 @@
     <Compile Include="Graph\Gdi\Plot\Groups\ICoordinateTransformingGroupStyle.cs" />
     <Compile Include="Graph\Gdi\Plot\Groups\PlotGroupStyleCollection.cs" />
     <Compile Include="Graph\Gdi\Plot\Groups\RelativeStackTransform.cs" />
-    <Compile Include="Graph\Gdi\Plot\Groups\SymbolShapeStyleGroupStyle.cs" />
     <Compile Include="Graph\Gdi\Plot\Groups\WaterfallTransform.cs" />
     <Compile Include="Graph\Gdi\Plot\IGPlotItem.cs" />
     <Compile Include="Graph\Gdi\Plot\PlotItem.cs" />
@@ -1451,7 +1450,6 @@
     <Compile Include="Graph\Gdi\Plot\Styles\IG2DPlotStyle.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\LabelPlotStyle.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\LinePlotStyle.cs" />
-    <Compile Include="Graph\Gdi\Plot\Styles\ScatterPlotStyle.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\XYLineScatterPlotStyle.cs" />
     <Compile Include="Graph\Gdi\Plot\XYColumnPlotItem.cs" />
     <Compile Include="Graph\Gdi\Plot\XYColumnPlotItemLabelTextStyle.cs" />

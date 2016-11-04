@@ -157,7 +157,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					s._additionalDropTargetBaseValue = (Altaxo.Data.AltaxoVariant)info.GetValue("AdditionalDropTargetBaseValue", s);
 				}
 
-				s._pen = (PenX)info.GetValue("Pen", s);
+				s.ChildSetMember(ref s._pen, (PenX)info.GetValue("Pen", s) ?? new PenX(NamedColors.Black, 1));
 				s._independentColor = info.GetBoolean("IndependentColor");
 
 				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
@@ -275,7 +275,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (null == pen)
 				throw new ArgumentNullException(nameof(pen));
 
+			ChildSetMember(ref _pen, pen);
 			this._dropTargets = new CSPlaneIDList(new[] { planeID });
+
+			// Cached values
+			SetCachedValues();
+		}
+
+		public DropLinePlotStyle(IEnumerable<CSPlaneID> planeIDs, PenX pen)
+		{
+			if (null == pen)
+				throw new ArgumentNullException(nameof(pen));
+
+			ChildSetMember(ref _pen, pen);
+			this._dropTargets = new CSPlaneIDList(planeIDs);
 
 			// Cached values
 			SetCachedValues();
@@ -295,7 +308,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			yield return new DocumentNodeAndName(_pen, () => _pen = null, "Pen");
+			if (null != _pen)
+				yield return new DocumentNodeAndName(_pen, () => _pen = null, "Pen");
 		}
 
 		public bool IsVisible

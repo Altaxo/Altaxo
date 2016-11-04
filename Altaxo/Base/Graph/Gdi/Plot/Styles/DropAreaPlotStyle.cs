@@ -176,6 +176,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_connectionStyle = LineConnectionStyles.StraightConnection.Instance;
 		}
 
+		public DropAreaPlotStyle(ILineConnectionStyle connection, bool ignoreMissingDataPoints, bool connectCircular, CSPlaneID direction, BrushX fillBrush)
+		{
+			_connectionStyle = connection;
+			_ignoreMissingDataPoints = ignoreMissingDataPoints;
+			_connectCircular = connectCircular;
+			_fillDirection = direction;
+			ChildCopyToMember(ref _fillBrush, fillBrush);
+			_framePen = new PenX(NamedColors.Transparent, 1);
+		}
+
 		public DropAreaPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			var penWidth = GraphDocument.GetDefaultPenWidth(context);
