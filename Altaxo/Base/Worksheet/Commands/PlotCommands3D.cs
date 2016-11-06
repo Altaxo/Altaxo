@@ -243,7 +243,7 @@ namespace Altaxo.Worksheet.Commands
 				var s1 = ColorGroupStyle.NewExternalGroupStyle();
 				s1.IsStepEnabled = true;
 				c.Add(s1);
-				IPlotGroupStyle s2 = new DashPatternGroupStyle() { IsStepEnabled = true };
+				var s2 = new DashPatternGroupStyle() { IsStepEnabled = true };
 				c.Add(s2, s1.GetType());
 				return c;
 			}
@@ -288,7 +288,7 @@ namespace Altaxo.Worksheet.Commands
 			get
 			{
 				var c = new PlotGroupStyleCollection();
-				IPlotGroupStyle s1 = ColorGroupStyle.NewExternalGroupStyle();
+				var s1 = ColorGroupStyle.NewExternalGroupStyle();
 				s1.IsStepEnabled = true;
 				c.Add(s1);
 				var s2 = new DashPatternGroupStyle() { IsStepEnabled = true };
@@ -307,7 +307,7 @@ namespace Altaxo.Worksheet.Commands
 				var s1 = new BarSizePosition3DGroupStyle() { IsStepEnabled = true };
 				c.Add(s1);
 
-				IPlotGroupStyle s2 = ColorGroupStyle.NewExternalGroupStyle();
+				var s2 = ColorGroupStyle.NewExternalGroupStyle();
 				c.Add(s2);
 				return c;
 			}

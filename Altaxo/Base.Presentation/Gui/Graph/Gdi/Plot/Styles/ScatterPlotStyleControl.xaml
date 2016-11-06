@@ -10,6 +10,7 @@
              mc:Ignorable="d">
 
 	<UserControl.Resources>
+		<axogc:VisibilityCollapsedForFalseConverter x:Key="CollapsedIfFalse" />
 		<Style TargetType="Label">
 			<Style.Setters>
 				<Setter Property="Margin" Value="6,0,0,0" />
@@ -29,6 +30,7 @@
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="4" />
 			<ColumnDefinition Width="Auto" MinWidth="100" />
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
@@ -36,7 +38,15 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="0" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
@@ -53,16 +63,42 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 
-		<Label Grid.Column="0" Grid.Row="0" Content="Shape:" />
-		<local:ScatterSymbolComboBox x:Name="_cbSymbolShape" Grid.Column="1" Grid.Row="0" />
+		<CheckBox x:Name="_chkIndependentSkipFreq" Grid.Row="0" Grid.Column="0" Content="Independent skip frequency: " />
+		<axogc:Int32UpDown x:Name="_edSymbolSkipFrequency" Grid.Row="0" Grid.Column="2" Minimum="1" />
 
-		<CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="6" Content="Indep. color:" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged" />
-		<axogcd:ColorComboBox x:Name="_cbColor" Grid.Column="1" Grid.Row="6" />
+		<CheckBox x:Name="_guiIndependentScatterSymbol" Grid.Row="4"  Grid.Column="0" Content="Independent scatter symbol:" />
+		<local:ScatterSymbolComboBox x:Name="_cbSymbolShape"  Grid.Row="4" Grid.Column="2" SelectedItemChanged="EhScatterSymbolChanged" />
 
-		<CheckBox x:Name="_chkIndependentSize" Grid.Column="0" Grid.Row="8" Content="Indep. symbol size:" />
-		<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSize" Grid.Column="1" Grid.Row="8" />
+		<Label Content="Inset:" Grid.Row="6" Grid.Column="0" />
+		<ComboBox x:Name="_guiInset" Grid.Row="6" Grid.Column="2" SelectionChanged="EhInsetChanged" />
 
-		<CheckBox x:Name="_chkIndependentSkipFreq" Grid.Column="0" Grid.Row="12" Content="Indep. skip frequency: " />
-		<axogc:Int32UpDown x:Name="_edSymbolSkipFrequency" Grid.Column="1" Grid.Row="12" Minimum="1" />
+		<Label Content="Frame:" Grid.Row="8" Grid.Column="0" />
+		<CheckBox x:Name="_guiUseFrame" Content="Show frame around symbol" Grid.Row="8" Grid.Column="2" />
+
+		<CheckBox x:Name="_chkIndependentSize" Grid.Row="10"  Grid.Column="0" Content="Independent symbol size:" />
+		<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSize" Grid.Row="10" Grid.Column="2" />
+
+		<CheckBox x:Name="_chkIndependentColor" Grid.Row="14" Grid.Column="0" Content="Independent color:" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged" />
+		<axogcd:ColorComboBox x:Name="_cbColor" Grid.Row="14" Grid.Column="2" />
+
+		<Expander x:Name="_guiOverridesExpander" Header="Overrides" Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="3" />
+
+		<CheckBox x:Name="_guiOverrideAbsoluteStructureWidth" Grid.Row="18" Grid.Column="0" Content="Override absolute structure width:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<axogcd:LineThicknessComboBox x:Name="_guiOverriddenAbsoluteStructureWidth" Grid.Row="18" Grid.Column="2"  IsEnabled="{Binding ElementName=_guiOverrideAbsoluteStructureWidth, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+
+		<CheckBox x:Name="_guiOverrideRelativeStructureWidth" Grid.Row="20" Grid.Column="0" Content="Override relative structure width:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiOverriddenRelativeStructureWidth"  Grid.Row="20" Grid.Column="2" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" IsEnabled="{Binding ElementName=_guiOverrideRelativeStructureWidth, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+
+		<CheckBox x:Name="_guiOverridePlotColorInfluence" Grid.Row="22" Grid.Column="0" Content="Plot color influences:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<axogc:EnumFlagControl x:Name="_guiOverriddenPlotColorInfluence" Grid.Row="22" Grid.Column="2"  IsEnabled="{Binding ElementName=_guiOverridePlotColorInfluence, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+
+		<CheckBox x:Name="_guiOverrideFillColor" Grid.Row="24" Grid.Column="0" Content="Override fill color:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<axogcd:ColorComboBox x:Name="_guiOverriddenFillColor" Grid.Row="24" Grid.Column="2" IsEnabled="{Binding ElementName=_guiOverrideFillColor, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+
+		<CheckBox x:Name="_guiOverrideFrameColor" Grid.Row="26" Grid.Column="0" Content="Override frame color:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<axogcd:ColorComboBox x:Name="_guiOverriddenFrameColor" Grid.Row="26" Grid.Column="2" IsEnabled="{Binding ElementName=_guiOverrideFrameColor, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+
+		<CheckBox x:Name="_guiOverrideInsetColor" Grid.Row="28" Grid.Column="0" Content="Override inset color:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<axogcd:ColorComboBox x:Name="_guiOverriddenInsetColor" Grid.Row="28" Grid.Column="2" IsEnabled="{Binding ElementName=_guiOverrideInsetColor, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
 	</Grid>
 </UserControl>

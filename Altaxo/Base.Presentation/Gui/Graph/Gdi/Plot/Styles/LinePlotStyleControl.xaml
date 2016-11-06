@@ -89,17 +89,5 @@
 		<Label Content="+" Grid.Row="18" Grid.Column="3" />
 		<axogc:QuantityWithUnitTextBox x:Name="_guiSymbolGapFactor"  Grid.Row="18" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
 		<Label Content="* symbolSize" Grid.Row="18" Grid.Column="5" />
-
-		<!-- Filling -->
-
-		<CheckBox x:Name="_guiUseFill"  Grid.Row="20" Content="Fill area with:" Checked="EhUseFillChanged" Unchecked="EhUseFillChanged" />
-		<axogcd:BrushComboBox x:Name="_guiFillBrush" Grid.Row="20" Grid.Column="2" SelectedBrushChanged="EhFillBrushChanged" />
-
-		<Label Grid.Row="22" Grid.Column="0"  Content="Fill direction:" />
-		<ComboBox x:Name="_guiFillDirection" Grid.Row="22" Grid.Column="2" SelectionChanged="EhFillDirectionChanged" />
-
-		<GroupBox Header="Color linkage:" Grid.Row="24" Grid.ColumnSpan="3">
-			<axogc:SingleChoiceRadioStackPanel x:Name="_guiFillColorLinkage" Orientation="Vertical" SelectionChanged="EhIndependentFillColorChanged" />
-		</GroupBox>
 	</Grid>
 </UserControl>

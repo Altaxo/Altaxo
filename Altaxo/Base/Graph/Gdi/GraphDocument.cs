@@ -648,7 +648,12 @@ typeof(GraphDocument),
 
 					if (bounds.Height > 0)
 					{
-						result = Calc.Rounding.RoundToNumberOfSignificantDigits(bounds.Height, 2, MidpointRounding.ToEven);
+						result = bounds.Height * Math.Sqrt(2) * 1.2;
+						result = Calc.Rounding.RoundToNumberOfSignificantDigits(result, 2, MidpointRounding.ToEven);
+					}
+					else
+					{
+						result = Calc.Rounding.RoundToNumberOfSignificantDigits(font.Size * 2 / 3.0, 2, MidpointRounding.ToEven);
 					}
 				}
 			}

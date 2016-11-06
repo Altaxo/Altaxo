@@ -96,13 +96,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			GraphicsPath gp = new GraphicsPath();
 			var layerSize = layer.Size;
 
-			if (linePlotStyle.FillArea)
-			{
-				FillOneRange(gp, pdata, range, layer, linePlotStyle.FillDirection, linepts, connectCircular);
-				g.FillPath(linePlotStyle.FillBrush, gp);
-				gp.Reset();
-			}
-
 			// special efforts are necessary to realize a line/symbol gap
 			// I decided to use a path for this
 			// and hope that not so many segments are added to the path due

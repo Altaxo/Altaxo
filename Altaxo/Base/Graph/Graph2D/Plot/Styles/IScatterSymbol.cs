@@ -46,9 +46,34 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles
 		/// <summary>Determines which colors of the scatter symbol are affected by the plot color.</summary>
 		ScatterSymbols.PlotColorInfluence PlotColorInfluence { get; }
 
+		/// <summary>
+		/// Gets the width of internal structures (line e.g. the frame), relative to the symbol size.
+		/// </summary>
+		/// <value>
+		/// The width of internal structures (line e.g. the frame), relative to the symbol size.
+		/// </value>
+		double RelativeStructureWidth { get; }
+
+		/// <summary>
+		/// Gets the design size of this scatter symbol.
+		/// </summary>
+		/// <value>
+		/// The design size of this scatter symbol.
+		/// </value>
+		double DesignSize { get; }
+
+		/// <summary>
+		/// Calculates the polygons of the outer frame, the inner frame, and the inset.
+		/// </summary>
+		/// <param name="relativeStructureWidth">The relative width of the internal structures, e.g. the frame, relative to the symbol size.
+		/// If this argument is null, the value of this instance (<see cref="RelativeStructureWidth"/>) will be used.</param>
+		/// <param name="framePolygon">On return: the frame polygon.</param>
+		/// <param name="insetPolygon">On return: the inset polygon.</param>
+		/// <param name="fillPolygon">On return: the fill polygon.</param>
 		void CalculatePolygons(
-		out List<List<ClipperLib.IntPoint>> framePolygon,
-		out List<List<ClipperLib.IntPoint>> insetPolygon,
-		out List<List<ClipperLib.IntPoint>> fillPolygon);
+			double? relativeStructureWidth,
+			out List<List<ClipperLib.IntPoint>> framePolygon,
+			out List<List<ClipperLib.IntPoint>> insetPolygon,
+			out List<List<ClipperLib.IntPoint>> fillPolygon);
 	}
 }

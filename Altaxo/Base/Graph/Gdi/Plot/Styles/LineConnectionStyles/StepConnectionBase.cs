@@ -93,13 +93,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 			GraphicsPath gp = new GraphicsPath();
 
-			if (linePlotStyle.FillArea)
-			{
-				FillOneRange(gp, pdata, range, layer, linePlotStyle.FillDirection, linepts);
-				g.FillPath(linePlotStyle.FillBrush, gp);
-				gp.Reset();
-			}
-
 			if (null != symbolGap)
 			{
 				int end = range.UpperBound - 1;

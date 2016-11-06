@@ -26,6 +26,7 @@ using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Graph2D.Plot.Styles;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 using Altaxo.Gui.Graph.Plot.Groups;
 using System;
 using System.Collections.Generic;
@@ -59,10 +60,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		/// </summary>
 		bool IndependentSymbolSize { get; set; }
 
+		bool IndependentSymbolShape { get; set; }
+
 		/// <summary>
 		/// Initializes the symbol shape combobox.
 		/// </summary>
-		IScatterSymbol SymbolShape { get; set; }
+		IScatterSymbol ScatterSymbol { get; set; }
+
+		bool UseSymbolFrame { get; set; }
+
+		SelectableListNodeList Inset { set; }
 
 		bool IndependentColor { get; set; }
 
@@ -70,9 +77,29 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		int SkipFrequency { get; set; }
 
+		bool OverrideAbsoluteStructureWidth { get; set; }
+
+		double OverriddenAbsoluteStructureWidth { get; set; }
+
+		bool OverrideRelativeStructureWidth { get; set; }
+
+		double OverriddenRelativeStructureWidth { get; set; }
+
+		bool OverridePlotColorInfluence { get; set; }
+		PlotColorInfluence OverriddenPlotColorInfluence { get; set; }
+
+		bool OverrideFillColor { get; set; }
+		NamedColor OverriddenFillColor { get; set; }
+		bool OverrideFrameColor { get; set; }
+		NamedColor OverriddenFrameColor { get; set; }
+		bool OverrideInsetColor { get; set; }
+		NamedColor OverriddenInsetColor { get; set; }
+
 		#region events
 
 		event Action IndependentColorChanged;
+
+		event Action ScatterSymbolChanged;
 
 		#endregion events
 	}
@@ -89,9 +116,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
-		private SelectableListNodeList _dropLineChoices;
-		private SelectableListNodeList _symbolShapeChoices;
-		private SelectableListNodeList _symbolStyleChoices;
+		private SelectableListNodeList _symbolInsetChoices;
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -102,9 +127,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		{
 			_colorGroupStyleTracker = null;
 
-			_dropLineChoices = null;
-			_symbolShapeChoices = null;
-			_symbolStyleChoices = null;
+			_symbolInsetChoices = null;
 
 			base.Dispose(isDisposing);
 		}
@@ -117,26 +140,50 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
 
-				var symbolTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbol));
-				_symbolShapeChoices = new SelectableListNodeList();
+				var symbolTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbolInset));
+				_symbolInsetChoices = new SelectableListNodeList();
+				_symbolInsetChoices.Add(new SelectableListNode("No inset", null, false));
 				foreach (var ty in symbolTypes)
 				{
-					_symbolShapeChoices.Add(new SelectableListNode(ty.Name, ty, ty == _doc.Shape.GetType()));
+					_symbolInsetChoices.Add(new SelectableListNode(ty.Name, ty, false));
 				}
+
+				var symbol = _doc.ScatterSymbol;
+				_symbolInsetChoices.SetSelection(node => symbol.Inset?.GetType() == (Type)node.Tag);
 			}
 			if (_view != null)
 			{
+				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
+				_view.SkipFrequency = _doc.SkipFrequency;
+
+				_view.IndependentSymbolShape = _doc.IndependentScatterSymbol;
+				_view.ScatterSymbol = _doc.ScatterSymbol;
+				_view.Inset = _symbolInsetChoices;
+				_view.UseSymbolFrame = _doc.ScatterSymbol.Frame != null;
+
 				// now we have to set all dialog elements to the right values
 				_view.IndependentColor = _doc.IndependentColor;
 				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
 				_view.Color = _doc.Color;
 
-				_view.SymbolShape = _doc.Shape;
-
 				_view.IndependentSymbolSize = _doc.IndependentSymbolSize;
 				_view.SymbolSize = _doc.SymbolSize;
-				_view.SkipFrequency = _doc.SkipFrequency;
-				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
+
+				_view.OverrideAbsoluteStructureWidth = _doc.OverrideStructureWidthOffset.HasValue;
+				_view.OverriddenAbsoluteStructureWidth = _doc.OverrideStructureWidthOffset ?? 0;
+
+				_view.OverrideRelativeStructureWidth = _doc.OverrideStructureWidthFactor.HasValue;
+				_view.OverriddenRelativeStructureWidth = _doc.OverrideStructureWidthFactor ?? 0;
+
+				_view.OverridePlotColorInfluence = _doc.OverridePlotColorInfluence.HasValue;
+				_view.OverriddenPlotColorInfluence = _doc.OverridePlotColorInfluence ?? PlotColorInfluence.None;
+
+				_view.OverrideFillColor = _doc.OverrideFillColor.HasValue;
+				_view.OverriddenFillColor = _doc.OverrideFillColor ?? _doc.ScatterSymbol.FillColor;
+				_view.OverrideFrameColor = _doc.OverrideFrameColor.HasValue;
+				_view.OverriddenFrameColor = _doc.OverrideFrameColor ?? _doc.ScatterSymbol.Frame?.Color ?? NamedColors.Transparent;
+				_view.OverrideInsetColor = _doc.OverrideInsetColor.HasValue;
+				_view.OverriddenInsetColor = _doc.OverrideInsetColor ?? _doc.ScatterSymbol.Inset?.Color ?? NamedColors.Transparent;
 			}
 		}
 
@@ -145,24 +192,29 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			// don't trust user input, so all into a try statement
 			try
 			{
-				// Symbol Color
-				_doc.Color = _view.Color;
-
-				_doc.IndependentColor = _view.IndependentColor;
-
-				_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
-
-				// Symbol Shape
-				_doc.Shape = _view.SymbolShape;
-				// Symbol Style
-
-				// Symbol Size
-				_doc.SymbolSize = _view.SymbolSize;
-
 				// Skip points
 
 				_doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
 				_doc.SkipFrequency = _view.SkipFrequency;
+
+				// Symbol Shape
+				_doc.ScatterSymbol = _view.ScatterSymbol;
+
+				// Symbol Color
+				_doc.IndependentColor = _view.IndependentColor;
+				_doc.Color = _view.Color;
+
+				// Symbol Size
+				_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
+				_doc.SymbolSize = _view.SymbolSize;
+
+				_doc.OverrideStructureWidthOffset = _view.OverrideAbsoluteStructureWidth ? _view.OverriddenAbsoluteStructureWidth : (double?)null;
+				_doc.OverrideStructureWidthFactor = _view.OverrideRelativeStructureWidth ? _view.OverriddenRelativeStructureWidth : (double?)null;
+
+				_doc.OverridePlotColorInfluence = _view.OverridePlotColorInfluence ? _view.OverriddenPlotColorInfluence : (PlotColorInfluence?)null;
+				_doc.OverrideFillColor = _view.OverrideFillColor ? _view.OverriddenFillColor : (NamedColor?)null;
+				_doc.OverrideFrameColor = _view.OverrideFrameColor ? _view.OverriddenFrameColor : (NamedColor?)null;
+				_doc.OverrideInsetColor = _view.OverrideInsetColor ? _view.OverriddenInsetColor : (NamedColor?)null;
 			}
 			catch (Exception ex)
 			{
@@ -177,11 +229,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		{
 			base.AttachView();
 			_view.IndependentColorChanged += EhIndependentColorChanged;
+			_view.ScatterSymbolChanged += EhScatterSymbolChanged;
 		}
 
 		protected override void DetachView()
 		{
 			_view.IndependentColorChanged -= EhIndependentColorChanged;
+			_view.ScatterSymbolChanged += EhScatterSymbolChanged;
 			base.DetachView();
 		}
 
@@ -192,6 +246,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 				_doc.IndependentColor = _view.IndependentColor;
 				_view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
 			}
+		}
+
+		private void EhScatterSymbolChanged()
+		{
+			var symbol = _view.ScatterSymbol;
+
+			_symbolInsetChoices.SetSelection(node => symbol.Inset?.GetType() == (Type)node.Tag);
+
+			_view.Inset = _symbolInsetChoices;
+			_view.UseSymbolFrame = symbol.Frame != null;
 		}
 	} // end of class XYPlotScatterStyleController
 } // end of namespace

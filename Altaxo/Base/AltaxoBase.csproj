@@ -1474,7 +1474,7 @@
     <Compile Include="Graph\Plot\Data\XYFunctionPlotData.cs" />
     <Compile Include="Graph\Plot\Data\XYScatterPointInformation.cs" />
     <Compile Include="Graph\Plot\Data\XYZMeshedColumnPlotData.cs" />
-    <Compile Include="Graph\Plot\Groups\BarWidthPositionGroupStyle.cs" />
+    <Compile Include="Graph\Plot\Groups\BarSizePosition2DGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\ColorPlotGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\IPlotGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\IPlotGroupStyleCollection.cs" />

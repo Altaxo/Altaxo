@@ -413,12 +413,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public void CollectExternalGroupStyles(PlotGroupStyleCollection externalGroups)
 		{
-			BarWidthPositionGroupStyle.AddExternalGroupStyle(externalGroups);
+			BarSizePosition2DGroupStyle.AddExternalGroupStyle(externalGroups);
 		}
 
 		public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
-			BarWidthPositionGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+			BarSizePosition2DGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 		}
 
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
@@ -441,9 +441,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						maxLogicalX = logicalX;
 				}
 
-				BarWidthPositionGroupStyle.IntendToApply(externalGroups, localGroups, numberOfItems, minLogicalX, maxLogicalX);
+				BarSizePosition2DGroupStyle.IntendToApply(externalGroups, localGroups, numberOfItems, minLogicalX, maxLogicalX);
 			}
-			BarWidthPositionGroupStyle bwp = PlotGroupStyle.GetStyleToInitialize<BarWidthPositionGroupStyle>(externalGroups, localGroups);
+			BarSizePosition2DGroupStyle bwp = PlotGroupStyle.GetStyleToInitialize<BarSizePosition2DGroupStyle>(externalGroups, localGroups);
 			if (null != bwp)
 				bwp.Initialize(_relInnerGapX, _relOuterGapX);
 
@@ -457,7 +457,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			_cachedColorForIndexFunction = null;
 
-			BarWidthPositionGroupStyle bwp = PlotGroupStyle.GetStyleToApply<BarWidthPositionGroupStyle>(externalGroups, localGroups);
+			BarSizePosition2DGroupStyle bwp = PlotGroupStyle.GetStyleToApply<BarSizePosition2DGroupStyle>(externalGroups, localGroups);
 			if (null != bwp)
 				bwp.Apply(out _relInnerGapX, out _relOuterGapX, out _xSizeLogical, out _xOffsetLogical);
 

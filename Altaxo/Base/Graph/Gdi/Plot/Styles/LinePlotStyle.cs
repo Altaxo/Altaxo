@@ -202,13 +202,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		[field: NonSerialized]
 		protected Func<int, double> _cachedSymbolSizeForIndexFunction;
 
-		protected bool _fillArea;
-		protected BrushX _fillBrush; // brush to fill the area under the line
-		protected CSPlaneID _fillDirection; // the direction to fill
-
-		/// <summary>Designates if the fill color is independent or dependent.</summary>
-		protected ColorLinkage _fillColorLinkage = ColorLinkage.PreserveAlpha;
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 0)]
@@ -256,7 +249,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				}
 				else
 				{
-					var drop = new DropAreaPlotStyle(s.Connection, s.IgnoreMissingDataPoints, false, GetFillDirection(fillDir), fillBrush);
+					var drop = new DropAreaPlotStyle(s.Connection, s.IgnoreMissingDataPoints, false, GetFillDirection(fillDir), fillBrush, ColorLinkage.PreserveAlpha);
 					return new object[] { s, drop };
 				}
 			}
@@ -315,7 +308,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				}
 				else
 				{
-					var drop = new DropAreaPlotStyle(s.Connection, s.IgnoreMissingDataPoints, false, XmlSerializationSurrogate0.GetFillDirection(fillDir), fillBrush);
+					var drop = new DropAreaPlotStyle(s.Connection, s.IgnoreMissingDataPoints, false, XmlSerializationSurrogate0.GetFillDirection(fillDir), fillBrush, ColorLinkage.PreserveAlpha);
 					return new object[] { s, drop };
 				}
 			}
@@ -350,7 +343,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var fillBrush = (BrushX)info.GetValue("FillBrush", s);
 				var fillDir = (CSPlaneID)info.GetValue("FillDirection", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
-				s._fillColorLinkage = info.GetBoolean("IndependentFillColor") ? ColorLinkage.Independent : ColorLinkage.PreserveAlpha;
+				var fillColorLinkage = info.GetBoolean("IndependentFillColor") ? ColorLinkage.Independent : ColorLinkage.PreserveAlpha;
 				s._connectCircular = info.GetBoolean("ConnectCircular");
 
 				if (!fillArea)
@@ -359,7 +352,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				}
 				else
 				{
-					var drop = new DropAreaPlotStyle(s.Connection, s.IgnoreMissingDataPoints, false, fillDir, fillBrush);
+					var drop = new DropAreaPlotStyle(s.Connection, s.IgnoreMissingDataPoints, false, fillDir, fillBrush, fillColorLinkage);
 					return new object[] { s, drop };
 				}
 			}
@@ -396,7 +389,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var fillBrush = (BrushX)info.GetValue("FillBrush", s);
 				var fillDir = (CSPlaneID)info.GetValue("FillDirection", s);
 				s._independentColor = info.GetBoolean("IndependentColor");
-				s._fillColorLinkage = (ColorLinkage)info.GetEnum("FillColorLinkage", typeof(ColorLinkage));
+				var fillColorLinkage = (ColorLinkage)info.GetEnum("FillColorLinkage", typeof(ColorLinkage));
 				s._connectCircular = info.GetBoolean("ConnectCircular");
 
 				if (!fillArea)
@@ -405,7 +398,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				}
 				else
 				{
-					var drop = new DropAreaPlotStyle(s.Connection, s.IgnoreMissingDataPoints, false, fillDir, fillBrush);
+					var drop = new DropAreaPlotStyle(s.Connection, s.IgnoreMissingDataPoints, false, fillDir, fillBrush, fillColorLinkage);
 					return new object[] { s, drop };
 				}
 			}
@@ -496,11 +489,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._symbolGapOffset = from._symbolGapOffset;
 				this._symbolGapFactor = from._symbolGapFactor;
 
-				this._fillArea = from._fillArea;
-				this._fillBrush = null == from._fillBrush ? null : (BrushX)from._fillBrush.Clone();
-				this._fillDirection = from._fillDirection;
-				this._fillColorLinkage = from._fillColorLinkage;
-
 				EhSelfChanged();
 
 				suspendToken.Resume(eventFiring);
@@ -552,9 +540,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_linePen = new PenX(color, penWidth) { LineJoin = LineJoin.Bevel };
 			_useSymbolGap = true;
 			_ignoreMissingDataPoints = false;
-			_fillArea = false;
-			_fillBrush = new BrushX(color);
-			_fillDirection = null;
 			_connectionStyle = LineConnectionStyles.StraightConnection.Instance;
 			_independentColor = false;
 
@@ -569,9 +554,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_linePen = new PenX(color, penWidth) { LineJoin = LineJoin.Bevel };
 			_useSymbolGap = true;
 			_ignoreMissingDataPoints = false;
-			_fillArea = false;
-			_fillBrush = new BrushX(color);
-			_fillDirection = null;
 			_connectionStyle = LineConnectionStyles.StraightConnection.Instance;
 			_independentColor = false;
 
@@ -588,18 +570,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			if (null != _linePen)
 				yield return new Main.DocumentNodeAndName(_linePen, "Pen");
-
-			if (null != _fillBrush)
-				yield return new Main.DocumentNodeAndName(_fillBrush, "FillBrush");
 		}
 
 		protected virtual void CreateEventChain()
 		{
 			if (null != _linePen)
 				_linePen.ParentObject = this;
-
-			if (null != _fillBrush)
-				_fillBrush.ParentObject = this;
 		}
 
 		#endregion Construction and copying
@@ -813,73 +789,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		public ColorLinkage FillColorLinkage
-		{
-			get
-			{
-				return _fillColorLinkage;
-			}
-			set
-			{
-				var oldValue = _fillColorLinkage;
-				_fillColorLinkage = value;
-				if (value != oldValue)
-					EhSelfChanged(EventArgs.Empty);
-			}
-		}
-
-		public bool FillArea
-		{
-			get { return this._fillArea; }
-			set
-			{
-				this._fillArea = value;
-				// ensure that if value is true, there is a fill brush which is not null
-				if (true == value && null == this._fillBrush)
-					this._fillBrush = new BrushX(NamedColors.White);
-
-				EhSelfChanged(EventArgs.Empty); // Fire Changed event
-			}
-		}
-
-		public CSPlaneID FillDirection
-		{
-			get { return this._fillDirection; }
-			set
-			{
-				CSPlaneID oldvalue = _fillDirection;
-				_fillDirection = value;
-				if (oldvalue != value)
-				{
-					EhSelfChanged(EventArgs.Empty); // Fire Changed event
-				}
-			}
-		}
-
-		public BrushX FillBrush
-		{
-			get { return this._fillBrush; }
-			set
-			{
-				// copy the brush only if not null
-				if (null != value)
-				{
-					this._fillBrush = (BrushX)value.Clone();
-					this._fillBrush.ParentObject = this;
-					EhSelfChanged(EventArgs.Empty); // Fire Changed event
-				}
-				else
-					throw new ArgumentNullException("FillBrush", "FillBrush must not be set to null, instead set FillArea to false");
-			}
-		}
-
 		public bool IsVisible
 		{
 			get
 			{
 				if (!LineConnectionStyles.NoConnection.Instance.Equals(_connectionStyle))
-					return true;
-				if (_fillArea)
 					return true;
 
 				return false;
@@ -955,14 +869,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// ensure that brush and pen are cached
 			if (null != _linePen) _linePen.Cached = true;
 
-			if (_fillArea)
-			{
-				if (null != _fillBrush)
-					_fillBrush.SetEnvironment(new RectangleD2D(PointD2D.Empty, layer.Size), BrushX.GetEffectiveMaximumResolution(g, 1));
-
-				_fillDirection = layer.UpdateCSPlaneID(_fillDirection);
-			}
-
 			if (this._ignoreMissingDataPoints)
 			{
 				// in case we ignore the missing points, all ranges can be plotted
@@ -1007,990 +913,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion Painting
 
-		#region NoConnection
-
-		public void NoConnection_PaintOneRange(
-			Graphics g,
-			Processed2DPlotData pdata,
-			PlotRange range,
-			IPlotArea layer,
-			float symbolGap)
-		{
-		}
-
-		public void NoConnection_FillOneRange(GraphicsPath gp,
-		 Processed2DPlotData pdata,
-		 PlotRange range,
-		 IPlotArea layer,
-		 CSPlaneID fillDirection
-		 )
-		{
-		}
-
-		#endregion NoConnection
-
-		#region StraightConnection
-
-		public void StraightConnection_PaintOneRange(
-			Graphics g,
-			Processed2DPlotData pdata,
-			PlotRange range,
-			IPlotArea layer,
-			float symbolGap)
-		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PointF[] linepts = new PointF[range.Length + (_connectCircular ? 1 : 0)];
-			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-			if (_connectCircular) linepts[linepts.Length - 1] = linepts[0];
-			int lastIdx = range.Length - 1 + (_connectCircular ? 1 : 0);
-			GraphicsPath gp = new GraphicsPath();
-			var layerSize = layer.Size;
-
-			if (_fillArea)
-			{
-				StraightConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
-				g.FillPath(this._fillBrush, gp);
-				gp.Reset();
-			}
-
-			// special efforts are necessary to realize a line/symbol gap
-			// I decided to use a path for this
-			// and hope that not so many segments are added to the path due
-			// to the exclusion criteria that a line only appears between two symbols (rel<0.5)
-			// if the symbols do not overlap. So for a big array of points it is very likely
-			// that the symbols overlap and no line between the symbols needs to be plotted
-			if (this._useSymbolGap && symbolGap > 0)
-			{
-				float xdiff, ydiff, rel, startx, starty, stopx, stopy;
-				for (int i = 0; i < lastIdx; i++)
-				{
-					xdiff = linepts[i + 1].X - linepts[i].X;
-					ydiff = linepts[i + 1].Y - linepts[i].Y;
-					rel = (float)(symbolGap / System.Math.Sqrt(xdiff * xdiff + ydiff * ydiff));
-					if (rel < 0.5) // a line only appears if the relative gap is smaller 1/2
-					{
-						startx = linepts[i].X + rel * xdiff;
-						starty = linepts[i].Y + rel * ydiff;
-						stopx = linepts[i + 1].X - rel * xdiff;
-						stopy = linepts[i + 1].Y - rel * ydiff;
-
-						gp.AddLine(startx, starty, stopx, stopy);
-						gp.StartFigure();
-					}
-				} // end for
-				g.DrawPath(this._linePen, gp);
-				gp.Reset();
-			}
-			else // no line symbol gap required, so we can use DrawLines to draw the lines
-			{
-				if (linepts.Length > 1) // we don't want to have a drawing exception if number of points is only one
-				{
-					g.DrawLines(this._linePen, linepts);
-				}
-			}
-		} // end function PaintOneRange
-
-		public void StraightConnection_FillOneRange(GraphicsPath gp,
-			Processed2DPlotData pdata,
-			PlotRange range,
-			IPlotArea layer,
-			CSPlaneID fillDirection
-			)
-		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PointF[] linepts = new PointF[range.Length + (_connectCircular ? 1 : 0)];
-			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-			if (_connectCircular) linepts[linepts.Length - 1] = linepts[0];
-
-			StraightConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
-		}
-
-		private void StraightConnection_FillOneRange(GraphicsPath gp,
-			Processed2DPlotData pdata,
-			PlotRange range,
-			IPlotArea layer,
-			CSPlaneID fillDirection,
-			PointF[] linepts
-			)
-		{
-			Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-			layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-			gp.AddLines(linepts);
-			Logical3D r1 = layer.GetLogical3D(pdata, _connectCircular ? range.OriginalFirstPoint : range.OriginalLastPoint);
-			layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-			layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
-			gp.CloseFigure();
-		}
-
-		#endregion StraightConnection
-
-		#region SplineConnection
-
-		public void SplineConnection_PaintOneRange(
-			Graphics g,
-			Processed2DPlotData pdata,
-			PlotRange range,
-			IPlotArea layer,
-			float symbolGap)
-		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-			int lastIdx = range.Length - 1;
-			GraphicsPath gp = new GraphicsPath();
-			var layerSize = layer.Size;
-
-			if (_fillArea)
-			{
-				SplineConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
-				g.FillPath(this._fillBrush, gp);
-				gp.Reset();
-			}
-
-			// unfortuately, there is no easy way to support line/symbol gaps
-			// thats why I ignore this value and draw a curve through the points
-			g.DrawCurve(this._linePen, linepts);
-		} // end function PaintOneRange (Spline)
-
-		public void SplineConnection_FillOneRange(GraphicsPath gp,
-		 Processed2DPlotData pdata,
-		 PlotRange range,
-		 IPlotArea layer,
-		 CSPlaneID fillDirection
-		 )
-		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-
-			SplineConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
-		}
-
-		private void SplineConnection_FillOneRange(GraphicsPath gp,
-			Processed2DPlotData pdata,
-			PlotRange range,
-			IPlotArea layer,
-			CSPlaneID fillDirection,
-			PointF[] linepts
-			)
-		{
-			Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-			layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-			gp.AddCurve(linepts);
-			Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-			layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-			layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
-
-			gp.CloseFigure();
-		}
-
-		#endregion SplineConnection
-
-		#region BezierConnection
-
-		public void BezierConnection_PaintOneRange(
-			Graphics g,
-			Processed2DPlotData pdata,
-			PlotRange rangeRaw,
-			IPlotArea layer,
-			float symbolGap)
-		{
-			// Bezier is only supported with point numbers n=4+3*k
-			// so trim the range appropriately
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PlotRange range = new PlotRange(rangeRaw);
-			var layerSize = layer.Size;
-			range.UpperBound = range.LowerBound + 3 * ((range.Length + 2) / 3) - 2;
-			if (range.Length < 4)
-				return; // then to less points are in this range
-
-			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-			int lastIdx = range.Length - 1;
-			GraphicsPath gp = new GraphicsPath();
-
-			if (_fillArea)
-			{
-				BezierConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
-				g.FillPath(this._fillBrush, gp);
-				gp.Reset();
-			}
-
-			// unfortuately, there is no easy way to support line/symbol gaps
-			// thats why I ignore this value and draw a curve through the points
-			g.DrawBeziers(this._linePen, linepts);
-		} // end function PaintOneRange BezierLineStyle
-
-		public void BezierConnection_FillOneRange(GraphicsPath gp,
-		Processed2DPlotData pdata,
-		PlotRange rangeRaw,
-		IPlotArea layer,
-		CSPlaneID fillDirection
-		)
-		{
-			// Bezier is only supported with point numbers n=4+3*k
-			// so trim the range appropriately
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PlotRange range = new PlotRange(rangeRaw);
-			var layerSize = layer.Size;
-			range.UpperBound = range.LowerBound + 3 * ((range.Length + 2) / 3) - 2;
-			if (range.Length < 4)
-				return; // then to less points are in this range
-
-			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-
-			BezierConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
-		}
-
-		public void BezierConnection_FillOneRange(GraphicsPath gp,
-		 Processed2DPlotData pdata,
-		 PlotRange range,
-		 IPlotArea layer,
-		 CSPlaneID fillDirection,
-		 PointF[] linepts
-		 )
-		{
-			Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-			layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-			gp.AddBeziers(linepts);
-			Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-			layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-			layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
-
-			gp.CloseFigure();
-		}
-
-		#endregion BezierConnection
-
-		#region StepHorzConnection
-
-		public void StepHorzConnection_PaintOneRange(
-			Graphics g,
-			Processed2DPlotData pdata,
-			PlotRange range,
-			IPlotArea layer,
-			float symbolGap)
-		{
-			if (range.Length < 2)
-				return;
-
-			int lastIdx;
-			PointF[] linepts = StepHorzConnection_GetSubPoints(pdata, range, layer, out lastIdx);
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-
-			GraphicsPath gp = new GraphicsPath();
-
-			if (_fillArea)
-			{
-				StepHorzConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
-				g.FillPath(this._fillBrush, gp);
-				gp.Reset();
-			}
-
-			if (this._useSymbolGap && symbolGap > 0)
-			{
-				int end = range.UpperBound - 1;
-				float symbolGapSquared = symbolGap * symbolGap;
-				for (int j = range.LowerBound; j < end; j++)
-				{
-					float xmiddle = linePoints[j + 1].X;
-					float ymiddle = linePoints[j].Y;
-
-					// decide if horz line is necessary
-					float xdiff = System.Math.Abs(linePoints[j + 1].X - linePoints[j].X);
-					float ydiff = System.Math.Abs(linePoints[j + 1].Y - linePoints[j].Y);
-
-					float xrel1 = symbolGap / xdiff;
-					float xrel2 = ydiff > symbolGap ? 1 : (float)(1 - System.Math.Sqrt(symbolGapSquared - ydiff * ydiff) / xdiff);
-
-					float yrel1 = xdiff > symbolGap ? 0 : (float)(System.Math.Sqrt(symbolGapSquared - xdiff * xdiff) / ydiff);
-					float yrel2 = 1 - symbolGap / ydiff;
-
-					xdiff = linePoints[j + 1].X - linePoints[j].X;
-					ydiff = linePoints[j + 1].Y - linePoints[j].Y;
-
-					if (xrel1 < xrel2)
-						gp.AddLine(linePoints[j].X + xrel1 * xdiff, linePoints[j].Y, linePoints[j].X + xrel2 * xdiff, linePoints[j].Y);
-
-					if (yrel1 < yrel2)
-						gp.AddLine(linePoints[j + 1].X, linePoints[j].Y + yrel1 * ydiff, linePoints[j + 1].X, linePoints[j].Y + yrel2 * ydiff);
-
-					if (xrel1 < xrel2 || yrel1 < yrel2)
-						gp.StartFigure();
-				}
-				g.DrawPath(this._linePen, gp);
-				gp.Reset();
-			}
-			else
-			{
-				g.DrawLines(this._linePen, linepts);
-			}
-		} // end function PaintOneRange StepHorzLineStyle
-
-		private PointF[] StepHorzConnection_GetSubPoints(
-	 Processed2DPlotData pdata,
-	 PlotRange range,
-	 IPlotArea layer,
-			out int lastIndex)
-		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			var layerSize = layer.Size;
-			PointF[] linepts = new PointF[range.Length * 2 - 1];
-			int end = range.UpperBound - 1;
-			int i, j;
-			for (i = 0, j = range.LowerBound; j < end; i += 2, j++)
-			{
-				linepts[i] = linePoints[j];
-				linepts[i + 1].X = linePoints[j + 1].X;
-				linepts[i + 1].Y = linePoints[j].Y;
-			}
-			linepts[i] = linePoints[j];
-			lastIndex = i;
-			return linepts;
-		}
-
-		public void StepHorzConnection_FillOneRange(GraphicsPath gp,
-		Processed2DPlotData pdata,
-		PlotRange range,
-		IPlotArea layer,
-		CSPlaneID fillDirection
-		)
-		{
-			if (range.Length < 2)
-				return;
-
-			int lastIdx;
-			PointF[] linepts = StepHorzConnection_GetSubPoints(pdata, range, layer, out lastIdx);
-			StepHorzConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
-		}
-
-		private void StepHorzConnection_FillOneRange(GraphicsPath gp,
-		Processed2DPlotData pdata,
-		PlotRange range,
-		IPlotArea layer,
-			CSPlaneID fillDirection,
-		PointF[] linepts
-		)
-		{
-			Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-			layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-			gp.AddLines(linepts);
-			Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-			layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-			layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
-			gp.CloseFigure();
-		}
-
-		#endregion StepHorzConnection
-
-		#region StepVertConnection
-
-		public void StepVertConnection_PaintOneRange(
-			Graphics g,
-			Processed2DPlotData pdata,
-			PlotRange range,
-			IPlotArea layer,
-			float symbolGap)
-		{
-			if (range.Length < 2)
-				return;
-
-			int lastIdx;
-			PointF[] linepts = StepVertConnection_GetSubPoints(pdata, range, layer, out lastIdx);
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-
-			GraphicsPath gp = new GraphicsPath();
-
-			if (_fillArea)
-			{
-				StepVertConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
-				g.FillPath(this._fillBrush, gp);
-				gp.Reset();
-			}
-
-			if (this._useSymbolGap && symbolGap > 0)
-			{
-				int end = range.UpperBound - 1;
-				float symbolGapSquared = symbolGap * symbolGap;
-				for (int j = range.LowerBound; j < end; j++)
-				{
-					float xmiddle = linePoints[j + 1].X;
-					float ymiddle = linePoints[j].Y;
-
-					// decide if horz line is necessary
-					float xdiff = System.Math.Abs(linePoints[j + 1].X - linePoints[j].X);
-					float ydiff = System.Math.Abs(linePoints[j + 1].Y - linePoints[j].Y);
-
-					float yrel1 = symbolGap / ydiff;
-					float yrel2 = xdiff > symbolGap ? 1 : (float)(1 - System.Math.Sqrt(symbolGapSquared - xdiff * xdiff) / ydiff);
-
-					float xrel1 = ydiff > symbolGap ? 0 : (float)(System.Math.Sqrt(symbolGapSquared - ydiff * ydiff) / xdiff);
-					float xrel2 = 1 - symbolGap / xdiff;
-
-					xdiff = linePoints[j + 1].X - linePoints[j].X;
-					ydiff = linePoints[j + 1].Y - linePoints[j].Y;
-
-					if (yrel1 < yrel2)
-						gp.AddLine(linePoints[j].X, linePoints[j].Y + yrel1 * ydiff, linePoints[j].X, linePoints[j].Y + yrel2 * ydiff);
-
-					if (xrel1 < xrel2)
-						gp.AddLine(linePoints[j].X + xrel1 * ydiff, linePoints[j + 1].Y, linePoints[j].X + xrel2 * xdiff, linePoints[j + 1].Y);
-
-					if (xrel1 < xrel2 || yrel1 < yrel2)
-						gp.StartFigure();
-				}
-				g.DrawPath(this._linePen, gp);
-				gp.Reset();
-			}
-			else
-			{
-				g.DrawLines(this._linePen, linepts);
-			}
-		} // end function PaintOneRange StepVertLineStyle
-
-		private PointF[] StepVertConnection_GetSubPoints(
-	Processed2DPlotData pdata,
-	PlotRange range,
-	IPlotArea layer,
-		 out int lastIdx)
-		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			var layerSize = layer.Size;
-			PointF[] linepts = new PointF[range.Length * 2 - 1];
-			int end = range.UpperBound - 1;
-			int i, j;
-			for (i = 0, j = range.LowerBound; j < end; i += 2, j++)
-			{
-				linepts[i] = linePoints[j];
-				linepts[i + 1].X = linePoints[j].X;
-				linepts[i + 1].Y = linePoints[j + 1].Y;
-			}
-			linepts[i] = linePoints[j];
-			lastIdx = i;
-
-			return linepts;
-		}
-
-		public void StepVertConnection_FillOneRange(GraphicsPath gp,
-		Processed2DPlotData pdata,
-		PlotRange range,
-		IPlotArea layer,
-		CSPlaneID fillDirection
-		)
-		{
-			if (range.Length < 2)
-				return;
-
-			int lastIdx;
-			PointF[] linepts = StepVertConnection_GetSubPoints(pdata, range, layer, out lastIdx);
-			StepVertConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
-		}
-
-		private void StepVertConnection_FillOneRange(GraphicsPath gp,
-		Processed2DPlotData pdata,
-		PlotRange range,
-		IPlotArea layer,
-			CSPlaneID fillDirection,
-		PointF[] linepts
-		)
-		{
-			Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-			layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-			gp.AddLines(linepts);
-			Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-			layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-			layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
-
-			gp.CloseFigure();
-		}
-
-		#endregion StepVertConnection
-
-		#region StepVertCenterConnection
-
-		public void StepVertCenterConnection_PaintOneRange(
-			Graphics g,
-			Processed2DPlotData pdata,
-			PlotRange range,
-			IPlotArea layer,
-			float symbolGap)
-		{
-			if (range.Length < 2)
-				return;
-
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			int lastIdx;
-			PointF[] linepts = StepVertCenterConnection_GetSubPoints(pdata, range, layer, out lastIdx);
-
-			GraphicsPath gp = new GraphicsPath();
-
-			if (_fillArea)
-			{
-				StepVertCenterConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
-				g.FillPath(this._fillBrush, gp);
-				gp.Reset();
-			}
-
-			if (this._useSymbolGap && symbolGap > 0)
-			{
-				int end = linepts.Length - 1;
-				float symbolGapSquared = symbolGap * symbolGap;
-				for (int j = 0; j < end; j += 3)
-				{
-					float ydiff = linepts[j + 1].Y - linepts[j].Y;
-					if (System.Math.Abs(ydiff) > symbolGap) // then the two vertical lines are visible, and full visible horz line
-					{
-						gp.AddLine(linepts[j].X, linepts[j].Y + (ydiff > 0 ? symbolGap : -symbolGap), linepts[j + 1].X, linepts[j + 1].Y);
-						gp.AddLine(linepts[j + 1].X, linepts[j + 1].Y, linepts[j + 2].X, linepts[j + 2].Y);
-						gp.AddLine(linepts[j + 2].X, linepts[j + 2].Y, linepts[j + 3].X, linepts[j + 3].Y - (ydiff > 0 ? symbolGap : -symbolGap));
-						gp.StartFigure();
-					}
-					else // no vertical lines visible, and horz line can be shortened
-					{
-						// Calculate, how much of the horz line is invisible on both ends
-						float xoffs = (float)(System.Math.Sqrt(symbolGapSquared - ydiff * ydiff));
-						if (2 * xoffs < System.Math.Abs(linepts[j + 2].X - linepts[j + 1].X))
-						{
-							xoffs = (linepts[j + 2].X > linepts[j + 1].X) ? xoffs : -xoffs;
-							gp.AddLine(linepts[j + 1].X + xoffs, linepts[j + 1].Y, linepts[j + 2].X - xoffs, linepts[j + 2].Y);
-							gp.StartFigure();
-						}
-					}
-				} // for loop
-				g.DrawPath(this._linePen, gp);
-				gp.Reset();
-			}
-			else
-			{
-				g.DrawLines(this._linePen, linepts);
-			}
-		} // end function PaintOneRange StepVertMiddleLineStyle
-
-		private PointF[] StepVertCenterConnection_GetSubPoints(
-Processed2DPlotData pdata,
-PlotRange range,
-IPlotArea layer,
-	out int lastIdx)
-		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			var layerSize = layer.Size;
-			PointF[] linepts = new PointF[range.Length * 3 - 2];
-			int end = range.UpperBound - 1;
-			int i, j;
-			for (i = 0, j = range.LowerBound; j < end; i += 3, j++)
-			{
-				linepts[i] = linePoints[j];
-				linepts[i + 1].X = linePoints[j].X;
-				linepts[i + 1].Y = 0.5f * (linePoints[j].Y + linePoints[j + 1].Y);
-				linepts[i + 2].X = linePoints[j + 1].X;
-				linepts[i + 2].Y = linepts[i + 1].Y;
-			}
-			linepts[i] = linePoints[j];
-			lastIdx = i;
-
-			return linepts;
-		}
-
-		public void StepVertCenterConnection_FillOneRange(GraphicsPath gp,
-		Processed2DPlotData pdata,
-		PlotRange range,
-		IPlotArea layer,
-		CSPlaneID fillDirection
-		)
-		{
-			if (range.Length < 2)
-				return;
-
-			int lastIdx;
-			PointF[] linepts = StepVertCenterConnection_GetSubPoints(pdata, range, layer, out lastIdx);
-			StepVertCenterConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
-		}
-
-		private void StepVertCenterConnection_FillOneRange(GraphicsPath gp,
-		Processed2DPlotData pdata,
-		PlotRange range,
-		IPlotArea layer,
-			CSPlaneID fillDirection,
-		PointF[] linepts
-		)
-		{
-			Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-			layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-			gp.AddLines(linepts);
-			Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-			layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-			layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
-
-			gp.CloseFigure();
-		}
-
-		#endregion StepVertCenterConnection
-
-		#region StepHorzCenterConnection
-
-		public void StepHorzCenterConnection_PaintOneRange(
-			Graphics g,
-			Processed2DPlotData pdata,
-			PlotRange range,
-			IPlotArea layer,
-			float symbolGap)
-		{
-			if (range.Length < 2)
-				return;
-
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			int lastIdx;
-			PointF[] linepts = StepHorzCenterConnection_GetSubPoints(pdata, range, layer, out lastIdx);
-
-			GraphicsPath gp = new GraphicsPath();
-
-			if (_fillArea)
-			{
-				StepHorzCenterConnection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
-				g.FillPath(this._fillBrush, gp);
-				gp.Reset();
-			}
-
-			if (this._useSymbolGap && symbolGap > 0)
-			{
-				int end = linepts.Length - 1;
-				float symbolGapSquared = symbolGap * symbolGap;
-				for (int j = 0; j < end; j += 3)
-				{
-					float xdiff = linepts[j + 1].X - linepts[j].X;
-					if (System.Math.Abs(xdiff) > symbolGap) // then the two horz lines are visible, and full visible vert line
-					{
-						gp.AddLine(linepts[j].X + (xdiff > 0 ? symbolGap : -symbolGap), linepts[j].Y, linepts[j + 1].X, linepts[j + 1].Y);
-						gp.AddLine(linepts[j + 1].X, linepts[j + 1].Y, linepts[j + 2].X, linepts[j + 2].Y);
-						gp.AddLine(linepts[j + 2].X, linepts[j + 2].Y, linepts[j + 3].X - (xdiff > 0 ? symbolGap : -symbolGap), linepts[j + 3].Y);
-						gp.StartFigure();
-					}
-					else // no horizontal lines visible, and vertical line may be shortened
-					{
-						// Calculate, how much of the horz line is invisible on both ends
-						float yoffs = (float)(System.Math.Sqrt(symbolGapSquared - xdiff * xdiff));
-						if (2 * yoffs < System.Math.Abs(linepts[j + 2].Y - linepts[j + 1].Y))
-						{
-							yoffs = (linepts[j + 2].Y > linepts[j + 1].Y) ? yoffs : -yoffs;
-							gp.AddLine(linepts[j + 1].X, linepts[j + 1].Y + yoffs, linepts[j + 2].X, linepts[j + 2].Y - yoffs);
-							gp.StartFigure();
-						}
-					}
-				} // for loop
-				g.DrawPath(this._linePen, gp);
-				gp.Reset();
-			}
-			else
-			{
-				g.DrawLines(this._linePen, linepts);
-			}
-		} // end function PaintOneRange StepHorzMiddleLineStyle
-
-		private PointF[] StepHorzCenterConnection_GetSubPoints(
-Processed2DPlotData pdata,
-PlotRange range,
-IPlotArea layer,
- out int lastIdx)
-		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			var layerSize = layer.Size;
-			PointF[] linepts = new PointF[range.Length * 3 - 2];
-			int end = range.UpperBound - 1;
-			int i, j;
-			for (i = 0, j = range.LowerBound; j < end; i += 3, j++)
-			{
-				linepts[i] = linePoints[j];
-				linepts[i + 1].Y = linePoints[j].Y;
-				linepts[i + 1].X = 0.5f * (linePoints[j].X + linePoints[j + 1].X);
-				linepts[i + 2].Y = linePoints[j + 1].Y;
-				linepts[i + 2].X = linepts[i + 1].X;
-			}
-			linepts[i] = linePoints[j];
-			lastIdx = i;
-
-			return linepts;
-		}
-
-		public void StepHorzCenterConnection_FillOneRange(GraphicsPath gp,
-		Processed2DPlotData pdata,
-		PlotRange range,
-		IPlotArea layer,
-		CSPlaneID fillDirection
-		)
-		{
-			if (range.Length < 2)
-				return;
-
-			int lastIdx;
-			PointF[] linepts = StepHorzCenterConnection_GetSubPoints(pdata, range, layer, out lastIdx);
-			StepHorzCenterConnection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
-		}
-
-		private void StepHorzCenterConnection_FillOneRange(GraphicsPath gp,
-		Processed2DPlotData pdata,
-		PlotRange range,
-		IPlotArea layer,
-			CSPlaneID fillDirection,
-		PointF[] linepts
-		)
-		{
-			Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-			layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-			gp.AddLines(linepts);
-			Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-			layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-			layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
-
-			gp.CloseFigure();
-		}
-
-		#endregion StepHorzCenterConnection
-
-		#region Segment2Connection
-
-		public void Segment2Connection_PaintOneRange(
-			Graphics g,
-			Processed2DPlotData pdata,
-			PlotRange range,
-			IPlotArea layer,
-			float symbolGap)
-		{
-			int lastIdx;
-			PointF[] linepts = Segment2Connection_GetSubPoints(pdata, range, layer, out lastIdx);
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-
-			GraphicsPath gp = new GraphicsPath();
-			int i;
-
-			if (_fillArea)
-			{
-				Segment2Connection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts, lastIdx);
-				g.FillPath(this._fillBrush, gp);
-				gp.Reset();
-			}
-
-			// special efforts are necessary to realize a line/symbol gap
-			// I decided to use a path for this
-			// and hope that not so many segments are added to the path due
-			// to the exclusion criteria that a line only appears between two symbols (rel<0.5)
-			// if the symbols do not overlap. So for a big array of points it is very likely
-			// that the symbols overlap and no line between the symbols needs to be plotted
-			if (this._useSymbolGap && symbolGap > 0)
-			{
-				float xdiff, ydiff, rel, startx, starty, stopx, stopy;
-				for (i = 0; i < lastIdx; i += 2)
-				{
-					xdiff = linepts[i + 1].X - linepts[i].X;
-					ydiff = linepts[i + 1].Y - linepts[i].Y;
-					rel = (float)(symbolGap / System.Math.Sqrt(xdiff * xdiff + ydiff * ydiff));
-					if (rel < 0.5) // a line only appears if the relative gap is smaller 1/2
-					{
-						startx = linepts[i].X + rel * xdiff;
-						starty = linepts[i].Y + rel * ydiff;
-						stopx = linepts[i + 1].X - rel * xdiff;
-						stopy = linepts[i + 1].Y - rel * ydiff;
-
-						gp.AddLine(startx, starty, stopx, stopy);
-						gp.StartFigure();
-					}
-				} // end for
-				g.DrawPath(this._linePen, gp);
-				gp.Reset();
-			}
-			else // no line symbol gap required, so we can use DrawLines to draw the lines
-			{
-				for (i = 0; i < lastIdx; i += 2)
-				{
-					gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i + 1].X, linepts[i + 1].Y);
-					gp.StartFigure();
-				} // end for
-				g.DrawPath(this._linePen, gp);
-				gp.Reset();
-			}
-		} // end function PaintOneRange Segment2LineStyle
-
-		private PointF[] Segment2Connection_GetSubPoints(
-Processed2DPlotData pdata,
-PlotRange range,
-IPlotArea layer,
- out int lastIdx)
-		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			var layerSize = layer.Size;
-			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-			lastIdx = range.Length - 1;
-
-			return linepts;
-		}
-
-		public void Segment2Connection_FillOneRange(GraphicsPath gp,
-		Processed2DPlotData pdata,
-		PlotRange range,
-		IPlotArea layer,
-		CSPlaneID fillDirection
-		)
-		{
-			if (range.Length < 2)
-				return;
-
-			int lastIdx;
-			PointF[] linepts = Segment2Connection_GetSubPoints(pdata, range, layer, out lastIdx);
-			Segment2Connection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts, lastIdx);
-		}
-
-		private void Segment2Connection_FillOneRange(GraphicsPath gp,
-		Processed2DPlotData pdata,
-		PlotRange range,
-		IPlotArea layer,
-			CSPlaneID fillDirection,
-		PointF[] linepts,
-			int lastIdx
-		)
-		{
-			int offs = range.LowerBound;
-			for (int i = 0; i < lastIdx; i += 2)
-			{
-				Logical3D r0 = layer.GetLogical3D(pdata, i + range.OriginalFirstPoint);
-				layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-				gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i + 1].X, linepts[i + 1].Y);
-				Logical3D r1 = layer.GetLogical3D(pdata, i + 1 + range.OriginalFirstPoint);
-				layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-				layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
-				gp.StartFigure();
-			}
-
-			gp.CloseFigure();
-		}
-
-		#endregion Segment2Connection
-
-		#region Segment3Connection
-
-		public void Segment3Connection_PaintOneRange(
-			Graphics g,
-			Processed2DPlotData pdata,
-			PlotRange range,
-			IPlotArea layer,
-			float symbolGap)
-		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			int lastIdx;
-			PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, out lastIdx);
-			GraphicsPath gp = new GraphicsPath();
-			int i;
-
-			if (_fillArea)
-			{
-				Segment3Connection_FillOneRange(gp, pdata, range, layer, _fillDirection, linepts);
-				g.FillPath(this._fillBrush, gp);
-				gp.Reset();
-			}
-
-			// special efforts are necessary to realize a line/symbol gap
-			// I decided to use a path for this
-			// and hope that not so many segments are added to the path due
-			// to the exclusion criteria that a line only appears between two symbols (rel<0.5)
-			// if the symbols do not overlap. So for a big array of points it is very likely
-			// that the symbols overlap and no line between the symbols needs to be plotted
-			lastIdx = range.Length - 1;
-
-			if (this._useSymbolGap && symbolGap > 0)
-			{
-				float xdiff, ydiff, rel, startx, starty, stopx, stopy;
-				for (i = 0; i < lastIdx; i++)
-				{
-					if (2 != (i % 3))
-					{
-						xdiff = linepts[i + 1].X - linepts[i].X;
-						ydiff = linepts[i + 1].Y - linepts[i].Y;
-						rel = (float)(symbolGap / System.Math.Sqrt(xdiff * xdiff + ydiff * ydiff));
-						if (rel < 0.5) // a line only appears if the relative gap is smaller 1/2
-						{
-							startx = linepts[i].X + rel * xdiff;
-							starty = linepts[i].Y + rel * ydiff;
-							stopx = linepts[i + 1].X - rel * xdiff;
-							stopy = linepts[i + 1].Y - rel * ydiff;
-
-							gp.AddLine(startx, starty, stopx, stopy);
-							gp.StartFigure();
-						}
-					}
-				} // end for
-				g.DrawPath(this._linePen, gp);
-				gp.Reset();
-			}
-			else // no line symbol gap required, so we can use DrawLines to draw the lines
-			{
-				for (i = 0; i < lastIdx; i += 3)
-				{
-					gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i + 1].X, linepts[i + 1].Y);
-					gp.AddLine(linepts[i + 1].X, linepts[i + 1].Y, linepts[i + 2].X, linepts[i + 2].Y);
-					gp.StartFigure();
-				} // end for
-				g.DrawPath(this._linePen, gp);
-				gp.Reset();
-			}
-		} // end function PaintOneRange Segment3LineStyle
-
-		private PointF[] Segment3Connection_GetSubPoints(
-Processed2DPlotData pdata,
-PlotRange range,
-IPlotArea layer,
-out int lastIndex)
-		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			var layerSize = layer.Size;
-			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-			lastIndex = 0;
-
-			return linepts;
-		}
-
-		public void Segment3Connection_FillOneRange(GraphicsPath gp,
-		Processed2DPlotData pdata,
-		PlotRange range,
-		IPlotArea layer,
-		CSPlaneID fillDirection
-		)
-		{
-			if (range.Length < 2)
-				return;
-
-			int lastIdx;
-			PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, out lastIdx);
-			Segment3Connection_FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
-		}
-
-		private void Segment3Connection_FillOneRange(GraphicsPath gp,
-		Processed2DPlotData pdata,
-		PlotRange range,
-		IPlotArea layer,
-			CSPlaneID fillDirection,
-		PointF[] linepts
-		)
-		{
-			int lastIdx = range.Length - 2;
-			int offs = range.LowerBound;
-			for (int i = 0; i < lastIdx; i += 3)
-			{
-				Logical3D r0 = layer.GetLogical3D(pdata, i + range.OriginalFirstPoint);
-				layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-				gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i + 1].X, linepts[i + 1].Y);
-				gp.AddLine(linepts[i + 1].X, linepts[i + 1].Y, linepts[i + 2].X, linepts[i + 2].Y);
-
-				Logical3D r1 = layer.GetLogical3D(pdata, i + 2 + range.OriginalFirstPoint);
-				layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-				layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
-				gp.StartFigure();
-			}
-			gp.CloseFigure();
-		}
-
-		#endregion Segment3Connection
-
 		public bool IsColorProvider
 		{
 			get { return !this._independentColor; }
@@ -2029,8 +951,6 @@ out int lastIndex)
 		{
 			if (this.IsColorProvider)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this.Color; });
-			else if (this._fillColorLinkage == ColorLinkage.Dependent && this._fillBrush != null)
-				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._fillBrush.Color; });
 
 			if (!_independentDashStyle)
 				DashPatternGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashPattern; });
@@ -2070,19 +990,6 @@ out int lastIndex)
 			else
 			{
 				_cachedSymbolSizeForIndexFunction = null;
-			}
-
-			// Fill Area
-
-			if (this._fillArea && ColorLinkage.Independent != _fillColorLinkage)
-			{
-				if (null == _fillBrush)
-					_fillBrush = new BrushX(NamedColors.Black);
-
-				if (_fillColorLinkage == ColorLinkage.Dependent)
-					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { _fillBrush.Color = c; });
-				else if (ColorLinkage.PreserveAlpha == _fillColorLinkage)
-					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { _fillBrush.Color = c.NewWithAlphaValue(_fillBrush.Color.Color.A); });
 			}
 		}
 

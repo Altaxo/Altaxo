@@ -28,6 +28,7 @@ using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Graph2D.Plot.Styles;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 using Altaxo.Gui.Common.Drawing;
 using System;
 using System.Collections.Generic;
@@ -45,8 +46,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 	{
 		public event Action IndependentColorChanged;
 
-		private bool _enableDisableAll = false;
-		private int _suppressEvents = 0;
+		public event Action ScatterSymbolChanged;
 
 		public ScatterPlotStyleControl()
 		{
@@ -92,10 +92,52 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			set { _cbColor.SelectedColor = value; }
 		}
 
-		public IScatterSymbol SymbolShape
+		public bool IndependentSymbolShape
+		{
+			get
+			{
+				return true == _guiIndependentScatterSymbol.IsChecked;
+			}
+			set
+			{
+				_guiIndependentScatterSymbol.IsChecked = value;
+			}
+		}
+
+		public IScatterSymbol ScatterSymbol
 		{
 			get { return _cbSymbolShape.SelectedItem; }
 			set { _cbSymbolShape.SelectedItem = value; }
+		}
+
+		private void EhScatterSymbolChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			ScatterSymbolChanged?.Invoke();
+		}
+
+		public bool UseSymbolFrame
+		{
+			get
+			{
+				return _guiUseFrame.IsChecked == true;
+			}
+			set
+			{
+				_guiUseFrame.IsChecked = value;
+			}
+		}
+
+		public SelectableListNodeList Inset
+		{
+			set
+			{
+				GuiHelper.Initialize(_guiInset, value);
+			}
+		}
+
+		private void EhInsetChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiInset);
 		}
 
 		public bool IndependentSymbolSize
@@ -141,6 +183,150 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			set
 			{
 				_cbColor.ShowPlotColorsOnly = value;
+			}
+		}
+
+		public bool OverrideAbsoluteStructureWidth
+		{
+			get
+			{
+				return _guiOverrideAbsoluteStructureWidth.IsChecked == true;
+			}
+			set
+			{
+				_guiOverrideAbsoluteStructureWidth.IsChecked = value;
+			}
+		}
+
+		public double OverriddenAbsoluteStructureWidth
+		{
+			get
+			{
+				return _guiOverriddenAbsoluteStructureWidth.SelectedQuantityAsValueInPoints;
+			}
+			set
+			{
+				_guiOverriddenAbsoluteStructureWidth.SelectedQuantityAsValueInPoints = value;
+			}
+		}
+
+		public bool OverrideRelativeStructureWidth
+		{
+			get
+			{
+				return _guiOverrideRelativeStructureWidth.IsChecked == true;
+			}
+			set
+			{
+				_guiOverrideRelativeStructureWidth.IsChecked = value;
+			}
+		}
+
+		public double OverriddenRelativeStructureWidth
+		{
+			get
+			{
+				return _guiOverriddenRelativeStructureWidth.SelectedQuantityAsValueInSIUnits;
+			}
+			set
+			{
+				_guiOverriddenRelativeStructureWidth.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
+
+		public bool OverridePlotColorInfluence
+		{
+			get
+			{
+				return _guiOverridePlotColorInfluence.IsChecked == true;
+			}
+			set
+			{
+				_guiOverridePlotColorInfluence.IsChecked = value;
+			}
+		}
+
+		public PlotColorInfluence OverriddenPlotColorInfluence
+		{
+			get
+			{
+				return (PlotColorInfluence)_guiOverriddenPlotColorInfluence.SelectedValue;
+			}
+			set
+			{
+				_guiOverriddenPlotColorInfluence.Initialize(value);
+			}
+		}
+
+		public bool OverrideFillColor
+		{
+			get
+			{
+				return _guiOverrideFillColor.IsChecked == true;
+			}
+			set
+			{
+				_guiOverrideFillColor.IsChecked = value;
+			}
+		}
+
+		public NamedColor OverriddenFillColor
+		{
+			get
+			{
+				return _guiOverriddenFillColor.SelectedColor;
+			}
+			set
+			{
+				_guiOverriddenFillColor.SelectedColor = value;
+			}
+		}
+
+		public bool OverrideFrameColor
+		{
+			get
+			{
+				return _guiOverrideFrameColor.IsChecked == true;
+			}
+			set
+			{
+				_guiOverrideFrameColor.IsChecked = value;
+			}
+		}
+
+		public NamedColor OverriddenFrameColor
+		{
+			get
+			{
+				return _guiOverriddenFrameColor.SelectedColor;
+			}
+			set
+			{
+				_guiOverriddenFrameColor.SelectedColor = value;
+			}
+		}
+
+		public bool OverrideInsetColor
+		{
+			get
+			{
+				return _guiOverrideInsetColor.IsChecked == true;
+			}
+			set
+			{
+				_guiOverrideInsetColor.IsChecked = value;
+			}
+		}
+
+		public NamedColor OverriddenInsetColor
+		{
+			get
+			{
+				return _guiOverriddenInsetColor.SelectedColor;
+			}
+			set
+			{
+				_guiOverriddenInsetColor.SelectedColor = value;
 			}
 		}
 	}

@@ -181,39 +181,39 @@ namespace Altaxo.Worksheet.Commands
 
 		public static G2DPlotStyleCollection PlotStyle_Line(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+			var result = new G2DPlotStyleCollection();
 			result.Add(new LinePlotStyle(context));
 			return result;
 		}
 
 		public static G2DPlotStyleCollection PlotStyle_Symbol(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+			var result = new G2DPlotStyleCollection();
 			result.Add(new ScatterPlotStyle(context));
 			return result;
 		}
 
 		public static G2DPlotStyleCollection PlotStyle_Line_Symbol(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+			var result = new G2DPlotStyleCollection();
 			result.Add(new ScatterPlotStyle(context));
-			result.Add(new LinePlotStyle(context));
+			result.Add(new LinePlotStyle(context) { UseSymbolGap = true });
 			return result;
 		}
 
 		public static G2DPlotStyleCollection PlotStyle_LineArea(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
 			G2DPlotStyleCollection result = new G2DPlotStyleCollection();
-			LinePlotStyle ps1 = new LinePlotStyle(context);
-			ps1.FillArea = true;
-			ps1.FillDirection = Graph.CSPlaneID.Bottom;
+			var ps1 = new LinePlotStyle(context);
+			var ps2 = new DropAreaPlotStyle(context) { FillDirection = Graph.CSPlaneID.Bottom };
 			result.Add(ps1);
+			result.Add(ps2);
 			return result;
 		}
 
 		public static G2DPlotStyleCollection PlotStyle_Bar(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
 		{
-			G2DPlotStyleCollection result = new G2DPlotStyleCollection();
+			var result = new G2DPlotStyleCollection();
 			BarGraphPlotStyle ps1 = new BarGraphPlotStyle(context);
 			result.Add(ps1);
 			return result;
@@ -227,10 +227,11 @@ namespace Altaxo.Worksheet.Commands
 		{
 			get
 			{
-				PlotGroupStyleCollection c = new PlotGroupStyleCollection();
-				IPlotGroupStyle s1 = ColorGroupStyle.NewExternalGroupStyle();
+				var c = new PlotGroupStyleCollection();
+				var s1 = ColorGroupStyle.NewExternalGroupStyle();
+				s1.IsStepEnabled = true;
 				c.Add(s1);
-				IPlotGroupStyle s2 = new DashPatternGroupStyle();
+				var s2 = new DashPatternGroupStyle() { IsStepEnabled = true };
 				c.Add(s2, s1.GetType());
 				return c;
 			}
@@ -240,7 +241,7 @@ namespace Altaxo.Worksheet.Commands
 		{
 			get
 			{
-				PlotGroupStyleCollection c = GroupStyle_Color_Line;
+				var c = GroupStyle_Color_Line;
 				c.CoordinateTransformingStyle = new AbsoluteStackTransform();
 				return c;
 			}
@@ -270,10 +271,11 @@ namespace Altaxo.Worksheet.Commands
 		{
 			get
 			{
-				PlotGroupStyleCollection c = new PlotGroupStyleCollection();
-				IPlotGroupStyle s1 = ColorGroupStyle.NewExternalGroupStyle();
+				var c = new PlotGroupStyleCollection();
+				var s1 = ColorGroupStyle.NewExternalGroupStyle();
+				s1.IsStepEnabled = true;
 				c.Add(s1);
-				IPlotGroupStyle s2 = new ScatterSymbolGroupStyle();
+				var s2 = new ScatterSymbolGroupStyle() { IsStepEnabled = true };
 				c.Add(s2, s1.GetType());
 				return c;
 			}
@@ -283,12 +285,13 @@ namespace Altaxo.Worksheet.Commands
 		{
 			get
 			{
-				PlotGroupStyleCollection c = new PlotGroupStyleCollection();
-				IPlotGroupStyle s1 = ColorGroupStyle.NewExternalGroupStyle();
+				var c = new PlotGroupStyleCollection();
+				var s1 = ColorGroupStyle.NewExternalGroupStyle();
+				s1.IsStepEnabled = true;
 				c.Add(s1);
-				IPlotGroupStyle s2 = new DashPatternGroupStyle();
+				var s2 = new DashPatternGroupStyle() { IsStepEnabled = true };
 				c.Add(s2, s1.GetType());
-				IPlotGroupStyle s3 = new ScatterSymbolGroupStyle();
+				var s3 = new ScatterSymbolGroupStyle() { IsStepEnabled = true };
 				c.Add(s3, s2.GetType());
 				return c;
 			}
@@ -298,11 +301,11 @@ namespace Altaxo.Worksheet.Commands
 		{
 			get
 			{
-				PlotGroupStyleCollection c = new PlotGroupStyleCollection();
-				IPlotGroupStyle s1 = new BarWidthPositionGroupStyle();
+				var c = new PlotGroupStyleCollection();
+				var s1 = new BarSizePosition2DGroupStyle() { IsStepEnabled = true };
 				c.Add(s1);
 
-				IPlotGroupStyle s2 = ColorGroupStyle.NewExternalGroupStyle();
+				var s2 = ColorGroupStyle.NewExternalGroupStyle();
 				c.Add(s2);
 				return c;
 			}
@@ -312,12 +315,11 @@ namespace Altaxo.Worksheet.Commands
 		{
 			get
 			{
-				PlotGroupStyleCollection c = new PlotGroupStyleCollection();
-				IPlotGroupStyle s1 = new BarWidthPositionGroupStyle();
-				s1.IsStepEnabled = false;
+				var c = new PlotGroupStyleCollection();
+				var s1 = new BarSizePosition2DGroupStyle() { IsStepEnabled = false };
 				c.Add(s1);
 
-				IPlotGroupStyle s2 = ColorGroupStyle.NewExternalGroupStyle();
+				var s2 = ColorGroupStyle.NewExternalGroupStyle();
 				c.Add(s2);
 
 				c.CoordinateTransformingStyle = new AbsoluteStackTransform();
@@ -329,12 +331,11 @@ namespace Altaxo.Worksheet.Commands
 		{
 			get
 			{
-				PlotGroupStyleCollection c = new PlotGroupStyleCollection();
-				IPlotGroupStyle s1 = new BarWidthPositionGroupStyle();
-				s1.IsStepEnabled = false;
+				var c = new PlotGroupStyleCollection();
+				var s1 = new BarSizePosition2DGroupStyle() { IsStepEnabled = false };
 				c.Add(s1);
 
-				IPlotGroupStyle s2 = ColorGroupStyle.NewExternalGroupStyle();
+				var s2 = ColorGroupStyle.NewExternalGroupStyle();
 				c.Add(s2);
 
 				c.CoordinateTransformingStyle = new RelativeStackTransform();

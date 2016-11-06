@@ -34,7 +34,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
 	public abstract class OpenSymbolBase : SymbolBase, IScatterSymbol
 	{
-		protected NamedColor _fillColor;
+		protected NamedColor _fillColor = NamedColors.Black;
 		protected double _relativeStructureWidth = 0.09375;
 
 		#region Serialization
@@ -68,7 +68,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 		/// Gets a copy of the outer symbol shape as polygon(s).
 		/// </summary>
 		/// <returns>Polygon(s) of the outer symbol shape.</returns>
-		public abstract List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon();
+		public abstract List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon(double relativeStructureWidth);
 
 		protected OpenSymbolBase()
 		{
@@ -83,6 +83,8 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 		{
 			return this.MemberwiseClone();
 		}
+
+		public double DesignSize { get { return 2; } }
 
 		public NamedColor FillColor { get { return _fillColor; } }
 
@@ -131,6 +133,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 		public IScatterSymbolInset Inset { get { return null; } }
 
 		public void CalculatePolygons(
+			double? relativeStructureWidth,
 			out List<List<ClipperLib.IntPoint>> framePolygon,
 			out List<List<ClipperLib.IntPoint>> insetPolygon,
 			out List<List<ClipperLib.IntPoint>> fillPolygon)
@@ -138,7 +141,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 		{
 			insetPolygon = null;
 			framePolygon = null;
-			fillPolygon = GetCopyOfOuterPolygon();
+			fillPolygon = GetCopyOfOuterPolygon(relativeStructureWidth ?? _relativeStructureWidth);
 		}
 
 		public override bool Equals(object obj)

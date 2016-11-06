@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 	public abstract class ClosedSymbolBase : SymbolBase, IScatterSymbol
 	{
 		private PlotColorInfluence _plotColorInfluence = PlotColorInfluence.FillColor;
-		protected NamedColor _fillColor;
+		protected NamedColor _fillColor = NamedColors.Black;
 
 		protected double _relativeStructureWidth = 0.09375;
 		protected IScatterSymbolFrame _frame;
@@ -94,6 +94,8 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 		{
 			return this.MemberwiseClone();
 		}
+
+		public double DesignSize { get { return 2; } }
 
 		public NamedColor FillColor { get { return _fillColor; } }
 
@@ -196,6 +198,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 		}
 
 		public void CalculatePolygons(
+			double? overrideRelativeStructureWidth,
 			out List<List<ClipperLib.IntPoint>> framePolygon,
 			out List<List<ClipperLib.IntPoint>> insetPolygon,
 			out List<List<ClipperLib.IntPoint>> fillPolygon)
@@ -209,16 +212,17 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			var outerPolygon = GetCopyOfOuterPolygon();
 
 			List<List<ClipperLib.IntPoint>> innerFramePolygon = null;
-			if (null != _frame && _relativeStructureWidth > 0)
+			double relativeStructureWidth = overrideRelativeStructureWidth ?? _relativeStructureWidth;
+			if (null != _frame && relativeStructureWidth > 0)
 			{
 				// get frame polygon
-				innerFramePolygon = _frame.GetCopyOfClipperPolygon(_relativeStructureWidth, outerPolygon);
+				innerFramePolygon = _frame.GetCopyOfClipperPolygon(relativeStructureWidth, outerPolygon);
 			}
 
 			if (null != _inset)
 			{
 				// get inset polygon
-				insetPolygon = _inset.GetCopyOfClipperPolygon(_relativeStructureWidth);
+				insetPolygon = _inset.GetCopyOfClipperPolygon(relativeStructureWidth);
 			}
 
 			// if null != insetPolygon

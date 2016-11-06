@@ -81,44 +81,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		/// <summary>Occurs when the user checked or unchecked the "use frame" checkbox.</summary>
 		event Action UseLineChanged;
 
-		/// <summary>Occurs when the  frame pen has changed by user interaction.</summary>
-		event Action LinePenChanged;
-
 		#endregion events
-
-		#region Fill
-
-		/// <summary>
-		/// Gets/sets the fill area check box.
-		/// </summary>
-		bool UseFill { get; set; }
-
-		/// <summary>Sets a value indicating whether plot colors only should be shown for the fill brush.</summary>
-		/// <value><c>true</c> if only plot colors should be shown for fill brush; otherwise, <c>false</c>.</value>
-		bool ShowPlotColorsOnlyForFillBrush { set; }
-
-		void InitializeFillColorLinkage(SelectableListNodeList list);
-
-		/// <summary>
-		/// Gets/sets the contents of the fill color combobox.
-		/// </summary>
-		BrushX FillBrush { get; set; }
-
-		/// <summary>
-		/// Initializes the fill direction combobox.
-		/// </summary>
-		/// <param name="list">List of possible selections.</param>
-		void InitializeFillDirection(SelectableListNodeList list);
-
-		/// <summary>Occurs when the user choice for IndependentColor of the fill brush has changed.</summary>
-		event Action IndependentFillColorChanged;
-
-		event Action UseFillChanged;
-
-		/// <summary>Occurs when the fill brush has changed by user interaction.</summary>
-		event Action FillBrushChanged;
-
-		#endregion Fill
 	}
 
 	#endregion Interfaces
@@ -135,9 +98,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		private SelectableListNodeList _lineConnectChoices;
 
-		private SelectableListNodeList _areaFillDirectionChoices;
-		private SelectableListNodeList _fillColorLinkageChoices;
-
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
 			yield break;
@@ -148,8 +108,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			_colorGroupStyleTracker = null;
 
 			_lineConnectChoices = null;
-			_areaFillDirectionChoices = null;
-			_fillColorLinkageChoices = null;
 
 			base.Dispose(isDisposing);
 		}
@@ -162,8 +120,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
 				InitializeLineConnectionChoices();
-				_fillColorLinkageChoices = new SelectableListNodeList(_doc.FillColorLinkage);
-				InitializeFillDirectionChoices();
 			}
 
 			if (_view != null)
@@ -182,13 +138,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 				_view.UseSymbolGap = _doc.UseSymbolGap;
 				_view.SymbolGapOffset = _doc.SymbolGapOffset;
 				_view.SymbolGapFactor = _doc.SymbolGapFactor;
-
-				// Fill area
-				_view.UseFill = _doc.FillArea;
-				_view.InitializeFillColorLinkage(_fillColorLinkageChoices);
-				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
-				_view.FillBrush = null != _doc.FillBrush ? _doc.FillBrush : new BrushX(NamedColors.Transparent);
-				_view.InitializeFillDirection(_areaFillDirectionChoices);
 			}
 		}
 
@@ -235,20 +184,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 				_doc.SymbolGapOffset = _view.SymbolGapOffset;
 				_doc.SymbolGapFactor = _view.SymbolGapFactor;
 
-				// Fill Area
-				_doc.FillArea = _view.UseFill;
-
-				// Line fill direction
-				selNode = _areaFillDirectionChoices.FirstSelectedNode;
-				if (_doc.FillArea && null != selNode)
-					_doc.FillDirection = ((CSPlaneID)selNode.Tag);
-				else
-					_doc.FillDirection = null;
-
-				// Line fill color
-				_doc.FillBrush = _view.FillBrush;
-				// _doc.FillColorLinkage = _view.FillColorLinkage; // already done during showing the view, see EhFillColorLinkageChanged()
-
 				return ApplyEnd(true, disposeController);
 			}
 			catch (Exception ex)
@@ -264,35 +199,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 			_view.IndependentLineColorChanged += EhIndependentLineColorChanged;
 			_view.UseLineChanged += EhUseLineChanged;
-			_view.UseFillChanged += EhUseFillChanged;
-			_view.IndependentFillColorChanged += EhIndependentFillColorChanged;
-			_view.FillBrushChanged += EhFillBrushChanged;
-			_view.LinePenChanged += EhLinePenChanged;
 		}
 
 		protected override void DetachView()
 		{
 			_view.IndependentLineColorChanged -= EhIndependentLineColorChanged;
 			_view.UseLineChanged -= EhUseLineChanged;
-			_view.UseFillChanged -= EhUseFillChanged;
-			_view.IndependentFillColorChanged -= EhIndependentFillColorChanged;
-			_view.FillBrushChanged -= EhFillBrushChanged;
-			_view.LinePenChanged -= EhLinePenChanged;
 			base.DetachView();
-		}
-
-		public void InitializeFillDirectionChoices()
-		{
-			_areaFillDirectionChoices = new SelectableListNodeList();
-			IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
-			if (layer != null)
-			{
-				foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.FillDirection }))
-				{
-					CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
-					_areaFillDirectionChoices.Add(new SelectableListNode(info.Name, id, id == _doc.FillDirection));
-				}
-			}
 		}
 
 		#region Color management
@@ -321,26 +234,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		{
 			if (null != _view)
 			{
-				_doc.FillColorLinkage = (ColorLinkage)_fillColorLinkageChoices.FirstSelectedNode.Tag;
 				_doc.IndependentLineColor = _view.IndependentLineColor;
-				if (_view.UseFill)
-					_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
 				if (IsLineUsed)
 					_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
-			}
-		}
-
-		private void EhIndependentFillColorChanged()
-		{
-			if (null != _view)
-			{
-				_doc.FillColorLinkage = (ColorLinkage)_fillColorLinkageChoices.FirstSelectedNode.Tag;
-				if (ColorLinkage.Dependent == _doc.FillColorLinkage && IsLineUsed && false == _view.IndependentLineColor)
-					InternalSetFillColorToLineColor();
-				if (ColorLinkage.PreserveAlpha == _doc.FillColorLinkage && IsLineUsed && false == _view.IndependentLineColor)
-					InternalSetFillColorRGBToLineColor();
-
-				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
 			}
 		}
 
@@ -349,95 +245,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			if (null != _view)
 			{
 				_doc.IndependentLineColor = _view.IndependentLineColor;
-				if (false == _view.IndependentLineColor && _view.UseFill && ColorLinkage.Dependent == _doc.FillColorLinkage)
-					InternalSetLineColorToFillColor();
 				_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
 			}
-		}
-
-		private void EhFillBrushChanged()
-		{
-			if (null != _view)
-			{
-				if (_view.UseFill && ColorLinkage.Dependent == _doc.FillColorLinkage && IsLineUsed && false == _view.IndependentLineColor)
-				{
-					if (_view.LinePen.Color != _view.FillBrush.Color)
-						InternalSetLineColorToFillColor();
-				}
-			}
-		}
-
-		private void EhLinePenChanged()
-		{
-			if (null != _view)
-			{
-				if (_view.UseFill && ColorLinkage.Dependent == _doc.FillColorLinkage && IsLineUsed && false == _view.IndependentLineColor)
-				{
-					if (_view.FillBrush.Color != _view.LinePen.Color)
-						InternalSetFillColorToLineColor();
-				}
-				else if (_view.UseFill && ColorLinkage.PreserveAlpha == _doc.FillColorLinkage && IsLineUsed && false == _view.IndependentLineColor)
-				{
-					if (_view.FillBrush.Color != _view.LinePen.Color)
-						InternalSetFillColorRGBToLineColor();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Internal sets the fill color to the color of the line.
-		/// </summary>
-		private void InternalSetFillColorToLineColor()
-		{
-			var newBrush = _view.FillBrush.Clone();
-			newBrush.Color = _view.LinePen.Color;
-			_view.FillBrush = newBrush;
-		}
-
-		/// <summary>
-		/// Internal sets the fill color to the color of the line, but here only the RGB component is used from the line color. The A component of the fill color remains unchanged.
-		/// </summary>
-		private void InternalSetFillColorRGBToLineColor()
-		{
-			var newBrush = _view.FillBrush.Clone();
-			var c = _view.LinePen.Color.NewWithAlphaValue(newBrush.Color.Color.A); ;
-			newBrush.Color = c;
-			_view.FillBrush = newBrush;
-		}
-
-		/// <summary>
-		/// Internal sets the color of the line to the color of the fill brush.
-		/// </summary>
-		private void InternalSetLineColorToFillColor()
-		{
-			var newPen = _view.LinePen.Clone();
-			newPen.Color = _view.FillBrush.Color;
-			_view.LinePen = newPen;
-		}
-
-		private void EhUseFillChanged()
-		{
-			var newValue = _view.UseFill;
-
-			if (true == newValue)
-			{
-				if (IsLineUsed && false == _view.IndependentLineColor)
-				{
-					InternalSetFillColorToLineColor();
-				}
-				else if (null == _view.FillBrush || _view.FillBrush.IsInvisible)
-				{
-					_view.FillBrush = new BrushX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
-				}
-			}
-
-			if (true == newValue && null == _areaFillDirectionChoices.FirstSelectedNode && _areaFillDirectionChoices.Count > 0) // if no fill direction is currently selected, the select it now!
-			{
-				_areaFillDirectionChoices[0].IsSelected = true;
-				_view.InitializeFillDirection(_areaFillDirectionChoices);
-			}
-
-			_view.UseFill = newValue && _areaFillDirectionChoices.Count > 0; // to enable/disable gui items in the control
 		}
 
 		private void EhUseLineChanged()
@@ -446,11 +255,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 			if (true == newValue)
 			{
-				if (_view.UseFill && ColorLinkage.Dependent == _doc.FillColorLinkage)
-				{
-					InternalSetLineColorToFillColor();
-				}
-				else if (null == _view.LinePen || _view.LinePen.IsInvisible)
+				if (null == _view.LinePen || _view.LinePen.IsInvisible)
 				{
 					_view.LinePen = new PenX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
 				}

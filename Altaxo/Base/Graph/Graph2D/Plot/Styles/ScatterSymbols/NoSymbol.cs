@@ -55,6 +55,10 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
 		#endregion Serialization
 
+		public double DesignSize { get { return 2; } }
+
+		public double RelativeStructureWidth { get { return 0.09375; } }
+
 		public NamedColor FillColor
 		{
 			get
@@ -87,7 +91,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			}
 		}
 
-		public void CalculatePolygons(out List<List<IntPoint>> framePolygon, out List<List<IntPoint>> insetPolygon, out List<List<IntPoint>> fillPolygon)
+		public void CalculatePolygons(double? relativeStructureWidth, out List<List<IntPoint>> framePolygon, out List<List<IntPoint>> insetPolygon, out List<List<IntPoint>> fillPolygon)
 		{
 			framePolygon = null;
 			insetPolygon = null;

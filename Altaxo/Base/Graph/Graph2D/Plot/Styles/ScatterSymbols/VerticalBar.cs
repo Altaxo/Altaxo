@@ -71,10 +71,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 		{
 		}
 
-		public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon()
+		public override List<List<ClipperLib.IntPoint>> GetCopyOfOuterPolygon(double relativeStructureWidth)
 		{
-			var h = ClipperScalingInt;
-			var w = (int)Math.Round(0.25 + _relativeStructureWidth * ClipperScalingInt);
+			relativeStructureWidth = Altaxo.Calc.RMath.ClampToInterval(relativeStructureWidth, 0, 0.5);
+			var h = (int)Math.Round(0.25 + Math.Sqrt(1 - relativeStructureWidth * relativeStructureWidth) * ClipperScalingInt);
+			var w = (int)Math.Round(0.25 + relativeStructureWidth * ClipperScalingInt);
 
 			return new List<List<ClipperLib.IntPoint>>(1)
 			{

@@ -94,13 +94,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			GraphicsPath gp = new GraphicsPath();
 			var layerSize = layer.Size;
 
-			if (linePlotStyle.FillArea)
-			{
-				FillOneRange(gp, pdata, range, layer, linePlotStyle.FillDirection, linepts);
-				g.FillPath(linePlotStyle.FillBrush, gp);
-				gp.Reset();
-			}
-
 			// unfortuately, there is no easy way to support line/symbol gaps
 			// thats why I ignore this value and draw a curve through the points
 			g.DrawCurve(linePen, linepts);

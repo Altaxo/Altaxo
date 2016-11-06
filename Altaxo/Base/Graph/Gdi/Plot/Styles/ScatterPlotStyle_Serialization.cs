@@ -108,14 +108,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				var shape = (DeprecatedShape)info.GetValue("Shape", typeof(DeprecatedShape));
 				var style = (DeprecatedStyle)info.GetValue("Style", typeof(DeprecatedStyle));
-				s._symbolShape = GetScatterSymbol(shape, style);
+				s._scatterSymbol = GetScatterSymbol(shape, style);
 
 				var dropLine = (DeprecatedDropLine)info.GetValue("DropLine", s);
 				var pen = (PenX)info.GetValue("Pen", s);
 				s._color = pen.Color;
 				s._symbolSize = info.GetSingle("SymbolSize");
-				s._relativePenWidth = info.GetSingle("RelativePenWidth");
-				s._symbolSize *= Sqrt2 * (1 + s._relativePenWidth);
+				s._overrideStructureWidthFactor = info.GetSingle("RelativePenWidth");
+				s._symbolSize *= Sqrt2 * (1 + s._overrideStructureWidthFactor.Value);
 
 				if (dropLine != DeprecatedDropLine.NoDrop)
 				{
@@ -151,14 +151,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				var shape = (DeprecatedShape)info.GetValue("Shape", typeof(DeprecatedShape));
 				var style = (DeprecatedStyle)info.GetValue("Style", typeof(DeprecatedStyle));
-				s._symbolShape = GetScatterSymbol(shape, style);
+				s._scatterSymbol = GetScatterSymbol(shape, style);
 
 				var dropLine = (DeprecatedDropLine)info.GetValue("DropLine", s);
 				var pen = (PenX)info.GetValue("Pen", s);
 				s._color = pen.Color;
 				s._symbolSize = info.GetSingle("SymbolSize");
-				s._relativePenWidth = info.GetSingle("RelativePenWidth");
-				s._symbolSize *= Sqrt2 * (1 + s._relativePenWidth);
+				s._overrideStructureWidthFactor = info.GetSingle("RelativePenWidth");
+				s._symbolSize *= Sqrt2 * (1 + s._overrideStructureWidthFactor.Value);
 
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
@@ -204,14 +204,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				var shape = (DeprecatedShape)info.GetValue("Shape", s);
 				var style = (DeprecatedStyle)info.GetValue("Style", s);
-				s._symbolShape = GetScatterSymbol(shape, style);
+				s._scatterSymbol = GetScatterSymbol(shape, style);
 
 				var dropLineTargets = (CSPlaneIDList)info.GetValue("DropLine", s);
 				var pen = (PenX)info.GetValue("Pen", s);
 				s._color = pen.Color;
 				s._symbolSize = info.GetSingle("SymbolSize");
-				s._relativePenWidth = info.GetSingle("RelativePenWidth");
-				s._symbolSize *= Sqrt2 * (1 + s._relativePenWidth);
+				s._overrideStructureWidthFactor = info.GetSingle("RelativePenWidth");
+				s._symbolSize *= Sqrt2 * (1 + s._overrideStructureWidthFactor.Value);
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
 				s._skipFreq = info.GetInt32("SkipFreq");
@@ -241,14 +241,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
 				info.AddValue("SkipFreq", s._skipFreq);
 
-				info.AddValue("Shape", s._symbolShape);
+				info.AddValue("IndependentScatterSymbol", s._independentScatterSymbol);
+				info.AddValue("ScatterSymbol", s._scatterSymbol);
 				info.AddValue("IndependentSymbolSize", s._independentSymbolSize);
 				info.AddValue("SymbolSize", s._symbolSize);
-				info.AddValue("RelativeStructureWidth", s._relativePenWidth);
 
 				info.AddValue("IndependentColor", s._independentColor);
 				info.AddValue("Color", s._color);
 
+				info.AddValue("OverrideStructureWidthOffset", s._overrideStructureWidthOffset);
+				info.AddValue("OverrideStructureWidthFactor", s._overrideStructureWidthFactor);
 				info.AddNullableEnum("OverridePlotColorInfluence", s._overridePlotColorInfluence);
 				info.AddValue("OverrideFillColor", s._overrideFillColor);
 				info.AddValue("OverrideFrameColor", s._overrideFrameColor);
@@ -262,15 +264,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
 				s._skipFreq = info.GetInt32("SkipFreq");
 
-				s._symbolShape = (IScatterSymbol)info.GetValue("Shape", s);
+				s._independentScatterSymbol = info.GetBoolean("IndependentScatterSymbol");
+				s._scatterSymbol = (IScatterSymbol)info.GetValue("ScatterSymbol", s);
 
 				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
 				s._symbolSize = info.GetSingle("SymbolSize");
-				s._relativePenWidth = info.GetSingle("RelativeStructureWidth");
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s._color = (NamedColor)info.GetValue("Color", s);
 
-				s._overridePlotColorInfluence = info.GetNullableEnum<PlotColorInfluence>("PlotColorInfluence");
+				s._overrideStructureWidthOffset = info.GetNullableDouble("OverrideStructureWidthOffset");
+				s._overrideStructureWidthFactor = info.GetNullableDouble("OverrideStructureWidthFactor");
+				s._overridePlotColorInfluence = info.GetNullableEnum<PlotColorInfluence>("OverridePlotColorInfluence");
 				s._overrideFillColor = (NamedColor?)info.GetValue("OverrideFillColor", s);
 				s._overrideFrameColor = (NamedColor?)info.GetValue("OverrideFrameColor", s);
 				s._overrideInsetColor = (NamedColor?)info.GetValue("OverrideInsetColor", s);

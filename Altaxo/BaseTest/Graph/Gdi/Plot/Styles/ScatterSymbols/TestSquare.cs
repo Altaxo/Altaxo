@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
 
 			var square = new Square();
 
-			square.CalculatePolygons(out framePolygon, out insetPolygon, out fillPolygon);
+			square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
 
 			Assert.IsNull(framePolygon);
 			Assert.IsNull(insetPolygon);
@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
 
 			var square = new Square().WithFrame(new ConstantThicknessFrame()).WithRelativeStructureWidth(0.125);
 
-			square.CalculatePolygons(out framePolygon, out insetPolygon, out fillPolygon);
+			square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
 
 			Assert.IsNotNull(framePolygon);
 			Assert.IsNull(insetPolygon);
@@ -78,7 +78,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
 
 			var square = new Square().WithInset(new VerticalBarInset()).WithRelativeStructureWidth(0.125);
 
-			square.CalculatePolygons(out framePolygon, out insetPolygon, out fillPolygon);
+			square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
 
 			Assert.IsNull(framePolygon);
 			Assert.IsNotNull(insetPolygon);
@@ -97,7 +97,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
 										.WithInset(new VerticalBarInset())
 										.WithRelativeStructureWidth(0.125);
 
-			square.CalculatePolygons(out framePolygon, out insetPolygon, out fillPolygon);
+			square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
 
 			Assert.IsNotNull(framePolygon);
 			Assert.IsNotNull(insetPolygon);
@@ -116,7 +116,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.ScatterSymbols
 										.WithInset(new SquarePointInset())
 										.WithRelativeStructureWidth(0.125);
 
-			square.CalculatePolygons(out framePolygon, out insetPolygon, out fillPolygon);
+			square.CalculatePolygons(null, out framePolygon, out insetPolygon, out fillPolygon);
 
 			Assert.IsNotNull(framePolygon);
 			Assert.IsNotNull(insetPolygon);

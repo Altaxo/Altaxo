@@ -176,12 +176,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_connectionStyle = LineConnectionStyles.StraightConnection.Instance;
 		}
 
-		public DropAreaPlotStyle(ILineConnectionStyle connection, bool ignoreMissingDataPoints, bool connectCircular, CSPlaneID direction, BrushX fillBrush)
+		public DropAreaPlotStyle(ILineConnectionStyle connection, bool ignoreMissingDataPoints, bool connectCircular, CSPlaneID direction, BrushX fillBrush, ColorLinkage fillColorLinkage)
 		{
 			_connectionStyle = connection;
 			_ignoreMissingDataPoints = ignoreMissingDataPoints;
 			_connectCircular = connectCircular;
 			_fillDirection = direction;
+			_fillColorLinkage = fillColorLinkage;
 			ChildCopyToMember(ref _fillBrush, fillBrush);
 			_framePen = new PenX(NamedColors.Transparent, 1);
 		}

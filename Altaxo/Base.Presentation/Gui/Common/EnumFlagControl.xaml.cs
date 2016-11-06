@@ -36,6 +36,8 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	public partial class EnumFlagControl : UserControl, IEnumFlagView
 	{
+		private SelectableListNodeList _choices;
+
 		public EnumFlagControl()
 		{
 			InitializeComponent();
@@ -43,7 +45,33 @@ namespace Altaxo.Gui.Common
 
 		public void Initialize(SelectableListNodeList choices)
 		{
-			_listView.ItemsSource = choices;
+			_choices = choices;
+			_listView.ItemsSource = _choices;
+		}
+
+		public void Initialize(Enum value)
+		{
+			_choices = new SelectableListNodeList(value);
+			_listView.ItemsSource = _choices;
+		}
+
+		public int SelectedValue
+		{
+			get
+			{
+				int sum = 0;
+
+				if (null != _choices)
+				{
+					foreach (var item in _choices)
+					{
+						if (item.IsSelected)
+							sum |= (int)(item.Tag);
+					}
+				}
+
+				return sum;
+			}
 		}
 	}
 }
