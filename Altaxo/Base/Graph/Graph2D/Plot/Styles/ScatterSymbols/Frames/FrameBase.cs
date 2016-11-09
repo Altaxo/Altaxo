@@ -81,6 +81,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames
 			}
 		}
 
+		IScatterSymbolFrame IScatterSymbolFrame.WithColor(NamedColor color)
+		{
+			return WithColor(color);
+		}
+
 		public abstract List<List<IntPoint>> GetCopyOfClipperPolygon(double relativeWidth, List<List<IntPoint>> outerPolygon);
 
 		public override bool Equals(object obj)

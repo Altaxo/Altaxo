@@ -245,9 +245,32 @@ namespace Altaxo.Collections
 		/// <param name="selectedItem">Item of an enumeration that is currently selected.</param>
 		public SelectableListNodeList(System.Enum selectedItem)
 		{
-			var values = System.Enum.GetValues(selectedItem.GetType());
-			foreach (var value in values)
-				Add(new SelectableListNode(value.ToString(), value, value.ToString() == selectedItem.ToString()));
+			if (selectedItem.GetType().IsDefined(typeof(FlagsAttribute), inherit: false)) // is this an enumeration with the Flags attribute?
+			{
+				// enumeration with flags attribute
+				var values = System.Enum.GetValues(selectedItem.GetType());
+				foreach (var val in values)
+				{
+					var node = new SelectableListNode(System.Enum.GetName(selectedItem.GetType(), val), val, IsChecked(val, Convert.ToInt64(selectedItem)));
+					Add(node);
+				}
+			}
+			else
+			{
+				// enumeration without flags attribute
+				var values = System.Enum.GetValues(selectedItem.GetType());
+				foreach (var value in values)
+					Add(new SelectableListNode(value.ToString(), value, value.ToString() == selectedItem.ToString()));
+			}
+		}
+
+		private static bool IsChecked(object flag, long document)
+		{
+			long x = Convert.ToInt64(flag);
+			if (x == 0)
+				return 0 == document;
+			else
+				return (x == (x & document));
 		}
 
 		/// <summary>Adds items to this collection.</summary>

@@ -92,7 +92,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			set { _cbColor.SelectedColor = value; }
 		}
 
-		public bool IndependentSymbolShape
+		public bool IndependentScatterSymbol
 		{
 			get
 			{
@@ -254,7 +254,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				_guiOverriddenPlotColorInfluence.Initialize(value);
+				_guiOverriddenPlotColorInfluence.SelectedValue = value;
 			}
 		}
 

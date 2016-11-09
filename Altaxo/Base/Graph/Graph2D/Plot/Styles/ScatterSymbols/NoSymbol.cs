@@ -59,12 +59,22 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
 		public double RelativeStructureWidth { get { return 0.09375; } }
 
+		IScatterSymbol IScatterSymbol.WithRelativeStructureWidth(double relativeStructureWidth)
+		{
+			return this;
+		}
+
 		public NamedColor FillColor
 		{
 			get
 			{
 				return NamedColors.Transparent;
 			}
+		}
+
+		IScatterSymbol IScatterSymbol.WithFillColor(NamedColor fillColor)
+		{
+			return this;
 		}
 
 		public IScatterSymbolFrame Frame
@@ -75,6 +85,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			}
 		}
 
+		IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame frame)
+		{
+			return this;
+		}
+
 		public IScatterSymbolInset Inset
 		{
 			get
@@ -83,12 +98,22 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			}
 		}
 
+		IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset inset)
+		{
+			return this;
+		}
+
 		public PlotColorInfluence PlotColorInfluence
 		{
 			get
 			{
 				return PlotColorInfluence.None;
 			}
+		}
+
+		IScatterSymbol IScatterSymbol.WithPlotColorInfluence(PlotColorInfluence plotColorInfluence)
+		{
+			return this;
 		}
 
 		public void CalculatePolygons(double? relativeStructureWidth, out List<List<IntPoint>> framePolygon, out List<List<IntPoint>> insetPolygon, out List<List<IntPoint>> fillPolygon)

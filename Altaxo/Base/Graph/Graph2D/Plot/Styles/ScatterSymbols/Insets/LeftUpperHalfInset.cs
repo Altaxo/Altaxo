@@ -66,7 +66,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 				{
 				new ClipperLib.IntPoint( -h, -h),
 				new ClipperLib.IntPoint( h, h),
-				new ClipperLib.IntPoint( -0, h),
+				new ClipperLib.IntPoint( -h, h),
 			}
 			};
 		}

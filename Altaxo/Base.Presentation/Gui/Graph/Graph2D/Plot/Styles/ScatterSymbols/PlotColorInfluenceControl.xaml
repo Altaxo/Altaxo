@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="Altaxo.Gui.Graph.Graph2D.Plot.Styles.ScatterSymbols.PlotColorInfluenceControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Altaxo.Gui.Graph.Graph2D.Plot.Styles.ScatterSymbols"
+             mc:Ignorable="d">
+	<UserControl.Resources>
+		<Style TargetType="Label">
+			<Setter Property="HorizontalAlignment" Value="Left" />
+		</Style>
+		<Style TargetType="RadioButton">
+			<Setter Property="Margin" Value="4,0,4,0" />
+			<Setter Property="VerticalAlignment" Value="Center" />
+		</Style>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Label Grid.Row="0" Grid.Column="0" Content="On fill color: " />
+		<RadioButton x:Name="_guiFillFull" Grid.Row="0" Grid.Column="1" Content="Full" GroupName="Fill" Tag="2" />
+		<RadioButton x:Name="_guiFillAlpha" Grid.Row="0" Grid.Column="2" Content="PreserveAlpha" GroupName="Fill" Tag="1" />
+		<RadioButton x:Name="_guiFillNone" Grid.Row="0" Grid.Column="3" Content="None" GroupName="Fill" Tag="0" />
+
+		<Label Grid.Row="1" Grid.Column="0" Content="On frame color: " />
+		<RadioButton x:Name="_guiFrameFull" Grid.Row="1" Grid.Column="1" Content="Full" GroupName="Frame" Tag="2" />
+		<RadioButton x:Name="_guiFrameAlpha" Grid.Row="1" Grid.Column="2" Content="PreserveAlpha" GroupName="Frame" Tag="1" />
+		<RadioButton x:Name="_guiFrameNone" Grid.Row="1" Grid.Column="3" Content="None" GroupName="Frame" Tag="0" />
+
+		<Label Grid.Row="2" Grid.Column="0" Content="On inset color: " />
+		<RadioButton x:Name="_guiInsetFull" Grid.Row="2" Grid.Column="1" Content="Full" GroupName="Inset" Tag="2" />
+		<RadioButton x:Name="_guiInsetAlpha" Grid.Row="2" Grid.Column="2" Content="PreserveAlpha" GroupName="Inset" Tag="1" />
+		<RadioButton x:Name="_guiInsetNone" Grid.Row="2" Grid.Column="3" Content="None" GroupName="Inset" Tag="0" />
+	</Grid>
+</UserControl>

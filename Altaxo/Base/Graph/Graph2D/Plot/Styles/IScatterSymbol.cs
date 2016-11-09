@@ -39,12 +39,21 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles
 	public interface IScatterSymbol : Main.IImmutable, ICloneable
 	{
 		ScatterSymbols.IScatterSymbolFrame Frame { get; }
+
+		IScatterSymbol WithFrame(ScatterSymbols.IScatterSymbolFrame frame);
+
 		ScatterSymbols.IScatterSymbolInset Inset { get; }
+
+		IScatterSymbol WithInset(ScatterSymbols.IScatterSymbolInset inset);
 
 		NamedColor FillColor { get; }
 
+		IScatterSymbol WithFillColor(NamedColor fillColor);
+
 		/// <summary>Determines which colors of the scatter symbol are affected by the plot color.</summary>
 		ScatterSymbols.PlotColorInfluence PlotColorInfluence { get; }
+
+		IScatterSymbol WithPlotColorInfluence(ScatterSymbols.PlotColorInfluence plotColorInfluence);
 
 		/// <summary>
 		/// Gets the width of internal structures (line e.g. the frame), relative to the symbol size.
@@ -53,6 +62,8 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles
 		/// The width of internal structures (line e.g. the frame), relative to the symbol size.
 		/// </value>
 		double RelativeStructureWidth { get; }
+
+		IScatterSymbol WithRelativeStructureWidth(double relativeStructureWidth);
 
 		/// <summary>
 		/// Gets the design size of this scatter symbol.

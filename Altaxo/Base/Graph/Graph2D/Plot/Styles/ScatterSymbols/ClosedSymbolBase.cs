@@ -34,7 +34,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 {
 	public abstract class ClosedSymbolBase : SymbolBase, IScatterSymbol
 	{
-		private PlotColorInfluence _plotColorInfluence = PlotColorInfluence.FillColor;
+		private PlotColorInfluence _plotColorInfluence = PlotColorInfluence.FillColorFull;
 		protected NamedColor _fillColor = NamedColors.Black;
 
 		protected double _relativeStructureWidth = 0.09375;
@@ -87,7 +87,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 		protected ClosedSymbolBase(NamedColor fillColor, bool isFillColorInfluencedByPlotColor)
 		{
 			_fillColor = fillColor;
-			_plotColorInfluence = isFillColorInfluencedByPlotColor ? PlotColorInfluence.FillColor : PlotColorInfluence.None;
+			_plotColorInfluence = isFillColorInfluencedByPlotColor ? PlotColorInfluence.FillColorFull : PlotColorInfluence.None;
 		}
 
 		public object Clone()
@@ -113,6 +113,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			}
 		}
 
+		IScatterSymbol IScatterSymbol.WithFillColor(NamedColor fillColor)
+		{
+			return WithFillColor(fillColor);
+		}
+
 		public PlotColorInfluence PlotColorInfluence { get { return _plotColorInfluence; } }
 
 		public ClosedSymbolBase WithPlotColorInfluence(PlotColorInfluence value)
@@ -127,6 +132,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 				result._plotColorInfluence = value;
 				return result;
 			}
+		}
+
+		IScatterSymbol IScatterSymbol.WithPlotColorInfluence(PlotColorInfluence plotColorInfluence)
+		{
+			return WithPlotColorInfluence(plotColorInfluence);
 		}
 
 		public double RelativeStructureWidth { get { return _relativeStructureWidth; } }
@@ -150,6 +160,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			}
 		}
 
+		IScatterSymbol IScatterSymbol.WithRelativeStructureWidth(double relativeStructureWidth)
+		{
+			return WithRelativeStructureWidth(relativeStructureWidth);
+		}
+
 		public IScatterSymbolFrame Frame
 		{
 			get { return _frame; }
@@ -157,12 +172,17 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
 		public ClosedSymbolBase WithFrame(IScatterSymbolFrame frame)
 		{
-			return WithFrame(frame, true);
+			return WithFrame(frame, null);
 		}
 
-		public ClosedSymbolBase WithFrame(IScatterSymbolFrame frame, bool isInfluencedByPlotColor)
+		IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame frame)
 		{
-			if (object.ReferenceEquals(_frame, frame) && _plotColorInfluence.HasFlag(PlotColorInfluence.FrameColor) == isInfluencedByPlotColor)
+			return WithFrame(frame, null);
+		}
+
+		public ClosedSymbolBase WithFrame(IScatterSymbolFrame frame, bool? isInfluencedByPlotColor)
+		{
+			if (object.ReferenceEquals(_frame, frame) && (!isInfluencedByPlotColor.HasValue || _plotColorInfluence.HasFlag(PlotColorInfluence.FrameColorFull) == isInfluencedByPlotColor.Value))
 			{
 				return this;
 			}
@@ -170,7 +190,8 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			{
 				var result = (ClosedSymbolBase)this.MemberwiseClone();
 				result._frame = frame;
-				result._plotColorInfluence = result._plotColorInfluence.WithFlag(PlotColorInfluence.FrameColor, isInfluencedByPlotColor);
+				if (isInfluencedByPlotColor.HasValue)
+					result._plotColorInfluence = result._plotColorInfluence.WithFlag(PlotColorInfluence.FrameColorFull, isInfluencedByPlotColor.Value);
 				return result;
 			}
 		}
@@ -179,12 +200,17 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
 		public ClosedSymbolBase WithInset(IScatterSymbolInset inset)
 		{
-			return WithInset(inset, true);
+			return WithInset(inset, null);
 		}
 
-		public ClosedSymbolBase WithInset(IScatterSymbolInset inset, bool isInfluencedByPlotColor)
+		IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset inset)
 		{
-			if (object.ReferenceEquals(_inset, inset) && _plotColorInfluence.HasFlag(PlotColorInfluence.InsetColor) == isInfluencedByPlotColor)
+			return WithInset(inset, null);
+		}
+
+		public ClosedSymbolBase WithInset(IScatterSymbolInset inset, bool? isInfluencedByPlotColor)
+		{
+			if (object.ReferenceEquals(_inset, inset) && (!isInfluencedByPlotColor.HasValue || _plotColorInfluence.HasFlag(PlotColorInfluence.InsetColorFull) == isInfluencedByPlotColor.Value))
 			{
 				return this;
 			}
@@ -192,7 +218,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			{
 				var result = (ClosedSymbolBase)this.MemberwiseClone();
 				result._inset = inset;
-				result._plotColorInfluence = result._plotColorInfluence.WithFlag(PlotColorInfluence.InsetColor, isInfluencedByPlotColor);
+
+				if (isInfluencedByPlotColor.HasValue)
+					result._plotColorInfluence = result._plotColorInfluence.WithFlag(PlotColorInfluence.InsetColorFull, isInfluencedByPlotColor.Value);
 				return result;
 			}
 		}

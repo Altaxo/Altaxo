@@ -34,6 +34,8 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 	{
 		NamedColor Color { get; }
 
+		IScatterSymbolInset WithColor(NamedColor color);
+
 		List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth);
 	}
 }

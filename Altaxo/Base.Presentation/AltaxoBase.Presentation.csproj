@@ -557,6 +557,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\Graph2D\Plot\Styles\ScatterSymbols\PlotColorInfluenceControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\Graph3D\Axis\AxisCreationControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1237,6 +1241,9 @@
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\ScatterSymbolConverters.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\VectorCartesicPlotStyleControl.xaml.cs">
       <DependentUpon>VectorCartesicPlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Graph2D\Plot\Styles\ScatterSymbols\PlotColorInfluenceControl.xaml.cs">
+      <DependentUpon>PlotColorInfluenceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Graph3D\Plot\Styles\BarGraphPlotStyleControl.xaml.cs">
       <DependentUpon>BarGraphPlotStyleControl.xaml</DependentUpon>

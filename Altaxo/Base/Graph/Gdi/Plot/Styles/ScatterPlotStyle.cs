@@ -486,10 +486,56 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				new PointF((float)(scale * intPoint.X), (float)(-scale * intPoint.Y))).ToArray();
 		}
 
-		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
+		private struct CachedPathData
 		{
+			public double SymbolSize;
+			public GraphicsPath FillPath;
+			public GraphicsPath FramePath;
+			public GraphicsPath InsetPath;
+
+			public void Clear()
+			{
+				SymbolSize = 0;
+				FillPath?.Dispose(); FillPath = null;
+				FramePath?.Dispose(); FramePath = null;
+				InsetPath?.Dispose(); InsetPath = null;
+			}
+		}
+
+		private struct CachedBrushData
+		{
+			public NamedColor? PlotColor;
+			public Brush FillBrush;
+			public Brush FrameBrush;
+			public Brush InsetBrush;
+
+			public void Clear()
+			{
+				PlotColor = null;
+				FillBrush?.Dispose(); FillBrush = null;
+				FrameBrush?.Dispose(); FrameBrush = null;
+				InsetBrush?.Dispose(); InsetBrush = null;
+			}
+		}
+
+		/// <summary>
+		/// Calculates the paths and stores them into a structure given by the argument <paramref name="cachedPathData"/>.
+		/// </summary>
+		/// <param name="symbolSize">The size of the symbol for which to calculate the paths.</param>
+		/// <param name="cachedPathData">The cached path data.</param>
+		/// <returns>True if new paths have been calculated; false if the previously cached data could be used.</returns>
+		private bool CalculatePaths(double symbolSize, ref CachedPathData cachedPathData)
+		{
+			if (symbolSize == cachedPathData.SymbolSize)
+				return false; // we assume that the structure already contains valid data.
+
+			cachedPathData.SymbolSize = symbolSize;
+			cachedPathData.FillPath = cachedPathData.FramePath = cachedPathData.InsetPath = null;
+
 			if (this._scatterSymbol is NoSymbol)
-				return;
+			{
+				return true;
+			}
 
 			List<List<ClipperLib.IntPoint>> insetPolygon = null;
 			List<List<ClipperLib.IntPoint>> framePolygon = null;
@@ -498,20 +544,95 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			double? overrideRelativeStructureWidth = null;
 			if (_overrideStructureWidthOffset.HasValue || _overrideStructureWidthFactor.HasValue)
 			{
-				overrideRelativeStructureWidth = (_overrideStructureWidthFactor ?? 0) + (_overrideStructureWidthOffset ?? 0) / _scatterSymbol.DesignSize;
+				overrideRelativeStructureWidth = (_overrideStructureWidthFactor ?? 0) + (_overrideStructureWidthOffset ?? 0) / _symbolSize;
 			}
 			_scatterSymbol.CalculatePolygons(overrideRelativeStructureWidth, out framePolygon, out insetPolygon, out fillPolygon);
 
+			// calculate the path only once
+			if (null != insetPolygon)
+			{
+				cachedPathData.InsetPath = new GraphicsPath();
+				foreach (var list in insetPolygon)
+					cachedPathData.InsetPath.AddPolygon(ToPointFArray(list, _symbolSize));
+			}
+
+			if (null != fillPolygon)
+			{
+				cachedPathData.FillPath = new GraphicsPath();
+				foreach (var list in fillPolygon)
+					cachedPathData.FillPath.AddPolygon(ToPointFArray(list, _symbolSize));
+			}
+
+			if (null != framePolygon)
+			{
+				cachedPathData.FramePath = new GraphicsPath();
+				foreach (var list in framePolygon)
+					cachedPathData.FramePath.AddPolygon(ToPointFArray(list, _symbolSize));
+			}
+
+			return true;
+		}
+
+		private bool CalculateBrushes(NamedColor plotColor, CachedPathData cachedPathData, ref CachedBrushData cachedBrushData)
+		{
+			if (plotColor == cachedBrushData.PlotColor)
+				return false; // cached data valid and could be reused;
+
+			cachedBrushData.Clear();
+			cachedBrushData.PlotColor = plotColor;
+
 			var plotColorInfluence = _overridePlotColorInfluence ?? _scatterSymbol.PlotColorInfluence;
 
-			var path = new GraphicsPath();
+			if (null != cachedPathData.InsetPath)
+			{
+				var insetColor = _overrideInsetColor ?? _scatterSymbol.Inset.Color;
+				if (plotColorInfluence.HasFlag(PlotColorInfluence.InsetColorFull))
+					insetColor = plotColor;
+				else if (plotColorInfluence.HasFlag(PlotColorInfluence.InsetColorPreserveAlpha))
+					insetColor = plotColor.NewWithAlphaValue(insetColor.Color.A);
 
-			PlotRangeList rangeList = pdata.RangeList;
-			PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
+				cachedBrushData.InsetBrush = new SolidBrush(insetColor);
+			}
 
+			if (null != cachedPathData.FillPath)
+			{
+				var fillColor = _overrideFillColor ?? _scatterSymbol.FillColor;
+				if (plotColorInfluence.HasFlag(PlotColorInfluence.FillColorFull))
+					fillColor = plotColor;
+				else if (plotColorInfluence.HasFlag(PlotColorInfluence.FillColorPreserveAlpha))
+					fillColor = plotColor.NewWithAlphaValue(fillColor.Color.A);
+
+				cachedBrushData.FillBrush = new SolidBrush(fillColor);
+			}
+
+			if (null != cachedPathData.FramePath)
+			{
+				var frameColor = _overrideFrameColor ?? _scatterSymbol.Frame.Color;
+				if (plotColorInfluence.HasFlag(PlotColorInfluence.FrameColorFull))
+					frameColor = plotColor;
+				else if (plotColorInfluence.HasFlag(PlotColorInfluence.FrameColorPreserveAlpha))
+					frameColor = plotColor.NewWithAlphaValue(frameColor.Color.A);
+
+				cachedBrushData.FrameBrush = new SolidBrush(plotColorInfluence.HasFlag(PlotColorInfluence.FrameColorFull) ? _color : _overrideFrameColor ?? _scatterSymbol.Frame.Color);
+			}
+
+			return true;
+		}
+
+		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
+		{
 			// adjust the skip frequency if it was not set appropriate
 			if (_skipFreq <= 0)
 				_skipFreq = 1;
+
+			if (this._scatterSymbol is NoSymbol)
+				return;
+
+			CachedPathData cachedPathData = new CachedPathData();
+			CachedBrushData cachedBrushData = new CachedBrushData();
+
+			PlotRangeList rangeList = pdata.RangeList;
+			PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
 
 			float xpos = 0, ypos = 0;
 			float xdiff, ydiff;
@@ -519,38 +640,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size
 			{
 				// calculate the path only once
-				GraphicsPath insetPath = null;
-				SolidBrush insetBrush = null;
-				if (null != insetPolygon)
-				{
-					insetPath = new GraphicsPath();
-					insetBrush = new SolidBrush(plotColorInfluence.HasFlag(PlotColorInfluence.InsetColor) ? _color : _overrideInsetColor ?? _scatterSymbol.Inset.Color);
-					foreach (var list in insetPolygon)
-						insetPath.AddPolygon(ToPointFArray(list, _symbolSize));
-				}
-
-				GraphicsPath fillPath = null;
-				SolidBrush fillBrush = null;
-				if (null != fillPolygon)
-				{
-					fillPath = new GraphicsPath();
-					fillBrush = new SolidBrush(plotColorInfluence.HasFlag(PlotColorInfluence.FillColor) ? _color : _overrideFillColor ?? _scatterSymbol.FillColor);
-
-					foreach (var list in fillPolygon)
-						fillPath.AddPolygon(ToPointFArray(list, _symbolSize));
-				}
-
-				GraphicsPath framePath = null;
-				SolidBrush frameBrush = null;
-				if (null != framePolygon)
-				{
-					framePath = new GraphicsPath();
-					frameBrush = new SolidBrush(plotColorInfluence.HasFlag(PlotColorInfluence.FrameColor) ? _color : _overrideFrameColor ?? _scatterSymbol.Frame.Color);
-					foreach (var list in framePolygon)
-						framePath.AddPolygon(ToPointFArray(list, _symbolSize));
-				}
-
-				// end of path calculations
+				CalculatePaths(_symbolSize, ref cachedPathData);
+				CalculateBrushes(_color, cachedPathData, ref cachedBrushData);
 
 				// save the graphics stat since we have to translate the origin
 				System.Drawing.Drawing2D.GraphicsState gs = g.Save();
@@ -563,37 +654,96 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					ypos = ptArray[j].Y;
 					g.TranslateTransform(xdiff, ydiff);
 
-					if (null != insetPath)
-						g.FillPath(insetBrush, insetPath);
+					if (null != cachedPathData.InsetPath)
+						g.FillPath(cachedBrushData.InsetBrush, cachedPathData.InsetPath);
 
-					if (null != fillPath)
-						g.FillPath(fillBrush, fillPath);
+					if (null != cachedPathData.FillPath)
+						g.FillPath(cachedBrushData.FillBrush, cachedPathData.FillPath);
 
-					if (null != framePath)
-						g.FillPath(frameBrush, framePath);
+					if (null != cachedPathData.FramePath)
+						g.FillPath(cachedBrushData.FrameBrush, cachedPathData.FramePath);
 				} // end for
 
 				g.Restore(gs); // Restore the graphics state
 			}
 			else // using a variable symbol size or variable symbol color
 			{
-				throw new NotImplementedException();
+				CalculatePaths(_symbolSize, ref cachedPathData);
+				CalculateBrushes(_color, cachedPathData, ref cachedBrushData);
+
+				for (int r = 0; r < rangeList.Count; r++)
+				{
+					int lower = rangeList[r].LowerBound;
+					int upper = rangeList[r].UpperBound;
+					int offset = rangeList[r].OffsetToOriginal;
+					for (int j = lower; j < upper; j += _skipFreq)
+					{
+						if (null == _cachedColorForIndexFunction)
+						{
+							double customSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
+							CalculatePaths(_symbolSize, ref cachedPathData);
+						}
+						else
+						{
+							double customSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
+							var customSymbolColor = _cachedColorForIndexFunction(j + offset);
+							CalculatePaths(_symbolSize, ref cachedPathData);
+							CalculateBrushes(_color, cachedPathData, ref cachedBrushData);
+						}
+
+						xdiff = ptArray[j].X - xpos;
+						ydiff = ptArray[j].Y - ypos;
+						xpos = ptArray[j].X;
+						ypos = ptArray[j].Y;
+						g.TranslateTransform(xdiff, ydiff);
+
+						if (null != cachedPathData.InsetPath)
+							g.FillPath(cachedBrushData.InsetBrush, cachedPathData.InsetPath);
+
+						if (null != cachedPathData.FillPath)
+							g.FillPath(cachedBrushData.FillBrush, cachedPathData.FillPath);
+
+						if (null != cachedPathData.FramePath)
+							g.FillPath(cachedBrushData.FrameBrush, cachedPathData.FramePath);
+					}
+				}
 			}
+
+			cachedBrushData.Clear();
+			cachedPathData.Clear();
 		}
 
 		public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
 		{
 			if (_scatterSymbol is NoSymbol)
 				return bounds;
-			/*
+
+			var cachedPathData = new CachedPathData();
+			var cachedBrushData = new CachedBrushData();
+
+			CalculatePaths(_symbolSize, ref cachedPathData);
+			CalculateBrushes(_color, cachedPathData, ref cachedBrushData);
+
 			GraphicsState gs = g.Save();
 			g.TranslateTransform(bounds.X + 0.5f * bounds.Width, bounds.Y + 0.5f * bounds.Height);
-			Paint(g);
+
+			if (null != cachedPathData.InsetPath)
+				g.FillPath(cachedBrushData.InsetBrush, cachedPathData.InsetPath);
+
+			if (null != cachedPathData.FillPath)
+				g.FillPath(cachedBrushData.FillBrush, cachedPathData.FillPath);
+
+			if (null != cachedPathData.FramePath)
+				g.FillPath(cachedBrushData.FrameBrush, cachedPathData.FramePath);
+
+			cachedBrushData.Clear();
+			cachedPathData.Clear();
+
 			g.Restore(gs);
 
 			if (this.SymbolSize > bounds.Height)
 				bounds.Inflate(0, (float)(this.SymbolSize - bounds.Height));
-			*/
+
 			return bounds;
 		}
 

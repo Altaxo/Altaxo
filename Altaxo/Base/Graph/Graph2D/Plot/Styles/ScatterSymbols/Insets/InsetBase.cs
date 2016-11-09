@@ -85,6 +85,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 			}
 		}
 
+		IScatterSymbolInset IScatterSymbolInset.WithColor(NamedColor color)
+		{
+			return WithColor(color);
+		}
+
 		public override bool Equals(object obj)
 		{
 			return this.GetType() == obj?.GetType() && this._color == ((InsetBase)obj)._color;

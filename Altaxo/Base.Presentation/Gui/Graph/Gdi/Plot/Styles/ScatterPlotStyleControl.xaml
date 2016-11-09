@@ -7,6 +7,7 @@
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:local="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles"
+						 xmlns:agggpss="clr-namespace:Altaxo.Gui.Graph.Graph2D.Plot.Styles.ScatterSymbols"
              mc:Ignorable="d">
 
 	<UserControl.Resources>
@@ -35,6 +36,12 @@
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
@@ -90,7 +97,7 @@
 		<axogc:QuantityWithUnitTextBox x:Name="_guiOverriddenRelativeStructureWidth"  Grid.Row="20" Grid.Column="2" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" IsEnabled="{Binding ElementName=_guiOverrideRelativeStructureWidth, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
 
 		<CheckBox x:Name="_guiOverridePlotColorInfluence" Grid.Row="22" Grid.Column="0" Content="Plot color influences:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
-		<axogc:EnumFlagControl x:Name="_guiOverriddenPlotColorInfluence" Grid.Row="22" Grid.Column="2"  IsEnabled="{Binding ElementName=_guiOverridePlotColorInfluence, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<agggpss:PlotColorInfluenceControl x:Name="_guiOverriddenPlotColorInfluence" Grid.Row="22" Grid.Column="2"  IsEnabled="{Binding ElementName=_guiOverridePlotColorInfluence, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
 
 		<CheckBox x:Name="_guiOverrideFillColor" Grid.Row="24" Grid.Column="0" Content="Override fill color:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
 		<axogcd:ColorComboBox x:Name="_guiOverriddenFillColor" Grid.Row="24" Grid.Column="2" IsEnabled="{Binding ElementName=_guiOverrideFillColor, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />

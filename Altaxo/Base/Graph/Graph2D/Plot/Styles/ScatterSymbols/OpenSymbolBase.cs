@@ -102,7 +102,17 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			}
 		}
 
-		public PlotColorInfluence PlotColorInfluence { get { return PlotColorInfluence.FillColor; } }
+		IScatterSymbol IScatterSymbol.WithFillColor(NamedColor fillColor)
+		{
+			return WithFillColor(fillColor);
+		}
+
+		public PlotColorInfluence PlotColorInfluence { get { return PlotColorInfluence.FillColorFull; } }
+
+		IScatterSymbol IScatterSymbol.WithPlotColorInfluence(PlotColorInfluence plotColorInfluence)
+		{
+			return this;
+		}
 
 		public double RelativeStructureWidth { get { return _relativeStructureWidth; } }
 
@@ -125,12 +135,27 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			}
 		}
 
+		IScatterSymbol IScatterSymbol.WithRelativeStructureWidth(double relativeStructureWidth)
+		{
+			return WithRelativeStructureWidth(relativeStructureWidth);
+		}
+
 		public IScatterSymbolFrame Frame
 		{
 			get { return null; }
 		}
 
+		IScatterSymbol IScatterSymbol.WithFrame(IScatterSymbolFrame frame)
+		{
+			return this;
+		}
+
 		public IScatterSymbolInset Inset { get { return null; } }
+
+		IScatterSymbol IScatterSymbol.WithInset(IScatterSymbolInset inset)
+		{
+			return this;
+		}
 
 		public void CalculatePolygons(
 			double? relativeStructureWidth,
