@@ -708,12 +708,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 								gpath.Flatten();
 								var pathPoints = gpath.PathPoints;
 								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
+								if (null != shortenedPathPoints)
+									g.DrawLines(pen, shortenedPathPoints);
 							}
-
-							if (null != shortenedPathPoints)
-								g.DrawLines(pen, shortenedPathPoints);
 							else
+							{
 								g.DrawPath(pen, gpath);
+							}
 						}
 					}
 				} // for each range
@@ -759,12 +760,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 								gpath.Flatten();
 								var pathPoints = gpath.PathPoints;
 								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
+								if (null != shortenedPathPoints)
+									g.DrawLines(pen, shortenedPathPoints);
 							}
-
-							if (null != shortenedPathPoints)
-								g.DrawLines(pen, shortenedPathPoints);
 							else
+							{
 								g.DrawPath(pen, gpath);
+							}
 						}
 					}
 				}
