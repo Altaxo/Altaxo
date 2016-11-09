@@ -363,8 +363,7 @@ namespace Altaxo.Drawing
 			else
 			{
 				int number = int.Parse(usedName.Substring(i + 1), System.Globalization.NumberStyles.Any);
-				string formatString = "N" + numberOfDigits.ToString(System.Globalization.CultureInfo.InvariantCulture);
-				return GetUnusedName(usedName.Substring(0, i + 1) + (number + 1).ToString(formatString, System.Globalization.CultureInfo.InvariantCulture));
+				return GetUnusedName(usedName.Substring(0, i + 1) + (number + 1).ToString(System.Globalization.CultureInfo.InvariantCulture));
 			}
 		}
 
