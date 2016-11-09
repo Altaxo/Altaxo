@@ -118,18 +118,18 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 			if (linestyle)
 			{
 				if (serial && color)
-					_doc.Add(new DashPatternGroupStyle(), typeof(ColorGroupStyle));
+					_doc.Add(new DashPatternGroupStyle() { IsStepEnabled = true }, typeof(ColorGroupStyle));
 				else
-					_doc.Add(new DashPatternGroupStyle());
+					_doc.Add(new DashPatternGroupStyle() { IsStepEnabled = true });
 			}
 			if (symbol)
 			{
 				if (serial && linestyle)
-					_doc.Add(new ScatterSymbolGroupStyle(), typeof(DashPatternGroupStyle));
+					_doc.Add(new ScatterSymbolGroupStyle() { IsStepEnabled = true }, typeof(DashPatternGroupStyle));
 				else if (serial && color)
-					_doc.Add(new ScatterSymbolGroupStyle(), typeof(ColorGroupStyle));
+					_doc.Add(new ScatterSymbolGroupStyle() { IsStepEnabled = true}, typeof(ColorGroupStyle));
 				else
-					_doc.Add(new ScatterSymbolGroupStyle());
+					_doc.Add(new ScatterSymbolGroupStyle() { IsStepEnabled = true });
 			}
 
 			_doc.PlotGroupStrictness = _view.PlotGroupStrict;
