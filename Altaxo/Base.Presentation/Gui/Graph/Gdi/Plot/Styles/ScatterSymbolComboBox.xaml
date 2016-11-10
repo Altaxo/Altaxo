@@ -14,31 +14,6 @@
 		<local:ScatterSymbolToItemNameConverter x:Key="ItemToItemNameConverter" />
 		<local:ScatterSymbolToListNameConverter x:Key="ItemToListNameConverter" />
 
-		<!-- Checkerboard brush for the background of color items -->
-		<DrawingBrush x:Key="CheckerboardBrush"
-        Stretch="None" TileMode="Tile" AlignmentX="Left" AlignmentY="Top"
-        Viewport="0,0,8,8" ViewportUnits="Absolute">
-			<DrawingBrush.Drawing>
-				<DrawingGroup>
-					<GeometryDrawing Brush="White">
-						<GeometryDrawing.Geometry>
-							<RectangleGeometry Rect="0,0,8,8" />
-						</GeometryDrawing.Geometry>
-					</GeometryDrawing>
-					<GeometryDrawing Brush="Black">
-						<GeometryDrawing.Geometry>
-							<RectangleGeometry Rect="0,0,4,4" />
-						</GeometryDrawing.Geometry>
-					</GeometryDrawing>
-					<GeometryDrawing Brush="Black">
-						<GeometryDrawing.Geometry>
-							<RectangleGeometry Rect="4,4,4,4" />
-						</GeometryDrawing.Geometry>
-					</GeometryDrawing>
-				</DrawingGroup>
-			</DrawingBrush.Drawing>
-		</DrawingBrush>
-
 		<!-- Shown as the content of the button that opens the TreeView dropdown -->
 		<Path x:Key="ColorGroupButtonContent" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Fill="Black">
 			<Path.Data>
@@ -49,9 +24,7 @@
 		<!-- Item template for  items in the TreeView (which are of type NGTreeNode -->
 		<DataTemplate x:Key="TItemTemplate">
 			<StackPanel Orientation="Horizontal" Margin="2">
-				<Border BorderBrush="Black" BorderThickness="1" Background="{StaticResource CheckerboardBrush}" SnapsToDevicePixels="True">
-					<Image Width="16" Height="16" Source="{Binding Tag, Converter={StaticResource ItemToItemImageConverter}}" />
-				</Border>
+				<Image Width="16" Height="16" Source="{Binding Tag, Converter={StaticResource ItemToItemImageConverter}}" />
 				<TextBlock Text="{Binding Text}" Margin="4 0 4 0" VerticalAlignment="Center" />
 			</StackPanel>
 		</DataTemplate>
@@ -59,9 +32,7 @@
 		<!-- Item template for  items in the ComboBox -->
 		<DataTemplate x:Key="TItemTemplateForComboBox">
 			<StackPanel Orientation="Horizontal" Margin="2">
-				<Border BorderBrush="Black" BorderThickness="1" Background="{StaticResource CheckerboardBrush}" SnapsToDevicePixels="True">
-					<Image Width="16" Height="16" Source="{Binding ., Converter={StaticResource ItemToItemImageConverter}}" />
-				</Border>
+				<Image Width="16" Height="16" Source="{Binding ., Converter={StaticResource ItemToItemImageConverter}}" />
 				<TextBlock Text="{Binding ., Converter={StaticResource ItemToItemNameConverter}}" Margin="4 0 4 0" VerticalAlignment="Center" />
 			</StackPanel>
 		</DataTemplate>
@@ -80,9 +51,7 @@
 			<StackPanel Orientation="Vertical">
 				<TextBlock Text="{Binding Path=., Converter={StaticResource ItemToListNameConverter}}" FontSize="8" FontStyle="Italic" />
 				<StackPanel Orientation="Horizontal" Margin="2">
-					<Border BorderBrush="Black" BorderThickness="1" Background="{StaticResource CheckerboardBrush}" SnapsToDevicePixels="True" VerticalAlignment="Center">
-						<Image Width="16" Height="12"  Source="{Binding ., Converter={StaticResource ItemToItemImageConverter}}" />
-					</Border>
+					<Image Width="16" Height="12"  Source="{Binding ., Converter={StaticResource ItemToItemImageConverter}}" />
 					<TextBlock Text="{Binding ., Converter={StaticResource ItemToItemNameConverter}}" Margin="4 0 4 0" VerticalAlignment="Center" />
 				</StackPanel>
 			</StackPanel>

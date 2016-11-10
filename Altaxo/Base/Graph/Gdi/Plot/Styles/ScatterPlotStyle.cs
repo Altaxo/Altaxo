@@ -613,7 +613,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				else if (plotColorInfluence.HasFlag(PlotColorInfluence.FrameColorPreserveAlpha))
 					frameColor = plotColor.NewWithAlphaValue(frameColor.Color.A);
 
-				cachedBrushData.FrameBrush = new SolidBrush(plotColorInfluence.HasFlag(PlotColorInfluence.FrameColorFull) ? _color : _overrideFrameColor ?? _scatterSymbol.Frame.Color);
+				cachedBrushData.FrameBrush = new SolidBrush(frameColor);
 			}
 
 			return true;

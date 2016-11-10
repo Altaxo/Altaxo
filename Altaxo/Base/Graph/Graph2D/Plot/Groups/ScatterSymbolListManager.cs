@@ -69,9 +69,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
 					new Styles.ScatterSymbols.Square(),
 					new Styles.ScatterSymbols.Circle(),
 					new Styles.ScatterSymbols.UpTriangle(),
-					new Styles.ScatterSymbols.DownTriangle(),
 					new Styles.ScatterSymbols.Diamond(),
+					new Styles.ScatterSymbols.DownTriangle(),
+					new Styles.ScatterSymbols.Pentagon(),
 					new Styles.ScatterSymbols.LeftTriangle(),
+					new Styles.ScatterSymbols.Hexagon(),
 					new Styles.ScatterSymbols.RightTriangle(),
 			})
 					)
