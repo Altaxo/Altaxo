@@ -49,6 +49,10 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 		public ScatterSymbolListControl()
 		{
 			InitializeComponent();
+
+			// set the item template of current items to a more appropriate template
+			var currentItemsTemplate = this.FindResource("CurrentItemsTemplateResource") as DataTemplate;
+			_guiSL.CurrentItemsTemplate = currentItemsTemplate;
 		}
 
 		#region Interface forwarding
@@ -406,6 +410,14 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 		private void EhSetInsetColor(object sender, RoutedEventArgs e)
 		{
 			InsetColorForAllSelected?.Invoke(_guiInsetColor.SelectedColor);
+		}
+
+		public virtual DataTemplate CurrentItemsTemplate
+		{
+			get
+			{
+				return this.FindResource("CurrentItemsTemplateResource") as DataTemplate;
+			}
 		}
 	}
 }

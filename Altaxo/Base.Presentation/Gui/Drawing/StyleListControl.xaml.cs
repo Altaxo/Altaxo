@@ -438,5 +438,27 @@ namespace Altaxo.Gui.Drawing
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_guiCurrentItems);
 		}
+
+		private DataTemplate _currentItemsTemplate;
+
+		/// <summary>
+		/// Gets or sets the data template for the current items. Controls that use this class can set the items template to a value of choice.
+		/// </summary>
+		/// <value>
+		/// The current items template.
+		/// </value>
+		public virtual DataTemplate CurrentItemsTemplate
+		{
+			get
+			{
+				if (null == _currentItemsTemplate)
+					_currentItemsTemplate = this.FindResource("CurrentItemsTemplateResource") as DataTemplate;
+				return _currentItemsTemplate;
+			}
+			set
+			{
+				_currentItemsTemplate = value;
+			}
+		}
 	}
 }

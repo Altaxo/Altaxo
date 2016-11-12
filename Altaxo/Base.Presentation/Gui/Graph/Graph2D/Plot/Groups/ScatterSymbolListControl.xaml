@@ -9,7 +9,19 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogggpss="clr-namespace:Altaxo.Gui.Graph.Graph2D.Plot.Styles.ScatterSymbols"
+ 						 xmlns:axogggps="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles"
+
              mc:Ignorable="d">
+	<UserControl.Resources>
+		<axogggps:ScatterSymbolToImageSourceConverter x:Key="ItemToItemImageConverter" />
+
+		<DataTemplate x:Key="CurrentItemsTemplateResource">
+			<StackPanel Orientation="Horizontal" Margin="2">
+				<Image Width="16" Height="16" Source="{Binding Tag, Converter={StaticResource ItemToItemImageConverter}}" />
+				<TextBlock Text="{Binding Text}" Margin="4 0 4 0" VerticalAlignment="Center" />
+			</StackPanel>
+		</DataTemplate>
+	</UserControl.Resources>
 	<StackPanel Orientation="Horizontal">
 		<axogd:StyleListControl x:Name="_guiSL" />
 		<Grid Background="AliceBlue">
