@@ -433,5 +433,10 @@ namespace Altaxo.Gui.Drawing
 		{
 			CurrentList_Store?.Invoke();
 		}
+
+		private void EhCurrentItemsSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiCurrentItems);
+		}
 	}
 }

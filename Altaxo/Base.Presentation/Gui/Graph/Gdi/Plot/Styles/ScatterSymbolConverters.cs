@@ -37,11 +37,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
 	public class ScatterSymbolToImageSourceConverter : IValueConverter
 	{
+		public NamedColor PlotColor { get; set; } = NamedColors.Black;
+		public double SymbolSize { get; set; } = 16;
+
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			const double symbolSize = 16;
-			var plotColor = NamedColors.Black;
-
 			var symbol = value as IScatterSymbol;
 
 			if (null == symbol)
@@ -50,8 +50,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			PathGeometry fill, frame, inset;
 			Brush fillBrush, frameBrush, insetBrush;
 
-			GetPathGeometries(symbol, symbolSize, out fill, out frame, out inset);
-			GetBrushes(symbol, plotColor, fill, frame, inset, out fillBrush, out frameBrush, out insetBrush);
+			GetPathGeometries(symbol, SymbolSize, out fill, out frame, out inset);
+			GetBrushes(symbol, PlotColor, fill, frame, inset, out fillBrush, out frameBrush, out insetBrush);
 
 			// draws a transparent outline to fix the borders
 			var drawingGroup = new DrawingGroup();

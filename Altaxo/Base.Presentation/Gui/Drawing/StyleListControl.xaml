@@ -111,7 +111,7 @@
 		</Button>
 
 		<Label Content="Items of list:" Grid.Row="7" Grid.Column="4" />
-		<ListBox x:Name="_guiCurrentItems" Grid.Row="8" Grid.RowSpan="7" Grid.Column="4" ScrollViewer.VerticalScrollBarVisibility="Visible"
+		<ListBox x:Name="_guiCurrentItems" Grid.Row="8" Grid.RowSpan="7" Grid.Column="4" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Extended" SelectionChanged="EhCurrentItemsSelectionChanged"
  		dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding CurrentItemsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
  		dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding CurrentItemsDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
 

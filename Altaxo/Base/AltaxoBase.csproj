@@ -628,6 +628,8 @@
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\DropAreaPlotStyleController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\ScatterPlotStyleController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\VectorCartesicPlotStyleController.cs" />
+    <Compile Include="Gui\Graph\Graph2D\Plot\Groups\ScatterSymbolListController.cs" />
+    <Compile Include="Gui\Graph\Graph2D\Plot\Styles\ScatterSymbolController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Axis\AxisCreationController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Axis\AxisLabelStyleController.cs" />
     <Compile Include="Gui\Graph\Graph3D\Axis\AxisLineStyleController.cs" />

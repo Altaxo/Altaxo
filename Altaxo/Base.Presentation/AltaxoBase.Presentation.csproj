@@ -557,6 +557,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\Graph2D\Plot\Groups\ScatterSymbolListControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Graph\Graph2D\Plot\Styles\ScatterSymbolControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\Graph2D\Plot\Styles\ScatterSymbols\PlotColorInfluenceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1241,6 +1249,12 @@
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\ScatterSymbolConverters.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\VectorCartesicPlotStyleControl.xaml.cs">
       <DependentUpon>VectorCartesicPlotStyleControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Graph2D\Plot\Groups\ScatterSymbolListControl.xaml.cs">
+      <DependentUpon>ScatterSymbolListControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Graph2D\Plot\Styles\ScatterSymbolControl.xaml.cs">
+      <DependentUpon>ScatterSymbolControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Graph2D\Plot\Styles\ScatterSymbols\PlotColorInfluenceControl.xaml.cs">
       <DependentUpon>PlotColorInfluenceControl.xaml</DependentUpon>

@@ -641,21 +641,7 @@ typeof(GraphDocument),
 			if (null != context)
 			{
 				var font = context.GetValue(PropertyKeyDefaultFont);
-				using (var path = new GraphicsPath())
-				{
-					path.AddString("x", GdiFontManager.GdiFontFamily(font), (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
-					var bounds = path.GetBounds();
-
-					if (bounds.Height > 0)
-					{
-						result = bounds.Height * Math.Sqrt(2) * 1.2;
-						result = Calc.Rounding.RoundToNumberOfSignificantDigits(result, 2, MidpointRounding.ToEven);
-					}
-					else
-					{
-						result = Calc.Rounding.RoundToNumberOfSignificantDigits(font.Size * 2 / 3.0, 2, MidpointRounding.ToEven);
-					}
-				}
+				return font.Size;
 			}
 			return result;
 		}
