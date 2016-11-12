@@ -532,7 +532,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			cachedPathData.SymbolSize = symbolSize;
 			cachedPathData.FillPath = cachedPathData.FramePath = cachedPathData.InsetPath = null;
 
-			if (this._scatterSymbol is NoSymbol)
+			if (_scatterSymbol is NoSymbol)
 			{
 				return true;
 			}
@@ -544,7 +544,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			double? overrideRelativeStructureWidth = null;
 			if (_overrideStructureWidthOffset.HasValue || _overrideStructureWidthFactor.HasValue)
 			{
-				overrideRelativeStructureWidth = (_overrideStructureWidthFactor ?? 0) + (_overrideStructureWidthOffset ?? 0) / _symbolSize;
+				overrideRelativeStructureWidth = (_overrideStructureWidthFactor ?? 0) + (_overrideStructureWidthOffset ?? 0) / symbolSize;
 			}
 			_scatterSymbol.CalculatePolygons(overrideRelativeStructureWidth, out framePolygon, out insetPolygon, out fillPolygon);
 
@@ -553,21 +553,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				cachedPathData.InsetPath = new GraphicsPath();
 				foreach (var list in insetPolygon)
-					cachedPathData.InsetPath.AddPolygon(ToPointFArray(list, _symbolSize));
+					cachedPathData.InsetPath.AddPolygon(ToPointFArray(list, symbolSize));
 			}
 
 			if (null != fillPolygon)
 			{
 				cachedPathData.FillPath = new GraphicsPath();
 				foreach (var list in fillPolygon)
-					cachedPathData.FillPath.AddPolygon(ToPointFArray(list, _symbolSize));
+					cachedPathData.FillPath.AddPolygon(ToPointFArray(list, symbolSize));
 			}
 
 			if (null != framePolygon)
 			{
 				cachedPathData.FramePath = new GraphicsPath();
 				foreach (var list in framePolygon)
-					cachedPathData.FramePath.AddPolygon(ToPointFArray(list, _symbolSize));
+					cachedPathData.FramePath.AddPolygon(ToPointFArray(list, symbolSize));
 			}
 
 			return true;
@@ -681,14 +681,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						if (null == _cachedColorForIndexFunction)
 						{
 							double customSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
-							CalculatePaths(_symbolSize, ref cachedPathData);
+							CalculatePaths(customSymbolSize, ref cachedPathData);
 						}
 						else
 						{
 							double customSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
 							var customSymbolColor = _cachedColorForIndexFunction(j + offset);
-							CalculatePaths(_symbolSize, ref cachedPathData);
-							CalculateBrushes(_color, cachedPathData, ref cachedBrushData);
+							CalculatePaths(customSymbolSize, ref cachedPathData);
+							CalculateBrushes(NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B), cachedPathData, ref cachedBrushData);
 						}
 
 						xdiff = ptArray[j].X - xpos;
