@@ -94,6 +94,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		protected NamedColor? _overrideInsetColor;
 
+		protected bool _overrideFrame;
+		protected IScatterSymbolFrame _overriddenFrame;
+
+		protected bool _overrideInset;
+		protected IScatterSymbolInset _overriddenInset;
+
 		// cached values:
 		/// <summary>If this function is set, then _symbolSize is ignored and the symbol size is evaluated by this function.</summary>
 		[field: NonSerialized]
@@ -125,6 +131,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._independentColor = from._independentColor;
 				this._color = from._color;
 
+				this._overrideFrame = from._overrideFrame;
+				this._overriddenFrame = from._overriddenFrame;
+				this._overrideInset = from._overrideInset;
+				this._overriddenInset = from._overriddenInset;
 				this._overrideStructureWidthOffset = from._overrideStructureWidthOffset;
 				this._overrideStructureWidthFactor = from._overrideStructureWidthFactor;
 				this._overridePlotColorInfluence = from._overridePlotColorInfluence;
@@ -310,6 +320,70 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				{
 					_symbolSize = value;
 					EhSelfChanged(EventArgs.Empty); // Fire Changed event
+				}
+			}
+		}
+
+		public bool OverrideFrame
+		{
+			get
+			{
+				return _overrideFrame;
+			}
+			set
+			{
+				if (!(_overrideFrame == value))
+				{
+					_overrideFrame = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public IScatterSymbolFrame OverriddenFrame
+		{
+			get
+			{
+				return _overriddenFrame;
+			}
+			set
+			{
+				if (!object.ReferenceEquals(_overriddenFrame, value))
+				{
+					_overriddenFrame = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public bool OverrideInset
+		{
+			get
+			{
+				return _overrideInset;
+			}
+			set
+			{
+				if (!(_overrideInset == value))
+				{
+					_overrideInset = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
+		public IScatterSymbolInset OverriddenInset
+		{
+			get
+			{
+				return _overriddenInset;
+			}
+			set
+			{
+				if (!object.ReferenceEquals(_overriddenInset, value))
+				{
+					_overriddenInset = value;
+					EhSelfChanged();
 				}
 			}
 		}

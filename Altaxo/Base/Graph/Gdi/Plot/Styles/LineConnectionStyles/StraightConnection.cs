@@ -162,7 +162,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		public override void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			bool ignoreMissingDataPoints,
@@ -189,7 +189,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		public void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			PointF[] linePoints,

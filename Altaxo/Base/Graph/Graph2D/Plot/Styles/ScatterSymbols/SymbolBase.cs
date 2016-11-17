@@ -49,6 +49,9 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 		/// <summary>By multiplying the clipper polynom points with this factor, you will get a symbol size of 1.</summary>
 		public const double InverseClipperScalingToSymbolSize1 = 0.5 / 1073741824.0;
 
+		/// <summary>The size of a symbol in clipper coordinates.</summary>
+		public const double ClipperSymbolSize = 2 * 1073741824.0;
+
 		#region Serialization
 
 		protected static void SerializeSetV0(IScatterSymbol obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

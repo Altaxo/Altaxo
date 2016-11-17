@@ -84,7 +84,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 			return this.MemberwiseClone();
 		}
 
-		public double DesignSize { get { return 2; } }
+		public double DesignSize { get { return ClipperSymbolSize; } }
 
 		public NamedColor FillColor { get { return _fillColor; } }
 

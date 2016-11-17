@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ namespace Altaxo.Graph.Plot.Data
 	/// <remarks>For use in a list, the UpperBound property is somewhat useless, since it should be equal
 	/// to the LowerBound property of the next item.</remarks>
 	[Serializable]
-	public class PlotRange
+	public class PlotRange : IPlotRange
 	{
 		/// <summary>
 		/// First index of a contiguous plot range in the plot point array (i.e. in the array of processed plot point data, <b>not</b> in the original data column).
@@ -139,6 +139,14 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			get { return _upperBound; }
 			set { _upperBound = value; }
+		}
+
+		public IPlotRange WithUpperBoundShortenedBy(int count)
+		{
+			if (!(count >= 0))
+				throw new ArgumentOutOfRangeException(nameof(count), "must be >=0");
+
+			return new PlotRange(_lowerBound, Math.Max(0, _upperBound - count), _offsetToOriginal);
 		}
 
 		/// <summary>

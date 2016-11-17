@@ -41,6 +41,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
 
 		private static ScatterSymbolListManager _instance;
 
+		public ScatterSymbolList BuiltinSolid { get; private set; }
+		public ScatterSymbolList BuiltinOpen { get; private set; }
+		public ScatterSymbolList BuiltinDotCenter { get; private set; }
+		public ScatterSymbolList BuiltinHollow { get; private set; }
+
 		public ScatterSymbolList OldSolid { get; private set; }
 		public ScatterSymbolList OldOpen { get; private set; }
 		public ScatterSymbolList OldDotCenter { get; private set; }
@@ -65,7 +70,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
 		protected ScatterSymbolListManager()
 			: base(
 					(list, level) => new StyleListManagerBaseEntryValue<ScatterSymbolList, IScatterSymbol>(list, level),
-					new ScatterSymbolList("BuiltinDefault", new IScatterSymbol[] {
+					new ScatterSymbolList("BuiltinSolid", new IScatterSymbol[] {
 					new Styles.ScatterSymbols.Square(),
 					new Styles.ScatterSymbols.Circle(),
 					new Styles.ScatterSymbols.UpTriangle(),
@@ -79,7 +84,18 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
 					)
 
 		{
+			BuiltinSolid = BuiltinDefault;
+
 			ScatterSymbolList dummy;
+
+			BuiltinOpen = new ScatterSymbolList("BuiltinOpen", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.White).WithFrame(new ConstantThicknessFrame()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull)));
+			InternalTryRegisterList(BuiltinOpen, ItemDefinitionLevel.Builtin, out dummy, false);
+
+			BuiltinHollow = new ScatterSymbolList("BuiltinHollow", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.Transparent).WithFrame(new ConstantThicknessFrame()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull)));
+			InternalTryRegisterList(BuiltinHollow, ItemDefinitionLevel.Builtin, out dummy, false);
+
+			BuiltinDotCenter = new ScatterSymbolList("BuiltinDotCenter", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.White).WithFrame(new ConstantThicknessFrame()).WithInset(new CirclePointInset()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull | Styles.ScatterSymbols.PlotColorInfluence.InsetColorFull)));
+			InternalTryRegisterList(BuiltinDotCenter, ItemDefinitionLevel.Builtin, out dummy, false);
 
 			// filled symbols
 			OldSolid = new ScatterSymbolList("OldSolid", new IScatterSymbol[] {

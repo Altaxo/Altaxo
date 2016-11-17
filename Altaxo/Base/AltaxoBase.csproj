@@ -443,6 +443,8 @@
     <Compile Include="Graph\Graph3D\Plot\Styles\BarGraphPlotStyle.cs" />
     <Compile Include="Graph\Graph3D\Plot\Styles\ErrorBarPlotStyle.cs" />
     <Compile Include="Graph\Plot\Data\IColumnPlotData.cs" />
+    <Compile Include="Graph\Plot\Data\IPlotRange.cs" />
+    <Compile Include="Graph\Plot\Data\PlotRangeCompound.cs" />
     <Compile Include="Graph\Plot\Groups\BarShiftStrategy3D.cs" />
     <Compile Include="Graph\Plot\Groups\BarSizePosition3DGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\DashPatternGroupStyle.cs" />
@@ -567,6 +569,7 @@
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
     <Compile Include="Graph\Plot\Groups\IShiftLogicalXYGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\IShiftLogicalXYZGroupStyle.cs" />
+    <Compile Include="Graph\Plot\Groups\LineConnection2DGroupStyle.cs" />
     <Compile Include="Graph\Scales\Boundaries\CumulativeProbabilityBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\InverseNumericalBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\IZBoundsHolder.cs" />

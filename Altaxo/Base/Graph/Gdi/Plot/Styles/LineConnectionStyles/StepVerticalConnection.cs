@@ -65,7 +65,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 		protected override PointF[] GetSubPoints(
 		Processed2DPlotData pdata,
-		PlotRange range,
+		IPlotRange range,
 		IPlotArea layer,
 		bool connectCircular,
 		out int numberOfPointsPerOriginalPoint,

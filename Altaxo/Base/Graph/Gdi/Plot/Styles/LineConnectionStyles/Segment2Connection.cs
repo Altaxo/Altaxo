@@ -143,7 +143,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 		private PointF[] Segment2Connection_GetSubPoints(
 Processed2DPlotData pdata,
-PlotRange range,
+IPlotRange range,
 IPlotArea layer,
 out int lastIdx)
 		{
@@ -160,7 +160,7 @@ out int lastIdx)
 		public override void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			bool ignoreMissingDataPoints,
@@ -188,7 +188,7 @@ out int lastIdx)
 		public void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			PointF[] linePoints,
@@ -215,7 +215,7 @@ out int lastIdx)
 		public void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			PointF[] linePoints,

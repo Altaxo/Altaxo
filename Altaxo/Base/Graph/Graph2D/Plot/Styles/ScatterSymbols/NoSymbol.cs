@@ -55,7 +55,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 
 		#endregion Serialization
 
-		public double DesignSize { get { return 2; } }
+		public double DesignSize { get { return ClipperSymbolSize; } }
 
 		public double RelativeStructureWidth { get { return 0.09375; } }
 
@@ -68,7 +68,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 		{
 			get
 			{
-				return NamedColors.Transparent;
+				return NamedColors.Black;
 			}
 		}
 
@@ -107,7 +107,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols
 		{
 			get
 			{
-				return PlotColorInfluence.None;
+				return PlotColorInfluence.FillColorFull;
 			}
 		}
 

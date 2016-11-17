@@ -249,12 +249,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddValue("IndependentColor", s._independentColor);
 				info.AddValue("Color", s._color);
 
-				info.AddValue("OverrideStructureWidthOffset", s._overrideStructureWidthOffset);
-				info.AddValue("OverrideStructureWidthFactor", s._overrideStructureWidthFactor);
-				info.AddNullableEnum("OverridePlotColorInfluence", s._overridePlotColorInfluence);
-				info.AddValue("OverrideFillColor", s._overrideFillColor);
-				info.AddValue("OverrideFrameColor", s._overrideFrameColor);
-				info.AddValue("OverrideInsetColor", s._overrideInsetColor);
+				info.AddValue("OverrideFrame", s._overrideFrame);
+				info.AddValue("OverriddenFrame", s._overriddenFrame);
+				info.AddValue("OverrideInset", s._overrideInset);
+				info.AddValue("OverriddenInset", s._overriddenInset);
+				info.AddValue("OverriddenStructureWidthOffset", s._overrideStructureWidthOffset);
+				info.AddValue("OverriddenStructureWidthFactor", s._overrideStructureWidthFactor);
+				info.AddNullableEnum("OverriddenPlotColorInfluence", s._overridePlotColorInfluence);
+				info.AddValue("OverriddenFillColor", s._overrideFillColor);
+				info.AddValue("OverriddenFrameColor", s._overrideFrameColor);
+				info.AddValue("OverriddenInsetColor", s._overrideInsetColor);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -272,12 +276,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._independentColor = info.GetBoolean("IndependentColor");
 				s._color = (NamedColor)info.GetValue("Color", s);
 
-				s._overrideStructureWidthOffset = info.GetNullableDouble("OverrideStructureWidthOffset");
-				s._overrideStructureWidthFactor = info.GetNullableDouble("OverrideStructureWidthFactor");
-				s._overridePlotColorInfluence = info.GetNullableEnum<PlotColorInfluence>("OverridePlotColorInfluence");
-				s._overrideFillColor = (NamedColor?)info.GetValue("OverrideFillColor", s);
-				s._overrideFrameColor = (NamedColor?)info.GetValue("OverrideFrameColor", s);
-				s._overrideInsetColor = (NamedColor?)info.GetValue("OverrideInsetColor", s);
+				s._overrideFrame = info.GetBoolean("OverrideFrame");
+				s._overriddenFrame = (IScatterSymbolFrame)info.GetValue("OverriddenFrame", s);
+				s._overrideInset = info.GetBoolean("OverrideInset");
+				s._overriddenInset = (IScatterSymbolInset)info.GetValue("OverriddenInset", s);
+				s._overrideStructureWidthOffset = info.GetNullableDouble("OverriddenStructureWidthOffset");
+				s._overrideStructureWidthFactor = info.GetNullableDouble("OverriddenStructureWidthFactor");
+				s._overridePlotColorInfluence = info.GetNullableEnum<PlotColorInfluence>("OverriddenPlotColorInfluence");
+				s._overrideFillColor = (NamedColor?)info.GetValue("OverriddenFillColor", s);
+				s._overrideFrameColor = (NamedColor?)info.GetValue("OverriddenFrameColor", s);
+				s._overrideInsetColor = (NamedColor?)info.GetValue("OverriddenInsetColor", s);
 
 				return s;
 			}

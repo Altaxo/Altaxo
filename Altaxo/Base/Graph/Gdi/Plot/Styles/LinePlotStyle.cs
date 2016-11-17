@@ -945,6 +945,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 			DashPatternGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+			LineConnection2DGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 		}
 
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
@@ -954,10 +955,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			if (!_independentDashStyle)
 				DashPatternGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashPattern; });
+
+			LineConnection2DGroupStyle.PrepareStyle(externalGroups, localGroups, () => _connectionStyle);
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
+			// LineConnectionStyle is the same for all sub plot styles
+			LineConnection2DGroupStyle.ApplyStyle(externalGroups, localGroups, (lineConnection) => this._connectionStyle = lineConnection);
+
 			// SkipFrequency should be the same for all sub plot styles
 			if (!_independentSkipFreq)
 			{

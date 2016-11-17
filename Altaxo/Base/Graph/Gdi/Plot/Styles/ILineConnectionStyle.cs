@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		void FillOneRange(
 			GraphicsPath gp,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			bool ignoreMissingDataPoints,

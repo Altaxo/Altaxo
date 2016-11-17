@@ -54,6 +54,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			_penGlue.CbStartCap = _cbLineStartCap;
 			_penGlue.CbStartCapAbsSize = _cbLineStartCapSize;
 			_penGlue.CbStartCapRelSize = _edLineStartCapRelSize;
+
+			_penGlue.CbEndCap = _cbLineEndCap;
+			_penGlue.CbEndCapAbsSize = _cbLineEndCapSize;
+			_penGlue.CbEndCapRelSize = _edLineEndCapRelSize;
 		}
 
 		public bool AdditionalDropTargetIsEnabled

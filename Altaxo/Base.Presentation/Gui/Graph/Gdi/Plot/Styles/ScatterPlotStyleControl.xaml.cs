@@ -48,9 +48,20 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		public event Action ScatterSymbolChanged;
 
+		public event Action CreateNewSymbolSetFromOverrides;
+
 		public ScatterPlotStyleControl()
 		{
 			InitializeComponent();
+
+			var shapeMenuItem = new MenuItem() { Header = "Create new symbol set from overrides", ToolTip = "This will create a new symbol set from the current symbol set and the settings in Overrides" };
+			shapeMenuItem.Click += EhCreateNewScatterSymbolSet;
+			_cbSymbolShape.ContextMenu.Items.Add(shapeMenuItem);
+		}
+
+		private void EhCreateNewScatterSymbolSet(object sender, RoutedEventArgs e)
+		{
+			CreateNewSymbolSetFromOverrides?.Invoke();
 		}
 
 		public void EnableDisableMain(bool bEnable)
@@ -115,18 +126,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			ScatterSymbolChanged?.Invoke();
 		}
 
-		public bool UseSymbolFrame
-		{
-			get
-			{
-				return _guiUseFrame.IsChecked == true;
-			}
-			set
-			{
-				_guiUseFrame.IsChecked = value;
-			}
-		}
-
 		public SelectableListNodeList Inset
 		{
 			set
@@ -138,6 +137,19 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		private void EhInsetChanged(object sender, SelectionChangedEventArgs e)
 		{
 			GuiHelper.SynchronizeSelectionFromGui(_guiInset);
+		}
+
+		public SelectableListNodeList Frame
+		{
+			set
+			{
+				GuiHelper.Initialize(_guiFrame, value);
+			}
+		}
+
+		private void EhFrameChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiFrame);
 		}
 
 		public bool IndependentSymbolSize
@@ -183,6 +195,30 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			set
 			{
 				_cbColor.ShowPlotColorsOnly = value;
+			}
+		}
+
+		public bool OverrideInset
+		{
+			get
+			{
+				return _guiOverrideInset.IsChecked == true;
+			}
+			set
+			{
+				_guiOverrideInset.IsChecked = value;
+			}
+		}
+
+		public bool OverrideFrame
+		{
+			get
+			{
+				return _guiOverrideFrame.IsChecked == true;
+			}
+			set
+			{
+				_guiOverrideFrame.IsChecked = value;
 			}
 		}
 

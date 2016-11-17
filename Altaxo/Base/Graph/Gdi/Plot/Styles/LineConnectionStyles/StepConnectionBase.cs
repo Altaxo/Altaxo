@@ -53,7 +53,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <returns></returns>
 		protected abstract PointF[] GetSubPoints(
 		Processed2DPlotData pdata,
-		PlotRange range,
+		IPlotRange range,
 		IPlotArea layer,
 		bool connectCircular,
 		out int numberOfPointsPerOriginalPoint,
@@ -135,7 +135,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		public override void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			bool ignoreMissingDataPoints,
@@ -163,7 +163,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		public virtual void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			PointF[] linePoints

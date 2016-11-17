@@ -300,7 +300,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			var color = GraphDocument.GetDefaultPlotColor(context);
 			double penWidth = GraphDocument.GetDefaultPenWidth(context);
-			_pen = new PenX(color, penWidth);
+			_pen = new PenX(color, penWidth) { ParentObject = this };
 
 			_lineWidth1Offset = penWidth;
 			_lineWidth1Factor = 0;
@@ -330,7 +330,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				if (!object.ReferenceEquals(this._pen, value))
 				{
-					_pen = value;
+					ChildCopyToMember(ref _pen, value);
 					SetCachedValues();
 					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}

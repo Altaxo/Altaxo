@@ -184,7 +184,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_fillDirection = direction;
 			_fillColorLinkage = fillColorLinkage;
 			ChildCopyToMember(ref _fillBrush, fillBrush);
-			_framePen = new PenX(NamedColors.Transparent, 1);
+			ChildSetMember(ref _framePen, new PenX(NamedColors.Transparent, 1));
 		}
 
 		public DropAreaPlotStyle(Altaxo.Main.Properties.IReadOnlyPropertyBag context)
@@ -192,9 +192,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var penWidth = GraphDocument.GetDefaultPenWidth(context);
 			var color = GraphDocument.GetDefaultPlotColor(context);
 
-			_framePen = new PenX(NamedColors.Transparent, penWidth) { LineJoin = LineJoin.Bevel, ParentObject = this };
+			ChildSetMember(ref _framePen, new PenX(NamedColors.Transparent, penWidth) { LineJoin = LineJoin.Bevel });
 			_ignoreMissingDataPoints = false;
-			_fillBrush = new BrushX(color) { ParentObject = this };
+			ChildSetMember(ref _fillBrush, new BrushX(color));
 			_fillDirection = new CSPlaneID(1, 0);
 			_connectionStyle = LineConnectionStyles.StraightConnection.Instance;
 		}
@@ -290,14 +290,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			set
 			{
 				// copy the brush only if not null
-				if (null != value)
-				{
-					this._fillBrush = (BrushX)value.Clone();
-					this._fillBrush.ParentObject = this;
-					EhSelfChanged(EventArgs.Empty); // Fire Changed event
-				}
-				else
+				if (null == value)
 					throw new ArgumentNullException("FillBrush", "FillBrush must not be set to null, instead set FillArea to false");
+
+				if (ChildCopyToMember(ref _fillBrush, value))
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 			}
 		}
 
@@ -385,7 +382,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// in case we ignore the missing points, all ranges can be plotted
 				// as one range, i.e. continuously
 				// for this, we create the totalRange, which contains all ranges
-				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
+				IPlotRange totalRange = new PlotRangeCompound(rangeList);
 				_connectionStyle.FillOneRange(gp, pdata, totalRange, layer, _fillDirection, _ignoreMissingDataPoints, _connectCircular);
 			}
 			else // we not ignore missing points, so plot all ranges separately
@@ -421,6 +418,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 			DashPatternGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+			LineConnection2DGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 		}
 
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
@@ -429,10 +427,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._fillBrush.Color; });
 			else if (this._frameColorLinkage == ColorLinkage.Dependent && this._framePen != null)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._framePen.Color; });
+
+			LineConnection2DGroupStyle.PrepareStyle(externalGroups, localGroups, () => _connectionStyle);
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
+			// LineConnectionStyle is the same for all sub plot styles
+			LineConnection2DGroupStyle.ApplyStyle(externalGroups, localGroups, (lineConnection) => this._connectionStyle = lineConnection);
+
 			if (ColorLinkage.Independent != _fillColorLinkage)
 			{
 				if (null == _fillBrush)
@@ -446,7 +449,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (ColorLinkage.Independent != _frameColorLinkage)
 			{
 				if (null == _framePen)
-					_framePen = new PenX(NamedColors.Black);
+					ChildSetMember(ref _framePen, new PenX(NamedColors.Black));
 
 				if (_frameColorLinkage == ColorLinkage.Dependent)
 					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { _framePen.Color = c; });

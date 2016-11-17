@@ -69,7 +69,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		/// </summary>
 		IScatterSymbol ScatterSymbol { get; set; }
 
-		bool UseSymbolFrame { get; set; }
+		SelectableListNodeList Frame { set; }
 
 		SelectableListNodeList Inset { set; }
 
@@ -78,6 +78,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		bool IndependentSkipFrequency { get; set; }
 
 		int SkipFrequency { get; set; }
+
+		bool OverrideInset { get; set; }
+
+		bool OverrideFrame { get; set; }
 
 		bool OverrideAbsoluteStructureWidth { get; set; }
 
@@ -103,6 +107,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		event Action ScatterSymbolChanged;
 
+		event Action CreateNewSymbolSetFromOverrides;
+
 		#endregion events
 	}
 
@@ -119,6 +125,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
 		private SelectableListNodeList _symbolInsetChoices;
+		private SelectableListNodeList _symbolFrameChoices;
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -142,10 +149,20 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			{
 				_colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
 
-				var symbolTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbolInset));
+				// Frame
+				var frameTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbolFrame));
+				_symbolFrameChoices = new SelectableListNodeList();
+				_symbolFrameChoices.Add(new SelectableListNode("No frame", null, false));
+				foreach (var ty in frameTypes)
+				{
+					_symbolFrameChoices.Add(new SelectableListNode(ty.Name, ty, false));
+				}
+
+				// Insets
+				var insetTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbolInset));
 				_symbolInsetChoices = new SelectableListNodeList();
 				_symbolInsetChoices.Add(new SelectableListNode("No inset", null, false));
-				foreach (var ty in symbolTypes)
+				foreach (var ty in insetTypes)
 				{
 					_symbolInsetChoices.Add(new SelectableListNode(ty.Name, ty, false));
 				}
@@ -157,8 +174,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 				_view.IndependentScatterSymbol = _doc.IndependentScatterSymbol;
 				_view.ScatterSymbol = _doc.ScatterSymbol;
-				_view.Inset = _symbolInsetChoices;
-				_view.UseSymbolFrame = _doc.ScatterSymbol.Frame != null;
 
 				// now we have to set all dialog elements to the right values
 				_view.IndependentColor = _doc.IndependentColor;
@@ -167,6 +182,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 				_view.IndependentSymbolSize = _doc.IndependentSymbolSize;
 				_view.SymbolSize = _doc.SymbolSize;
+
+				_view.OverrideFrame = _doc.OverrideFrame;
+				_symbolFrameChoices.ForEachDo(node => node.IsSelected = _doc.OverriddenFrame?.GetType() == (Type)node.Tag);
+				_view.Frame = _symbolFrameChoices;
+
+				_view.OverrideInset = _doc.OverrideInset;
+				_symbolInsetChoices.ForEachDo(node => node.IsSelected = _doc.OverriddenInset?.GetType() == (Type)node.Tag);
+				_view.Inset = _symbolInsetChoices;
 
 				_view.OverrideAbsoluteStructureWidth = _doc.OverrideStructureWidthOffset.HasValue;
 				_view.OverriddenAbsoluteStructureWidth = _doc.OverrideStructureWidthOffset ?? 0;
@@ -211,6 +234,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 				_doc.IndependentSymbolSize = _view.IndependentSymbolSize;
 				_doc.SymbolSize = _view.SymbolSize;
 
+				_doc.OverrideFrame = _view.OverrideFrame;
+				_doc.OverriddenFrame = _symbolFrameChoices.FirstSelectedNode?.Tag == null ? null : (IScatterSymbolFrame)Activator.CreateInstance((Type)_symbolFrameChoices.FirstSelectedNode.Tag);
+
+				_doc.OverrideInset = _view.OverrideInset;
+				_doc.OverriddenInset = _symbolInsetChoices.FirstSelectedNode?.Tag == null ? null : (IScatterSymbolInset)Activator.CreateInstance((Type)_symbolInsetChoices.FirstSelectedNode.Tag);
+
 				_doc.OverrideStructureWidthOffset = _view.OverrideAbsoluteStructureWidth ? _view.OverriddenAbsoluteStructureWidth : (double?)null;
 				_doc.OverrideStructureWidthFactor = _view.OverrideRelativeStructureWidth ? _view.OverriddenRelativeStructureWidth : (double?)null;
 
@@ -218,13 +247,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 				_doc.OverrideFillColor = _view.OverrideFillColor ? _view.OverriddenFillColor : (NamedColor?)null;
 				_doc.OverrideFrameColor = _view.OverrideFrameColor ? _view.OverriddenFrameColor : (NamedColor?)null;
 				_doc.OverrideInsetColor = _view.OverrideInsetColor ? _view.OverriddenInsetColor : (NamedColor?)null;
-
-				bool cancellationRequested;
-				_doc.ScatterSymbol = CheckForNeedToCreateNewSymbol(_doc.ScatterSymbol, out cancellationRequested);
-				if (cancellationRequested)
-				{
-					applyResult = false;
-				}
 
 				if (!disposeController)
 				{
@@ -246,12 +268,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			base.AttachView();
 			_view.IndependentColorChanged += EhIndependentColorChanged;
 			_view.ScatterSymbolChanged += EhScatterSymbolChanged;
+			_view.CreateNewSymbolSetFromOverrides += EhCreateNewSymbolSetFromOverrides;
 		}
 
 		protected override void DetachView()
 		{
 			_view.IndependentColorChanged -= EhIndependentColorChanged;
 			_view.ScatterSymbolChanged += EhScatterSymbolChanged;
+			_view.CreateNewSymbolSetFromOverrides -= EhCreateNewSymbolSetFromOverrides;
 			base.DetachView();
 		}
 
@@ -268,12 +292,19 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		{
 			var symbol = _view.ScatterSymbol;
 
-			// Inset
-			_symbolInsetChoices.SetSelection(node => symbol.Inset?.GetType() == (Type)node.Tag);
-			_view.Inset = _symbolInsetChoices;
-
 			// Frame
-			_view.UseSymbolFrame = symbol.Frame != null;
+			if (!_view.OverrideFrame)
+			{
+				_symbolFrameChoices.ForEachDo(n => n.IsSelected = (symbol.Frame?.GetType() == (Type)n.Tag));
+				_view.Frame = _symbolFrameChoices;
+			}
+
+			// Inset
+			if (!_view.OverrideInset)
+			{
+				_symbolInsetChoices.SetSelection(node => symbol.Inset?.GetType() == (Type)node.Tag);
+				_view.Inset = _symbolInsetChoices;
+			}
 
 			// Structure width
 			if (!_view.OverrideRelativeStructureWidth)
@@ -296,18 +327,108 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 				_view.OverriddenInsetColor = symbol.Inset.Color;
 		}
 
-		private IScatterSymbol CheckForNeedToCreateNewSymbol(IScatterSymbol symbol, out bool cancellationRequested)
+		private void EhCreateNewSymbolSetFromOverrides()
+		{
+			bool cancellationRequested;
+			var newSymbol = CreateNewSymbolSetFromOverrides(_doc.ScatterSymbol, out cancellationRequested);
+			ClearAllOverridesThatAreEqualToScatterSymbol(newSymbol);
+			_doc.ScatterSymbol = newSymbol;
+			_view.ScatterSymbol = newSymbol;
+			EhScatterSymbolChanged();
+		}
+
+		private void ClearAllOverridesThatAreEqualToScatterSymbol(IScatterSymbol symbol)
+		{
+			if (symbol.Frame?.GetType() == (Type)_symbolFrameChoices.FirstSelectedNode?.Tag)
+				_view.OverrideFrame = false;
+
+			if (symbol.Inset?.GetType() == (Type)_symbolInsetChoices.FirstSelectedNode?.Tag)
+				_view.OverrideInset = false;
+
+			if ((_view.OverrideRelativeStructureWidth == false || symbol.RelativeStructureWidth == _view.OverriddenRelativeStructureWidth) && (_view.OverrideAbsoluteStructureWidth == false || _view.OverriddenAbsoluteStructureWidth == 0))
+			{
+				_view.OverrideAbsoluteStructureWidth = false;
+				_view.OverrideRelativeStructureWidth = false;
+			}
+
+			if (symbol.PlotColorInfluence == _view.OverriddenPlotColorInfluence)
+				_view.OverridePlotColorInfluence = false;
+
+			if (symbol.FillColor == _view.OverriddenFillColor)
+				_view.OverrideFillColor = false;
+
+			if (symbol.Frame == null || symbol.Frame.Color == _view.OverriddenFrameColor)
+				_view.OverrideFrameColor = false;
+
+			if (symbol.Inset == null || symbol.Inset.Color == _view.OverriddenInsetColor)
+				_view.OverrideInsetColor = false;
+		}
+
+		private IScatterSymbol CreateNewSymbolSetFromOverrides(IScatterSymbol symbol, out bool cancellationRequested)
 		{
 			cancellationRequested = false;
-			bool hasNewInset = false;
-			bool hasNewFrame = false;
-			if (symbol.Inset?.GetType() != (Type)_symbolInsetChoices.FirstSelectedNode.Tag)
-				hasNewInset = true;
-			if ((symbol.Frame != null) != _view.UseSymbolFrame)
-				hasNewFrame = true;
 
-			if (!hasNewFrame && !hasNewInset)
-				return symbol; // nothing to do
+			double overriddenAbsoluteStructureWidth = _view.OverrideAbsoluteStructureWidth ? _view.OverriddenAbsoluteStructureWidth : 0;
+			double overriddenRelativeStructureWidth = _view.OverrideRelativeStructureWidth ? _view.OverriddenRelativeStructureWidth : symbol.RelativeStructureWidth;
+
+			double resultingRelativeStructureWidth = overriddenRelativeStructureWidth;
+
+			if (_view.OverrideAbsoluteStructureWidth && _view.OverriddenAbsoluteStructureWidth != 0)
+			{
+				if (overriddenRelativeStructureWidth <= 0)
+				{
+					var dlgResult = Current.Gui.YesNoCancelMessageBox(
+						"Currently the absolute structure width has been overriden.\r\n" +
+						"However, in the new symbol set to be created, only the relative structure width can be stored.\r\n" +
+						"This is especially problematic, since the relative structure width is set to 0 (zero).\r\n" +
+						"Do you want to convert the absolute structure width into a relative value?\r\n" +
+						"Yes:    Converts absolute structure width into relative width, using current symbol size\r\n" +
+						"No:     Sets relative structure width to zero (probably not very useful)\r\n" +
+						"Cancel: Cancels the creation of a new symbol set",
+						"Question concerning absolute/relative structure width",
+						true);
+
+					if (null == dlgResult)
+					{
+						cancellationRequested = true;
+						return symbol;
+					}
+					else if (true == dlgResult)
+					{
+						resultingRelativeStructureWidth = overriddenAbsoluteStructureWidth / _view.SymbolSize;
+					}
+					else
+					{
+						resultingRelativeStructureWidth = 0;
+					}
+				}
+				else
+				{
+					var dlgResult = Current.Gui.YesNoCancelMessageBox(
+						"Currently the absolute structure width has been overriden.\r\n" +
+						"However, in the new symbol set to be created, only the relative structure width can be stored.\r\n" +
+						"Do you want to take both the absolute and the relative structure width into account?\r\n" +
+						"Yes:    Converts the combined absolute and relative structure width into relative width, using current symbol size\r\n" +
+						"No:     Sets relative structure, using the overridden relative structure width or the default value.\r\n" +
+						"Cancel: Cancels the creation of a new symbol set",
+						"Question concerning absolute/relative structure width",
+						false);
+
+					if (null == dlgResult)
+					{
+						cancellationRequested = true;
+						return symbol;
+					}
+					else if (true == dlgResult)
+					{
+						resultingRelativeStructureWidth = overriddenRelativeStructureWidth + overriddenAbsoluteStructureWidth / _view.SymbolSize;
+					}
+					else
+					{
+						resultingRelativeStructureWidth = overriddenRelativeStructureWidth;
+					}
+				}
+			}
 
 			// we have to create a new symbol - if IsIndependent symbol is not checked, we have to create a new series of symbols
 
@@ -342,27 +463,28 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			{
 				var newSymbol = symbolToModify;
 
-				var newInsetType = (Type)_symbolInsetChoices.FirstSelectedNode.Tag;
-				if (null != newInsetType)
+				if (_view.OverrideInset)
 				{
-					newSymbol = newSymbol.WithInset((IScatterSymbolInset)Activator.CreateInstance(newInsetType));
-				}
-				else
-				{
-					newSymbol = newSymbol.WithInset(null);
-				}
-
-				if (_view.UseSymbolFrame)
-				{
-					newSymbol = newSymbol.WithFrame(new ConstantThicknessFrame());
-				}
-				else
-				{
-					newSymbol = newSymbol.WithFrame(null);
+					var newInsetType = (Type)_symbolInsetChoices.FirstSelectedNode?.Tag;
+					if (newInsetType != newSymbol.Inset?.GetType())
+					{
+						var newInset = null == newInsetType ? null : (IScatterSymbolInset)Activator.CreateInstance(newInsetType);
+						newSymbol = newSymbol.WithInset(newInset);
+					}
 				}
 
-				if (_view.OverrideRelativeStructureWidth)
-					newSymbol = newSymbol.WithRelativeStructureWidth(_view.OverriddenRelativeStructureWidth);
+				if (_view.OverrideFrame)
+				{
+					var newFrameType = (Type)_symbolFrameChoices.FirstSelectedNode?.Tag;
+					if (newFrameType != newSymbol.Frame?.GetType())
+					{
+						var newFrame = null == newFrameType ? null : (IScatterSymbolFrame)Activator.CreateInstance(newFrameType);
+						newSymbol = newSymbol.WithFrame(newFrame);
+					}
+				}
+
+				if (_view.OverrideRelativeStructureWidth || _view.OverrideRelativeStructureWidth)
+					newSymbol = newSymbol.WithRelativeStructureWidth(resultingRelativeStructureWidth);
 
 				if (_view.OverridePlotColorInfluence)
 					newSymbol = newSymbol.WithPlotColorInfluence(_view.OverriddenPlotColorInfluence);
@@ -381,18 +503,27 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 			if (createNewSymbolList)
 			{
-				string newName = "Custom";
-				if (!Current.Gui.ShowDialog(ref newName, "Enter a name for the new scatter symbol set", false))
+				string existingListName;
+				if (ScatterSymbolListManager.Instance.TryGetListByMembers(newSymbols, null, out existingListName))
 				{
-					cancellationRequested = true;
-					return symbol;
+					Current.Gui.InfoMessageBox("A symbol set with the chosen parameters already exists under the name: " + existingListName, "Symbol set exists");
+					return ScatterSymbolListManager.Instance.GetList(existingListName)[originalItemIndex];
 				}
+				else
+				{
+					string newName = "Custom";
+					if (!Current.Gui.ShowDialog(ref newName, "Enter a name for the new scatter symbol set", false))
+					{
+						cancellationRequested = true;
+						return symbol;
+					}
 
-				var newScatterSymbolList = new ScatterSymbolList(newName, newSymbols);
-				ScatterSymbolList resultList;
-				ScatterSymbolListManager.Instance.TryRegisterList(newScatterSymbolList, Altaxo.Main.ItemDefinitionLevel.Project, out resultList);
-				// return the item at the original list index.
-				return resultList[originalItemIndex];
+					var newScatterSymbolList = new ScatterSymbolList(newName, newSymbols);
+					ScatterSymbolList resultList;
+					ScatterSymbolListManager.Instance.TryRegisterList(newScatterSymbolList, Altaxo.Main.ItemDefinitionLevel.Project, out resultList);
+					// return the item at the original list index.
+					return resultList[originalItemIndex];
+				}
 			}
 			else
 			{

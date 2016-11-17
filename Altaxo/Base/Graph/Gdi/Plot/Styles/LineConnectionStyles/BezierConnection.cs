@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		public override void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
-			PlotRange rangeRaw,
+			IPlotRange rangeRaw,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			bool ignoreMissingDataPoints,
@@ -119,12 +119,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		{
 			// Bezier is only supported with point numbers n=4+3*k
 			// so trim the range appropriately
+			var upperBound = rangeRaw.LowerBound + 3 * ((rangeRaw.Length + 2) / 3) - 2;
+			if (upperBound - rangeRaw.LowerBound < 4) // then to less points are in this range
+				return;
+
+			IPlotRange range = rangeRaw.WithUpperBoundShortenedBy(rangeRaw.UpperBound - upperBound);
+
 			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PlotRange range = new PlotRange(rangeRaw);
 			var layerSize = layer.Size;
-			range.UpperBound = range.LowerBound + 3 * ((range.Length + 2) / 3) - 2;
-			if (range.Length < 4)
-				return; // then to less points are in this range
 
 			PointF[] linepts = new PointF[range.Length];
 			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
@@ -144,7 +146,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		public void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			PointF[] linePoints

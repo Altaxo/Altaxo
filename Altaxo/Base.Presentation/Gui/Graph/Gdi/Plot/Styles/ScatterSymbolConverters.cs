@@ -163,7 +163,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 	{
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			return value?.ToString();
+			return value?.GetType().Name;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
