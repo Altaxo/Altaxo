@@ -28,6 +28,7 @@ using Altaxo.Graph.Graph2D.Plot.Styles;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Data;
@@ -35,6 +36,10 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
+	/// <summary>
+	/// Converts an instance of <see cref="IScatterSymbol"/> into an image.
+	/// </summary>
+	/// <seealso cref="System.Windows.Data.IValueConverter" />
 	public class ScatterSymbolToImageSourceConverter : IValueConverter
 	{
 		public NamedColor PlotColor { get; set; } = NamedColors.Black;
@@ -154,6 +159,38 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+	/// <summary>
+	/// Converts a type, which must be the type of a non-abstract subclass which implements <see cref="IScatterSymbol"/>, to an image.
+	/// </summary>
+	/// <seealso cref="System.Windows.Data.IValueConverter" />
+	public class ScatterSymbolTypeToImageSourceConverter : IValueConverter
+	{
+		private ScatterSymbolToImageSourceConverter _innerConverter = new ScatterSymbolToImageSourceConverter();
+
+		public double SymbolSize
+		{
+			get { return _innerConverter.SymbolSize; }
+			set { _innerConverter.SymbolSize = value; }
+		}
+
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			var symbolType = value as Type;
+
+			if (null == symbolType)
+				return null;
+
+			var symbol = (IScatterSymbol)Activator.CreateInstance(symbolType);
+
+			return _innerConverter.Convert(symbol, targetType, parameter, culture);
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			throw new NotImplementedException();
 		}

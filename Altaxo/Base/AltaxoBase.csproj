@@ -316,6 +316,9 @@
     <Compile Include="Graph\Gdi\Plot\Styles\LineConnectionStyles\NoConnection.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\ScatterPlotStyle.cs" />
     <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\Hexagon.cs" />
+    <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\Insets\CirclePointInset.cs" />
+    <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\Insets\DiamondBulletPointInset.cs" />
+    <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\Insets\SquareBulletPointInset.cs" />
     <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\Pentagon.cs" />
     <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\VerticalBar.cs" />
     <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\HorizontalBar.cs" />
@@ -335,7 +338,7 @@
     <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\Insets\RightHalfInset.cs" />
     <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\Insets\LeftHalfInset.cs" />
     <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\Insets\HorizontalBarInset.cs" />
-    <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\Insets\CirclePointInset.cs" />
+    <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\Insets\CircleBulletPointInset.cs" />
     <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\Insets\BackslashInset.cs" />
     <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\Insets\SlashInset.cs" />
     <Compile Include="Graph\Graph2D\Plot\Styles\ScatterSymbols\Insets\CrossTimesInset.cs" />

@@ -94,7 +94,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
 			BuiltinHollow = new ScatterSymbolList("BuiltinHollow", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.Transparent).WithFrame(new ConstantThicknessFrame()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull)));
 			InternalTryRegisterList(BuiltinHollow, ItemDefinitionLevel.Builtin, out dummy, false);
 
-			BuiltinDotCenter = new ScatterSymbolList("BuiltinDotCenter", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.White).WithFrame(new ConstantThicknessFrame()).WithInset(new CirclePointInset()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull | Styles.ScatterSymbols.PlotColorInfluence.InsetColorFull)));
+			BuiltinDotCenter = new ScatterSymbolList("BuiltinDotCenter", BuiltinSolid.Select(s => s.WithFillColor(NamedColors.White).WithFrame(new ConstantThicknessFrame()).WithInset(new CircleBulletPointInset()).WithPlotColorInfluence(Styles.ScatterSymbols.PlotColorInfluence.FrameColorFull | Styles.ScatterSymbols.PlotColorInfluence.InsetColorFull)));
 			InternalTryRegisterList(BuiltinDotCenter, ItemDefinitionLevel.Builtin, out dummy, false);
 
 			// filled symbols
@@ -144,11 +144,11 @@ namespace Altaxo.Graph.Graph2D.Plot.Groups
 
 			// old dotcenter symbols
 			OldDotCenter = new ScatterSymbolList("OldDotCenter", new IScatterSymbol[] {
-					new Styles.ScatterSymbols.Square(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CirclePointInset(), true),
-					new Styles.ScatterSymbols.Circle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CirclePointInset(), true),
-					new Styles.ScatterSymbols.UpTriangle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CirclePointInset(), true),
-					new Styles.ScatterSymbols.DownTriangle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CirclePointInset(), true),
-					new Styles.ScatterSymbols.Diamond(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CirclePointInset(), true),
+					new Styles.ScatterSymbols.Square(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
+					new Styles.ScatterSymbols.Circle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
+					new Styles.ScatterSymbols.UpTriangle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
+					new Styles.ScatterSymbols.DownTriangle(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
+					new Styles.ScatterSymbols.Diamond(NamedColors.White, false).WithFrame(new ConstantThicknessFrame(), true).WithInset(new CircleBulletPointInset(), true),
 					new Styles.ScatterSymbols.CrossPlus(NamedColors.Black, true),
 					new Styles.ScatterSymbols.CrossTimes(NamedColors.Black, true),
 					new Styles.ScatterSymbols.Star(NamedColors.Black, true),

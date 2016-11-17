@@ -29,14 +29,14 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 {
-	public class CirclePointInset : InsetBase
+	public class SquareBulletPointInset : InsetBase
 	{
 		#region Serialization
 
 		/// <summary>
 		/// 2016-10-27 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CirclePointInset), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SquareBulletPointInset), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -46,7 +46,7 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = (CirclePointInset)o ?? new CirclePointInset();
+				var s = (SquareBulletPointInset)o ?? new SquareBulletPointInset();
 				info.GetBaseValueEmbedded(s, s.GetType().BaseType, parent);
 				return s;
 			}
@@ -56,15 +56,18 @@ namespace Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Insets
 
 		public override List<List<ClipperLib.IntPoint>> GetCopyOfClipperPolygon(double relativeWidth)
 		{
-			var radius = relativeWidth * ClipperScalingDouble;
-			var list = new List<ClipperLib.IntPoint>(360);
+			var w = 2 * relativeWidth * ClipperScalingDouble;
 
-			for (int i = 0; i < 360; ++i)
+			return new List<List<ClipperLib.IntPoint>>(1)
 			{
-				var phi = Math.PI * i / 180.0;
-				list.Add(new ClipperLib.IntPoint((int)(radius * Math.Cos(phi)), (int)(radius * Math.Sin(phi))));
+				new List<ClipperLib.IntPoint>(4)
+				{
+				new ClipperLib.IntPoint(-w, -w),
+				new ClipperLib.IntPoint(w, -w),
+				new ClipperLib.IntPoint(w, w),
+				new ClipperLib.IntPoint(-w, w)
 			}
-			return new List<List<ClipperLib.IntPoint>>(1) { list };
+			};
 		}
 	}
 }

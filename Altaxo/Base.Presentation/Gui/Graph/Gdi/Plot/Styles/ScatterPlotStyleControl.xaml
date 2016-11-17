@@ -11,6 +11,7 @@
              mc:Ignorable="d">
 
 	<UserControl.Resources>
+		<local:ScatterSymbolInsetTypeToImageSourceConverter x:Key="InsetToImageSourceConverter" />
 		<axogc:VisibilityCollapsedForFalseConverter x:Key="CollapsedIfFalse" />
 		<Style TargetType="Label">
 			<Style.Setters>
@@ -88,7 +89,16 @@
 		<ComboBox x:Name="_guiFrame" Grid.Row="10" Grid.Column="2" SelectionChanged="EhFrameChanged"  IsEnabled="{Binding ElementName=_guiOverrideFrame, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
 
 		<CheckBox x:Name="_guiOverrideInset" Content="Override inset:" Grid.Row="12" Grid.Column="0" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
-		<ComboBox x:Name="_guiInset" Grid.Row="12" Grid.Column="2" SelectionChanged="EhInsetChanged"  IsEnabled="{Binding ElementName=_guiOverrideInset, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<ComboBox x:Name="_guiInset" Grid.Row="12" Grid.Column="2" SelectionChanged="EhInsetChanged"  IsEnabled="{Binding ElementName=_guiOverrideInset, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}">
+			<ComboBox.ItemTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal" Margin="2">
+						<Image Source="{Binding Tag, Converter={StaticResource InsetToImageSourceConverter}}" MinWidth="16" MaxWidth="16" MaxHeight="16" />
+						<TextBlock Text="{Binding Text}" Margin="4 0 4 0" VerticalAlignment="Center" />
+					</StackPanel>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
 
 		<CheckBox x:Name="_guiOverrideAbsoluteStructureWidth" Grid.Row="14" Grid.Column="0" Content="Override absolute structure width:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
 		<axogcd:LineThicknessComboBox x:Name="_guiOverriddenAbsoluteStructureWidth" Grid.Row="14" Grid.Column="2"  IsEnabled="{Binding ElementName=_guiOverrideAbsoluteStructureWidth, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />

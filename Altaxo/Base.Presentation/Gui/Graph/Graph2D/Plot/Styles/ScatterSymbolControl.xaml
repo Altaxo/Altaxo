@@ -8,7 +8,12 @@
  						 xmlns:axogd="clr-namespace:Altaxo.Gui.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axogggpss="clr-namespace:Altaxo.Gui.Graph.Graph2D.Plot.Styles.ScatterSymbols">
+						 xmlns:axogggpss="clr-namespace:Altaxo.Gui.Graph.Graph2D.Plot.Styles.ScatterSymbols"
+						 xmlns:axogggps="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles">
+	<UserControl.Resources>
+		<axogggps:ScatterSymbolInsetTypeToImageSourceConverter x:Key="InsetTypeToImageSourceConverter" />
+		<axogggps:ScatterSymbolTypeToImageSourceConverter x:Key="SymbolTypeToImageSourceConverter" />
+	</UserControl.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -42,7 +47,16 @@
 		</Grid.ColumnDefinitions>
 
 		<Label Content="Shape:" Grid.Row="0" Grid.Column="0" />
-		<ComboBox x:Name="_guiShape" Grid.Row="0" Grid.Column="2" SelectionChanged="EhShapeChanged" />
+		<ComboBox x:Name="_guiShape" Grid.Row="0" Grid.Column="2" SelectionChanged="EhShapeChanged">
+			<ComboBox.ItemTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal" Margin="2">
+						<Image Source="{Binding Tag, Converter={StaticResource SymbolTypeToImageSourceConverter}}" MinWidth="16" MaxWidth="16" MaxHeight="16" />
+						<TextBlock Text="{Binding Text}" Margin="4 0 4 0" VerticalAlignment="Center" />
+					</StackPanel>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
 
 		<Label Content="Structur width:" Grid.Row="2" Grid.Column="0" />
 		<axogc:QuantityWithUnitTextBox x:Name="_guiStructureWidth"  Grid.Row="2" Grid.Column="2" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityChanged="EhStructureWidthChanged" />
@@ -51,7 +65,16 @@
 		<ComboBox x:Name="_guiFrame" Grid.Row="6" Grid.Column="2" SelectionChanged="EhFrameChanged" />
 
 		<Label Content="Inset:" Grid.Row="8" Grid.Column="0" />
-		<ComboBox x:Name="_guiInset" Grid.Row="8" Grid.Column="2" SelectionChanged="EhInsetChanged" />
+		<ComboBox x:Name="_guiInset" Grid.Row="8" Grid.Column="2" SelectionChanged="EhInsetChanged">
+			<ComboBox.ItemTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal" Margin="2">
+						<Image Source="{Binding Tag, Converter={StaticResource InsetTypeToImageSourceConverter}}" MinWidth="16" MaxWidth="16" MaxHeight="16" />
+						<TextBlock Text="{Binding Text}" Margin="4 0 4 0" VerticalAlignment="Center" />
+					</StackPanel>
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
 
 		<Label Content="Plot color influence:" Grid.Row="10" Grid.Column="0" />
 		<axogggpss:PlotColorInfluenceControl x:Name="_guiPlotColorInfluence" Grid.Row="10" Grid.Column="2" SelectedValueChanged="EhPlotColorInfluenceChanged" />

@@ -13,6 +13,8 @@
 
              mc:Ignorable="d">
 	<UserControl.Resources>
+		<axogggps:ScatterSymbolInsetTypeToImageSourceConverter x:Key="InsetTypeToImageSourceConverter" />
+		<axogggps:ScatterSymbolTypeToImageSourceConverter x:Key="SymbolTypeToImageSourceConverter" />
 		<axogggps:ScatterSymbolToImageSourceConverter x:Key="ItemToItemImageConverter" />
 
 		<DataTemplate x:Key="CurrentItemsTemplateResource">
@@ -65,7 +67,16 @@
 					<Button Content="Set!" Grid.Row="2" Grid.Column="4" Click="EhSetStructureWidth" />
 
 					<Label Content="Shape:" Grid.Row="4" Grid.Column="0" />
-					<ComboBox x:Name="_guiShape" Grid.Row="4" Grid.Column="2" />
+					<ComboBox x:Name="_guiShape" Grid.Row="4" Grid.Column="2">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal" Margin="2">
+									<Image Source="{Binding Tag, Converter={StaticResource SymbolTypeToImageSourceConverter}}" MinWidth="16" MaxWidth="16" MaxHeight="16" />
+									<TextBlock Text="{Binding Text}" Margin="4 0 4 0" VerticalAlignment="Center" />
+								</StackPanel>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
 					<Button Content="Set!" Grid.Row="4" Grid.Column="4" Click="EhSetShape" />
 
 					<Label Content="Frame:" Grid.Row="6" Grid.Column="0" />
@@ -73,7 +84,16 @@
 					<Button Content="Set!" Grid.Row="6" Grid.Column="4" Click="EhSetFrame" />
 
 					<Label Content="Inset:" Grid.Row="8" Grid.Column="0" />
-					<ComboBox x:Name="_guiInset" Grid.Row="8" Grid.Column="2" />
+					<ComboBox x:Name="_guiInset" Grid.Row="8" Grid.Column="2">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal" Margin="2">
+									<Image Source="{Binding Tag, Converter={StaticResource InsetTypeToImageSourceConverter}}" MinWidth="16" MaxWidth="16" MaxHeight="16" />
+									<TextBlock Text="{Binding Text}" Margin="4 0 4 0" VerticalAlignment="Center" />
+								</StackPanel>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
 					<Button Content="Set!" Grid.Row="8" Grid.Column="4" Click="EhSetInset" />
 
 					<Label Content="Plot color influence:" Grid.Row="10" Grid.Column="0" />

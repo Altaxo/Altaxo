@@ -1246,6 +1246,7 @@
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\ScatterSymbolComboBox.xaml.cs">
       <DependentUpon>ScatterSymbolComboBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Graph\Gdi\Plot\Styles\ScatterSymbolInsetConverters.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\ScatterSymbolConverters.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\VectorCartesicPlotStyleControl.xaml.cs">
       <DependentUpon>VectorCartesicPlotStyleControl.xaml</DependentUpon>
