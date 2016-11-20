@@ -166,11 +166,13 @@ namespace Altaxo.Graph.Gdi.Plot
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PlotItemCollection", 1)]
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotItemCollection), 2)]
-		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Gdi.Plot.PlotItemCollection", 2)]
+		private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
+				throw new InvalidOperationException("Serialization of old version");
+				/*
 				PlotItemCollection s = (PlotItemCollection)obj;
 
 				info.CreateArray("PlotItems", s.Count);
@@ -179,6 +181,7 @@ namespace Altaxo.Graph.Gdi.Plot
 				info.CommitArray();
 
 				info.AddValue("GroupStyles", s._plotGroupStyles);
+				*/
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -195,6 +198,45 @@ namespace Altaxo.Graph.Gdi.Plot
 
 				s._plotGroupStyles = (PlotGroupStyleCollection)info.GetValue("GroupStyles", s);
 				if (null != s._plotGroupStyles) s._plotGroupStyles.ParentObject = s;
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// 2016-11-18 Now the group styles are serialized before the plot items. Because the group styles save
+		/// the style sets anyway, we spare saving the style sets in both the first plot item and the group style.
+		/// </summary>
+		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotItemCollection), 3)]
+		private class XmlSerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				PlotItemCollection s = (PlotItemCollection)obj;
+
+				info.AddValue("GroupStyles", s._plotGroupStyles);
+
+				info.CreateArray("PlotItems", s.Count);
+				for (int i = 0; i < s.Count; i++)
+					info.AddValue("PlotItem", s[i]);
+				info.CommitArray();
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				PlotItemCollection s = null != o ? (PlotItemCollection)o : new PlotItemCollection();
+
+				s._plotGroupStyles = (PlotGroupStyleCollection)info.GetValue("GroupStyles", s);
+				if (null != s._plotGroupStyles) s._plotGroupStyles.ParentObject = s;
+
+				int count = info.OpenArray();
+				IGPlotItem[] plotItems = new IGPlotItem[count];
+				for (int i = 0; i < count; i++)
+				{
+					s.Add((IGPlotItem)info.GetValue("PlotItem", s));
+				}
+				info.CloseArray(count);
 
 				return s;
 			}
