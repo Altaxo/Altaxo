@@ -166,6 +166,13 @@ namespace Altaxo.Graph.Gdi
 
 		#region Polyline constituted by an array of PointF
 
+		/// <summary>
+		/// Calculates the total length of a polyline.
+		/// </summary>
+		/// <param name="polyline">The polyline.</param>
+		/// <returns>Total length of the polyline.</returns>
+		/// <exception cref="ArgumentNullException">polyline</exception>
+		/// <exception cref="ArgumentException">Polyline must have at least 2 points - polyline</exception>
 		public static double TotalLineLength(this PointF[] polyline)
 		{
 			if (null == polyline)
@@ -178,6 +185,40 @@ namespace Altaxo.Graph.Gdi
 			PointF prev = polyline[0];
 			PointF curr;
 			for (int i = 1; i < polyline.Length; ++i)
+			{
+				curr = polyline[i];
+				var dx = curr.X - prev.X;
+				var dy = curr.Y - prev.Y;
+				sum += Math.Sqrt(dx * dx + dy * dy);
+				prev = curr;
+			}
+
+			return sum;
+		}
+
+		/// <summary>
+		/// Calculates the total length of a polyline.
+		/// </summary>
+		/// <param name="polyline">The points of the polyline. Only points starting from <paramref name="startIdx"/> with the number of points = <paramref name="count"/> are considered to be part of the polyline.</param>
+		/// <param name="startIdx">Index of the first point of the polyline in array <paramref name="polyline"/>.</param>
+		/// <param name="count">The number of points of the polyline. An exception is thrown if this argument is less than 2.</param>
+		/// <returns>The total length of the polyline, from index <paramref name="startIdx"/> with number of points equal to <paramref name="count"/>.</returns>
+		/// <exception cref="ArgumentNullException">polyline</exception>
+		/// <exception cref="ArgumentException">Polyline must have at least 2 points - polyline</exception>
+		public static double TotalLineLength(this PointF[] polyline, int startIdx, int count)
+		{
+			if (null == polyline)
+				throw new ArgumentNullException(nameof(polyline));
+			if (count < 2)
+				throw new ArgumentException("Polyline must have at least 2 points", nameof(polyline));
+
+			int nextIdx = startIdx + count; // 1 beyond the last point of the polyline
+
+			double sum = 0;
+
+			PointF prev = polyline[startIdx];
+			PointF curr;
+			for (int i = startIdx + 1; i < nextIdx; ++i)
 			{
 				curr = polyline[i];
 				var dx = curr.X - prev.X;
@@ -266,6 +307,94 @@ namespace Altaxo.Graph.Gdi
 			{
 				double sum = 0, prevSum = 0;
 				for (int i = polyline.Length - 2; i >= 0; --i)
+				{
+					sum += LengthBetween(polyline[i], polyline[i + 1]);
+					if (!(sum < a2))
+					{
+						p1 = Interpolate(polyline[i + 1], polyline[i], (a2 - prevSum) / (sum - prevSum));
+						i1 = p1 != polyline[i] ? i : i - 1;
+						break;
+					}
+					prevSum = sum;
+				}
+			}
+
+			if (p0.HasValue && p1.HasValue)
+			{
+				var plist = new List<PointF>();
+				plist.Add(p0.Value);
+				for (int i = i0; i <= i1; ++i)
+					plist.Add(polyline[i]);
+				plist.Add(p1.Value);
+				return plist.ToArray();
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Returns a new, shortened polyline. If the shortened line would have zero or negative length, <c>null</c> is returned.
+		/// </summary>
+		/// <param name="polyline">The points of the polyline. Only points starting from <paramref name="startIdx"/> with the number of points = <paramref name="count"/> are considered to be part of the polyline.</param>
+		/// <param name="startIdx">Index of the first point of the polyline in array <paramref name="polyline"/>.</param>
+		/// <param name="count">The number of points of the polyline. An exception is thrown if this argument is less than 2.</param>
+		/// <param name="marginAtStart">The margin at start. Either an absolute value, or relative to the total length of the polyline.</param>
+		/// <param name="marginAtEnd">The margin at end. Either an absolute value, or relative to the total length of the polyline.</param>
+		/// <returns>A new, shortened polyline. If the shortened line would have zero or negative length, <c>null</c> is returned.</returns>
+		public static PointF[] ShortenedBy(this PointF[] polyline, int startIdx, int count, RADouble marginAtStart, RADouble marginAtEnd)
+		{
+			if (null == polyline)
+				throw new ArgumentNullException(nameof(polyline));
+			if (count < 2)
+				throw new ArgumentException("Polyline must have at least 2 points", nameof(polyline));
+
+			int nextIdx = startIdx + count;
+
+			double totLength = TotalLineLength(polyline, startIdx, count);
+
+			double a1 = marginAtStart.IsAbsolute ? marginAtStart.Value : marginAtStart.Value * totLength;
+			double a2 = marginAtEnd.IsAbsolute ? marginAtEnd.Value : marginAtEnd.Value * totLength;
+
+			if (!((a1 + a2) < totLength))
+				return null;
+
+			PointF? p0 = null;
+			PointF? p1 = null;
+			int i0 = 0;
+			int i1 = 0;
+
+			if (a1 <= 0)
+			{
+				p0 = Interpolate(polyline[startIdx], polyline[startIdx + 1], a1 / totLength);
+				i0 = startIdx + 1;
+			}
+			else
+			{
+				double sum = 0, prevSum = 0;
+				for (int i = startIdx + 1; i < nextIdx; ++i)
+				{
+					sum += LengthBetween(polyline[i], polyline[i - 1]);
+					if (!(sum < a1))
+					{
+						p0 = Interpolate(polyline[i - 1], polyline[i], (a1 - prevSum) / (sum - prevSum));
+						i0 = p0 != polyline[i] ? i : i + 1;
+						break;
+					}
+					prevSum = sum;
+				}
+			}
+
+			if (a2 <= 0)
+			{
+				p1 = Interpolate(polyline[nextIdx - 2], polyline[nextIdx - 1], 1 - a2 / totLength);
+				i1 = nextIdx - 2;
+			}
+			else
+			{
+				double sum = 0, prevSum = 0;
+				for (int i = nextIdx - 2; i >= startIdx; --i)
 				{
 					sum += LengthBetween(polyline[i], polyline[i + 1]);
 					if (!(sum < a2))

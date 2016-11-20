@@ -142,10 +142,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 						double gapAtStart = symbolGap(originalRowIndex);
 						double gapAtEnd = i != range.Length ? symbolGap(originalRowIndex + skipFrequency) : symbolGap(range.OffsetToOriginal);
 
-						var polyline = linepts.ShortenedBy(RADouble.NewAbs(gapAtStart / 2), RADouble.NewAbs(gapAtEnd / 2));
+						int countM1 = Math.Min(skipFrequency, lastIdx - i);
 
-						if (null != polyline)
-							g.DrawLines(linePen, polyline);
+						if (countM1 >= 1)
+						{
+							var polyline = linepts.ShortenedBy(i, countM1+1, RADouble.NewAbs(gapAtStart / 2), RADouble.NewAbs(gapAtEnd / 2));
+
+							if (null != polyline)
+								g.DrawLines(linePen, polyline);
+						}
 					} // end for
 				}
 			}
