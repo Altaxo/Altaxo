@@ -415,5 +415,26 @@ namespace Altaxo.Drawing
 				return _deserializationRenameDictionaryKey;
 			}
 		}
+
+		public string GetListLevelName(ItemDefinitionLevel listLevel)
+		{
+			switch (listLevel)
+			{
+				case ItemDefinitionLevel.Builtin:
+					return "Builtin";
+
+				case ItemDefinitionLevel.Application:
+					return "Application";
+
+				case ItemDefinitionLevel.UserDefined:
+					return "User";
+
+				case ItemDefinitionLevel.Project:
+					return "Project";
+
+				default:
+					throw new ArgumentOutOfRangeException(nameof(listLevel), "list level is out of range");
+			}
+		}
 	}
 }

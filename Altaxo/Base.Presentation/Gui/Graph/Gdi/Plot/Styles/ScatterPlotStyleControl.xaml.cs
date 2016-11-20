@@ -50,6 +50,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		public event Action CreateNewSymbolSetFromOverrides;
 
+		public event Action SimilarSymbolSetChosen;
+
 		public ScatterPlotStyleControl()
 		{
 			InitializeComponent();
@@ -83,6 +85,20 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		public void InitializeSymbolShape(SelectableListNodeList list)
 		{
 			_cbSymbolShape.SelectedItem = list.FirstSelectedNode?.Tag as IScatterSymbol;
+		}
+
+		public SelectableListNodeList SimilarSymbols
+		{
+			set
+			{
+				GuiHelper.Initialize(_guiSimilarSymbolSets, value);
+			}
+		}
+
+		private void EhSimilarSymbolChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiSimilarSymbolSets);
+			SimilarSymbolSetChosen?.Invoke();
 		}
 
 		public bool IndependentColor

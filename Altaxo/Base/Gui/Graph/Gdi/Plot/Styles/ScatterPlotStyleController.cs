@@ -73,6 +73,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		SelectableListNodeList Inset { set; }
 
+		SelectableListNodeList SimilarSymbols { set; }
+
 		bool IndependentColor { get; set; }
 
 		bool IndependentSkipFrequency { get; set; }
@@ -109,6 +111,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		event Action CreateNewSymbolSetFromOverrides;
 
+		event Action SimilarSymbolSetChosen;
+
 		#endregion events
 	}
 
@@ -126,6 +130,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		private SelectableListNodeList _symbolInsetChoices;
 		private SelectableListNodeList _symbolFrameChoices;
+
+		/// <summary>List with symbol lists containing the same order of symbol shapes. The text here is the name of the symbol list (!),
+		/// whereas the tag is the symbol with the same shape as the currently choosen shape. Because of this, the content must change every time
+		/// the user choose another symbol</summary>
+		private SelectableListNodeList _similarSymbolChoices;
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -269,6 +278,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			_view.IndependentColorChanged += EhIndependentColorChanged;
 			_view.ScatterSymbolChanged += EhScatterSymbolChanged;
 			_view.CreateNewSymbolSetFromOverrides += EhCreateNewSymbolSetFromOverrides;
+			_view.SimilarSymbolSetChosen += EhSimilarShapeChosen;
 		}
 
 		protected override void DetachView()
@@ -276,6 +286,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			_view.IndependentColorChanged -= EhIndependentColorChanged;
 			_view.ScatterSymbolChanged += EhScatterSymbolChanged;
 			_view.CreateNewSymbolSetFromOverrides -= EhCreateNewSymbolSetFromOverrides;
+			_view.SimilarSymbolSetChosen -= EhSimilarShapeChosen;
 			base.DetachView();
 		}
 
@@ -325,6 +336,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			// InsetColor
 			if (!_view.OverrideInsetColor && symbol.Inset != null)
 				_view.OverriddenInsetColor = symbol.Inset.Color;
+
+			// Initialize the list of similar symbols
+			Initialize_SimilarSymbolList();
+			if (null != _view) _view.SimilarSymbols = _similarSymbolChoices;
 		}
 
 		private void EhCreateNewSymbolSetFromOverrides()
@@ -535,5 +550,75 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 					return newSymbols[originalItemIndex];
 			}
 		}
+
+		#region Similar symbols
+
+		private bool HasSameShapes(ScatterSymbolList l1, ScatterSymbolList l2)
+		{
+			if (l1.Count != l2.Count)
+				return false;
+
+			for (int i = 0; i < l1.Count; ++i)
+			{
+				if (l1[i].GetType() != l2[i].GetType())
+					return false;
+			}
+
+			return true;
+		}
+
+		private IScatterSymbol _lastSymbolForWhichSimilarSetsWhereSearched;
+
+		/// <summary>
+		/// Initializes the list with symbol sets that are similar (== have the same shapes in the same order) as the symbol set that
+		/// is currently chosen. The text of the SelectableListNode contains the name of the symbol list (!), whereas the tag
+		/// contains the symbol with the same shape, but from the other symbol set.
+		/// </summary>
+		private void Initialize_SimilarSymbolList()
+		{
+			var currentSymbol = _view?.ScatterSymbol ?? _doc.ScatterSymbol;
+
+			if (object.ReferenceEquals(currentSymbol, _lastSymbolForWhichSimilarSetsWhereSearched))
+				return; // then _similarSymbolChoices is already up-to-date
+			_lastSymbolForWhichSimilarSetsWhereSearched = currentSymbol;
+
+			_similarSymbolChoices = new SelectableListNodeList();
+			var currentList = ScatterSymbolListManager.Instance.GetParentList(currentSymbol);
+			if (null == currentList)
+				return; // return with an empty _similarSymbolChoices
+
+			var currentIndex = currentList.IndexOf(currentSymbol); // index of the current symbol in the symbol set
+
+			// we need a sorted dictionary in order to sort first by level, then by name.
+			var list = new List<Tuple<string, ScatterSymbolList>>();
+
+			foreach (var entry in ScatterSymbolListManager.Instance.GetEntryValues())
+			{
+				if (HasSameShapes(currentList, entry.List))
+				{
+					list.Add(new Tuple<string, ScatterSymbolList>(ScatterSymbolListManager.Instance.GetListLevelName(entry.Level) + "\\" + entry.List.Name, entry.List));
+				}
+			}
+
+			// now bring this into the SelectableListNodeList
+			foreach (var entry in list)
+			{
+				_similarSymbolChoices.Add(new SelectableListNode(
+					entry.Item1,
+					entry.Item2[currentIndex], object.ReferenceEquals(currentList, entry.Item2)));
+			}
+		}
+
+		private void EhSimilarShapeChosen()
+		{
+			var node = _similarSymbolChoices.FirstSelectedNode;
+			if (node != null)
+			{
+				var newSymbol = (IScatterSymbol)node.Tag;
+				_view.ScatterSymbol = newSymbol;
+			}
+		}
+
+		#endregion Similar symbols
 	} // end of class XYPlotScatterStyleController
 } // end of namespace
