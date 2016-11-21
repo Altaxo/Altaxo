@@ -593,12 +593,45 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		/// <summary>
+		/// Calculates the scatter symbol from the original scatter symbol and the overrides of frame and inset.
+		/// </summary>
+		/// <returns></returns>
+		private IScatterSymbol CalculateOverriddenScatterSymbol()
+		{
+			if (_scatterSymbol is NoSymbol)
+			{
+				return _scatterSymbol;
+			}
+
+			var scatterSymbol = _scatterSymbol;
+
+			if (_overrideFrame)
+			{
+				var newFrame = _overriddenFrame;
+				if (newFrame != null && scatterSymbol.Frame != null && newFrame.Color != scatterSymbol.Frame.Color)
+					newFrame = newFrame.WithColor(scatterSymbol.Frame.Color);
+				scatterSymbol = scatterSymbol.WithFrame(newFrame);
+			}
+
+			if (_overrideInset)
+			{
+				var newInset = _overriddenInset;
+				if (newInset != null && scatterSymbol.Inset != null && newInset.Color != scatterSymbol.Inset.Color)
+					newInset = newInset.WithColor(scatterSymbol.Inset.Color);
+				scatterSymbol = scatterSymbol.WithInset(newInset);
+			}
+
+			return scatterSymbol;
+		}
+
+		/// <summary>
 		/// Calculates the paths and stores them into a structure given by the argument <paramref name="cachedPathData"/>.
 		/// </summary>
+		/// <param name="scatterSymbol">ScatterSymbol, already processed via <see cref="CalculateOverriddenScatterSymbol"/></param>
 		/// <param name="symbolSize">The size of the symbol for which to calculate the paths.</param>
 		/// <param name="cachedPathData">The cached path data.</param>
 		/// <returns>True if new paths have been calculated; false if the previously cached data could be used.</returns>
-		private bool CalculatePaths(double symbolSize, ref CachedPathData cachedPathData)
+		private bool CalculatePaths(IScatterSymbol scatterSymbol, double symbolSize, ref CachedPathData cachedPathData)
 		{
 			if (symbolSize == cachedPathData.SymbolSize)
 				return false; // we assume that the structure already contains valid data.
@@ -606,7 +639,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			cachedPathData.SymbolSize = symbolSize;
 			cachedPathData.FillPath = cachedPathData.FramePath = cachedPathData.InsetPath = null;
 
-			if (_scatterSymbol is NoSymbol)
+			if (scatterSymbol is NoSymbol)
 			{
 				return true;
 			}
@@ -620,7 +653,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				overrideRelativeStructureWidth = (_overrideStructureWidthFactor ?? 0) + (_overrideStructureWidthOffset ?? 0) / symbolSize;
 			}
-			_scatterSymbol.CalculatePolygons(overrideRelativeStructureWidth, out framePolygon, out insetPolygon, out fillPolygon);
+			scatterSymbol.CalculatePolygons(overrideRelativeStructureWidth, out framePolygon, out insetPolygon, out fillPolygon);
 
 			// calculate the path only once
 			if (null != insetPolygon)
@@ -647,7 +680,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return true;
 		}
 
-		private bool CalculateBrushes(NamedColor plotColor, CachedPathData cachedPathData, ref CachedBrushData cachedBrushData)
+		/// <summary>
+		/// Calculates the brushes.
+		/// </summary>
+		/// <param name="scatterSymbol">ScatterSymbol, already processed via <see cref="CalculateOverriddenScatterSymbol"/></param>
+		/// <param name="plotColor">The current plot color.</param>
+		/// <param name="cachedPathData">The cached path data.</param>
+		/// <param name="cachedBrushData">Cached brush data, which will be filled-in during this call..</param>
+		/// <returns>True if new cached brush data were calculated; false if the cached data were up-to-date.</returns>
+		private bool CalculateBrushes(IScatterSymbol scatterSymbol, NamedColor plotColor, CachedPathData cachedPathData, ref CachedBrushData cachedBrushData)
 		{
 			if (plotColor == cachedBrushData.PlotColor)
 				return false; // cached data valid and could be reused;
@@ -655,11 +696,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			cachedBrushData.Clear();
 			cachedBrushData.PlotColor = plotColor;
 
-			var plotColorInfluence = _overridePlotColorInfluence ?? _scatterSymbol.PlotColorInfluence;
+			var plotColorInfluence = _overridePlotColorInfluence ?? scatterSymbol.PlotColorInfluence;
 
 			if (null != cachedPathData.InsetPath)
 			{
-				var insetColor = _overrideInsetColor ?? _scatterSymbol.Inset.Color;
+				var insetColor = _overrideInsetColor ?? scatterSymbol.Inset.Color;
 				if (plotColorInfluence.HasFlag(PlotColorInfluence.InsetColorFull))
 					insetColor = plotColor;
 				else if (plotColorInfluence.HasFlag(PlotColorInfluence.InsetColorPreserveAlpha))
@@ -670,7 +711,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			if (null != cachedPathData.FillPath)
 			{
-				var fillColor = _overrideFillColor ?? _scatterSymbol.FillColor;
+				var fillColor = _overrideFillColor ?? scatterSymbol.FillColor;
 				if (plotColorInfluence.HasFlag(PlotColorInfluence.FillColorFull))
 					fillColor = plotColor;
 				else if (plotColorInfluence.HasFlag(PlotColorInfluence.FillColorPreserveAlpha))
@@ -681,7 +722,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			if (null != cachedPathData.FramePath)
 			{
-				var frameColor = _overrideFrameColor ?? _scatterSymbol.Frame.Color;
+				var frameColor = _overrideFrameColor ?? scatterSymbol.Frame.Color;
 				if (plotColorInfluence.HasFlag(PlotColorInfluence.FrameColorFull))
 					frameColor = plotColor;
 				else if (plotColorInfluence.HasFlag(PlotColorInfluence.FrameColorPreserveAlpha))
@@ -711,11 +752,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			float xpos = 0, ypos = 0;
 			float xdiff, ydiff;
 
+			// Calculate current scatterSymbol overridden with frame and inset
+			var scatterSymbol = CalculateOverriddenScatterSymbol();
+
 			if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size
 			{
 				// calculate the path only once
-				CalculatePaths(_symbolSize, ref cachedPathData);
-				CalculateBrushes(_color, cachedPathData, ref cachedBrushData);
+				CalculatePaths(scatterSymbol, _symbolSize, ref cachedPathData);
+				CalculateBrushes(scatterSymbol, _color, cachedPathData, ref cachedBrushData);
 
 				// save the graphics stat since we have to translate the origin
 				System.Drawing.Drawing2D.GraphicsState gs = g.Save();
@@ -742,8 +786,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			else // using a variable symbol size or variable symbol color
 			{
-				CalculatePaths(_symbolSize, ref cachedPathData);
-				CalculateBrushes(_color, cachedPathData, ref cachedBrushData);
+				CalculatePaths(scatterSymbol, _symbolSize, ref cachedPathData);
+				CalculateBrushes(scatterSymbol, _color, cachedPathData, ref cachedBrushData);
 
 				for (int r = 0; r < rangeList.Count; r++)
 				{
@@ -755,14 +799,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						if (null == _cachedColorForIndexFunction)
 						{
 							double customSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
-							CalculatePaths(customSymbolSize, ref cachedPathData);
+							CalculatePaths(scatterSymbol, customSymbolSize, ref cachedPathData);
 						}
 						else
 						{
 							double customSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
 							var customSymbolColor = _cachedColorForIndexFunction(j + offset);
-							CalculatePaths(customSymbolSize, ref cachedPathData);
-							CalculateBrushes(NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B), cachedPathData, ref cachedBrushData);
+							CalculatePaths(scatterSymbol, customSymbolSize, ref cachedPathData);
+							CalculateBrushes(scatterSymbol, NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B), cachedPathData, ref cachedBrushData);
 						}
 
 						xdiff = ptArray[j].X - xpos;
@@ -794,9 +838,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			var cachedPathData = new CachedPathData();
 			var cachedBrushData = new CachedBrushData();
-
-			CalculatePaths(_symbolSize, ref cachedPathData);
-			CalculateBrushes(_color, cachedPathData, ref cachedBrushData);
+			var scatterSymbol = CalculateOverriddenScatterSymbol();
+			CalculatePaths(scatterSymbol, _symbolSize, ref cachedPathData);
+			CalculateBrushes(scatterSymbol, _color, cachedPathData, ref cachedBrushData);
 
 			GraphicsState gs = g.Save();
 			g.TranslateTransform(bounds.X + 0.5f * bounds.Width, bounds.Y + 0.5f * bounds.Height);
