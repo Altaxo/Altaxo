@@ -572,14 +572,16 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		/// This plots a label plot into the provided layer.
 		/// </summary>
 		/// <param name="layer">The layer to plot into.</param>
+		/// <param name="table">The table of PLS output data.</param>
 		/// <param name="xcol">The x column.</param>
 		/// <param name="ycol">The y column.</param>
 		/// <param name="labelcol">The label column.</param>
-		public static void PlotOnlyLabel(XYPlotLayer layer, Altaxo.Data.DataColumn xcol, Altaxo.Data.DataColumn ycol, Altaxo.Data.DataColumn labelcol)
+		public static void PlotOnlyLabel(XYPlotLayer layer, Altaxo.Data.DataTable table, Altaxo.Data.DataColumn xcol, Altaxo.Data.DataColumn ycol, Altaxo.Data.DataColumn labelcol)
 		{
 			var context = layer.GetPropertyContext();
 
-			XYColumnPlotData pa = new XYColumnPlotData(xcol, ycol);
+			var groupNumber = table.DataColumns.GetColumnGroup(ycol);
+			XYColumnPlotData pa = new XYColumnPlotData(table, groupNumber, xcol, ycol);
 
 			G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Empty, layer.GetPropertyContext());
 			LabelPlotStyle labelStyle = new LabelPlotStyle(labelcol, context);
@@ -607,7 +609,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				GetAnalysis(table).CalculateYResidual(table, whichY, numberOfFactors);
 			}
 
-			PlotOnlyLabel(layer, table[yactcolname], table[yrescolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
+			PlotOnlyLabel(layer, table, table[yactcolname], table[yrescolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
 
 			layer.DefaultXAxisTitleString = string.Format("Y original{0}", whichY);
 			layer.DefaultYAxisTitleString = string.Format("Y residual{0} (#factors:{1})", whichY, numberOfFactors);
@@ -631,7 +633,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				GetAnalysis(table).CalculateCrossPredictedAndResidual(table, whichY, numberOfFactors, false, true, false);
 			}
 
-			PlotOnlyLabel(layer, table[yactcolname], table[yrescolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
+			PlotOnlyLabel(layer, table, table[yactcolname], table[yrescolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
 
 			layer.DefaultXAxisTitleString = string.Format("Y original{0}", whichY);
 			layer.DefaultYAxisTitleString = string.Format("Y cross residual{0} (#factors:{1})", whichY, numberOfFactors);
@@ -699,7 +701,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				GetAnalysis(table).CalculateXResidual(table, whichY, numberOfFactors);
 			}
 
-			PlotOnlyLabel(layer, table[yactcolname], table[xresidualcolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
+			PlotOnlyLabel(layer, table, table[yactcolname], table[xresidualcolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
 
 			layer.DefaultXAxisTitleString = string.Format("Y original{0}", whichY);
 			layer.DefaultYAxisTitleString = string.Format("X residual{0} (#factors:{1})", whichY, numberOfFactors);
@@ -722,7 +724,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				GetAnalysis(table).CalculateCrossPredictedAndResidual(table, whichY, numberOfFactors, false, false, true);
 			}
 
-			PlotOnlyLabel(layer, table[yactcolname], table[xresidualcolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
+			PlotOnlyLabel(layer, table, table[yactcolname], table[xresidualcolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
 
 			layer.DefaultXAxisTitleString = string.Format("Y original{0}", whichY);
 			layer.DefaultYAxisTitleString = string.Format("X cross residual{0} (#factors:{1})", whichY, numberOfFactors);
@@ -744,7 +746,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				GetAnalysis(table).CalculateYPredicted(table, whichY, numberOfFactors);
 			}
 
-			PlotOnlyLabel(layer, table[yactcolname], table[ypredcolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
+			PlotOnlyLabel(layer, table, table[yactcolname], table[ypredcolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
 
 			layer.DefaultXAxisTitleString = string.Format("Y original{0}", whichY);
 			layer.DefaultYAxisTitleString = string.Format("Y predicted{0} (#factors:{1})", whichY, numberOfFactors);
@@ -766,7 +768,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				GetAnalysis(table).CalculateCrossPredictedAndResidual(table, whichY, numberOfFactors, true, false, false);
 			}
 
-			PlotOnlyLabel(layer, table[yactcolname], table[ypredcolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
+			PlotOnlyLabel(layer, table, table[yactcolname], table[ypredcolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
 
 			layer.DefaultXAxisTitleString = string.Format("Y original{0}", whichY);
 			layer.DefaultYAxisTitleString = string.Format("Y cross predicted{0} (#factors:{1})", whichY, numberOfFactors);
@@ -959,8 +961,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		{
 			Altaxo.Data.DataColumn ycol = table[WorksheetAnalysis.GetPRESSValue_ColumnName()];
 			Altaxo.Data.DataColumn xcol = table[WorksheetAnalysis.GetNumberOfFactors_ColumnName()];
+			var groupNumber = table.DataColumns.GetColumnGroup(ycol);
 
-			XYColumnPlotData pa = new XYColumnPlotData(xcol, ycol);
+			XYColumnPlotData pa = new XYColumnPlotData(table, groupNumber, xcol, ycol);
 			G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter, layer.GetPropertyContext());
 			layer.PlotItems.Add(new XYColumnPlotItem(pa, ps));
 
@@ -988,8 +991,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		{
 			Altaxo.Data.DataColumn ycol = table[WorksheetAnalysis.GetCrossPRESSValue_ColumnName()];
 			Altaxo.Data.DataColumn xcol = table[WorksheetAnalysis.GetNumberOfFactors_ColumnName()];
+			var groupNumber = table.DataColumns.GetColumnGroup(ycol);
 
-			XYColumnPlotData pa = new XYColumnPlotData(xcol, ycol);
+			XYColumnPlotData pa = new XYColumnPlotData(table, groupNumber, xcol, ycol);
 			G2DPlotStyleCollection ps = new G2DPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter, layer.GetPropertyContext());
 			layer.PlotItems.Add(new XYColumnPlotItem(pa, ps));
 
@@ -1036,7 +1040,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				GetAnalysis(table).CalculateXLeverage(table, preferredNumberOfFactors);
 			}
 
-			PlotOnlyLabel(layer, table[xcolname], table[ycolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
+			PlotOnlyLabel(layer, table, table[xcolname], table[ycolname], table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
 
 			layer.DefaultXAxisTitleString = string.Format("Measurement");
 			layer.DefaultYAxisTitleString = string.Format("Score leverage (#factors:{0})", preferredNumberOfFactors);

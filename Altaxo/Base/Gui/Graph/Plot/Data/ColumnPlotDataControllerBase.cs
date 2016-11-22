@@ -331,6 +331,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		private const int IndexGroupRowSelection = 0;
 		private const int IndexGroupDataColumns = 1;
+		private int IndexGroupOtherColumns = 2; // but can be a different number
 
 		protected List<GroupInfo> _columnGroup;
 
@@ -409,14 +410,17 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 				var positionDataColumns = _doc.GetAdditionallyUsedColumns().ToArray();
 
-				// find data table if not already known ...
-				foreach (var entry in positionDataColumns)
+				foreach (var groupEntry in positionDataColumns)
 				{
-					if (docDataTable == null)
+					// find data table if not already known ...
+					foreach (var entry in groupEntry.Item2)
 					{
-						docDataTable = DataTable.GetParentDataTableOf(entry.Item2 as DataColumn);
-						if (null != docDataTable && docDataTable.DataColumns.ContainsColumn((DataColumn)entry.Item2))
-							docGroupNumber = docDataTable.DataColumns.GetColumnGroup((DataColumn)entry.Item2);
+						if (docDataTable == null)
+						{
+							docDataTable = DataTable.GetParentDataTableOf(entry.Item2 as DataColumn);
+							if (null != docDataTable && docDataTable.DataColumns.ContainsColumn((DataColumn)entry.Item2))
+								docGroupNumber = docDataTable.DataColumns.GetColumnGroup((DataColumn)entry.Item2);
+						}
 					}
 				}
 
@@ -455,25 +459,28 @@ namespace Altaxo.Gui.Graph.Plot.Data
 					grpInfo.Columns.Add(columnInfo);
 				}
 
+				IndexGroupOtherColumns = IndexGroupDataColumns;
 				if (_columnGroup.Count <= IndexGroupDataColumns)
 				{
-					if (positionDataColumns.Length == 2)
-						_columnGroup.Add(new GroupInfo { GroupName = "#0: data (X-Y)" });
-					else if (positionDataColumns.Length == 3)
-						_columnGroup.Add(new GroupInfo { GroupName = "#0: data (X-Y-Z)" });
-					else
-						_columnGroup.Add(new GroupInfo { GroupName = "#0: position data" });
+					foreach (var groupEntry in positionDataColumns)
+					{
+						_columnGroup.Add(new GroupInfo { GroupName = groupEntry.Item1 });
+						++IndexGroupOtherColumns;
+					}
 				}
 
-				grpInfo = _columnGroup[IndexGroupDataColumns];
-				grpInfo.Columns.Clear();
-				foreach (var entry in positionDataColumns)
+				for (int i = 0; i < positionDataColumns.Length; ++i)
 				{
-					grpInfo.Columns.Add(new PlotColumnInformationInternal(entry.Item2, entry.Item3) { Label = entry.Item1, ColumnSetter = entry.Item4 });
-				}
-				foreach (var entry in grpInfo.Columns)
-				{
-					entry.Update(_doc.DataTable);
+					grpInfo = _columnGroup[IndexGroupDataColumns + i];
+					grpInfo.Columns.Clear();
+					foreach (var entry in positionDataColumns[i].Item2)
+					{
+						grpInfo.Columns.Add(new PlotColumnInformationInternal(entry.Item2, entry.Item3) { Label = entry.Item1, ColumnSetter = entry.Item4 });
+					}
+					foreach (var entry in grpInfo.Columns)
+					{
+						entry.Update(_doc.DataTable);
+					}
 				}
 
 				// Initialize tables

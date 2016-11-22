@@ -601,6 +601,7 @@
     <Compile Include="Drawing\StyleListManagerBase.cs" />
     <Compile Include="Drawing\StyleListManagerBaseForClasses.cs" />
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DDataSourceController.cs" />
+    <Compile Include="Gui\Analysis\NonLinearFitting\FitElementDataController.cs" />
     <Compile Include="Gui\Analysis\Statistics\HistogramCreationController.cs" />
     <Compile Include="Gui\Analysis\Statistics\LogarithmicBinningController.cs" />
     <Compile Include="Gui\Analysis\Statistics\LinearBinningController.cs" />

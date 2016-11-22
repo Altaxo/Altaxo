@@ -103,11 +103,14 @@ namespace Altaxo.Worksheet.Commands
 				else
 					xcol = null == table ? null : table.FindXColumnOf(ycol);
 
+				int groupNumber = table.GetColumnGroup(ycol);
+				var parentTable = DataTable.GetParentDataTableOf(table);
+
 				XYColumnPlotData pa;
 				if (null != xcol)
-					pa = new XYColumnPlotData(xcol, ycol);
+					pa = new XYColumnPlotData(parentTable, groupNumber, xcol, ycol);
 				else
-					pa = new XYColumnPlotData(new Altaxo.Data.IndexerColumn(), ycol);
+					pa = new XYColumnPlotData(parentTable, groupNumber, new Altaxo.Data.IndexerColumn(), ycol);
 
 				G2DPlotStyleCollection ps = templatePlotStyle != null ? (G2DPlotStyleCollection)templatePlotStyle.Clone() : new G2DPlotStyleCollection();
 

@@ -53,11 +53,12 @@ namespace Altaxo.Graph.Plot.Data
 		/// </summary>
 		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
 		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
+		IEnumerable<Tuple<string, // Name of the column group, e.g. "X-Y-Data"
 		IEnumerable<Tuple<
 	string, // Column label
 	IReadableColumn, // the column as it was at the time of this call
 	string, // the name of the column (last part of the column proxies document path)
 	Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
-	>> GetAdditionallyUsedColumns();
+	>>>> GetAdditionallyUsedColumns();
 	}
 }

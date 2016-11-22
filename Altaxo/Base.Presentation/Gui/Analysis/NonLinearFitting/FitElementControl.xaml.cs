@@ -44,11 +44,22 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		#region Members
 
 		private const int idxVariablesColumn = 0;
+
+		/// <summary>In this column and the next are located the blue circles and the buttons to choose the error scaling</summary>
 		private const int idxErrorFuncColumn = 1;
+
 		private const int idxRectLeftColumn = 2;
+
+		/// <summary>Holds the variable names on the fit function side. Spans to the middle of the fit function button.</summary>
 		private const int idxVariablesNameColumn = 3;
+
+		/// <summary>Holds the paramenter names. Spans from the middle of the fit function button.</summary>
 		private const int idxParameterNameColumn = 4;
+
+		/// <summary>This column and the next holds the blue circles on the parameter side.</summary>
 		private const int idxParameterSymbolColumn = 5; // and 6
+
+		/// <summary>Holds the parameter names.</summary>
 		private const int idxParameterColumn = 7;
 
 		private FitElement _fitElement;
@@ -84,8 +95,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 
 			var colW = new GridLength(circleDiameter / 2);
-			_colL1.Width = colW;
-			_colL2.Width = colW;
+			_colL1.MinWidth = circleDiameter / 2;
+			_colL2.MinWidth = circleDiameter / 2;
 			_colR1.Width = colW;
 			_colR2.Width = colW;
 
@@ -142,92 +153,115 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			// external independent variable names
 			for (int i = 0; i < _numberOfX; ++i)
 			{
-				var item = new Button()
+				var item = new Label()
 				{
 					Content = GetTextShownForIndependentVariable(i),
 					Margin = leftButtonMargin,
-					Tag = i
+					Tag = i,
+					HorizontalAlignment = HorizontalAlignment.Right
 				};
 				item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
 				item.SetValue(Grid.RowProperty, i);
-				item.Click += new RoutedEventHandler(EhClickOnIndependentVariable);
 				_grid.Children.Add(item);
 			}
 
+			// Background for table, group number, Row selection and Button
+
+			{
+				var item = new Border() { Background = Brushes.Bisque };
+				item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
+				item.SetValue(Grid.RowProperty, _numberOfX);
+				item.SetValue(Grid.RowSpanProperty, 4);
+				_grid.Children.Add(item);
+			}
+
+			// Table name
+			{
+				var item = new Label()
+				{
+					Content = "Table: " + (_fitElement?.DataTable?.Name ?? "??Unknown??"),
+					Margin = leftButtonMargin
+				};
+				item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
+				item.SetValue(Grid.RowProperty, _numberOfX);
+				_grid.Children.Add(item);
+			}
+			// Group Number
+			{
+				var item = new Label()
+				{
+					Content = "GroupNumber: " + (_fitElement?.GroupNumber.ToString() ?? "??Unknown??"),
+					Margin = leftButtonMargin
+				};
+				item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
+				item.SetValue(Grid.RowProperty, _numberOfX + 1);
+				_grid.Children.Add(item);
+			}
 			// plot range
 			{
-				var item = new Button()
+				var item = new Label()
 				{
 					Content = GetTextShownForPlotRange(),
 					Margin = leftButtonMargin
 				};
 				item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
-				item.SetValue(Grid.RowProperty, _numberOfX);
-				item.Click += new RoutedEventHandler(EhClickOnPlotRange);
+				item.SetValue(Grid.RowProperty, _numberOfX + 2);
+				_grid.Children.Add(item);
+			}
+
+			// setup button
+			{
+				var item = new Button()
+				{
+					Content = "Setup variables/range",
+					Margin = new Thickness(4)
+				};
+				item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
+				item.SetValue(Grid.RowProperty, _numberOfX + 3);
+				item.Click += new RoutedEventHandler(EhSetupVariablesAndRange);
 				_grid.Children.Add(item);
 			}
 
 			// internal dependent variable names
 			for (int i = 0; i < _numberOfY; ++i)
 			{
-				var item = new TextBlock()
-				{
-					Text = null != _fitElement.FitFunction && i < _fitElement.FitFunction.NumberOfDependentVariables ? _fitElement.FitFunction.DependentVariableName(i) : string.Empty,
-					Margin = standardLeftInnerLabelMargin,
-					HorizontalAlignment = HorizontalAlignment.Left,
-					VerticalAlignment = VerticalAlignment.Center
-				};
+				string name = null != _fitElement.FitFunction && i < _fitElement.FitFunction.NumberOfDependentVariables ? _fitElement.FitFunction.DependentVariableName(i) : string.Empty;
+				var item = new TextBlock() { Text = name };
+				item.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+				item.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+				item.Margin = standardLeftInnerLabelMargin;
 				item.SetValue(Grid.ColumnProperty, idxVariablesNameColumn);
 				item.SetValue(Grid.RowProperty, _totalSlots - _numberOfY + i);
 				_grid.Children.Add(item);
 
-				var circle = new Ellipse()
+				var errorScaleButton = new Button()
 				{
-					Stroke = Brushes.Blue,
-					StrokeThickness = circleThickness,
-					Width = circleDiameter,
-					Height = circleDiameter,
+					Content = GetTextShownForErrorEvaluation(i),
+					Padding = new Thickness(0),
 					HorizontalAlignment = HorizontalAlignment.Center,
-					VerticalAlignment = VerticalAlignment.Center
+					VerticalAlignment = VerticalAlignment.Center,
+					Tag = i
 				};
-				circle.SetValue(Grid.ColumnProperty, 1);
-				circle.SetValue(Grid.ColumnSpanProperty, 2);
-				circle.SetValue(Grid.RowProperty, _totalSlots - _numberOfY + i);
-				_grid.Children.Add(circle);
+				errorScaleButton.Click += new RoutedEventHandler(EhClickOnErrorFunction);
+				errorScaleButton.SetValue(Grid.ColumnProperty, 1);
+				errorScaleButton.SetValue(Grid.ColumnSpanProperty, 2);
+				errorScaleButton.SetValue(Grid.RowProperty, _totalSlots - _numberOfY + i);
+				_grid.Children.Add(errorScaleButton);
 			}
 
 			// external dependent variable names
 			for (int i = 0; i < _numberOfY; ++i)
 			{
-				var panel = new StackPanel { Orientation = System.Windows.Controls.Orientation.Horizontal };
-				panel.SetValue(Grid.ColumnProperty, idxVariablesColumn);
-				panel.SetValue(Grid.ColumnSpanProperty, 1);
-				panel.SetValue(Grid.RowProperty, _totalSlots - _numberOfY + i);
-
-				var item = new Button()
+				var item = new Label()
 				{
 					Content = GetTextShownForDependentVariable(i),
 					Margin = leftButtonMargin,
-					Tag = i
+					Tag = i,
+					HorizontalAlignment = HorizontalAlignment.Right
 				};
-				item.Click += new RoutedEventHandler(EhClickOnDependentVariable);
-				item.ContextMenu = new ContextMenu();
-				var menuItem = new MenuItem { Header = "Remove", Tag = item };
-				menuItem.Click += EhRemoveDependentVariable;
-				item.ContextMenu.Items.Add(menuItem);
-				panel.Children.Add(item);
-
-				item = new Button()
-				{
-					Content = GetTextShownForErrorEvaluation(i),
-					Padding = new Thickness(0),
-					Margin = leftButtonMargin,
-					Tag = i
-				};
-				item.Click += new RoutedEventHandler(EhClickOnErrorFunction);
-				panel.Children.Add(item);
-
-				_grid.Children.Add(panel);
+				item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
+				item.SetValue(Grid.RowProperty, _totalSlots - _numberOfY + i);
+				_grid.Children.Add(item);
 			}
 
 			// internal parameter names
@@ -276,6 +310,20 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
+		private string GetTextShownForIndependentVariable(int i)
+		{
+			INumericColumn col = _fitElement.IndependentVariables(i);
+			var colColl = DataColumnCollection.GetParentDataColumnCollectionOf(col as DataColumn);
+			return colColl?.GetColumnName(col as DataColumn) ?? col.FullName ?? "??Unassigned??";
+		}
+
+		private string GetTextShownForDependentVariable(int i)
+		{
+			INumericColumn col = _fitElement.DependentVariables(i);
+			var colColl = DataColumnCollection.GetParentDataColumnCollectionOf(col as DataColumn);
+			return colColl?.GetColumnName(col as DataColumn) ?? col.FullName ?? "??Unassigned??";
+		}
+
 		private string GetTextShownForParameter(int i)
 		{
 			return _fitElement.ParameterName(i);
@@ -287,33 +335,28 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			return name;
 		}
 
-		private string GetTextShownForDependentVariable(int i)
-		{
-			INumericColumn col = _fitElement.DependentVariables(i);
-			string name = col != null ? col.FullName : "Choose a column ..";
-			return name;
-		}
-
 		private string GetTextShownForPlotRange()
 		{
 			var plotRange = _fitElement.DataRowSelection;
 
-			if (plotRange is Altaxo.Data.Selections.RangeOfRowIndices)
+			if (plotRange is Altaxo.Data.Selections.AllRows)
+			{
+				return "All data rows selected";
+			}
+			else if (plotRange is Altaxo.Data.Selections.RangeOfRowIndices)
 			{
 				var range = plotRange as Altaxo.Data.Selections.RangeOfRowIndices;
-				return "Range: " + range.Start.ToString() + " to " + range.LastInclusive.ToString();
+				return "Row index range: " + range.Start.ToString() + " to " + range.LastInclusive.ToString();
+			}
+			else if (plotRange is Altaxo.Data.Selections.RangeOfNumericalValues)
+			{
+				var range = plotRange as Altaxo.Data.Selections.RangeOfNumericalValues;
+				return string.Format("Range of column {0} from {1} to {2}", range.ColumnName, range.LowerValue, range.UpperValue);
 			}
 			else
 			{
-				return "Non-trivial row indices selection";
+				return "Non-trivial data row selection";
 			}
-		}
-
-		private string GetTextShownForIndependentVariable(int i)
-		{
-			INumericColumn col = _fitElement.IndependentVariables(i);
-			string name = col != null ? col.FullName : "Choose a column ..";
-			return name;
 		}
 
 		private void EhClickOnFitFunction(object sender, RoutedEventArgs e)
@@ -322,11 +365,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			_controller.EhView_EditFitFunction();
 		}
 
-		private void EhClickOnPlotRange(object sender, RoutedEventArgs e)
+		private void EhSetupVariablesAndRange(object sender, RoutedEventArgs e)
 		{
-			_controller.EhView_ChooseFitRange();
-
-			((ContentControl)sender).Content = GetTextShownForPlotRange();
+			_controller.EhView_SetupVariablesAndRange();
 		}
 
 		private void EhClickOnParameter(object sender, RoutedEventArgs e)
@@ -341,28 +382,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			int idx = (int)((FrameworkElement)sender).Tag;
 			_controller.EhView_ChooseErrorFunction(idx);
 			((ContentControl)sender).Content = GetTextShownForErrorEvaluation(idx);
-		}
-
-		private void EhClickOnDependentVariable(object sender, RoutedEventArgs e)
-		{
-			int idx = (int)((FrameworkElement)sender).Tag;
-			_controller.EhView_ChooseDependentColumn(idx);
-			((ContentControl)sender).Content = GetTextShownForDependentVariable(idx);
-		}
-
-		private void EhRemoveDependentVariable(object sender, RoutedEventArgs e)
-		{
-			var fwe = (FrameworkElement)((FrameworkElement)sender).Tag; // the menuItem has the corresponding button as tag
-			int idx = (int)(fwe.Tag); // the button's tag contains the index
-			_controller.EhView_DeleteDependentVariable(idx);
-			((ContentControl)fwe).Content = GetTextShownForDependentVariable(idx);
-		}
-
-		private void EhClickOnIndependentVariable(object sender, RoutedEventArgs e)
-		{
-			int idx = (int)((FrameworkElement)sender).Tag;
-			_controller.EhView_ChooseIndependentColumn(idx);
-			((ContentControl)sender).Content = GetTextShownForIndependentVariable(idx);
 		}
 
 		#endregion Work
@@ -391,12 +410,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			_numberOfY = _fitElement.NumberOfDependentVariables;
 			_numberOfParameter = _fitElement.NumberOfParameters;
 
-			_totalSlots = Math.Max(_numberOfParameter, _numberOfX + _numberOfY + 1);
+			_totalSlots = Math.Max(_numberOfParameter, _numberOfX + _numberOfY + 4);
 			SetupElements();
 		}
 
 		public void Refresh()
 		{
+			SetupElements();
 		}
 
 		public bool FitFunctionSelected

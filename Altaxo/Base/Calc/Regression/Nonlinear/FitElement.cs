@@ -25,7 +25,9 @@
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
+using Altaxo.Graph.Plot.Data;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Altaxo.Calc.Regression.Nonlinear
@@ -37,6 +39,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	public class FitElement
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		IColumnPlotData,
 		ICloneable
 	{
 		/// <summary>Fitting function. Can be null if no fitting function was actually chosen.</summary>
@@ -384,6 +387,65 @@ namespace Altaxo.Calc.Regression.Nonlinear
 					ChildSetMember(ref _rangeOfRows, value);
 					EhSelfChanged(EventArgs.Empty);
 				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the columns used additionally by this style, e.g. the label column for a label plot style, or the error columns for an error bar plot style.
+		/// </summary>
+		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
+		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
+		public IEnumerable<Tuple<string, // Name of the column group, e.g. "X-Y-Data"
+		IEnumerable<Tuple<
+	string, // Column label
+	IReadableColumn, // the column as it was at the time of this call
+	string, // the name of the column (last part of the column proxies document path)
+	Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
+	>>>> GetAdditionallyUsedColumns()
+		{
+			yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>("Independent variables", GetIndependentVariables());
+			yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>("Dependent variables", GetDependentVariables());
+		}
+
+		private IEnumerable<Tuple<
+	string, // Column label
+	IReadableColumn, // the column as it was at the time of this call
+	string, // the name of the column (last part of the column proxies document path)
+	Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
+	>> GetIndependentVariables()
+		{
+			for (int i = 0; i < NumberOfIndependentVariables; ++i)
+			{
+				int k = i;
+
+				string nameOfVariable = null != this.FitFunction && i < this.FitFunction.NumberOfIndependentVariables ? this.FitFunction.IndependentVariableName(i) : string.Empty;
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+					nameOfVariable,
+					_independentVariables[k].Document,
+					_independentVariables[k]?.DocumentPath?.LastPartOrDefault,
+					(col, table) => { ChildSetMember(ref _independentVariables[k], NumericColumnProxyBase.FromColumn((INumericColumn)col)); DataTable = table; }
+					);
+			}
+		}
+
+		private IEnumerable<Tuple<
+	string, // Column label
+	IReadableColumn, // the column as it was at the time of this call
+	string, // the name of the column (last part of the column proxies document path)
+	Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
+	>> GetDependentVariables()
+		{
+			for (int i = 0; i < NumberOfDependentVariables; ++i)
+			{
+				int k = i;
+
+				string nameOfVariable = null != this.FitFunction && k < this.FitFunction.NumberOfDependentVariables ? this.FitFunction.DependentVariableName(k) : string.Empty;
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+					nameOfVariable,
+					_dependentVariables[k].Document,
+					_dependentVariables[k]?.DocumentPath?.LastPartOrDefault,
+					(col, table) => { ChildSetMember(ref _dependentVariables[k], NumericColumnProxyBase.FromColumn((INumericColumn)col)); DataTable = table; }
+					);
 			}
 		}
 

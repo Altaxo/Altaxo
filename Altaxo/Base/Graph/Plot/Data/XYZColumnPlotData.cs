@@ -508,16 +508,32 @@ namespace Altaxo.Graph.Plot.Data
 		/// </summary>
 		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
 		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
-		public IEnumerable<Tuple<
+		public IEnumerable<Tuple<string, // Name of the column group, e.g. "X-Y-Data"
+		IEnumerable<Tuple<
+	string, // Column label
+	IReadableColumn, // the column as it was at the time of this call
+	string, // the name of the column (last part of the column proxies document path)
+	Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
+	>>>> GetAdditionallyUsedColumns()
+		{
+			yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>("#0: X-Y-Z-Data", GetColumns());
+		}
+
+		/// <summary>
+		/// Gets the columns used additionally by this style, e.g. the label column for a label plot style, or the error columns for an error bar plot style.
+		/// </summary>
+		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
+		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
+		private IEnumerable<Tuple<
 			string, // Column label
 			IReadableColumn, // the column as it was at the time of this call
 			string, // the name of the column (last part of the column proxies document path)
 			Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
-			>> GetAdditionallyUsedColumns()
+			>> GetColumns()
 		{
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(nameof(XColumn), XColumn, _xColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { XColumn = col; DataTable = table; });
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(nameof(YColumn), YColumn, _yColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { YColumn = col; DataTable = table; });
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(nameof(ZColumn), ZColumn, _zColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { ZColumn = col; DataTable = table; });
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>("X", XColumn, _xColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { XColumn = col; DataTable = table; });
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>("Y", YColumn, _yColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { YColumn = col; DataTable = table; });
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>("Z", ZColumn, _zColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { ZColumn = col; DataTable = table; });
 		}
 
 		/// <summary>

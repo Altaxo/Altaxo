@@ -379,6 +379,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 				DataColumn ycol = tab[columnname];
 				if (null != ycol)
 				{
+					int groupNumber = tab.DataColumns.GetColumnGroup(ycol);
 					DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
 
 					// search in our document for the first plot item that is an XYColumnPlotItem,
@@ -406,9 +407,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
 					XYColumnPlotItem result;
 					if (null == xcol)
-						result = new XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(), ycol), templatePlotStyle);
+						result = new XYColumnPlotItem(new XYColumnPlotData(tab, groupNumber, new Altaxo.Data.IndexerColumn(), ycol), templatePlotStyle);
 					else
-						result = new XYColumnPlotItem(new XYColumnPlotData(xcol, ycol), templatePlotStyle);
+						result = new XYColumnPlotItem(new XYColumnPlotData(tab, groupNumber, xcol, ycol), templatePlotStyle);
 
 					return result;
 				}
@@ -425,6 +426,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 			if (null == tab)
 				return null;
 
+			var groupNumber = tab.DataColumns.GetColumnGroup(ycol);
 			DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
 
 			// search in our document for the first plot item that is an XYColumnPlotItem,
@@ -452,9 +454,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
 			XYColumnPlotItem result;
 			if (null == xcol)
-				result = new XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(), ycol), templatePlotStyle);
+				result = new XYColumnPlotItem(new XYColumnPlotData(tab, groupNumber, new Altaxo.Data.IndexerColumn(), ycol), templatePlotStyle);
 			else
-				result = new XYColumnPlotItem(new XYColumnPlotData(xcol, ycol), templatePlotStyle);
+				result = new XYColumnPlotItem(new XYColumnPlotData(tab, groupNumber, xcol, ycol), templatePlotStyle);
 
 			return result;
 		}

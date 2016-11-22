@@ -46,19 +46,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 	public interface IFitElementViewEventSink
 	{
-		void EhView_ChooseIndependentColumn(int idx);
-
-		void EhView_ChooseDependentColumn(int idx);
-
 		void EhView_ChooseErrorFunction(int idx);
 
 		void EhView_ChooseFitFunction();
 
 		void EhView_ChooseExternalParameter(int idx);
 
-		void EhView_ChooseFitRange();
-
-		void EhView_DeleteDependentVariable(int idx);
+		void EhView_SetupVariablesAndRange();
 
 		void EhView_EditFitFunction();
 	}
@@ -106,64 +100,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		#region IFitElementController
 
-		public void EhView_ChooseFitRange()
+		public void EhView_SetupVariablesAndRange()
 		{
-			var totalRows = _doc.GetMaximumRowIndexExclusiveFromDataColumns();
+			var controller = new FitElementDataController();
+			controller.InitializeDocument(_doc);
 
-			object rangeObj;
-			int firstIncl, lastIncl;
-			if (_doc.DataRowSelection.GetSelectedRowIndicesFromTo(0, totalRows, _doc.DataTable?.DataColumns, totalRows).TryGetFirstAndLast(out firstIncl, out lastIncl))
-				rangeObj = ContiguousNonNegativeIntegerRange.NewFromStartAndLast(firstIncl, lastIncl);
-			else
-				rangeObj = ContiguousNonNegativeIntegerRange.NewFromStartAndCount(0, int.MaxValue);
+			Current.Gui.ShowDialog(controller, "Fit element variables", true);
 
-			if (Current.Gui.ShowDialog(ref rangeObj, "Choose fit range"))
-			{
-				var range = (ContiguousNonNegativeIntegerRange)rangeObj;
-				_doc.DataRowSelection = Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(range.Start, range.Count);
-				_view.Refresh();
-			}
-		}
-
-		public void EhView_ChooseIndependentColumn(int idx)
-		{
-			SingleColumnChoice choice = new SingleColumnChoice();
-			choice.SelectedColumn = _doc.IndependentVariables(idx) as DataColumn;
-			object choiceAsObject = choice;
-			if (Current.Gui.ShowDialog(ref choiceAsObject, "Select independent column"))
-			{
-				choice = (SingleColumnChoice)choiceAsObject;
-
-				if (choice.SelectedColumn is INumericColumn)
-				{
-					_doc.SetIndependentVariable(idx, (INumericColumn)choice.SelectedColumn);
-				}
-				else
-				{
-					Current.Gui.ErrorMessageBox("Choosen column is not numeric!");
-				}
-			}
-			_view.Refresh();
-		}
-
-		public void EhView_ChooseDependentColumn(int idx)
-		{
-			SingleColumnChoice choice = new SingleColumnChoice();
-			choice.SelectedColumn = _doc.DependentVariables(idx) as DataColumn;
-			object choiceAsObject = choice;
-			if (Current.Gui.ShowDialog(ref choiceAsObject, "Select dependent column"))
-			{
-				choice = (SingleColumnChoice)choiceAsObject;
-
-				if (choice.SelectedColumn is INumericColumn)
-				{
-					_doc.SetDependentVariable(idx, (INumericColumn)choice.SelectedColumn);
-				}
-				else
-				{
-					Current.Gui.ErrorMessageBox("Choosen column is not numeric!");
-				}
-			}
 			_view.Refresh();
 		}
 
@@ -184,12 +127,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 					Current.Gui.ErrorMessageBox("Choosen parameter name was empty!");
 				}
 			}
-			_view.Refresh();
-		}
-
-		public void EhView_DeleteDependentVariable(int idx)
-		{
-			_doc.SetDependentVariable(idx, null);
 			_view.Refresh();
 		}
 

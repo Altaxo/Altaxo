@@ -125,7 +125,7 @@ namespace Altaxo.Graph.Plot.Data
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				bool bNeedsCallback = false;
-				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
+				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData(info);
 
 				object xColumn = info.GetValue("XColumn", s);
 				object yColumn = info.GetValue("YColumn", s);
@@ -219,7 +219,7 @@ namespace Altaxo.Graph.Plot.Data
 
 			public override object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
+				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData(info);
 				base.Deserialize(s, info, parent);
 
 				bool bNeedsCallback = false;
@@ -297,7 +297,7 @@ namespace Altaxo.Graph.Plot.Data
 
 			public virtual XYColumnPlotData SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
+				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData(info);
 
 				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
 				s._yColumn = (IReadableColumnProxy)info.GetValue("YColumn", s);
@@ -358,7 +358,7 @@ namespace Altaxo.Graph.Plot.Data
 
 			public virtual XYColumnPlotData SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData();
+				XYColumnPlotData s = null != o ? (XYColumnPlotData)o : new XYColumnPlotData(info);
 
 				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
 				if (null != s._xColumn) s._xColumn.ParentObject = s;
@@ -491,6 +491,16 @@ namespace Altaxo.Graph.Plot.Data
 
 		#endregion Serialization
 
+		public XYColumnPlotData(Altaxo.Data.DataTable dataTable, int groupNumber, Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn)
+		{
+			DataTable = dataTable;
+			ChildSetMember(ref _dataRowSelection, new AllRows());
+			_groupNumber = groupNumber;
+			XColumn = xColumn;
+			YColumn = yColumn;
+		}
+
+		/*
 		public XYColumnPlotData(Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn)
 		{
 			XColumn = xColumn;
@@ -502,6 +512,7 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			ChildSetMember(ref _dataRowSelection, new AllRows());
 		}
+		*/
 
 		/// <summary>
 		/// Copy constructor.
@@ -566,14 +577,45 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			get
 			{
-				return _dataTable?.Document;
+				var result = _dataTable?.Document;
+
+				if (null != result)
+					return result;
+
+				var col = YColumn as DataColumn;
+				if (null != col)
+				{
+					result = DataTable.GetParentDataTableOf(col);
+					if (null != result)
+					{
+						var dcoll = DataColumnCollection.GetParentDataColumnCollectionOf(col);
+						this._groupNumber = dcoll.GetColumnGroup(col);
+						this.DataTable = result;
+						return result;
+					}
+				}
+
+				col = XColumn as DataColumn;
+				if (null != col)
+				{
+					result = DataTable.GetParentDataTableOf(col);
+					if (null != result)
+					{
+						var dcoll = DataColumnCollection.GetParentDataColumnCollectionOf(col);
+						this._groupNumber = dcoll.GetColumnGroup(col);
+						this.DataTable = result;
+						return result;
+					}
+				}
+
+				return result;
 			}
 			set
 			{
 				if (null == value)
 					throw new ArgumentNullException(nameof(value));
 
-				if (object.ReferenceEquals(DataTable, value))
+				if (object.ReferenceEquals(_dataTable?.Document, value))
 					return;
 
 				if (ChildSetMember(ref _dataTable, new DataTableProxy(value)))
@@ -775,15 +817,31 @@ namespace Altaxo.Graph.Plot.Data
 		/// </summary>
 		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
 		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
-		public IEnumerable<Tuple<
+		public IEnumerable<Tuple<string, // Name of the column group, e.g. "X-Y-Data"
+		IEnumerable<Tuple<
+	string, // Column label
+	IReadableColumn, // the column as it was at the time of this call
+	string, // the name of the column (last part of the column proxies document path)
+	Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
+	>>>> GetAdditionallyUsedColumns()
+		{
+			yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>("#0: X-Y-Data", GetColumns());
+		}
+
+		/// <summary>
+		/// Gets the columns used additionally by this style, e.g. the label column for a label plot style, or the error columns for an error bar plot style.
+		/// </summary>
+		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
+		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
+		private IEnumerable<Tuple<
 			string, // Column label
 			IReadableColumn, // the column as it was at the time of this call
 			string, // the name of the column (last part of the column proxies document path)
 			Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
-			>> GetAdditionallyUsedColumns()
+			>> GetColumns()
 		{
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(nameof(XColumn), XColumn, _xColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { XColumn = col; DataTable = table; });
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(nameof(YColumn), YColumn, _yColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { YColumn = col; DataTable = table; });
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>("X", XColumn, _xColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { XColumn = col; DataTable = table; });
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>("Y", YColumn, _yColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { YColumn = col; DataTable = table; });
 		}
 
 		public Altaxo.Data.IReadableColumn XColumn
