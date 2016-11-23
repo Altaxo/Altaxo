@@ -86,7 +86,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 		/// <summary>Controller for the <see cref="PlotGroupStyleCollection"/> that is associated with the parent of this plot item.</summary>
 		private PlotGroupCollectionController _plotGroupController;
 
-		private IPlotColumnDataController _dataController;
+		private IMVCANController _dataController; // IPlotColumnDataController
 		private IXYPlotStyleCollectionController _styleCollectionController;
 		private List<IMVCANController> _styleControllerList = new List<IMVCANController>();
 
@@ -160,7 +160,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 				_styleCollectionController.StyleEditRequested += new Action<int>(_styleCollectionController_StyleEditRequested);
 
 				// Initialize the data controller
-				_dataController = (IPlotColumnDataController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataObject, _doc }, typeof(IPlotColumnDataController), UseDocument.Directly);
+				_dataController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataObject, _doc }, typeof(IMVCANController), UseDocument.Directly);
 
 				// Initialize the style controller list
 				InitializeStyleControllerList();
@@ -280,7 +280,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 				}
 			}
 
-			_dataController.SetAdditionalPlotColumns(GetAdditionalColumns()); // update list in case it has changed
+			if(_dataController is IPlotColumnDataController)
+			((IPlotColumnDataController)_dataController).SetAdditionalPlotColumns(GetAdditionalColumns()); // update list in case it has changed
 		}
 
 		/// <summary>
@@ -313,7 +314,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 				_styleControllerList.Add(ctrl);
 			}
 
-			_dataController.SetAdditionalPlotColumns(GetAdditionalColumns());
+			if(_dataController is IPlotColumnDataController)
+			((IPlotColumnDataController)_dataController).SetAdditionalPlotColumns(GetAdditionalColumns());
 		}
 
 		private IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>> GetAdditionalColumns()

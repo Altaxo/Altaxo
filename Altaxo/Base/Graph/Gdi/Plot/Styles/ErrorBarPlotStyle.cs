@@ -106,7 +106,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// </summary>
 		private double _symbolGapFactor = 1.25;
 
-		private double _endCapSizeFactor = 1;
+		private double _endCapSizeFactor = 0.8;
 
 		private double _endCapSizeOffset;
 
@@ -114,7 +114,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// If true, the end cap is shown even if the line is not shown, because the line length is zero.
 		/// This can happen if the user defined gap is larger than the error.
 		/// </summary>
-		private bool _forceVisibilityOfEndCap;
+		private bool _forceVisibilityOfEndCap = true;
 
 		private double _lineWidth1Offset;
 		private double _lineWidth1Factor;
@@ -335,7 +335,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_lineWidth1Offset = penWidth;
 			_lineWidth1Factor = 0;
 
-			this._pen = new PenX(color, penWidth) { ParentObject = this };
+			this._pen = new PenX(color, penWidth) { EndCap = new Altaxo.Graph.Gdi.LineCaps.SymBarLineCap(), ParentObject = this };
 		}
 
 		public ErrorBarPlotStyle(ErrorBarPlotStyle from, bool copyWithDataReferences)
@@ -400,6 +400,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			if (null != _pen)
 				yield return new Main.DocumentNodeAndName(_pen, "Pen");
+
+			if (null != _commonErrorColumn)
+				yield return new Main.DocumentNodeAndName(_commonErrorColumn, "CommonErrorColumn");
 
 			if (null != _positiveErrorColumn)
 				yield return new Main.DocumentNodeAndName(_positiveErrorColumn, "PositiveErrorColumn");
@@ -1075,21 +1078,36 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						errorBarPath.Reset();
 						layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalNeg);
 						PointF[] shortenedPathPoints = null;
+						bool shortenedPathPointsCalculated = false;
 						if (_useSymbolGap)
 						{
 							double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
-							if (gap != 0)
+							if (gap > 0)
 							{
 								errorBarPath.Flatten();
 								var pathPoints = errorBarPath.PathPoints;
 								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
+								shortenedPathPointsCalculated = true;
+								if (null==shortenedPathPoints && _forceVisibilityOfEndCap && !(strokePen.EndCap is Altaxo.Graph.Gdi.LineCaps.FlatCap))
+								{
+									var totalLineLength = GdiExtensionMethods.TotalLineLength(pathPoints);
+									var shortTheLineBy = Math.Max(0, totalLineLength - 0.125*strokePen.Width);
+									shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(shortTheLineBy), RADouble.NewAbs(0));
+								}
 							}
 						}
 
-						if (null != shortenedPathPoints)
-							g.DrawLines(strokePen, shortenedPathPoints);
+						if (shortenedPathPointsCalculated)
+						{
+							if (null != shortenedPathPoints)
+							{
+								g.DrawLines(strokePen, shortenedPathPoints);
+							}
+						}
 						else
+						{
 							g.DrawPath(strokePen, errorBarPath);
+						}
 					}
 
 					if (logicalPosValid)
@@ -1097,22 +1115,39 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						errorBarPath.Reset();
 						layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalPos);
 						PointF[] shortenedPathPoints = null;
+						bool shortenedPathPointsCalculated = false;
+
 
 						if (_useSymbolGap)
 						{
 							double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
-							if (gap != 0)
+							if (gap > 0)
 							{
 								errorBarPath.Flatten();
 								var pathPoints = errorBarPath.PathPoints;
 								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
+								shortenedPathPointsCalculated = true;
+								if (null == shortenedPathPoints && _forceVisibilityOfEndCap && !(strokePen.EndCap is Altaxo.Graph.Gdi.LineCaps.FlatCap))
+								{
+									var totalLineLength = GdiExtensionMethods.TotalLineLength(pathPoints);
+									var shortTheLineBy = Math.Max(0, totalLineLength - 0.125 * strokePen.Width);
+									shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(shortTheLineBy), RADouble.NewAbs(0));
+								}
+
 							}
 						}
 
-						if (null != shortenedPathPoints)
-							g.DrawLines(strokePen, shortenedPathPoints);
+						if (shortenedPathPointsCalculated)
+						{
+							if (null != shortenedPathPoints)
+							{
+								g.DrawLines(strokePen, shortenedPathPoints);
+							}
+						}
 						else
+						{
 							g.DrawPath(strokePen, errorBarPath);
+						}
 					}
 				}
 
