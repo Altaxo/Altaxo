@@ -51,7 +51,14 @@ namespace Altaxo.Main
 		/// </summary>
 		private Dictionary<AbsoluteDocumentPath, AbsoluteDocumentPath> _itemRelocationDictionary = new Dictionary<AbsoluteDocumentPath, AbsoluteDocumentPath>();
 
-		private List<KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>> _pathPartReplacementDictionary = new List<KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>>();
+		/// <summary>
+		/// This are two lists: the first list contains part replacement lists on different levels.
+		/// Thus the first item at index 0 in this list are the immediate replacements from the original path to the replaced path.
+		/// The second item at index 1 in the list are the replacements, where we have both the original path and the replace path without the topmost folder level.
+		/// The following items remove successivly the topmost folder level from both original path and replacement path
+		/// 
+		/// </summary>
+		private List<List<KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>>> _pathPartReplacementDictionary = new List<List<KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>>>();
 
 		/// <summary>
 		/// Visits a <see cref="DocNodeProxy"/> and applies the modifications to the document path of that proxy.
@@ -82,10 +89,13 @@ namespace Altaxo.Main
 			}
 
 			// the pathReplacementDictionary has 2nd priority
-			foreach (var entry in _pathPartReplacementDictionary)
+			foreach (var levelEntry in _pathPartReplacementDictionary)
 			{
-				if (proxy.ReplacePathParts(entry.Key, entry.Value, (IDocumentLeafNode)owner))
-					break;
+				foreach (var entry in levelEntry)
+				{
+					if (proxy.ReplacePathParts(entry.Key, entry.Value, (IDocumentLeafNode)owner))
+						return;
+				}
 			}
 		}
 
@@ -111,11 +121,31 @@ namespace Altaxo.Main
 			if (null == newItemNamePart)
 				throw new NullReferenceException("newItemPart");
 
-			foreach (var itemType in AltaxoDocument.ProjectItemTypes)
+			int level = 0;
+			while (originalItemNamePart != newItemNamePart)
 			{
-				var orgPath = AltaxoDocument.GetRootPathForProjectItemType(itemType).Append(originalItemNamePart);
-				var newPath = AltaxoDocument.GetRootPathForProjectItemType(itemType).Append(newItemNamePart);
-				_pathPartReplacementDictionary.Add(new KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>(orgPath, newPath));
+				if (!(level < _pathPartReplacementDictionary.Count))
+				{
+					_pathPartReplacementDictionary.Add(new List<KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>>());
+				}
+
+				foreach (var itemType in AltaxoDocument.ProjectItemTypes)
+				{
+					var orgPath = AltaxoDocument.GetRootPathForProjectItemType(itemType).Append(originalItemNamePart);
+					var newPath = AltaxoDocument.GetRootPathForProjectItemType(itemType).Append(newItemNamePart);
+					_pathPartReplacementDictionary[level].Add(new KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>(orgPath, newPath));
+				}
+
+				if (string.IsNullOrEmpty(originalItemNamePart) || string.IsNullOrEmpty(newItemNamePart))
+				{
+					break;
+				}
+				else // strip the topmost folder of both original and replacement
+				{
+					originalItemNamePart = ProjectFolder.GetFoldersParentFolder(originalItemNamePart);
+					newItemNamePart = ProjectFolder.GetFoldersParentFolder(newItemNamePart);
+					++level;
+				}
 			}
 		}
 	}
