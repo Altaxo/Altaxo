@@ -55,10 +55,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		private IRowSelection _rangeOfRows;
 
 		/// <summary>Array of columns that are used as data source for the independent variables.</summary>
-		private INumericColumnProxy[] _independentVariables;
+		private IReadableColumnProxy[] _independentVariables;
 
 		/// <summary>Array of columns that are used as data source for the dependent variables.</summary>
-		private INumericColumnProxy[] _dependentVariables;
+		private IReadableColumnProxy[] _dependentVariables;
 
 		/// <summary>Holds for each dependent variable the kind of error evaluation (i.e. the kind of weighing of the difference between current dependent values and the calculated value of the fitting function)</summary>
 		private IVarianceScaling[] _errorEvaluation;
@@ -107,19 +107,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				if (null != s._rangeOfRows) s._rangeOfRows.ParentObject = s;
 
 				int arraycount = info.OpenArray();
-				s._independentVariables = new INumericColumnProxy[arraycount];
+				s._independentVariables = new IReadableColumnProxy[arraycount];
 				for (int i = 0; i < arraycount; ++i)
 				{
-					s._independentVariables[i] = (INumericColumnProxy)info.GetValue("e", s);
+					s._independentVariables[i] = (IReadableColumnProxy)info.GetValue("e", s);
 					if (null != s._independentVariables[i]) s._independentVariables[i].ParentObject = s;
 				}
 				info.CloseArray(arraycount);
 
 				arraycount = info.OpenArray();
-				s._dependentVariables = new INumericColumnProxy[arraycount];
+				s._dependentVariables = new IReadableColumnProxy[arraycount];
 				for (int i = 0; i < arraycount; ++i)
 				{
-					s._dependentVariables[i] = (INumericColumnProxy)info.GetValue("e", s);
+					s._dependentVariables[i] = (IReadableColumnProxy)info.GetValue("e", s);
 					if (null != s._dependentVariables[i]) s._dependentVariables[i].ParentObject = s;
 				}
 				info.CloseArray(arraycount);
@@ -186,19 +186,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				if (null != s._rangeOfRows) s._rangeOfRows.ParentObject = s;
 
 				int arraycount = info.OpenArray();
-				s._independentVariables = new INumericColumnProxy[arraycount];
+				s._independentVariables = new IReadableColumnProxy[arraycount];
 				for (int i = 0; i < arraycount; ++i)
 				{
-					s._independentVariables[i] = (INumericColumnProxy)info.GetValue("e", s);
+					s._independentVariables[i] = (IReadableColumnProxy)info.GetValue("e", s);
 					if (null != s._independentVariables[i]) s._independentVariables[i].ParentObject = s;
 				}
 				info.CloseArray(arraycount);
 
 				arraycount = info.OpenArray();
-				s._dependentVariables = new INumericColumnProxy[arraycount];
+				s._dependentVariables = new IReadableColumnProxy[arraycount];
 				for (int i = 0; i < arraycount; ++i)
 				{
-					s._dependentVariables[i] = (INumericColumnProxy)info.GetValue("e", s);
+					s._dependentVariables[i] = (IReadableColumnProxy)info.GetValue("e", s);
 					if (null != s._dependentVariables[i]) s._dependentVariables[i].ParentObject = s;
 				}
 				info.CloseArray(arraycount);
@@ -228,9 +228,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		public FitElement()
 		{
-			_independentVariables = new INumericColumnProxy[0];
+			_independentVariables = new IReadableColumnProxy[0];
 
-			_dependentVariables = new INumericColumnProxy[0];
+			_dependentVariables = new IReadableColumnProxy[0];
 
 			_errorEvaluation = new IVarianceScaling[0];
 
@@ -249,18 +249,18 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			this._groupNumber = from._groupNumber;
 			ChildCloneToMember(ref _rangeOfRows, from._rangeOfRows);
 
-			_independentVariables = new INumericColumnProxy[from._independentVariables.Length];
+			_independentVariables = new IReadableColumnProxy[from._independentVariables.Length];
 			for (int i = 0; i < _independentVariables.Length; ++i)
 			{
 				if (from._independentVariables[i] != null)
-					_independentVariables[i] = (INumericColumnProxy)from._independentVariables[i].Clone();
+					_independentVariables[i] = (IReadableColumnProxy)from._independentVariables[i].Clone();
 			}
 
-			_dependentVariables = new INumericColumnProxy[from._dependentVariables.Length];
+			_dependentVariables = new IReadableColumnProxy[from._dependentVariables.Length];
 			for (int i = 0; i < _dependentVariables.Length; ++i)
 			{
 				if (from._dependentVariables[i] != null)
-					_dependentVariables[i] = (INumericColumnProxy)from._dependentVariables[i].Clone();
+					_dependentVariables[i] = (IReadableColumnProxy)from._dependentVariables[i].Clone();
 			}
 			_errorEvaluation = new IVarianceScaling[from._errorEvaluation.Length];
 			for (int i = 0; i < _errorEvaluation.Length; ++i)
@@ -273,17 +273,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			_parameterNameStart = from._parameterNameStart;
 		}
 
-		public FitElement(DataTable table, int groupNumber, IRowSelection rowSelection, INumericColumn xColumn, INumericColumn yColumn)
+		public FitElement(DataTable table, int groupNumber, IRowSelection rowSelection, IReadableColumn xColumn, IReadableColumn yColumn)
 		{
 			ChildSetMember(ref _dataTable, new DataTableProxy(table));
 			_groupNumber = groupNumber;
 			ChildCloneToMember(ref _rangeOfRows, rowSelection);
 
-			_independentVariables = new INumericColumnProxy[1];
-			_independentVariables[0] = NumericColumnProxyBase.FromColumn(xColumn);
+			_independentVariables = new IReadableColumnProxy[1];
+			_independentVariables[0] = ReadableColumnProxyBase.FromColumn(xColumn);
 
-			_dependentVariables = new INumericColumnProxy[1];
-			_dependentVariables[0] = NumericColumnProxyBase.FromColumn(yColumn);
+			_dependentVariables = new IReadableColumnProxy[1];
+			_dependentVariables[0] = ReadableColumnProxyBase.FromColumn(yColumn);
 
 			_errorEvaluation = new IVarianceScaling[1];
 			_errorEvaluation[0] = new ConstantVarianceScaling();
@@ -400,18 +400,18 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	string, // Column label
 	IReadableColumn, // the column as it was at the time of this call
 	string, // the name of the column (last part of the column proxies document path)
-	Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
+	Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller
 	>>>> GetAdditionallyUsedColumns()
 		{
-			yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>("Independent variables", GetIndependentVariables());
-			yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>("Dependent variables", GetDependentVariables());
+			yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>>>("Independent variables", GetIndependentVariables());
+			yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>>>("Dependent variables", GetDependentVariables());
 		}
 
 		private IEnumerable<Tuple<
 	string, // Column label
 	IReadableColumn, // the column as it was at the time of this call
 	string, // the name of the column (last part of the column proxies document path)
-	Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
+	Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller
 	>> GetIndependentVariables()
 		{
 			for (int i = 0; i < NumberOfIndependentVariables; ++i)
@@ -419,11 +419,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				int k = i;
 
 				string nameOfVariable = null != this.FitFunction && i < this.FitFunction.NumberOfIndependentVariables ? this.FitFunction.IndependentVariableName(i) : string.Empty;
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
 					nameOfVariable,
 					_independentVariables[k].Document,
 					_independentVariables[k]?.DocumentPath?.LastPartOrDefault,
-					(col, table) => { ChildSetMember(ref _independentVariables[k], NumericColumnProxyBase.FromColumn((INumericColumn)col)); DataTable = table; }
+					(col, table, group) => { ChildSetMember(ref _independentVariables[k], ReadableColumnProxyBase.FromColumn(col)); DataTable = table; GroupNumber = group; }
 					);
 			}
 		}
@@ -432,7 +432,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	string, // Column label
 	IReadableColumn, // the column as it was at the time of this call
 	string, // the name of the column (last part of the column proxies document path)
-	Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
+	Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller
 	>> GetDependentVariables()
 		{
 			for (int i = 0; i < NumberOfDependentVariables; ++i)
@@ -440,11 +440,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				int k = i;
 
 				string nameOfVariable = null != this.FitFunction && k < this.FitFunction.NumberOfDependentVariables ? this.FitFunction.DependentVariableName(k) : string.Empty;
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
 					nameOfVariable,
-					_dependentVariables[k].Document,
+					_dependentVariables[k]?.Document,
 					_dependentVariables[k]?.DocumentPath?.LastPartOrDefault,
-					(col, table) => { ChildSetMember(ref _dependentVariables[k], NumericColumnProxyBase.FromColumn((INumericColumn)col)); DataTable = table; }
+					(col, table, group) => { ChildSetMember(ref _dependentVariables[k], ReadableColumnProxyBase.FromColumn(col)); DataTable = table; GroupNumber = group; }
 					);
 			}
 		}
@@ -477,7 +477,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// </summary>
 		/// <param name="i">Index.</param>
 		/// <returns>The ith independent variable column, or <c>null if such a column is no longer available.</c></returns>
-		public INumericColumn IndependentVariables(int i)
+		public IReadableColumn IndependentVariables(int i)
 		{
 			return null == this._independentVariables[i] ? null : this._independentVariables[i].Document;
 		}
@@ -487,9 +487,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// </summary>
 		/// <param name="i">Index.</param>
 		/// <param name="col">Independent variable column to set.</param>
-		public void SetIndependentVariable(int i, INumericColumn col)
+		public void SetIndependentVariable(int i, IReadableColumn col)
 		{
-			this._independentVariables[i] = NumericColumnProxyBase.FromColumn(col);
+			this._independentVariables[i] = ReadableColumnProxyBase.FromColumn(col);
 
 			EhSelfChanged(EventArgs.Empty);
 		}
@@ -500,7 +500,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// </summary>
 		/// <param name="i">Index.</param>
 		/// <returns>The ith dependent variable column, or <c>null if such a column is no longer available.</c></returns>
-		public INumericColumn DependentVariables(int i)
+		public IReadableColumn DependentVariables(int i)
 		{
 			return null == this._dependentVariables[i] ? null : this._dependentVariables[i].Document;
 		}
@@ -510,9 +510,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// </summary>
 		/// <param name="i">Index.</param>
 		/// <param name="col">Dependent variable column to set.</param>
-		public void SetDependentVariable(int i, INumericColumn col)
+		public void SetDependentVariable(int i, IReadableColumn col)
 		{
-			this._dependentVariables[i] = NumericColumnProxyBase.FromColumn(col);
+			this._dependentVariables[i] = ReadableColumnProxyBase.FromColumn(col);
 
 			if (col != null)
 			{
@@ -650,8 +650,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		private void InternalReallocIndependentVariables(int noIndep)
 		{
-			INumericColumnProxy[] oldArr = this._independentVariables;
-			INumericColumnProxy[] newArr = new INumericColumnProxy[noIndep];
+			var oldArr = this._independentVariables;
+			var newArr = new IReadableColumnProxy[noIndep];
 			for (int i = Math.Min(newArr.Length, oldArr.Length) - 1; i >= 0; i--)
 				newArr[i] = oldArr[i];
 
@@ -661,8 +661,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		private void InternalReallocDependentVariables(int noDep)
 		{
 			{
-				INumericColumnProxy[] oldArr = this._dependentVariables;
-				INumericColumnProxy[] newArr = new INumericColumnProxy[noDep];
+				var oldArr = this._dependentVariables;
+				var newArr = new IReadableColumnProxy[noDep];
 				for (int i = Math.Min(newArr.Length, oldArr.Length) - 1; i >= 0; i--)
 					newArr[i] = oldArr[i];
 				this._dependentVariables = newArr;
@@ -746,7 +746,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		public IAscendingIntegerCollection CalculateValidNumericRows()
 		{
 			// also obtain the valid rows both of the independent and of the dependent variables
-			INumericColumn[] cols = new INumericColumn[_independentVariables.Length + _dependentVariables.Length];
+			var cols = new IReadableColumn[_independentVariables.Length + _dependentVariables.Length];
 			int i;
 			AscendingIntegerCollection selectedCols = new AscendingIntegerCollection();
 			// note: for a fitting session all independent variables columns must

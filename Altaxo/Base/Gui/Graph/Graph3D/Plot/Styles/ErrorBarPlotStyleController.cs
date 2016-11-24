@@ -132,10 +132,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		/// </summary>
 		private DataTable _supposedParentDataTable;
 
+		/// <summary>
+		/// The group number that the column of the style should belong to.
+		/// </summary>
+		private int _supposedGroupNumber;
+
 		public override bool InitializeDocument(params object[] args)
 		{
 			if (args.Length >= 2 && (args[1] is DataTable))
 				_supposedParentDataTable = (DataTable)args[1];
+
+			if (args.Length >= 3 && args[2] is int)
+				_supposedGroupNumber = (int)args[2];
 
 			return base.InitializeDocument(args);
 		}
@@ -266,7 +274,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		private void InitializeCommonErrorColumnText()
 		{
 			var info = new PlotColumnInformation(_doc.CommonErrorColumn, _doc.CommonErrorColumnDataColumnName);
-			info.Update(_supposedParentDataTable);
+			info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
 			_view?.Initialize_CommonErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
 			_view?.Initialize_CommonErrorColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
@@ -275,7 +283,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		private void InitializePositiveErrorColumnText()
 		{
 			var info = new PlotColumnInformation(_doc.PositiveErrorColumn, _doc.PositiveErrorColumnDataColumnName);
-			info.Update(_supposedParentDataTable);
+			info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
 			_view?.Initialize_PositiveErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
 			_view?.Initialize_PositiveErrorColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
@@ -284,7 +292,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		private void InitializeNegativeErrorColumnText()
 		{
 			var info = new PlotColumnInformation(_doc.NegativeErrorColumn, _doc.NegativeErrorColumnDataColumnName);
-			info.Update(_supposedParentDataTable);
+			info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
 			_view?.Initialize_NegativeErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
 			_view?.Initialize_NegativeErrorColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
@@ -298,42 +306,45 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		/// Item2 is the column itself,
 		/// Item3 is the column name (last part of the full path to the column), and
 		/// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
-		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>> GetDataColumnsExternallyControlled()
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>> GetDataColumnsExternallyControlled()
 		{
 			if (_doc.UseCommonErrorColumn)
 			{
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
 			"CommonError", // label to be shown
 			_doc.CommonErrorColumn,
 			_doc.CommonErrorColumnDataColumnName,
-			(column, table) =>
+			(column, table, group) =>
 			{
 				_doc.CommonErrorColumn = column;
 				this._supposedParentDataTable = table;
+				this._supposedGroupNumber = group;
 				InitializeCommonErrorColumnText();
 			});
 			}
 			else
 			{
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
 					"PositiveError", // label to be shown
 					_doc.PositiveErrorColumn,
 					_doc.PositiveErrorColumnDataColumnName,
-					(column, table) =>
+					(column, table, group) =>
 					{
 						_doc.PositiveErrorColumn = column;
 						this._supposedParentDataTable = table;
+						this._supposedGroupNumber = group;
 						this.InitializePositiveErrorColumnText();
 					});
 
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
 					"NegativeError", // label to be shown
 					_doc.NegativeErrorColumn,
 					_doc.NegativeErrorColumnDataColumnName,
-					(column, table) =>
+					(column, table, group) =>
 					{
 						_doc.NegativeErrorColumn = column;
 						this._supposedParentDataTable = table;
+						this._supposedGroupNumber = group;
 						this.InitializeNegativeErrorColumnText();
 					});
 			}

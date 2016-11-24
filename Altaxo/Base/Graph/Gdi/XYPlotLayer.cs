@@ -1046,6 +1046,8 @@ namespace Altaxo.Graph.Gdi
 		{
 			if (e is BoundariesChangedEventArgs)
 				EhBoundaryChangedEventFromPlotItem((BoundariesChangedEventArgs)e);
+			else if (e is PlotItemDataChangedEventArgs)
+				EhBoundaryChangedEventFromPlotItem(new BoundariesChangedEventArgs(BoundariesChangedData.ComplexChange));
 			else if (e is ScaleInstanceChangedEventArgs)
 				EhScaleInstanceChanged((ScaleInstanceChangedEventArgs)e);
 

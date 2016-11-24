@@ -2523,7 +2523,9 @@ namespace Altaxo.Data
 		/// </summary>
 		public static Altaxo.Data.DataColumnCollection GetParentDataColumnCollectionOf(Altaxo.Data.DataColumn column)
 		{
-			if (column.ParentObject is DataColumnCollection)
+			if (null == column)
+				return null;
+			else if (column.ParentObject is DataColumnCollection)
 				return (DataColumnCollection)column.ParentObject;
 			else
 				return (DataColumnCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(column, typeof(DataColumnCollection));

@@ -316,7 +316,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 			_dataController.SetAdditionalPlotColumns(GetAdditionalColumns());
 		}
 
-		private IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>> GetAdditionalColumns()
+		private IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>>>> GetAdditionalColumns()
 		{
 			for (int i = 0; i < _styleControllerList.Count; ++i)
 			{
@@ -328,7 +328,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
 				if (null != additionalColumns)
 				{
-					yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>(
+					yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>>>(
 						string.Format("#{0}: {1}", i + 1, Current.Gui.GetUserFriendlyClassName(_doc.Style[i].GetType())),
 						additionalColumns);
 				}
@@ -368,7 +368,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 			for (int i = 0; i < _styleControllerList.Count; i++)
 			{
 				if (null != _styleControllerList[i])
-					_styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable);
+					_styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable, (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.GroupNumber ?? 0);
 			}
 		}
 

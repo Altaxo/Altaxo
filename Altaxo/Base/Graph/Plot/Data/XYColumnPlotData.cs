@@ -499,20 +499,7 @@ namespace Altaxo.Graph.Plot.Data
 			XColumn = xColumn;
 			YColumn = yColumn;
 		}
-
-		/*
-		public XYColumnPlotData(Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn)
-		{
-			XColumn = xColumn;
-			YColumn = yColumn;
-			ChildSetMember(ref _dataRowSelection, new AllRows());
-		}
-
-		protected XYColumnPlotData()
-		{
-			ChildSetMember(ref _dataRowSelection, new AllRows());
-		}
-		*/
+		
 
 		/// <summary>
 		/// Copy constructor.
@@ -582,31 +569,15 @@ namespace Altaxo.Graph.Plot.Data
 				if (null != result)
 					return result;
 
-				var col = YColumn as DataColumn;
-				if (null != col)
-				{
-					result = DataTable.GetParentDataTableOf(col);
-					if (null != result)
-					{
-						var dcoll = DataColumnCollection.GetParentDataColumnCollectionOf(col);
-						this._groupNumber = dcoll.GetColumnGroup(col);
-						this.DataTable = result;
-						return result;
-					}
-				}
+				bool nonUniformTables, nonUniformGroup;
+				DataTable resultTable;
+				int? resultGroup;
+				IReadableColumnExtensions.GetCommonDataTableAndGroupNumberFromColumns(GetAllColumns(), out nonUniformTables, out resultTable, out nonUniformGroup, out resultGroup);
 
-				col = XColumn as DataColumn;
-				if (null != col)
-				{
-					result = DataTable.GetParentDataTableOf(col);
-					if (null != result)
-					{
-						var dcoll = DataColumnCollection.GetParentDataColumnCollectionOf(col);
-						this._groupNumber = dcoll.GetColumnGroup(col);
-						this.DataTable = result;
-						return result;
-					}
-				}
+				if (null != resultTable)
+					this.DataTable = resultTable;
+				if (null != resultGroup)
+					this.GroupNumber = resultGroup.Value;
 
 				return result;
 			}
@@ -623,6 +594,12 @@ namespace Altaxo.Graph.Plot.Data
 					EhSelfChanged(PlotItemDataChangedEventArgs.Empty);
 				}
 			}
+		}
+
+		private IEnumerable<IReadableColumn> GetAllColumns()
+		{
+			yield return XColumn;
+			yield return YColumn;
 		}
 
 		public int GroupNumber
@@ -822,10 +799,10 @@ namespace Altaxo.Graph.Plot.Data
 	string, // Column label
 	IReadableColumn, // the column as it was at the time of this call
 	string, // the name of the column (last part of the column proxies document path)
-	Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
+	Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller
 	>>>> GetAdditionallyUsedColumns()
 		{
-			yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>("#0: X-Y-Data", GetColumns());
+			yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>>>("#0: X-Y-Data", GetColumns());
 		}
 
 		/// <summary>
@@ -837,11 +814,11 @@ namespace Altaxo.Graph.Plot.Data
 			string, // Column label
 			IReadableColumn, // the column as it was at the time of this call
 			string, // the name of the column (last part of the column proxies document path)
-			Action<IReadableColumn, DataTable> // action to set the column during Apply of the controller
+			Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller
 			>> GetColumns()
 		{
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>("X", XColumn, _xColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { XColumn = col; DataTable = table; });
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>("Y", YColumn, _yColumn?.DocumentPath?.LastPartOrDefault, (col, table) => { YColumn = col; DataTable = table; });
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>("X", XColumn, _xColumn?.DocumentPath?.LastPartOrDefault, (col, table, group) => { XColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>("Y", YColumn, _yColumn?.DocumentPath?.LastPartOrDefault, (col, table, group) => { YColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
 		}
 
 		public Altaxo.Data.IReadableColumn XColumn

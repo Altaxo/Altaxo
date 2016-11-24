@@ -92,10 +92,19 @@ namespace Altaxo.Gui.Data.Selections
 		/// </summary>
 		private DataTable _supposedParentDataTable;
 
+		/// <summary>
+		/// The group number that the column of the style should belong to.
+		/// </summary>
+		private int _supposedGroupNumber;
+
+
 		public override bool InitializeDocument(params object[] args)
 		{
 			if (args.Length >= 2 && (args[1] is DataTable))
 				_supposedParentDataTable = (DataTable)args[1];
+
+			if (args.Length >= 3 && args[2] is int)
+				_supposedGroupNumber = (int)args[2];
 
 			return base.InitializeDocument(args);
 		}
@@ -552,7 +561,7 @@ namespace Altaxo.Gui.Data.Selections
 		/// (iii) the name of the column (only if it is a data column; otherwise empty)
 		/// (iiii) an action to set the column if a value has been assigned to, or if the column has changed.
 		/// </returns>
-		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>> GetAdditionalColumns()
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>> GetAdditionalColumns()
 		{
 			for (int i = 0; i < _rsEntryList.Count; ++i)
 			{
@@ -563,14 +572,15 @@ namespace Altaxo.Gui.Data.Selections
 					var controller = rsEntry.DetailsController as IDataColumnController;
 					controller.SetIndex(i);
 
-					yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+					yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
 						"Col#" + i.ToString(),
 						controller.Column,
 						controller.ColumnName,
-						(column, table) =>
+						(column, table, group) =>
 						{
 							_supposedParentDataTable = table;
-							controller.SetDataColumn(column, table);
+							_supposedGroupNumber = group;
+							controller.SetDataColumn(column, table, group);
 						}
 						);
 				}

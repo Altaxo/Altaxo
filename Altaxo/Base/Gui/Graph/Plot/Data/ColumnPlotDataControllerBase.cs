@@ -180,7 +180,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		/// (iiii) an action to set the column if a value has been assigned to, or if the column was changed.
 		/// </param>
 		void SetAdditionalPlotColumns(
-			IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>> additionalColumns
+			IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>>>> additionalColumns
 			);
 	}
 
@@ -201,8 +201,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			public string Label { get; set; }
 
 			/// <summary>Action to set the column property back in the style, if Apply of this controller is called.
-			/// First argument is the column, second argument is the supposed parent data table.</summary>
-			public Action<IReadableColumn, DataTable> ColumnSetter { get; set; }
+			/// First argument is the column, second argument is the supposed parent data table, third the group number.</summary>
+			public Action<IReadableColumn, DataTable, int> ColumnSetter { get; set; }
 
 			public PlotColumnInformationInternal(IReadableColumn column, string nameOfUnderlyingDataColumn)
 				: base(column, nameOfUnderlyingDataColumn)
@@ -211,7 +211,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 			protected override void OnChanged()
 			{
-				ColumnSetter?.Invoke(Column, _supposedDataTable);
+				ColumnSetter?.Invoke(Column, _supposedDataTable, _supposedGroupNumber);
 			}
 		}
 
@@ -455,7 +455,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 						ColumnSetter = col.Item4
 					};
 
-					columnInfo.Update(_doc.DataTable);
+					columnInfo.Update(_doc.DataTable, _doc.GroupNumber);
 					grpInfo.Columns.Add(columnInfo);
 				}
 
@@ -479,7 +479,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 					}
 					foreach (var entry in grpInfo.Columns)
 					{
-						entry.Update(_doc.DataTable);
+						entry.Update(_doc.DataTable, _doc.GroupNumber);
 					}
 				}
 
@@ -541,7 +541,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 					ColumnSetter = col.Item4
 				};
 
-				columnInfo.Update(_doc.DataTable);
+				columnInfo.Update(_doc.DataTable, _doc.GroupNumber);
 				grpInfo.Columns.Add(columnInfo);
 			}
 
@@ -555,7 +555,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			{
 				for (int i = 0; i < _columnGroup.Count; ++i)
 					for (int j = 0; j < _columnGroup[i].Columns.Count; ++j)
-						_columnGroup[i].Columns[j].ColumnSetter(_columnGroup[i].Columns[j].Column, _doc.DataTable);
+						_columnGroup[i].Columns[j].ColumnSetter(_columnGroup[i].Columns[j].Column, _doc.DataTable, _doc.GroupNumber);
 			}
 			_isDirty = false;
 
@@ -564,7 +564,37 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 			_doc.DataRowSelection = (IRowSelection)(_rowSelectionController.ModelObject);
 
+			// do not believe in the DataTable and Group number. Instead try to get DataTable and GroupNumber from the columns
+			{
+				bool dataTableIsNotUniform, groupNumberIsNotUniform;
+				DataTable resultingTable;
+				int? resultingGroupNumber;
+				IReadableColumnExtensions.GetCommonDataTableAndGroupNumberFromColumns(GetEnumerationOfAllColumns(), out dataTableIsNotUniform, out resultingTable, out groupNumberIsNotUniform, out resultingGroupNumber);
+
+				if (null != resultingTable && !dataTableIsNotUniform)
+					_doc.DataTable = resultingTable;
+				if (null != resultingGroupNumber && !groupNumberIsNotUniform)
+					_doc.GroupNumber = resultingGroupNumber.Value;
+			}
+
+
+
 			return ApplyEnd(true, disposeController);
+		}
+
+		/// <summary>
+		/// Gets the enumeration of all columns that are controlled by this controller.
+		/// </summary>
+		/// <returns>Enumeration of all columns that are controlled by this controller.</returns>
+		private IEnumerable<IReadableColumn> GetEnumerationOfAllColumns()
+		{
+			for (int i = 0; i < _columnGroup.Count; ++i)
+			{
+				for (int j = 0; j < _columnGroup[i].Columns.Count; ++j)
+				{
+					yield return _columnGroup[i].Columns[j].Column;
+				}
+			}
 		}
 
 		protected override void AttachView()
@@ -813,7 +843,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 							info.UnderlyingColumn = colDict[info.NameOfDataColumn];
 						}
 
-						info.Update(_doc.DataTable, true);
+						info.Update(_doc.DataTable, _doc.GroupNumber, true);
 						_view?.PlotColumn_Update(new PlotColumnTag(i, j), info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 					}
 				}
@@ -824,8 +854,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		#region AvailableDataColumns
 
-		private const int MaxNumberOfDataColumnsWithoutTreeView = 100;
-
 		private void Controller_AvailableDataColumns_Initialize()
 		{
 			_availableDataColumns.Nodes.Clear();
@@ -834,7 +862,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 				return;
 
 			var columns = dataTable.DataColumns.GetListOfColumnsWithGroupNumber(_doc.GroupNumber);
-			if (columns.Count <= MaxNumberOfDataColumnsWithoutTreeView)
+			if (columns.Count <= DataColumnBundleNode.MaxNumberOfColumnsInOneNode)
 			{
 				for (int i = 0; i < columns.Count; ++i)
 				{
@@ -881,6 +909,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 			_availableTables.SetSelection((nd) => object.ReferenceEquals(nd.Tag, _doc.DataTable));
 			_view?.AvailableTables_Initialize(_availableTables);
+			_groupNumbersAll = _doc.DataTable.DataColumns.GetGroupNumbersAll();
+			_view?.GroupNumber_Initialize(_groupNumbersAll, _doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _groupNumbersAll.Min != _doc.GroupNumber));
 		}
 
 		private void TriggerUpdateOfMatchingTables()
@@ -990,7 +1020,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 				SetDirty();
 				var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 				info.UnderlyingColumn = (DataColumn)node.Tag;
-				info.Update(_doc.DataTable);
+				info.Update(_doc.DataTable, _doc.GroupNumber);
 				_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 				TriggerUpdateOfMatchingTables();
 			}
@@ -1007,7 +1037,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			{
 				SetDirty();
 				info.UnderlyingColumn = editedColumn;
-				info.Update(_doc.DataTable);
+				info.Update(_doc.DataTable, _doc.GroupNumber);
 				_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 			}
 		}
@@ -1017,7 +1047,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			SetDirty();
 			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 			info.UnderlyingColumn = null;
-			info.Update(_doc.DataTable);
+			info.Update(_doc.DataTable, _doc.GroupNumber);
 			_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 			TriggerUpdateOfMatchingTables();
 		}
@@ -1097,7 +1127,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 				{
 					bool wasEdited;
 					info.UnderlyingColumn = EditOtherAvailableColumn(createdObj, out wasEdited);
-					info.Update(_doc.DataTable);
+					info.Update(_doc.DataTable, _doc.GroupNumber);
 					_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 				}
 			}
@@ -1193,7 +1223,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 					throw new NotImplementedException();
 			}
 			SetDirty();
-			info.Update(_doc.DataTable);
+			info.Update(_doc.DataTable, _doc.GroupNumber);
 			_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 		}
 
@@ -1253,7 +1283,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			if (wasEdited)
 			{
 				SetDirty();
-				info.Update(_doc.DataTable);
+				info.Update(_doc.DataTable, _doc.GroupNumber);
 				_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 			}
 		}
@@ -1263,7 +1293,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			SetDirty();
 			var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 			info.Transformation = null;
-			info.Update(_doc.DataTable);
+			info.Update(_doc.DataTable, _doc.GroupNumber);
 			_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 		}
 
@@ -1434,13 +1464,13 @@ namespace Altaxo.Gui.Graph.Plot.Data
 					}
 				}
 
-				info.Update(_doc.DataTable);
+				info.Update(_doc.DataTable, _doc.GroupNumber);
 				_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 			}
 			else if (data is DataColumn)
 			{
 				info.UnderlyingColumn = (DataColumn)data;
-				info.Update(_doc.DataTable);
+				info.Update(_doc.DataTable, _doc.GroupNumber);
 				_view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
 				TriggerUpdateOfMatchingTables();
 			}
@@ -1466,7 +1496,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		/// (iii) the name of the column (only if it is a data column; otherwise empty)
 		/// (iiii) an action to set the column if a value has been assigned to, or if the column was changed
 		/// can be used to get or set the underlying column.</param>
-		public void SetAdditionalPlotColumns(IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>>>> additionalColumns)
+		public void SetAdditionalPlotColumns(IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>>>> additionalColumns)
 		{
 			int groupNumber = 1;
 			foreach (var group in additionalColumns)
@@ -1491,7 +1521,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 						ColumnSetter = col.Item4
 					};
 
-					columnInfo.Update(_doc.DataTable);
+					columnInfo.Update(_doc.DataTable, _doc.GroupNumber);
 					_columnGroup[groupNumber].Columns.Add(columnInfo);
 				}
 			}

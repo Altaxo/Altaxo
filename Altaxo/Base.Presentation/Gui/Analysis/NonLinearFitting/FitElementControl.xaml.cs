@@ -312,16 +312,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		private string GetTextShownForIndependentVariable(int i)
 		{
-			INumericColumn col = _fitElement.IndependentVariables(i);
+			var col = _fitElement.IndependentVariables(i);
 			var colColl = DataColumnCollection.GetParentDataColumnCollectionOf(col as DataColumn);
-			return colColl?.GetColumnName(col as DataColumn) ?? col.FullName ?? "??Unassigned??";
+			return colColl?.GetColumnName(col as DataColumn) ?? col?.FullName ?? "??Unassigned??";
 		}
 
 		private string GetTextShownForDependentVariable(int i)
 		{
-			INumericColumn col = _fitElement.DependentVariables(i);
+			var col = _fitElement.DependentVariables(i);
 			var colColl = DataColumnCollection.GetParentDataColumnCollectionOf(col as DataColumn);
-			return colColl?.GetColumnName(col as DataColumn) ?? col.FullName ?? "??Unassigned??";
+			return colColl?.GetColumnName(col as DataColumn) ?? col?.FullName ?? "??Unassigned??";
 		}
 
 		private string GetTextShownForParameter(int i)

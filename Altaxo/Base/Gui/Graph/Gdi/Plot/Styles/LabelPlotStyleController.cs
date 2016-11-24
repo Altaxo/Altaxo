@@ -184,10 +184,18 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		/// </summary>
 		private DataTable _supposedParentDataTable;
 
+		/// <summary>
+		/// The group number that the column of the style should belong to.
+		/// </summary>
+		private int _supposedGroupNumber;
+
 		public override bool InitializeDocument(params object[] args)
 		{
 			if (args.Length >= 2 && (args[1] is DataTable))
 				_supposedParentDataTable = (DataTable)args[1];
+
+			if (args.Length >= 3 && args[2] is int)
+				_supposedGroupNumber = (int)args[2];
 
 			return base.InitializeDocument(args);
 		}
@@ -350,7 +358,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		private void InitializeLabelColumnText()
 		{
 			var info = new PlotColumnInformation(_doc.LabelColumn, _doc.LabelColumnDataColumnName);
-			info.Update(_supposedParentDataTable);
+			info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
 			_view?.Init_LabelColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
 			_view?.Init_Transformation(info.TransformationTextToShow, info.TransformationToolTip);
@@ -364,16 +372,17 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		/// Item2 is the column itself,
 		/// Item3 is the column name (last part of the full path to the column), and
 		/// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
-		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>> GetDataColumnsExternallyControlled()
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>> GetDataColumnsExternallyControlled()
 		{
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable>>(
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
 				"LabelColumn", // label to be shown
 				_doc.LabelColumn,
 				_doc.LabelColumnDataColumnName,
-				(column, table) =>
+				(column, table, group) =>
 				{
 					_doc.LabelColumn = column;
 					this._supposedParentDataTable = table;
+					this._supposedGroupNumber = group;
 					InitializeLabelColumnText();
 				});
 		}

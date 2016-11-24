@@ -221,6 +221,7 @@
     <Compile Include="Data\Extensions\DecomposeByColumnContent.cs" />
     <Compile Include="Data\Extensions\DecomposeByColumnContentDataSource.cs" />
     <Compile Include="Data\Extensions\ExpandCyclingVariableColumnDataSource.cs" />
+    <Compile Include="Data\Extensions\IReadableColumnExtensions.cs" />
     <Compile Include="Data\Extensions\MatrixToDataTableConverter.cs" />
     <Compile Include="Data\IAltaxoTableDataSource.cs" />
     <Compile Include="Data\IROTableDataSource.cs" />

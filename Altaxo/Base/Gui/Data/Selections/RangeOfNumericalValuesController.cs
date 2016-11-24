@@ -58,6 +58,11 @@ namespace Altaxo.Gui.Data.Selections
 		/// </summary>
 		private DataTable _supposedParentDataTable;
 
+		/// <summary>
+		/// The group number that the column of the style should belong to.
+		/// </summary>
+		private int _supposedGroupNumber;
+
 		private SelectableListNodeList _lowerInclusive;
 		private SelectableListNodeList _upperInclusive;
 
@@ -65,6 +70,9 @@ namespace Altaxo.Gui.Data.Selections
 		{
 			if (args.Length >= 2 && (args[1] is DataTable))
 				_supposedParentDataTable = (DataTable)args[1];
+
+			if (args.Length >= 3 && args[2] is int)
+				_supposedGroupNumber = (int)args[2];
 
 			return base.InitializeDocument(args);
 		}
@@ -98,7 +106,7 @@ namespace Altaxo.Gui.Data.Selections
 		private void View_InitializeColumn()
 		{
 			var info = new PlotColumnInformation(_doc.Column, _doc.ColumnName) { PlotColumnBoxStateIfColumnIsMissing = PlotColumnControlState.Error };
-			info.Update(_supposedParentDataTable);
+			info.Update(_supposedParentDataTable, _supposedGroupNumber);
 			_view?.Init_Column(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
 			_view?.Init_ColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
 		}
@@ -134,9 +142,10 @@ namespace Altaxo.Gui.Data.Selections
 			yield break;
 		}
 
-		void IDataColumnController.SetDataColumn(IReadableColumn column, DataTable supposedParentDataTable)
+		void IDataColumnController.SetDataColumn(IReadableColumn column, DataTable supposedParentDataTable, int supposedGroupNumber)
 		{
 			_supposedParentDataTable = supposedParentDataTable;
+			_supposedGroupNumber = supposedGroupNumber;
 			_doc.Column = column;
 			View_InitializeColumn();
 		}

@@ -38,6 +38,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		protected DataTable _supposedDataTable;
 
 		/// <summary>
+		/// The group number that is supposed to be the group number of the column.
+		/// </summary>
+		protected int _supposedGroupNumber;
+
+		/// <summary>
 		/// If the underlying column is or was a data column, then here we store the data column's name.
 		/// </summary>
 		protected string _nameOfUnderlyingDataColumn;
@@ -199,23 +204,31 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		/// Updates the information, assuming that the underlying data table is the same as before.
 		/// </summary>
 		/// <param name="dataTableOfPlotItem">The data table of plot item.</param>
-		public void Update(DataTable dataTableOfPlotItem)
+		/// <param name="groupNumberOfPlotItem">The group number of plot item.</param>
+		public void Update(DataTable dataTableOfPlotItem, int groupNumberOfPlotItem)
 		{
-			Update(dataTableOfPlotItem, false);
+			Update(dataTableOfPlotItem, groupNumberOfPlotItem, false);
 		}
 
 		/// <summary>
 		/// Updates the information, indicating in <paramref name="hasTableChanged"/> whether the underlying data table has changed.
 		/// </summary>
 		/// <param name="dataTableOfPlotItem">The data table of plot item.</param>
+		/// <param name="groupNumberOfPlotItem">The group number of plot item.</param>
 		/// <param name="hasTableChanged">If set to <c>true</c>, the data table has recently changed.</param>
-		public void Update(DataTable dataTableOfPlotItem, bool hasTableChanged)
+		public void Update(DataTable dataTableOfPlotItem, int groupNumberOfPlotItem, bool hasTableChanged)
 		{
 			bool hasChanged = false;
 
 			if (!object.ReferenceEquals(_supposedDataTable, dataTableOfPlotItem))
 			{
 				_supposedDataTable = dataTableOfPlotItem;
+				hasChanged = true;
+			}
+
+			if (!(_supposedGroupNumber == groupNumberOfPlotItem))
+			{
+				_supposedGroupNumber = groupNumberOfPlotItem;
 				hasChanged = true;
 			}
 
@@ -273,6 +286,14 @@ namespace Altaxo.Gui.Graph.Plot.Data
 					{
 						hasChanged |= InternalSet(ref _plotColumnBoxText, parentTable.DataColumns.GetColumnName(dcolumn));
 						hasChanged |= InternalSet(ref _plotColumnToolTip, string.Format("The column {0} is a data column with another parent data table: {1}", _nameOfUnderlyingDataColumn, parentTable.Name));
+						hasChanged |= InternalSet(ref _plotColumnBoxState, PlotColumnControlState.Warning);
+					}
+					if(!(parentTable.DataColumns.GetColumnGroup(dcolumn) ==_supposedGroupNumber))
+					{
+						string columnName = parentTable.DataColumns.GetColumnName(dcolumn);
+						hasChanged |= InternalSet(ref _nameOfUnderlyingDataColumn, columnName);
+						hasChanged |= InternalSet(ref _plotColumnBoxText, columnName);
+						hasChanged |= InternalSet(ref _plotColumnToolTip, string.Format("The column {0} is a data column with another group number: {1}", _nameOfUnderlyingDataColumn, parentTable.DataColumns.GetColumnGroup(dcolumn)));
 						hasChanged |= InternalSet(ref _plotColumnBoxState, PlotColumnControlState.Warning);
 					}
 					else

@@ -52,13 +52,13 @@ namespace Altaxo.Graph.Procedures
 			if (xyPlotItem == null)
 				return "Active plot is not a X-Y Plot!";
 
-			INumericColumn xColumn = xyPlotItem.XYColumnPlotData.XColumn as INumericColumn;
-			INumericColumn yColumn = xyPlotItem.XYColumnPlotData.YColumn as INumericColumn;
+			var xColumn = xyPlotItem.XYColumnPlotData.XColumn as IReadableColumn;
+			var yColumn = xyPlotItem.XYColumnPlotData.YColumn as IReadableColumn;
 
-			if (xColumn == null)
+			if (xColumn == null || xColumn.ItemType!=typeof(double))
 				return "The x-column is not numeric";
 
-			if (yColumn == null)
+			if (yColumn == null || yColumn.ItemType!=typeof(double))
 				return "The y-column is not numeric";
 
 			Calc.Regression.Nonlinear.NonlinearFitDocument localdoc = ctrl.Doc.GetGraphProperty(FitDocumentPropertyName) as Calc.Regression.Nonlinear.NonlinearFitDocument;

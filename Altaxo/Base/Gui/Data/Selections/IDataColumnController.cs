@@ -42,7 +42,7 @@ namespace Altaxo.Gui.Data.Selections
 		/// <param name="idx">The index.</param>
 		void SetIndex(int idx);
 
-		void SetDataColumn(IReadableColumn column, DataTable supposedParentDataTable);
+		void SetDataColumn(IReadableColumn column, DataTable supposedParentDataTable, int supposedGroupNumber);
 
 		IReadableColumn Column { get; }
 

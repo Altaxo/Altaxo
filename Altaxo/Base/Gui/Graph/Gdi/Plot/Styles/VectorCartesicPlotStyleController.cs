@@ -26,6 +26,7 @@ using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Gui.Data;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Groups;
@@ -105,7 +106,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 	[UserControllerForObject(typeof(VectorCartesicPlotStyle))]
 	[ExpectedTypeOfView(typeof(IVectorCartesicPlotStyleView))]
-	public class VectorCartesicPlotStyleController : MVCANControllerEditOriginalDocBase<VectorCartesicPlotStyle, IVectorCartesicPlotStyleView>
+	public class VectorCartesicPlotStyleController : MVCANControllerEditOriginalDocBase<VectorCartesicPlotStyle, IVectorCartesicPlotStyleView>, IColumnDataExternallyControlled
 	{
 		/// <summary>Tracks the presence of a color group style in the parent collection.</summary>
 		private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
@@ -117,10 +118,18 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		/// </summary>
 		private DataTable _supposedParentDataTable;
 
+		/// <summary>
+		/// The group number that the column of the style should belong to.
+		/// </summary>
+		private int _supposedGroupNumber;
+
 		public override bool InitializeDocument(params object[] args)
 		{
 			if (args.Length >= 2 && (args[1] is DataTable))
 				_supposedParentDataTable = (DataTable)args[1];
+
+			if (args.Length >= 3 && args[2] is int)
+				_supposedGroupNumber = (int)args[2];
 
 			return base.InitializeDocument(args);
 		}
@@ -230,7 +239,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		private void InitializeColumnXText()
 		{
 			var info = new PlotColumnInformation(_doc.ColumnX, _doc.ColumnXDataColumnName);
-			info.Update(_supposedParentDataTable);
+			info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
 			_view?.Initialize_ColumnX(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
 			_view?.Initialize_ColumnXTransformation(info.TransformationTextToShow, info.TransformationToolTip);
@@ -239,11 +248,47 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		private void InitializeColumnYText()
 		{
 			var info = new PlotColumnInformation(_doc.ColumnY, _doc.ColumnYDataColumnName);
-			info.Update(_supposedParentDataTable);
+			info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
 			_view?.Initialize_ColumnY(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
 			_view?.Initialize_ColumnYTransformation(info.TransformationTextToShow, info.TransformationToolTip);
 		}
+
+		/// <summary>
+		/// Gets the additional columns that the controller's document is referring to.
+		/// </summary>
+		/// <returns>Enumeration of tuples.
+		/// Item1 is a label to be shown in the column data dialog to let the user identify the column.
+		/// Item2 is the column itself,
+		/// Item3 is the column name (last part of the full path to the column), and
+		/// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
+		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>> GetDataColumnsExternallyControlled()
+		{
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
+				"X", // label to be shown
+				_doc.ColumnX,
+				_doc.ColumnXDataColumnName,
+				(column, table, group) =>
+				{
+					_doc.ColumnX = column;
+					this._supposedParentDataTable = table;
+					this._supposedGroupNumber = group;
+					InitializeColumnXText();
+				});
+
+			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
+				"Y", // label to be shown
+				_doc.ColumnY,
+				_doc.ColumnYDataColumnName,
+				(column, table, group) =>
+				{
+					_doc.ColumnY = column;
+					this._supposedParentDataTable = table;
+					this._supposedGroupNumber = group;
+					InitializeColumnYText();
+				});
+		}
+
 
 		private void EhIndependentColorChanged()
 		{

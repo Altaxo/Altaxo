@@ -566,6 +566,34 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
+		/// Determines which of the rows of a set of columns is truly numeric, i.e. all columns in this row contains a value, which is not double.NaN.
+		/// </summary>
+		/// <param name="table">Array of numeric columns.</param>
+		/// <param name="selectedCols">The indizes of the columns in question into the collection.</param>
+		/// <param name="selectedRowIndices">The selected data row indices.</param>
+		/// <param name="rowCount">The minimum row count of all the selected columns.</param>
+		/// <returns>A boolean array. If an element of the array is true at a given index, that row contains valid numeric values in all columns.</returns>
+		public static bool[] GetValidNumericRows(IReadableColumn[] table, IAscendingIntegerCollection selectedCols, IEnumerable<int> selectedRowIndices, int rowCount)
+		{
+			// determine the number of valid rows
+			bool[] rowValid = new bool[rowCount];
+
+			foreach (int i in selectedRowIndices)
+				rowValid[i] = true;
+
+			for (int i = 0; i < selectedCols.Count; i++)
+			{
+				var col = table[selectedCols[i]];
+				for (int j = 0; j < rowCount; j++)
+				{
+					if (double.IsNaN(col[j]))
+						rowValid[j] = false;
+				}
+			}
+			return rowValid;
+		}
+
+		/// <summary>
 		/// Counts the number of valid rows from the array that is returned by for instance <see cref="GetValidNumericRows(INumericColumn[], IAscendingIntegerCollection, int)" />.
 		/// </summary>
 		/// <param name="array">The boolean array.</param>
