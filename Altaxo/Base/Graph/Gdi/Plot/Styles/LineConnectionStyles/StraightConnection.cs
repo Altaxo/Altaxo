@@ -115,7 +115,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 						ydiff = linepts[i + 1].Y - linepts[i].Y;
 						var diffLength = System.Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
 						double gapAtStart = symbolGap(originalIndex);
-						double gapAtEnd = i != range.Length ? symbolGap(originalIndex + 1) : symbolGap(range.OffsetToOriginal);
+						double gapAtEnd = i != (range.Length-1) ? symbolGap(originalIndex + 1) : symbolGap(range.OffsetToOriginal);
 						var relAtStart = (float)(0.5 * gapAtStart / diffLength); // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
 						var relAtEnd = (float)(0.5 * gapAtEnd / diffLength); // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
 
