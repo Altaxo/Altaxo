@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		public override void Paint(
 			Graphics g,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			PenX linePen,
 			Func<int, double> symbolGap,
@@ -87,16 +87,54 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			bool connectCircular,
 			LinePlotStyle linePlotStyle)
 		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
+			PointF[] allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+			PointF[] subLinePoints = new PointF[range.Length];
+			Array.Copy(allLinePoints, range.LowerBound, subLinePoints, 0, range.Length); // Extract
 			int lastIdx = range.Length - 1;
 			GraphicsPath gp = new GraphicsPath();
 			var layerSize = layer.Size;
 
-			// unfortuately, there is no easy way to support line/symbol gaps
-			// thats why I ignore this value and draw a curve through the points
-			g.DrawCurve(linePen, linepts);
+
+			if (connectCircular)
+			{
+				g.DrawClosedCurve(linePen, subLinePoints);
+			}
+			else
+			{
+
+				if (symbolGap != null)
+				{
+					// convert points to bezier segments
+					var bezierSegments = GdiExtensionMethods.OpenCardinalSplineToBezierSegments(subLinePoints, subLinePoints.Length);
+					var subBezierSegments = new PointF[0];
+					int subLength, subBezierLength;
+					for (int i = 0; i < (range.Length - 1); i += skipFrequency)
+					{
+						subLength = Math.Min(skipFrequency, range.Length - 1 - i);
+						int originalIndex = range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound);
+						double gapAtStart = symbolGap(originalIndex);
+						double gapAtEnd = subLength == skipFrequency ? symbolGap(originalIndex + skipFrequency) : 0;
+						subBezierLength = 3 * subLength + 1;
+						if (subBezierSegments.Length != subBezierLength)
+							subBezierSegments = new PointF[subBezierLength];
+
+						Array.Copy(bezierSegments, i * 3, subBezierSegments, 0, subBezierLength);
+						var shortenedBezierSegments = GdiExtensionMethods.ShortenBezierCurve(subBezierSegments, gapAtStart/2, gapAtEnd/2);
+
+						if (null != shortenedBezierSegments)
+						{
+							g.DrawBeziers(linePen, shortenedBezierSegments);
+						}
+					}
+
+				}
+				else
+				{
+					g.DrawCurve(linePen, subLinePoints);
+				}
+
+
+			}
 		}
 
 		/// <inheritdoc/>
@@ -145,5 +183,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 			gp.CloseFigure();
 		}
+
+
+
+
 	}
 }

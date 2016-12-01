@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		public override void Paint(
 			Graphics g,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			PenX pen,
 			Func<int, double> symbolGap,

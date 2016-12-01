@@ -66,6 +66,44 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
+			int _lastPlotPointIndex;
+		int _lastRangeIndex;
+		public int GetOriginalRowIndexFromPlotPointIndex(int plotPointIndex)
+		{
+			if (plotPointIndex >= _lastPlotPointIndex)
+			{
+				if (plotPointIndex < _ranges[_lastRangeIndex].UpperBound)
+				{
+					return _ranges[_lastRangeIndex].GetOriginalRowIndexFromPlotPointIndex(plotPointIndex);
+				}
+
+				for (int i = _lastRangeIndex + 1; i < _ranges.Length; ++i)
+				{
+					if (plotPointIndex < _ranges[i].UpperBound)
+					{
+						_lastRangeIndex = i;
+						_lastPlotPointIndex = plotPointIndex;
+						return _ranges[i].GetOriginalRowIndexFromPlotPointIndex(plotPointIndex);
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < _ranges.Length; ++i)
+				{
+					if (plotPointIndex < _ranges[i].UpperBound)
+					{
+						_lastRangeIndex = i;
+						_lastPlotPointIndex = plotPointIndex;
+						return _ranges[i].GetOriginalRowIndexFromPlotPointIndex(plotPointIndex);
+					}
+				}
+			}
+
+			throw new ArgumentOutOfRangeException(nameof(plotPointIndex), "is above the range range");
+
+		}
+
 		/// <inheritdoc/>
 		public int OriginalFirstPoint
 		{

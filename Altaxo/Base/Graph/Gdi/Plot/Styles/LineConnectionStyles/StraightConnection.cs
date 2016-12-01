@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		public override void Paint(
 			Graphics g,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			PenX linePen,
 			Func<int, double> symbolGap,
@@ -95,6 +95,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			int lastIdx = range.Length - 1 + (connectCircular ? 1 : 0);
 			GraphicsPath gp = new GraphicsPath();
 			var layerSize = layer.Size;
+			var rangeLowerBound = range.LowerBound;
 
 			// special efforts are necessary to realize a line/symbol gap
 			// I decided to use a path for this
@@ -109,13 +110,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				{
 					for (int i = 0; i < lastIdx; i++)
 					{
-						int originalIndex = range.OffsetToOriginal + i;
+						int originalIndex = range.GetOriginalRowIndexFromPlotPointIndex(i+rangeLowerBound);
 
 						xdiff = linepts[i + 1].X - linepts[i].X;
 						ydiff = linepts[i + 1].Y - linepts[i].Y;
 						var diffLength = System.Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
 						double gapAtStart = symbolGap(originalIndex);
-						double gapAtEnd = i != (range.Length-1) ? symbolGap(originalIndex + 1) : symbolGap(range.OffsetToOriginal);
+						double gapAtEnd = i != (range.Length-1) ? symbolGap(originalIndex + 1) : symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(rangeLowerBound));
 						var relAtStart = (float)(0.5 * gapAtStart / diffLength); // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
 						var relAtEnd = (float)(0.5 * gapAtEnd / diffLength); // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
 
@@ -140,7 +141,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 						int originalRowIndex = range.OriginalFirstPoint + i;
 
 						double gapAtStart = symbolGap(originalRowIndex);
-						double gapAtEnd = i != range.Length ? symbolGap(originalRowIndex + skipFrequency) : symbolGap(range.OffsetToOriginal);
+						double gapAtEnd = i != range.Length ? symbolGap(originalRowIndex + skipFrequency) : symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(rangeLowerBound));
 
 						int countM1 = Math.Min(skipFrequency, lastIdx - i);
 

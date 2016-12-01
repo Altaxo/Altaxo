@@ -75,7 +75,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		public override void Paint(
 			Graphics g,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			PenX linePen,
 			Func<int, double> symbolGap,
@@ -88,8 +88,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 			int lastIdx;
 			int numberOfPointsPerOriginalPoint;
-			PointF[] linepts = GetSubPoints(pdata, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+			PointF[] allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+			PointF[] subLinePoints = GetSubPoints(pdata, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
 
 			GraphicsPath gp = new GraphicsPath();
 
@@ -101,18 +101,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				var subPoints = new PointF[subPointsLength];
 				for (int i = 0; i < range.Length; i += skipFrequency)
 				{
-					int originalIndexStart = range.OffsetToOriginal + i;
-					int originalIndexEnd = range.OffsetToOriginal + ((i + skipFrequency) < range.Length ? (i + skipFrequency) : (connectCircular ? 0 : range.Length - 1));
 
-					int copyLength = Math.Min(subPointsLength, linepts.Length - numberOfPointsPerOriginalPoint * i);
+					int copyLength = Math.Min(subPointsLength, subLinePoints.Length - numberOfPointsPerOriginalPoint * i);
 					if (copyLength < 2)
 						continue; // happens probably at the end of the range if there are not enough points to draw
 
 					if (subPoints.Length != copyLength)
 						subPoints = new PointF[copyLength];
 
-					Array.Copy(linepts, numberOfPointsPerOriginalPoint * i, subPoints, 0, copyLength);
+					Array.Copy(subLinePoints, numberOfPointsPerOriginalPoint * i, subPoints, 0, copyLength);
 
+					int originalIndexStart = range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i);
+					int originalIndexEnd = range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + ((i + skipFrequency) < range.Length ? (i + skipFrequency) : (connectCircular ?  0 : range.Length - 1)));
 					double gapAtStart = symbolGap(originalIndexStart);
 					double gapAtEnd = symbolGap(originalIndexEnd);
 
@@ -125,9 +125,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			else
 			{
 				if (connectCircular)
-					g.DrawPolygon(linePen, linepts);
+					g.DrawPolygon(linePen, subLinePoints);
 				else
-					g.DrawLines(linePen, linepts);
+					g.DrawLines(linePen, subLinePoints);
 			}
 		}
 

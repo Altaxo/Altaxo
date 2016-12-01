@@ -73,27 +73,27 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		{
 			numberOfPointsPerOriginalPoint = 3;
 
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PointF[] linepts = new PointF[numberOfPointsPerOriginalPoint * (range.Length - 1 + (connectCircular ? 1 : 0)) + 1];
+			PointF[] allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+			PointF[] subLinePoints = new PointF[numberOfPointsPerOriginalPoint * (range.Length - 1 + (connectCircular ? 1 : 0)) + 1];
 			int end = range.UpperBound - 1;
 			int i, j;
 			for (i = 0, j = range.LowerBound; j < end; i += numberOfPointsPerOriginalPoint, j++)
 			{
-				linepts[i] = linePoints[j];
-				linepts[i + 1] = new PointF(linePoints[j].X, (linePoints[j].Y + linePoints[j + 1].Y) / 2);
-				linepts[i + 2] = new PointF(linePoints[j + 1].X, (linePoints[j].Y + linePoints[j + 1].Y) / 2);
+				subLinePoints[i] = allLinePoints[j];
+				subLinePoints[i + 1] = new PointF(allLinePoints[j].X, (allLinePoints[j].Y + allLinePoints[j + 1].Y) / 2);
+				subLinePoints[i + 2] = new PointF(allLinePoints[j + 1].X, (allLinePoints[j].Y + allLinePoints[j + 1].Y) / 2);
 			}
-			linepts[i] = linePoints[j];
+			subLinePoints[i] = allLinePoints[j];
 			lastIndex = i;
 
 			if (connectCircular)
 			{
-				linepts[i + 1] = new PointF(linePoints[j].X, (linePoints[j].Y + linePoints[0].Y) / 2);
-				linepts[i + 2] = new PointF(linePoints[0].X, (linePoints[j].Y + linePoints[0].Y) / 2);
-				linepts[i + 3] = linePoints[0];
+				subLinePoints[i + 1] = new PointF(allLinePoints[j].X, (allLinePoints[j].Y + allLinePoints[range.LowerBound].Y) / 2);
+				subLinePoints[i + 2] = new PointF(allLinePoints[range.LowerBound].X, (allLinePoints[j].Y + allLinePoints[range.LowerBound].Y) / 2);
+				subLinePoints[i + 3] = allLinePoints[range.LowerBound];
 				lastIndex = i + 3;
 			}
-			return linepts;
+			return subLinePoints;
 		}
 	}
 }

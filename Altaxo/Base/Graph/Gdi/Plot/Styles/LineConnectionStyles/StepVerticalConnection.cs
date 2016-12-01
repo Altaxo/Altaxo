@@ -73,26 +73,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		{
 			numberOfPointsPerOriginalPoint = 2;
 
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PointF[] linepts = new PointF[range.Length * 2 - 1 + (connectCircular ? 2 : 0)];
+			PointF[] allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+			PointF[] subLinePoints = new PointF[range.Length * 2 - 1 + (connectCircular ? 2 : 0)];
 			int end = range.UpperBound - 1;
 			int i, j;
 			for (i = 0, j = range.LowerBound; j < end; i += 2, j++)
 			{
-				linepts[i] = linePoints[j];
-				linepts[i + 1].X = linePoints[j].X;
-				linepts[i + 1].Y = linePoints[j + 1].Y;
+				subLinePoints[i] = allLinePoints[j];
+				subLinePoints[i + 1].X = allLinePoints[j].X;
+				subLinePoints[i + 1].Y = allLinePoints[j + 1].Y;
 			}
-			linepts[i] = linePoints[j];
+			subLinePoints[i] = allLinePoints[j];
 			lastIndex = i;
 
 			if (connectCircular)
 			{
-				linepts[i + 1] = new PointF(linePoints[j].X, linePoints[0].Y);
-				linepts[i + 2] = linePoints[0];
+				subLinePoints[i + 1] = new PointF(allLinePoints[j].X, allLinePoints[range.LowerBound].Y);
+				subLinePoints[i + 2] = allLinePoints[range.LowerBound];
 				lastIndex = i + 2;
 			}
-			return linepts;
+			return subLinePoints;
 		}
 	}
 }

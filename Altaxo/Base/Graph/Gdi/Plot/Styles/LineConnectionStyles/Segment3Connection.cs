@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		public override void Paint(
 			Graphics g,
 			Processed2DPlotData pdata,
-			PlotRange range,
+			IPlotRange range,
 			IPlotArea layer,
 			PenX linePen,
 			Func<int, double> symbolGap,
@@ -88,7 +88,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			LinePlotStyle linePlotStyle)
 		{
 			int lastIdx;
-			PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, out lastIdx);
+			PointF[] subLinePoints = Segment3Connection_GetSubPoints(pdata, range, layer, connectCircular, out lastIdx);
 
 			GraphicsPath gp = new GraphicsPath();
 			int i;
@@ -101,26 +101,36 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			// that the symbols overlap and no line between the symbols needs to be plotted
 			if (null != symbolGap)
 			{
-				float xdiff, ydiff, rel, startx, starty, stopx, stopy;
+				float startx, starty, stopx, stopy;
 				for (i = 0; i < lastIdx; ++i)
 				{
 					if (2 == (i % 3))
 						continue;
 
-					int originalIndex = range.OffsetToOriginal + i;
-					xdiff = linepts[i + 1].X - linepts[i].X;
-					ydiff = linepts[i + 1].Y - linepts[i].Y;
-					var diffLength = System.Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
+					int originalIndex = range.GetOriginalRowIndexFromPlotPointIndex(i+range.LowerBound);
+					var diff = GdiExtensionMethods.Subtract(subLinePoints[i + 1], subLinePoints[i]);
+					var diffLength = GdiExtensionMethods.VectorLength(diff);
+
 					double gapAtStart = 0 == i % skipFrequency ? symbolGap(originalIndex) : 0;
-					double gapAtEnd = 0 == (i + 1) % skipFrequency ? (i != range.Length ? symbolGap(originalIndex + 1) : symbolGap(range.OffsetToOriginal)) : 0;
+
+					double gapAtEnd;
+					if ((0 == (i + 1) % skipFrequency) || ((i + 1) == range.Length))
+					{
+						gapAtEnd = ((i + 1) != range.Length) ? symbolGap(originalIndex + 1) : symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound));
+					}
+					else
+					{
+						gapAtEnd = 0;
+					}
+
 					var relAtStart = (float)(0.5 * gapAtStart / diffLength); // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
 					var relAtEnd = (float)(0.5 * gapAtEnd / diffLength); // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
 					if ((relAtStart + relAtEnd) < 1) // a line only appears if sum of the gaps  is smaller than 1
 					{
-						startx = linepts[i].X + relAtStart * xdiff;
-						starty = linepts[i].Y + relAtStart * ydiff;
-						stopx = linepts[i + 1].X - relAtEnd * xdiff;
-						stopy = linepts[i + 1].Y - relAtEnd * ydiff;
+						startx = subLinePoints[i].X + relAtStart * diff.X;
+						starty = subLinePoints[i].Y + relAtStart * diff.Y;
+						stopx = subLinePoints[i + 1].X - relAtEnd * diff.X;
+						stopy = subLinePoints[i + 1].Y - relAtEnd * diff.Y;
 
 						gp.AddLine(startx, starty, stopx, stopy);
 						gp.StartFigure();
@@ -133,8 +143,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			{
 				for (i = 0; i < lastIdx; i += 3)
 				{
-					gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i + 1].X, linepts[i + 1].Y);
-					gp.AddLine(linepts[i + 1].X, linepts[i + 1].Y, linepts[i + 2].X, linepts[i + 2].Y);
+					gp.AddLine(subLinePoints[i].X, subLinePoints[i].Y, subLinePoints[i + 1].X, subLinePoints[i + 1].Y);
+					gp.AddLine(subLinePoints[i + 1].X, subLinePoints[i + 1].Y, subLinePoints[i + 2].X, subLinePoints[i + 2].Y);
 					gp.StartFigure();
 				} // end for
 				g.DrawPath(linePen, gp);
@@ -143,18 +153,24 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		}
 
 		private PointF[] Segment3Connection_GetSubPoints(
-Processed2DPlotData pdata,
-IPlotRange range,
-IPlotArea layer,
-out int lastIndex)
+			Processed2DPlotData pdata,
+			IPlotRange range,
+			IPlotArea layer,
+			bool connectCircular,
+			out int lastIndex)
 		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+			PointF[] allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			var layerSize = layer.Size;
-			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-			lastIndex = 0;
+			PointF[] subLinePoints = new PointF[range.Length + (connectCircular ? 1 : 0)];
+			Array.Copy(allLinePoints, range.LowerBound, subLinePoints, 0, range.Length); // Extract
+			if (connectCircular)
+			{
+				subLinePoints[range.Length] = subLinePoints[0];
+			}
 
-			return linepts;
+			lastIndex = range.Length - 1 + (connectCircular ? 1 : 0);
+
+			return subLinePoints;
 		}
 
 		/// <inheritdoc/>
@@ -172,8 +188,8 @@ out int lastIndex)
 				return;
 
 			int lastIdx;
-			PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, out lastIdx);
-			FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
+			PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, connectCircular, out lastIdx);
+			FillOneRange(gp, pdata, range, layer, connectCircular, fillDirection, linepts);
 		}
 
 		/// <summary>
@@ -190,6 +206,7 @@ out int lastIndex)
 			Processed2DPlotData pdata,
 			IPlotRange range,
 			IPlotArea layer,
+			bool connectCircular,
 			CSPlaneID fillDirection,
 			PointF[] linePoints
 
@@ -199,7 +216,7 @@ out int lastIndex)
 				return;
 
 			int lastIdx;
-			PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, out lastIdx);
+			PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, connectCircular, out lastIdx);
 			FillOneRange(gp, pdata, range, layer, fillDirection, linepts, lastIdx);
 		}
 

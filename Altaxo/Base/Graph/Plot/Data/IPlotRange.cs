@@ -68,5 +68,15 @@ namespace Altaxo.Graph.Plot.Data
 		/// Row index of the last point of this plot range in the original data column.
 		/// </summary>
 		int OriginalLastPoint { get; }
+
+
+		/// <summary>
+		/// Returns the row index in the original data column in dependence on the plot point index. 
+		/// Thus, if the argument is set to <see cref="LowerBound"/>, the return value is <see cref="OriginalFirstPoint"/>.
+		/// </summary>
+		int GetOriginalRowIndexFromPlotPointIndex(int plotPointIndex);
+
+		
+
 	}
 }

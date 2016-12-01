@@ -257,11 +257,29 @@ namespace Altaxo.Geometry
 			return Distance(this, p);
 		}
 
+		/// <summary>
+		/// Calculates the squared distance between this point and another point.
+		/// </summary>
+		/// <param name="p">Other point.</param>
+		/// <returns>The distance between this point and point p.</returns>
+		public double DistanceSquaredTo(PointD2D p)
+		{
+			return DistanceSquared(this, p);
+		}
+
 		public double VectorLength
 		{
 			get
 			{
 				return Math.Sqrt(X * X + Y * Y);
+			}
+		}
+
+		public double VectorLengthSquared
+		{
+			get
+			{
+				return (X * X + Y * Y);
 			}
 		}
 
@@ -348,6 +366,19 @@ namespace Altaxo.Geometry
 			double x = p1.X - p2.X;
 			double y = p1.Y - p2.Y;
 			return Math.Sqrt(x * x + y * y);
+		}
+
+		/// <summary>
+		/// Calculates the squared distance between two points.
+		/// </summary>
+		/// <param name="p1">First point.</param>
+		/// <param name="p2">Second point.</param>
+		/// <returns>The distance between points p1 and p2.</returns>
+		public static double DistanceSquared(PointD2D p1, PointD2D p2)
+		{
+			double x = p1.X - p2.X;
+			double y = p1.Y - p2.Y;
+			return (x * x + y * y);
 		}
 
 		/// <summary>

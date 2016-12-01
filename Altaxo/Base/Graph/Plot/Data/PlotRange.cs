@@ -189,6 +189,15 @@ namespace Altaxo.Graph.Plot.Data
 				yield return i + _offsetToOriginal;
 			}
 		}
+
+		public int GetOriginalRowIndexFromPlotPointIndex(int plotPointIndex)
+		{
+#if DEBUG
+			if (!(plotPointIndex >= _lowerBound && plotPointIndex < _upperBound))
+				throw new ArgumentOutOfRangeException(nameof(plotPointIndex));
+#endif
+			return plotPointIndex + _offsetToOriginal;
+		}
 	}
 
 	/// <summary>

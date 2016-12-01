@@ -874,7 +874,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// in case we ignore the missing points, all ranges can be plotted
 				// as one range, i.e. continuously
 				// for this, we create the totalRange, which contains all ranges
-				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
+				var totalRange = new PlotRangeCompound(rangeList);
 				_connectionStyle.Paint(g, pdata, totalRange, layer, _linePen, symbolGapFunction, _skipFreq, _connectCircular, this);
 			}
 			else // we not ignore missing points, so plot all ranges separately

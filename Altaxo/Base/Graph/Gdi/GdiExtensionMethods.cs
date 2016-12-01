@@ -52,6 +52,26 @@ namespace Altaxo.Graph.Gdi
 			return (float)Math.Sqrt(p.X * p.X + p.Y * p.Y);
 		}
 
+		public static float VectorLengthSquared(this PointF p)
+		{
+			return (p.X * p.X + p.Y * p.Y);
+		}
+
+		public static float DistanceTo(this PointF p, PointF q)
+		{
+			var dx = p.X - q.X;
+			var dy = p.Y - q.Y;
+			return (float)Math.Sqrt(dx * dx + dy * dy);
+		}
+
+
+		public static float DistanceSquaredTo(this PointF p, PointF q)
+		{
+			var dx = p.X - q.X;
+			var dy = p.Y - q.Y;
+			return dx * dx + dy * dy;
+		}
+
 		public static PointF FlipXY(this PointF p)
 		{
 			return new PointF(p.Y, p.X);
@@ -473,6 +493,453 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		#endregion String Alignement
+
+		#region CardialSpline to BezierSegments
+
+		// see also source of wine at: http://source.winehq.org/source/dlls/gdiplus/graphicspath.c#L445
+		// 
+
+		/// <summary>
+		/// Calculates Bezier points from cardinal spline endpoints.
+		/// </summary>
+		/// <param name="end">The end point.</param>
+		/// <param name="adj">The adjacent point next to the endpoint.</param>
+		/// <param name="tension">The tension.</param>
+		/// <returns></returns>
+		/// <remarks>Original name in Wine sources: calc_curve_bezier_endp</remarks>
+		static PointF Calc_Curve_Bezier_Endpoint(PointF end, PointF adj, float tension)
+		{
+			// tangent at endpoints is the line from the endpoint to the adjacent point 
+			return new PointF(
+			(tension * (adj.X - end.X) + end.X),
+			(tension * (adj.Y - end.Y) + end.Y));
+		}
+
+		/// <summary>
+		/// Calculates the control points of the incoming and outgoing Bezier segment around the original point at index i+1.
+		/// </summary>
+		/// <param name="pts">The original points thought to be connected by a cardinal spline.</param>
+		/// <param name="i">The index i. To calculate the control points, the indices i, i+1 and i+2 are used from the point array <paramref name="pts"/>.</param>
+		/// <param name="tension">The tension of the cardinal spline.</param>
+		/// <param name="p1">The Bezier control point that controls the slope towards the point <paramref name="pts"/>[i+1].</param>
+		/// <param name="p2">The Bezier control point that controls the slope outwards from the point <paramref name="pts"/>[i+1].</param>
+		/// <remarks>Original name in Wine source: calc_curve_bezier</remarks>
+		static void Calc_Curve_Bezier(PointF[] pts, int i, float tension, out PointF p1, out PointF p2)
+		{
+			/* calculate tangent */
+			var diffX = pts[2 + i].X - pts[i].X;
+			var diffY = pts[2 + i].Y - pts[i].Y;
+
+			/* apply tangent to get control points */
+			p1 = new PointF(pts[1 + i].X - tension * diffX, pts[1 + i].Y - tension * diffY);
+			p2 = new PointF(pts[1 + i].X + tension * diffX, pts[1 + i].Y + tension * diffY);
+		}
+
+
+		/// <summary>
+		/// Calculates the control points of the incoming and outgoing Bezier segment around the original point <paramref name="p1"/>.
+		/// </summary>
+		/// <param name="pts0">The previous point on a cardinal spline curce.</param>
+		/// <param name="pts1">The point on a cardinal spline curve for which to calculate the incoming and outgoing Bezier control points.</param>
+		/// <param name="pts2">The nex point on the cardinal spline curve.</param>
+		/// <param name="tension">The tension of the cardinal spline.</param>
+		/// <param name="p1">The Bezier control point that controls the slope towards the point <paramref name="pts1"/>.</param>
+		/// <param name="p2">The Bezier control point that controls the slope outwards from the point <paramref name="pts1"/>.</param>
+		/// <remarks>This function is not in the original Wine sources. It is introduced here for optimization to avoid allocation of a new array when converting closed cardinal spline curves.</remarks>
+		static void Calc_Curve_Bezier(PointF pts0, PointF pts1, PointF pts2, float tension, out PointF p1, out PointF p2)
+		{
+			/* calculate tangent */
+			var diffX = pts2.X - pts0.X;
+			var diffY = pts2.Y - pts0.Y;
+
+			/* apply tangent to get control points */
+			/* apply tangent to get control points */
+			p1 = new PointF(pts1.X - tension * diffX, pts1.Y - tension * diffY);
+			p2 = new PointF(pts1.X + tension * diffX, pts1.Y + tension * diffY);
+		}
+
+
+		/// <summary>
+		/// Converts an open cardinal spline, given by the points in <paramref name="points"/>, to Bezier segments.
+		/// </summary>
+		/// <param name="points">The control points of the open cardinal spline curve.</param>
+		/// <param name="count">Number of control points of the closed cardinal spline curve.</param>
+		/// <param name="tension">The tension of the cardinal spline.</param>
+		/// <returns>Bezier segments that constitute the closed curve.</returns>
+		/// <remarks>Original name in Wine source: GdipAddPathClosedCurve2</remarks>
+		public static PointF[] OpenCardinalSplineToBezierSegments(PointF[] points, int count)
+		{
+			return OpenCardinalSplineToBezierSegments(points, count, 0.5555555555555555555f);
+		}
+
+		/// <summary>
+		/// Converts an open cardinal spline, given by the points in <paramref name="points"/>, to Bezier segments.
+		/// </summary>
+		/// <param name="points">The control points of the open cardinal spline curve.</param>
+		/// <param name="count">Number of control points of the closed cardinal spline curve.</param>
+		/// <param name="tension">The tension of the cardinal spline.</param>
+		/// <returns>Bezier segments that constitute the closed curve.</returns>
+		/// <remarks>Original name in Wine source: GdipAddPathClosedCurve2</remarks>
+		public static PointF[] OpenCardinalSplineToBezierSegments(PointF[] points, int count, float tension)
+		{
+			const float TENSION_CONST = 0.3f;
+
+			int len_pt = count * 3 - 2;
+			var pt = new PointF[len_pt];
+			tension = tension * TENSION_CONST;
+
+			var p1 = Calc_Curve_Bezier_Endpoint(points[0], points[1], tension);
+			pt[0] = points[0];
+			pt[1] = p1;
+			var p2 = p1;
+
+			for (int i = 0; i < count - 2; i++)
+			{
+				Calc_Curve_Bezier(points, i, tension, out p1, out p2);
+
+				pt[3 * i + 2] = p1;
+				pt[3 * i + 3] = points[i + 1];
+				pt[3 * i + 4] = p2;
+			}
+
+			p1 = Calc_Curve_Bezier_Endpoint(points[count - 1], points[count - 2], tension);
+
+			pt[len_pt - 2] = p1;
+			pt[len_pt - 1] = points[count - 1];
+
+			return pt;
+		}
+
+
+
+		/// <summary>
+		/// Converts a closed cardinal spline, given by the points in <paramref name="points"/>, to Bezier segments.
+		/// </summary>
+		/// <param name="points">The control points of the closed cardinal spline curve.</param>
+		/// <param name="count">Number of control points of the closed cardinal spline curve.</param>
+		/// <param name="tension">The tension of the cardinal spline.</param>
+		/// <returns>Bezier segments that constitute the closed curve.</returns>
+		/// <remarks>Original name in Wine source: GdipAddPathClosedCurve2</remarks>
+		public static PointF[] ClosedCardinalSplineToBezierSegments(PointF[] points, int count, float tension)
+		{
+			const float TENSION_CONST = 0.3f;
+
+			var len_pt = (count + 1) * 3 - 2;
+			var pt = new PointF[len_pt];
+
+			tension = tension * TENSION_CONST;
+
+			PointF p1, p2;
+			for (int i = 0; i < count - 2; i++)
+			{
+				Calc_Curve_Bezier(points, i, tension, out p1, out p2);
+
+				pt[3 * i + 2] = p1;
+				pt[3 * i + 3] = points[i + 1];
+				pt[3 * i + 4] = p2;
+			}
+
+			// calculation around last point of the original curve
+			Calc_Curve_Bezier(points[count - 2], points[count - 1], points[0], tension, out p1, out p2);
+			pt[len_pt - 5] = p1;
+			pt[len_pt - 4] = points[count - 1];
+			pt[len_pt - 3] = p2;
+
+			// calculation around first point of the original curve
+			Calc_Curve_Bezier(points[count - 1], points[0], points[1], tension, out p1, out p2);
+			pt[len_pt - 2] = p1;
+			pt[len_pt - 1] = points[0]; // close path
+			pt[0] = points[0]; // first point
+			pt[1] = p2; // outgoing control point
+
+
+
+			return pt;
+		}
+
+		/// <summary>
+		/// Shortens a Bezier segment and returns the Bezier points of the shortened segment.
+		/// </summary>
+		/// <param name="P1">Control point p1 of the bezier segment.</param>
+		/// <param name="P2">Control point p2 of the bezier segment.</param>
+		/// <param name="P3">Control point p3 of the bezier segment.</param>
+		/// <param name="P4">Control point p4 of the bezier segment.</param>
+		/// <param name="t0">Value in the range 0..1 to indicate the shortening at the beginning of the segment.</param>
+		/// <param name="t1">Value in the range 0..1 to indicate the shortening at the beginning of the segment. This value must be greater than <paramref name="t0"/>.</param>
+		/// <returns>The control points of the shortened Bezier segment.</returns>
+		/// <remarks>
+		/// <para>See this source <see href="http://stackoverflow.com/questions/11703283/cubic-bezier-curve-segment"/> for explanation.</para>
+		/// <para>The assumtion here is that the Bezier curve is parametrized using</para>
+		/// <para>B(t) = (1−t)³ P1 + 3(1−t)² t P2 + 3(1−t) t² P3 + t³ P4</para>
+		/// </remarks>
+		public static Tuple<PointF, PointF, PointF, PointF> ShortenBezierSegment(PointF P1, PointF P2, PointF P3, PointF P4, float t0, float t1)
+		{
+			// the assumption was that the curve was parametrized using
+			// B(t) = (1−t)³ P1 + 3(1−t)² t P2 + 3(1−t) t² P3 + t³ P4
+
+			var u0 = 1 - t0;
+			var u1 = 1 - t1;
+
+			var PS1X = u0 * u0 * u0 * P1.X + (t0 * u0 * u0 + u0 * t0 * u0 + u0 * u0 * t0) * P2.X + (t0 * t0 * u0 + u0 * t0 * t0 + t0 * u0 * t0) * P3.X + t0 * t0 * t0 * P4.X;
+			var PS1Y = u0 * u0 * u0 * P1.Y + (t0 * u0 * u0 + u0 * t0 * u0 + u0 * u0 * t0) * P2.Y + (t0 * t0 * u0 + u0 * t0 * t0 + t0 * u0 * t0) * P3.Y + t0 * t0 * t0 * P4.Y;
+
+			var PS2X = u0 * u0 * u1 * P1.X + (t0 * u0 * u1 + u0 * t0 * u1 + u0 * u0 * t1) * P2.X + (t0 * t0 * u1 + u0 * t0 * t1 + t0 * u0 * t1) * P3.X + t0 * t0 * t1 * P4.X;
+			var PS2Y = u0 * u0 * u1 * P1.Y + (t0 * u0 * u1 + u0 * t0 * u1 + u0 * u0 * t1) * P2.Y + (t0 * t0 * u1 + u0 * t0 * t1 + t0 * u0 * t1) * P3.Y + t0 * t0 * t1 * P4.Y;
+
+			var PS3X = u0 * u1 * u1 * P1.X + (t0 * u1 * u1 + u0 * t1 * u1 + u0 * u1 * t1) * P2.X + (t0 * t1 * u1 + u0 * t1 * t1 + t0 * u1 * t1) * P3.X + t0 * t1 * t1 * P4.X;
+			var PS3Y = u0 * u1 * u1 * P1.Y + (t0 * u1 * u1 + u0 * t1 * u1 + u0 * u1 * t1) * P2.Y + (t0 * t1 * u1 + u0 * t1 * t1 + t0 * u1 * t1) * P3.Y + t0 * t1 * t1 * P4.Y;
+
+			var PS4X = u1 * u1 * u1 * P1.X + (t1 * u1 * u1 + u1 * t1 * u1 + u1 * u1 * t1) * P2.X + (t1 * t1 * u1 + u1 * t1 * t1 + t1 * u1 * t1) * P3.X + t1 * t1 * t1 * P4.X;
+			var PS4Y = u1 * u1 * u1 * P1.Y + (t1 * u1 * u1 + u1 * t1 * u1 + u1 * u1 * t1) * P2.Y + (t1 * t1 * u1 + u1 * t1 * t1 + t1 * u1 * t1) * P3.Y + t1 * t1 * t1 * P4.Y;
+
+			return new Tuple<PointF, PointF, PointF, PointF>(new PointF(PS1X, PS1Y), new PointF(PS2X, PS2Y), new PointF(PS3X, PS3Y), new PointF(PS4X, PS4Y));
+		}
+
+
+		/// <summary>
+		/// Flattens a bezier segment, using only an absolute tolerance. The flattened points are stored together with their curve parameter t.
+		/// </summary>
+		/// <param name="absoluteTolerance">The absolute tolerance used for the flattening.</param>
+		/// <param name="maxRecursionLevel">The maximum recursion level.</param>
+		/// <param name="p0_0">The p0 0.</param>
+		/// <param name="p1_0">The p1 0.</param>
+		/// <param name="p2_0">The p2 0.</param>
+		/// <param name="p3_0">The p3 0.</param>
+		/// <param name="t0">The curve parameter that corresponds to the point <paramref name="p0_0"/>.</param>
+		/// <param name="t1">The curve parameter that corresponds to the point <paramref name="p3_0"/>.</param>
+		/// <param name="flattenedList">The list with flattened points.</param>
+		/// <param name="insertIdx">Index in the <paramref name="flattenedList"/> where to insert the next calculated point.</param>
+		/// <returns></returns>
+		public static bool FlattenBezierSegment(double absoluteTolerance, int maxRecursionLevel, PointF p0_0, PointF p1_0, PointF p2_0, PointF p3_0, float t0, float t1, List<Tuple<float, PointF>> flattenedList, int insertIdx)
+		{
+			// First, test for absolute deviation of the curve
+
+			double ux = 3 * p1_0.X - 2 * p0_0.X - p3_0.X;
+			ux *= ux;
+
+			double uy = 3 * p1_0.Y - 2 * p0_0.Y - p3_0.Y;
+			uy *= uy;
+
+			double vx = 3 * p2_0.X - 2 * p3_0.X - p0_0.X;
+			vx *= vx;
+
+			double vy = 3 * p2_0.Y - 2 * p3_0.Y - p0_0.Y;
+			vy *= vy;
+
+			if (ux < vx)
+				ux = vx;
+			if (uy < vy)
+				uy = vy;
+
+			if ((ux + uy) > absoluteTolerance) // tolerance here is 16*tol^2 (tol is the maximum absolute allowed deviation of the curve from the approximation)
+			{
+				var p0_1 = new PointF(0.5f * (p0_0.X + p1_0.X), 0.5f * (p0_0.Y + p1_0.Y));
+				var p1_1 = new PointF(0.5f * (p1_0.X + p2_0.X), 0.5f * (p1_0.Y + p2_0.Y));
+				var p2_1 = new PointF(0.5f * (p2_0.X + p3_0.X), 0.5f * (p2_0.Y + p3_0.Y));
+
+				var p0_2 = new PointF(0.5f * (p0_1.X + p1_1.X), 0.5f * (p0_1.Y + p1_1.Y));
+				var p1_2 = new PointF(0.5f * (p1_1.X + p2_1.X), 0.5f * (p1_1.Y + p2_1.Y));
+
+				var p0_3 = new PointF(0.5f * (p0_2.X + p1_2.X), 0.5f * (p0_2.Y + p1_2.Y));
+
+				float tMiddle = 0.5f * (t0 + t1);
+				flattenedList.Insert(insertIdx, new Tuple<float, PointF>(tMiddle, p0_3));
+
+				if (maxRecursionLevel > 0)
+				{
+					// now flatten the right side first
+					FlattenBezierSegment(absoluteTolerance, maxRecursionLevel - 1, p0_3, p1_2, p2_1, p3_0, tMiddle, t1, flattenedList, insertIdx + 1);
+
+					// and the left side
+					FlattenBezierSegment(absoluteTolerance, maxRecursionLevel - 1, p0_0, p0_1, p0_2, p0_3, t0, tMiddle, flattenedList, insertIdx);
+				}
+
+				return true;
+			}
+
+			return false;
+		}
+
+		private static float Pow2(float x ) { return x * x; }
+
+		/// <summary>
+		/// If a line segment is given by this parametric equation: p(t)=(1-t)*p0 + t*p1, this function calculates the parameter t at which
+		/// the point p(t) has a squared distance <paramref name="dsqr"/> from the pivot point <paramref name="pivot"/>. The argument
+		/// <paramref name="chooseFarSolution"/> determines which of two possible solutions is choosen.
+		/// </summary>
+		/// <param name="p0">Start point of the line segment.</param>
+		/// <param name="p1">End point of the line segment.</param>
+		/// <param name="pivot">Pivot point.</param>
+		/// <param name="dsqr">Squared distance from the pivot point to a point on the line segment.</param>
+		/// <param name="chooseFarSolution">If true, the solution with the higher t is returned, presuming that t is in the range [0,1].
+		/// If false, the solution with the lower t is returned, presuming that t is in the range[0,1]. If neither of the both solutions is in
+		/// the range [0,1], <see cref="double.NaN"/> is returned.
+		/// </param>
+		/// <returns></returns>
+		public static double GetParameterOnLineSegmentFromDistanceToPoint(PointF p0, PointF p1, PointF pivot, double dsqr, bool chooseFarSolution)
+		{
+			var dx = p1.X - p0.X;
+			var dy = p1.Y - p0.Y;
+			var p0x = p0.X - pivot.X;
+			var p0y = p0.Y - pivot.Y;
+			var dx2dy2 = dx * dx + dy * dy;
+
+			var sqrt = Math.Sqrt(dsqr * dx2dy2 - Pow2(dy * p0x - dx * p0y));
+			var pre = -(dx * p0x + dy * p0y);
+
+			var sol1 = (pre - sqrt) / dx2dy2;
+			var sol2 = (pre + sqrt) / dx2dy2;
+
+			if (chooseFarSolution)
+			{
+				if (0 <= sol2 && sol2 <= 1)
+					return sol2;
+				else if (0 <= sol1 && sol1 <= 1)
+					return sol1;
+				else
+					return double.NaN;
+			}
+			else
+			{
+				if (0 <= sol1 && sol1 <= 1)
+					return sol1;
+				else if (0 <= sol2 && sol2 <= 1)
+					return sol2;
+				else
+					return double.NaN;
+			}
+
+		}
+
+		public static double GetFractionalIndexFromDistanceFromStartOfBezierCurve(PointF[] points, double distanceFromStart)
+		{
+			var pivot = points[0];
+			var dsqr = distanceFromStart * distanceFromStart;
+			var list = new List<Tuple<float, PointF>>();
+
+			int segmentCount = (points.Length - 1) / 3;
+			for (int segmentStart = 0, segmentIndex = 0; segmentStart < points.Length; segmentStart += 3, ++segmentIndex)
+			{
+				// Find a point (either curve point or control point that is farther away than required
+				if (pivot.DistanceSquaredTo(points[segmentStart + 1]) < dsqr &&
+						pivot.DistanceSquaredTo(points[segmentStart + 2]) < dsqr &&
+						pivot.DistanceSquaredTo(points[segmentStart + 3]) < dsqr)
+				{
+					continue;
+				}
+
+				list.Clear();
+				list.Add(new Tuple<float, PointF>(0, points[segmentStart + 0]));
+				list.Add(new Tuple<float, PointF>(1, points[segmentStart + 3]));
+				FlattenBezierSegment(1, 12, points[segmentStart + 0], points[segmentStart + 1], points[segmentStart + 2], points[segmentStart + 3], 0, 1, list, 1);
+
+				for (int i = 1; i < list.Count; ++i)
+				{
+					if (pivot.DistanceSquaredTo(list[i].Item2) >= dsqr)
+					{
+						var tline = GetParameterOnLineSegmentFromDistanceToPoint(list[i - 1].Item2, list[i].Item2, pivot, dsqr, false);
+						return segmentIndex + (1 - tline) * list[i - 1].Item1 + (tline) * list[i].Item1;
+					}
+				}
+			}
+
+			return double.NaN;
+		}
+
+		public static double GetFractionalIndexFromDistanceFromEndOfBezierCurve(PointF[] points, double distanceFromEnd)
+		{
+			var pivot = points[points.Length - 1];
+			var dsqr = distanceFromEnd * distanceFromEnd;
+			var list = new List<Tuple<float, PointF>>();
+
+			int segmentCount = (points.Length - 1) / 3;
+			for (int segmentStart = points.Length - 4, segmentIndex = segmentCount - 1; segmentStart >= 0; segmentStart -= 3, --segmentIndex)
+			{
+				// Find a point (either curve point or control point that is farther away than required
+				if (pivot.DistanceSquaredTo(points[segmentStart + 0]) < dsqr &&
+						pivot.DistanceSquaredTo(points[segmentStart + 1]) < dsqr &&
+						pivot.DistanceSquaredTo(points[segmentStart + 2]) < dsqr)
+				{
+					continue; // all points too close, thus continue with next Bezier segment
+				}
+
+				list.Clear();
+				list.Add(new Tuple<float, PointF>(0, points[segmentStart + 0]));
+				list.Add(new Tuple<float, PointF>(1, points[segmentStart + 3]));
+				FlattenBezierSegment(1, 12, points[segmentStart + 0], points[segmentStart + 1], points[segmentStart + 2], points[segmentStart + 3], 0, 1, list, 1);
+
+				for (int i = list.Count - 2; i >= 0; --i)
+				{
+					if (pivot.DistanceSquaredTo(list[i].Item2) >= dsqr)
+					{
+						var tline = GetParameterOnLineSegmentFromDistanceToPoint(list[i].Item2, list[i+1].Item2, pivot, dsqr, true);
+						return segmentIndex + (1 - tline) * list[i].Item1 + (tline) * list[i + 1].Item1;
+					}
+				}
+			}
+
+			return double.NaN;
+		}
+
+		public static PointF[] ShortenBezierCurve(PointF[] points, double distanceFromStart, double distanceFromEnd)
+		{
+			int totalSegments = (points.Length - 1) / 3;
+			double fractionalIndexStart = 0;
+			double fractionalIndexEnd = totalSegments;
+
+			fractionalIndexStart = GetFractionalIndexFromDistanceFromStartOfBezierCurve(points, distanceFromStart);
+			if (double.IsNaN(fractionalIndexStart))
+				return null; // there is no bezier curve left after shortening
+
+			fractionalIndexEnd = GetFractionalIndexFromDistanceFromEndOfBezierCurve(points, distanceFromEnd);
+			if (double.IsNaN(fractionalIndexEnd))
+				return null; // there is no bezier curve left after shortening
+
+			if (!(fractionalIndexStart < fractionalIndexEnd))
+				return null; // there is no bezier curve left after shortening
+
+			int segmentStart = (int)Math.Floor(fractionalIndexStart);
+			int segmentLast = Math.Min((int)Math.Floor(fractionalIndexEnd), totalSegments - 1);
+			int subPoints = 1 + 3 * (segmentLast - segmentStart + 1);
+
+			var result = new PointF[subPoints];
+			Array.Copy(points, segmentStart * 3, result, 0, subPoints);
+			double fractionStart = fractionalIndexStart - segmentStart;
+			double fractionEnd = fractionalIndexEnd - segmentLast;
+
+			if (fractionStart > 0 && fractionEnd > 0 && segmentStart == segmentLast) // if there is only one segment to shorten, do it concurrently at the start and the end
+			{
+				var shortenedSegment = ShortenBezierSegment(result[0], result[1], result[2], result[3], (float)fractionStart, (float)fractionEnd);
+				result[0] = shortenedSegment.Item1;
+				result[1] = shortenedSegment.Item2;
+				result[2] = shortenedSegment.Item3;
+				result[3] = shortenedSegment.Item4;
+			}
+			else
+			{
+				if (fractionStart > 0)
+				{
+					var shortenedSegment = ShortenBezierSegment(result[0], result[1], result[2], result[3], (float)fractionStart, 1);
+					result[0] = shortenedSegment.Item1;
+					result[1] = shortenedSegment.Item2;
+					result[2] = shortenedSegment.Item3;
+					result[3] = shortenedSegment.Item4;
+				}
+				if (fractionEnd > 0)
+				{
+					int lastStart = 3 * segmentLast;
+					var shortenedSegment = ShortenBezierSegment(result[0 + lastStart], result[1 + lastStart], result[2 + lastStart], result[3 + lastStart], 1, (float)fractionEnd);
+					result[0 + lastStart] = shortenedSegment.Item1;
+					result[1 + lastStart] = shortenedSegment.Item2;
+					result[2 + lastStart] = shortenedSegment.Item3;
+					result[3 + lastStart] = shortenedSegment.Item4;
+				}
+			}
+
+			return result;
+		}
+
+		#endregion
 	}
 
 	/// <summary>
@@ -532,5 +999,6 @@ namespace Altaxo.Graph.Gdi
 			Center.X += dx;
 			Center.Y += dy;
 		}
+
 	}
 }

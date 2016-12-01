@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		public override void Paint(
 			Graphics g,
 			Processed2DPlotData pdata,
-			PlotRange rangeRaw,
+			IPlotRange rangeRaw,
 			IPlotArea layer,
 			PenX linePen,
 			Func<int, double> symbolGap,
@@ -90,9 +90,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			// Bezier is only supported with point numbers n=4+3*k
 			// so trim the range appropriately
 			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PlotRange range = new PlotRange(rangeRaw);
+			var range = rangeRaw.WithUpperBoundShortenedBy(rangeRaw.Length - (3 * ((rangeRaw.Length + 2) / 3) - 2));
 			var layerSize = layer.Size;
-			range.UpperBound = range.LowerBound + 3 * ((range.Length + 2) / 3) - 2;
 			if (range.Length < 4)
 				return; // then to less points are in this range
 
