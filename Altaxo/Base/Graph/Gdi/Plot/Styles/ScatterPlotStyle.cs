@@ -53,7 +53,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		protected bool _independentSkipFreq;
 
 		/// <summary>A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
-		protected int _skipFreq;
+		protected int _skipFreq = 1;
+
+		/// <summary>
+		/// If true, treat missing points as if not present (e.g. connect lines over missing points, count skip seamlessly over missing points)
+		/// </summary>
+		protected bool _ignoreMissingDataPoints;
+
+		/// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
+		private bool _independentOnShiftingGroupStyles = true;
+
+
 
 		protected bool _independentScatterSymbol;
 
@@ -121,6 +131,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				this._independentSkipFreq = from._independentSkipFreq;
 				this._skipFreq = from._skipFreq;
+				this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+				this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 
 				this._independentScatterSymbol = from._independentScatterSymbol;
 				this._scatterSymbol = from._scatterSymbol;
@@ -455,6 +467,25 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
+		/// <summary>
+		/// True when we don't want to shift the position of the items, for instance due to the bar graph plot group.
+		/// </summary>
+		public bool IndependentOnShiftingGroupStyles
+		{
+			get
+			{
+				return _independentOnShiftingGroupStyles;
+			}
+			set
+			{
+				if (!(_independentOnShiftingGroupStyles == value))
+				{
+					_independentOnShiftingGroupStyles = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
 		public PlotColorInfluence? OverridePlotColorInfluence
 		{
 			get
@@ -734,26 +765,22 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return true;
 		}
 
-		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
+
+		private void PaintOneRange(
+			Graphics g,
+			IPlotArea layer,
+			Processed2DPlotData pdata,
+			IPlotRange range,
+			IScatterSymbol scatterSymbol,
+			ref CachedPathData cachedPathData,
+			ref CachedBrushData cachedBrushData)
 		{
-			// adjust the skip frequency if it was not set appropriate
-			if (_skipFreq <= 0)
-				_skipFreq = 1;
-
-			if (this._scatterSymbol is NoSymbol)
-				return;
-
-			CachedPathData cachedPathData = new CachedPathData();
-			CachedBrushData cachedBrushData = new CachedBrushData();
-
-			PlotRangeList rangeList = pdata.RangeList;
-			PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
+			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
 
 			float xpos = 0, ypos = 0;
 			float xdiff, ydiff;
 
-			// Calculate current scatterSymbol overridden with frame and inset
-			var scatterSymbol = CalculateOverriddenScatterSymbol();
+			int originalIndex;
 
 			if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size
 			{
@@ -764,12 +791,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// save the graphics stat since we have to translate the origin
 				System.Drawing.Drawing2D.GraphicsState gs = g.Save();
 
-				for (int j = 0; j < ptArray.Length; j += _skipFreq)
+				for (int plotPointIndex = range.LowerBound; plotPointIndex < range.UpperBound; plotPointIndex += _skipFreq)
 				{
-					xdiff = ptArray[j].X - xpos;
-					ydiff = ptArray[j].Y - ypos;
-					xpos = ptArray[j].X;
-					ypos = ptArray[j].Y;
+					xdiff = ptArray[plotPointIndex].X - xpos;
+					ydiff = ptArray[plotPointIndex].Y - ypos;
+					xpos = ptArray[plotPointIndex].X;
+					ypos = ptArray[plotPointIndex].Y;
 					g.TranslateTransform(xdiff, ydiff);
 
 					if (null != cachedPathData.InsetPath)
@@ -789,43 +816,79 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				CalculatePaths(scatterSymbol, _symbolSize, ref cachedPathData);
 				CalculateBrushes(scatterSymbol, _color, cachedPathData, ref cachedBrushData);
 
-				for (int r = 0; r < rangeList.Count; r++)
+				for (int plotPointIndex = range.LowerBound; plotPointIndex < range.UpperBound; plotPointIndex += _skipFreq)
 				{
-					int lower = rangeList[r].LowerBound;
-					int upper = rangeList[r].UpperBound;
-					int offset = rangeList[r].OffsetToOriginal;
-					for (int j = lower; j < upper; j += _skipFreq)
+					originalIndex = range.GetOriginalRowIndexFromPlotPointIndex(plotPointIndex);
+
+					if (null == _cachedColorForIndexFunction)
 					{
-						if (null == _cachedColorForIndexFunction)
-						{
-							double customSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
-							CalculatePaths(scatterSymbol, customSymbolSize, ref cachedPathData);
-						}
-						else
-						{
-							double customSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
-							var customSymbolColor = _cachedColorForIndexFunction(j + offset);
-							CalculatePaths(scatterSymbol, customSymbolSize, ref cachedPathData);
-							CalculateBrushes(scatterSymbol, NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B), cachedPathData, ref cachedBrushData);
-						}
-
-						xdiff = ptArray[j].X - xpos;
-						ydiff = ptArray[j].Y - ypos;
-						xpos = ptArray[j].X;
-						ypos = ptArray[j].Y;
-						g.TranslateTransform(xdiff, ydiff);
-
-						if (null != cachedPathData.InsetPath)
-							g.FillPath(cachedBrushData.InsetBrush, cachedPathData.InsetPath);
-
-						if (null != cachedPathData.FillPath)
-							g.FillPath(cachedBrushData.FillBrush, cachedPathData.FillPath);
-
-						if (null != cachedPathData.FramePath)
-							g.FillPath(cachedBrushData.FrameBrush, cachedPathData.FramePath);
+						double customSymbolSize = _cachedSymbolSizeForIndexFunction(originalIndex);
+						CalculatePaths(scatterSymbol, customSymbolSize, ref cachedPathData);
 					}
+					else
+					{
+						double customSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalIndex);
+						var customSymbolColor = _cachedColorForIndexFunction(originalIndex);
+						CalculatePaths(scatterSymbol, customSymbolSize, ref cachedPathData);
+						CalculateBrushes(scatterSymbol, NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B), cachedPathData, ref cachedBrushData);
+					}
+
+					xdiff = ptArray[plotPointIndex].X - xpos;
+					ydiff = ptArray[plotPointIndex].Y - ypos;
+					xpos = ptArray[plotPointIndex].X;
+					ypos = ptArray[plotPointIndex].Y;
+					g.TranslateTransform(xdiff, ydiff);
+
+					if (null != cachedPathData.InsetPath)
+						g.FillPath(cachedBrushData.InsetBrush, cachedPathData.InsetPath);
+
+					if (null != cachedPathData.FillPath)
+						g.FillPath(cachedBrushData.FillBrush, cachedPathData.FillPath);
+
+					if (null != cachedPathData.FramePath)
+						g.FillPath(cachedBrushData.FrameBrush, cachedPathData.FramePath);
+
 				}
 			}
+		}
+
+		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
+		{
+			// adjust the skip frequency if it was not set appropriate
+			if (_skipFreq <= 0)
+				_skipFreq = 1;
+
+			if (this._scatterSymbol is NoSymbol)
+				return;
+
+			CachedPathData cachedPathData = new CachedPathData();
+			CachedBrushData cachedBrushData = new CachedBrushData();
+
+			PlotRangeList rangeList = pdata.RangeList;
+			PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
+
+
+
+			// Calculate current scatterSymbol overridden with frame and inset
+			var scatterSymbol = CalculateOverriddenScatterSymbol();
+
+
+			if (this._ignoreMissingDataPoints)
+			{
+				// in case we ignore the missing points, all ranges can be plotted
+				// as one range, i.e. continuously
+				// for this, we create the totalRange, which contains all ranges
+				var totalRange = new PlotRangeCompound(rangeList);
+				this.PaintOneRange(g, layer, pdata, totalRange, scatterSymbol, ref cachedPathData, ref cachedBrushData);
+			}
+			else // we not ignore missing points, so plot all ranges separately
+			{
+				for (int i = 0; i < rangeList.Count; i++)
+				{
+					this.PaintOneRange(g, layer, pdata, rangeList[i], scatterSymbol, ref cachedPathData, ref cachedBrushData);
+				}
+			}
+
 
 			cachedBrushData.Clear();
 			cachedPathData.Clear();
@@ -893,6 +956,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			SymbolSizeGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 			ScatterSymbolGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // here it is OK to add the local group style, even if _independentScatterSymbol is true
 			SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group style only)
+			IgnoreMissingDataPointsGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 		}
 
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
@@ -907,10 +971,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
 			SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SkipFrequency; });
+
+			// IgnoreMissingDataPoints should be the same for all sub plot styles, so there is no "private" property
+			IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
+
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
+			// IgnoreMissingDataPoints is the same for all sub plot styles
+			IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
+
+
 			if (this.IsColorReceiver)
 			{
 				// try to get a constant color ...

@@ -564,12 +564,11 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="points">The control points of the open cardinal spline curve.</param>
 		/// <param name="count">Number of control points of the closed cardinal spline curve.</param>
-		/// <param name="tension">The tension of the cardinal spline.</param>
 		/// <returns>Bezier segments that constitute the closed curve.</returns>
 		/// <remarks>Original name in Wine source: GdipAddPathClosedCurve2</remarks>
 		public static PointF[] OpenCardinalSplineToBezierSegments(PointF[] points, int count)
 		{
-			return OpenCardinalSplineToBezierSegments(points, count, 0.5555555555555555555f);
+			return OpenCardinalSplineToBezierSegments(points, count, 0.5f);
 		}
 
 		/// <summary>
@@ -582,7 +581,7 @@ namespace Altaxo.Graph.Gdi
 		/// <remarks>Original name in Wine source: GdipAddPathClosedCurve2</remarks>
 		public static PointF[] OpenCardinalSplineToBezierSegments(PointF[] points, int count, float tension)
 		{
-			const float TENSION_CONST = 0.3f;
+			const float TENSION_CONST = 1.0f / 3; ;
 
 			int len_pt = count * 3 - 2;
 			var pt = new PointF[len_pt];
@@ -610,7 +609,17 @@ namespace Altaxo.Graph.Gdi
 			return pt;
 		}
 
-
+		/// <summary>
+		/// Converts a closed cardinal spline, given by the points in <paramref name="points"/>, to Bezier segments.
+		/// </summary>
+		/// <param name="points">The control points of the closed cardinal spline curve.</param>
+		/// <param name="count">Number of control points of the closed cardinal spline curve.</param>
+		/// <returns>Bezier segments that constitute the closed curve.</returns>
+		/// <remarks>Original name in Wine source: GdipAddPathClosedCurve2</remarks>
+		public static PointF[] ClosedCardinalSplineToBezierSegments(PointF[] points, int count)
+		{
+			return ClosedCardinalSplineToBezierSegments(points, count, 0.5f);
+		}
 
 		/// <summary>
 		/// Converts a closed cardinal spline, given by the points in <paramref name="points"/>, to Bezier segments.
@@ -622,7 +631,7 @@ namespace Altaxo.Graph.Gdi
 		/// <remarks>Original name in Wine source: GdipAddPathClosedCurve2</remarks>
 		public static PointF[] ClosedCardinalSplineToBezierSegments(PointF[] points, int count, float tension)
 		{
-			const float TENSION_CONST = 0.3f;
+			const float TENSION_CONST = 1.0f / 3;
 
 			var len_pt = (count + 1) * 3 - 2;
 			var pt = new PointF[len_pt];
@@ -760,7 +769,7 @@ namespace Altaxo.Graph.Gdi
 			return false;
 		}
 
-		private static float Pow2(float x ) { return x * x; }
+		private static float Pow2(float x) { return x * x; }
 
 		/// <summary>
 		/// If a line segment is given by this parametric equation: p(t)=(1-t)*p0 + t*p1, this function calculates the parameter t at which
@@ -872,7 +881,7 @@ namespace Altaxo.Graph.Gdi
 				{
 					if (pivot.DistanceSquaredTo(list[i].Item2) >= dsqr)
 					{
-						var tline = GetParameterOnLineSegmentFromDistanceToPoint(list[i].Item2, list[i+1].Item2, pivot, dsqr, true);
+						var tline = GetParameterOnLineSegmentFromDistanceToPoint(list[i].Item2, list[i + 1].Item2, pivot, dsqr, true);
 						return segmentIndex + (1 - tline) * list[i].Item1 + (tline) * list[i + 1].Item1;
 					}
 				}
@@ -925,10 +934,10 @@ namespace Altaxo.Graph.Gdi
 					result[2] = shortenedSegment.Item3;
 					result[3] = shortenedSegment.Item4;
 				}
-				if (fractionEnd > 0)
+				if (fractionEnd < 1)
 				{
 					int lastStart = 3 * segmentLast;
-					var shortenedSegment = ShortenBezierSegment(result[0 + lastStart], result[1 + lastStart], result[2 + lastStart], result[3 + lastStart], 1, (float)fractionEnd);
+					var shortenedSegment = ShortenBezierSegment(result[0 + lastStart], result[1 + lastStart], result[2 + lastStart], result[3 + lastStart], 0, (float)fractionEnd);
 					result[0 + lastStart] = shortenedSegment.Item1;
 					result[1 + lastStart] = shortenedSegment.Item2;
 					result[2 + lastStart] = shortenedSegment.Item3;

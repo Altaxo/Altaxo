@@ -51,16 +51,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	{
 		protected ILineConnectionStyle _connectionStyle;
 
-		protected bool _ignoreMissingDataPoints; // treat missing points as if not present (connect lines over missing points)
-
 		/// <summary>If true, the start and the end point of the line are connected too.</summary>
 		protected bool _connectCircular;
 
-		protected bool _fillArea;
+		protected bool _ignoreMissingDataPoints; // treat missing points as if not present (connect lines over missing points)
 
-		protected BrushX _fillBrush; // brush to fill the area under the line
+		/// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
+		private bool _independentOnShiftingGroupStyles = true;
 
 		protected CSPlaneID _fillDirection; // the direction to fill
+
+		protected FillAreaRule _fillRule;
+
+		protected BrushX _fillBrush; // brush to fill the area under the line
 
 		/// <summary>Designates if the fill color is independent or dependent.</summary>
 		protected ColorLinkage _fillColorLinkage = ColorLinkage.PreserveAlpha;
@@ -82,13 +85,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				var s = (DropAreaPlotStyle)obj;
 
-				info.AddValue("IgnoreMissingPoints", s._ignoreMissingDataPoints);
-				info.AddValue("ConnectCircular", s._connectCircular);
 				info.AddValue("Connection", s._connectionStyle);
+				info.AddValue("ConnectCircular", s._connectCircular);
+				info.AddValue("IgnoreMissingDataPoints", s._ignoreMissingDataPoints);
+				info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
 
 				info.AddValue("FillDirection", s._fillDirection);
+				info.AddEnum("FillRule", s._fillRule);
 				info.AddValue("FillBrush", s._fillBrush);
 				info.AddEnum("FillColorLinkage", s._fillColorLinkage);
+
 				info.AddValue("Frame", s._framePen);
 				info.AddEnum("FrameColorLinkage", s._frameColorLinkage);
 			}
@@ -97,14 +103,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				DropAreaPlotStyle s = (DropAreaPlotStyle)o ?? new DropAreaPlotStyle(info);
 
-				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
-				s._connectCircular = info.GetBoolean("ConnectCircular");
 				s._connectionStyle = (ILineConnectionStyle)info.GetValue("Connection", s);
+				s._connectCircular = info.GetBoolean("ConnectCircular");
+				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingDataPoints");
+				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
 
 				s._fillDirection = (CSPlaneID)info.GetValue("FillDirection", s);
+				s._fillRule = (FillAreaRule)info.GetEnum("FillRule", typeof(FillAreaRule));
 				s._fillBrush = (BrushX)info.GetValue("FillBrush", s);
 				if (null != s._fillBrush) s._fillBrush.ParentObject = s;
 				s._fillColorLinkage = (ColorLinkage)info.GetEnum("FillColorLinkage", typeof(ColorLinkage));
+
 				s._framePen = (PenX)info.GetValue("Pen", s);
 				if (null != s._framePen) s._framePen.ParentObject = s;
 				s._frameColorLinkage = (ColorLinkage)info.GetEnum("FrameColorLinkage", typeof(ColorLinkage));
@@ -123,11 +132,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
-				this._connectCircular = from._connectCircular;
 				this._connectionStyle = from._connectionStyle;
+				this._connectCircular = from._connectCircular;
+				this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+				this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 
 				this._fillDirection = from._fillDirection;
+				this._fillRule = from._fillRule;
 				ChildCopyToMember(ref _fillBrush, from._fillBrush);
 				this._fillColorLinkage = from._fillColorLinkage;
 				ChildCopyToMember(ref _framePen, from._framePen);
@@ -270,6 +281,25 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
+		/// <summary>
+		/// True when we don't want to shift the position of the items, for instance due to the bar graph plot group.
+		/// </summary>
+		public bool IndependentOnShiftingGroupStyles
+		{
+			get
+			{
+				return _independentOnShiftingGroupStyles;
+			}
+			set
+			{
+				if (!(_independentOnShiftingGroupStyles == value))
+				{
+					_independentOnShiftingGroupStyles = value;
+					EhSelfChanged();
+				}
+			}
+		}
+
 		public CSPlaneID FillDirection
 		{
 			get { return this._fillDirection; }
@@ -279,6 +309,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_fillDirection = value;
 				if (oldvalue != value)
 				{
+					EhSelfChanged(EventArgs.Empty); // Fire Changed event
+				}
+			}
+		}
+
+		public FillAreaRule FillRule
+		{
+			get { return this._fillRule; }
+			set
+			{
+				if (!(_fillRule == value))
+				{
+					_fillRule = value;
 					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 			}
@@ -418,6 +461,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 			DashPatternGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+			IgnoreMissingDataPointsGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 			LineConnection2DGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 		}
 
@@ -428,13 +472,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			else if (this._frameColorLinkage == ColorLinkage.Dependent && this._framePen != null)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._framePen.Color; });
 
-			LineConnection2DGroupStyle.PrepareStyle(externalGroups, localGroups, () => _connectionStyle);
+			IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
+			LineConnection2DGroupStyle.PrepareStyle(externalGroups, localGroups, () => new Tuple<ILineConnectionStyle, bool>(_connectionStyle, _connectCircular));
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
+			// IgnoreMissingDataPoints is the same for all sub plot styles
+			IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
+
 			// LineConnectionStyle is the same for all sub plot styles
-			LineConnection2DGroupStyle.ApplyStyle(externalGroups, localGroups, (lineConnection) => this._connectionStyle = lineConnection);
+			LineConnection2DGroupStyle.ApplyStyle(externalGroups, localGroups, (lineConnection, connectCircular) => { this._connectionStyle = lineConnection; this._connectCircular = connectCircular; });
 
 			if (ColorLinkage.Independent != _fillColorLinkage)
 			{

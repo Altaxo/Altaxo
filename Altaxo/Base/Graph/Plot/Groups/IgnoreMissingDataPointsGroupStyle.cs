@@ -34,17 +34,14 @@ namespace Altaxo.Graph.Plot.Groups
 	/// Thus it is only intended for local use (only amound substyles of a single plot item).
 	/// plot styles.
 	/// </summary>
-	public class LineConnection2DGroupStyle
+	public class IgnoreMissingDataPointsGroupStyle
 		:
 		Main.SuspendableDocumentLeafNodeWithEventArgs,
 		IPlotGroupStyle
 	{
 		private bool _isInitialized;
-
-		private ILineConnectionStyle _lineConnectionStyle;
-		private bool _connectCircular;
-
-		private static readonly Type MyType = typeof(LineConnection2DGroupStyle);
+		private bool _ignoreMissingDataPoints;
+		private static readonly Type MyType = typeof(IgnoreMissingDataPointsGroupStyle);
 
 		#region Serialization
 
@@ -52,17 +49,17 @@ namespace Altaxo.Graph.Plot.Groups
 		/// 2016-11-17 Initial version
 		/// </summary>
 		/// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineConnection2DGroupStyle), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IgnoreMissingDataPointsGroupStyle), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				LineConnection2DGroupStyle s = (LineConnection2DGroupStyle)obj;
+				IgnoreMissingDataPointsGroupStyle s = (IgnoreMissingDataPointsGroupStyle)obj;
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				LineConnection2DGroupStyle s = null != o ? (LineConnection2DGroupStyle)o : new LineConnection2DGroupStyle();
+				IgnoreMissingDataPointsGroupStyle s = null != o ? (IgnoreMissingDataPointsGroupStyle)o : new IgnoreMissingDataPointsGroupStyle();
 				return s;
 			}
 		}
@@ -71,28 +68,28 @@ namespace Altaxo.Graph.Plot.Groups
 
 		#region Constructors
 
-		public LineConnection2DGroupStyle()
+		public IgnoreMissingDataPointsGroupStyle()
 		{
 		}
 
-		public LineConnection2DGroupStyle(LineConnection2DGroupStyle from)
+		public IgnoreMissingDataPointsGroupStyle(IgnoreMissingDataPointsGroupStyle from)
 		{
 			this._isInitialized = from._isInitialized;
-			this._lineConnectionStyle = from._lineConnectionStyle;
+			this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
 		}
 
 		#endregion Constructors
 
 		#region ICloneable Members
 
-		public LineConnection2DGroupStyle Clone()
+		public IgnoreMissingDataPointsGroupStyle Clone()
 		{
-			return new LineConnection2DGroupStyle(this);
+			return new IgnoreMissingDataPointsGroupStyle(this);
 		}
 
 		object ICloneable.Clone()
 		{
-			return new LineConnection2DGroupStyle(this);
+			return new IgnoreMissingDataPointsGroupStyle(this);
 		}
 
 		#endregion ICloneable Members
@@ -101,9 +98,9 @@ namespace Altaxo.Graph.Plot.Groups
 
 		public void TransferFrom(IPlotGroupStyle fromb)
 		{
-			LineConnection2DGroupStyle from = (LineConnection2DGroupStyle)fromb;
+			IgnoreMissingDataPointsGroupStyle from = (IgnoreMissingDataPointsGroupStyle)fromb;
 			this._isInitialized = from._isInitialized;
-			_lineConnectionStyle = from._lineConnectionStyle;
+			_ignoreMissingDataPoints = from._ignoreMissingDataPoints;
 		}
 
 		public void BeginPrepare()
@@ -166,26 +163,17 @@ namespace Altaxo.Graph.Plot.Groups
 			}
 		}
 
-		public void Initialize(ILineConnectionStyle lineConnectionStyle, bool connectCircular)
+		public void Initialize(bool ignoreMissingDataPoints)
 		{
 			_isInitialized = true;
-			_lineConnectionStyle = lineConnectionStyle;
-			_connectCircular = connectCircular;
+			_ignoreMissingDataPoints = ignoreMissingDataPoints;
 		}
 
-		public ILineConnectionStyle LineConnectionStyle
+		public bool IgnoreMissingDataPoints
 		{
 			get
 			{
-				return _lineConnectionStyle;
-			}
-		}
-
-		public bool ConnectCircular
-		{
-			get
-			{
-				return _connectCircular;
+				return _ignoreMissingDataPoints;
 			}
 		}
 
@@ -202,39 +190,30 @@ namespace Altaxo.Graph.Plot.Groups
 		 IPlotGroupStyleCollection externalGroups,
 		 IPlotGroupStyleCollection localGroups)
 		{
-			if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(LineConnection2DGroupStyle)))
-				localGroups.Add(new LineConnection2DGroupStyle());
+			if (PlotGroupStyle.ShouldAddLocalGroupStyle(externalGroups, localGroups, typeof(IgnoreMissingDataPointsGroupStyle)))
+				localGroups.Add(new IgnoreMissingDataPointsGroupStyle());
 		}
 
-		/// <summary>
-		/// Prepares the style.
-		/// </summary>
-		/// <param name="externalGroups">The external groups.</param>
-		/// <param name="localGroups">The local groups.</param>
-		/// <param name="getter">The getter function. Item1 of the tuple is the line connection style, Item2 of the tuple is the ConnectCircular flag.</param>
 		public static void PrepareStyle(
 			IPlotGroupStyleCollection externalGroups,
 			IPlotGroupStyleCollection localGroups,
-			Func<Tuple<ILineConnectionStyle, bool>> getter)
+			Func<bool> getter)
 		{
-			if (!externalGroups.ContainsType(typeof(LineConnection2DGroupStyle))
+			if (!externalGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle))
 				&& null != localGroups
-				&& !localGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
+				&& !localGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
 			{
-				localGroups.Add(new LineConnection2DGroupStyle());
+				localGroups.Add(new IgnoreMissingDataPointsGroupStyle());
 			}
 
-			LineConnection2DGroupStyle grpStyle = null;
-			if (externalGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
-				grpStyle = (LineConnection2DGroupStyle)externalGroups.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
+			IgnoreMissingDataPointsGroupStyle grpStyle = null;
+			if (externalGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
+				grpStyle = (IgnoreMissingDataPointsGroupStyle)externalGroups.GetPlotGroupStyle(typeof(IgnoreMissingDataPointsGroupStyle));
 			else if (localGroups != null)
-				grpStyle = (LineConnection2DGroupStyle)localGroups.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
+				grpStyle = (IgnoreMissingDataPointsGroupStyle)localGroups.GetPlotGroupStyle(typeof(IgnoreMissingDataPointsGroupStyle));
 
 			if (grpStyle != null && getter != null && !grpStyle.IsInitialized)
-			{
-				var data = getter();
-				grpStyle.Initialize(data.Item1, data.Item2);
-			}
+				grpStyle.Initialize(getter());
 		}
 
 		/// <summary>
@@ -247,20 +226,20 @@ namespace Altaxo.Graph.Plot.Groups
 		public static bool ApplyStyle(
 			IPlotGroupStyleCollection externalGroups,
 			IPlotGroupStyleCollection localGroups,
-			Action<ILineConnectionStyle, bool> setter)
+			Action<bool> setter)
 		{
-			LineConnection2DGroupStyle grpStyle = null;
+			IgnoreMissingDataPointsGroupStyle grpStyle = null;
 			IPlotGroupStyleCollection grpColl = null;
-			if (externalGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
+			if (externalGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
 				grpColl = externalGroups;
-			else if (localGroups != null && localGroups.ContainsType(typeof(LineConnection2DGroupStyle)))
+			else if (localGroups != null && localGroups.ContainsType(typeof(IgnoreMissingDataPointsGroupStyle)))
 				grpColl = localGroups;
 
 			if (null != grpColl)
 			{
-				grpStyle = (LineConnection2DGroupStyle)grpColl.GetPlotGroupStyle(typeof(LineConnection2DGroupStyle));
-				grpColl.OnBeforeApplication(typeof(LineConnection2DGroupStyle));
-				setter(grpStyle.LineConnectionStyle, grpStyle._connectCircular);
+				grpStyle = (IgnoreMissingDataPointsGroupStyle)grpColl.GetPlotGroupStyle(typeof(IgnoreMissingDataPointsGroupStyle));
+				grpColl.OnBeforeApplication(typeof(IgnoreMissingDataPointsGroupStyle));
+				setter(grpStyle.IgnoreMissingDataPoints);
 				return true;
 			}
 			else

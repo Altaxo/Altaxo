@@ -158,10 +158,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			CSPlaneID fillDirection);
 
 		/// <summary>A value indicating whether the skip frequency value is independent from other values.</summary>
-		protected bool _independentSkipFreq;
+		protected bool _independentSkipFrequency;
 
 		/// <summary>A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
-		protected int _skipFreq = 1;
+		protected int _skipFrequency = 1;
+
+		/// <summary>
+		/// If true, treat missing points as if not present (e.g. connect lines over missing points, continue with skip over missing points).
+		/// </summary>
+		protected bool _ignoreMissingDataPoints; // treat missing points as if not present (connect lines over missing points)
+
+		/// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
+		private bool _independentOnShiftingGroupStyles = true;
 
 		protected bool _independentColor;
 
@@ -179,7 +187,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>Controls the length of the end bar.</summary>
 		protected double _symbolSize;
 
-		protected bool _ignoreMissingDataPoints; // treat missing points as if not present (connect lines over missing points)
 
 		/// <summary>If true, the start and the end point of the line are connected too.</summary>
 		protected bool _connectCircular;
@@ -414,10 +421,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				var s = (LinePlotStyle)obj;
 
-				info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
-				info.AddValue("SkipFreq", s._skipFreq);
+				info.AddValue("IndependentSkipFreq", s._independentSkipFrequency);
+				info.AddValue("SkipFreq", s._skipFrequency);
 
-				info.AddValue("IgnoreMissingPoints", s._ignoreMissingDataPoints);
+				info.AddValue("IgnoreMissingDataPoints", s._ignoreMissingDataPoints);
+				info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
+
 				info.AddValue("ConnectCircular", s._connectCircular);
 				info.AddValue("Connection", s._connectionStyle);
 
@@ -437,10 +446,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				LinePlotStyle s = (LinePlotStyle)o ?? new LinePlotStyle(info);
 
-				s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
-				s._skipFreq = info.GetInt32("SkipFreq");
+				s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
+				s._skipFrequency = info.GetInt32("SkipFreq");
 
-				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingPoints");
+				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingDataPoints");
+				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
+
 				s._connectCircular = info.GetBoolean("ConnectCircular");
 				s._connectionStyle = (ILineConnectionStyle)info.GetValue("Connection", s);
 
@@ -471,10 +482,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				this._independentSkipFreq = from._independentSkipFreq;
-				this._skipFreq = from._skipFreq;
+				this._independentSkipFrequency = from._independentSkipFrequency;
+				this._skipFrequency = from._skipFrequency;
 
 				this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+				this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+
+
 				this._connectCircular = from._connectCircular;
 				this._connectionStyle = from._connectionStyle;
 
@@ -585,13 +599,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>Skip frequency. A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
 		public int SkipFrequency
 		{
-			get { return _skipFreq; }
+			get { return _skipFrequency; }
 			set
 			{
 				value = Math.Max(1, value);
-				if (!(_skipFreq == value))
+				if (!(_skipFrequency == value))
 				{
-					_skipFreq = value;
+					_skipFrequency = value;
 					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 			}
@@ -602,14 +616,33 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			get
 			{
-				return _independentSkipFreq;
+				return _independentSkipFrequency;
 			}
 			set
 			{
-				if (!(_independentSkipFreq == value))
+				if (!(_independentSkipFrequency == value))
 				{
-					_independentSkipFreq = value;
+					_independentSkipFrequency = value;
 					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// True when we don't want to shift the position of the items, for instance due to the bar graph plot group.
+		/// </summary>
+		public bool IndependentOnShiftingGroupStyles
+		{
+			get
+			{
+				return _independentOnShiftingGroupStyles;
+			}
+			set
+			{
+				if (!(_independentOnShiftingGroupStyles == value))
+				{
+					_independentOnShiftingGroupStyles = value;
+					EhSelfChanged();
 				}
 			}
 		}
@@ -875,13 +908,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// as one range, i.e. continuously
 				// for this, we create the totalRange, which contains all ranges
 				var totalRange = new PlotRangeCompound(rangeList);
-				_connectionStyle.Paint(g, pdata, totalRange, layer, _linePen, symbolGapFunction, _skipFreq, _connectCircular, this);
+				_connectionStyle.Paint(g, pdata, totalRange, layer, _linePen, symbolGapFunction, _skipFrequency, _connectCircular, this);
 			}
 			else // we not ignore missing points, so plot all ranges separately
 			{
 				for (int i = 0; i < rangelistlen; i++)
 				{
-					_connectionStyle.Paint(g, pdata, rangeList[i], layer, _linePen, symbolGapFunction, _skipFreq, _connectCircular, this);
+					_connectionStyle.Paint(g, pdata, rangeList[i], layer, _linePen, symbolGapFunction, _skipFrequency, _connectCircular, this);
 				}
 			}
 		}
@@ -945,6 +978,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 			DashPatternGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+			IgnoreMissingDataPointsGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 			LineConnection2DGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 		}
 
@@ -956,19 +990,23 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (!_independentDashStyle)
 				DashPatternGroupStyle.PrepareStyle(externalGroups, localGroups, delegate { return this.LinePen.DashPattern; });
 
-			LineConnection2DGroupStyle.PrepareStyle(externalGroups, localGroups, () => _connectionStyle);
+			IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
+			LineConnection2DGroupStyle.PrepareStyle(externalGroups, localGroups, () => new Tuple<ILineConnectionStyle, bool>(_connectionStyle, _connectCircular));
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
+			// IgnoreMissingDataPoints is the same for all sub plot styles
+			IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
+
 			// LineConnectionStyle is the same for all sub plot styles
-			LineConnection2DGroupStyle.ApplyStyle(externalGroups, localGroups, (lineConnection) => this._connectionStyle = lineConnection);
+			LineConnection2DGroupStyle.ApplyStyle(externalGroups, localGroups, (lineConnection, connectCircular) => { this._connectionStyle = lineConnection; this._connectCircular = connectCircular; });
 
 			// SkipFrequency should be the same for all sub plot styles
-			if (!_independentSkipFreq)
+			if (!_independentSkipFrequency)
 			{
-				_skipFreq = 1;
-				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this._skipFreq = c; });
+				_skipFrequency = 1;
+				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this._skipFrequency = c; });
 			}
 
 			if (this.IsColorReceiver)

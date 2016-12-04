@@ -61,6 +61,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		private ValueInterpretation _meaningOfValues;
 
+		/// <summary>A value indicating whether the skip frequency value is independent from other values.</summary>
+		protected bool _independentSkipFrequency;
+
+		/// <summary>A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
+		protected int _skipFrequency;
+
+		/// <summary>
+		/// If true, treat missing points as if not present (e.g. connect lines over missing points, count skip seamlessly over missing points)
+		/// </summary>
+		protected bool _ignoreMissingDataPoints;
+
+		/// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
+		private bool _independentOnShiftingGroupStyles = true;
+
 		/// <summary>If true, the vector length is set manually, and the three columns are used only to determine the vector direction.</summary>
 		private bool _useManualVectorLength;
 
@@ -110,16 +124,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		private double _lineWidth1Offset;
 		private double _lineWidth1Factor;
 
-		/// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
-		private bool _independentOnShiftingGroupStyles = true; // default is true, because we don't want irritated users
-
-		/// <summary>
-		/// Skip frequency.
-		/// </summary>
-		protected int _skipFrequency;
-
-		protected bool _independentSkipFrequency;
-
 		/// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
 		private double _cachedLogicalShiftX;
 
@@ -148,6 +152,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddValue("ColumnY", s._columnY);
 				info.AddValue("IndependentSkipFreq", s._independentSkipFrequency);
 				info.AddValue("SkipFreq", s._skipFrequency);
+				info.AddValue("IgnoreMissingDataPoints", s._ignoreMissingDataPoints);
+				info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
+
 				info.AddValue("UseManualVectorLength", s._useManualVectorLength);
 				info.AddValue("VectorLengthOffset", s._vectorLengthOffset);
 				info.AddValue("VectorLengthFactor", s._vectorLengthFactor);
@@ -168,7 +175,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddValue("SymbolGapOffset", s._symbolGapOffset);
 				info.AddValue("SymbolGapFactor", s._symbolGapFactor);
 
-				info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
 			}
 
 			protected virtual VectorCartesicPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -185,6 +191,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
 				s._skipFrequency = info.GetInt32("SkipFreq");
+				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingDataPoints");
+				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
 
 				s._useManualVectorLength = info.GetBoolean("UseManualVectorLength");
 				s._vectorLengthOffset = info.GetDouble("VectorLengthOffset");
@@ -206,7 +214,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._symbolGapOffset = info.GetDouble("SymbolGapOffset");
 				s._symbolGapFactor = info.GetDouble("SymbolGapFactor");
 
-				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
 
 				return s;
 			}
@@ -255,6 +262,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._meaningOfValues = from._meaningOfValues;
 				this._independentSkipFrequency = from._independentSkipFrequency;
 				this._skipFrequency = from._skipFrequency;
+				this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
 				this._useManualVectorLength = from._useManualVectorLength;
 				this._vectorLengthOffset = from._vectorLengthOffset;
 				this._vectorLengthFactor = from._vectorLengthFactor;
@@ -699,6 +707,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			if (!_independentSkipFrequency)
 				SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group only)
+
+			// IgnoreMissingDataPoints should be the same for all sub plot styles, so there is no "private" property
+			IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
 		}
 
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
@@ -709,12 +720,20 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (!_independentSkipFrequency)
 				SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return SkipFrequency; });
 
+			// IgnoreMissingDataPoints should be the same for all sub plot styles, so there is no "private" property
+			IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
+
+
 			// note: symbol size and barposition are only applied, but not prepared
 			// this item can not be used as provider of a symbol size
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
+			// IgnoreMissingDataPoints is the same for all sub plot styles
+			IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
+
+
 			_cachedColorForIndexFunction = null;
 			_cachedSymbolSizeForIndexFunction = null;
 			// color

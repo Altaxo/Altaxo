@@ -46,10 +46,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		IG2DPlotStyle
 	{
 		/// <summary>A value indicating whether the skip frequency value is independent from other values.</summary>
-		protected bool _independentSkipFreq;
+		protected bool _independentSkipFrequency;
 
 		/// <summary>A value of 2 skips every other data point, a value of 3 skips 2 out of 3 data points, and so on.</summary>
-		protected int _skipFreq;
+		protected int _skipFrequency;
+
+		/// <summary>
+		/// If true, treat missing points as if not present (e.g. connect lines over missing points, count skip seamlessly over missing points)
+		/// </summary>
+		protected bool _ignoreMissingDataPoints;
+
+		/// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
+		private bool _independentOnShiftingGroupStyles = true;
+
 
 		/// <summary>Target(s) for the drop line.</summary>
 		protected CSPlaneIDList _dropTargets;
@@ -118,8 +127,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				DropLinePlotStyle s = (DropLinePlotStyle)obj;
 
-				info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
-				info.AddValue("SkipFreq", s._skipFreq);
+				info.AddValue("IndependentSkipFreq", s._independentSkipFrequency);
+				info.AddValue("SkipFreq", s._skipFrequency);
+				info.AddValue("IgnoreMissingDataPoints", s._ignoreMissingDataPoints);
+				info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
+
 				info.AddValue("DropTargets", s._dropTargets);
 				info.AddValue("HasAdditionalDropTarget", s._additionalDropTargetIsEnabled);
 				if (s._additionalDropTargetIsEnabled)
@@ -146,8 +158,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				DropLinePlotStyle s = null != o ? (DropLinePlotStyle)o : new DropLinePlotStyle(info);
 
-				s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
-				s._skipFreq = info.GetInt32("SkipFreq");
+				s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
+				s._skipFrequency = info.GetInt32("SkipFreq");
+				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingDataPoints");
+				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
+
 				s._dropTargets = (CSPlaneIDList)info.GetValue("DropLine", s);
 				s._additionalDropTargetIsEnabled = info.GetBoolean("HasAdditionalDropTarget");
 				if (s._additionalDropTargetIsEnabled)
@@ -214,8 +229,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			using (var suspendToken = SuspendGetToken())
 			{
-				this._independentSkipFreq = from._independentSkipFreq;
-				this._skipFreq = from._skipFreq;
+				this._independentSkipFrequency = from._independentSkipFrequency;
+				this._skipFrequency = from._skipFrequency;
+				this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
+				this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
+
 				this._dropTargets = from._dropTargets; // immutable
 
 				this._additionalDropTargetIsEnabled = from._additionalDropTargetIsEnabled;
@@ -492,13 +510,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public int SkipFrequency
 		{
-			get { return _skipFreq; }
+			get { return _skipFrequency; }
 			set
 			{
 				value = Math.Max(1, value);
-				if (value != _skipFreq)
+				if (value != _skipFrequency)
 				{
-					_skipFreq = value;
+					_skipFrequency = value;
 					EhSelfChanged(EventArgs.Empty); // Fire Changed event
 				}
 			}
@@ -508,14 +526,33 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			get
 			{
-				return _independentSkipFreq;
+				return _independentSkipFrequency;
 			}
 			set
 			{
-				bool oldValue = _independentSkipFreq;
-				_independentSkipFreq = value;
+				bool oldValue = _independentSkipFrequency;
+				_independentSkipFrequency = value;
 				if (value != oldValue)
 					EhSelfChanged(EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// True when we don't want to shift the position of the items, for instance due to the bar graph plot group.
+		/// </summary>
+		public bool IndependentOnShiftingGroupStyles
+		{
+			get
+			{
+				return _independentOnShiftingGroupStyles;
+			}
+			set
+			{
+				if (!(_independentOnShiftingGroupStyles == value))
+				{
+					_independentOnShiftingGroupStyles = value;
+					EhSelfChanged();
+				}
 			}
 		}
 
@@ -656,8 +693,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
 
 			// adjust the skip frequency if it was not set appropriate
-			if (_skipFreq <= 0)
-				_skipFreq = 1;
+			if (_skipFrequency <= 0)
+				_skipFrequency = 1;
 
 			var dropTargets = new List<CSPlaneID>(_dropTargets.Select(id => layer.UpdateCSPlaneID(id)));
 			if (_additionalDropTargetIsEnabled)
@@ -695,7 +732,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					int lower = range.LowerBound;
 					int upper = range.UpperBound;
 
-					for (int j = lower; j < upper; j += _skipFreq)
+					for (int j = lower; j < upper; j += _skipFrequency)
 					{
 						Logical3D r3d = layer.GetLogical3D(pdata, j + range.OffsetToOriginal);
 						foreach (CSPlaneID id in dropTargets)
@@ -727,7 +764,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					int lower = range.LowerBound;
 					int upper = range.UpperBound;
 					int offset = range.OffsetToOriginal;
-					for (int j = lower; j < upper; j += _skipFreq)
+					for (int j = lower; j < upper; j += _skipFrequency)
 					{
 						var pen = _pen.Clone();
 						if (null == _cachedColorForIndexFunction)
@@ -799,7 +836,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		public void CollectLocalGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
 			ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
-			SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group style only)
+
+			if (!_independentSkipFrequency)
+				SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group style only)
+
+			IgnoreMissingDataPointsGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 		}
 
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
@@ -808,12 +849,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this.Color; });
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			if (!_independentSkipFreq)
-				SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return _skipFreq; });
+			if (!_independentSkipFrequency)
+				SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return _skipFrequency; });
+
+			// IgnoreMissingDataPoints should be the same for all sub plot styles, so there is no "private" property
+			IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
+			// IgnoreMissingDataPoints is the same for all sub plot styles
+			IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
+
+
 			if (this.IsColorReceiver)
 			{
 				// try to get a constant color ...
@@ -838,10 +886,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
-			if (!_independentSkipFreq)
+			if (!_independentSkipFrequency)
 			{
-				_skipFreq = 1;
-				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this._skipFreq = c; });
+				_skipFrequency = 1;
+				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this._skipFrequency = c; });
 			}
 		}
 

@@ -261,6 +261,7 @@
     <Compile Include="Drawing\DashPatterns\Solid.cs" />
     <Compile Include="Drawing\DashPatterns\Dot.cs" />
     <Compile Include="Drawing\DashPatterns\Dash.cs" />
+    <Compile Include="Drawing\FillAreaRule.cs" />
     <Compile Include="Drawing\IDashPattern.cs" />
     <Compile Include="Drawing\D3D\ILineCap.cs" />
     <Compile Include="Drawing\D3D\LineCaps\ContourArrow20.cs" />
@@ -586,6 +587,7 @@
     <Compile Include="Graph\Gdi\XYPlotLayer_LegacyCode.cs" />
     <Compile Include="Graph\Plot\Groups\IShiftLogicalXYGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\IShiftLogicalXYZGroupStyle.cs" />
+    <Compile Include="Graph\Plot\Groups\IgnoreMissingDataPointsGroupStyle.cs" />
     <Compile Include="Graph\Plot\Groups\LineConnection2DGroupStyle.cs" />
     <Compile Include="Graph\Scales\Boundaries\CumulativeProbabilityBoundaries.cs" />
     <Compile Include="Graph\Scales\Boundaries\InverseNumericalBoundaries.cs" />

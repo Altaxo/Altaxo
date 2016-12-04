@@ -240,6 +240,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				info.AddValue("IndependentSkipFreq", s._independentSkipFreq);
 				info.AddValue("SkipFreq", s._skipFreq);
+				info.AddValue("IgnoreMissingDataPoints", s._ignoreMissingDataPoints);
+				info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
 
 				info.AddValue("IndependentScatterSymbol", s._independentScatterSymbol);
 				info.AddValue("ScatterSymbol", s._scatterSymbol);
@@ -267,6 +269,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				s._independentSkipFreq = info.GetBoolean("IndependentSkipFreq");
 				s._skipFreq = info.GetInt32("SkipFreq");
+
+				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingDataPoints");
+				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
 
 				s._independentScatterSymbol = info.GetBoolean("IndependentScatterSymbol");
 				s._scatterSymbol = (IScatterSymbol)info.GetValue("ScatterSymbol", s);

@@ -97,29 +97,57 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 			if (connectCircular)
 			{
-				g.DrawClosedCurve(linePen, subLinePoints);
+				if (symbolGap != null)
+				{
+					// convert points to bezier segments
+					var bezierSegments = GdiExtensionMethods.ClosedCardinalSplineToBezierSegments(subLinePoints, subLinePoints.Length);
+					var subBezierSegments = new PointF[0];
+					int subPointLengthM1, subBezierLength;
+					for (int i = 0; i < (range.Length); i += skipFrequency)
+					{
+						subPointLengthM1 = Math.Min(skipFrequency, range.Length - i);
+						int originalIndex = range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound);
+						double gapAtStart = symbolGap(originalIndex);
+						double gapAtEnd = subPointLengthM1 == skipFrequency ? ((i + skipFrequency) < range.Length ? symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound + skipFrequency)) : symbolGap(range.OriginalFirstPoint)) : 0;
+						subBezierLength = 3 * subPointLengthM1 + 1;
+						if (subBezierSegments.Length != subBezierLength)
+							subBezierSegments = new PointF[subBezierLength];
+
+						Array.Copy(bezierSegments, i * 3, subBezierSegments, 0, subBezierLength);
+						var shortenedBezierSegments = GdiExtensionMethods.ShortenBezierCurve(subBezierSegments, gapAtStart / 2, gapAtEnd / 2);
+
+						if (null != shortenedBezierSegments)
+						{
+							g.DrawBeziers(linePen, shortenedBezierSegments);
+						}
+					}
+				}
+				else
+				{
+					g.DrawClosedCurve(linePen, subLinePoints);
+				}
+
 			}
 			else
 			{
-
 				if (symbolGap != null)
 				{
 					// convert points to bezier segments
 					var bezierSegments = GdiExtensionMethods.OpenCardinalSplineToBezierSegments(subLinePoints, subLinePoints.Length);
 					var subBezierSegments = new PointF[0];
-					int subLength, subBezierLength;
+					int subPointLengthM1, subBezierLength;
 					for (int i = 0; i < (range.Length - 1); i += skipFrequency)
 					{
-						subLength = Math.Min(skipFrequency, range.Length - 1 - i);
+						subPointLengthM1 = Math.Min(skipFrequency, range.Length - 1 - i);
 						int originalIndex = range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound);
 						double gapAtStart = symbolGap(originalIndex);
-						double gapAtEnd = subLength == skipFrequency ? symbolGap(originalIndex + skipFrequency) : 0;
-						subBezierLength = 3 * subLength + 1;
+						double gapAtEnd = subPointLengthM1 == skipFrequency ? symbolGap(originalIndex + skipFrequency) : 0;
+						subBezierLength = 3 * subPointLengthM1 + 1;
 						if (subBezierSegments.Length != subBezierLength)
 							subBezierSegments = new PointF[subBezierLength];
 
 						Array.Copy(bezierSegments, i * 3, subBezierSegments, 0, subBezierLength);
-						var shortenedBezierSegments = GdiExtensionMethods.ShortenBezierCurve(subBezierSegments, gapAtStart/2, gapAtEnd/2);
+						var shortenedBezierSegments = GdiExtensionMethods.ShortenBezierCurve(subBezierSegments, gapAtStart / 2, gapAtEnd / 2);
 
 						if (null != shortenedBezierSegments)
 						{

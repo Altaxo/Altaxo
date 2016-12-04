@@ -54,6 +54,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// </summary>
 		protected int _skipFrequency;
 
+		/// <summary>
+		/// If true, treat missing points as if not present (e.g. connect lines over missing points, count skip seamlessly over missing points)
+		/// </summary>
+		protected bool _ignoreMissingDataPoints;
+
 		/// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
 		protected bool _independentOnShiftingGroupStyles;
 
@@ -496,6 +501,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddValue("AttachedAxis", s._attachedPlane);
 				info.AddValue("IndependentSkipFreq", s._independentSkipFrequency);
 				info.AddValue("SkipFreq", s._skipFrequency);
+				info.AddValue("IgnoreMissingDataPoints", s._ignoreMissingDataPoints);
 				info.AddValue("IndependentOnShiftingGroupStyles", s._independentOnShiftingGroupStyles);
 				info.AddValue("LabelFormat", s._labelFormatString);
 
@@ -537,6 +543,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._attachedPlane = (CSPlaneID)info.GetValue("AttachedPlane", s);
 				s._independentSkipFrequency = info.GetBoolean("IndependentSkipFreq");
 				s._skipFrequency = info.GetInt32("SkipFreq");
+				s._ignoreMissingDataPoints = info.GetBoolean("IgnoreMissingDataPoints");
 				s._independentOnShiftingGroupStyles = info.GetBoolean("IndependentOnShiftingGroupStyles");
 				s._labelFormatString = info.GetString("LabelFormat");
 
@@ -593,6 +600,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._attachedPlane = from._attachedPlane;
 				this._independentSkipFrequency = from._independentSkipFrequency;
 				this._skipFrequency = from._skipFrequency;
+				this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
 				this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 				this._labelFormatString = from._labelFormatString;
 
@@ -1416,6 +1424,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			if (this.IsColorProvider)
 				ColorGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
+
+			SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group style only)
+			IgnoreMissingDataPointsGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 		}
 
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
@@ -1424,10 +1435,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this.LabelBrush.Color; });
 			else if (this.IsBackgroundColorProvider)
 				ColorGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return this._backgroundStyle.Brush.Color; });
+
+			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
+			if (!_independentSkipFrequency)
+				SkipFrequencyGroupStyle.PrepareStyle(externalGroups, localGroups, delegate () { return _skipFrequency; });
+
+			// IgnoreMissingDataPoints should be the same for all sub plot styles, so there is no "private" property
+			IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
+			// IgnoreMissingDataPoints is the same for all sub plot styles
+			IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
+
+
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
 			if (!_independentSkipFrequency)
 			{
