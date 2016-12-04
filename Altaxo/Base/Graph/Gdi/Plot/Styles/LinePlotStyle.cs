@@ -744,10 +744,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			set
 			{
-				bool oldValue = _ignoreMissingDataPoints;
-				_ignoreMissingDataPoints = value;
-				if (value != oldValue)
+				if (!(_ignoreMissingDataPoints == value))
+				{
+					_ignoreMissingDataPoints = value;
 					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 

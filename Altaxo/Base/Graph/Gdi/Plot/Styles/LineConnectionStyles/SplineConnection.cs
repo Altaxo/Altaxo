@@ -91,7 +91,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			PointF[] subLinePoints = new PointF[range.Length];
 			Array.Copy(allLinePoints, range.LowerBound, subLinePoints, 0, range.Length); // Extract
 			int lastIdx = range.Length - 1;
-			GraphicsPath gp = new GraphicsPath();
 			var layerSize = layer.Size;
 
 
@@ -106,9 +105,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 					for (int i = 0; i < (range.Length); i += skipFrequency)
 					{
 						subPointLengthM1 = Math.Min(skipFrequency, range.Length - i);
-						int originalIndex = range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound);
-						double gapAtStart = symbolGap(originalIndex);
-						double gapAtEnd = subPointLengthM1 == skipFrequency ? ((i + skipFrequency) < range.Length ? symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound + skipFrequency)) : symbolGap(range.OriginalFirstPoint)) : 0;
+						int originalIndexAtStart = range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound);
+						double gapAtStart = symbolGap(originalIndexAtStart);
+						int originalIndexAtEnd = ((i + skipFrequency) < range.Length) ? range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound + skipFrequency) : range.OriginalFirstPoint;
+						double gapAtEnd = symbolGap(originalIndexAtEnd);
 						subBezierLength = 3 * subPointLengthM1 + 1;
 						if (subBezierSegments.Length != subBezierLength)
 							subBezierSegments = new PointF[subBezierLength];

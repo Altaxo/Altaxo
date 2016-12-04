@@ -53,11 +53,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 				if (e.RemovedItems.Count > 0)
 					oldItem = (TabItem)e.RemovedItems[0];
 
-				object newContent = null == newItem ? null : newItem.Content;
-				object oldContent = null == oldItem ? null : oldItem.Content;
-
-				if (null != SelectedPage_Changed)
-					SelectedPage_Changed(this, new Altaxo.Main.InstanceChangedEventArgs(oldContent, newContent));
+				SelectedPage_Changed?.Invoke(this, new Altaxo.Main.InstanceChangedEventArgs(oldItem?.Content, newItem?.Content));
 			}
 		}
 

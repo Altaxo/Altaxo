@@ -196,6 +196,18 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 			if (!_styleCollectionController.Apply(disposeController))
 				return false;
 
+			var activeSubStyleIndex = GetActiveSubStyleControlIndex();
+			if (activeSubStyleIndex.HasValue)
+			{
+				if(false == _styleControllerList[activeSubStyleIndex.Value].Apply(false))
+				{
+					_view.BringTabToFront(activeSubStyleIndex.Value);
+					applyResult = false;
+					goto end_of_function;
+				}
+				DistributeStyleChange(activeSubStyleIndex.Value, true);
+			}
+
 			for (int i = 0; i < _styleControllerList.Count; ++i)
 			{
 				if (false == _styleControllerList[i].Apply(disposeController))
@@ -243,6 +255,23 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 		}
 
 		private SuspendableObject _disablerOfActiveChildControlChanged = new SuspendableObject();
+		private object _activeChildControl;
+
+		/// <summary>
+		/// Get the index of the active sub style control, or null if the active control is not a sub style control (e.g. it is the data control).
+		/// </summary>
+		/// <returns></returns>
+		private int? GetActiveSubStyleControlIndex()
+		{
+			for (int i = 0; i < _styleControllerList.Count; i++)
+			{
+				if (_styleControllerList[i] != null && object.ReferenceEquals(_styleControllerList[i].ViewObject, _activeChildControl))
+				{
+					return i;
+				}
+			}
+			return null;
+		}
 
 		private void View_SetAllTabViews()
 		{
@@ -265,6 +294,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
 		protected void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs e)
 		{
+			if (e.NewInstance != null)
+				this._activeChildControl = e.NewInstance;
+
 			if (_disablerOfActiveChildControlChanged.IsSuspended)
 				return;
 
@@ -276,7 +308,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 					if (!_styleControllerList[i].Apply(false))
 						return;
 
-					DistributeStyleChange(i);
+					DistributeStyleChange(i, true);
 				}
 			}
 
@@ -342,16 +374,21 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 		/// for this styles are also updated.
 		/// </summary>
 		/// <param name="pivotelement"></param>
-		private void DistributeStyleChange(int pivotelement)
+		/// <param name="updateAllStyleControllers">If true, the style controllers are newly initialized. Set this parameter to false if this is unneccessary, e.g.
+		/// when applying the controller and closing it afterwards.</param>
+		private void DistributeStyleChange(int pivotelement, bool updateAllStyleControllers)
 		{
 			IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
 			_doc.Style.DistributeSubStyleChange(pivotelement, layer, _doc.GetRangesAndPoints(layer));
 
-			// now all style controllers must be updated
-			for (int i = 0; i < _styleControllerList.Count; i++)
+			if (updateAllStyleControllers)
 			{
-				if (null != _styleControllerList[i])
-					_styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable, (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.GroupNumber ?? 0);
+				// now all style controllers must be updated
+				for (int i = 0; i < _styleControllerList.Count; i++)
+				{
+					if (null != _styleControllerList[i])
+						_styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable, (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.GroupNumber ?? 0);
+				}
 			}
 		}
 

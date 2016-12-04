@@ -468,6 +468,29 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		/// <summary>
+		/// Gets or sets a value indicating whether to ignore missing data points. If the value is set to true,
+		/// the line is plotted even if there is a gap in the data points.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if missing data points should be ignored; otherwise, if <c>false</c>, no line is plotted between a gap in the data.
+		/// </value>
+		public bool IgnoreMissingDataPoints
+		{
+			get
+			{
+				return _ignoreMissingDataPoints;
+			}
+			set
+			{
+				if (!(_ignoreMissingDataPoints == value))
+				{
+					_ignoreMissingDataPoints = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
 		/// True when we don't want to shift the position of the items, for instance due to the bar graph plot group.
 		/// </summary>
 		public bool IndependentOnShiftingGroupStyles
@@ -782,14 +805,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			int originalIndex;
 
+			// save the graphics stat since we have to translate the origin
+			System.Drawing.Drawing2D.GraphicsState gs = g.Save();
+
 			if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size
 			{
 				// calculate the path only once
 				CalculatePaths(scatterSymbol, _symbolSize, ref cachedPathData);
 				CalculateBrushes(scatterSymbol, _color, cachedPathData, ref cachedBrushData);
 
-				// save the graphics stat since we have to translate the origin
-				System.Drawing.Drawing2D.GraphicsState gs = g.Save();
+				
 
 				for (int plotPointIndex = range.LowerBound; plotPointIndex < range.UpperBound; plotPointIndex += _skipFreq)
 				{
@@ -809,7 +834,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						g.FillPath(cachedBrushData.FrameBrush, cachedPathData.FramePath);
 				} // end for
 
-				g.Restore(gs); // Restore the graphics state
+				
 			}
 			else // using a variable symbol size or variable symbol color
 			{
@@ -850,6 +875,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				}
 			}
+
+			g.Restore(gs); // Restore the graphics state
 		}
 
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
