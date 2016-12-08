@@ -733,8 +733,8 @@ namespace Altaxo.Graph.Gdi
 
 				if (info.CurrentElementName == "DashPattern")
 				{
-					var dashPattern = (IDashPattern)info.GetValue("DashPattern", null);
-					if (!Drawing.DashPatterns.Solid.Instance.Equals(dashPattern))
+					s._dashPattern = (IDashPattern)info.GetValue("DashPattern", null);
+					if (!Drawing.DashPatterns.Solid.Instance.Equals(s._dashPattern))
 					{
 						if (0 != (cp & PenX.Configured.DashCap))
 							s._dashCap = (DashCap)info.GetEnum("DashCap", typeof(DashCap));
