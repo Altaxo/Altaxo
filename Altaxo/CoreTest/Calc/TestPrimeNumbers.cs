@@ -97,5 +97,41 @@ namespace AltaxoTest.Calc
 			Assert.AreEqual(6803, list[0]);
 			Assert.AreEqual(6823, list[1]);
 		}
+
+		[Test]
+		public void TestLeastCommonMultiple()
+		{
+			// primes
+			Assert.AreEqual(1 * 1, PrimeNumberMath.LeastCommonMultiple(1, 1));
+			Assert.AreEqual(1 * 2, PrimeNumberMath.LeastCommonMultiple(1, 2));
+			Assert.AreEqual(2 * 1, PrimeNumberMath.LeastCommonMultiple(2, 1));
+			Assert.AreEqual(2 * 3, PrimeNumberMath.LeastCommonMultiple(2, 3));
+			Assert.AreEqual(3 * 2, PrimeNumberMath.LeastCommonMultiple(3, 2));
+			Assert.AreEqual(3 * 5, PrimeNumberMath.LeastCommonMultiple(3, 5));
+			Assert.AreEqual(5 * 3, PrimeNumberMath.LeastCommonMultiple(5, 3));
+			Assert.AreEqual(3 * 17, PrimeNumberMath.LeastCommonMultiple(3, 17));
+			Assert.AreEqual(17 * 3, PrimeNumberMath.LeastCommonMultiple(17, 3));
+
+			// pure composites
+			Assert.AreEqual(8, PrimeNumberMath.LeastCommonMultiple(1, 8));
+			Assert.AreEqual(8, PrimeNumberMath.LeastCommonMultiple(2, 8));
+			Assert.AreEqual(8, PrimeNumberMath.LeastCommonMultiple(4, 8));
+			Assert.AreEqual(8, PrimeNumberMath.LeastCommonMultiple(8, 1));
+			Assert.AreEqual(8, PrimeNumberMath.LeastCommonMultiple(8, 2));
+			Assert.AreEqual(8, PrimeNumberMath.LeastCommonMultiple(8, 4));
+
+			// with one other component
+			Assert.AreEqual(8 * 5, PrimeNumberMath.LeastCommonMultiple(8, 5 * 1));
+			Assert.AreEqual(8 * 5, PrimeNumberMath.LeastCommonMultiple(8, 5 * 2));
+			Assert.AreEqual(8 * 5, PrimeNumberMath.LeastCommonMultiple(8, 5 * 4));
+			Assert.AreEqual(8 * 5, PrimeNumberMath.LeastCommonMultiple(8, 5 * 8));
+			Assert.AreEqual(8 * 5, PrimeNumberMath.LeastCommonMultiple(5 * 1, 8));
+			Assert.AreEqual(8 * 5, PrimeNumberMath.LeastCommonMultiple(5 * 2, 8));
+			Assert.AreEqual(8 * 5, PrimeNumberMath.LeastCommonMultiple(5 * 4, 8));
+			Assert.AreEqual(8 * 5, PrimeNumberMath.LeastCommonMultiple(5 * 8, 8));
+
+			//Composites
+			Assert.AreEqual(2 * 2 * 2 * 2 * 2 * 3 * 3 * 3 * 5 * 5 * 7 * 7 * 7, PrimeNumberMath.LeastCommonMultiple(2 * 2 * 2 * 2 * 3 * 3 * 3 * 7 * 7 * 7, 2 * 2 * 2 * 2 * 2 * 5 * 5 * 7 * 7));
+		}
 	}
 }

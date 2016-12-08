@@ -869,6 +869,43 @@ namespace Altaxo.Calc
 			return primeList;
 		}
 
+		private static IEnumerable<PrimeFactor> EnumeratePrimeFactors(long nominator, double maxPrime)
+		{
+			double sqrtOfCurrentNominator = Math.Sqrt(nominator);
+			bool isCompleteDecomposition = maxPrime >= sqrtOfCurrentNominator;
+			int recurrences;
+
+			foreach (int prime in GetPrimeNumbersExcludingOneUpTo((int)Math.Min(maxPrime, MaximumSupportedPrimeNumber)))
+			{
+				recurrences = 0;
+				while (0 == nominator % prime)
+				{
+					++recurrences;
+					nominator /= prime;
+				}
+
+				if (recurrences > 0)
+				{
+					yield return new PrimeFactor(prime, recurrences);
+					if (nominator == 1)
+					{
+						break;
+					}
+					sqrtOfCurrentNominator = Math.Sqrt(nominator);
+				}
+
+				if (prime > sqrtOfCurrentNominator) // it is better to compare with square root, because square root needs to be recalculated only if a new factor was found
+				{
+					yield return new PrimeFactor((int)nominator, 1);
+					nominator = 1;
+					break;
+				}
+			}
+
+			if (isCompleteDecomposition && nominator != 1)
+				throw new NotImplementedException(string.Format("Unable to decompose number {0} into prime factors because the number contains prime factors greater than {1}, which is not implemented now", nominator, MaximumSupportedPrimeNumber));
+		}
+
 		public static IEnumerable<int> GetAllDivisors(long x)
 		{
 			var primeFactors = PrimeFactorization(x);
@@ -897,6 +934,81 @@ namespace Altaxo.Calc
 					foreach (var divs in GetDivisorsUpToStage(stage - 1, primeFactors))
 						yield return factor * divs;
 					factor *= prime;
+				}
+			}
+		}
+
+		private static long Pow(int x, int n)
+		{
+			long value = 1;
+
+			/* repeated squaring method
+			 * returns 0.0^0 = 1.0, so continuous in x
+			 */
+			do
+			{
+				if (0 != (n & 1))
+					value *= x;  /* for n odd */
+
+				n >>= 1;
+				x *= x;
+			} while (n != 0);
+
+			return value;
+		}
+
+		/// <summary>
+		/// Gets the least common multiple of the two numbers <paramref name="x"/> and <paramref name="y"/>.
+		/// </summary>
+		/// <param name="x">First number.</param>
+		/// <param name="y">Second number.</param>
+		/// <returns>Least common multiple of the two numbers <paramref name="x"/> and <paramref name="y"/>.</returns>
+		public static long LeastCommonMultiple(long x, long y)
+		{
+			if (x <= 0)
+				throw new ArgumentOutOfRangeException(nameof(x));
+			if (y <= 0)
+				throw new ArgumentOutOfRangeException(nameof(y));
+			if (x == 1)
+				return y;
+			if (y == 1)
+				return x;
+
+			using (var xL = EnumeratePrimeFactors(x, double.MaxValue).GetEnumerator())
+			{
+				using (var yL = EnumeratePrimeFactors(y, double.MaxValue).GetEnumerator())
+				{
+					bool xValid = xL.MoveNext();
+					bool yValid = yL.MoveNext();
+
+					checked // aware of overflows in multiply
+					{
+						long r = 1;
+						for (;;)
+						{
+							if (xValid && yValid && xL.Current.PrimeNumber == yL.Current.PrimeNumber)
+							{
+								r *= Pow(xL.Current.PrimeNumber, Math.Max(xL.Current.Power, yL.Current.Power));
+								xValid = xL.MoveNext();
+								yValid = yL.MoveNext();
+							}
+							else if (xValid && (!yValid || xL.Current.PrimeNumber < yL.Current.PrimeNumber))
+							{
+								r *= Pow(xL.Current.PrimeNumber, xL.Current.Power);
+								xValid = xL.MoveNext();
+							}
+							else if (yValid && (!xValid || xL.Current.PrimeNumber > yL.Current.PrimeNumber))
+							{
+								r *= Pow(yL.Current.PrimeNumber, yL.Current.Power);
+								yValid = yL.MoveNext();
+							}
+							else
+							{
+								break;
+							}
+						}
+						return r;
+					}
 				}
 			}
 		}
