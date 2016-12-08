@@ -141,7 +141,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 						subPointLengthM1 = Math.Min(skipFrequency, range.Length - 1 - i);
 						int originalIndex = range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound);
 						double gapAtStart = symbolGap(originalIndex);
-						double gapAtEnd = subPointLengthM1 == skipFrequency ? symbolGap(originalIndex + skipFrequency) : 0;
+						double gapAtEnd = subPointLengthM1 == skipFrequency ? symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound + skipFrequency)) : 0;
 						subBezierLength = 3 * subPointLengthM1 + 1;
 						if (subBezierSegments.Length != subBezierLength)
 							subBezierSegments = new PointF[subBezierLength];
@@ -179,7 +179,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			PointF[] linepts = new PointF[range.Length];
 			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-			FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
+			FillOneRange(gp, pdata, range, layer, fillDirection, linepts, connectCircular);
 		}
 
 		/// <summary>
@@ -198,18 +198,27 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
-			PointF[] linePoints
+			PointF[] linePoints,
+			bool connectCircular
 
 		)
 		{
-			Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-			layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-			gp.AddCurve(linePoints);
-			Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-			layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-			layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+			if (connectCircular)
+			{
+				gp.AddClosedCurve(linePoints);
+				gp.CloseFigure();
+			}
+			else
+			{
+				Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+				layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+				gp.AddCurve(linePoints);
+				Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+				layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+				layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
 
-			gp.CloseFigure();
+				gp.CloseFigure();
+			}
 		}
 
 

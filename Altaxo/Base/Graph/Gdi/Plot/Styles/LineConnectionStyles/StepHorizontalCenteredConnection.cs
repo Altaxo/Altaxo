@@ -63,7 +63,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 		#endregion Serialization
 
-		protected override PointF[] GetSubPoints(
+		protected override PointF[] GetStepPolylinePoints(
 		Processed2DPlotData pdata,
 		IPlotRange range,
 		IPlotArea layer,

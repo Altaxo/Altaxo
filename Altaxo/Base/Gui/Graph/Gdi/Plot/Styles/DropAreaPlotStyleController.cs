@@ -157,7 +157,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 				// Fill area
 				_view.InitializeFillColorLinkage(_fillColorLinkageChoices);
-				_view.InitializeFrameColorLinkage(_fillColorLinkageChoices);
+				_view.InitializeFrameColorLinkage(_frameColorLinkageChoices);
 				_view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
 				_view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FrameColorLinkage);
 				_view.FillBrush = null != _doc.FillBrush ? _doc.FillBrush : new BrushX(NamedColors.Transparent);

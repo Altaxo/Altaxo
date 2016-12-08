@@ -110,13 +110,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				{
 					for (int i = 0; i < lastIdx; i++)
 					{
-						int originalIndex = range.GetOriginalRowIndexFromPlotPointIndex(i+rangeLowerBound);
-
 						xdiff = linepts[i + 1].X - linepts[i].X;
 						ydiff = linepts[i + 1].Y - linepts[i].Y;
 						var diffLength = System.Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
-						double gapAtStart = symbolGap(originalIndex);
-						double gapAtEnd = i != (range.Length-1) ? symbolGap(originalIndex + 1) : symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(rangeLowerBound));
+						double gapAtStart = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
+						double gapAtEnd;
+						if (connectCircular && skipFrequency >= (range.Length - i))
+							gapAtEnd = symbolGap(range.OriginalFirstPoint);
+						else if (skipFrequency <= (range.Length - 1 - i))
+							gapAtEnd = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i + skipFrequency));
+						else
+							gapAtEnd = 0;
+
 						var relAtStart = (float)(0.5 * gapAtStart / diffLength); // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
 						var relAtEnd = (float)(0.5 * gapAtEnd / diffLength); // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
 
@@ -138,16 +143,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				{
 					for (int i = 0; i < lastIdx; i += skipFrequency)
 					{
-						int originalRowIndex = range.OriginalFirstPoint + i;
+						int subPointLengthM1 = Math.Min(skipFrequency, linepts.Length - 1 - i);
+						double gapAtStart = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
+						double gapAtEnd;
+						if (connectCircular && skipFrequency >= (range.Length - i))
+							gapAtEnd = symbolGap(range.OriginalFirstPoint);
+						else if (skipFrequency <= (range.Length - 1 - i))
+							gapAtEnd = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i + skipFrequency));
+						else
+							gapAtEnd = 0;
 
-						double gapAtStart = symbolGap(originalRowIndex);
-						double gapAtEnd = i != range.Length ? symbolGap(originalRowIndex + skipFrequency) : symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(rangeLowerBound));
-
-						int countM1 = Math.Min(skipFrequency, lastIdx - i);
-
-						if (countM1 >= 1)
+						if (subPointLengthM1 >= 1)
 						{
-							var polyline = linepts.ShortenedBy(i, countM1+1, RADouble.NewAbs(gapAtStart / 2), RADouble.NewAbs(gapAtEnd / 2));
+							var polyline = linepts.ShortenPartialPolylineByDistanceFromStartAndEnd(i, i + subPointLengthM1, gapAtStart / 2, gapAtEnd / 2);
 
 							if (null != polyline)
 								g.DrawLines(linePen, polyline);
@@ -175,11 +183,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			bool connectCircular
 		)
 		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PointF[] linepts = new PointF[range.Length + (connectCircular ? 1 : 0)];
-			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-			if (connectCircular) linepts[linepts.Length - 1] = linepts[0];
-			FillOneRange(gp, pdata, range, layer, fillDirection, linepts, connectCircular);
+			PointF[] allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
+			PointF[] circularLinePoints = new PointF[range.Length + (connectCircular ? 1 : 0)];
+			Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, range.Length); // Extract
+			if (connectCircular)
+				circularLinePoints[circularLinePoints.Length - 1] = circularLinePoints[0];
+
+			FillOneRange(gp, pdata, range, layer, fillDirection, circularLinePoints, connectCircular);
 		}
 
 		/// <summary>
@@ -202,13 +212,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			bool connectCircular
 			)
 		{
-			Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-			layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-			gp.AddLines(linePoints);
-			Logical3D r1 = layer.GetLogical3D(pdata, connectCircular ? range.OriginalFirstPoint : range.OriginalLastPoint);
-			layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-			layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
-			gp.CloseFigure();
+			if (connectCircular)
+			{
+				gp.AddLines(linePoints);
+				gp.CloseFigure();
+			}
+			else // not circular
+			{
+				Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+				layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+				gp.AddLines(linePoints);
+				Logical3D r1 = layer.GetLogical3D(pdata, connectCircular ? range.OriginalFirstPoint : range.OriginalLastPoint);
+				layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+				layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+				gp.CloseFigure();
+			}
 		}
 	}
 }

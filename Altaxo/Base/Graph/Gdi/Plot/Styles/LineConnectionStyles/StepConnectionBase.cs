@@ -51,7 +51,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <param name="numberOfPointsPerOriginalPoint">The number of points per original point. For most step styles one additional point is inserted, thus the return value is 2. For some connection styles, two points are inserted inbetween two original points, thus the return value will be 3.</param>
 		/// <param name="lastIndex">The last index.</param>
 		/// <returns></returns>
-		protected abstract PointF[] GetSubPoints(
+		protected abstract PointF[] GetStepPolylinePoints(
 		Processed2DPlotData pdata,
 		IPlotRange range,
 		IPlotArea layer,
@@ -89,7 +89,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			int lastIdx;
 			int numberOfPointsPerOriginalPoint;
 			PointF[] allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PointF[] subLinePoints = GetSubPoints(pdata, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
+			PointF[] stepPolylinePoints = GetStepPolylinePoints(pdata, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
 
 			GraphicsPath gp = new GraphicsPath();
 
@@ -98,36 +98,35 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				int end = range.UpperBound - 1;
 
 				var subPointsLength = skipFrequency * numberOfPointsPerOriginalPoint + 1;
-				var subPoints = new PointF[subPointsLength];
 				for (int i = 0; i < range.Length; i += skipFrequency)
 				{
 
-					int copyLength = Math.Min(subPointsLength, subLinePoints.Length - numberOfPointsPerOriginalPoint * i);
-					if (copyLength < 2)
+					int partialPolylineLength = Math.Min(subPointsLength, stepPolylinePoints.Length - numberOfPointsPerOriginalPoint * i);
+					if (partialPolylineLength < 2)
 						continue; // happens probably at the end of the range if there are not enough points to draw
 
-					if (subPoints.Length != copyLength)
-						subPoints = new PointF[copyLength];
+					double gapAtStart = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
+					double gapAtEnd;
+					if (connectCircular && skipFrequency >= (range.Length - i))
+						gapAtEnd = symbolGap(range.OriginalFirstPoint);
+					else if (skipFrequency <= (range.Length - 1 - i))
+						gapAtEnd = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i + skipFrequency));
+					else
+						gapAtEnd = 0;
 
-					Array.Copy(subLinePoints, numberOfPointsPerOriginalPoint * i, subPoints, 0, copyLength);
+					int startOfPartialPolyline = numberOfPointsPerOriginalPoint * i;
+					var shortenedPolyline = stepPolylinePoints.ShortenPartialPolylineByDistanceFromStartAndEnd(startOfPartialPolyline, startOfPartialPolyline + partialPolylineLength - 1, gapAtStart / 2, gapAtEnd / 2);
 
-					int originalIndexStart = range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i);
-					int originalIndexEnd = range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + ((i + skipFrequency) < range.Length ? (i + skipFrequency) : (connectCircular ?  0 : range.Length - 1)));
-					double gapAtStart = symbolGap(originalIndexStart);
-					double gapAtEnd = symbolGap(originalIndexEnd);
-
-					var polyline = subPoints.ShortenedBy(RADouble.NewAbs(gapAtStart / 2), RADouble.NewAbs(gapAtEnd / 2));
-
-					if (null != polyline)
-						g.DrawLines(linePen, polyline);
+					if (null != shortenedPolyline)
+						g.DrawLines(linePen, shortenedPolyline);
 				}
 			}
 			else
 			{
 				if (connectCircular)
-					g.DrawPolygon(linePen, subLinePoints);
+					g.DrawPolygon(linePen, stepPolylinePoints);
 				else
-					g.DrawLines(linePen, subLinePoints);
+					g.DrawLines(linePen, stepPolylinePoints);
 			}
 		}
 
@@ -147,8 +146,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 			int lastIdx;
 			int numberOfPointsPerOriginalPoint;
-			PointF[] linepts = GetSubPoints(pdata, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
-			FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
+			PointF[] linepts = GetStepPolylinePoints(pdata, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
+			FillOneRange(gp, pdata, range, layer, fillDirection, linepts, connectCircular);
 		}
 
 		/// <summary>
@@ -160,22 +159,32 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="fillDirection">Designates a bound to fill to.</param>
 		/// <param name="linePoints">The points that mark the line.</param>
+		/// <param name="connectCircular">If true, a circular connection is drawn.</param>
 		public virtual void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
 			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
-			PointF[] linePoints
+			PointF[] linePoints,
+			bool connectCircular
 		)
 		{
-			Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-			layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-			gp.AddLines(linePoints);
-			Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-			layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-			layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
-			gp.CloseFigure();
+			if (connectCircular)
+			{
+				gp.AddLines(linePoints);
+				gp.CloseFigure();
+			}
+			else
+			{
+				Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+				layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+				gp.AddLines(linePoints);
+				Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+				layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+				layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+				gp.CloseFigure();
+			}
 		}
 	}
 }

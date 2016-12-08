@@ -79,7 +79,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		public override void Paint(
 			Graphics g,
 			Processed2DPlotData pdata,
-			IPlotRange rangeRaw,
+			IPlotRange range,
 			IPlotArea layer,
 			PenX linePen,
 			Func<int, double> symbolGap,
@@ -89,48 +89,144 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		{
 			// Bezier is only supported with point numbers n=4+3*k
 			// so trim the range appropriately
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			var range = rangeRaw.WithUpperBoundShortenedBy(rangeRaw.Length - (3 * ((rangeRaw.Length + 2) / 3) - 2));
-			var layerSize = layer.Size;
+			PointF[] allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			if (range.Length < 4)
-				return; // then to less points are in this range
+				return; // then too less points are in this range
 
-			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
-			int lastIdx = range.Length - 1;
-			GraphicsPath gp = new GraphicsPath();
+			if (connectCircular)
+			{
+				var circularLinePointsLengthM1 = 2 + TrimToValidBezierLength(range.Length);
+				var circularLinePoints = new PointF[circularLinePointsLengthM1 + 1];
+				Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, range.Length); // Extract
+				circularLinePoints[circularLinePointsLengthM1] = circularLinePoints[0];
 
-			// unfortuately, there is no easy way to support line/symbol gaps
-			// thats why I ignore this value and draw a curve through the points
-			g.DrawBeziers(linePen, linepts);
+				// amend missing control points
+				if (circularLinePointsLengthM1 - range.Length >= 1)
+					circularLinePoints[circularLinePointsLengthM1 - 1] = GdiExtensionMethods.Interpolate(circularLinePoints[circularLinePointsLengthM1 - 3], circularLinePoints[circularLinePointsLengthM1], 0.5); // Last Control point should be halfway between
+				if (circularLinePointsLengthM1 - range.Length >= 2)
+					circularLinePoints[circularLinePointsLengthM1 - 2] = GdiExtensionMethods.Interpolate(circularLinePoints[circularLinePointsLengthM1 - 3], circularLinePoints[circularLinePointsLengthM1], 0.5); // Middle Control point should be halfway between previous fixed point and last(=first) fixed point
+
+				if (null != symbolGap) // circular with symbol gap
+				{
+					var realSkipFrequency = skipFrequency % 3 == 0 ? skipFrequency : skipFrequency * 3; // least common multiple of skipFrequency and 3
+					for (int i = 0; i < range.Length; i += realSkipFrequency)
+					{
+						var skipLinePointsLength = Math.Min(realSkipFrequency + 1, TrimToValidBezierLength(circularLinePoints.Length - i));
+						if (skipLinePointsLength >= 4)
+						{
+							var skipLinePoints = new PointF[skipLinePointsLength];
+							Array.Copy(circularLinePoints, i, skipLinePoints, 0, skipLinePointsLength); // Extract
+
+							var gapAtStart = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
+							double gapAtEnd;
+							if (connectCircular && realSkipFrequency >= (range.Length - 1 - i))
+								gapAtEnd = symbolGap(range.OriginalFirstPoint);
+							else if (realSkipFrequency <= (range.Length - 1 - i))
+								gapAtEnd = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i + realSkipFrequency));
+							else
+								gapAtEnd = 0;
+
+							if (gapAtStart != 0 || gapAtEnd != 0)
+							{
+								skipLinePoints = GdiExtensionMethods.ShortenBezierCurve(skipLinePoints, gapAtStart / 2, gapAtEnd / 2);
+							}
+
+							if (null != skipLinePoints)
+							{
+								g.DrawBeziers(linePen, skipLinePoints);
+							}
+						}
+					}
+				}
+				else // circular without symbol gap
+				{
+					g.DrawBeziers(linePen, circularLinePoints);
+				}
+			}
+			else // not circular
+			{
+				if (null != symbolGap) // not circular with symbol gap
+				{
+					var realSkipFrequency = skipFrequency % 3 == 0 ? skipFrequency : skipFrequency * 3; // least common multiple of skipFrequency and 3
+					for (int i = 0; i < range.Length; i += realSkipFrequency)
+					{
+						var skipLinePointsLength = Math.Min(realSkipFrequency + 1, TrimToValidBezierLength(range.Length - i));
+						if (skipLinePointsLength >= 4)
+						{
+							var skipLinePoints = new PointF[skipLinePointsLength];
+							Array.Copy(allLinePoints, range.LowerBound + i, skipLinePoints, 0, skipLinePointsLength); // Extract
+
+							var gapAtStart = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
+							var gapAtEnd = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i + skipLinePointsLength - 1));
+
+							if (gapAtStart != 0 || gapAtEnd != 0)
+							{
+								skipLinePoints = GdiExtensionMethods.ShortenBezierCurve(skipLinePoints, gapAtStart / 2, gapAtEnd / 2);
+							}
+
+							if (null != skipLinePoints)
+							{
+								g.DrawBeziers(linePen, skipLinePoints);
+							}
+						}
+					}
+				}
+				else // not circular without symbol gap
+				{
+					var trimmedLength = TrimToValidBezierLength(range.Length);
+					var subLinePoints = new PointF[trimmedLength];
+					Array.Copy(allLinePoints, range.LowerBound, subLinePoints, 0, trimmedLength); // Extract
+					g.DrawBeziers(linePen, subLinePoints);
+				}
+			}
 		}
+
+		static int TrimToValidBezierLength(int x)
+		{
+			return (3 * ((x + 2) / 3) - 2);
+		}
+
+
+
 
 		/// <inheritdoc/>
 		public override void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
-			IPlotRange rangeRaw,
+			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			bool ignoreMissingDataPoints,
 			bool connectCircular
 		)
 		{
-			// Bezier is only supported with point numbers n=4+3*k
-			// so trim the range appropriately
-			var upperBound = rangeRaw.LowerBound + 3 * ((rangeRaw.Length + 2) / 3) - 2;
-			if (upperBound - rangeRaw.LowerBound < 4) // then to less points are in this range
+			if (range.Length < 4)
 				return;
 
-			IPlotRange range = rangeRaw.WithUpperBoundShortenedBy(rangeRaw.UpperBound - upperBound);
+			var allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			var layerSize = layer.Size;
+			if (connectCircular)
+			{
+				var circularLinePointsLengthM1 = 2 + TrimToValidBezierLength(range.Length);
+				var circularLinePoints = new PointF[circularLinePointsLengthM1 + 1];
+				Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, range.Length); // Extract
+				circularLinePoints[circularLinePointsLengthM1] = circularLinePoints[0];
 
-			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints, range.LowerBound, linepts, 0, range.Length); // Extract
+				// amend missing control points
+				if (circularLinePointsLengthM1 - range.Length >= 1)
+					circularLinePoints[circularLinePointsLengthM1 - 1] = GdiExtensionMethods.Interpolate(circularLinePoints[circularLinePointsLengthM1 - 3], circularLinePoints[circularLinePointsLengthM1], 0.5); // Last Control point should be halfway between
+				if (circularLinePointsLengthM1 - range.Length >= 2)
+					circularLinePoints[circularLinePointsLengthM1 - 2] = GdiExtensionMethods.Interpolate(circularLinePoints[circularLinePointsLengthM1 - 3], circularLinePoints[circularLinePointsLengthM1], 0.5); // Middle Control point should be halfway between previous fixed point and last(=first) fixed point
 
-			FillOneRange(gp, pdata, range, layer, fillDirection, linepts);
+				FillOneRange(gp, pdata, range, layer, fillDirection, circularLinePoints, connectCircular);
+			}
+			else
+			{
+				var trimmedLinePointsLength = TrimToValidBezierLength(range.Length);
+				var trimmedLinePoints = new PointF[trimmedLinePointsLength];
+				Array.Copy(allLinePoints, range.LowerBound, trimmedLinePoints, 0, trimmedLinePointsLength); // Extract
+				FillOneRange(gp, pdata, range, layer, fillDirection, trimmedLinePoints, connectCircular);
+			}
 		}
 
 		/// <summary>
@@ -142,23 +238,35 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="fillDirection">Designates a bound to fill to.</param>
 		/// <param name="linePoints">The points that mark the line.</param>
+		/// <param name="connectCircular">If true, a circular connection is drawn.</param>
 		public void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
 			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
-			PointF[] linePoints
+			PointF[] linePoints,
+			bool connectCircular
 		)
 		{
-			Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
-			layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-			gp.AddBeziers(linePoints);
-			Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
-			layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-			layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+			if (connectCircular)
+			{
+				gp.AddBeziers(linePoints);
+				gp.CloseFigure();
 
-			gp.CloseFigure();
+			}
+			else
+			{
+				Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+				layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+				gp.AddBeziers(linePoints);
+				Logical3D r1 = layer.GetLogical3D(pdata, range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + linePoints.Length - 1));
+				layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+				layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+
+				gp.CloseFigure();
+			}
+
 		}
 	}
 }

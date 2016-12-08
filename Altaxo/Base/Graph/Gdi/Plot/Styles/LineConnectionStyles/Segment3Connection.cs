@@ -102,12 +102,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			if (null != symbolGap)
 			{
 				float startx, starty, stopx, stopy;
-				for (i = 0; i < lastIdx; ++i)
+				for (i = 0; i < subLinePoints.Length-1; ++i)
 				{
 					if (2 == (i % 3))
 						continue;
 
-					int originalIndex = range.GetOriginalRowIndexFromPlotPointIndex(i+range.LowerBound);
+					int originalIndex = range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound);
 					var diff = GdiExtensionMethods.Subtract(subLinePoints[i + 1], subLinePoints[i]);
 					var diffLength = GdiExtensionMethods.VectorLength(diff);
 
@@ -141,7 +141,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			}
 			else // no line symbol gap required, so we can use DrawLines to draw the lines
 			{
-				for (i = 0; i < lastIdx; i += 3)
+				for (i = 0; i < subLinePoints.Length-2; i += 3)
 				{
 					gp.AddLine(subLinePoints[i].X, subLinePoints[i].Y, subLinePoints[i + 1].X, subLinePoints[i + 1].Y);
 					gp.AddLine(subLinePoints[i + 1].X, subLinePoints[i + 1].Y, subLinePoints[i + 2].X, subLinePoints[i + 2].Y);
@@ -189,36 +189,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 			int lastIdx;
 			PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, connectCircular, out lastIdx);
-			FillOneRange(gp, pdata, range, layer, connectCircular, fillDirection, linepts);
+			FillOneRange(gp, pdata, range, layer, fillDirection, linepts, connectCircular);
 		}
 
-		/// <summary>
-		/// Template to get a fill path.
-		/// </summary>
-		/// <param name="gp">Graphics path to fill with data.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
-		/// <param name="range">The plot range to use.</param>
-		/// <param name="layer">Graphics layer.</param>
-		/// <param name="fillDirection">Designates a bound to fill to.</param>
-		/// <param name="linePoints">The points that mark the line.</param>
-		public void FillOneRange(
-		GraphicsPath gp,
-			Processed2DPlotData pdata,
-			IPlotRange range,
-			IPlotArea layer,
-			bool connectCircular,
-			CSPlaneID fillDirection,
-			PointF[] linePoints
 
-		)
-		{
-			if (range.Length < 2)
-				return;
-
-			int lastIdx;
-			PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, connectCircular, out lastIdx);
-			FillOneRange(gp, pdata, range, layer, fillDirection, linepts, lastIdx);
-		}
 
 		/// <summary>
 		/// Template to get a fill path.
@@ -235,24 +209,31 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
-			PointF[] linepts,
-			int lastIdx
+			PointF[] linePoints,
+			bool connectCircular
 			)
 		{
-			int offs = range.LowerBound;
-			for (int i = 0; i < lastIdx; i += 3)
+			if (connectCircular)
 			{
-				Logical3D r0 = layer.GetLogical3D(pdata, i + range.OriginalFirstPoint);
-				layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-				gp.AddLine(linepts[i].X, linepts[i].Y, linepts[i + 1].X, linepts[i + 1].Y);
-				gp.AddLine(linepts[i + 1].X, linepts[i + 1].Y, linepts[i + 2].X, linepts[i + 2].Y);
-
-				Logical3D r1 = layer.GetLogical3D(pdata, i + 2 + range.OriginalFirstPoint);
-				layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
-				layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
-				gp.StartFigure();
+				gp.AddLines(linePoints);
+				gp.CloseFigure();
 			}
-			gp.CloseFigure();
+			else
+			{
+				for (int i = 0; i < linePoints.Length - 2; i += 3)
+				{
+					Logical3D r0 = layer.GetLogical3D(pdata, range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
+					layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
+					gp.AddLine(linePoints[i].X, linePoints[i].Y, linePoints[i + 1].X, linePoints[i + 1].Y);
+					gp.AddLine(linePoints[i + 1].X, linePoints[i + 1].Y, linePoints[i + 2].X, linePoints[i + 2].Y);
+
+					Logical3D r1 = layer.GetLogical3D(pdata, range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i + 2));
+					layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
+					layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
+					gp.StartFigure();
+				}
+				gp.CloseFigure();
+			}
 		}
 	}
 }

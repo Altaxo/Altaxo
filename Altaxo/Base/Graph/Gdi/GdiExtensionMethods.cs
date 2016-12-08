@@ -442,6 +442,193 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
+
+		/// <summary>
+		/// Gets the fractional index into points of a polyline by searching a point along the polyline that has a specified distance to the start point of the polyline.
+		/// </summary>
+		/// <param name="points">The points of the polyline curve.</param>
+		/// <param name="distanceFromStart">The distance to the start point of the polyline curve, i.e. to the point at index 0.</param>
+		/// <returns>The fractional index of the global polyline curve where the point at this fractional index has a distance of <paramref name="distanceFromEnd"/> to the start point at index 0.
+		/// The return value is in the range [0..points.Length-1]. If no such point is found, then double.NaN is returned.</returns>
+		public static double GetFractionalIndexFromDistanceFromStartOfPolylineCurve(PointF[] points, double distanceFromStart)
+		{
+			return GetFractionalIndexFromDistanceFromStartOfPartialPolylineCurve(points, 0, points.Length-1, distanceFromStart);
+		}
+		/// <summary>
+		/// Gets the fractional index into points of a partial polyline by searching a point along the partial polyline that has a specified distance to the start point of the partial polyline.
+		/// </summary>
+		/// <param name="points">The points of the global polyline curve. From this points only the partial polyline (indices <paramref name="startIndex"/> .. <paramref name="endIndex"/>) is considered.</param>
+		/// <param name="startIndex">The first index of the partial polyline curve that is considered here.</param>
+		/// <param name="endIndex">The last valid index of the partial polyline curve that is considered here.</param>
+		/// <param name="distanceFromStart">The distance to the start of the partial polyline curve, i.e. to the point at index <paramref name="startIndex"/>.</param>
+		/// <returns>The fractional index of the global polyline curve where the point at this fractional index has a distance of <paramref name="distanceFromStart"/> from the point at index <paramref name="startIndex"/>.
+		/// The return value is in the range [<paramref name="startIndex"/> .. <paramref name="endIndex"/>]. If no such point is found, then double.NaN is returned.
+		/// </returns>
+		public static double GetFractionalIndexFromDistanceFromStartOfPartialPolylineCurve(PointF[] points, int startIndex, int endIndex, double distanceFromStart)
+		{
+			if (0 == distanceFromStart)
+				return startIndex; // speed-up, but also fix a problem when the segment from startIndex to startIndex+1 has a length of zero
+
+
+			var pivot = points[startIndex];
+			var dsqr = distanceFromStart * distanceFromStart;
+			var list = new List<Tuple<float, PointF>>();
+
+			for (int segmentEnd = startIndex + 1; segmentEnd <= endIndex; ++segmentEnd)
+			{
+				// Find a point (either curve point or control point that is farther away than required
+				if (pivot.DistanceSquaredTo(points[segmentEnd]) < dsqr)
+				{
+					continue;
+				}
+
+				var tline = GetParameterOnLineSegmentFromDistanceToPoint(points[segmentEnd - 1], points[segmentEnd], pivot, dsqr, false);
+				return segmentEnd - 1 + tline;
+			}
+
+			return double.NaN;
+		}
+
+		/// <summary>
+		/// Gets the fractional index into points of a polyline by searching a point along the polyline that has a specified distance to the end point of the polyline.
+		/// </summary>
+		/// <param name="points">The points of the polyline curve.</param>
+		/// <param name="distanceFromEnd">The distance from the end point of the polyline curve, i.e. from the point at index <paramref name="points"/>].Length-1</param>
+		/// <returns>The fractional index of the global polyline curve where the point at this fractional index has a distance of <paramref name="distanceFromEnd"/> from the point at index <paramref name="endStartIndex"/>.
+		/// The return value is in the range [0..points.Length-1]. If no such points is found, then double.NaN is returned.</returns>
+		public static double GetFractionalIndexFromDistanceFromEndOfPolylineCurve(PointF[] points, double distanceFromEnd)
+		{
+			return GetFractionalIndexFromDistanceFromEndOfPartialPolylineCurve(points, 0, points.Length - 1, distanceFromEnd);
+		}
+
+		/// <summary>
+		/// Gets the fractional index into points of a partial polyline by searching a point along the partial polyline that has a specified distance to the end point of the partial polyline.
+		/// </summary>
+		/// <param name="points">The points of the global polyline curve. From this points only the partial polyline (indices <paramref name="firstBoundIndex"/> .. <paramref name="endStartIndex"/>) is considered.</param>
+		/// <param name="firstBoundIndex">The first index of the partial polyline curve that is considered here.</param>
+		/// <param name="endStartIndex">The last valid index of the partial polyline curve that is considered here.</param>
+		/// <param name="distanceFromEnd">The distance from the end of the partial polyline curve, i.e. from the points[<paramref name="endStartIndex"/>].</param>
+		/// <returns>The fractional index of the global polyline curve where the point at this fractional index has a distance of <paramref name="distanceFromEnd"/> from the point at index <paramref name="endStartIndex"/>.
+		/// The return value is in the range [<paramref name="firstBoundIndex"/> .. <paramref name="endStartIndex"/>]. If no such point is found, then double.NaN is returned.
+		/// </returns>
+		public static double GetFractionalIndexFromDistanceFromEndOfPartialPolylineCurve(PointF[] points, int firstBoundIndex, int endStartIndex, double distanceFromEnd)
+		{
+			if (0 == distanceFromEnd)
+				return endStartIndex; // speed-up, but also fix a problem when the segment from endStartIndex-1 to endStartIndex has a length of zero
+
+			var pivot = points[endStartIndex];
+			var dsqr = distanceFromEnd * distanceFromEnd;
+
+			for (int segmentStart = endStartIndex - 1; segmentStart >= firstBoundIndex; --segmentStart)
+			{
+				// Find a point (either curve point or control point that is farther away than required
+				if (pivot.DistanceSquaredTo(points[segmentStart]) < dsqr)
+				{
+					continue; // all points too close, thus continue with next Bezier segment
+				}
+
+				var tline = GetParameterOnLineSegmentFromDistanceToPoint(points[segmentStart], points[segmentStart + 1], pivot, dsqr, true);
+				return segmentStart + tline;
+			}
+
+			return double.NaN;
+		}
+
+		/// <summary>
+		/// Shortens a line segment and returns the line points of the shortened segment.
+		/// </summary>
+		/// <param name="P1">Start point p1 of the line segment.</param>
+		/// <param name="P2">End point p2 of the line segment.</param>
+		/// <param name="t0">Value in the range 0..1 to indicate the shortening at the beginning of the segment.</param>
+		/// <param name="t1">Value in the range 0..1 to indicate the shortening at the beginning of the segment. This value must be greater than <paramref name="t0"/>.</param>
+		/// <returns>The points of the shortened line segment.</returns>
+		public static Tuple<PointF, PointF> ShortenLineSegment(PointF P1, PointF P2, float t0, float t1)
+		{
+			var u0 = 1 - t0;
+			var u1 = 1 - t1;
+
+			var PS1X = u0 * P1.X + t0 * P2.X;
+			var PS1Y = u0 * P1.Y + t0 * P2.Y;
+
+			var PS2X = u1 * P1.X + t1 * P2.X;
+			var PS2Y = u1 * P1.Y + t1 * P2.Y;
+
+			return new Tuple<PointF, PointF>(new PointF(PS1X, PS1Y), new PointF(PS2X, PS2Y));
+		}
+
+		/// <summary>
+		/// Shortens a polyline at both sides in such a way that the new start has a distance <paramref name="distanceFromStart"/> to the original start of the polyline, and the
+		/// new end has a distance <paramref name="distanceFromEnd"/> to the original end of the polyline. If the shortening leads to a polyline of zero length, then <c>null</c> is returned.
+		/// </summary>
+		/// <param name="points">The points of the polyline.</param>
+		/// <param name="distanceFromStart">The distance of the start of the shortened polyline to the first point of the original polyline (at index 0).</param>
+		/// <param name="distanceFromEnd">The distance of the end of the shortened polyline to the last point of the original polyline (at index <paramref name="points"/>.Length-1).</param>
+		/// <returns>The shortened polyline, or null if the polyline was shortened to zero length.</returns>
+		public static PointF[] ShortenPolylineByDistanceFromStartAndEnd(this PointF[] points, double distanceFromStart, double distanceFromEnd)
+		{
+			return ShortenPartialPolylineByDistanceFromStartAndEnd(points, 0, points.Length - 1, distanceFromStart, distanceFromEnd);
+		}
+
+		/// <summary>
+		/// Shortens a partial polyline, given by the first point at index <paramref name="startIndex"/> and the last index <paramref name="endIndex"/>, at both sides in such a way that the new start has a distance <paramref name="distanceFromStart"/> to the original start of the polyline, and the
+		/// new end has a distance <paramref name="distanceFromEnd"/> to the original end of the polyline. If the shortening leads to a polyline of zero length, then <c>null</c> is returned.
+		/// </summary>
+		/// <param name="points">The points of the original global polyline.</param>
+		/// <param name="startIndex">Index of first valid point of the partial polyline that is to be shortened.</param>
+		/// <param name="endIndex">Index of the last valid point of the partial polyline that is to be shortened.</param>
+		/// <param name="distanceFromStart">The distance of the start of the shortened polyline to the first point of the original polyline (at index 0).</param>
+		/// <param name="distanceFromEnd">The distance of the end of the shortened polyline to the last point of the original polyline (at index <paramref name="points"/>.Length-1).</param>
+		/// <returns>The shortened polyline, or null if the polyline was shortened to zero length.</returns>
+		public static PointF[] ShortenPartialPolylineByDistanceFromStartAndEnd(this PointF[] points, int startIndex, int endIndex, double distanceFromStart, double distanceFromEnd)
+		{
+
+			var fractionalIndexStart = GetFractionalIndexFromDistanceFromStartOfPartialPolylineCurve(points, startIndex, endIndex, distanceFromStart);
+			if (double.IsNaN(fractionalIndexStart))
+				return null; // there is no curve left after shortening
+
+			var fractionalIndexEnd = GetFractionalIndexFromDistanceFromEndOfPartialPolylineCurve(points, startIndex, endIndex, distanceFromEnd);
+			if (double.IsNaN(fractionalIndexEnd))
+				return null; // there is no curve left after shortening
+
+			if (!(fractionalIndexStart < fractionalIndexEnd))
+				return null; // there is no curve left after shortening
+
+
+			int segmentStart = (int)Math.Floor(fractionalIndexStart);
+			int segmentLast = Math.Min((int)Math.Floor(fractionalIndexEnd), endIndex - 1);
+			int subPoints = (segmentLast - segmentStart + 2);
+
+			var result = new PointF[subPoints];
+			Array.Copy(points, segmentStart, result, 0, subPoints);
+			double fractionStart = fractionalIndexStart - segmentStart;
+			double fractionEnd = fractionalIndexEnd - segmentLast;
+
+			if (fractionStart > 0 && fractionEnd > 0 && segmentStart == segmentLast) // if there is only one segment to shorten, do it concurrently at the start and the end
+			{
+				var shortenedSegment = ShortenLineSegment(result[0], result[1], (float)fractionStart, (float)fractionEnd);
+				result[0] = shortenedSegment.Item1;
+				result[1] = shortenedSegment.Item2;
+			}
+			else
+			{
+				if (fractionStart > 0)
+				{
+					var shortenedSegment = ShortenLineSegment(result[0], result[1], (float)fractionStart, 1);
+					result[0] = shortenedSegment.Item1;
+					result[1] = shortenedSegment.Item2;
+				}
+				if (fractionEnd < 1)
+				{
+					int lastStart = segmentLast - segmentStart; // -segmentStart because subarray begins at segmentStart
+					var shortenedSegment = ShortenLineSegment(result[lastStart], result[1 + lastStart], 0, (float)fractionEnd);
+					result[0 + lastStart] = shortenedSegment.Item1;
+					result[1 + lastStart] = shortenedSegment.Item2;
+				}
+			}
+			return result;
+		}
+
+
 		#endregion Polyline constituted by an array of PointF
 
 		#region String Alignement
@@ -827,7 +1014,7 @@ namespace Altaxo.Graph.Gdi
 			var list = new List<Tuple<float, PointF>>();
 
 			int segmentCount = (points.Length - 1) / 3;
-			for (int segmentStart = 0, segmentIndex = 0; segmentStart < points.Length; segmentStart += 3, ++segmentIndex)
+			for (int segmentStart = 0, segmentIndex = 0; (segmentStart + 3) < points.Length; segmentStart += 3, ++segmentIndex)
 			{
 				// Find a point (either curve point or control point that is farther away than required
 				if (pivot.DistanceSquaredTo(points[segmentStart + 1]) < dsqr &&
@@ -936,7 +1123,7 @@ namespace Altaxo.Graph.Gdi
 				}
 				if (fractionEnd < 1)
 				{
-					int lastStart = 3 * segmentLast;
+					int lastStart = 3 * (segmentLast - segmentStart); // -segmentStart because subarray begins at segmentStart
 					var shortenedSegment = ShortenBezierSegment(result[0 + lastStart], result[1 + lastStart], result[2 + lastStart], result[3 + lastStart], 0, (float)fractionEnd);
 					result[0 + lastStart] = shortenedSegment.Item1;
 					result[1 + lastStart] = shortenedSegment.Item2;
