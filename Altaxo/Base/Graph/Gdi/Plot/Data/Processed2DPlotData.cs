@@ -183,5 +183,42 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 		/// Returns true if the z-value is constant. In this case some optimizations can be made.
 		/// </summary>
 		public virtual bool IsZConstant { get { return true; } }
+
+
+
+		#region Helper functions
+
+		/// <summary>
+		/// Shift the plot points provided in <paramref name="pdata"/> with a logical shift in x- and/or y- direction.
+		/// </summary>
+		/// <param name="pdata">The plot point position data.</param>
+		/// <param name="layer">The plot layer for which the data are intended.</param>
+		/// <param name="logicalShiftX">The logical shift in x-direction.</param>
+		/// <param name="logicalShiftY">The logical shift in y-direction.</param>
+		/// <returns>Array of plot point positions, but now shifted by logical values in x-direction (<paramref name="logicalShiftX"/>) and y-direction (<paramref name="logicalShiftY"/>).</returns>
+		public static PointF[] GetPlotPointsInAbsoluteLayerCoordinatesWithShift(Processed2DPlotData pdata, IPlotArea layer, double logicalShiftX, double logicalShiftY)
+		{
+			var result = new PointF[pdata.PlotPointsInAbsoluteLayerCoordinates.Length];
+			foreach (PlotRange r in pdata.RangeList)
+			{
+				int lower = r.LowerBound;
+				int upper = r.UpperBound;
+				int offset = r.OffsetToOriginal;
+				for (int j = lower; j < upper; ++j)
+				{
+					int originalRow = j + offset;
+					Logical3D logicalMean = layer.GetLogical3D(pdata, originalRow);
+					logicalMean.RX += logicalShiftX;
+					logicalMean.RY += logicalShiftY;
+
+					double x, y;
+					layer.CoordinateSystem.LogicalToLayerCoordinates(logicalMean, out x, out y);
+					result[j] = new PointF((float)x, (float)y);
+				}
+			}
+			return result;
+		}
+
+		#endregion
 	}
 }

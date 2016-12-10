@@ -887,28 +887,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 
-		static PointF[] GetPlotPointsInAbsoluteLayerCoordinatesWithShift(Processed2DPlotData pdata, IPlotArea layer, double cachedLogicalShiftX, double cachedLogicalShiftY)
-		{
-			var result = new PointF[pdata.PlotPointsInAbsoluteLayerCoordinates.Length];
-			foreach (PlotRange r in pdata.RangeList)
-			{
-				int lower = r.LowerBound;
-				int upper = r.UpperBound;
-				int offset = r.OffsetToOriginal;
-				for (int j = lower; j < upper; ++j)
-				{
-					int originalRow = j + offset;
-					Logical3D logicalMean = layer.GetLogical3D(pdata, originalRow);
-					logicalMean.RX += cachedLogicalShiftX;
-					logicalMean.RY += cachedLogicalShiftY;
-
-					double x, y;
-					layer.CoordinateSystem.LogicalToLayerCoordinates(logicalMean, out x, out y);
-					result[j] = new PointF((float)x, (float)y);
-				}
-			}
-			return result;
-		}
+		
 
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
@@ -927,7 +906,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			if (!_independentOnShiftingGroupStyles && (0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY))
 			{
-				plotPositions = GetPlotPointsInAbsoluteLayerCoordinatesWithShift(pdata, layer, _cachedLogicalShiftX, _cachedLogicalShiftY);
+				plotPositions = Processed2DPlotData.GetPlotPointsInAbsoluteLayerCoordinatesWithShift(pdata, layer, _cachedLogicalShiftX, _cachedLogicalShiftY);
 			}
 
 

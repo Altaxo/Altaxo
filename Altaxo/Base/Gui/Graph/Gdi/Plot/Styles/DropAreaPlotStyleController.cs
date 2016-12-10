@@ -49,6 +49,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		bool IgnoreMissingDataPoints { get; set; }
 
+		bool IndependentOnShiftingGroupStyles { get; set; }
+
 		/// <summary>
 		/// Initializes the Line connection combobox.
 		/// </summary>
@@ -153,6 +155,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 				_view.InitializeLineConnect(_lineConnectChoices);
 				_view.ConnectCircular = _doc.ConnectCircular;
 				_view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
+				_view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
 				_view.FramePen = _doc.FramePen;
 
 				// Fill area
@@ -187,6 +190,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			{
 				_doc.ConnectCircular = _view.ConnectCircular;
 				_doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
+				_doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
 
 				// Line Connect
 

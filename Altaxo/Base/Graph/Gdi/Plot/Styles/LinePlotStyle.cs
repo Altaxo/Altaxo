@@ -179,6 +179,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		[field: NonSerialized]
 		protected Func<int, double> _cachedSymbolSizeForIndexFunction;
 
+		/// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftX;
+
+		/// <summary>Logical y shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftY;
+
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.XYPlotLineStyle", 0)]
@@ -851,10 +857,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PlotRangeList rangeList = pdata.RangeList;
-			float symbolGap = (float)(_symbolSize);
-			int rangelistlen = rangeList.Count;
+			if (this._connectionStyle is LineConnectionStyles.NoConnection)
+				return;
+
+
+			PointF[] plotPositions = pdata.PlotPointsInAbsoluteLayerCoordinates;
+
+			if (!_independentOnShiftingGroupStyles && (0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY))
+			{
+				plotPositions = Processed2DPlotData.GetPlotPointsInAbsoluteLayerCoordinatesWithShift(pdata, layer, _cachedLogicalShiftX, _cachedLogicalShiftY);
+			}
+
 
 			Func<int, double> symbolGapFunction = null;
 
@@ -871,8 +884,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 
 			// ensure that brush and pen are cached
-			if (null != _linePen) _linePen.Cached = true;
+			if (null != _linePen)
+				_linePen.Cached = true;
 
+
+			PlotRangeList rangeList = pdata.RangeList;
 			if (this._ignoreMissingDataPoints)
 			{
 				// in case we ignore the missing points, all ranges can be plotted
@@ -883,7 +899,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			else // we not ignore missing points, so plot all ranges separately
 			{
-				for (int i = 0; i < rangelistlen; i++)
+				for (int i = 0; i < rangeList.Count; i++)
 				{
 					_connectionStyle.Paint(g, pdata, rangeList[i], layer, _linePen, symbolGapFunction, _skipFrequency, _connectCircular, this);
 				}
@@ -1005,6 +1021,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			else
 			{
 				_cachedSymbolSizeForIndexFunction = null;
+			}
+
+
+			// Shift the items ?
+			_cachedLogicalShiftX = 0;
+			_cachedLogicalShiftY = 0;
+			if (!_independentOnShiftingGroupStyles)
+			{
+				var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYGroupStyle>(externalGroups, localGroups);
+				if (null != shiftStyle)
+				{
+					shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY);
+				}
 			}
 		}
 

@@ -63,38 +63,36 @@
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 
 		<Label Grid.Column="0" Grid.Row="0" Content="Line connection:" />
 		<ComboBox x:Name="_guiLineConnect" Grid.Column="2" Grid.Row="0" SelectionChanged="EhUseLineConnectChanged" />
 		<CheckBox x:Name="_guiConnectCircular" Grid.Column="2" Grid.Row="2" Content="Circular connection" />
 		<CheckBox x:Name="_guiIgnoreMissingPoints" Grid.Column="2" Grid.Row="6" Content="Ignore data gaps" />
+		<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles"  Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="4" Content="Independent on data shifting group styles"  />
 
-		<Label Grid.Row="8" Grid.Column="0"  Content="Fill direction:" />
-		<ComboBox x:Name="_guiFillDirection" Grid.Row="8" Grid.Column="2" SelectionChanged="EhFillDirectionChanged" />
 
-		<Label Content="Fill color:" Grid.Row="10" Grid.Column="0" />
-		<axogcd:BrushComboBox x:Name="_guiFillBrush" Grid.Row="10" Grid.Column="2" SelectedBrushChanged="EhFillBrushChanged" />
+		<Label Grid.Row="10" Grid.Column="0"  Content="Fill direction:" />
+		<ComboBox x:Name="_guiFillDirection" Grid.Row="10" Grid.Column="2" SelectionChanged="EhFillDirectionChanged" />
 
-		<GroupBox Header="Fill color linkage:" Grid.Row="12" Grid.ColumnSpan="3">
+		<Label Content="Fill color:" Grid.Row="12" Grid.Column="0" />
+		<axogcd:BrushComboBox x:Name="_guiFillBrush" Grid.Row="12" Grid.Column="2" SelectedBrushChanged="EhFillBrushChanged" />
+
+		<GroupBox Header="Fill color linkage:" Grid.Row="14" Grid.ColumnSpan="3">
 			<axogc:SingleChoiceRadioStackPanel x:Name="_guiFillColorLinkage" Orientation="Vertical" SelectionChanged="EhFillColorLinkageChanged" />
 		</GroupBox>
 
-		<Label Content="Frame pen:" Grid.Row="14" Grid.Column="0" />
-		<axogcd:BrushComboBox x:Name="_guiFrameBrush"  Grid.Row="14" Grid.Column="2" />
+		<Label Content="Frame pen:" Grid.Row="16" Grid.Column="0" />
+		<axogcd:BrushComboBox x:Name="_guiFrameBrush"  Grid.Row="16" Grid.Column="2" />
 
-		<GroupBox Header="Frame color linkage:" Grid.Row="16" Grid.ColumnSpan="3">
+		<GroupBox Header="Frame color linkage:" Grid.Row="18" Grid.ColumnSpan="3">
 			<axogc:SingleChoiceRadioStackPanel x:Name="_guiFrameColorLinkage" Orientation="Vertical" SelectionChanged="EhFrameColorLinkageChanged" />
 		</GroupBox>
 
-		<Label Content="Dash style:" Grid.Row="18" Grid.Column="0" />
-		<axogdd:DashPatternComboBox x:Name="_guiFrameDashStyle" Grid.Row="18" Grid.Column="2" />
+		<Label Content="Dash style:" Grid.Row="20" Grid.Column="0" />
+		<axogdd:DashPatternComboBox x:Name="_guiFrameDashStyle" Grid.Row="20" Grid.Column="2" />
 
-		<Label Grid.Column="0" Grid.Row="20" Content="Thickness:" />
-		<axogcd:LineThicknessComboBox  Grid.Row="20" x:Name="_guiFrameThickness1" Grid.Column="2" />
+		<Label Grid.Column="0" Grid.Row="22" Content="Thickness:" />
+		<axogcd:LineThicknessComboBox  Grid.Row="22" x:Name="_guiFrameThickness1" Grid.Column="2" />
 	</Grid>
 </UserControl>

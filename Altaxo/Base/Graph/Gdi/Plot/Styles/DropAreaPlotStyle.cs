@@ -73,6 +73,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>Designates if the fill color is independent or dependent.</summary>
 		protected ColorLinkage _frameColorLinkage = ColorLinkage.PreserveAlpha;
 
+
+		/// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftX;
+
+		/// <summary>Logical y shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftY;
+
+
 		#region Serialization
 
 		/// <summary>
@@ -406,9 +414,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
-			PointF[] linePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PlotRangeList rangeList = pdata.RangeList;
-			int rangelistlen = rangeList.Count;
+			if (this._connectionStyle is LineConnectionStyles.NoConnection)
+				return;
+
+			PointF[] plotPositions = pdata.PlotPointsInAbsoluteLayerCoordinates;
+
+			if (!_independentOnShiftingGroupStyles && (0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY))
+			{
+				plotPositions = Processed2DPlotData.GetPlotPointsInAbsoluteLayerCoordinatesWithShift(pdata, layer, _cachedLogicalShiftX, _cachedLogicalShiftY);
+			}
 
 			// ensure that brush and pen are cached
 			if (null != _framePen) _framePen.Cached = true;
@@ -420,6 +434,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			var gp = new GraphicsPath();
 
+			PlotRangeList rangeList = pdata.RangeList;
 			if (this._ignoreMissingDataPoints)
 			{
 				// in case we ignore the missing points, all ranges can be plotted
@@ -430,7 +445,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 			else // we not ignore missing points, so plot all ranges separately
 			{
-				for (int i = 0; i < rangelistlen; i++)
+				for (int i = 0; i < rangeList.Count; i++)
 				{
 					_connectionStyle.FillOneRange(gp, pdata, rangeList[i], layer, _fillDirection, _ignoreMissingDataPoints, _connectCircular);
 				}
@@ -503,6 +518,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { _framePen.Color = c; });
 				else if (ColorLinkage.PreserveAlpha == _fillColorLinkage)
 					ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c) { _framePen.Color = c.NewWithAlphaValue(_framePen.Color.Color.A); });
+			}
+
+			// Shift the items ?
+			_cachedLogicalShiftX = 0;
+			_cachedLogicalShiftY = 0;
+			if (!_independentOnShiftingGroupStyles)
+			{
+				var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYGroupStyle>(externalGroups, localGroups);
+				if (null != shiftStyle)
+				{
+					shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY);
+				}
 			}
 		}
 
