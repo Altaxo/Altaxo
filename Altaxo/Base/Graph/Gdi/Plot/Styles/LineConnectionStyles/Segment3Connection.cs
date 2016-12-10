@@ -67,7 +67,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// Template to make a line draw.
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
+		/// <param name="allLinePoints">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
 		/// <param name="range">The plot range to use.</param>
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="linePen">The pen to draw the line.</param>
@@ -76,9 +76,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
 		/// <param name="connectCircular">If true, there is a line connecting the start and the end of the range.</param>
 		/// <param name="linePlotStyle">The line plot style.</param>
-		public override void Paint(
+		public override void PaintOneRange(
 			Graphics g,
-			Processed2DPlotData pdata,
+			PointF[] allLinePoints,
 			IPlotRange range,
 			IPlotArea layer,
 			PenX linePen,
@@ -88,7 +88,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			LinePlotStyle linePlotStyle)
 		{
 			int lastIdx;
-			PointF[] subLinePoints = Segment3Connection_GetSubPoints(pdata, range, layer, connectCircular, out lastIdx);
+			PointF[] subLinePoints = Segment3Connection_GetSubPoints(allLinePoints, range, layer, connectCircular, out lastIdx);
 
 			GraphicsPath gp = new GraphicsPath();
 			int i;
@@ -153,13 +153,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		}
 
 		private PointF[] Segment3Connection_GetSubPoints(
-			Processed2DPlotData pdata,
+			PointF[] allLinePoints,
 			IPlotRange range,
 			IPlotArea layer,
 			bool connectCircular,
 			out int lastIndex)
 		{
-			PointF[] allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			var layerSize = layer.Size;
 			PointF[] subLinePoints = new PointF[range.Length + (connectCircular ? 1 : 0)];
 			Array.Copy(allLinePoints, range.LowerBound, subLinePoints, 0, range.Length); // Extract
@@ -181,38 +180,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			bool ignoreMissingDataPoints,
-			bool connectCircular
+			bool connectCircular,
+			PointF[] allLinePointsShiftedAlready,
+			double logicalShiftX,
+			double logicalShiftY
 		)
 		{
 			if (range.Length < 2)
 				return;
 
 			int lastIdx;
-			PointF[] linepts = Segment3Connection_GetSubPoints(pdata, range, layer, connectCircular, out lastIdx);
-			FillOneRange(gp, pdata, range, layer, fillDirection, linepts, connectCircular);
-		}
+			PointF[] linePoints = Segment3Connection_GetSubPoints(allLinePointsShiftedAlready, range, layer, connectCircular, out lastIdx);
 
 
-
-		/// <summary>
-		/// Template to get a fill path.
-		/// </summary>
-		/// <param name="gp">Graphics path to fill with data.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
-		/// <param name="range">The plot range to use.</param>
-		/// <param name="layer">Graphics layer.</param>
-		/// <param name="fillDirection">Designates a bound to fill to.</param>
-		/// <param name="linePoints">The points that mark the line.</param>
-		public void FillOneRange(
-		GraphicsPath gp,
-			Processed2DPlotData pdata,
-			IPlotRange range,
-			IPlotArea layer,
-			CSPlaneID fillDirection,
-			PointF[] linePoints,
-			bool connectCircular
-			)
-		{
 			if (connectCircular)
 			{
 				gp.AddLines(linePoints);
@@ -223,11 +203,17 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				for (int i = 0; i < linePoints.Length - 2; i += 3)
 				{
 					Logical3D r0 = layer.GetLogical3D(pdata, range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
+					r0.RX += logicalShiftX;
+					r0.RY += logicalShiftY;
+
 					layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
 					gp.AddLine(linePoints[i].X, linePoints[i].Y, linePoints[i + 1].X, linePoints[i + 1].Y);
 					gp.AddLine(linePoints[i + 1].X, linePoints[i + 1].Y, linePoints[i + 2].X, linePoints[i + 2].Y);
 
 					Logical3D r1 = layer.GetLogical3D(pdata, range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i + 2));
+					r1.RX += logicalShiftX;
+					r1.RY += logicalShiftY;
+
 					layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
 					layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
 					gp.StartFigure();
@@ -235,5 +221,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				gp.CloseFigure();
 			}
 		}
+
+
+
+		
 	}
 }

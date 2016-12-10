@@ -419,7 +419,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			PointF[] plotPositions = pdata.PlotPointsInAbsoluteLayerCoordinates;
 
-			if (!_independentOnShiftingGroupStyles && (0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY))
+			if(_independentOnShiftingGroupStyles)
+			{
+				_cachedLogicalShiftX = _cachedLogicalShiftY = 0;
+			}
+
+			if (0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY)
 			{
 				plotPositions = Processed2DPlotData.GetPlotPointsInAbsoluteLayerCoordinatesWithShift(pdata, layer, _cachedLogicalShiftX, _cachedLogicalShiftY);
 			}
@@ -441,13 +446,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// as one range, i.e. continuously
 				// for this, we create the totalRange, which contains all ranges
 				IPlotRange totalRange = new PlotRangeCompound(rangeList);
-				_connectionStyle.FillOneRange(gp, pdata, totalRange, layer, _fillDirection, _ignoreMissingDataPoints, _connectCircular);
+				_connectionStyle.FillOneRange(gp, pdata, totalRange, layer, _fillDirection, _ignoreMissingDataPoints, _connectCircular, plotPositions, _cachedLogicalShiftX, _cachedLogicalShiftY);
 			}
 			else // we not ignore missing points, so plot all ranges separately
 			{
 				for (int i = 0; i < rangeList.Count; i++)
 				{
-					_connectionStyle.FillOneRange(gp, pdata, rangeList[i], layer, _fillDirection, _ignoreMissingDataPoints, _connectCircular);
+					_connectionStyle.FillOneRange(gp, pdata, rangeList[i], layer, _fillDirection, _ignoreMissingDataPoints, _connectCircular, plotPositions, _cachedLogicalShiftX, _cachedLogicalShiftY);
 				}
 			}
 

@@ -67,7 +67,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// Template to make a line draw.
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
+		/// <param name="allLinePoints">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
 		/// <param name="range">The plot range to use.</param>
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="linePen">The pen to draw the line.</param>
@@ -76,9 +76,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
 		/// <param name="connectCircular">If true, there is a line connecting the start and the end of the range.</param>
 		/// <param name="linePlotStyle">The line plot style.</param>
-		public override void Paint(
+		public override void PaintOneRange(
 			Graphics g,
-			Processed2DPlotData pdata,
+			PointF[] allLinePoints,
 			IPlotRange range,
 			IPlotArea layer,
 			PenX linePen,
@@ -87,10 +87,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			bool connectCircular,
 			LinePlotStyle linePlotStyle)
 		{
-			PointF[] linepts = new PointF[range.Length + (connectCircular ? 1 : 0)];
-			Array.Copy(pdata.PlotPointsInAbsoluteLayerCoordinates, range.LowerBound, linepts, 0, range.Length); // Extract
+			PointF[] circularLinePoints = new PointF[range.Length + (connectCircular ? 1 : 0)];
+			Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, range.Length); // Extract
 			if (connectCircular)
-				linepts[linepts.Length - 1] = linepts[0];
+				circularLinePoints[circularLinePoints.Length - 1] = circularLinePoints[0];
 
 			int lastIdx = range.Length - 1 + (connectCircular ? 1 : 0);
 			GraphicsPath gp = new GraphicsPath();
@@ -110,8 +110,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				{
 					for (int i = 0; i < lastIdx; i++)
 					{
-						xdiff = linepts[i + 1].X - linepts[i].X;
-						ydiff = linepts[i + 1].Y - linepts[i].Y;
+						xdiff = circularLinePoints[i + 1].X - circularLinePoints[i].X;
+						ydiff = circularLinePoints[i + 1].Y - circularLinePoints[i].Y;
 						var diffLength = System.Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
 						double gapAtStart = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
 						double gapAtEnd;
@@ -127,10 +127,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 						if ((relAtStart + relAtEnd) < 1) // a line only appears if sum of the gaps  is smaller than 1
 						{
-							startx = linepts[i].X + relAtStart * xdiff;
-							starty = linepts[i].Y + relAtStart * ydiff;
-							stopx = linepts[i + 1].X - relAtEnd * xdiff;
-							stopy = linepts[i + 1].Y - relAtEnd * ydiff;
+							startx = circularLinePoints[i].X + relAtStart * xdiff;
+							starty = circularLinePoints[i].Y + relAtStart * ydiff;
+							stopx = circularLinePoints[i + 1].X - relAtEnd * xdiff;
+							stopy = circularLinePoints[i + 1].Y - relAtEnd * ydiff;
 
 							gp.AddLine(startx, starty, stopx, stopy);
 							gp.StartFigure();
@@ -143,7 +143,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				{
 					for (int i = 0; i < lastIdx; i += skipFrequency)
 					{
-						int subPointLengthM1 = Math.Min(skipFrequency, linepts.Length - 1 - i);
+						int subPointLengthM1 = Math.Min(skipFrequency, circularLinePoints.Length - 1 - i);
 						double gapAtStart = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
 						double gapAtEnd;
 						if (connectCircular && skipFrequency >= (range.Length - i))
@@ -155,7 +155,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 						if (subPointLengthM1 >= 1)
 						{
-							var polyline = linepts.ShortenPartialPolylineByDistanceFromStartAndEnd(i, i + subPointLengthM1, gapAtStart / 2, gapAtEnd / 2);
+							var polyline = circularLinePoints.ShortenPartialPolylineByDistanceFromStartAndEnd(i, i + subPointLengthM1, gapAtStart / 2, gapAtEnd / 2);
 
 							if (null != polyline)
 								g.DrawLines(linePen, polyline);
@@ -165,9 +165,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			}
 			else // no line symbol gap required, so we can use DrawLines to draw the lines
 			{
-				if (linepts.Length > 1) // we don't want to have a drawing exception if number of points is only one
+				if (circularLinePoints.Length > 1) // we don't want to have a drawing exception if number of points is only one
 				{
-					g.DrawLines(linePen, linepts);
+					g.DrawLines(linePen, circularLinePoints);
 				}
 			}
 		}
@@ -180,53 +180,40 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			bool ignoreMissingDataPoints,
-			bool connectCircular
+			bool connectCircular,
+			PointF[] allLinePoints,
+			double logicalShiftX,
+			double logicalShiftY
 		)
 		{
-			PointF[] allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			PointF[] circularLinePoints = new PointF[range.Length + (connectCircular ? 1 : 0)];
 			Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, range.Length); // Extract
 			if (connectCircular)
 				circularLinePoints[circularLinePoints.Length - 1] = circularLinePoints[0];
 
-			FillOneRange(gp, pdata, range, layer, fillDirection, circularLinePoints, connectCircular);
-		}
-
-		/// <summary>
-		/// Template to get a fill path.
-		/// </summary>
-		/// <param name="gp">Graphics path to fill with data.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
-		/// <param name="range">The plot range to use.</param>
-		/// <param name="layer">Graphics layer.</param>
-		/// <param name="fillDirection">Designates a bound to fill to.</param>
-		/// <param name="linePoints">The points that mark the line.</param>
-		/// <param name="connectCircular">If true, the line is connected circular</param>
-		public void FillOneRange(
-		GraphicsPath gp,
-			Processed2DPlotData pdata,
-			IPlotRange range,
-			IPlotArea layer,
-			CSPlaneID fillDirection,
-			PointF[] linePoints,
-			bool connectCircular
-			)
-		{
 			if (connectCircular)
 			{
-				gp.AddLines(linePoints);
+				gp.AddLines(circularLinePoints);
 				gp.CloseFigure();
 			}
 			else // not circular
 			{
 				Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+				r0.RX += logicalShiftX;
+				r0.RY += logicalShiftY;
+
 				layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
-				gp.AddLines(linePoints);
+				gp.AddLines(circularLinePoints);
 				Logical3D r1 = layer.GetLogical3D(pdata, connectCircular ? range.OriginalFirstPoint : range.OriginalLastPoint);
+				r1.RX += logicalShiftX;
+				r1.RY += logicalShiftY;
+
 				layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
 				layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
 				gp.CloseFigure();
 			}
 		}
+
+		
 	}
 }

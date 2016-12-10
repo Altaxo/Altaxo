@@ -67,7 +67,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// Template to make a line draw.
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
+		/// <param name="allLinePoints">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
 		/// <param name="range">The plot range to use.</param>
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="linePen">The pen to draw the line.</param>
@@ -76,9 +76,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
 		/// <param name="connectCircular">If true, there is a line connecting the start and the end of the range.</param>
 		/// <param name="linePlotStyle">The line plot style.</param>
-		public override void Paint(
+		public override void PaintOneRange(
 			Graphics g,
-			Processed2DPlotData pdata,
+			PointF[] allLinePoints,
 			IPlotRange range,
 			IPlotArea layer,
 			PenX linePen,
@@ -89,7 +89,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		{
 			// Bezier is only supported with point numbers n=4+3*k
 			// so trim the range appropriately
-			PointF[] allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			if (range.Length < 4)
 				return; // then too less points are in this range
 
@@ -197,13 +196,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			bool ignoreMissingDataPoints,
-			bool connectCircular
+			bool connectCircular,
+			PointF[] allLinePoints,
+			double logicalShiftX,
+			double logicalShiftY
 		)
 		{
 			if (range.Length < 4)
 				return;
 
-			var allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 
 			if (connectCircular)
 			{
@@ -218,14 +219,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				if (circularLinePointsLengthM1 - range.Length >= 2)
 					circularLinePoints[circularLinePointsLengthM1 - 2] = GdiExtensionMethods.Interpolate(circularLinePoints[circularLinePointsLengthM1 - 3], circularLinePoints[circularLinePointsLengthM1], 0.5); // Middle Control point should be halfway between previous fixed point and last(=first) fixed point
 
-				FillOneRange(gp, pdata, range, layer, fillDirection, circularLinePoints, connectCircular);
+				FillOneRange_PreprocessedPoints(gp, pdata, range, layer, fillDirection, circularLinePoints, connectCircular, logicalShiftX, logicalShiftY);
 			}
 			else
 			{
 				var trimmedLinePointsLength = TrimToValidBezierLength(range.Length);
 				var trimmedLinePoints = new PointF[trimmedLinePointsLength];
 				Array.Copy(allLinePoints, range.LowerBound, trimmedLinePoints, 0, trimmedLinePointsLength); // Extract
-				FillOneRange(gp, pdata, range, layer, fillDirection, trimmedLinePoints, connectCircular);
+				FillOneRange_PreprocessedPoints(gp, pdata, range, layer, fillDirection, trimmedLinePoints, connectCircular, logicalShiftX, logicalShiftY);
 			}
 		}
 
@@ -239,14 +240,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <param name="fillDirection">Designates a bound to fill to.</param>
 		/// <param name="linePoints">The points that mark the line.</param>
 		/// <param name="connectCircular">If true, a circular connection is drawn.</param>
-		public void FillOneRange(
+		private void FillOneRange_PreprocessedPoints(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
 			IPlotRange range,
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			PointF[] linePoints,
-			bool connectCircular
+			bool connectCircular,
+			double logicalShiftX,
+			double logicalShiftY
 		)
 		{
 			if (connectCircular)
@@ -258,9 +261,15 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			else
 			{
 				Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+				r0.RX += logicalShiftX;
+				r0.RY += logicalShiftY;
 				layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
 				gp.AddBeziers(linePoints);
+
 				Logical3D r1 = layer.GetLogical3D(pdata, range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + linePoints.Length - 1));
+				r1.RX += logicalShiftX;
+				r1.RY += logicalShiftY;
+
 				layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
 				layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
 

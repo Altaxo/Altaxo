@@ -64,7 +64,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		#endregion Serialization
 
 		protected override PointF[] GetStepPolylinePoints(
-		Processed2DPlotData pdata,
+		PointF[] allLinePoints,
 		IPlotRange range,
 		IPlotArea layer,
 		bool connectCircular,
@@ -73,7 +73,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		{
 			numberOfPointsPerOriginalPoint = 2;
 
-			PointF[] allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			PointF[] subLinePoints = new PointF[range.Length * 2 - 1 + (connectCircular ? 2 : 0)];
 			int end = range.UpperBound - 1;
 			int i, j;

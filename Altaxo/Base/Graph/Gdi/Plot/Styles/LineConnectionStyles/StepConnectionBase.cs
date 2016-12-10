@@ -52,7 +52,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <param name="lastIndex">The last index.</param>
 		/// <returns></returns>
 		protected abstract PointF[] GetStepPolylinePoints(
-		Processed2DPlotData pdata,
+		PointF[] pdata,
 		IPlotRange range,
 		IPlotArea layer,
 		bool connectCircular,
@@ -63,7 +63,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// Template to make a line draw.
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
+		/// <param name="allLinePoints">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
 		/// <param name="range">The plot range to use.</param>
 		/// <param name="layer">Graphics layer.</param>
 		/// <param name="linePen">The pen to draw the line.</param>
@@ -72,9 +72,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <param name="skipFrequency">Skip frequency. Normally 1, thus all gaps are taken into account. If 2, only every 2nd gap is taken into account, and so on.</param>
 		/// <param name="connectCircular">If true, there is a line connecting the start and the end of the range.</param>
 		/// <param name="linePlotStyle">The line plot style.</param>
-		public override void Paint(
+		public override void PaintOneRange(
 			Graphics g,
-			Processed2DPlotData pdata,
+			PointF[] allLinePoints,
 			IPlotRange range,
 			IPlotArea layer,
 			PenX linePen,
@@ -88,8 +88,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 			int lastIdx;
 			int numberOfPointsPerOriginalPoint;
-			PointF[] allLinePoints = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			PointF[] stepPolylinePoints = GetStepPolylinePoints(pdata, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
+			PointF[] stepPolylinePoints = GetStepPolylinePoints(allLinePoints, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
 
 			GraphicsPath gp = new GraphicsPath();
 
@@ -138,7 +137,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			bool ignoreMissingDataPoints,
-			bool connectCircular
+			bool connectCircular,
+			PointF[] allLinePoints,
+			double logicalShiftX,
+			double logicalShiftY
 		)
 		{
 			if (range.Length < 2)
@@ -146,8 +148,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 			int lastIdx;
 			int numberOfPointsPerOriginalPoint;
-			PointF[] linepts = GetStepPolylinePoints(pdata, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
-			FillOneRange(gp, pdata, range, layer, fillDirection, linepts, connectCircular);
+			PointF[] linepts = GetStepPolylinePoints(allLinePoints, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
+			FillOneRange(gp, pdata, range, layer, fillDirection, linepts, connectCircular, allLinePoints, logicalShiftX, logicalShiftY);
 		}
 
 		/// <summary>
@@ -160,6 +162,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		/// <param name="fillDirection">Designates a bound to fill to.</param>
 		/// <param name="linePoints">The points that mark the line.</param>
 		/// <param name="connectCircular">If true, a circular connection is drawn.</param>
+		/// <param name="allLinePointsShiftedAlready">The plot positions, already shifted when a logical shift needed to be applied. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
+		/// <param name="logicalShiftX">The logical shift in x-direction.</param>
+		/// <param name="logicalShiftY">The logical shift in x-direction.</param>
 		public virtual void FillOneRange(
 		GraphicsPath gp,
 			Processed2DPlotData pdata,
@@ -167,7 +172,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			IPlotArea layer,
 			CSPlaneID fillDirection,
 			PointF[] linePoints,
-			bool connectCircular
+			bool connectCircular,
+			PointF[] allLinePointsShiftedAlready,
+			double logicalShiftX,
+			double logicalShiftY
 		)
 		{
 			if (connectCircular)
@@ -178,9 +186,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			else
 			{
 				Logical3D r0 = layer.GetLogical3D(pdata, range.OriginalFirstPoint);
+				r0.RX += logicalShiftX;
+				r0.RY += logicalShiftY;
+
 				layer.CoordinateSystem.GetIsolineFromPlaneToPoint(gp, fillDirection, r0);
 				gp.AddLines(linePoints);
+
 				Logical3D r1 = layer.GetLogical3D(pdata, range.OriginalLastPoint);
+				r1.RX += logicalShiftX;
+				r1.RY += logicalShiftY;
+
 				layer.CoordinateSystem.GetIsolineFromPointToPlane(gp, r1, fillDirection);
 				layer.CoordinateSystem.GetIsolineOnPlane(gp, fillDirection, r1, r0);
 				gp.CloseFigure();
