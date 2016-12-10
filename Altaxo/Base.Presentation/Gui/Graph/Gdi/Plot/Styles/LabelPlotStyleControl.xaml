@@ -68,10 +68,12 @@
 		<CheckBox x:Name="_guiIndependentSkipFrequency" Grid.Row="2" Grid.Column="0" Content="Indep. skip freq.: " />
 		<axogc:Int32UpDown x:Name="_guiSkipFrequency"  Grid.Row="2" Grid.Column="1" Minimum="1" />
 
-		<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles" Content="Do not shift position by shifting group styles" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="4" HorizontalAlignment="Left" />
+		<CheckBox x:Name="_guiIgnoreMissingDataPoints" Margin="16,0,0,0" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" Content="Ignore missing data points" ToolTip="If true, missing data points are treated as if not present." />
+
+		<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles" VerticalAlignment="Center"  Content="Do not shift position by shifting group styles" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Left" />
 
 		<Label Content="Label format:" Grid.Row="4" Grid.Column="0" />
-		<TextBox x:Name="_guiLabelFormat" Grid.Row="4" Grid.Column="1" />
+		<TextBox x:Name="_guiLabelFormat" Grid.Row="4" Grid.Column="1" ToolTip="Enter either a format without braces or with curly braces. Without braces, you can enter a format string that is appropriate for the type of the label. Use e.g. F3 to format a numeric value with 3 decimal digits. If using curly braces, {0} is the value of the label column, {1} is the row index, {2} is the x-value, and {3} is the y-value." />
 
 		<CheckBox x:Name="_guiAttachToAxis" Grid.Row="6"   Grid.Column="0"  Content="Attach to axis:" Checked="EhAttachToAxis_CheckedChanged" Unchecked="EhAttachToAxis_CheckedChanged" />
 		<ComboBox x:Name="_guiAttachedAxis" Grid.Row="6"  Grid.Column="1" SelectionChanged="EhAttachedAxisChanged" />

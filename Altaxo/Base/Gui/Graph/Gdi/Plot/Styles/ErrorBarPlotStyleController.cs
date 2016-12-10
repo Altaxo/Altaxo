@@ -69,6 +69,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		bool IndependentSkipFrequency { get; set; }
 
+		bool IgnoreMissingDataPoints { get; set; }
+
 		bool IndependentOnShiftingGroupStyles { get; set; }
 
 		bool UseCommonErrorColumn { get; set; }
@@ -190,7 +192,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 				_view.SkipFrequency = _doc.SkipFrequency;
 				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
-
+				_view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
 				_view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
 
 				_view.Initialize_MeaningOfValues(_meaningOfValues);
@@ -233,6 +235,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 			_doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
 			_doc.SkipFrequency = _view.SkipFrequency;
+			_doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
 
 			_doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
 

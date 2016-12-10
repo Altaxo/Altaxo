@@ -73,13 +73,15 @@
 		<ComboBox x:Name="_guiLineConnect" Grid.Column="2" Grid.Row="0" SelectionChanged="EhUseLineConnectChanged" />
 		<CheckBox x:Name="_guiConnectCircular" Grid.Column="2" Grid.Row="2" Content="Circular connection" />
 		<CheckBox x:Name="_guiIgnoreMissingPoints" Grid.Column="2" Grid.Row="6" Content="Ignore data gaps" />
+		<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles"  Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="4" Content="Independent on data shifting group styles"  />
 
-		<CheckBox x:Name="_guiIndependentLineColor" Grid.Column="0" Grid.Row="8" Content="Indep. color:" Checked="EhIndependentLineColorChanged" Unchecked="EhIndependentLineColorChanged" />
-		<axogcd:BrushComboBox x:Name="_guiLineBrush" Grid.Column="2" Grid.Row="8" />
-		<CheckBox x:Name="_guiIndependentDashStyle" Grid.Column="0" Grid.Row="10" Content="Indep. dash style:" Checked="EhIndependentDashStyleChanged" Unchecked="EhIndependentDashStyleChanged" />
-		<axogdd:DashPatternComboBox x:Name="_guiLineDashStyle" Grid.Column="2" Grid.Row="10" />
-		<Label Grid.Column="0" Grid.Row="12" Content="Thickness:" />
-		<axogcd:LineThicknessComboBox x:Name="_guiLineThickness1" Grid.Column="2" Grid.Row="12" />
+
+		<CheckBox x:Name="_guiIndependentLineColor" Grid.Column="0" Grid.Row="10" Content="Indep. color:" Checked="EhIndependentLineColorChanged" Unchecked="EhIndependentLineColorChanged" />
+		<axogcd:BrushComboBox x:Name="_guiLineBrush" Grid.Column="2" Grid.Row="10" />
+		<CheckBox x:Name="_guiIndependentDashStyle" Grid.Column="0" Grid.Row="12" Content="Indep. dash style:" Checked="EhIndependentDashStyleChanged" Unchecked="EhIndependentDashStyleChanged" />
+		<axogdd:DashPatternComboBox x:Name="_guiLineDashStyle" Grid.Column="2" Grid.Row="12" />
+		<Label Grid.Column="0" Grid.Row="14" Content="Thickness:" />
+		<axogcd:LineThicknessComboBox x:Name="_guiLineThickness1" Grid.Column="2" Grid.Row="14" />
 
 		<CheckBox x:Name="_guiIndependentSymbolSize" Content="Independent symbol size :"  Grid.Row="16" Grid.Column="0" />
 		<axogcd:LineCapSizeComboBox x:Name="_guiSymbolSize" Grid.Row="16" Grid.Column="2" />

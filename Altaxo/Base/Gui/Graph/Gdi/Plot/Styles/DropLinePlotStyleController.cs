@@ -84,6 +84,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		bool IndependentSkipFrequency { get; set; }
 
+		bool IgnoreMissingDataPoints { get; set; }
+
+
+		bool IndependentOnShiftingGroupStyles { get; set; }
+
+
 		double GapAtStartOffset { get; set; }
 		double GapAtStartFactor { get; set; }
 		double GapAtEndOffset { get; set; }
@@ -138,6 +144,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			{
 				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
 				_view.SkipFrequency = _doc.SkipFrequency;
+				_view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
+				_view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
 				_view.InitializeDropLineConditions(_dropLineChoices);
 
 				_view.AdditionalDropTargetIsEnabled = _doc.AdditionalDropTargetIsEnabled;
@@ -171,6 +179,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 				// Skip frequency
 				_doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
 				_doc.SkipFrequency = _view.SkipFrequency;
+				_doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
+				_doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
+
 				// Drop targets
 				_doc.DropTargets = new CSPlaneIDList(_dropLineChoices.Where(node => node.IsSelected).Select(node => (CSPlaneID)node.Tag));
 

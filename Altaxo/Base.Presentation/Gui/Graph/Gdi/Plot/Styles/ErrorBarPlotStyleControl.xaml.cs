@@ -96,6 +96,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			}
 		}
 
+		public bool IgnoreMissingDataPoints
+		{
+			get { return true == _guiIgnoreMissingDataPoints.IsChecked; }
+			set { this._guiIgnoreMissingDataPoints.IsChecked = value; }
+		}
+
 		public bool IndependentOnShiftingGroupStyles
 		{
 			get

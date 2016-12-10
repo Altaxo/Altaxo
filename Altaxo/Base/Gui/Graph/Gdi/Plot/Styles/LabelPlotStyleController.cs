@@ -139,6 +139,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		bool IndependentSkipFrequency { get; set; }
 
+		bool IgnoreMissingDataPoints { get; set; }
+
+
 		bool IndependentOnShiftingGroupStyles { get; set; }
 
 		string LabelFormatString { get; set; }
@@ -237,7 +240,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 				_view.SkipFrequency = _doc.SkipFrequency;
 				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
-
+				_view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
 				_view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
 
 				_view.LabelFormatString = _doc.LabelFormatString;
@@ -279,7 +282,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			// Data
 			_doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
 			_doc.SkipFrequency = _view.SkipFrequency;
-
+			_doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
 			_doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
 
 			_doc.LabelFormatString = _view.LabelFormatString;

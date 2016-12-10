@@ -114,6 +114,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		[field: NonSerialized]
 		protected Func<int, Color> _cachedColorForIndexFunction;
 
+		/// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftX;
+
+		/// <summary>Logical y shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftY;
+
 		#region Serialization
 
 		/// <summary>
@@ -538,6 +544,29 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		/// <summary>
+		/// Gets or sets a value indicating whether to ignore missing data points. If the value is set to true,
+		/// the line is plotted even if there is a gap in the data points.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if missing data points should be ignored; otherwise, if <c>false</c>, no line is plotted between a gap in the data.
+		/// </value>
+		public bool IgnoreMissingDataPoints
+		{
+			get
+			{
+				return _ignoreMissingDataPoints;
+			}
+			set
+			{
+				if (!(_ignoreMissingDataPoints == value))
+				{
+					_ignoreMissingDataPoints = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
 		/// True when we don't want to shift the position of the items, for instance due to the bar graph plot group.
 		/// </summary>
 		public bool IndependentOnShiftingGroupStyles
@@ -687,11 +716,42 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion I3DPlotItem Members
 
+
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
-			PlotRangeList rangeList = pdata.RangeList;
-			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
+			// adjust the skip frequency if it was not set appropriate
+			if (_skipFrequency <= 0)
+				_skipFrequency = 1;
 
+			if (_independentOnShiftingGroupStyles)
+			{
+				_cachedLogicalShiftX = _cachedLogicalShiftY = 0;
+			}
+
+
+			PlotRangeList rangeList = pdata.RangeList;
+
+
+
+			if (this._ignoreMissingDataPoints)
+			{
+				// in case we ignore the missing points, all ranges can be plotted
+				// as one range, i.e. continuously
+				// for this, we create the totalRange, which contains all ranges
+				var totalRange = new PlotRangeCompound(rangeList);
+				this.PaintOneRange(g, layer, totalRange, pdata);
+			}
+			else // we not ignore missing points, so plot all ranges separately
+			{
+				for (int i = 0; i < rangeList.Count; i++)
+				{
+					this.PaintOneRange(g, layer, rangeList[i], pdata);
+				}
+			}
+		}
+
+		private void PaintOneRange(Graphics g, IPlotArea layer, IPlotRange range, Processed2DPlotData pdata)
+		{
 			// adjust the skip frequency if it was not set appropriate
 			if (_skipFrequency <= 0)
 				_skipFrequency = 1;
@@ -726,87 +786,91 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var gapStart = 0.5 * (_gapAtStartOffset + _gapAtStartFactor * _cachedSymbolSize);
 				var gapEnd = 0.5 * (_gapAtEndOffset + _gapAtEndFactor * _cachedSymbolSize);
 
-				for (int r = 0; r < rangeList.Count; r++)
-				{
-					var range = rangeList[r];
-					int lower = range.LowerBound;
-					int upper = range.UpperBound;
 
-					for (int j = lower; j < upper; j += _skipFrequency)
-					{
-						Logical3D r3d = layer.GetLogical3D(pdata, j + range.OffsetToOriginal);
-						foreach (CSPlaneID id in dropTargets)
-						{
-							gpath.Reset();
-							layer.CoordinateSystem.GetIsolineFromPointToPlane(gpath, r3d, id);
-							PointF[] shortenedPathPoints = null;
-							if (gapStart != 0 || gapEnd != 0)
-							{
-								gpath.Flatten();
-								var pathPoints = gpath.PathPoints;
-								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
-								if (null != shortenedPathPoints)
-									g.DrawLines(pen, shortenedPathPoints);
-							}
-							else
-							{
-								g.DrawPath(pen, gpath);
-							}
-						}
-					}
-				} // for each range
-			}
-			else // using a variable symbol size or variable symbol color
-			{
-				for (int r = 0; r < rangeList.Count; r++)
+				int lower = range.LowerBound;
+				int upper = range.UpperBound;
+
+				for (int j = lower; j < upper; j += _skipFrequency)
 				{
-					var range = rangeList[r];
-					int lower = range.LowerBound;
-					int upper = range.UpperBound;
-					int offset = range.OffsetToOriginal;
-					for (int j = lower; j < upper; j += _skipFrequency)
+					var originalRowIndex = range.GetOriginalRowIndexFromPlotPointIndex(j);
+
+					Logical3D r3d = layer.GetLogical3D(pdata, originalRowIndex);
+					r3d.RX += _cachedLogicalShiftX;
+					r3d.RY += _cachedLogicalShiftY;
+
+					foreach (CSPlaneID id in dropTargets)
 					{
-						var pen = _pen.Clone();
-						if (null == _cachedColorForIndexFunction)
+						gpath.Reset();
+						layer.CoordinateSystem.GetIsolineFromPointToPlane(gpath, r3d, id);
+						PointF[] shortenedPathPoints = null;
+						if (gapStart != 0 || gapEnd != 0)
 						{
-							_cachedSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
-							double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
-							pen.Width = w1;
+							gpath.Flatten();
+							var pathPoints = gpath.PathPoints;
+							shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
+							if (null != shortenedPathPoints)
+								g.DrawLines(pen, shortenedPathPoints);
 						}
 						else
 						{
-							_cachedSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _cachedSymbolSize : _cachedSymbolSizeForIndexFunction(j + offset);
-							double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
-
-							var customSymbolColor = _cachedColorForIndexFunction(j + offset);
-							pen.Width = w1;
-							pen.Color = NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B);
-						}
-
-						var gapStart = 0.5 * (_gapAtStartOffset + _gapAtStartFactor * _cachedSymbolSize);
-						var gapEnd = 0.5 * (_gapAtEndOffset + _gapAtEndFactor * _cachedSymbolSize);
-
-						Logical3D r3d = layer.GetLogical3D(pdata, j + rangeList[r].OffsetToOriginal);
-						foreach (CSPlaneID id in _dropTargets)
-						{
-							gpath.Reset();
-							layer.CoordinateSystem.GetIsolineFromPointToPlane(gpath, r3d, id);
-							PointF[] shortenedPathPoints = null;
-							if (gapStart != 0 || gapEnd != 0)
-							{
-								gpath.Flatten();
-								var pathPoints = gpath.PathPoints;
-								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
-								if (null != shortenedPathPoints)
-									g.DrawLines(pen, shortenedPathPoints);
-							}
-							else
-							{
-								g.DrawPath(pen, gpath);
-							}
+							g.DrawPath(pen, gpath);
 						}
 					}
 				}
+
+			}
+			else // using a variable symbol size or variable symbol color
+			{
+
+				int lower = range.LowerBound;
+				int upper = range.UpperBound;
+				for (int j = lower; j < upper; j += _skipFrequency)
+				{
+					var originalRowIndex = range.GetOriginalRowIndexFromPlotPointIndex(j);
+					var pen = _pen.Clone();
+					if (null == _cachedColorForIndexFunction)
+					{
+						_cachedSymbolSize = _cachedSymbolSizeForIndexFunction(originalRowIndex);
+						double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
+						pen.Width = w1;
+					}
+					else
+					{
+						_cachedSymbolSize = null == _cachedSymbolSizeForIndexFunction ? _cachedSymbolSize : _cachedSymbolSizeForIndexFunction(originalRowIndex);
+						double w1 = _lineWidth1Offset + _lineWidth1Factor * _cachedSymbolSize;
+
+						var customSymbolColor = _cachedColorForIndexFunction(originalRowIndex);
+						pen.Width = w1;
+						pen.Color = NamedColor.FromArgb(customSymbolColor.A, customSymbolColor.R, customSymbolColor.G, customSymbolColor.B);
+					}
+
+					var gapStart = 0.5 * (_gapAtStartOffset + _gapAtStartFactor * _cachedSymbolSize);
+					var gapEnd = 0.5 * (_gapAtEndOffset + _gapAtEndFactor * _cachedSymbolSize);
+
+					Logical3D r3d = layer.GetLogical3D(pdata, originalRowIndex);
+					r3d.RX += _cachedLogicalShiftX;
+					r3d.RY += _cachedLogicalShiftY;
+
+					foreach (CSPlaneID id in _dropTargets)
+					{
+						gpath.Reset();
+						layer.CoordinateSystem.GetIsolineFromPointToPlane(gpath, r3d, id);
+						PointF[] shortenedPathPoints = null;
+						if (gapStart != 0 || gapEnd != 0)
+						{
+							gpath.Flatten();
+							var pathPoints = gpath.PathPoints;
+							shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gapStart), RADouble.NewAbs(gapEnd));
+							if (null != shortenedPathPoints)
+								g.DrawLines(pen, shortenedPathPoints);
+						}
+						else
+						{
+							g.DrawPath(pen, gpath);
+						}
+					}
+				}
+
 			}
 		}
 
@@ -890,6 +954,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				_skipFrequency = 1;
 				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this._skipFrequency = c; });
+			}
+
+			// Shift the items ?
+			_cachedLogicalShiftX = 0;
+			_cachedLogicalShiftY = 0;
+			if (!_independentOnShiftingGroupStyles)
+			{
+				var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYGroupStyle>(externalGroups, localGroups);
+				if (null != shiftStyle)
+				{
+					shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY);
+				}
 			}
 		}
 

@@ -119,6 +119,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		[field: NonSerialized]
 		protected Func<int, Color> _cachedColorForIndexFunction;
 
+		/// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftX;
+
+		/// <summary>Logical y shift between the location of the real data point and the point where the item is finally drawn.</summary>
+		private double _cachedLogicalShiftY;
+
+
 		#region Copying
 
 		/// <inheritdoc/>
@@ -792,13 +799,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		private void PaintOneRange(
 			Graphics g,
 			IPlotArea layer,
-			Processed2DPlotData pdata,
+			PointF[] plotPositions,
 			IPlotRange range,
 			IScatterSymbol scatterSymbol,
 			ref CachedPathData cachedPathData,
 			ref CachedBrushData cachedBrushData)
 		{
-			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
+			var ptArray = plotPositions;
 
 			float xpos = 0, ypos = 0;
 			float xdiff, ydiff;
@@ -814,7 +821,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				CalculatePaths(scatterSymbol, _symbolSize, ref cachedPathData);
 				CalculateBrushes(scatterSymbol, _color, cachedPathData, ref cachedBrushData);
 
-				
+
 
 				for (int plotPointIndex = range.LowerBound; plotPointIndex < range.UpperBound; plotPointIndex += _skipFreq)
 				{
@@ -834,7 +841,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						g.FillPath(cachedBrushData.FrameBrush, cachedPathData.FramePath);
 				} // end for
 
-				
+
 			}
 			else // using a variable symbol size or variable symbol color
 			{
@@ -879,6 +886,30 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			g.Restore(gs); // Restore the graphics state
 		}
 
+
+		static PointF[] GetPlotPointsInAbsoluteLayerCoordinatesWithShift(Processed2DPlotData pdata, IPlotArea layer, double cachedLogicalShiftX, double cachedLogicalShiftY)
+		{
+			var result = new PointF[pdata.PlotPointsInAbsoluteLayerCoordinates.Length];
+			foreach (PlotRange r in pdata.RangeList)
+			{
+				int lower = r.LowerBound;
+				int upper = r.UpperBound;
+				int offset = r.OffsetToOriginal;
+				for (int j = lower; j < upper; ++j)
+				{
+					int originalRow = j + offset;
+					Logical3D logicalMean = layer.GetLogical3D(pdata, originalRow);
+					logicalMean.RX += cachedLogicalShiftX;
+					logicalMean.RY += cachedLogicalShiftY;
+
+					double x, y;
+					layer.CoordinateSystem.LogicalToLayerCoordinates(logicalMean, out x, out y);
+					result[j] = new PointF((float)x, (float)y);
+				}
+			}
+			return result;
+		}
+
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
 			// adjust the skip frequency if it was not set appropriate
@@ -892,7 +923,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			CachedBrushData cachedBrushData = new CachedBrushData();
 
 			PlotRangeList rangeList = pdata.RangeList;
-			PointF[] ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
+			PointF[] plotPositions = pdata.PlotPointsInAbsoluteLayerCoordinates;
+
+			if (!_independentOnShiftingGroupStyles && (0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY))
+			{
+				plotPositions = GetPlotPointsInAbsoluteLayerCoordinatesWithShift(pdata, layer, _cachedLogicalShiftX, _cachedLogicalShiftY);
+			}
 
 
 
@@ -906,13 +942,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				// as one range, i.e. continuously
 				// for this, we create the totalRange, which contains all ranges
 				var totalRange = new PlotRangeCompound(rangeList);
-				this.PaintOneRange(g, layer, pdata, totalRange, scatterSymbol, ref cachedPathData, ref cachedBrushData);
+				this.PaintOneRange(g, layer, plotPositions, totalRange, scatterSymbol, ref cachedPathData, ref cachedBrushData);
 			}
 			else // we not ignore missing points, so plot all ranges separately
 			{
 				for (int i = 0; i < rangeList.Count; i++)
 				{
-					this.PaintOneRange(g, layer, pdata, rangeList[i], scatterSymbol, ref cachedPathData, ref cachedBrushData);
+					this.PaintOneRange(g, layer, plotPositions, rangeList[i], scatterSymbol, ref cachedPathData, ref cachedBrushData);
 				}
 			}
 
@@ -1038,6 +1074,18 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
 			if (!this._independentSkipFreq)
 				SkipFrequencyGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (int c) { this.SkipFrequency = c; });
+
+			// Shift the items ?
+			_cachedLogicalShiftX = 0;
+			_cachedLogicalShiftY = 0;
+			if (!_independentOnShiftingGroupStyles)
+			{
+				var shiftStyle = PlotGroupStyle.GetFirstStyleToApplyImplementingInterface<IShiftLogicalXYGroupStyle>(externalGroups, localGroups);
+				if (null != shiftStyle)
+				{
+					shiftStyle.Apply(out _cachedLogicalShiftX, out _cachedLogicalShiftY);
+				}
+			}
 		}
 
 		#endregion IPlotStyle Members

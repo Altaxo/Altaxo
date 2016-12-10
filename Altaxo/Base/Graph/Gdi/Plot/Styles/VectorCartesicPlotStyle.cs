@@ -201,7 +201,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._independentSymbolSize = info.GetBoolean("IndependentSymbolSize");
 				s._symbolSize = info.GetDouble("SymbolSize");
 
-				s.Pen = (PenX)info.GetValue("Pen", s);
+				s._strokePen = (PenX)info.GetValue("Pen", s);
+				if (null != s._strokePen) s._strokePen.ParentObject = s;
+
 				s._independentColor = info.GetBoolean("IndependentColor");
 
 				s._lineWidth1Offset = info.GetDouble("LineWidth1Offset");
@@ -655,6 +657,29 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		/// <summary>
+		/// Gets or sets a value indicating whether to ignore missing data points. If the value is set to true,
+		/// the line is plotted even if there is a gap in the data points.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if missing data points should be ignored; otherwise, if <c>false</c>, no line is plotted between a gap in the data.
+		/// </value>
+		public bool IgnoreMissingDataPoints
+		{
+			get
+			{
+				return _ignoreMissingDataPoints;
+			}
+			set
+			{
+				if (!(_ignoreMissingDataPoints == value))
+				{
+					_ignoreMissingDataPoints = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
 		/// True when we don't want to shift the position of the items, for instance due to the bar graph plot group.
 		/// </summary>
 		public bool IndependentOnShiftingGroupStyles
@@ -709,7 +734,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group only)
 
 			// IgnoreMissingDataPoints should be the same for all sub plot styles, so there is no "private" property
-			IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
+			IgnoreMissingDataPointsGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
 		}
 
 		public void PrepareGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups, IPlotArea layer, Processed2DPlotData pdata)
@@ -723,7 +748,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// IgnoreMissingDataPoints should be the same for all sub plot styles, so there is no "private" property
 			IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
 
-
 			// note: symbol size and barposition are only applied, but not prepared
 			// this item can not be used as provider of a symbol size
 		}
@@ -732,7 +756,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			// IgnoreMissingDataPoints is the same for all sub plot styles
 			IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
-
 
 			_cachedColorForIndexFunction = null;
 			_cachedSymbolSizeForIndexFunction = null;
@@ -778,12 +801,43 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
+			// adjust the skip frequency if it was not set appropriate
+			if (_skipFrequency <= 0)
+				_skipFrequency = 1;
+
+			if (_independentOnShiftingGroupStyles)
+			{
+				_cachedLogicalShiftX = _cachedLogicalShiftY = 0;
+			}
+
+
+			PlotRangeList rangeList = pdata.RangeList;
+
+
+
+			if (this._ignoreMissingDataPoints)
+			{
+				// in case we ignore the missing points, all ranges can be plotted
+				// as one range, i.e. continuously
+				// for this, we create the totalRange, which contains all ranges
+				var totalRange = new PlotRangeCompound(rangeList);
+				this.PaintOneRange(g, layer, totalRange, pdata);
+			}
+			else // we not ignore missing points, so plot all ranges separately
+			{
+				for (int i = 0; i < rangeList.Count; i++)
+				{
+					this.PaintOneRange(g, layer, rangeList[i], pdata);
+				}
+			}
+		}
+
+		protected void PaintOneRange(Graphics g, IPlotArea layer, IPlotRange range, Processed2DPlotData pdata)
+		{
 			const double logicalClampMinimum = -10;
 			const double logicalClampMaximum = 11;
 
 			// Plot error bars for the dependent variable (y)
-			PlotRangeList rangeList = pdata.RangeList;
-			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			var columnX = ColumnX;
 			var columnY = ColumnY;
 
@@ -797,115 +851,114 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			using (GraphicsPath isoLine = new GraphicsPath())
 			{
-				foreach (PlotRange r in rangeList)
+
+				int lower = range.LowerBound;
+				int upper = range.UpperBound;
+
+
+				for (int j = lower; j < upper; j += _skipFrequency)
 				{
-					int lower = r.LowerBound;
-					int upper = r.UpperBound;
-					int offset = r.OffsetToOriginal;
+					int originalRowIndex = range.GetOriginalRowIndexFromPlotPointIndex(j);
+					double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalRowIndex);
 
-					for (int j = lower; j < upper; j += _skipFrequency)
+					strokePen.Width = (_lineWidth1Offset + _lineWidth1Factor * symbolSize);
+
+					if (null != _cachedColorForIndexFunction)
+						strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRowIndex), "VariableColor");
+
+					if (!(strokePen.EndCap is LineCaps.FlatCap))
+						strokePen.EndCap = strokePen.EndCap.WithMinimumAbsoluteAndRelativeSize(symbolSize * _endCapSizeFactor + _endCapSizeOffset, 1 + 1E-6);
+
+					// Calculate target
+					AltaxoVariant targetX, targetY;
+					switch (_meaningOfValues)
 					{
-						int originalRow = j + offset;
-						double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalRow);
+						case ValueInterpretation.AbsoluteDifference:
+							{
+								targetX = pdata.GetXPhysical(originalRowIndex) + columnX[originalRowIndex];
+								targetY = pdata.GetYPhysical(originalRowIndex) + columnY[originalRowIndex];
+							}
+							break;
 
-						strokePen.Width = (_lineWidth1Offset + _lineWidth1Factor * symbolSize);
+						case ValueInterpretation.AbsoluteValue:
+							{
+								targetX = columnX[originalRowIndex];
+								targetY = columnY[originalRowIndex];
+							}
+							break;
 
-						if (null != _cachedColorForIndexFunction)
-							strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRow), "VariableColor");
+						default:
+							throw new NotImplementedException(nameof(_meaningOfValues));
+					}
 
-						if (!(strokePen.EndCap is LineCaps.FlatCap))
-							strokePen.EndCap = strokePen.EndCap.WithMinimumAbsoluteAndRelativeSize(symbolSize * _endCapSizeFactor + _endCapSizeOffset, 1 + 1E-6);
+					var logicalTarget = layer.GetLogical3D(targetX, targetY);
+					var logicalOrigin = layer.GetLogical3D(pdata, originalRowIndex);
 
-						// Calculate target
-						AltaxoVariant targetX, targetY;
-						switch (_meaningOfValues)
-						{
-							case ValueInterpretation.AbsoluteDifference:
-								{
-									targetX = pdata.GetXPhysical(originalRow) + columnX[originalRow];
-									targetY = pdata.GetYPhysical(originalRow) + columnY[originalRow];
-								}
-								break;
+					if (!_independentOnShiftingGroupStyles && (0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY))
+					{
+						logicalOrigin.RX += _cachedLogicalShiftX;
+						logicalOrigin.RY += _cachedLogicalShiftY;
+						logicalTarget.RX += _cachedLogicalShiftX;
+						logicalTarget.RY += _cachedLogicalShiftY;
+					}
 
-							case ValueInterpretation.AbsoluteValue:
-								{
-									targetX = columnX[originalRow];
-									targetY = columnY[originalRow];
-								}
-								break;
+					if (!Calc.RMath.IsInIntervalCC(logicalOrigin.RX, logicalClampMinimum, logicalClampMaximum))
+						continue;
+					if (!Calc.RMath.IsInIntervalCC(logicalOrigin.RY, logicalClampMinimum, logicalClampMaximum))
+						continue;
+					if (!Calc.RMath.IsInIntervalCC(logicalOrigin.RZ, logicalClampMinimum, logicalClampMaximum))
+						continue;
 
-							default:
-								throw new NotImplementedException(nameof(_meaningOfValues));
-						}
+					if (!Calc.RMath.IsInIntervalCC(logicalTarget.RX, logicalClampMinimum, logicalClampMaximum))
+						continue;
+					if (!Calc.RMath.IsInIntervalCC(logicalTarget.RY, logicalClampMinimum, logicalClampMaximum))
+						continue;
+					if (!Calc.RMath.IsInIntervalCC(logicalTarget.RZ, logicalClampMinimum, logicalClampMaximum))
+						continue;
 
-						var logicalTarget = layer.GetLogical3D(targetX, targetY);
-						var logicalOrigin = layer.GetLogical3D(pdata, originalRow);
+					isoLine.Reset();
 
-						if (!_independentOnShiftingGroupStyles && (0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY))
-						{
-							logicalOrigin.RX += _cachedLogicalShiftX;
-							logicalOrigin.RY += _cachedLogicalShiftY;
-							logicalTarget.RX += _cachedLogicalShiftX;
-							logicalTarget.RY += _cachedLogicalShiftY;
-						}
+					layer.CoordinateSystem.GetIsoline(isoLine, logicalOrigin, logicalTarget);
+					if (null == isoLine)
+						continue;
 
-						if (!Calc.RMath.IsInIntervalCC(logicalOrigin.RX, logicalClampMinimum, logicalClampMaximum))
-							continue;
-						if (!Calc.RMath.IsInIntervalCC(logicalOrigin.RY, logicalClampMinimum, logicalClampMaximum))
-							continue;
-						if (!Calc.RMath.IsInIntervalCC(logicalOrigin.RZ, logicalClampMinimum, logicalClampMaximum))
-							continue;
+					PointF[] isoLinePathPoints = null;
 
-						if (!Calc.RMath.IsInIntervalCC(logicalTarget.RX, logicalClampMinimum, logicalClampMaximum))
-							continue;
-						if (!Calc.RMath.IsInIntervalCC(logicalTarget.RY, logicalClampMinimum, logicalClampMaximum))
-							continue;
-						if (!Calc.RMath.IsInIntervalCC(logicalTarget.RZ, logicalClampMinimum, logicalClampMaximum))
-							continue;
+					if (_useManualVectorLength)
+					{
+						isoLine.Flatten();
+						isoLinePathPoints = isoLine.PathPoints;
 
-						isoLine.Reset();
-
-						layer.CoordinateSystem.GetIsoline(isoLine, logicalOrigin, logicalTarget);
+						double length = _vectorLengthOffset + _vectorLengthFactor * symbolSize;
+						double isoLineLength = isoLinePathPoints.TotalLineLength();
+						isoLinePathPoints = isoLinePathPoints.ShortenedBy(RADouble.NewAbs(0), RADouble.NewAbs(isoLineLength - length));
 						if (null == isoLine)
 							continue;
+					}
 
-						PointF[] isoLinePathPoints = null;
-
-						if (_useManualVectorLength)
+					if (_useSymbolGap)
+					{
+						if (null == isoLinePathPoints)
 						{
 							isoLine.Flatten();
 							isoLinePathPoints = isoLine.PathPoints;
+						}
 
-							double length = _vectorLengthOffset + _vectorLengthFactor * symbolSize;
-							double isoLineLength = isoLinePathPoints.TotalLineLength();
-							isoLinePathPoints = isoLinePathPoints.ShortenedBy(RADouble.NewAbs(0), RADouble.NewAbs(isoLineLength - length));
+						double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
+						if (gap != 0)
+						{
+							isoLinePathPoints = isoLinePathPoints.ShortenedBy(RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
 							if (null == isoLine)
 								continue;
 						}
-
-						if (_useSymbolGap)
-						{
-							if (null == isoLinePathPoints)
-							{
-								isoLine.Flatten();
-								isoLinePathPoints = isoLine.PathPoints;
-							}
-
-							double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
-							if (gap != 0)
-							{
-								isoLinePathPoints = isoLinePathPoints.ShortenedBy(RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
-								if (null == isoLine)
-									continue;
-							}
-						}
-
-						if (null != isoLinePathPoints)
-							g.DrawLines(_strokePen, isoLinePathPoints);
-						else
-							g.DrawPath(strokePen, isoLine);
 					}
+
+					if (null != isoLinePathPoints)
+						g.DrawLines(_strokePen, isoLinePathPoints);
+					else
+						g.DrawPath(strokePen, isoLine);
 				}
+
 			}
 		}
 

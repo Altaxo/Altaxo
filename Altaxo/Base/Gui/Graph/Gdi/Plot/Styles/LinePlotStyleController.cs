@@ -67,6 +67,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		bool IgnoreMissingDataPoints { get; set; }
 
+		bool IndependentOnShiftingGroupStyles { get; set; }
+
 		/// <summary>
 		/// Initializes the Line connection combobox.
 		/// </summary>
@@ -124,10 +126,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 			if (_view != null)
 			{
-				// Line properties
-				_view.InitializeLineConnect(_lineConnectChoices);
 				_view.ConnectCircular = _doc.ConnectCircular;
 				_view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
+				_view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
+
+				// Line properties
+				_view.InitializeLineConnect(_lineConnectChoices);
 				_view.IndependentLineColor = _doc.IndependentLineColor;
 				_view.IndependentDashStyle = _doc.IndependentDashStyle;
 				_view.ShowPlotColorsOnlyForLinePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor);
@@ -163,6 +167,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			{
 				_doc.ConnectCircular = _view.ConnectCircular;
 				_doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
+				_doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
 
 				// Pen
 				_doc.IndependentLineColor = _view.IndependentLineColor;

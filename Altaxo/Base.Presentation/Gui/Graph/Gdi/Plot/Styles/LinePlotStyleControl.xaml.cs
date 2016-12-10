@@ -214,6 +214,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			set { _guiIgnoreMissingPoints.IsChecked = value; }
 		}
 
+		public bool IndependentOnShiftingGroupStyles
+		{
+			get { return true == _guiIndependentOnShiftingGroupStyles.IsChecked; }
+			set { this._guiIndependentOnShiftingGroupStyles.IsChecked = value; }
+		}
+
 		#endregion IXYPlotLineStyleView
 	}
 }

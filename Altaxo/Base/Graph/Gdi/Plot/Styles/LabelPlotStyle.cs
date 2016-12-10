@@ -633,6 +633,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._cachedLogicalShiftX = from._cachedLogicalShiftX;
 				this._cachedLogicalShiftY = from._cachedLogicalShiftY;
 
+				this._cachedStringFormat = (System.Drawing.StringFormat)from._cachedStringFormat.Clone();
+
 				if (copyWithDataReferences)
 					this.LabelColumnProxy = (Altaxo.Data.IReadableColumnProxy)from._labelColumnProxy.Clone();
 
@@ -1139,6 +1141,29 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		/// <summary>
+		/// Gets or sets a value indicating whether to ignore missing data points. If the value is set to true,
+		/// the line is plotted even if there is a gap in the data points.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if missing data points should be ignored; otherwise, if <c>false</c>, no line is plotted between a gap in the data.
+		/// </value>
+		public bool IgnoreMissingDataPoints
+		{
+			get
+			{
+				return _ignoreMissingDataPoints;
+			}
+			set
+			{
+				if (!(_ignoreMissingDataPoints == value))
+				{
+					_ignoreMissingDataPoints = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
 		/// True when we don't want to shift the position of the items, for instance due to the bar graph plot group.
 		/// </summary>
 		public bool IndependentOnShiftingGroupStyles
@@ -1161,6 +1186,174 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 		}
 
+
+
+		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
+		{
+			// adjust the skip frequency if it was not set appropriate
+			if (_skipFrequency <= 0)
+				_skipFrequency = 1;
+
+			if (_independentOnShiftingGroupStyles)
+			{
+				_cachedLogicalShiftX = _cachedLogicalShiftY = 0;
+			}
+
+
+			PlotRangeList rangeList = pdata.RangeList;
+
+
+
+			if (this._ignoreMissingDataPoints)
+			{
+				// in case we ignore the missing points, all ranges can be plotted
+				// as one range, i.e. continuously
+				// for this, we create the totalRange, which contains all ranges
+				var totalRange = new PlotRangeCompound(rangeList);
+				this.PaintOneRange(g, layer, totalRange, pdata);
+			}
+			else // we not ignore missing points, so plot all ranges separately
+			{
+				for (int i = 0; i < rangeList.Count; i++)
+				{
+					this.PaintOneRange(g, layer, rangeList[i], pdata);
+				}
+			}
+		}
+
+		public void PaintOneRange(Graphics g, IPlotArea layer, IPlotRange range, Processed2DPlotData pdata)
+		{
+			if (this._labelColumnProxy.Document == null)
+				return;
+
+			_cachedStringFormat.Alignment = GdiExtensionMethods.ToGdi(_alignmentX);
+			_cachedStringFormat.LineAlignment = GdiExtensionMethods.ToGdi(_alignmentY);
+
+			if (null != _attachedPlane)
+				_attachedPlane = layer.UpdateCSPlaneID(_attachedPlane);
+
+			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
+			Altaxo.Data.IReadableColumn labelColumn = this._labelColumnProxy.Document;
+
+			bool isUsingVariableColorForLabelText = null != _cachedColorForIndexFunction && IsColorReceiver;
+			bool isUsingVariableColorForLabelBackground = null != _cachedColorForIndexFunction &&
+				(null != _backgroundStyle && _backgroundStyle.SupportsBrush && (_backgroundColorLinkage == ColorLinkage.Dependent || _backgroundColorLinkage == ColorLinkage.PreserveAlpha));
+			bool isUsingVariableColor = isUsingVariableColorForLabelText || isUsingVariableColorForLabelBackground;
+			BrushX clonedTextBrush = null;
+			BrushX clonedBackBrush = null;
+			if (isUsingVariableColorForLabelText)
+				clonedTextBrush = _brush.Clone();
+			if (isUsingVariableColorForLabelBackground)
+				clonedBackBrush = _backgroundStyle.Brush.Clone();
+
+			// save the graphics stat since we have to translate the origin
+			var gs = g.Save();
+
+			double xpos = 0, ypos = 0;
+			double xpre, ypre;
+			double xdiff, ydiff;
+
+			bool isFormatStringContainingBraces = _labelFormatString?.IndexOf('{') >= 0;
+			var culture = System.Threading.Thread.CurrentThread.CurrentCulture;
+
+			bool mustUseLogicalCoordinates = null != this._attachedPlane || 0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY;
+
+			int lower = range.LowerBound;
+			int upper = range.UpperBound;
+			for (int j = lower; j < upper; j+=_skipFrequency)
+			{
+				int originalRowIndex = range.GetOriginalRowIndexFromPlotPointIndex(j);
+				string label;
+				if (string.IsNullOrEmpty(_labelFormatString))
+				{
+					label = labelColumn[originalRowIndex].ToString();
+				}
+				else if (!isFormatStringContainingBraces)
+				{
+					label = labelColumn[originalRowIndex].ToString(_labelFormatString, culture);
+				}
+				else
+				{
+					// the label format string can contain {0} for the label column item, {1} for the row index, {2} .. {4} for the x, y and z component of the data point
+					label = string.Format(_labelFormatString, labelColumn[originalRowIndex], originalRowIndex, pdata.GetPhysical(0, originalRowIndex), pdata.GetPhysical(1, originalRowIndex), pdata.GetPhysical(2, originalRowIndex));
+				}
+
+				if (string.IsNullOrEmpty(label))
+					continue;
+
+				double localSymbolSize = _symbolSize;
+				if (null != _cachedSymbolSizeForIndexFunction)
+				{
+					localSymbolSize = _cachedSymbolSizeForIndexFunction(originalRowIndex);
+				}
+
+				double localFontSize = _fontSizeOffset + _fontSizeFactor * localSymbolSize;
+				if (!(localFontSize > 0))
+					continue;
+
+				_font = _font.WithSize(localFontSize);
+
+				// Start of preparation of brushes, if a variable color is used
+				if (isUsingVariableColor)
+				{
+					Color c = _cachedColorForIndexFunction(originalRowIndex);
+
+					if (isUsingVariableColorForLabelText)
+					{
+						clonedTextBrush.Color = new NamedColor(AxoColor.FromArgb(c.A, c.R, c.G, c.B), "e");
+					}
+					if (isUsingVariableColorForLabelBackground)
+					{
+						if (_backgroundColorLinkage == ColorLinkage.PreserveAlpha)
+							clonedBackBrush.Color = new NamedColor(AxoColor.FromArgb(clonedBackBrush.Color.Color.A, c.R, c.G, c.B), "e");
+						else
+							clonedBackBrush.Color = new NamedColor(AxoColor.FromArgb(c.A, c.R, c.G, c.B), "e");
+					}
+				}
+				// end of preparation of brushes for variable colors
+
+				if (mustUseLogicalCoordinates) // we must use logical coordinates because either there is a shift of logical coordinates, or an attached plane
+				{
+					Logical3D r3d = layer.GetLogical3D(pdata, originalRowIndex);
+					r3d.RX += _cachedLogicalShiftX;
+					r3d.RY += _cachedLogicalShiftY;
+
+					if (null != this._attachedPlane)
+					{
+						var pp = layer.CoordinateSystem.GetPointOnPlane(this._attachedPlane, r3d);
+						xpre = pp.X;
+						ypre = pp.Y;
+					}
+					else
+					{
+						PointD3D pt;
+						layer.CoordinateSystem.LogicalToLayerCoordinates(r3d, out xpre, out ypre);
+					}
+				}
+				else // no shifting, thus we can use layer coordinates
+				{
+					xpre = ptArray[j].X;
+					ypre = ptArray[j].Y;
+				}
+
+				xdiff = xpre - xpos;
+				ydiff = ypre - ypos;
+				xpos = xpre;
+				ypos = ypre;
+				g.TranslateTransform((float)xdiff, (float)ydiff);
+				if (this._rotation != 0)
+					g.RotateTransform((float)-this._rotation);
+
+				this.PaintOneItem(g, label, localSymbolSize, clonedTextBrush, clonedBackBrush);
+
+				if (this._rotation != 0)
+					g.RotateTransform((float)this._rotation);
+
+			}
+
+			g.Restore(gs); // Restore the graphics state
+		}
+
 		/// <summary>
 		/// Paints one label.
 		/// </summary>
@@ -1168,7 +1361,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="label"></param>
 		/// <param name="variableTextBrush">If not null, this argument provides the text brush that should be used now. If null, then the <see cref="_brush"/> is used instead.</param>
 		/// <param name="variableBackBrush"></param>
-		public void Paint(Graphics g, string label, double symbolSize, BrushX variableTextBrush, BrushX variableBackBrush)
+		public void PaintOneItem(Graphics g, string label, double symbolSize, BrushX variableTextBrush, BrushX variableBackBrush)
 		{
 			var fontSize = _font.Size;
 
@@ -1215,142 +1408,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var brush = null != variableTextBrush ? variableTextBrush : _brush;
 			brush.SetEnvironment(new RectangleF(new PointF((float)xpos, (float)ypos), stringsize), BrushX.GetEffectiveMaximumResolution(g, 1));
 			g.DrawString(label, gdiFont, brush, (float)xpos, (float)ypos, _cachedStringFormat);
-		}
-
-		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
-		{
-			if (this._labelColumnProxy.Document == null)
-				return;
-
-			_cachedStringFormat.Alignment = GdiExtensionMethods.ToGdi(_alignmentX);
-			_cachedStringFormat.LineAlignment = GdiExtensionMethods.ToGdi(_alignmentY);
-
-			if (null != _attachedPlane)
-				_attachedPlane = layer.UpdateCSPlaneID(_attachedPlane);
-
-			PlotRangeList rangeList = pdata.RangeList;
-			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
-			Altaxo.Data.IReadableColumn labelColumn = this._labelColumnProxy.Document;
-
-			bool isUsingVariableColorForLabelText = null != _cachedColorForIndexFunction && IsColorReceiver;
-			bool isUsingVariableColorForLabelBackground = null != _cachedColorForIndexFunction &&
-				(null != _backgroundStyle && _backgroundStyle.SupportsBrush && (_backgroundColorLinkage == ColorLinkage.Dependent || _backgroundColorLinkage == ColorLinkage.PreserveAlpha));
-			bool isUsingVariableColor = isUsingVariableColorForLabelText || isUsingVariableColorForLabelBackground;
-			BrushX clonedTextBrush = null;
-			BrushX clonedBackBrush = null;
-			if (isUsingVariableColorForLabelText)
-				clonedTextBrush = _brush.Clone();
-			if (isUsingVariableColorForLabelBackground)
-				clonedBackBrush = _backgroundStyle.Brush.Clone();
-
-			// save the graphics stat since we have to translate the origin
-			var gs = g.Save();
-
-			double xpos = 0, ypos = 0;
-			double xpre, ypre;
-			double xdiff, ydiff;
-
-			bool isFormatStringContainingBraces = _labelFormatString?.IndexOf('{') >= 0;
-			var culture = System.Threading.Thread.CurrentThread.CurrentCulture;
-
-			bool mustUseLogicalCoordinates = null != this._attachedPlane || 0 != _cachedLogicalShiftX || 0 != _cachedLogicalShiftY;
-
-			for (int r = 0; r < rangeList.Count; r++)
-			{
-				int lower = rangeList[r].LowerBound;
-				int upper = rangeList[r].UpperBound;
-				int offset = rangeList[r].OffsetToOriginal;
-				for (int j = lower; j < upper; j++)
-				{
-					string label;
-					if (string.IsNullOrEmpty(_labelFormatString))
-					{
-						label = labelColumn[j + offset].ToString();
-					}
-					else if (!isFormatStringContainingBraces)
-					{
-						label = labelColumn[j + offset].ToString(_labelFormatString, culture);
-					}
-					else
-					{
-						// the label format string can contain {0} for the label column item, {1} for the row index, {2} .. {4} for the x, y and z component of the data point
-						label = string.Format(_labelFormatString, labelColumn[j + offset], j + offset, pdata.GetPhysical(0, j + offset), pdata.GetPhysical(1, j + offset), pdata.GetPhysical(2, j + offset));
-					}
-
-					if (string.IsNullOrEmpty(label))
-						continue;
-
-					double localSymbolSize = _symbolSize;
-					if (null != _cachedSymbolSizeForIndexFunction)
-					{
-						localSymbolSize = _cachedSymbolSizeForIndexFunction(j + offset);
-					}
-
-					double localFontSize = _fontSizeOffset + _fontSizeFactor * localSymbolSize;
-					if (!(localFontSize > 0))
-						continue;
-
-					_font = _font.WithSize(localFontSize);
-
-					// Start of preparation of brushes, if a variable color is used
-					if (isUsingVariableColor)
-					{
-						Color c = _cachedColorForIndexFunction(j + offset);
-
-						if (isUsingVariableColorForLabelText)
-						{
-							clonedTextBrush.Color = new NamedColor(AxoColor.FromArgb(c.A, c.R, c.G, c.B), "e");
-						}
-						if (isUsingVariableColorForLabelBackground)
-						{
-							if (_backgroundColorLinkage == ColorLinkage.PreserveAlpha)
-								clonedBackBrush.Color = new NamedColor(AxoColor.FromArgb(clonedBackBrush.Color.Color.A, c.R, c.G, c.B), "e");
-							else
-								clonedBackBrush.Color = new NamedColor(AxoColor.FromArgb(c.A, c.R, c.G, c.B), "e");
-						}
-					}
-					// end of preparation of brushes for variable colors
-
-					if (mustUseLogicalCoordinates) // we must use logical coordinates because either there is a shift of logical coordinates, or an attached plane
-					{
-						Logical3D r3d = layer.GetLogical3D(pdata, j + offset);
-						r3d.RX += _cachedLogicalShiftX;
-						r3d.RY += _cachedLogicalShiftY;
-
-						if (null != this._attachedPlane)
-						{
-							var pp = layer.CoordinateSystem.GetPointOnPlane(this._attachedPlane, r3d);
-							xpre = pp.X;
-							ypre = pp.Y;
-						}
-						else
-						{
-							PointD3D pt;
-							layer.CoordinateSystem.LogicalToLayerCoordinates(r3d, out xpre, out ypre);
-						}
-					}
-					else // no shifting, thus we can use layer coordinates
-					{
-						xpre = ptArray[j].X;
-						ypre = ptArray[j].Y;
-					}
-
-					xdiff = xpre - xpos;
-					ydiff = ypre - ypos;
-					xpos = xpre;
-					ypos = ypre;
-					g.TranslateTransform((float)xdiff, (float)ydiff);
-					if (this._rotation != 0)
-						g.RotateTransform((float)-this._rotation);
-
-					this.Paint(g, label, localSymbolSize, clonedTextBrush, clonedBackBrush);
-
-					if (this._rotation != 0)
-						g.RotateTransform((float)this._rotation);
-				} // end for
-			}
-
-			g.Restore(gs); // Restore the graphics state
 		}
 
 		public RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)

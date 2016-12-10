@@ -127,36 +127,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		IG2DPlotStyle,
 		IRoutedPropertyReceiver
 	{
-		/// <summary>
-		/// Template to make a line draw.
-		/// </summary>
-		/// <param name="g">Graphics context.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
-		/// <param name="overriderange">The plot range to use.</param>
-		/// <param name="layer">Graphics layer.</param>
-		/// <param name="symbolGap">The size of the symbol gap.</param>
-		public delegate void PaintOneRangeTemplate(
-			Graphics g,
-			Processed2DPlotData pdata,
-			PlotRange overriderange,
-			IPlotArea layer,
-			float symbolGap);
-
-		/// <summary>
-		/// Template to get a fill path.
-		/// </summary>
-		/// <param name="gp">Graphics path to fill with data.</param>
-		/// <param name="pdata">The plot data. Don't use the Range property of the pdata, since it is overriden by the next argument.</param>
-		/// <param name="overriderange">The plot range to use.</param>
-		/// <param name="layer">Graphics layer.</param>
-		/// <param name="fillDirection">Designates a bound to fill to.</param>
-		public delegate void FillPathOneRangeTemplate(
-			GraphicsPath gp,
-			Processed2DPlotData pdata,
-			PlotRange overriderange,
-			IPlotArea layer,
-			CSPlaneID fillDirection);
-
 		/// <summary>A value indicating whether the skip frequency value is independent from other values.</summary>
 		protected bool _independentSkipFrequency;
 

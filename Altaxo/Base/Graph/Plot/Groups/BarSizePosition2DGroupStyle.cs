@@ -61,8 +61,19 @@ namespace Altaxo.Graph.Plot.Groups
 		/// </summary>
 		private double _logicalClusterSizeX;
 
+		/// <summary>The x-size of a bar in logical units.</summary>
 		private double _logicalItemSizeX;
+
+		/// <summary>The running x offset from the real data point to the center of the bar in logical units.</summary>
 		private double _logicalItemOffsetX;
+
+		/// <summary>The number of items in x-direction in a bar cluster.</summary>
+		private int _cachedNumberOfItemsX;
+
+
+		/// <summary>The running number of the item which is processed in the Step() call.</summary>
+		private int _cachedCurrentItemIndex;
+
 
 		#region Serialization
 
@@ -166,14 +177,41 @@ namespace Altaxo.Graph.Plot.Groups
 		{
 			_wasTouchedInThisPrepareStep = false;
 
-			int tnumberOfItems = 1;
+			int totalNumberOfItems = 1;
 			if (this._isStepEnabled)
-				tnumberOfItems = Math.Max(tnumberOfItems, _numberOfItems);
+				totalNumberOfItems = Math.Max(totalNumberOfItems, _numberOfItems);
 
-			_logicalItemSizeX = 1.0 / (tnumberOfItems + (tnumberOfItems - 1) * _relInnerGapX + _relOuterGapX);
+			// partition the total number of items in items in x-direction is easy for 2D: it is the number of items
+			PartitionItems(totalNumberOfItems, out _cachedNumberOfItemsX);
+
+			_logicalItemSizeX = 1.0 / (_cachedNumberOfItemsX + (_cachedNumberOfItemsX - 1) * _relInnerGapX + _relOuterGapX);
 			_logicalItemSizeX *= _logicalClusterSizeX;
 
-			_logicalItemOffsetX = 0.5 * (_logicalItemSizeX * _relOuterGapX - _logicalClusterSizeX);
+			_cachedCurrentItemIndex = 0;
+			SetPositionXY_AccordingToCachedCurrentItemIndex(); // sets the position of the first item (according to the _cachedCurrentItemIndex)
+		}
+
+		/// <summary>
+		/// Partitions the total number of items in rows and columns. This is easy here in 2D: it is simply the total number of items
+		/// </summary>
+		/// <param name="totalNumberOfItems">The total number of items.</param>
+		/// <param name="numberOfItemsX">The number of items in x-direction.</param>
+		private void PartitionItems(int totalNumberOfItems, out int numberOfItemsX)
+		{
+
+			numberOfItemsX = totalNumberOfItems;
+		}
+		/// <summary>
+		/// Sets the positions <see cref="_logicalItemOffsetX"/>  according to the <see cref="_cachedCurrentItemIndex"/>.
+		/// </summary>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		private void SetPositionXY_AccordingToCachedCurrentItemIndex()
+		{
+			int itemIndexX = _cachedCurrentItemIndex;
+
+			// leftmost position is 1/2 cluster size to the left, then 1/2 outer gap to the right, and 1/2 size to the right
+			_logicalItemOffsetX = 0.5 * (_logicalItemSizeX * (1 + _relOuterGapX) - _logicalClusterSizeX); // x-position of the first item (leftmost)
+			_logicalItemOffsetX += itemIndexX * _logicalItemSizeX * (1 + _relInnerGapX);
 		}
 
 		public bool CanCarryOver
@@ -194,7 +232,10 @@ namespace Altaxo.Graph.Plot.Groups
 
 		public int Step(int step)
 		{
-			_logicalItemOffsetX += step * _logicalItemSizeX * (1 + _relInnerGapX);
+			_cachedCurrentItemIndex += step;
+
+			SetPositionXY_AccordingToCachedCurrentItemIndex();
+
 			return 0;
 		}
 

@@ -81,6 +81,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		int SkipFrequency { get; set; }
 
+		bool IgnoreMissingDataPoints { get; set; }
+
+
+		bool IndependentOnShiftingGroupStyles { get; set; }
+
+
 		bool OverrideInset { get; set; }
 
 		bool OverrideFrame { get; set; }
@@ -180,6 +186,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			{
 				_view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
 				_view.SkipFrequency = _doc.SkipFrequency;
+				_view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
+				_view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
 
 				_view.IndependentScatterSymbol = _doc.IndependentScatterSymbol;
 				_view.ScatterSymbol = _doc.ScatterSymbol;
@@ -230,6 +238,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 				_doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
 				_doc.SkipFrequency = _view.SkipFrequency;
+				_doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
+				_doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
 
 				// Symbol Shape
 				_doc.IndependentScatterSymbol = _view.IndependentScatterSymbol;

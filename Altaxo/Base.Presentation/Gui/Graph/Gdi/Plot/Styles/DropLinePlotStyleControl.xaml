@@ -63,13 +63,22 @@
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 
-		<GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"  Header="Drop targets:">
+		<CheckBox x:Name="_guiIndependentSkipFreq" Grid.Row="0"  Grid.Column="0" Content="Independent skip frequency:" />
+		<axogc:Int32UpDown x:Name="_guiSkipFrequency" Grid.Row="0" Grid.Column="2"  Minimum="1" />
+
+		<CheckBox x:Name="_guiIgnoreMissingDataPoints" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Content="Ignore missing data points" ToolTip="If true, missing data points are treated as if not present." />
+
+		<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles"  Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Content="Independent on data shifting group styles" />
+
+		<GroupBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3"  Header="Drop targets:">
 			<axogc:EnumFlagControl  x:Name="_guiDropLines" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
 		</GroupBox>
 
-		<GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+		<GroupBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3">
 			<GroupBox.Header>
 				<CheckBox x:Name="_guiEnableUserDefinedDropTarget" Content="User defined drop target" />
 			</GroupBox.Header>
@@ -96,47 +105,44 @@
 			</Grid>
 		</GroupBox>
 
-		<CheckBox x:Name="_guiIndependentSkipFreq" Grid.Row="4"  Grid.Column="0" Content="Indep. skip freq.:" />
-		<axogc:Int32UpDown x:Name="_guiSkipFrequency" Grid.Row="4" Grid.Column="2"  Minimum="1" />
+		<CheckBox x:Name="_guiIndependentColor" Grid.Row="10" Grid.Column="0"  Content="Indep. color:" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged" />
+		<axogcd:BrushComboBox x:Name="_guiPenMaterial"  Grid.Row="10" Grid.Column="2" />
 
-		<CheckBox x:Name="_guiIndependentColor" Grid.Row="6" Grid.Column="0"  Content="Indep. color:" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged" />
-		<axogcd:BrushComboBox x:Name="_guiPenMaterial"  Grid.Row="6" Grid.Column="2" />
+		<Label  Grid.Row="12" Grid.Column="0" Content="Style:" />
+		<axogdd:DashPatternComboBox x:Name="_guiPenDashStyle" Grid.Row="12" Grid.Column="2" />
 
-		<Label  Grid.Row="8" Grid.Column="0" Content="Style:" />
-		<axogdd:DashPatternComboBox x:Name="_guiPenDashStyle" Grid.Row="8" Grid.Column="2" />
+		<Label Content="Min. abs. size:" Grid.Row="12" Grid.Column="4" />
+		<Label Content="Min. rel. size:" Grid.Row="12" Grid.Column="5" />
 
-		<Label Content="Min. abs. size:" Grid.Row="10" Grid.Column="4" />
-		<Label Content="Min. rel. size:" Grid.Row="10" Grid.Column="5" />
+		<Label Content="Line start cap:" Grid.Row="14" Grid.Column="0" />
+		<axogcd:LineCapComboBox Grid.Row="14" Grid.Column="2"  IsForEndCap="False" x:Name="_cbLineStartCap" />
+		<axogcd:LineCapSizeComboBox x:Name="_cbLineStartCapSize" Grid.Row="14" Grid.Column="4"  ToolTip="Minimum absolute cap size" />
+		<axogc:QuantityWithUnitTextBox x:Name="_edLineStartCapRelSize" Grid.Row="14" Grid.Column ="5" Margin="4,0,0,0" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
 
-		<Label Content="Line start cap:" Grid.Row="12" Grid.Column="0" />
-		<axogcd:LineCapComboBox Grid.Row="12" Grid.Column="2"  IsForEndCap="False" x:Name="_cbLineStartCap" />
-		<axogcd:LineCapSizeComboBox x:Name="_cbLineStartCapSize" Grid.Row="12" Grid.Column="4"  ToolTip="Minimum absolute cap size" />
-		<axogc:QuantityWithUnitTextBox x:Name="_edLineStartCapRelSize" Grid.Row="12" Grid.Column ="5" Margin="4,0,0,0" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
+		<Label Content="Line end cap:" Grid.Row="16" Grid.Column="0" />
+		<axogcd:LineCapComboBox Grid.Row="16" Grid.Column="2"  IsForEndCap="False" x:Name="_cbLineEndCap" />
+		<axogcd:LineCapSizeComboBox x:Name="_cbLineEndCapSize" Grid.Row="16" Grid.Column="4"  ToolTip="Minimum absolute cap size" />
+		<axogc:QuantityWithUnitTextBox x:Name="_edLineEndCapRelSize" Grid.Row="16" Grid.Column ="5" Margin="4,0,0,0" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
 
-		<Label Content="Line end cap:" Grid.Row="14" Grid.Column="0" />
-		<axogcd:LineCapComboBox Grid.Row="14" Grid.Column="2"  IsForEndCap="False" x:Name="_cbLineEndCap" />
-		<axogcd:LineCapSizeComboBox x:Name="_cbLineEndCapSize" Grid.Row="14" Grid.Column="4"  ToolTip="Minimum absolute cap size" />
-		<axogc:QuantityWithUnitTextBox x:Name="_edLineEndCapRelSize" Grid.Row="14" Grid.Column ="5" Margin="4,0,0,0" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
+		<CheckBox x:Name="_guiIndependentSymbolSize" Content="Independent symbol size :"  Grid.Row="18" Grid.Column="0" />
+		<axogcd:LineCapSizeComboBox x:Name="_guiSymbolSize" Grid.Row="18" Grid.Column="2" />
 
-		<CheckBox x:Name="_guiIndependentSymbolSize" Content="Independent symbol size :"  Grid.Row="16" Grid.Column="0" />
-		<axogcd:LineCapSizeComboBox x:Name="_guiSymbolSize" Grid.Row="16" Grid.Column="2" />
-
-		<Label Content="Line width 1 = " Grid.Row="18" Grid.Column="0" />
-		<axogcd:LineThicknessComboBox x:Name="_guiLineWidth1Offset" Grid.Row="18" Grid.Column="2" />
-		<Label Content="+" Grid.Row="18" Grid.Column="3" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiLineWidth1Factor"  Grid.Row="18" Grid.Column="4" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-		<Label Content="* symbolSize" Grid.Row="18" Grid.Column="5" />
-
-		<Label Content="Line gap at start = " Grid.Row="20" Grid.Column="0" />
-		<axogcd:LineThicknessComboBox x:Name="_guiGapAtStartOffset" Grid.Row="20" Grid.Column="2" />
+		<Label Content="Line width 1 = " Grid.Row="20" Grid.Column="0" />
+		<axogcd:LineThicknessComboBox x:Name="_guiLineWidth1Offset" Grid.Row="20" Grid.Column="2" />
 		<Label Content="+" Grid.Row="20" Grid.Column="3" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiGapAtStartFactor"  Grid.Row="20" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiLineWidth1Factor"  Grid.Row="20" Grid.Column="4" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
 		<Label Content="* symbolSize" Grid.Row="20" Grid.Column="5" />
 
-		<Label Content="Line gap at end = " Grid.Row="22" Grid.Column="0" />
-		<axogcd:LineThicknessComboBox x:Name="_guiGapAtEndOffset" Grid.Row="22" Grid.Column="2" />
+		<Label Content="Line gap at start = " Grid.Row="22" Grid.Column="0" />
+		<axogcd:LineThicknessComboBox x:Name="_guiGapAtStartOffset" Grid.Row="22" Grid.Column="2" />
 		<Label Content="+" Grid.Row="22" Grid.Column="3" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiGapAtEndFactor"  Grid.Row="22" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiGapAtStartFactor"  Grid.Row="22" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
 		<Label Content="* symbolSize" Grid.Row="22" Grid.Column="5" />
+
+		<Label Content="Line gap at end = " Grid.Row="24" Grid.Column="0" />
+		<axogcd:LineThicknessComboBox x:Name="_guiGapAtEndOffset" Grid.Row="24" Grid.Column="2" />
+		<Label Content="+" Grid.Row="24" Grid.Column="3" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiGapAtEndFactor"  Grid.Row="24" Grid.Column="4"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<Label Content="* symbolSize" Grid.Row="24" Grid.Column="5" />
 	</Grid>
 </UserControl>

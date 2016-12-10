@@ -198,6 +198,19 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			set { this._chkIndependentSkipFreq.IsChecked = value; }
 		}
 
+		public bool IgnoreMissingDataPoints
+		{
+			get { return true == _guiIgnoreMissingDataPoints.IsChecked; }
+			set { this._guiIgnoreMissingDataPoints.IsChecked = value; }
+		}
+
+		public bool IndependentOnShiftingGroupStyles
+		{
+			get { return true == _guiIndependentOnShiftingGroupStyles.IsChecked; }
+			set { this._guiIndependentOnShiftingGroupStyles.IsChecked = value; }
+		}
+
+
 		#endregion IXYPlotScatterStyleView
 
 		private void EhIndependentColorChanged(object sender, RoutedEventArgs e)

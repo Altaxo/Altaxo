@@ -671,6 +671,29 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		/// <summary>
+		/// Gets or sets a value indicating whether to ignore missing data points. If the value is set to true,
+		/// the line is plotted even if there is a gap in the data points.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if missing data points should be ignored; otherwise, if <c>false</c>, no line is plotted between a gap in the data.
+		/// </value>
+		public bool IgnoreMissingDataPoints
+		{
+			get
+			{
+				return _ignoreMissingDataPoints;
+			}
+			set
+			{
+				if (!(_ignoreMissingDataPoints == value))
+				{
+					_ignoreMissingDataPoints = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
 		/// True when we don't want to shift the position of the items, for instance due to the bar graph plot group.
 		/// </summary>
 		public bool IndependentOnShiftingGroupStyles
@@ -958,10 +981,38 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		public void Paint(System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
-			PaintErrorBars(AxisNumber, g, layer, pdata);
+			// adjust the skip frequency if it was not set appropriate
+			if (_skipFrequency <= 0)
+				_skipFrequency = 1;
+
+			if (_independentOnShiftingGroupStyles)
+			{
+				_cachedLogicalShiftX = _cachedLogicalShiftY = 0;
+			}
+
+
+			PlotRangeList rangeList = pdata.RangeList;
+
+
+
+			if (this._ignoreMissingDataPoints)
+			{
+				// in case we ignore the missing points, all ranges can be plotted
+				// as one range, i.e. continuously
+				// for this, we create the totalRange, which contains all ranges
+				var totalRange = new PlotRangeCompound(rangeList);
+				this.PaintOneRange(AxisNumber, g, layer, totalRange, pdata);
+			}
+			else // we not ignore missing points, so plot all ranges separately
+			{
+				for (int i = 0; i < rangeList.Count; i++)
+				{
+					this.PaintOneRange(AxisNumber, g, layer, rangeList[i], pdata);
+				}
+			}
 		}
 
-		protected void PaintErrorBars(int axisNumber, System.Drawing.Graphics g, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
+		protected void PaintOneRange(int axisNumber, Graphics g, IPlotArea layer, IPlotRange range, Processed2DPlotData pdata)
 		{
 			const double logicalClampMinimum = -10;
 			const double logicalClampMaximum = 11;
@@ -969,7 +1020,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_skipFrequency = Math.Max(1, _skipFrequency);
 
 			// Plot error bars for the dependent variable (y)
-			PlotRangeList rangeList = pdata.RangeList;
 			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
 			var posErrCol = PositiveErrorColumn;
 			var negErrCol = NegativeErrorColumn;
@@ -990,191 +1040,189 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			Region oldClippingRegion = g.Clip;
 			Region newClip = (Region)oldClippingRegion.Clone();
 
-			foreach (PlotRange r in rangeList)
+
+			int lower = range.LowerBound;
+			int upper = range.UpperBound;
+
+			for (int j = lower; j < upper; j += _skipFrequency)
 			{
-				int lower = r.LowerBound;
-				int upper = r.UpperBound;
-				int offset = r.OffsetToOriginal;
+				int originalRowIndex = range.GetOriginalRowIndexFromPlotPointIndex(j);
+				double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalRowIndex);
+				strokePen.Width = (_lineWidth1Offset + _lineWidth1Factor * symbolSize);
 
-				for (int j = lower; j < upper; j += _skipFrequency)
+				if (null != _cachedColorForIndexFunction)
+					strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(originalRowIndex), "VariableColor");
+				if (null != strokePen.EndCap)
+					strokePen.EndCap = strokePen.EndCap.WithMinimumAbsoluteAndRelativeSize(symbolSize * _endCapSizeFactor + _endCapSizeOffset, 1 + 1E-6);
+
+				AltaxoVariant vMeanPhysical = pdata.GetPhysical(axisNumber, originalRowIndex);
+				Logical3D logicalMean = layer.GetLogical3D(pdata, originalRowIndex);
+				logicalMean.RX += _cachedLogicalShiftX;
+				logicalMean.RY += _cachedLogicalShiftY;
+
+				if (!Calc.RMath.IsInIntervalCC(logicalMean.RX, logicalClampMinimum, logicalClampMaximum))
+					continue;
+				if (!Calc.RMath.IsInIntervalCC(logicalMean.RY, logicalClampMinimum, logicalClampMaximum))
+					continue;
+
+				var vMeanLogical = logicalMean.GetR(axisNumber);
+
+				Logical3D logicalPos = logicalMean;
+				Logical3D logicalNeg = logicalMean;
+				bool logicalPosValid = false;
+				bool logicalNegValid = false;
+
+				switch (_meaningOfValues)
 				{
-					int originalRow = j + offset;
-					double symbolSize = null == _cachedSymbolSizeForIndexFunction ? _symbolSize : _cachedSymbolSizeForIndexFunction(originalRow);
-					strokePen.Width = (_lineWidth1Offset + _lineWidth1Factor * symbolSize);
-
-					if (null != _cachedColorForIndexFunction)
-						strokePen.Color = GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction(j + offset), "VariableColor");
-					if (null != strokePen.EndCap)
-						strokePen.EndCap = strokePen.EndCap.WithMinimumAbsoluteAndRelativeSize(symbolSize * _endCapSizeFactor + _endCapSizeOffset, 1 + 1E-6);
-
-					AltaxoVariant vMeanPhysical = pdata.GetPhysical(axisNumber, originalRow);
-					Logical3D logicalMean = layer.GetLogical3D(pdata, originalRow);
-					logicalMean.RX += _cachedLogicalShiftX;
-					logicalMean.RY += _cachedLogicalShiftY;
-
-					if (!Calc.RMath.IsInIntervalCC(logicalMean.RX, logicalClampMinimum, logicalClampMaximum))
-						continue;
-					if (!Calc.RMath.IsInIntervalCC(logicalMean.RY, logicalClampMinimum, logicalClampMaximum))
-						continue;
-
-					var vMeanLogical = logicalMean.GetR(axisNumber);
-
-					Logical3D logicalPos = logicalMean;
-					Logical3D logicalNeg = logicalMean;
-					bool logicalPosValid = false;
-					bool logicalNegValid = false;
-
-					switch (_meaningOfValues)
-					{
-						case ValueInterpretation.AbsoluteError:
-							{
-								if (posErrCol != null)
-								{
-									var vPosLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(vMeanPhysical + Math.Abs(posErrCol[originalRow]));
-									vPosLogical = Calc.RMath.ClampToInterval(vPosLogical, logicalClampMinimum, logicalClampMaximum);
-									logicalPos.SetR(axisNumber, vPosLogical);
-									logicalPosValid = !logicalPos.IsNaN && vPosLogical != vMeanLogical;
-								}
-
-								if (negErrCol != null)
-								{
-									var vNegLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(vMeanPhysical - Math.Abs(negErrCol[originalRow]));
-									vNegLogical = Calc.RMath.ClampToInterval(vNegLogical, logicalClampMinimum, logicalClampMaximum);
-									logicalNeg.SetR(axisNumber, vNegLogical);
-									logicalNegValid = !logicalNeg.IsNaN && vNegLogical != vMeanLogical;
-								}
-							}
-							break;
-
-						case ValueInterpretation.RelativeError:
-							{
-								if (posErrCol != null)
-								{
-									var vPosLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(vMeanPhysical * (1 + Math.Abs(posErrCol[originalRow])));
-									vPosLogical = Calc.RMath.ClampToInterval(vPosLogical, logicalClampMinimum, logicalClampMaximum);
-									logicalPos.SetR(axisNumber, vPosLogical);
-									logicalPosValid = !logicalPos.IsNaN && vPosLogical != vMeanLogical;
-								}
-
-								if (negErrCol != null)
-								{
-									var vNegLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(vMeanPhysical * (1 - Math.Abs(negErrCol[originalRow])));
-									vNegLogical = Calc.RMath.ClampToInterval(vNegLogical, logicalClampMinimum, logicalClampMaximum);
-									logicalNeg.SetR(axisNumber, vNegLogical);
-									logicalNegValid = !logicalNeg.IsNaN && vNegLogical != vMeanLogical;
-								}
-							}
-							break;
-
-						case ValueInterpretation.AbsoluteValue:
-							{
-								if (posErrCol != null)
-								{
-									var vPosLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(posErrCol[originalRow]);
-									vPosLogical = Calc.RMath.ClampToInterval(vPosLogical, logicalClampMinimum, logicalClampMaximum);
-									logicalPos.SetR(axisNumber, vPosLogical);
-									logicalPosValid = !logicalPos.IsNaN && vPosLogical != vMeanLogical;
-								}
-
-								if (negErrCol != null)
-								{
-									var vNegLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(negErrCol[originalRow]);
-									vNegLogical = Calc.RMath.ClampToInterval(vNegLogical, logicalClampMinimum, logicalClampMaximum);
-									logicalNeg.SetR(axisNumber, vNegLogical);
-									logicalNegValid = !logicalNeg.IsNaN && vNegLogical != vMeanLogical;
-								}
-
-								if (object.ReferenceEquals(negErrCol, posErrCol))
-								{
-									logicalNegValid = false; // then we need only to plot the positive column, since both colums are identical
-								}
-							}
-							break;
-					} // end switch
-
-					if (!(logicalPosValid || logicalNegValid))
-						continue; // nothing to do for this point if both pos and neg logical point are invalid.
-
-					if (logicalNegValid)
-					{
-						errorBarPath.Reset();
-						layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalNeg);
-						PointF[] shortenedPathPoints = null;
-						bool shortenedPathPointsCalculated = false;
-						if (_useSymbolGap)
+					case ValueInterpretation.AbsoluteError:
 						{
-							double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
-							if (gap > 0)
+							if (posErrCol != null)
 							{
-								errorBarPath.Flatten();
-								var pathPoints = errorBarPath.PathPoints;
-								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
-								shortenedPathPointsCalculated = true;
-								if (null == shortenedPathPoints && _forceVisibilityOfEndCap && !(strokePen.EndCap is Altaxo.Graph.Gdi.LineCaps.FlatCap))
-								{
-									var totalLineLength = GdiExtensionMethods.TotalLineLength(pathPoints);
-									var shortTheLineBy = Math.Max(0, totalLineLength - 0.125 * strokePen.Width);
-									shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(shortTheLineBy), RADouble.NewAbs(0));
-								}
+								var vPosLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(vMeanPhysical + Math.Abs(posErrCol[originalRowIndex]));
+								vPosLogical = Calc.RMath.ClampToInterval(vPosLogical, logicalClampMinimum, logicalClampMaximum);
+								logicalPos.SetR(axisNumber, vPosLogical);
+								logicalPosValid = !logicalPos.IsNaN && vPosLogical != vMeanLogical;
+							}
+
+							if (negErrCol != null)
+							{
+								var vNegLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(vMeanPhysical - Math.Abs(negErrCol[originalRowIndex]));
+								vNegLogical = Calc.RMath.ClampToInterval(vNegLogical, logicalClampMinimum, logicalClampMaximum);
+								logicalNeg.SetR(axisNumber, vNegLogical);
+								logicalNegValid = !logicalNeg.IsNaN && vNegLogical != vMeanLogical;
 							}
 						}
+						break;
 
-						if (shortenedPathPointsCalculated)
+					case ValueInterpretation.RelativeError:
 						{
-							if (null != shortenedPathPoints)
+							if (posErrCol != null)
 							{
-								g.DrawLines(strokePen, shortenedPathPoints);
+								var vPosLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(vMeanPhysical * (1 + Math.Abs(posErrCol[originalRowIndex])));
+								vPosLogical = Calc.RMath.ClampToInterval(vPosLogical, logicalClampMinimum, logicalClampMaximum);
+								logicalPos.SetR(axisNumber, vPosLogical);
+								logicalPosValid = !logicalPos.IsNaN && vPosLogical != vMeanLogical;
+							}
+
+							if (negErrCol != null)
+							{
+								var vNegLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(vMeanPhysical * (1 - Math.Abs(negErrCol[originalRowIndex])));
+								vNegLogical = Calc.RMath.ClampToInterval(vNegLogical, logicalClampMinimum, logicalClampMaximum);
+								logicalNeg.SetR(axisNumber, vNegLogical);
+								logicalNegValid = !logicalNeg.IsNaN && vNegLogical != vMeanLogical;
 							}
 						}
-						else
+						break;
+
+					case ValueInterpretation.AbsoluteValue:
 						{
-							g.DrawPath(strokePen, errorBarPath);
+							if (posErrCol != null)
+							{
+								var vPosLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(posErrCol[originalRowIndex]);
+								vPosLogical = Calc.RMath.ClampToInterval(vPosLogical, logicalClampMinimum, logicalClampMaximum);
+								logicalPos.SetR(axisNumber, vPosLogical);
+								logicalPosValid = !logicalPos.IsNaN && vPosLogical != vMeanLogical;
+							}
+
+							if (negErrCol != null)
+							{
+								var vNegLogical = layer.Scales[axisNumber].PhysicalVariantToNormal(negErrCol[originalRowIndex]);
+								vNegLogical = Calc.RMath.ClampToInterval(vNegLogical, logicalClampMinimum, logicalClampMaximum);
+								logicalNeg.SetR(axisNumber, vNegLogical);
+								logicalNegValid = !logicalNeg.IsNaN && vNegLogical != vMeanLogical;
+							}
+
+							if (object.ReferenceEquals(negErrCol, posErrCol))
+							{
+								logicalNegValid = false; // then we need only to plot the positive column, since both colums are identical
+							}
+						}
+						break;
+				} // end switch
+
+				if (!(logicalPosValid || logicalNegValid))
+					continue; // nothing to do for this point if both pos and neg logical point are invalid.
+
+				if (logicalNegValid)
+				{
+					errorBarPath.Reset();
+					layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalNeg);
+					PointF[] shortenedPathPoints = null;
+					bool shortenedPathPointsCalculated = false;
+					if (_useSymbolGap)
+					{
+						double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
+						if (gap > 0)
+						{
+							errorBarPath.Flatten();
+							var pathPoints = errorBarPath.PathPoints;
+							shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
+							shortenedPathPointsCalculated = true;
+							if (null == shortenedPathPoints && _forceVisibilityOfEndCap && !(strokePen.EndCap is Altaxo.Graph.Gdi.LineCaps.FlatCap))
+							{
+								var totalLineLength = GdiExtensionMethods.TotalLineLength(pathPoints);
+								var shortTheLineBy = Math.Max(0, totalLineLength - 0.125 * strokePen.Width);
+								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(shortTheLineBy), RADouble.NewAbs(0));
+							}
 						}
 					}
 
-					if (logicalPosValid)
+					if (shortenedPathPointsCalculated)
 					{
-						errorBarPath.Reset();
-						layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalPos);
-						PointF[] shortenedPathPoints = null;
-						bool shortenedPathPointsCalculated = false;
-
-
-						if (_useSymbolGap)
+						if (null != shortenedPathPoints)
 						{
-							double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
-							if (gap > 0)
-							{
-								errorBarPath.Flatten();
-								var pathPoints = errorBarPath.PathPoints;
-								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
-								shortenedPathPointsCalculated = true;
-								if (null == shortenedPathPoints && _forceVisibilityOfEndCap && !(strokePen.EndCap is Altaxo.Graph.Gdi.LineCaps.FlatCap))
-								{
-									var totalLineLength = GdiExtensionMethods.TotalLineLength(pathPoints);
-									var shortTheLineBy = Math.Max(0, totalLineLength - 0.125 * strokePen.Width);
-									shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(shortTheLineBy), RADouble.NewAbs(0));
-								}
-
-							}
+							g.DrawLines(strokePen, shortenedPathPoints);
 						}
-
-						if (shortenedPathPointsCalculated)
-						{
-							if (null != shortenedPathPoints)
-							{
-								g.DrawLines(strokePen, shortenedPathPoints);
-							}
-						}
-						else
-						{
-							g.DrawPath(strokePen, errorBarPath);
-						}
+					}
+					else
+					{
+						g.DrawPath(strokePen, errorBarPath);
 					}
 				}
 
-				g.Clip = oldClippingRegion;
+				if (logicalPosValid)
+				{
+					errorBarPath.Reset();
+					layer.CoordinateSystem.GetIsoline(errorBarPath, logicalMean, logicalPos);
+					PointF[] shortenedPathPoints = null;
+					bool shortenedPathPointsCalculated = false;
+
+
+					if (_useSymbolGap)
+					{
+						double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
+						if (gap > 0)
+						{
+							errorBarPath.Flatten();
+							var pathPoints = errorBarPath.PathPoints;
+							shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(gap / 2), RADouble.NewAbs(0));
+							shortenedPathPointsCalculated = true;
+							if (null == shortenedPathPoints && _forceVisibilityOfEndCap && !(strokePen.EndCap is Altaxo.Graph.Gdi.LineCaps.FlatCap))
+							{
+								var totalLineLength = GdiExtensionMethods.TotalLineLength(pathPoints);
+								var shortTheLineBy = Math.Max(0, totalLineLength - 0.125 * strokePen.Width);
+								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(shortTheLineBy), RADouble.NewAbs(0));
+							}
+
+						}
+					}
+
+					if (shortenedPathPointsCalculated)
+					{
+						if (null != shortenedPathPoints)
+						{
+							g.DrawLines(strokePen, shortenedPathPoints);
+						}
+					}
+					else
+					{
+						g.DrawPath(strokePen, errorBarPath);
+					}
+				}
 			}
+
+			g.Clip = oldClippingRegion;
+
 		}
 
 		public System.Drawing.RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)

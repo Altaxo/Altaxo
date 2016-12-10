@@ -518,9 +518,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				j++;
 
-				double xcn = layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalRowIndex));
-				double xln = xcn + _xOffsetLogical;
-				double xrn = xln + _xSizeLogical;
+				double xcn = _xOffsetLogical + layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalRowIndex));
+				double xln = xcn  - 0.5 * _xSizeLogical;
+				double xrn = xcn  + 0.5 * _xSizeLogical;
 
 				double ycn = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(originalRowIndex));
 				double ynbase = globalBaseValue;
