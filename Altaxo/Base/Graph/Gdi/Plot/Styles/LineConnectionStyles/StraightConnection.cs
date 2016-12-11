@@ -87,10 +87,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			bool connectCircular,
 			LinePlotStyle linePlotStyle)
 		{
-			PointF[] circularLinePoints = new PointF[range.Length + (connectCircular ? 1 : 0)];
-			Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, range.Length); // Extract
-			if (connectCircular)
-				circularLinePoints[circularLinePoints.Length - 1] = circularLinePoints[0];
+			PointF[] circularLinePoints;
+
+			if (!connectCircular && range.LowerBound == 0 && range.UpperBound == allLinePoints.Length)
+			{
+				// under optimal conditions we can use allLinePoints directly
+				circularLinePoints = allLinePoints;
+			}
+			else
+			{
+				// otherwise, make a new array
+				circularLinePoints = new PointF[range.Length + (connectCircular ? 1 : 0)];
+				Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, range.Length); // Extract
+				if (connectCircular)
+					circularLinePoints[circularLinePoints.Length - 1] = circularLinePoints[0];
+			}
 
 			int lastIdx = range.Length - 1 + (connectCircular ? 1 : 0);
 			GraphicsPath gp = new GraphicsPath();
@@ -213,7 +224,5 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				gp.CloseFigure();
 			}
 		}
-
-		
 	}
 }
