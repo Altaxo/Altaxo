@@ -157,7 +157,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>Controls the length of the end bar.</summary>
 		protected double _symbolSize;
 
-
 		/// <summary>If true, the start and the end point of the line are connected too.</summary>
 		protected bool _connectCircular;
 
@@ -464,7 +463,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				this._ignoreMissingDataPoints = from._ignoreMissingDataPoints;
 				this._independentOnShiftingGroupStyles = from._independentOnShiftingGroupStyles;
 
-
 				this._connectCircular = from._connectCircular;
 				this._connectionStyle = from._connectionStyle;
 
@@ -542,7 +540,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			var color = GraphDocument.GetDefaultPlotColor(context);
 
 			_linePen = new PenX(color, penWidth) { LineJoin = LineJoin.Bevel };
-			_useSymbolGap = true;
 			_ignoreMissingDataPoints = false;
 			_connectionStyle = LineConnectionStyles.StraightConnection.Instance;
 			_independentColor = false;
@@ -619,7 +616,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				{
 					_independentOnShiftingGroupStyles = value;
 
-					if(true==value)
+					if (true == value)
 					{
 						_cachedLogicalShiftX = _cachedLogicalShiftY = 0;
 					}
@@ -866,11 +863,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			if (this._connectionStyle is LineConnectionStyles.NoConnection)
 				return;
 
-			if(_independentOnShiftingGroupStyles)
+			if (_independentOnShiftingGroupStyles)
 			{
 				_cachedLogicalShiftX = _cachedLogicalShiftY = 0;
 			}
-
 
 			PointF[] plotPositions = pdata.PlotPointsInAbsoluteLayerCoordinates;
 
@@ -878,7 +874,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				plotPositions = Processed2DPlotData.GetPlotPointsInAbsoluteLayerCoordinatesWithShift(pdata, layer, _cachedLogicalShiftX, _cachedLogicalShiftY);
 			}
-
 
 			Func<int, double> symbolGapFunction = null;
 
@@ -888,16 +883,19 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				{
 					symbolGapFunction = (idx) => _symbolGapOffset + _symbolGapFactor * _cachedSymbolSizeForIndexFunction(idx);
 				}
-				else
+				else if (0 != _symbolGapOffset || 0 != _symbolGapFactor * _symbolSize)
 				{
 					symbolGapFunction = (idx) => _symbolGapOffset + _symbolGapFactor * _symbolSize;
+				}
+				else
+				{
+					symbolGapFunction = null;
 				}
 			}
 
 			// ensure that brush and pen are cached
 			if (null != _linePen)
 				_linePen.Cached = true;
-
 
 			PlotRangeList rangeList = pdata.RangeList;
 			if (this._ignoreMissingDataPoints)
@@ -1038,7 +1036,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				_cachedSymbolSizeForIndexFunction = null;
 			}
-
 
 			// Shift the items ?
 			_cachedLogicalShiftX = 0;
