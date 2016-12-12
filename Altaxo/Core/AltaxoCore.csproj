@@ -392,6 +392,25 @@
     <Compile Include="Calc\LinearAlgebra\VectorSpacingEvaluator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Calc\Ode\Dopri5\Dopri5.cs" />
+    <Compile Include="Calc\Ode\Dopri5\Interfaces.cs" />
+    <Compile Include="Calc\Ode\DVode\dvode.cs" />
+    <Compile Include="Calc\Ode\DVode\xBaseOdeGearsAndAdamsMoulton.cs" />
+    <Compile Include="Calc\Ode\FortranLib.cs" />
+    <Compile Include="Calc\Ode\FortranTypes.cs" />
+    <Compile Include="Calc\Ode\OdeAdamsMoulton.cs" />
+    <Compile Include="Calc\Ode\OdeDelegates.cs" />
+    <Compile Include="Calc\Ode\OdeEnumerators.cs" />
+    <Compile Include="Calc\Ode\OdeExplicitRungeKutta45.cs" />
+    <Compile Include="Calc\Ode\OdeGearsBDF.cs" />
+    <Compile Include="Calc\Ode\OdeImplicitRungeKutta5.cs" />
+    <Compile Include="Calc\Ode\Radau5\dc_decsol.cs" />
+    <Compile Include="Calc\Ode\Radau5\decsol.cs" />
+    <Compile Include="Calc\Ode\Radau5\Interfaces.cs" />
+    <Compile Include="Calc\Ode\Radau5\radau5.cs" />
+    <Compile Include="Calc\Ode\RKSolOut.cs" />
+    <Compile Include="Calc\Ode\xBaseOdeRungeKutta.cs" />
+    <Compile Include="Calc\Ode\xOdeBase.cs" />
     <Compile Include="Calc\OperationDirection.cs" />
     <Compile Include="Calc\Optimization\BruteForceLineSearch.cs" />
     <Compile Include="Calc\Optimization\StupidLineSearch.cs" />
@@ -631,6 +650,9 @@
     <Compile Include="Units\Dimensionless\Unity.cs" />
     <Compile Include="WeakDelegate.cs" />
     <Compile Include="WeakEventHandlers.cs" />
+    <Content Include="Calc\Ode\Dopri5\readme.txt" />
+    <Content Include="Calc\Ode\DVode\readme.txt" />
+    <Content Include="Calc\Ode\Radau5\readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\de.StringResources.resources" />
