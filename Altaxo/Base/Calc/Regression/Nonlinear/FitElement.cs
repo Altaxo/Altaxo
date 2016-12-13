@@ -275,6 +275,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		public FitElement(DataTable table, int groupNumber, IRowSelection rowSelection, IReadableColumn xColumn, IReadableColumn yColumn)
 		{
+			if (null == table)
+				throw new ArgumentNullException(nameof(table));
+			if (null == rowSelection)
+				throw new ArgumentNullException(nameof(rowSelection));
+
 			ChildSetMember(ref _dataTable, new DataTableProxy(table));
 			_groupNumber = groupNumber;
 			ChildCloneToMember(ref _rangeOfRows, rowSelection);

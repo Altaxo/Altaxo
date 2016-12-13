@@ -562,13 +562,12 @@ namespace Altaxo.Graph.Plot.Data
 		{
 			get
 			{
-				var result = _dataTable?.Document;
+				var resultTable = _dataTable?.Document;
 
-				if (null != result)
-					return result;
+				if (null != resultTable)
+					return resultTable;
 
 				bool nonUniformTables, nonUniformGroup;
-				DataTable resultTable;
 				int? resultGroup;
 				IReadableColumnExtensions.GetCommonDataTableAndGroupNumberFromColumns(GetAllColumns(), out nonUniformTables, out resultTable, out nonUniformGroup, out resultGroup);
 
@@ -577,7 +576,7 @@ namespace Altaxo.Graph.Plot.Data
 				if (null != resultGroup)
 					this.GroupNumber = resultGroup.Value;
 
-				return result;
+				return resultTable;
 			}
 			set
 			{
