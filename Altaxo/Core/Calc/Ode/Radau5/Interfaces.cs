@@ -160,7 +160,7 @@ namespace Altaxo.Calc.Ode.Radau5
 		{
 			this.MeNEq = NEq;
 			this.MeY = new double[NEq];
-			//this.MeYDot = new double[NEq];
+			this.MeYDot = new double[NEq];
 			this.MeFunction = Func;
 		}
 
@@ -183,7 +183,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				this.MeY[i] = Y[i + o_y];
 			}
 
-			this.MeYDot = this.MeFunction(X, this.MeY);
+			this.MeFunction(X, this.MeY, this.MeYDot);
 
 			if (this.MeYDot.Length == this.MeNEq)
 			{
@@ -220,6 +220,7 @@ namespace Altaxo.Calc.Ode.Radau5
 			this.MeNEq = NEq;
 			this.MeY = new double[NEq];
 			this.MeJacobian = Jac;
+			this.MeJac = new double[NEq, NEq];
 		}
 
 		public void Run(int N, double X, double[] Y, int o_y, ref double[] DFY, int o_dfy, int LDFY, double RPAR
@@ -247,21 +248,14 @@ namespace Altaxo.Calc.Ode.Radau5
 				this.MeY[i] = Y[i + o_y];
 			}
 
-			this.MeJac = this.MeJacobian(X, this.MeY);
+			this.MeJacobian(X, this.MeY, this.MeJac);
 
-			if (this.MeJac.GetLength(0) == this.MeNEq && this.MeJac.GetLength(1) == this.MeNEq)
+			for (int j = 0; j < this.MeNEq; j++)
 			{
-				for (int j = 0; j < this.MeNEq; j++)
+				for (int i = 0; i < this.MeNEq; i++)
 				{
-					for (int i = 0; i < this.MeNEq; i++)
-					{
-						DFY[i + j * LDFY + o_dfy] = this.MeJac[i, j];
-					}
+					DFY[i + j * LDFY + o_dfy] = this.MeJac[i, j];
 				}
-			}
-			else
-			{
-				//Erroe
 			}
 
 			return;

@@ -39,22 +39,18 @@ namespace Calc.Ode
 		private const double lambda1PlusLambda2By2 = (lambda1 + lambda2) / 2;
 		private const double lambda1MinusLambda2By2 = (lambda1 - lambda2) / 2;
 
-		private double[] RateEquations(double t, double[] y)
+		private void RateEquations(double t, double[] y, double[] dydt)
 		{
-			double[] dydt = new double[2];
 			dydt[0] = lambda1PlusLambda2By2 * y[0] + lambda1MinusLambda2By2 * y[1];
 			dydt[1] = lambda1MinusLambda2By2 * y[0] + lambda1PlusLambda2By2 * y[1];
-			return dydt;
 		}
 
-		public double[,] JacRateEquations(double t, double[] y)
+		public void JacRateEquations(double t, double[] y, double[,] jacobian)
 		{
-			double[,] jacobian = new double[y.Length, y.Length];
 			jacobian[0, 0] = lambda1PlusLambda2By2;
 			jacobian[0, 1] = lambda1MinusLambda2By2;
 			jacobian[1, 0] = lambda1MinusLambda2By2;
 			jacobian[1, 1] = lambda1PlusLambda2By2;
-			return jacobian;
 		}
 
 		[Test]

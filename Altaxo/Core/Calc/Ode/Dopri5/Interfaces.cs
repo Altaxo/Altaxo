@@ -183,7 +183,7 @@ namespace Altaxo.Calc.Ode.Dopri5
 		{
 			this.MeNEq = NEq;
 			this.MeY = new double[NEq];
-			//this.MeYDot = new double[NEq];
+			this.MeYDot = new double[NEq];
 			this.MeFunction = Func;
 		}
 
@@ -206,19 +206,13 @@ namespace Altaxo.Calc.Ode.Dopri5
 				this.MeY[i] = Y[i + o_y];
 			}
 
-			this.MeYDot = this.MeFunction(X, this.MeY);
+			this.MeFunction(X, this.MeY, this.MeYDot);
 
-			if (this.MeYDot.Length == this.MeNEq)
+			for (int i = 0; i < this.MeNEq; i++)
 			{
-				for (int i = 0; i < this.MeNEq; i++)
-				{
-					F[i + o_f] = this.MeYDot[i];
-				}
+				F[i + o_f] = this.MeYDot[i];
 			}
-			else
-			{
-				//Erroe
-			}
+
 			return;
 		}
 	}

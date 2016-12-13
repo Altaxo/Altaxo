@@ -20,7 +20,7 @@ namespace Altaxo.Calc.Ode
 	/// <param name="y">Array of size N containing the dependent variable values(y(1),y(2),...,y(N)).</param>
 	/// <returns>A vector of size N, f(i) = dy(i)/dt that define the ordinary differential equations system,
 	/// where N is the number of differential equations.</returns>
-	public delegate double[] OdeFunction(double t, double[] y);
+	public delegate void OdeFunction(double t, double[] y, double[] dydt);
 
 	/// <summary>
 	/// Delegate that compute the Jacobian matrix df/dy (size NxN), as a function of the scalar t and the vector y.
@@ -28,7 +28,7 @@ namespace Altaxo.Calc.Ode
 	/// <param name="t">The independent variable.</param>
 	/// <param name="y">Array of size N containing the dependent variable values(y(1),y(2),...,y(N)).</param>
 	/// <returns>The Jacobian matrix df/dy (size NxN).</returns>
-	public delegate double[,] OdeJacobian(double t, double[] y);
+	public delegate void OdeJacobian(double t, double[] y, double[,] jacobian);
 
 	/// <summary>
 	/// Delegate used for solution output.

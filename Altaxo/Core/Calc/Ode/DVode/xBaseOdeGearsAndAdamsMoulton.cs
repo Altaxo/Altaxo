@@ -446,7 +446,7 @@ namespace Altaxo.Calc.Ode.DVode
 		{
 			this.MeNEq = NEq;
 			this.MeY = new double[NEq];
-			//this.MeYDot = new double[NEq];
+			this.MeYDot = new double[NEq];
 			this.MeFunction = Func;
 		}
 
@@ -469,19 +469,13 @@ namespace Altaxo.Calc.Ode.DVode
 				this.MeY[i] = Y[i + o_y];
 			}
 
-			this.MeYDot = this.MeFunction(T, this.MeY);
+			this.MeFunction(T, this.MeY, this.MeYDot);
 
-			if (this.MeYDot.Length == this.MeNEq)
+			for (int i = 0; i < this.MeNEq; i++)
 			{
-				for (int i = 0; i < this.MeNEq; i++)
-				{
-					YDOT[i + o_ydot] = this.MeYDot[i];
-				}
+				YDOT[i + o_ydot] = this.MeYDot[i];
 			}
-			else
-			{
-				//Erroe
-			}
+
 			return;
 		}
 	}
@@ -507,6 +501,7 @@ namespace Altaxo.Calc.Ode.DVode
 			this.MeNEq = NEq;
 			this.MeY = new double[NEq];
 			this.MeJacobian = Jac;
+			this.MeJac = new double[NEq, NEq];
 		}
 
 		public void Run(int NEQ, double T, double[] Y, int o_y, int ML, int MU, ref double[] PD, int o_pd
@@ -527,21 +522,14 @@ namespace Altaxo.Calc.Ode.DVode
 				this.MeY[i] = Y[i + o_y];
 			}
 
-			this.MeJac = this.MeJacobian(T, this.MeY);
+			this.MeJacobian(T, this.MeY, this.MeJac);
 
-			if (this.MeJac.GetLength(0) == this.MeNEq && this.MeJac.GetLength(1) == this.MeNEq)
+			for (int j = 0; j < this.MeNEq; j++)
 			{
-				for (int j = 0; j < this.MeNEq; j++)
+				for (int i = 0; i < this.MeNEq; i++)
 				{
-					for (int i = 0; i < this.MeNEq; i++)
-					{
-						PD[i + j * NRPD + o_pd] = this.MeJac[i, j];
-					}
+					PD[i + j * NRPD + o_pd] = this.MeJac[i, j];
 				}
-			}
-			else
-			{
-				//Erroe
 			}
 
 			return;
