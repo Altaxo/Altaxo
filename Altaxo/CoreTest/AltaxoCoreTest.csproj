@@ -258,6 +258,7 @@
     <Compile Include="Calc\LinearAlgebra\MatrixMathTest.cs" />
     <Compile Include="Calc\LinearAlgebra\TestSingularValueDecomposition.cs" />
     <Compile Include="Calc\LinearAlgebra\TikhonovRegularizedNonnegativeMatrixFactorizationTest.cs" />
+    <Compile Include="Calc\Ode\OdeGearsBDFTest.cs" />
     <Compile Include="Calc\Optimization\ConjugateGradientTest.cs" />
     <Compile Include="Calc\Optimization\EndCriteriaTest.cs" />
     <Compile Include="Calc\Optimization\NelderMeadTest.cs" />
