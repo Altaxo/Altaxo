@@ -376,7 +376,7 @@ namespace Altaxo.Graph.Plot.Data
 				int rangeLength = info.GetInt32("RangeLength");
 
 				if (rangeStart < 0 || rangeLength != int.MaxValue)
-					s._dataRowSelection = RangeOfRowIndices.FromStartAndCount(rangeStart, rangeLength);
+					s.ChildSetMember(ref s._dataRowSelection, RangeOfRowIndices.FromStartAndCount(rangeStart, rangeLength));
 
 				return s;
 			}
@@ -438,8 +438,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				s._groupNumber = info.GetInt32("GroupNumber");
 
-				s._dataRowSelection = (IRowSelection)info.GetValue("RowSelection", s);
-				if (null != s._dataRowSelection) s._dataRowSelection.ParentObject = s;
+				s.ChildSetMember(ref s._dataRowSelection, (IRowSelection)info.GetValue("RowSelection", s));
 
 				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
 				if (null != s._xColumn) s._xColumn.ParentObject = s;
@@ -499,7 +498,6 @@ namespace Altaxo.Graph.Plot.Data
 			XColumn = xColumn;
 			YColumn = yColumn;
 		}
-		
 
 		/// <summary>
 		/// Copy constructor.

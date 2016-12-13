@@ -126,8 +126,7 @@ namespace Altaxo.Graph.Plot.Data
 
 				s._groupNumber = info.GetInt32("GroupNumber");
 
-				s._dataRowSelection = (IRowSelection)info.GetValue("RowSelection", s);
-				if (null != s._dataRowSelection) s._dataRowSelection.ParentObject = s;
+				s.ChildSetMember(ref s._dataRowSelection, (IRowSelection)info.GetValue("RowSelection", s));
 
 				s._xColumn = (IReadableColumnProxy)info.GetValue("XColumn", s);
 				if (null != s._xColumn) s._xColumn.ParentObject = s;
@@ -179,8 +178,6 @@ namespace Altaxo.Graph.Plot.Data
 			ChildCopyToMember(ref _dataTable, from._dataTable);
 			this._groupNumber = from._groupNumber;
 			ChildCloneToMember(ref _dataRowSelection, from._dataRowSelection);
-
-			this._dataRowSelection = from._dataRowSelection;
 
 			ChildCopyToMember(ref _xColumn, from._xColumn);
 			ChildCopyToMember(ref _yColumn, from._yColumn);
