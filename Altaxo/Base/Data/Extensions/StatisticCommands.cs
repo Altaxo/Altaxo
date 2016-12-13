@@ -43,6 +43,8 @@ namespace Altaxo.Data
 		public static readonly string DefaultFractionInOneSigmaColumnName = "FractionInOneSigma";
 		public static readonly string DefaultFractionInTwoSigmaColumnName = "FractionInTwoSigma";
 		public static readonly string DefaultFractionInThreeSigmaColumnName = "FractionInThreeSigma";
+		public static readonly string DefaultMinimumColumnName = "Minimum";
+		public static readonly string DefaultMaximumColumnName = "Maximum";
 
 		/// <summary>
 		/// Calculates statistics of selected columns. Returns a new table where the statistical data will be written to.
@@ -128,6 +130,9 @@ namespace Altaxo.Data
 			var colFracTwoSigma = new Data.DoubleColumn();
 			var colFracThreeSigma = new Data.DoubleColumn();
 
+			var colMinimum = new DoubleColumn(); // Minimum of the values
+			var colMaximum = new DoubleColumn(); // Maximum of the values
+
 			int currRow = 0;
 			for (int si = 0; si < numcols; si++)
 			{
@@ -144,6 +149,9 @@ namespace Altaxo.Data
 				double sum = 0;
 				double sumsqr = 0;
 				int NN = 0;
+				double minimum = double.PositiveInfinity;
+				double maximum = double.NegativeInfinity;
+
 				for (int i = 0; i < rows; i++)
 				{
 					double val = bUseSelectedRows ? ncol[selectedRows[i]] : ncol[i];
@@ -153,6 +161,8 @@ namespace Altaxo.Data
 					NN++;
 					sum += val;
 					sumsqr += (val * val);
+					minimum = Math.Min(minimum, val);
+					maximum = Math.Max(maximum, val);
 				}
 				// now fill a new row in the worksheet
 
@@ -179,6 +189,11 @@ namespace Altaxo.Data
 					if (Altaxo.Calc.RMath.IsInIntervalCC(val, threeSigmaLo, threeSigmaHi)) ++cntThreeSigma;
 				}
 
+				if (0 == NN)
+				{
+					minimum = maximum = double.NaN;
+				}
+
 				colCol[currRow] = col.Name;
 				colMean[currRow] = mean; // mean
 				colSd[currRow] = sd;
@@ -189,13 +204,15 @@ namespace Altaxo.Data
 				colFracOneSigma[currRow] = cntOneSigma / (double)NN;
 				colFracTwoSigma[currRow] = cntTwoSigma / (double)NN;
 				colFracThreeSigma[currRow] = cntThreeSigma / (double)NN;
+				colMinimum[currRow] = minimum;
+				colMaximum[currRow] = maximum;
 				currRow++; // for the next column
 			} // for all selected columns
 
 			if (currRow != 0)
 			{
 				destinationTable.EnsureExistence(DefaultColumnNameColumnName, typeof(TextColumn), ColumnKind.X, 0).Append(colCol);
-				AppendStatisticalData(destinationTable, colMean, colSd, colSe, colSum, colSumSqr, colN, colFracOneSigma, colFracTwoSigma, colFracThreeSigma);
+				AppendStatisticalData(destinationTable, colMean, colSd, colSe, colSum, colSumSqr, colN, colFracOneSigma, colFracTwoSigma, colFracThreeSigma, colMinimum, colMaximum);
 			}
 		}
 
@@ -278,6 +295,8 @@ namespace Altaxo.Data
 			var colFracOneSigma = new Data.DoubleColumn();
 			var colFracTwoSigma = new Data.DoubleColumn();
 			var colFracThreeSigma = new Data.DoubleColumn();
+			var colMinimum = new DoubleColumn();
+			var colMaximum = new DoubleColumn();
 
 			// first fill the cols c1, c2, c5 with zeros because we want to sum up
 			for (int i = 0; i < numrows; i++)
@@ -285,6 +304,8 @@ namespace Altaxo.Data
 				colSum[i] = 0;
 				colSumSqr[i] = 0;
 				colNN[i] = 0;
+				colMinimum[i] = double.PositiveInfinity;
+				colMaximum[i] = double.NegativeInfinity;
 			}
 
 			for (int si = 0; si < numcols; si++)
@@ -307,6 +328,8 @@ namespace Altaxo.Data
 					colSum[i] += val;
 					colSumSqr[i] += val * val;
 					colNN[i] += 1;
+					colMinimum[i] = Math.Min(colMinimum[i], val);
+					colMaximum[i] = Math.Max(colMaximum[i], val);
 				}
 			} // for all selected columns
 
@@ -328,6 +351,11 @@ namespace Altaxo.Data
 					colMean[i] = mean; // mean
 					colSD[i] = sd;
 					colSE[i] = se;
+				}
+				else
+				{
+					colMinimum[i] = double.NaN;
+					colMaximum[i] = double.NaN;
 				}
 			} // for all rows
 
@@ -369,7 +397,7 @@ namespace Altaxo.Data
 			}
 
 			destinationTable.EnsureExistence(DefaultRowNumberColumnName, typeof(DoubleColumn), ColumnKind.X, 0).Append(cRows);
-			AppendStatisticalData(destinationTable, colMean, colSD, colSE, colSum, colSumSqr, colNN, colFracOneSigma, colFracTwoSigma, colFracThreeSigma);
+			AppendStatisticalData(destinationTable, colMean, colSD, colSE, colSum, colSumSqr, colNN, colFracOneSigma, colFracTwoSigma, colFracThreeSigma, colMinimum, colMaximum);
 		}
 
 		/// <summary>
@@ -430,7 +458,7 @@ namespace Altaxo.Data
 			result.DataColumns.Add(new DoubleColumn(), DefaultFractionInThreeSigmaColumnName, ColumnKind.V, 0);
 		}
 
-		private static void AppendStatisticalData(DataColumnCollection destinationTable, Data.DoubleColumn colMean, Data.DoubleColumn colSd, Data.DoubleColumn colSe, Data.DoubleColumn colSum, Data.DoubleColumn colSumSqr, Data.DoubleColumn colN, Data.DoubleColumn fracOneSigma, Data.DoubleColumn fracTwoSigma, Data.DoubleColumn fracThreeSigma)
+		private static void AppendStatisticalData(DataColumnCollection destinationTable, Data.DoubleColumn colMean, Data.DoubleColumn colSd, Data.DoubleColumn colSe, Data.DoubleColumn colSum, Data.DoubleColumn colSumSqr, Data.DoubleColumn colN, Data.DoubleColumn fracOneSigma, Data.DoubleColumn fracTwoSigma, Data.DoubleColumn fracThreeSigma, DoubleColumn minimum, DoubleColumn maximum)
 		{
 			destinationTable.EnsureExistence(DefaultMeanColumnName, typeof(DoubleColumn), ColumnKind.V, 0).Append(colMean);
 			destinationTable.EnsureExistence(DefaultStandardErrorColumnName, typeof(DoubleColumn), ColumnKind.Err, 0).Append(colSe);
@@ -441,6 +469,8 @@ namespace Altaxo.Data
 			destinationTable.EnsureExistence(DefaultFractionInOneSigmaColumnName, typeof(DoubleColumn), ColumnKind.V, 0).Append(fracOneSigma);
 			destinationTable.EnsureExistence(DefaultFractionInTwoSigmaColumnName, typeof(DoubleColumn), ColumnKind.V, 0).Append(fracTwoSigma);
 			destinationTable.EnsureExistence(DefaultFractionInThreeSigmaColumnName, typeof(DoubleColumn), ColumnKind.V, 0).Append(fracThreeSigma);
+			destinationTable.EnsureExistence(DefaultMinimumColumnName, typeof(DoubleColumn), ColumnKind.V, 0).Append(minimum);
+			destinationTable.EnsureExistence(DefaultMaximumColumnName, typeof(DoubleColumn), ColumnKind.V, 0).Append(maximum);
 		}
 
 		private static void AddSourcePropertyColumns(DataTable srctable, IAscendingIntegerCollection selectedColumns, DataTable destinationTable)
