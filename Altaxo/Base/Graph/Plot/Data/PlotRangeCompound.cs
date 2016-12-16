@@ -66,8 +66,9 @@ namespace Altaxo.Graph.Plot.Data
 			}
 		}
 
-			int _lastPlotPointIndex;
-		int _lastRangeIndex;
+		private int _lastPlotPointIndex;
+		private int _lastRangeIndex;
+
 		public int GetOriginalRowIndexFromPlotPointIndex(int plotPointIndex)
 		{
 			if (plotPointIndex >= _lastPlotPointIndex)
@@ -101,7 +102,6 @@ namespace Altaxo.Graph.Plot.Data
 			}
 
 			throw new ArgumentOutOfRangeException(nameof(plotPointIndex), "is above the range range");
-
 		}
 
 		/// <inheritdoc/>
@@ -156,8 +156,20 @@ namespace Altaxo.Graph.Plot.Data
 				return _ranges[0].WithUpperBoundShortenedBy(remaining);
 			else
 			{
-				return new PlotRangeCompound(_ranges.Take(i - 1).Concat(new[] { _ranges[i].WithUpperBoundShortenedBy(remaining) }));
+				return new PlotRangeCompound(_ranges.Take(i).Concat(new[] { _ranges[i].WithUpperBoundShortenedBy(remaining) }));
 			}
+		}
+
+		/// <inheritdoc/>
+		public IPlotRange WithUpperBoundExtendedBy(int count)
+		{
+			if (!(count >= 0))
+				throw new ArgumentOutOfRangeException(nameof(count), "must be >=0");
+
+			if (0 == count)
+				return this;
+
+			return new PlotRangeCompound(_ranges.Take(_ranges.Length - 1).Concat(new[] { _ranges[_ranges.Length - 1].WithUpperBoundExtendedBy(count) }));
 		}
 	}
 }

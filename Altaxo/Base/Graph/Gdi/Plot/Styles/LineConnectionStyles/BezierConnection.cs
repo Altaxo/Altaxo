@@ -92,10 +92,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			if (range.Length < 4)
 				return; // then too less points are in this range
 
+			PointF[] circularLinePoints;
+
 			if (connectCircular)
 			{
 				var circularLinePointsLengthM1 = 2 + TrimToValidBezierLength(range.Length);
-				var circularLinePoints = new PointF[circularLinePointsLengthM1 + 1];
+				circularLinePoints = new PointF[circularLinePointsLengthM1 + 1];
 				Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, range.Length); // Extract
 				circularLinePoints[circularLinePointsLengthM1] = circularLinePoints[0];
 
@@ -105,88 +107,72 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				if (circularLinePointsLengthM1 - range.Length >= 2)
 					circularLinePoints[circularLinePointsLengthM1 - 2] = GdiExtensionMethods.Interpolate(circularLinePoints[circularLinePointsLengthM1 - 3], circularLinePoints[circularLinePointsLengthM1], 0.5); // Middle Control point should be halfway between previous fixed point and last(=first) fixed point
 
-				if (null != symbolGap) // circular with symbol gap
-				{
-					var realSkipFrequency = skipFrequency % 3 == 0 ? skipFrequency : skipFrequency * 3; // least common multiple of skipFrequency and 3
-					for (int i = 0; i < range.Length; i += realSkipFrequency)
-					{
-						var skipLinePointsLength = Math.Min(realSkipFrequency + 1, TrimToValidBezierLength(circularLinePoints.Length - i));
-						if (skipLinePointsLength >= 4)
-						{
-							var skipLinePoints = new PointF[skipLinePointsLength];
-							Array.Copy(circularLinePoints, i, skipLinePoints, 0, skipLinePointsLength); // Extract
-
-							var gapAtStart = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
-							double gapAtEnd;
-							if (connectCircular && realSkipFrequency >= (range.Length - 1 - i))
-								gapAtEnd = symbolGap(range.OriginalFirstPoint);
-							else if (realSkipFrequency <= (range.Length - 1 - i))
-								gapAtEnd = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i + realSkipFrequency));
-							else
-								gapAtEnd = 0;
-
-							if (gapAtStart != 0 || gapAtEnd != 0)
-							{
-								skipLinePoints = GdiExtensionMethods.ShortenBezierCurve(skipLinePoints, gapAtStart / 2, gapAtEnd / 2);
-							}
-
-							if (null != skipLinePoints)
-							{
-								g.DrawBeziers(linePen, skipLinePoints);
-							}
-						}
-					}
-				}
-				else // circular without symbol gap
-				{
-					g.DrawBeziers(linePen, circularLinePoints);
-				}
+				range = range.WithUpperBoundExtendedBy(circularLinePointsLengthM1 - range.Length);
 			}
 			else // not circular
 			{
-				if (null != symbolGap) // not circular with symbol gap
+				var trimmedLength = TrimToValidBezierLength(range.Length);
+				if (range.Length != trimmedLength)
 				{
-					var realSkipFrequency = skipFrequency % 3 == 0 ? skipFrequency : skipFrequency * 3; // least common multiple of skipFrequency and 3
-					for (int i = 0; i < range.Length; i += realSkipFrequency)
+					range = range.WithUpperBoundShortenedBy(range.Length - trimmedLength);
+				}
+
+				if (range.LowerBound == 0 && trimmedLength == allLinePoints.Length)
+				{
+					circularLinePoints = allLinePoints;
+				}
+				else
+				{
+					circularLinePoints = new PointF[trimmedLength];
+					Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, trimmedLength); // Extract
+				}
+			}
+
+			if (null != symbolGap) // circular with symbol gap
+			{
+				var realSkipFrequency = skipFrequency % 3 == 0 ? skipFrequency : skipFrequency * 3; // least common multiple of skipFrequency and 3
+				PointF[] skipLinePoints = new PointF[0];
+				foreach (var segmentRange in GetSegmentRanges(range, symbolGap, realSkipFrequency, connectCircular))
+				{
+					if (segmentRange.IsFullRangeClosedCurve) // test if this is a closed polygon without any gaps -> draw a closed polygon and return
 					{
-						var skipLinePointsLength = Math.Min(realSkipFrequency + 1, TrimToValidBezierLength(range.Length - i));
-						if (skipLinePointsLength >= 4)
+						// use the whole circular arry to draw a closed polygon without any gaps
+						g.DrawBeziers(linePen, circularLinePoints);
+					}
+					else
+					{
+						var skipLinePointsLength = 1 + segmentRange.Length;
+						if (skipLinePoints.Length != skipLinePointsLength)
+							skipLinePoints = new PointF[skipLinePointsLength];
+						Array.Copy(circularLinePoints, segmentRange.IndexAtSubRangeStart, skipLinePoints, 0, skipLinePointsLength);
+
+						PointF[] shortenedLinePoints;
+						if (segmentRange.GapAtSubRangeStart != 0 || segmentRange.GapAtSubRangeEnd != 0)
 						{
-							var skipLinePoints = new PointF[skipLinePointsLength];
-							Array.Copy(allLinePoints, range.LowerBound + i, skipLinePoints, 0, skipLinePointsLength); // Extract
+							shortenedLinePoints = GdiExtensionMethods.ShortenBezierCurve(skipLinePoints, segmentRange.GapAtSubRangeStart / 2, segmentRange.GapAtSubRangeEnd / 2);
+						}
+						else
+						{
+							shortenedLinePoints = skipLinePoints;
+						}
 
-							var gapAtStart = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
-							var gapAtEnd = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i + skipLinePointsLength - 1));
-
-							if (gapAtStart != 0 || gapAtEnd != 0)
-							{
-								skipLinePoints = GdiExtensionMethods.ShortenBezierCurve(skipLinePoints, gapAtStart / 2, gapAtEnd / 2);
-							}
-
-							if (null != skipLinePoints)
-							{
-								g.DrawBeziers(linePen, skipLinePoints);
-							}
+						if (null != shortenedLinePoints)
+						{
+							g.DrawBeziers(linePen, shortenedLinePoints);
 						}
 					}
 				}
-				else // not circular without symbol gap
-				{
-					var trimmedLength = TrimToValidBezierLength(range.Length);
-					var subLinePoints = new PointF[trimmedLength];
-					Array.Copy(allLinePoints, range.LowerBound, subLinePoints, 0, trimmedLength); // Extract
-					g.DrawBeziers(linePen, subLinePoints);
-				}
+			}
+			else // no symbol gap
+			{
+				g.DrawBeziers(linePen, circularLinePoints);
 			}
 		}
 
-		static int TrimToValidBezierLength(int x)
+		private static int TrimToValidBezierLength(int x)
 		{
 			return (3 * ((x + 2) / 3) - 2);
 		}
-
-
-
 
 		/// <inheritdoc/>
 		public override void FillOneRange(
@@ -204,7 +190,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		{
 			if (range.Length < 4)
 				return;
-
 
 			if (connectCircular)
 			{
@@ -256,7 +241,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			{
 				gp.AddBeziers(linePoints);
 				gp.CloseFigure();
-
 			}
 			else
 			{
@@ -275,7 +259,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 				gp.CloseFigure();
 			}
-
 		}
 	}
 }

@@ -105,29 +105,31 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 			if (connectCircular)
 			{
-				if (symbolGap != null)
+				if (null != symbolGap)
 				{
 					// convert points to bezier segments
 					var bezierSegments = GdiExtensionMethods.ClosedCardinalSplineToBezierSegments(subLinePoints, subLinePoints.Length);
 					var subBezierSegments = new PointF[0];
-					int subPointLengthM1, subBezierLength;
-					for (int i = 0; i < (range.Length); i += skipFrequency)
+					foreach (var segmentRange in GetSegmentRanges(range, symbolGap, skipFrequency, connectCircular))
 					{
-						subPointLengthM1 = Math.Min(skipFrequency, range.Length - i);
-						int originalIndexAtStart = range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound);
-						double gapAtStart = symbolGap(originalIndexAtStart);
-						int originalIndexAtEnd = ((i + skipFrequency) < range.Length) ? range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound + skipFrequency) : range.OriginalFirstPoint;
-						double gapAtEnd = symbolGap(originalIndexAtEnd);
-						subBezierLength = 3 * subPointLengthM1 + 1;
-						if (subBezierSegments.Length != subBezierLength)
-							subBezierSegments = new PointF[subBezierLength];
-
-						Array.Copy(bezierSegments, i * 3, subBezierSegments, 0, subBezierLength);
-						var shortenedBezierSegments = GdiExtensionMethods.ShortenBezierCurve(subBezierSegments, gapAtStart / 2, gapAtEnd / 2);
-
-						if (null != shortenedBezierSegments)
+						if (segmentRange.IsFullRangeClosedCurve) // test if this is a closed polygon without any gaps -> draw a closed polygon and return
 						{
-							g.DrawBeziers(linePen, shortenedBezierSegments);
+							// use the whole circular arry to draw a closed polygon without any gaps
+							g.DrawClosedCurve(linePen, subLinePoints);
+						}
+						else
+						{
+							var subBezierLength = 3 * segmentRange.Length + 1;
+							if (subBezierSegments.Length != subBezierLength)
+								subBezierSegments = new PointF[subBezierLength];
+
+							Array.Copy(bezierSegments, segmentRange.IndexAtSubRangeStart * 3, subBezierSegments, 0, subBezierLength);
+							var shortenedBezierSegments = GdiExtensionMethods.ShortenBezierCurve(subBezierSegments, segmentRange.GapAtSubRangeStart / 2, segmentRange.GapAtSubRangeEnd / 2);
+
+							if (null != shortenedBezierSegments)
+							{
+								g.DrawBeziers(linePen, shortenedBezierSegments);
+							}
 						}
 					}
 				}
@@ -136,30 +138,34 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 					g.DrawClosedCurve(linePen, subLinePoints);
 				}
 			}
-			else
+			else // not circular
 			{
 				if (symbolGap != null)
 				{
 					// convert points to bezier segments
 					var bezierSegments = GdiExtensionMethods.OpenCardinalSplineToBezierSegments(subLinePoints, subLinePoints.Length);
 					var subBezierSegments = new PointF[0];
-					int subPointLengthM1, subBezierLength;
-					for (int i = 0; i < (range.Length - 1); i += skipFrequency)
+
+					foreach (var segmentRange in GetSegmentRanges(range, symbolGap, skipFrequency, connectCircular))
 					{
-						subPointLengthM1 = Math.Min(skipFrequency, range.Length - 1 - i);
-						int originalIndex = range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound);
-						double gapAtStart = symbolGap(originalIndex);
-						double gapAtEnd = subPointLengthM1 == skipFrequency ? symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(i + range.LowerBound + skipFrequency)) : 0;
-						subBezierLength = 3 * subPointLengthM1 + 1;
-						if (subBezierSegments.Length != subBezierLength)
-							subBezierSegments = new PointF[subBezierLength];
-
-						Array.Copy(bezierSegments, i * 3, subBezierSegments, 0, subBezierLength);
-						var shortenedBezierSegments = GdiExtensionMethods.ShortenBezierCurve(subBezierSegments, gapAtStart / 2, gapAtEnd / 2);
-
-						if (null != shortenedBezierSegments)
+						if (segmentRange.IsFullRangeClosedCurve) // test if this is a closed polygon without any gaps -> draw a closed polygon and return
 						{
-							g.DrawBeziers(linePen, shortenedBezierSegments);
+							// use the whole circular arry to draw a closed polygon without any gaps
+							g.DrawCurve(linePen, subLinePoints);
+						}
+						else
+						{
+							var subBezierLength = 3 * segmentRange.Length + 1;
+							if (subBezierSegments.Length != subBezierLength)
+								subBezierSegments = new PointF[subBezierLength];
+
+							Array.Copy(bezierSegments, segmentRange.IndexAtSubRangeStart * 3, subBezierSegments, 0, subBezierLength);
+							var shortenedBezierSegments = GdiExtensionMethods.ShortenBezierCurve(subBezierSegments, segmentRange.GapAtSubRangeStart / 2, segmentRange.GapAtSubRangeEnd / 2);
+
+							if (null != shortenedBezierSegments)
+							{
+								g.DrawBeziers(linePen, shortenedBezierSegments);
+							}
 						}
 					}
 				}

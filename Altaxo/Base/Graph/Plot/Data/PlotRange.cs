@@ -141,12 +141,22 @@ namespace Altaxo.Graph.Plot.Data
 			set { _upperBound = value; }
 		}
 
+		/// <inheritdoc/>
 		public IPlotRange WithUpperBoundShortenedBy(int count)
 		{
 			if (!(count >= 0))
 				throw new ArgumentOutOfRangeException(nameof(count), "must be >=0");
 
 			return new PlotRange(_lowerBound, Math.Max(0, _upperBound - count), _offsetToOriginal);
+		}
+
+		/// <inheritdoc/>
+		public IPlotRange WithUpperBoundExtendedBy(int count)
+		{
+			if (!(count >= 0))
+				throw new ArgumentOutOfRangeException(nameof(count), "must be >=0");
+
+			return new PlotRange(_lowerBound, _upperBound + count, _offsetToOriginal);
 		}
 
 		/// <summary>

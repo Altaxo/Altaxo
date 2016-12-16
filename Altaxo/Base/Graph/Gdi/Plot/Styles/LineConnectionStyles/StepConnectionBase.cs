@@ -83,41 +83,31 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			bool connectCircular,
 			LinePlotStyle linePlotStyle)
 		{
-			if (range.Length < 2)
-				return;
+			if (range.Length <= 1)
+				return; // seems to be only a single point, thus no connection possible
 
 			int lastIdx;
 			int numberOfPointsPerOriginalPoint;
 			PointF[] stepPolylinePoints = GetStepPolylinePoints(allLinePoints, range, layer, connectCircular, out numberOfPointsPerOriginalPoint, out lastIdx);
 
-			GraphicsPath gp = new GraphicsPath();
-
 			if (null != symbolGap)
 			{
-				int end = range.UpperBound - 1;
-
-				var subPointsLength = skipFrequency * numberOfPointsPerOriginalPoint + 1;
-				for (int i = 0; i < range.Length; i += skipFrequency)
+				foreach (var segmentRange in GetSegmentRanges(range, symbolGap, skipFrequency, connectCircular))
 				{
-
-					int partialPolylineLength = Math.Min(subPointsLength, stepPolylinePoints.Length - numberOfPointsPerOriginalPoint * i);
-					if (partialPolylineLength < 2)
-						continue; // happens probably at the end of the range if there are not enough points to draw
-
-					double gapAtStart = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
-					double gapAtEnd;
-					if (connectCircular && skipFrequency >= (range.Length - i))
-						gapAtEnd = symbolGap(range.OriginalFirstPoint);
-					else if (skipFrequency <= (range.Length - 1 - i))
-						gapAtEnd = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i + skipFrequency));
+					if (segmentRange.IsFullRangeClosedCurve) // test if this is a closed polygon without any gaps -> draw a closed polygon and return
+					{
+						// use the whole circular arry to draw a closed polygon without any gaps
+						g.DrawPolygon(linePen, stepPolylinePoints);
+					}
 					else
-						gapAtEnd = 0;
+					{
+						int plotIndexAtStart = segmentRange.IndexAtSubRangeStart * numberOfPointsPerOriginalPoint;
+						int plotIndexAtEnd = segmentRange.IndexAtSubRangeEnd * numberOfPointsPerOriginalPoint;
+						var shortenedPolyline = stepPolylinePoints.ShortenPartialPolylineByDistanceFromStartAndEnd(plotIndexAtStart, plotIndexAtEnd, segmentRange.GapAtSubRangeStart / 2, segmentRange.GapAtSubRangeEnd / 2);
 
-					int startOfPartialPolyline = numberOfPointsPerOriginalPoint * i;
-					var shortenedPolyline = stepPolylinePoints.ShortenPartialPolylineByDistanceFromStartAndEnd(startOfPartialPolyline, startOfPartialPolyline + partialPolylineLength - 1, gapAtStart / 2, gapAtEnd / 2);
-
-					if (null != shortenedPolyline)
-						g.DrawLines(linePen, shortenedPolyline);
+						if (null != shortenedPolyline)
+							g.DrawLines(linePen, shortenedPolyline);
+					}
 				}
 			}
 			else

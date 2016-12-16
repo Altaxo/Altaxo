@@ -102,5 +102,96 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 		{
 			return this.GetType() == obj?.GetType();
 		}
+
+		#region Sub range enumeration
+
+		protected struct SegmentRange
+		{
+			/// <summary>
+			/// If true, the subrange should be treated as a full range closed curve, i.e. a connection of all points of the range and additionally a connection of the last point back to
+			/// the first point. In this case, <see cref="IndexAtSubRangeEnd"/> is set to <see cref="IndexAtSubRangeStart"/>.
+			/// </summary>
+			public bool IsFullRangeClosedCurve;
+
+			/// <summary>
+			/// Zero based index of the start of the sub range.
+			/// </summary>
+			public int IndexAtSubRangeStart;
+
+			/// <summary>
+			/// Zero based index of the last valid point of the sub range (except in the case of <see cref="IsFullRangeClosedCurve"/>==true).
+			/// </summary>
+			public int IndexAtSubRangeEnd;
+
+			/// <summary>
+			/// The gap at the start of the sub range.
+			/// </summary>
+			public double GapAtSubRangeStart;
+
+			/// <summary>
+			/// The gap at the end of the sub range.
+			/// </summary>
+			public double GapAtSubRangeEnd;
+
+			public int Length { get { return IndexAtSubRangeEnd - IndexAtSubRangeStart; } }
+		}
+
+		protected static IEnumerable<SegmentRange> GetSegmentRanges(
+			IPlotRange range,
+			Func<int, double> symbolGap,
+			int skipFrequency, bool connectCircular)
+		{
+			int lengthNonCircular = range.Length;
+			int lengthCircularMinus1 = range.Length - 1 + (connectCircular ? 1 : 0);
+			// SubRange is a number of consecutive line segments, with joints where the symbol gap is zero
+			double gapAtSubRangeStart = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound)); // start index of the subrange
+			double gapAtSubRangeEnd = 0;
+			int indexAtSubRangeEnd;
+			for (int indexAtSubRangeStart = 0; indexAtSubRangeStart < lengthCircularMinus1; indexAtSubRangeStart = indexAtSubRangeEnd, gapAtSubRangeStart = gapAtSubRangeEnd)
+			{
+				// search for the last index of this subrange, i.e. for a point where the gap is non-zero
+				for (indexAtSubRangeEnd = indexAtSubRangeStart + 1, gapAtSubRangeEnd = 0; indexAtSubRangeEnd < lengthNonCircular; ++indexAtSubRangeEnd)
+				{
+					if (0 == indexAtSubRangeEnd % skipFrequency) // calculate gap only if in skip period
+						gapAtSubRangeEnd = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + indexAtSubRangeEnd));
+					if (0 != gapAtSubRangeEnd)
+						break;
+				}
+
+				// if this is circular connected and is the last point, then use the gap of the very first point
+				if (connectCircular && indexAtSubRangeEnd == lengthNonCircular)
+					gapAtSubRangeEnd = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound));
+
+				// test if this is a closed polygon without any gaps -> draw a closed polygon and return
+				if (connectCircular && 0 == gapAtSubRangeStart && indexAtSubRangeEnd == (lengthCircularMinus1 + 1))
+				{
+					// use the whole circular array to draw a closed polygon without any gaps
+					yield return new SegmentRange()
+					{
+						IsFullRangeClosedCurve = true,
+						IndexAtSubRangeStart = indexAtSubRangeStart,
+						IndexAtSubRangeEnd = indexAtSubRangeStart,
+						GapAtSubRangeStart = 0,
+						GapAtSubRangeEnd = 0
+					};
+					break;
+				}
+
+				// adjust the end index to be valid
+				if (!(indexAtSubRangeEnd <= lengthCircularMinus1))
+					indexAtSubRangeEnd = lengthCircularMinus1;
+
+				yield return new SegmentRange()
+				{
+					IsFullRangeClosedCurve = false,
+					IndexAtSubRangeStart = indexAtSubRangeStart,
+					IndexAtSubRangeEnd = indexAtSubRangeEnd,
+					GapAtSubRangeStart = gapAtSubRangeStart,
+					GapAtSubRangeEnd = gapAtSubRangeEnd
+				};
+			}
+		}
+
+		#endregion Sub range enumeration
 	}
 }

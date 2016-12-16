@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.Plot.Data;
 using Altaxo.Graph.Plot.Data;
 using System;
@@ -87,97 +85,81 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			bool connectCircular,
 			LinePlotStyle linePlotStyle)
 		{
-			PointF[] circularLinePoints;
+			if (range.Length <= 1)
+				return; // seems to be only a single point, thus no connection possible
 
-			if (!connectCircular && range.LowerBound == 0 && range.UpperBound == allLinePoints.Length)
-			{
-				// under optimal conditions we can use allLinePoints directly
-				circularLinePoints = allLinePoints;
-			}
-			else
+			PointF[] circularLinePoints;
+			int indexBasePlotPoints; // index of the first plot point of this range in circularLinePoints array
+			if (connectCircular) // we have to copy the array in order to append the first point to the end
 			{
 				// otherwise, make a new array
-				circularLinePoints = new PointF[range.Length + (connectCircular ? 1 : 0)];
+				circularLinePoints = new PointF[range.Length + 1];
 				Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, range.Length); // Extract
-				if (connectCircular)
-					circularLinePoints[circularLinePoints.Length - 1] = circularLinePoints[0];
+				circularLinePoints[circularLinePoints.Length - 1] = circularLinePoints[0];
+				indexBasePlotPoints = 0;
+			}
+			else // use the array directly without copying
+			{
+				circularLinePoints = allLinePoints;
+				indexBasePlotPoints = range.LowerBound;
 			}
 
-			int lastIdx = range.Length - 1 + (connectCircular ? 1 : 0);
-			GraphicsPath gp = new GraphicsPath();
-			var layerSize = layer.Size;
-			var rangeLowerBound = range.LowerBound;
-
-			// special efforts are necessary to realize a line/symbol gap
-			// I decided to use a path for this
-			// and hope that not so many segments are added to the path due
-			// to the exclusion criteria that a line only appears between two symbols (rel<0.5)
-			// if the symbols do not overlap. So for a big array of points it is very likely
-			// that the symbols overlap and no line between the symbols needs to be plotted
 			if (null != symbolGap)
 			{
-				float xdiff, ydiff, startx, starty, stopx, stopy;
-				if (skipFrequency <= 1) // skip all scatter symbol gaps -> thus skipOffset can be ignored
+				foreach (var segmentRange in GetSegmentRanges(range, symbolGap, skipFrequency, connectCircular))
 				{
-					for (int i = 0; i < lastIdx; i++)
+					if (segmentRange.IsFullRangeClosedCurve) // test if this is a closed polygon without any gaps -> draw a closed polygon and return
 					{
-						xdiff = circularLinePoints[i + 1].X - circularLinePoints[i].X;
-						ydiff = circularLinePoints[i + 1].Y - circularLinePoints[i].Y;
-						var diffLength = System.Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
-						double gapAtStart = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
-						double gapAtEnd;
-						if (connectCircular && skipFrequency >= (range.Length - i))
-							gapAtEnd = symbolGap(range.OriginalFirstPoint);
-						else if (skipFrequency <= (range.Length - 1 - i))
-							gapAtEnd = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i + skipFrequency));
-						else
-							gapAtEnd = 0;
+						// use the whole circular arry to draw a closed polygon without any gaps
+						g.DrawPolygon(linePen, circularLinePoints);
+					}
+					else if (segmentRange.Length == 1) // special case only one line segment
+					{
+						int plotIndexAtStart = segmentRange.IndexAtSubRangeStart + indexBasePlotPoints;
+						int plotIndexAtEnd = segmentRange.IndexAtSubRangeEnd + indexBasePlotPoints;
 
-						var relAtStart = (float)(0.5 * gapAtStart / diffLength); // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
-						var relAtEnd = (float)(0.5 * gapAtEnd / diffLength); // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
+						var xdiff = circularLinePoints[plotIndexAtEnd].X - circularLinePoints[plotIndexAtStart].X;
+						var ydiff = circularLinePoints[plotIndexAtEnd].Y - circularLinePoints[plotIndexAtStart].Y;
+						var diffLength = System.Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
+
+						var relAtStart = (float)(0.5 * segmentRange.GapAtSubRangeStart / diffLength); // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
+						var relAtEnd = (float)(0.5 * segmentRange.GapAtSubRangeEnd / diffLength); // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
 
 						if ((relAtStart + relAtEnd) < 1) // a line only appears if sum of the gaps  is smaller than 1
 						{
-							startx = circularLinePoints[i].X + relAtStart * xdiff;
-							starty = circularLinePoints[i].Y + relAtStart * ydiff;
-							stopx = circularLinePoints[i + 1].X - relAtEnd * xdiff;
-							stopy = circularLinePoints[i + 1].Y - relAtEnd * ydiff;
+							var startx = circularLinePoints[plotIndexAtStart].X + relAtStart * xdiff;
+							var starty = circularLinePoints[plotIndexAtStart].Y + relAtStart * ydiff;
+							var stopx = circularLinePoints[plotIndexAtEnd].X - relAtEnd * xdiff;
+							var stopy = circularLinePoints[plotIndexAtEnd].Y - relAtEnd * ydiff;
 
-							gp.AddLine(startx, starty, stopx, stopy);
-							gp.StartFigure();
+							g.DrawLine(linePen, startx, starty, stopx, stopy);
 						}
-					} // end for
-					g.DrawPath(linePen, gp);
-					gp.Reset();
-				}
-				else // skipFrequency is > 1
-				{
-					for (int i = 0; i < lastIdx; i += skipFrequency)
+					}
+					else
 					{
-						int subPointLengthM1 = Math.Min(skipFrequency, circularLinePoints.Length - 1 - i);
-						double gapAtStart = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i));
-						double gapAtEnd;
-						if (connectCircular && skipFrequency >= (range.Length - i))
-							gapAtEnd = symbolGap(range.OriginalFirstPoint);
-						else if (skipFrequency <= (range.Length - 1 - i))
-							gapAtEnd = symbolGap(range.GetOriginalRowIndexFromPlotPointIndex(range.LowerBound + i + skipFrequency));
-						else
-							gapAtEnd = 0;
+						int plotIndexAtStart = segmentRange.IndexAtSubRangeStart + indexBasePlotPoints;
+						int plotIndexAtEnd = segmentRange.IndexAtSubRangeEnd + indexBasePlotPoints;
+						var shortenedPolyline = circularLinePoints.ShortenPartialPolylineByDistanceFromStartAndEnd(plotIndexAtStart, plotIndexAtEnd, segmentRange.GapAtSubRangeStart / 2, segmentRange.GapAtSubRangeEnd / 2);
 
-						if (subPointLengthM1 >= 1)
-						{
-							var polyline = circularLinePoints.ShortenPartialPolylineByDistanceFromStartAndEnd(i, i + subPointLengthM1, gapAtStart / 2, gapAtEnd / 2);
-
-							if (null != polyline)
-								g.DrawLines(linePen, polyline);
-						}
-					} // end for
-				}
+						if (null != shortenedPolyline)
+							g.DrawLines(linePen, shortenedPolyline);
+					}
+				} // end for
 			}
-			else // no line symbol gap required, so we can use DrawLines to draw the lines
+			else // no line symbol gap required, so we can use DrawLines or DrawPolygon to draw the lines
 			{
-				if (circularLinePoints.Length > 1) // we don't want to have a drawing exception if number of points is only one
+				if (connectCircular) // array was already copied from original array
 				{
+					g.DrawPolygon(linePen, circularLinePoints);
+				}
+				else if (indexBasePlotPoints == 0 && range.Length == circularLinePoints.Length) // can use original array directly
+				{
+					g.DrawLines(linePen, circularLinePoints);
+				}
+				else
+				{
+					circularLinePoints = new PointF[range.Length];
+					Array.Copy(allLinePoints, range.LowerBound, circularLinePoints, 0, range.Length);
 					g.DrawLines(linePen, circularLinePoints);
 				}
 			}
