@@ -381,17 +381,8 @@ namespace Altaxo.Calc.Ode
 		/// <summary>
 		/// Execute predictor-corrector scheme for Nordsieck's method
 		/// </summary>
-		/// <param name="qcurr">current method order</param>
-		/// <param name="x">system phase vector to compute</param>
-		/// <param name="e0">initial error vector (en(0) in LSODE)</param>
-		/// <param name="t">current time</param>
-		/// <param name="xprev">initial value of phase vector</param>
-		/// <param name="z0">Zn(0) in LSODE - initial History matrix value</param>
-		/// <param name="dt">current step size</param>
-		/// <param name="l">current Nordsieck's parameters vector</param>
-		/// <param name="b">current b0 in Gear's scheme</param>
-		/// <param name="tau">current step change poarameter tau(q,q)</param>
-		/// <param name="zn">current Z Nordsieck's matrix to change</param>
+		/// <param name="currstate"></param>
+		/// <param name="flag"></param>
 		/// <param name="f">right parts vector</param>
 		/// <param name="opts">current options</param>
 		/// <returns>en - current error vector</returns>

@@ -92,7 +92,7 @@ namespace Altaxo.Calc.Ode
 		/// <code>
 		/// var sol=Ode.RK547M(0,new Vector(0,1),(t,x)=>new Vector(y+1,-x+2));
 		/// </code>
-		/// and then enumerate solution point from <see cref="System.IEnumerable"/> 'sol'.
+		/// and then enumerate solution point from <see cref="IEnumerable{SolutionPoint}"/> 'sol'.
 		/// </example>
 		/// <returns>Endless sequence of solution points</returns>
 		public static IEnumerable<SolutionPoint> RK547M(double t0, Vector x0, Func<double, Vector, Vector> f)
@@ -115,7 +115,7 @@ namespace Altaxo.Calc.Ode
 		/// <code>
 		/// var sol=Ode.RK547M(0,new Vector(0,1),(t,x)=>new Vector(y+1,-x+2));
 		/// </code>
-		/// and then enumerate solution point from <see cref="System.IEnumerable"/> 'sol'.
+		/// and then enumerate solution point from <see cref="IEnumerable{SolutionPoint}"/>.
 		/// </example>
 		/// <returns>Endless sequence of solution points</returns>
 
@@ -139,7 +139,7 @@ namespace Altaxo.Calc.Ode
 		/// <code>
 		/// var sol=Ode.RK547M(0,new Vector(0,1),(t,x)=>new Vector(y+1,-x+2));
 		/// </code>
-		/// and then enumerate solution point from <see cref="System.IEnumerable"/> 'sol'.
+		/// and then enumerate solution point from <see cref="IEnumerable{SolutionPoint}"/>.
 		/// </example>
 		/// <returns>Endless sequence of solution points</returns>
 		public static IEnumerable<SolutionPoint> RK547M(double t0, Vector x0, Func<double, Vector, Vector> f, Options opts)
@@ -321,7 +321,7 @@ namespace Altaxo.Calc.Ode
 		/// <code>
 		/// var sol=Ode.RK547M(0,new Vector(0,1),(t,x)=>new Vector(y+1,-x+2));
 		/// </code>
-		/// and then enumerate solution point from <see cref="System.IEnumerable"/> 'sol'.
+		/// and then enumerate solution point from <see cref="IEnumerable{SolutionPoint}"/>.
 		/// </example>
 		/// <returns>Endless sequence of solution points</returns>
 		public static IEnumerable<SolutionPoint> RK547M(double tstart, double tfinal, Vector x0, Func<double, Vector, Vector> f, Options opts)
@@ -335,9 +335,9 @@ namespace Altaxo.Calc.Ode
 		}
 
 		/// <summary>Interpolation for Runge-Kutta 5(4)7M method</summary>
-		/// <param name="s">Relative locations in the interval (t,t+dt)<\param>
-		/// <param name="y">Solution at start time<\param>
-		/// <param name="k">Runge-Kutta points<\param>
+		/// <param name="s">Relative locations in the interval (t,t+dt)</param>
+		/// <param name="y">Solution at start time</param>
+		/// <param name="k">Runge-Kutta points</param>
 		public static Vector[] RKinterp(Vector s, Vector y, Vector[] k)
 		{
 			if (k == null)

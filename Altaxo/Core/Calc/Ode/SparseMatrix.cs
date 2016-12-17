@@ -114,14 +114,15 @@ namespace Altaxo.Calc.Ode
 		}
 
 		/// <summary>C = A + B</summary>
+		/// <param name="A">first matrix </param>
 		/// <param name="B">another matrix </param>
 		/// <returns>     A + B</returns>
 		public static SparseMatrix operator +(SparseMatrix A, SparseMatrix B)
 		{
 			if (A == null)
-				throw new ArgumentNullException("A");
+				throw new ArgumentNullException(nameof(A));
 			if (B == null)
-				throw new ArgumentNullException("B");
+				throw new ArgumentNullException(nameof(B));
 			return A.plus(B);
 		}
 
@@ -392,8 +393,8 @@ namespace Altaxo.Calc.Ode
 			}
 		}
 
-		/// <summaryTranpose</summary>
-		/// <returns></returns>
+		/// <summary>Tranpose of sparse matrix</summary>
+		/// <returns>New matrix that is the transposed of the original.</returns>
 		public SparseMatrix Transpose()
 		{
 			var At = new SparseMatrix(this.ColumnDimension, this.RowDimension);

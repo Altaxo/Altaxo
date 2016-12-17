@@ -59,7 +59,7 @@ namespace Altaxo.Calc.Ode
 
 		/// <summary>Construct a matrix from a 2-D jagged array.</summary>
 		/// <param name="A">Two-dimensional array of doubles.</param>
-		/// <exception cref="IllegalArgumentException">All rows must have the same length</exception>
+		/// <exception cref="ArgumentException">All rows must have the same length</exception>
 		/// <remarks>Array is not copied</remarks>
 		public Matrix(double[][] A)
 		{
@@ -78,12 +78,11 @@ namespace Altaxo.Calc.Ode
 		}
 
 		/// <summary>Construct a matrix from a copy of a 2-D array.</summary>
-		/// <param name="m">Two-dimensional array of doubles. First index is row, second is column</param>
-		/// </seealso>
+		/// <param name="arr">Two-dimensional array of doubles. First index is row, second is column</param>
 		public Matrix(double[,] arr)
 		{
 			if (arr == null)
-				throw new ArgumentNullException("A");
+				throw new ArgumentNullException(nameof(arr));
 			m = arr.GetLength(0);
 			n = arr.GetLength(1);
 			this.a = new double[m][];
@@ -217,7 +216,7 @@ namespace Altaxo.Calc.Ode
 		/// <param name="j0">Initial column index </param>
 		/// <param name="j1">Final column index </param>
 		/// <returns>A(i0:i1,j0:j1) </returns>
-		/// <exception cref="ArrayIndexOutOfBoundsException">Submatrix indices </exception>
+		/// <exception cref="IndexOutOfRangeException">Submatrix indices </exception>
 		public Matrix Submatrix(int i0, int i1, int j0, int j1)
 		{
 			Matrix X = new Matrix(i1 - i0 + 1, j1 - j0 + 1);
@@ -243,7 +242,7 @@ namespace Altaxo.Calc.Ode
 		/// <param name="r">Array of row indices.</param>
 		/// <param name="c">Array of column indices.</param>
 		/// <returns>A(r(:),c(:)) </returns>
-		/// <exception cref="ArrayIndexOutOfBoundsException">Submatrix indices</exception>
+		/// <exception cref="IndexOutOfRangeException">Submatrix indices</exception>
 		public Matrix Submatrix(int[] r, int[] c)
 		{
 			if (r == null)
@@ -274,7 +273,7 @@ namespace Altaxo.Calc.Ode
 		/// <param name="i1">Final row index</param>
 		/// <param name="c">Array of column indices.</param>
 		/// <returns>A(i0:i1,c(:))</returns>
-		/// <exception cref="ArrayIndexOutOfBoundsException">Submatrix indices</exception>
+		/// <exception cref="IndexOutOfRangeException">Submatrix indices</exception>
 		public Matrix Submatrix(int i0, int i1, int[] c)
 		{
 			if (c == null)
@@ -300,10 +299,10 @@ namespace Altaxo.Calc.Ode
 
 		/// <summary>Get a submatrix.</summary>
 		/// <param name="r">   Array of row indices.</param>
-		/// <param name="i0">  Initial column index.</param>
-		/// <param name="i1">  Final column index.</param>
+		/// <param name="j0">  Initial column index.</param>
+		/// <param name="j1">  Final column index.</param>
 		/// <returns>     A(r(:),j0:j1)</returns>
-		/// <exception cref="ArrayIndexOutOfBoundsException">Submatrix indices</exception>
+		/// <exception cref="IndexOutOfRangeException">Submatrix indices</exception>
 		public Matrix Submatrix(int[] r, int j0, int j1)
 		{
 			if (r == null)
@@ -523,7 +522,6 @@ namespace Altaxo.Calc.Ode
 		}
 
 		/// <summary>Matrix inverse for a lower triangular matrix</summary>
-		/// <param name="L"></param>
 		/// <returns></returns>
 		public Matrix InverseLower()
 		{

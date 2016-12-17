@@ -78,7 +78,7 @@ namespace Altaxo.Calc.Ode
 		///   From Intel Fortran Language Reference
 		/// </remarks>
 		/// <param name="s"></param>
-		/// <param name="count"></param>
+		/// <param name="ncopies"></param>
 		/// <returns></returns>
 		public static string REPEAT(string s, int ncopies)
 		{
@@ -104,10 +104,10 @@ namespace Altaxo.Calc.Ode
 
 		/// <summary>
 		/// Transfer of sign
-		/// Returns |a1| if a2>= 0
-		/// Returns -|a1| if a2< 0
+		/// Returns |a1| if a2&gt;= 0
+		/// Returns -|a1| if a2&lt;0
 		/// </summary>
-		/// <returns> Returns |a1| if a2>= 0, Returns -|a1| if a2< 0 </returns>
+		/// <returns> Returns |a1| if a2&gt;= 0, Returns -|a1| if a2&lt;0 </returns>
 		public static int Sign(int a1, int a2)
 		{
 			if (a2 >= 0) return Math.Abs(a1);
@@ -116,10 +116,10 @@ namespace Altaxo.Calc.Ode
 
 		/// <summary>
 		/// Transfer of sign
-		/// Returns |a1| if a2>= 0
-		/// Returns -|a1| if a2< 0
+		/// Returns |a1| if a2&gt;= 0
+		/// Returns -|a1| if a2&lt;0
 		/// </summary>
-		/// <returns> Returns |a1| if a2>= 0, Returns -|a1| if a2< 0 </returns>
+		/// <returns> Returns |a1| if a2&gt;= 0, Returns -|a1| if a2&lt;0 </returns>
 		public static float Sign(float a1, float a2)
 		{
 			if (a2 >= 0) return Math.Abs(a1);
@@ -128,10 +128,10 @@ namespace Altaxo.Calc.Ode
 
 		/// <summary>
 		/// Transfer of sign
-		/// Returns |a1| if a2>= 0
-		/// Returns -|a1| if a2< 0
+		/// Returns |a1| if a2&gt;= 0
+		/// Returns -|a1| if a2&lt;0
 		/// </summary>
-		/// <returns> Returns |a1| if a2>= 0, Returns -|a1| if a2< 0 </returns>
+		/// <returns> Returns |a1| if a2&gt;= 0, Returns -|a1| if a2&lt;0 </returns>
 		public static double Sign(double a1, double a2)
 		{
 			if (a2 >= 0) return Math.Abs(a1);
@@ -255,7 +255,7 @@ namespace Altaxo.Calc.Ode
 		///   IBM XL Fortran for AIX
 		/// </remarks>
 		/// <param name="s"></param>
-		/// <param name="value"></param>
+		/// <param name="set"></param>
 		/// <param name="back"></param>
 		/// <returns></returns>
 		public static int SCAN(string s, string set, bool back)

@@ -53,7 +53,6 @@ namespace Altaxo.Calc.Ode
 		}
 
 		/// <summary>Clones specified vector</summary>
-		/// <param name="v">Vector to clone</param>
 		/// <returns>Copy of vector passes as parameter</returns>
 		public Vector Clone()
 		{
@@ -476,7 +475,6 @@ namespace Altaxo.Calc.Ode
 		/// <summary>
 		/// Returns a vector whose elements are the absolute values of the given vector elements
 		/// </summary>
-		/// <param name="v">Vector to operate with</param>
 		/// <returns>Vector v1 such that for each i = 0...dim(v) v1[i] = |v[i]|</returns>
 		public Vector Abs()
 		{
