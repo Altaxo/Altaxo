@@ -50,19 +50,23 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		}
 
 		[Test]
-		[ExpectedException(typeof(NotSquareMatrixException))]
 		public void CDWide()
 		{
-			FloatMatrix wm = new FloatMatrix(2, 3);
-			FloatCholeskyDecomp wcd = new FloatCholeskyDecomp(wm);
+			Assert.Throws(typeof(NotSquareMatrixException), () =>
+			{
+				FloatMatrix wm = new FloatMatrix(2, 3);
+				FloatCholeskyDecomp wcd = new FloatCholeskyDecomp(wm);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(NotSquareMatrixException))]
 		public void CDLong()
 		{
-			FloatMatrix lm = new FloatMatrix(3, 2);
-			FloatCholeskyDecomp lcd = new FloatCholeskyDecomp(lm);
+			Assert.Throws(typeof(NotSquareMatrixException), () =>
+			{
+				FloatMatrix lm = new FloatMatrix(3, 2);
+				FloatCholeskyDecomp lcd = new FloatCholeskyDecomp(lm);
+			});
 		}
 
 		[Test]
@@ -225,12 +229,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		}
 
 		[Test]
-		[ExpectedException(typeof(NotPositiveDefiniteException))]
 		public void GetInverseNotPositiveDefiniteTest()
 		{
-			FloatMatrix a = new FloatMatrix(3, 3);
-			FloatCholeskyDecomp dcd = new FloatCholeskyDecomp(a);
-			dcd.GetInverse();
+			Assert.Throws(typeof(NotPositiveDefiniteException), () =>
+			{
+				FloatMatrix a = new FloatMatrix(3, 3);
+				FloatCholeskyDecomp dcd = new FloatCholeskyDecomp(a);
+				dcd.GetInverse();
+			});
 		}
 	}
 }

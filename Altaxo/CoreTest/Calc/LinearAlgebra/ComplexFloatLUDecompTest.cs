@@ -51,19 +51,23 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		}
 
 		[Test]
-		[ExpectedException(typeof(NotSquareMatrixException))]
 		public void LUWide()
 		{
-			ComplexFloatMatrix wm = new ComplexFloatMatrix(2, 3);
-			ComplexFloatLUDecomp wlu = new ComplexFloatLUDecomp(wm);
+			Assert.Throws(typeof(NotSquareMatrixException), () =>
+			{
+				ComplexFloatMatrix wm = new ComplexFloatMatrix(2, 3);
+				ComplexFloatLUDecomp wlu = new ComplexFloatLUDecomp(wm);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(NotSquareMatrixException))]
 		public void LULong()
 		{
-			ComplexFloatMatrix lm = new ComplexFloatMatrix(3, 2);
-			ComplexFloatLUDecomp llu = new ComplexFloatLUDecomp(lm);
+			Assert.Throws(typeof(NotSquareMatrixException), () =>
+			{
+				ComplexFloatMatrix lm = new ComplexFloatMatrix(3, 2);
+				ComplexFloatLUDecomp llu = new ComplexFloatLUDecomp(lm);
+			});
 		}
 
 		[Test]
@@ -139,12 +143,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		}
 
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void GetInverseSingularTest()
 		{
-			ComplexFloatMatrix a = new ComplexFloatMatrix(3, 3);
-			ComplexFloatLUDecomp dlu = new ComplexFloatLUDecomp(a);
-			dlu.GetInverse();
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				ComplexFloatMatrix a = new ComplexFloatMatrix(3, 3);
+				ComplexFloatLUDecomp dlu = new ComplexFloatLUDecomp(a);
+				dlu.GetInverse();
+			});
 		}
 
 		[Test]

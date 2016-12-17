@@ -108,7 +108,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		#region Test Fixture Setup
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void SetupTestCases()
 		{
 			// unit testing values - order 1
@@ -571,18 +571,22 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// Test constructor with a null parameter
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullParameterTestforConstructor1()
 		{
-			DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(null as DoubleVector);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(null as DoubleVector);
+			});
 		}
 
 		// Test constructor with a null parameter
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullParameterTestforConstructor2()
 		{
-			DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(null as double[]);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(null as double[]);
+			});
 		}
 
 		#endregion Null Parameter Tests for Constructor
@@ -591,20 +595,24 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// Test constructor with a zero length vector parameter
 		[Test]
-		[ExpectedException(typeof(System.RankException))]
 		public void ZeroLengthVectorTestsforConstructor1()
 		{
-			DoubleVector dv = new DoubleVector(1, 0.0);
-			dv.RemoveAt(0);
-			DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(dv);
+			Assert.Throws(typeof(System.RankException), () =>
+			{
+				DoubleVector dv = new DoubleVector(1, 0.0);
+				dv.RemoveAt(0);
+				DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(dv);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(System.RankException))]
 		public void ZeroLengthVectorTestsforConstructor2()
 		{
-			double[] dv = new double[0];
-			DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(dv);
+			Assert.Throws(typeof(System.RankException), () =>
+			{
+				double[] dv = new double[0];
+				DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(dv);
+			});
 		}
 
 		#endregion Zero Length Vector Tests for Constructor
@@ -1215,11 +1223,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Null Parameter Test for SolveVector
 
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullParameterTestforSolveVector()
 		{
-			DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(T10);
-			DoubleVector X = dsl.Solve(null as DoubleVector);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(T10);
+				DoubleVector X = dsl.Solve(null as DoubleVector);
+			});
 		}
 
 		#endregion Null Parameter Test for SolveVector
@@ -1227,11 +1237,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Mismatch Rows Test for SolveVector
 
 		[Test]
-		[ExpectedException(typeof(System.RankException))]
 		public void MismatchRowsTestforSolveVector()
 		{
-			DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(T10);
-			DoubleVector X = dsl.Solve(X5);
+			Assert.Throws(typeof(System.RankException), () =>
+			{
+				DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(T10);
+				DoubleVector X = dsl.Solve(X5);
+			});
 		}
 
 		#endregion Mismatch Rows Test for SolveVector
@@ -1395,11 +1407,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Null Parameter Test for SolveMatrix
 
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullParameterTestforSolveMatrix()
 		{
-			DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(T10);
-			DoubleMatrix X = dsl.Solve(null as DoubleMatrix);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(T10);
+				DoubleMatrix X = dsl.Solve(null as DoubleMatrix);
+			});
 		}
 
 		#endregion Null Parameter Test for SolveMatrix
@@ -1407,11 +1421,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Mismatch Rows Test for SolveMatrix
 
 		[Test]
-		[ExpectedException(typeof(System.RankException))]
 		public void MismatchRowsTestforSolveMatrix()
 		{
-			DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(T10);
-			DoubleMatrix X = dsl.Solve(I5);
+			Assert.Throws(typeof(System.RankException), () =>
+			{
+				DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(T10);
+				DoubleMatrix X = dsl.Solve(I5);
+			});
 		}
 
 		#endregion Mismatch Rows Test for SolveMatrix
@@ -1768,10 +1784,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test null parameter
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveVector1()
 		{
-			DoubleVector X = DoubleSymmetricLevinson.Solve(null, new double[] { 1.0, 1.0 });
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				DoubleVector X = DoubleSymmetricLevinson.Solve(null, new double[] { 1.0, 1.0 });
+			});
 		}
 
 		#endregion Null Parameter Test 1 for Static SolveVector
@@ -1780,10 +1798,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test null parameter
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveVector2()
 		{
-			DoubleVector X = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0 }, null as RODoubleVector);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				DoubleVector X = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0 }, null as RODoubleVector);
+			});
 		}
 
 		#endregion Null Parameter Test for 2 Static SolveVector
@@ -1792,10 +1812,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test mismatching dimensions
 		[Test]
-		[ExpectedException(typeof(RankException))]
 		public void RowMismatchTestforStaticSolveVector()
 		{
-			DoubleVector X = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0, 1.0 }, new double[] { 1.0, 1.0 });
+			Assert.Throws(typeof(RankException), () =>
+			{
+				DoubleVector X = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0, 1.0 }, new double[] { 1.0, 1.0 });
+			});
 		}
 
 		#endregion Row Mismatch Test for Static SolveVector
@@ -1804,10 +1826,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test with Toeplitz matrix which has a singular principal sub-matrix
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void SingularTestforStaticSolveVector()
 		{
-			DoubleVector X = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0, 1.0 }, new double[] { 1.0, 1.0, 1.0 });
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				DoubleVector X = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0, 1.0 }, new double[] { 1.0, 1.0, 1.0 });
+			});
 		}
 
 		#endregion Singular Test for Static SolveVector
@@ -1960,13 +1984,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test null parameter
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveMatrix1()
 		{
-			DoubleMatrix Y = new DoubleMatrix(2);
-			Y[0, 0] = Y[1, 1] = 2.0;
-			Y[0, 1] = Y[1, 0] = 1.0;
-			DoubleMatrix X = DoubleSymmetricLevinson.Solve(null, Y);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				DoubleMatrix Y = new DoubleMatrix(2);
+				Y[0, 0] = Y[1, 1] = 2.0;
+				Y[0, 1] = Y[1, 0] = 1.0;
+				DoubleMatrix X = DoubleSymmetricLevinson.Solve(null, Y);
+			});
 		}
 
 		#endregion Null Parameter Test 1 for Static SolveMatrix
@@ -1975,10 +2001,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test null parameter
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveMatrix2()
 		{
-			DoubleMatrix Y = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0 }, null as DoubleMatrix);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				DoubleMatrix Y = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0 }, null as DoubleMatrix);
+			});
 		}
 
 		#endregion Null Parameter Test 2 for Static SolveMatrix
@@ -1987,14 +2015,16 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test mismatching dimensions
 		[Test]
-		[ExpectedException(typeof(RankException))]
 		public void RowMismatchTestforStaticSolveMatrix()
 		{
-			DoubleMatrix Y = new DoubleMatrix(2);
-			Y[0, 0] = Y[1, 1] = 2.0;
-			Y[0, 1] = Y[1, 0] = 1.0;
+			Assert.Throws(typeof(RankException), () =>
+			{
+				DoubleMatrix Y = new DoubleMatrix(2);
+				Y[0, 0] = Y[1, 1] = 2.0;
+				Y[0, 1] = Y[1, 0] = 1.0;
 
-			DoubleMatrix X = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0, 1.0 }, Y);
+				DoubleMatrix X = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0, 1.0 }, Y);
+			});
 		}
 
 		#endregion Row Mismatch Test for Static SolveMatrix
@@ -2003,10 +2033,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test with Toeplitz matrix which has a singular principal sub-matrix
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void SingularTestforStaticSolveMatrix()
 		{
-			DoubleMatrix X = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0, 1.0 }, DoubleMatrix.CreateIdentity(3));
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				DoubleMatrix X = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0, 1.0 }, DoubleMatrix.CreateIdentity(3));
+			});
 		}
 
 		#endregion Singular Test for Static SolveMatrix
@@ -2195,10 +2227,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test Yule-Walker with a null reference
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticYuleWalker()
 		{
-			DoubleVector Y = DoubleSymmetricLevinson.YuleWalker(null);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				DoubleVector Y = DoubleSymmetricLevinson.YuleWalker(null);
+			});
 		}
 
 		#endregion Null Parameter Test for Static YuleWalker
@@ -2207,10 +2241,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test Yule-Walker with order 1 matrix
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void RowTestforStaticYuleWalker()
 		{
-			DoubleVector Y = DoubleSymmetricLevinson.YuleWalker(new double[] { 1.0 });
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				DoubleVector Y = DoubleSymmetricLevinson.YuleWalker(new double[] { 1.0 });
+			});
 		}
 
 		#endregion Row Test for Static YuleWalker
@@ -2219,10 +2255,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test Yule-Walker with matrix with singular principal sub-matrix
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void SingularTestforStaticYuleWalker()
 		{
-			DoubleVector Y = DoubleSymmetricLevinson.YuleWalker(new double[] { 1.0, 1.0, 1.0 });
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				DoubleVector Y = DoubleSymmetricLevinson.YuleWalker(new double[] { 1.0, 1.0, 1.0 });
+			});
 		}
 
 		#endregion Singular Test for Static YuleWalker
@@ -2355,10 +2393,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Null Prameter Test for Static Inverse
 
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullPrameterTestforStaticInverse()
 		{
-			DoubleMatrix Y = DoubleSymmetricLevinson.Inverse(null);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				DoubleMatrix Y = DoubleSymmetricLevinson.Inverse(null);
+			});
 		}
 
 		#endregion Null Prameter Test for Static Inverse
@@ -2366,16 +2406,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Singular Test for Static Inverse
 
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void SingularTestforStaticInverse()
 		{
-			// setup an ill-conditioned system (second order principal submatrix is singular)
-			DoubleVector T = new DoubleVector(3);
-			T[0] = 1.0;
-			T[1] = 1.0;
-			T[2] = 1.0;
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				// setup an ill-conditioned system (second order principal submatrix is singular)
+				DoubleVector T = new DoubleVector(3);
+				T[0] = 1.0;
+				T[1] = 1.0;
+				T[2] = 1.0;
 
-			DoubleMatrix Y = DoubleSymmetricLevinson.Inverse(T);
+				DoubleMatrix Y = DoubleSymmetricLevinson.Inverse(T);
+			});
 		}
 
 		#endregion Singular Test for Static Inverse

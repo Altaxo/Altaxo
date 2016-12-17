@@ -70,10 +70,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullTest()
 		{
-			DoubleQRDecomp test = new DoubleQRDecomp(null);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				DoubleQRDecomp test = new DoubleQRDecomp(null);
+			});
 		}
 
 		[Test]
@@ -281,17 +283,21 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		}
 
 		[Test]
-		[ExpectedException(typeof(NotSquareMatrixException))]
 		public void GetWideDeterminantTest()
 		{
-			double det = wqr.GetDeterminant();
+			Assert.Throws(typeof(NotSquareMatrixException), () =>
+			{
+				double det = wqr.GetDeterminant();
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(NotSquareMatrixException))]
 		public void GetLongDeterminantTest()
 		{
-			double det = lqr.GetDeterminant();
+			Assert.Throws(typeof(NotSquareMatrixException), () =>
+			{
+				double det = lqr.GetDeterminant();
+			});
 		}
 	}
 }

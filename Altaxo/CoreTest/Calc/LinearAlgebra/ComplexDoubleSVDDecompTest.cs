@@ -40,7 +40,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		private ComplexDoubleSVDDecomp wsvd;
 		private const double TOLERENCE = 2.000E-014;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void SetupTestCases()
 		{
 			a = new ComplexDoubleMatrix(3);

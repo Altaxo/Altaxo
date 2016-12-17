@@ -33,10 +33,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 	public class ComplexFloatQRDecompTest
 	{
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullTest()
 		{
-			ComplexFloatQRDecomp test = new ComplexFloatQRDecomp(null);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexFloatQRDecomp test = new ComplexFloatQRDecomp(null);
+			});
 		}
 
 		[Test]

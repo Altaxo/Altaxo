@@ -85,24 +85,30 @@ namespace AltaxoTest.Collections
 		}
 
 		[Test]
-		[ExpectedException(typeof(System.ArgumentOutOfRangeException))]
 		public void TestFromStartAndCount4A()
 		{
-			var r = ContiguousIntegerRange.FromStartAndCount(0, -1);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				var r = ContiguousIntegerRange.FromStartAndCount(0, -1);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(System.ArgumentOutOfRangeException))]
 		public void TestFromStartAndCount4B()
 		{
-			var r = ContiguousIntegerRange.FromStartAndCount(1, int.MaxValue);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				var r = ContiguousIntegerRange.FromStartAndCount(1, int.MaxValue);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(System.ArgumentOutOfRangeException))]
 		public void TestFromStartAndCount4C()
 		{
-			var r = ContiguousIntegerRange.FromStartAndCount(int.MaxValue, 1);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				var r = ContiguousIntegerRange.FromStartAndCount(int.MaxValue, 1);
+			});
 		}
 
 		[Test]

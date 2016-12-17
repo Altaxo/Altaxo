@@ -98,7 +98,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		#region Text Fixture Setup
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void SetupTestCases()
 		{
 			// unit testing values - order 1
@@ -348,10 +348,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// Test constructor with a null parameter
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullParameterTestforConstructor()
 		{
-			ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(null as ComplexFloatVector);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(null as ComplexFloatVector);
+			});
 		}
 
 		#endregion Null Parameter Tests for Constructor
@@ -360,12 +362,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// Test constructor with a zero length vector parameter
 		[Test]
-		[ExpectedException(typeof(System.RankException))]
 		public void ZeroLengthVectorTestsforConstructor1()
 		{
-			ComplexFloatVector cdv = new ComplexFloatVector(1, 0.0f);
-			cdv.RemoveAt(0);
-			ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(cdv);
+			Assert.Throws(typeof(System.RankException), () =>
+			{
+				ComplexFloatVector cdv = new ComplexFloatVector(1, 0.0f);
+				cdv.RemoveAt(0);
+				ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(cdv);
+			});
 		}
 
 		#endregion Zero Length Vector Tests for Constructor
@@ -818,11 +822,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Null Parameter Test for SolveVector
 
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullParameterTestforSolveVector()
 		{
-			ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
-			ComplexFloatVector X = cdsl.Solve(null as ComplexFloatVector);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
+				ComplexFloatVector X = cdsl.Solve(null as ComplexFloatVector);
+			});
 		}
 
 		#endregion Null Parameter Test for SolveVector
@@ -830,11 +836,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Mismatch Rows Test for SolveVector
 
 		[Test]
-		[ExpectedException(typeof(System.RankException))]
 		public void MismatchRowsTestforSolveVector()
 		{
-			ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T4);
-			ComplexFloatVector X = cdsl.Solve(X5);
+			Assert.Throws(typeof(System.RankException), () =>
+			{
+				ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T4);
+				ComplexFloatVector X = cdsl.Solve(X5);
+			});
 		}
 
 		#endregion Mismatch Rows Test for SolveVector
@@ -972,11 +980,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Null Parameter Test for SolveMatrix
 
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullParameterTestforSolveMatrix()
 		{
-			ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
-			ComplexFloatMatrix X = cdsl.Solve(null as ComplexFloatMatrix);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T5);
+				ComplexFloatMatrix X = cdsl.Solve(null as ComplexFloatMatrix);
+			});
 		}
 
 		#endregion Null Parameter Test for SolveMatrix
@@ -984,11 +994,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Mismatch Rows Test for SolveMatrix
 
 		[Test]
-		[ExpectedException(typeof(System.RankException))]
 		public void MismatchRowsTestforSolveMatrix()
 		{
-			ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T4);
-			ComplexFloatMatrix X = cdsl.Solve(I5);
+			Assert.Throws(typeof(System.RankException), () =>
+			{
+				ComplexFloatSymmetricLevinson cdsl = new ComplexFloatSymmetricLevinson(T4);
+				ComplexFloatMatrix X = cdsl.Solve(I5);
+			});
 		}
 
 		#endregion Mismatch Rows Test for SolveMatrix
@@ -1287,10 +1299,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test null parameter
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveVector1()
 		{
-			ComplexFloatVector X = ComplexFloatSymmetricLevinson.Solve(null, X5);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexFloatVector X = ComplexFloatSymmetricLevinson.Solve(null, X5);
+			});
 		}
 
 		#endregion Null Parameter Test 1 for Static SolveVector
@@ -1299,10 +1313,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test null parameter
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveVector2()
 		{
-			ComplexFloatVector X = ComplexFloatSymmetricLevinson.Solve(T5, null as ComplexFloatVector);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexFloatVector X = ComplexFloatSymmetricLevinson.Solve(T5, null as ComplexFloatVector);
+			});
 		}
 
 		#endregion Null Parameter Test for 2 Static SolveVector
@@ -1311,10 +1327,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test mismatching dimensions
 		[Test]
-		[ExpectedException(typeof(RankException))]
 		public void RowMismatchTestforStaticSolveVector()
 		{
-			ComplexFloatVector X = ComplexFloatSymmetricLevinson.Solve(T5, Y4);
+			Assert.Throws(typeof(RankException), () =>
+			{
+				ComplexFloatVector X = ComplexFloatSymmetricLevinson.Solve(T5, Y4);
+			});
 		}
 
 		#endregion Row Mismatch Test for Static SolveVector
@@ -1323,12 +1341,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test with Toeplitz matrix which has a singular principal sub-matrix
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void SingularTestforStaticSolveVector()
 		{
-			ComplexFloatVector T = new ComplexFloatVector(3);
-			T[2] = T[1] = T[0] = new ComplexFloat(1.0f, 1.0f);
-			ComplexFloatVector X = ComplexFloatSymmetricLevinson.Solve(T, T);
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				ComplexFloatVector T = new ComplexFloatVector(3);
+				T[2] = T[1] = T[0] = new ComplexFloat(1.0f, 1.0f);
+				ComplexFloatVector X = ComplexFloatSymmetricLevinson.Solve(T, T);
+			});
 		}
 
 		#endregion Singular Test for Static SolveVector
@@ -1457,10 +1477,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test null parameter
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveMatrix1()
 		{
-			ComplexFloatMatrix X = ComplexFloatSymmetricLevinson.Solve(null, L2);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexFloatMatrix X = ComplexFloatSymmetricLevinson.Solve(null, L2);
+			});
 		}
 
 		#endregion Null Parameter Test 1 for Static SolveMatrix
@@ -1469,10 +1491,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test null parameter
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveMatrix2()
 		{
-			ComplexFloatMatrix Y = ComplexFloatSymmetricLevinson.Solve(T2, null as ComplexFloatMatrix);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexFloatMatrix Y = ComplexFloatSymmetricLevinson.Solve(T2, null as ComplexFloatMatrix);
+			});
 		}
 
 		#endregion Null Parameter Test 2 for Static SolveMatrix
@@ -1481,10 +1505,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test mismatching dimensions
 		[Test]
-		[ExpectedException(typeof(RankException))]
 		public void RowMismatchTestforStaticSolveMatrix()
 		{
-			ComplexFloatMatrix X = ComplexFloatSymmetricLevinson.Solve(T2, L3);
+			Assert.Throws(typeof(RankException), () =>
+			{
+				ComplexFloatMatrix X = ComplexFloatSymmetricLevinson.Solve(T2, L3);
+			});
 		}
 
 		#endregion Row Mismatch Test for Static SolveMatrix
@@ -1493,12 +1519,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test with Toeplitz matrix which has a singular principal sub-matrix
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void SingularTestforStaticSolveMatrix()
 		{
-			ComplexFloatVector T = new ComplexFloatVector(3);
-			T[2] = T[1] = T[0] = new ComplexFloat(1.0f, 1.0f);
-			ComplexFloatMatrix X = ComplexFloatSymmetricLevinson.Solve(T, ComplexFloatMatrix.CreateIdentity(3));
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				ComplexFloatVector T = new ComplexFloatVector(3);
+				T[2] = T[1] = T[0] = new ComplexFloat(1.0f, 1.0f);
+				ComplexFloatMatrix X = ComplexFloatSymmetricLevinson.Solve(T, ComplexFloatMatrix.CreateIdentity(3));
+			});
 		}
 
 		#endregion Singular Test for Static SolveMatrix
@@ -1657,10 +1685,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test Yule-Walker with a null reference
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticYuleWalker()
 		{
-			ComplexFloatVector Y = ComplexFloatSymmetricLevinson.YuleWalker(null);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexFloatVector Y = ComplexFloatSymmetricLevinson.YuleWalker(null);
+			});
 		}
 
 		#endregion Null Parameter Test for Static YuleWalker
@@ -1669,12 +1699,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test Yule-Walker with order 1 matrix
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void RowTestforStaticYuleWalker()
 		{
-			ComplexFloatVector T = new ComplexFloatVector(1);
-			T[0] = new ComplexFloat(1.0f, 1.0f);
-			ComplexFloatVector Y = ComplexFloatSymmetricLevinson.YuleWalker(T);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				ComplexFloatVector T = new ComplexFloatVector(1);
+				T[0] = new ComplexFloat(1.0f, 1.0f);
+				ComplexFloatVector Y = ComplexFloatSymmetricLevinson.YuleWalker(T);
+			});
 		}
 
 		#endregion Row Test for Static YuleWalker
@@ -1683,12 +1715,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test Yule-Walker with matrix with singular principal sub-matrix
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void SingularTestforStaticYuleWalker()
 		{
-			ComplexFloatVector T = new ComplexFloatVector(3);
-			T[2] = T[1] = T[0] = new ComplexFloat(1.0f, 1.0f);
-			ComplexFloatVector Y = ComplexFloatSymmetricLevinson.YuleWalker(T);
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				ComplexFloatVector T = new ComplexFloatVector(3);
+				T[2] = T[1] = T[0] = new ComplexFloat(1.0f, 1.0f);
+				ComplexFloatVector Y = ComplexFloatSymmetricLevinson.YuleWalker(T);
+			});
 		}
 
 		#endregion Singular Test for Static YuleWalker
@@ -1796,10 +1830,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Null Prameter Test for Static Inverse
 
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullPrameterTestforStaticInverse()
 		{
-			ComplexFloatMatrix Y = ComplexFloatSymmetricLevinson.Inverse(null);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				ComplexFloatMatrix Y = ComplexFloatSymmetricLevinson.Inverse(null);
+			});
 		}
 
 		#endregion Null Prameter Test for Static Inverse
@@ -1807,16 +1843,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Singular Test for Static Inverse
 
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void SingularTestforStaticInverse()
 		{
-			// setup an ill-conditioned system (second order principal submatrix is singular)
-			ComplexFloatVector T = new ComplexFloatVector(3);
-			T[0] = ComplexFloat.One;
-			T[1] = ComplexFloat.One;
-			T[2] = ComplexFloat.One;
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				// setup an ill-conditioned system (second order principal submatrix is singular)
+				ComplexFloatVector T = new ComplexFloatVector(3);
+				T[0] = ComplexFloat.One;
+				T[1] = ComplexFloat.One;
+				T[2] = ComplexFloat.One;
 
-			ComplexFloatMatrix Y = ComplexFloatSymmetricLevinson.Inverse(T);
+				ComplexFloatMatrix Y = ComplexFloatSymmetricLevinson.Inverse(T);
+			});
 		}
 
 		#endregion Singular Test for Static Inverse

@@ -65,25 +65,29 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Current Exception with index=-1.
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void CurrentException()
 		{
-			DoubleVector test = new DoubleVector(new double[2] { 1, 2 });
-			IEnumerator enumerator = test.GetEnumerator();
-			object value = enumerator.Current;
+			Assert.Throws(typeof(InvalidOperationException), () =>
+			{
+				DoubleVector test = new DoubleVector(new double[2] { 1, 2 });
+				IEnumerator enumerator = test.GetEnumerator();
+				object value = enumerator.Current;
+			});
 		}
 
 		//Test Current Exception with index>length
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void CurrentException2()
 		{
-			DoubleVector test = new DoubleVector(new double[2] { 1, 2 });
-			IEnumerator enumerator = test.GetEnumerator();
-			enumerator.MoveNext();
-			enumerator.MoveNext();
-			enumerator.MoveNext();
-			object value = enumerator.Current;
+			Assert.Throws(typeof(InvalidOperationException), () =>
+			{
+				DoubleVector test = new DoubleVector(new double[2] { 1, 2 });
+				IEnumerator enumerator = test.GetEnumerator();
+				enumerator.MoveNext();
+				enumerator.MoveNext();
+				enumerator.MoveNext();
+				object value = enumerator.Current;
+			});
 		}
 	}
 }

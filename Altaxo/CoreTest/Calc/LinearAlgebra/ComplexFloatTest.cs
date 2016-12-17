@@ -118,35 +118,43 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullString()
 		{
-			string s = null;
-			ComplexFloat cf = new ComplexFloat(s);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				string s = null;
+				ComplexFloat cf = new ComplexFloat(s);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(FormatException))]
 		public void FormatExceptionTest1()
 		{
-			string s = "";
-			ComplexFloat cf = new ComplexFloat(s);
+			Assert.Throws(typeof(FormatException), () =>
+			{
+				string s = "";
+				ComplexFloat cf = new ComplexFloat(s);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(FormatException))]
 		public void FormatExceptionTest2()
 		{
-			string s = "+";
-			ComplexFloat cf = new ComplexFloat(s);
+			Assert.Throws(typeof(FormatException), () =>
+			{
+				string s = "+";
+				ComplexFloat cf = new ComplexFloat(s);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(FormatException))]
 		public void FormatExceptionTest3()
 		{
-			string s = "1i+2";
-			ComplexFloat cf = new ComplexFloat(s);
+			Assert.Throws(typeof(FormatException), () =>
+			{
+				string s = "1i+2";
+				ComplexFloat cf = new ComplexFloat(s);
+			});
 		}
 
 		[Test]

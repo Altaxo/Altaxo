@@ -70,10 +70,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullTest()
 		{
-			FloatQRDecomp test = new FloatQRDecomp(null);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				FloatQRDecomp test = new FloatQRDecomp(null);
+			});
 		}
 
 		[Test]
@@ -281,17 +283,21 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		}
 
 		[Test]
-		[ExpectedException(typeof(NotSquareMatrixException))]
 		public void GetWideDeterminantTest()
 		{
-			float det = wqr.GetDeterminant();
+			Assert.Throws(typeof(NotSquareMatrixException), () =>
+			{
+				float det = wqr.GetDeterminant();
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(NotSquareMatrixException))]
 		public void GetLongDeterminantTest()
 		{
-			float det = lqr.GetDeterminant();
+			Assert.Throws(typeof(NotSquareMatrixException), () =>
+			{
+				float det = lqr.GetDeterminant();
+			});
 		}
 	}
 }

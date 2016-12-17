@@ -85,11 +85,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Copy Constructor.
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CtorCopyNull()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(a);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(a);
+			});
 		}
 
 		//Test Copy Constructor.
@@ -117,11 +119,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Copy Constructor.
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CtorCopyComplexFloatNull()
 		{
-			FloatMatrix a = null;
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(a);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				FloatMatrix a = null;
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(a);
+			});
 		}
 
 		//Test Copy Constructor.
@@ -149,11 +153,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Copy Constructor.
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CtorCopyFloatNull()
 		{
-			FloatMatrix a = null;
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(a);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				FloatMatrix a = null;
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(a);
+			});
 		}
 
 		//Test Copy Constructor.
@@ -181,11 +187,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Copy Constructor.
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CtorCopyDoubleNull()
 		{
-			FloatMatrix a = null;
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(a);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				FloatMatrix a = null;
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(a);
+			});
 		}
 
 		//Test Multiple Dimensional ComplexDoubleArray Constructor with Square array.
@@ -261,11 +269,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Multiple Dimensional Complex Array Constructor with null.
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CtorMultDimComplexDoubleNull()
 		{
-			double[,] values = null;
-			ComplexDoubleMatrix test = new ComplexDoubleMatrix(values);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				double[,] values = null;
+				ComplexDoubleMatrix test = new ComplexDoubleMatrix(values);
+			});
 		}
 
 		//Test Multiple Dimensional ComplexFloat Array Constructor with Square array.
@@ -341,11 +351,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Multiple Dimensional ComplexFloat Array Constructor with null.
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CtorMultDimComplexFloatNull()
 		{
-			float[,] values = null;
-			ComplexDoubleMatrix test = new ComplexDoubleMatrix(values);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				float[,] values = null;
+				ComplexDoubleMatrix test = new ComplexDoubleMatrix(values);
+			});
 		}
 
 		//Test Multiple Dimensional DoubleArray Constructor with Square array.
@@ -421,11 +433,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Multiple Dimensional Double Array Constructor with null.
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CtorMultDimDoubleNull()
 		{
-			double[,] values = null;
-			ComplexDoubleMatrix test = new ComplexDoubleMatrix(values);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				double[,] values = null;
+				ComplexDoubleMatrix test = new ComplexDoubleMatrix(values);
+			});
 		}
 
 		//Test Multiple Dimensional Float Array Constructor with Square array.
@@ -501,20 +515,24 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Multiple Dimensional Float Array Constructor with null.
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CtorMultDimFloatNull()
 		{
-			float[,] values = null;
-			ComplexDoubleMatrix test = new ComplexDoubleMatrix(values);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				float[,] values = null;
+				ComplexDoubleMatrix test = new ComplexDoubleMatrix(values);
+			});
 		}
 
 		//Test Jagged Array  Constructor with null.
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CtorJaggedNull()
 		{
-			double[,] values = null;
-			ComplexDoubleMatrix test = new ComplexDoubleMatrix(values);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				double[,] values = null;
+				ComplexDoubleMatrix test = new ComplexDoubleMatrix(values);
+			});
 		}
 
 		//Test implicit conversion from ComplexFloatMatrix.
@@ -1090,50 +1108,58 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test Invert singular
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void InvertSingular()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-			a.Invert();
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
+				a.Invert();
+			});
 		}
 
 		//test Invert not square
 		[Test]
-		[ExpectedException(typeof(NotSquareMatrixException))]
 		public void InvertNotSquare()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(3, 2);
-			a[0, 0] = new Complex(2);
-			a[0, 1] = new Complex(4);
-			a[1, 0] = new Complex(3);
-			a[1, 1] = new Complex(7);
-			a[2, 0] = new Complex(5);
-			a[2, 1] = new Complex(5);
-			a.Invert();
+			Assert.Throws(typeof(NotSquareMatrixException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(3, 2);
+				a[0, 0] = new Complex(2);
+				a[0, 1] = new Complex(4);
+				a[1, 0] = new Complex(3);
+				a[1, 1] = new Complex(7);
+				a[2, 0] = new Complex(5);
+				a[2, 1] = new Complex(5);
+				a.Invert();
+			});
 		}
 
 		//test GetInverse singular
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void GetInverseSingular()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-			ComplexDoubleMatrix b = a.GetInverse();
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
+				ComplexDoubleMatrix b = a.GetInverse();
+			});
 		}
 
 		//test GetInverse not square
 		[Test]
-		[ExpectedException(typeof(NotSquareMatrixException))]
 		public void GetInverseNotSquare()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(3, 2);
-			a[0, 0] = new Complex(2);
-			a[0, 1] = new Complex(4);
-			a[1, 0] = new Complex(3);
-			a[1, 1] = new Complex(7);
-			a[2, 0] = new Complex(5);
-			a[2, 1] = new Complex(5);
-			ComplexDoubleMatrix b = a.GetInverse();
+			Assert.Throws(typeof(NotSquareMatrixException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(3, 2);
+				a[0, 0] = new Complex(2);
+				a[0, 1] = new Complex(4);
+				a[1, 0] = new Complex(3);
+				a[1, 1] = new Complex(7);
+				a[2, 0] = new Complex(5);
+				a[2, 1] = new Complex(5);
+				ComplexDoubleMatrix b = a.GetInverse();
+			});
 		}
 
 		//test GetInverse
@@ -1169,17 +1195,19 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test GetDeterminant
 		[Test]
-		[ExpectedException(typeof(NotSquareMatrixException))]
 		public void GetDeterminantNotSquare()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(3, 2);
-			a[0, 0] = new Complex(2);
-			a[0, 1] = new Complex(4);
-			a[1, 0] = new Complex(3);
-			a[1, 1] = new Complex(7);
-			a[2, 0] = new Complex(5);
-			a[2, 1] = new Complex(5);
-			Complex b = a.GetDeterminant();
+			Assert.Throws(typeof(NotSquareMatrixException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(3, 2);
+				a[0, 0] = new Complex(2);
+				a[0, 1] = new Complex(4);
+				a[1, 0] = new Complex(3);
+				a[1, 1] = new Complex(7);
+				a[2, 0] = new Complex(5);
+				a[2, 1] = new Complex(5);
+				Complex b = a.GetDeterminant();
+			});
 		}
 
 		//test GetRow
@@ -1198,11 +1226,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test GetRow
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void GetRowOutOfRange()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-			ComplexDoubleVector b = a.GetRow(3);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
+				ComplexDoubleVector b = a.GetRow(3);
+			});
 		}
 
 		//test GetColumn
@@ -1221,11 +1251,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test GetColumn
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void GetColumnOutOfRange()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-			ComplexDoubleVector b = a.GetColumn(3);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
+				ComplexDoubleVector b = a.GetColumn(3);
+			});
 		}
 
 		//test GetDiagonal
@@ -1257,22 +1289,26 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test SetRow
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SetRowOutOfRange()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-			ComplexDoubleVector b = new ComplexDoubleVector(2);
-			a.SetRow(2, b);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
+				ComplexDoubleVector b = new ComplexDoubleVector(2);
+				a.SetRow(2, b);
+			});
 		}
 
 		//test SetRow
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void SetRowWrongRank()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-			ComplexDoubleVector b = new ComplexDoubleVector(3);
-			a.SetRow(1, b);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
+				ComplexDoubleVector b = new ComplexDoubleVector(3);
+				a.SetRow(1, b);
+			});
 		}
 
 		//test SetRow
@@ -1291,22 +1327,26 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test SetRow
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SetRowArrayOutOfRange()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-			Complex[] b = new Complex[2];
-			a.SetRow(2, b);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
+				Complex[] b = new Complex[2];
+				a.SetRow(2, b);
+			});
 		}
 
 		//test SetRow
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void SetRowArrayWrongRank()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-			Complex[] b = new Complex[3];
-			a.SetRow(1, b);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
+				Complex[] b = new Complex[3];
+				a.SetRow(1, b);
+			});
 		}
 
 		//test SetColumn
@@ -1324,22 +1364,26 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test SetColumn
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SetColumnOutOfRange()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-			ComplexDoubleVector b = new ComplexDoubleVector(2);
-			a.SetColumn(2, b);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
+				ComplexDoubleVector b = new ComplexDoubleVector(2);
+				a.SetColumn(2, b);
+			});
 		}
 
 		//test SetColumn
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void SetColumnWrongRank()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-			ComplexDoubleVector b = new ComplexDoubleVector(3);
-			a.SetColumn(1, b);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
+				ComplexDoubleVector b = new ComplexDoubleVector(3);
+				a.SetColumn(1, b);
+			});
 		}
 
 		//test SetColumn
@@ -1357,22 +1401,26 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test SetColumn
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void SetColumnArrayOutOfRange()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-			Complex[] b = new Complex[2];
-			a.SetColumn(2, b);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
+				Complex[] b = new Complex[2];
+				a.SetColumn(2, b);
+			});
 		}
 
 		//test SetColumn
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void SetColumnArrayWrongRank()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
-			Complex[] b = new Complex[3];
-			a.SetColumn(1, b);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2);
+				Complex[] b = new Complex[3];
+				a.SetColumn(1, b);
+			});
 		}
 
 		//test SetDiagonal
@@ -1429,47 +1477,57 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test GetSubMatrix
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void GetSubMatrixOutRange1()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(4);
-			ComplexDoubleMatrix b = a.GetSubMatrix(-1, 2);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(4);
+				ComplexDoubleMatrix b = a.GetSubMatrix(-1, 2);
+			});
 		}
 
 		//test GetSubMatrix
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void GetSubMatrixOutRange2()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(4);
-			ComplexDoubleMatrix b = a.GetSubMatrix(2, 4);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(4);
+				ComplexDoubleMatrix b = a.GetSubMatrix(2, 4);
+			});
 		}
 
 		//test GetSubMatrix
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void GetSubMatrixOutRange3()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(4);
-			ComplexDoubleMatrix b = a.GetSubMatrix(0, 0, 4, 2);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(4);
+				ComplexDoubleMatrix b = a.GetSubMatrix(0, 0, 4, 2);
+			});
 		}
 
 		//test GetSubMatrix
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void GetSubMatrixOutRange4()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(4);
-			ComplexDoubleMatrix b = a.GetSubMatrix(0, 0, 2, 4);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(4);
+				ComplexDoubleMatrix b = a.GetSubMatrix(0, 0, 2, 4);
+			});
 		}
 
 		//test GetSubMatrix
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void GetSubMatrixOutRange5()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(4);
-			ComplexDoubleMatrix b = a.GetSubMatrix(0, 3, 2, 2);
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(4);
+				ComplexDoubleMatrix b = a.GetSubMatrix(0, 3, 2, 2);
+			});
 		}
 
 		//test GetUpperTriangle square matrix
@@ -1791,11 +1849,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//static NegateNull
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NegateNull()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleMatrix b = ComplexDoubleMatrix.Negate(a);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleMatrix b = ComplexDoubleMatrix.Negate(a);
+			});
 		}
 
 		//static operator -
@@ -1817,11 +1877,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//static operator - null
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void OperatorMinusNull()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleMatrix b = -a;
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleMatrix b = -a;
+			});
 		}
 
 		//static subtact two square matrices
@@ -1877,62 +1939,74 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//static Subtract two square matrices, one null
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void StaticSubtractNull()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = null;
-			ComplexDoubleMatrix c = ComplexDoubleMatrix.Subtract(a, b);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = null;
+				ComplexDoubleMatrix c = ComplexDoubleMatrix.Subtract(a, b);
+			});
 		}
 
 		//operator Subtract two square matrices, one null
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void OperatorSubtractNull()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = null;
-			ComplexDoubleMatrix c = a - b;
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = null;
+				ComplexDoubleMatrix c = a - b;
+			});
 		}
 
 		//member Subtract two square matrices, one null
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void MemberSubtractNull()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = null;
-			a.Subtract(b);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = null;
+				a.Subtract(b);
+			});
 		}
 
 		//static Subtract two incompatible matrices
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void StaticSubtractIncompatible()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
-			ComplexDoubleMatrix c = ComplexDoubleMatrix.Subtract(a, b);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
+				ComplexDoubleMatrix c = ComplexDoubleMatrix.Subtract(a, b);
+			});
 		}
 
 		//operator Subtract two  incompatible matrices
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void OperatorSubtractIncompatible()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
-			ComplexDoubleMatrix c = a - b;
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
+				ComplexDoubleMatrix c = a - b;
+			});
 		}
 
 		//member Subtract two  incompatible matricess
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void MemberSubtractIncompatible()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
-			a.Subtract(b);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
+				a.Subtract(b);
+			});
 		}
 
 		//static add two square matrices
@@ -1988,62 +2062,74 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//static add two square matrices, one null
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void StaticAddNull()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = null;
-			ComplexDoubleMatrix c = ComplexDoubleMatrix.Add(a, b);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = null;
+				ComplexDoubleMatrix c = ComplexDoubleMatrix.Add(a, b);
+			});
 		}
 
 		//operator add two square matrices, one null
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void OperatorAddNull()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = null;
-			ComplexDoubleMatrix c = a + b;
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = null;
+				ComplexDoubleMatrix c = a + b;
+			});
 		}
 
 		//member add two square matrices, one null
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void MemberAddNull()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = null;
-			a.Add(b);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = null;
+				a.Add(b);
+			});
 		}
 
 		//static add two incompatible matrices
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void StaticAddIncompatible()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
-			ComplexDoubleMatrix c = ComplexDoubleMatrix.Add(a, b);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
+				ComplexDoubleMatrix c = ComplexDoubleMatrix.Add(a, b);
+			});
 		}
 
 		//operator add two  incompatible matrices
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void OperatorAddIncompatible()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
-			ComplexDoubleMatrix c = a + b;
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
+				ComplexDoubleMatrix c = a + b;
+			});
 		}
 
 		//member add two  incompatible matricess
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void MemberAddIncompatible()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
-			a.Add(b);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(3);
+				a.Add(b);
+			});
 		}
 
 		//static divide matrix by double
@@ -2096,20 +2182,24 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//static divide null matrix by double
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void StaticDivideNull()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleMatrix b = ComplexDoubleMatrix.Divide(a, 2);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleMatrix b = ComplexDoubleMatrix.Divide(a, 2);
+			});
 		}
 
 		//operator divide null matrix by double
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void OperatorDivideNull()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleMatrix b = a / 2;
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleMatrix b = a / 2;
+			});
 		}
 
 		//copy
@@ -2147,11 +2237,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test multiply double null matrix operator *
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void OperatorMultiplyComplexDoubleMatrixNull()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleMatrix b = 2.0 * a;
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleMatrix b = 2.0 * a;
+			});
 		}
 
 		//test multiply  matrix double operator *
@@ -2172,11 +2264,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test multiply  null matrix double operator *
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void OperatorMultiplyMatrixComplexDoubleNull()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleMatrix b = a * 2;
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleMatrix b = a * 2;
+			});
 		}
 
 		//test static multiply double matrix
@@ -2197,11 +2291,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test static multiply double null matrix
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void StaticMultiplyComplexDoubleMatrixNull()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleMatrix b = ComplexDoubleMatrix.Multiply(2.0, a);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleMatrix b = ComplexDoubleMatrix.Multiply(2.0, a);
+			});
 		}
 
 		//test static multiply  matrix double
@@ -2223,11 +2319,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test static multiply  null matrix double operator *
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void StaticMultiplyMatrixComplexDoubleNull()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleMatrix b = ComplexDoubleMatrix.Multiply(a, 2.0);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleMatrix b = ComplexDoubleMatrix.Multiply(a, 2.0);
+			});
 		}
 
 		//test member multiply  double
@@ -2263,32 +2361,38 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test multiply  matrix nonconform vector operator *
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void OperatorMultiplyMatrixNonConformVector()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleVector b = new ComplexDoubleVector(3, 2.0);
-			ComplexDoubleVector c = a * b;
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleVector b = new ComplexDoubleVector(3, 2.0);
+				ComplexDoubleVector c = a * b;
+			});
 		}
 
 		//test multiply null matrix vector operator *
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void OperatorMultiplyNullMatrixVector()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleVector b = new ComplexDoubleVector(2, 2.0);
-			ComplexDoubleVector c = a * b;
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleVector b = new ComplexDoubleVector(2, 2.0);
+				ComplexDoubleVector c = a * b;
+			});
 		}
 
 		//test multiply matrix null vector operator *
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void OperatorMultiplyMatrixNullVector()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleVector b = null;
-			ComplexDoubleVector c = a * b;
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleVector b = null;
+				ComplexDoubleVector c = a * b;
+			});
 		}
 
 		//test static multiply  matrix vector
@@ -2308,32 +2412,38 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test static multiply  matrix nonconform vector
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void StaticMultiplyMatrixNonConformVector()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleVector b = new ComplexDoubleVector(3, 2.0);
-			ComplexDoubleVector c = a * b;
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleVector b = new ComplexDoubleVector(3, 2.0);
+				ComplexDoubleVector c = a * b;
+			});
 		}
 
 		//test static multiply null matrix vector
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void StaticMultiplyNullMatrixVector()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleVector b = new ComplexDoubleVector(2, 2.0);
-			ComplexDoubleVector c = ComplexDoubleMatrix.Multiply(a, b);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleVector b = new ComplexDoubleVector(2, 2.0);
+				ComplexDoubleVector c = ComplexDoubleMatrix.Multiply(a, b);
+			});
 		}
 
 		//test static multiply matrix null vector
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void StaticMultiplyMatrixNullVector()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleVector b = null;
-			ComplexDoubleVector c = ComplexDoubleMatrix.Multiply(a, b);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleVector b = null;
+				ComplexDoubleVector c = ComplexDoubleMatrix.Multiply(a, b);
+			});
 		}
 
 		//test member multiply vector
@@ -2355,22 +2465,26 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test member multiply  matrix nonconform vector
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void MemberMultiplyMatrixNonConformVector()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleVector b = new ComplexDoubleVector(3, 2.0);
-			a.Multiply(b);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleVector b = new ComplexDoubleVector(3, 2.0);
+				a.Multiply(b);
+			});
 		}
 
 		//test member multiply null vector
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void MemberMultiplyNullVector()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleVector b = null;
-			a.Multiply(b);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleVector b = null;
+				a.Multiply(b);
+			});
 		}
 
 		//test multiply  matrix matrix operator *
@@ -2392,12 +2506,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test multiply  nonconform matrix matrix operator *
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void OperatorMultiplyMatrixNonConformMatrix()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(3, 2, 2.0);
-			ComplexDoubleMatrix c = a * b;
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(3, 2, 2.0);
+				ComplexDoubleMatrix c = a * b;
+			});
 		}
 
 		//test multiply  long matrix wide matrix operator *
@@ -2433,22 +2549,26 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test multiply null matrix matrix operator *
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void OperatorMultiplyNullMatrixMatrix()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(2, 2.0);
-			ComplexDoubleMatrix c = a * b;
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(2, 2.0);
+				ComplexDoubleMatrix c = a * b;
+			});
 		}
 
 		//test multiply matrix null matrix operator *
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void OperatorMultiplyMatrixNullMatrix()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2.0);
-			ComplexDoubleMatrix b = null;
-			ComplexDoubleMatrix c = a * b;
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2.0);
+				ComplexDoubleMatrix b = null;
+				ComplexDoubleMatrix c = a * b;
+			});
 		}
 
 		//test static multiply  matrix matrix
@@ -2470,12 +2590,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test static multiply nonconform matrix matrix
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void StaticMultiplyMatrixNonConformMatrix()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(3, 2, 2.0);
-			ComplexDoubleMatrix c = ComplexDoubleMatrix.Multiply(a, b);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(3, 2, 2.0);
+				ComplexDoubleMatrix c = ComplexDoubleMatrix.Multiply(a, b);
+			});
 		}
 
 		//test static multiply  long matrix wide matrix
@@ -2511,22 +2633,26 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test static multiply null matrix matrix
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void StaticMultiplyNullMatrixMatrix()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(2, 2.0);
-			ComplexDoubleMatrix c = ComplexDoubleMatrix.Multiply(a, b);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(2, 2.0);
+				ComplexDoubleMatrix c = ComplexDoubleMatrix.Multiply(a, b);
+			});
 		}
 
 		//test static multiply matrix null matrix
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void StaticMultiplyMatrixNullMatrix()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2.0);
-			ComplexDoubleMatrix b = null;
-			ComplexDoubleMatrix c = ComplexDoubleMatrix.Multiply(a, b);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2.0);
+				ComplexDoubleMatrix b = null;
+				ComplexDoubleMatrix c = ComplexDoubleMatrix.Multiply(a, b);
+			});
 		}
 
 		//test member multiply  matrix matrix
@@ -2548,12 +2674,14 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test member multiply nonconform matrix matrix
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void MemberMultiplyMatrixNonConformMatrix()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(3, 2, 2.0);
-			a.Multiply(b);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2);
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(3, 2, 2.0);
+				a.Multiply(b);
+			});
 		}
 
 		//test member multiply  long matrix wide matrix
@@ -2589,22 +2717,26 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//test member multiply null matrix matrix
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void MemberMultiplyNullMatrixMatrix()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2.0);
-			ComplexDoubleMatrix b = null;
-			a.Multiply(b);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 2.0);
+				ComplexDoubleMatrix b = null;
+				a.Multiply(b);
+			});
 		}
 
 		//copy null
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CopyNull()
 		{
-			ComplexDoubleMatrix a = null;
-			ComplexDoubleMatrix b = new ComplexDoubleMatrix(2);
-			b.Copy(a);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleMatrix a = null;
+				ComplexDoubleMatrix b = new ComplexDoubleMatrix(2);
+				b.Copy(a);
+			});
 		}
 
 		//Norm
@@ -2670,20 +2802,24 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Wide Condition
 		[Test]
-		[ExpectedException(typeof(NotSquareMatrixException))]
 		public void WideCondition()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 3);
-			a.GetConditionNumber();
+			Assert.Throws(typeof(NotSquareMatrixException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(2, 3);
+				a.GetConditionNumber();
+			});
 		}
 
 		//Long Condition
 		[Test]
-		[ExpectedException(typeof(NotSquareMatrixException))]
 		public void LongCondition()
 		{
-			ComplexDoubleMatrix a = new ComplexDoubleMatrix(3, 2);
-			a.GetConditionNumber();
+			Assert.Throws(typeof(NotSquareMatrixException), () =>
+			{
+				ComplexDoubleMatrix a = new ComplexDoubleMatrix(3, 2);
+				a.GetConditionNumber();
+			});
 		}
 
 		//clone

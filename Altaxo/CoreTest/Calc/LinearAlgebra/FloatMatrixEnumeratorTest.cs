@@ -73,27 +73,31 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Current Exception with index=-1.
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void CurrentException()
 		{
-			FloatMatrix test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
-			IEnumerator enumerator = test.GetEnumerator();
-			object value = enumerator.Current;
+			Assert.Throws(typeof(InvalidOperationException), () =>
+			{
+				FloatMatrix test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
+				IEnumerator enumerator = test.GetEnumerator();
+				object value = enumerator.Current;
+			});
 		}
 
 		//Test Current Exception with index>length
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void CurrentException2()
 		{
-			FloatMatrix test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
-			IEnumerator enumerator = test.GetEnumerator();
-			enumerator.MoveNext();
-			enumerator.MoveNext();
-			enumerator.MoveNext();
-			enumerator.MoveNext();
-			enumerator.MoveNext();
-			object value = enumerator.Current;
+			Assert.Throws(typeof(InvalidOperationException), () =>
+			{
+				FloatMatrix test = new FloatMatrix(new float[2, 2] { { 1f, 2f }, { 3f, 4f } });
+				IEnumerator enumerator = test.GetEnumerator();
+				enumerator.MoveNext();
+				enumerator.MoveNext();
+				enumerator.MoveNext();
+				enumerator.MoveNext();
+				enumerator.MoveNext();
+				object value = enumerator.Current;
+			});
 		}
 	}
 }

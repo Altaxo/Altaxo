@@ -40,7 +40,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		private ComplexFloatSVDDecomp wsvd;
 		private const float TOLERENCE = 2.000E-6f;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void SetupTestCases()
 		{
 			a = new ComplexFloatMatrix(3);

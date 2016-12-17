@@ -47,18 +47,22 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Copy Constructor.
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CtorDimensionsZero()
 		{
-			FloatVector test = new FloatVector(0);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				FloatVector test = new FloatVector(0);
+			});
 		}
 
 		//Test Copy Constructor.
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CtorDimensionsNegative()
 		{
-			FloatVector test = new FloatVector(-1);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				FloatVector test = new FloatVector(-1);
+			});
 		}
 
 		//Test Intital Values Constructor.
@@ -100,47 +104,57 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Copy Constructor.
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CtorCopyNull()
 		{
-			FloatVector a = null;
-			FloatVector b = new FloatVector(a);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				FloatVector a = null;
+				FloatVector b = new FloatVector(a);
+			});
 		}
 
 		//Test Index Access
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexAccessGetNegative()
 		{
-			FloatVector a = new FloatVector(new float[2] { 0, 1 });
-			float b = a[-1];
+			Assert.Throws(typeof(IndexOutOfRangeException), () =>
+			{
+				FloatVector a = new FloatVector(new float[2] { 0, 1 });
+				float b = a[-1];
+			});
 		}
 
 		//Test Index Access
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexAccessSetNegative()
 		{
-			FloatVector a = new FloatVector(2);
-			a[-1] = 1;
+			Assert.Throws(typeof(IndexOutOfRangeException), () =>
+			{
+				FloatVector a = new FloatVector(2);
+				a[-1] = 1;
+			});
 		}
 
 		//Test Index Access
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexAccessGetOutOfRange()
 		{
-			FloatVector a = new FloatVector(new float[2] { 0, 1 });
-			float b = a[2];
+			Assert.Throws(typeof(IndexOutOfRangeException), () =>
+			{
+				FloatVector a = new FloatVector(new float[2] { 0, 1 });
+				float b = a[2];
+			});
 		}
 
 		//Test Index Access
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexAccessSetOutOfRange()
 		{
-			FloatVector a = new FloatVector(2);
-			a[2] = 1;
+			Assert.Throws(typeof(IndexOutOfRangeException), () =>
+			{
+				FloatVector a = new FloatVector(2);
+				a[2] = 1;
+			});
 		}
 
 		//Test Equals
@@ -292,24 +306,28 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test invalid dimensions with copy
 		[Test]
-		[ExpectedException(typeof(System.ArgumentException))]
 		public void CopyException()
 		{
-			FloatVector a = new FloatVector(new float[4] { 0, 1, 2, 3 });
-			FloatVector b = new FloatVector(5);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				FloatVector a = new FloatVector(new float[4] { 0, 1, 2, 3 });
+				FloatVector b = new FloatVector(5);
 
-			a.Copy(b);
+				a.Copy(b);
+			});
 		}
 
 		//Test invalid dimensions with swap
 		[Test]
-		[ExpectedException(typeof(System.ArgumentException))]
 		public void SwapException()
 		{
-			FloatVector a = new FloatVector(new float[4] { 0, 1, 2, 3 });
-			FloatVector b = new FloatVector(new float[5] { 4, 5, 6, 7, 8 });
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				FloatVector a = new FloatVector(new float[4] { 0, 1, 2, 3 });
+				FloatVector b = new FloatVector(new float[5] { 4, 5, 6, 7, 8 });
 
-			a.Swap(b);
+				a.Swap(b);
+			});
 		}
 
 		//Test Copy and Swap
@@ -621,13 +639,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test IEnumerable and DoubleVectorEnumerator
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void GetEnumeratorException()
 		{
-			FloatVector a = new FloatVector(new float[4] { 0, 1, 2, 3 });
-			IEnumerator dve = a.GetEnumerator();
+			Assert.Throws(typeof(InvalidOperationException), () =>
+			{
+				FloatVector a = new FloatVector(new float[4] { 0, 1, 2, 3 });
+				IEnumerator dve = a.GetEnumerator();
 
-			double b = (double)dve.Current;
+				double b = (double)dve.Current;
+			});
 		}
 
 		//Test IEnumerable and DoubleVectorEnumerator

@@ -48,18 +48,22 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Copy Constructor.
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CtorDimensionsZero()
 		{
-			ComplexDoubleVector test = new ComplexDoubleVector(0);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleVector test = new ComplexDoubleVector(0);
+			});
 		}
 
 		//Test Copy Constructor.
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void CtorDimensionsNegative()
 		{
-			ComplexDoubleVector test = new ComplexDoubleVector(-1);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleVector test = new ComplexDoubleVector(-1);
+			});
 		}
 
 		//Test Intital Values Constructor.
@@ -101,47 +105,57 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test Copy Constructor.
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void CtorCopyNull()
 		{
-			ComplexDoubleVector a = null;
-			ComplexDoubleVector b = new ComplexDoubleVector(a);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				ComplexDoubleVector a = null;
+				ComplexDoubleVector b = new ComplexDoubleVector(a);
+			});
 		}
 
 		//Test Index Access
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexAccessGetNegative()
 		{
-			ComplexDoubleVector a = new ComplexDoubleVector(new double[2] { 0, 1 });
-			Complex b = a[-1];
+			Assert.Throws(typeof(IndexOutOfRangeException), () =>
+			{
+				ComplexDoubleVector a = new ComplexDoubleVector(new double[2] { 0, 1 });
+				Complex b = a[-1];
+			});
 		}
 
 		//Test Index Access
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexAccessSetNegative()
 		{
-			ComplexDoubleVector a = new ComplexDoubleVector(2);
-			a[-1] = 1;
+			Assert.Throws(typeof(IndexOutOfRangeException), () =>
+			{
+				ComplexDoubleVector a = new ComplexDoubleVector(2);
+				a[-1] = 1;
+			});
 		}
 
 		//Test Index Access
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexAccessGetOutOfRange()
 		{
-			ComplexDoubleVector a = new ComplexDoubleVector(new double[2] { 0, 1 });
-			Complex b = a[2];
+			Assert.Throws(typeof(IndexOutOfRangeException), () =>
+			{
+				ComplexDoubleVector a = new ComplexDoubleVector(new double[2] { 0, 1 });
+				Complex b = a[2];
+			});
 		}
 
 		//Test Index Access
 		[Test]
-		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexAccessSetOutOfRange()
 		{
-			ComplexDoubleVector a = new ComplexDoubleVector(2);
-			a[2] = 1;
+			Assert.Throws(typeof(IndexOutOfRangeException), () =>
+			{
+				ComplexDoubleVector a = new ComplexDoubleVector(2);
+				a[2] = 1;
+			});
 		}
 
 		//Test Equals
@@ -300,24 +314,28 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test invalid dimensions with copy
 		[Test]
-		[ExpectedException(typeof(System.ArgumentException))]
 		public void CopyException()
 		{
-			ComplexDoubleVector a = new ComplexDoubleVector(new double[4] { 0, 1, 2, 3 });
-			ComplexDoubleVector b = new ComplexDoubleVector(5);
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleVector a = new ComplexDoubleVector(new double[4] { 0, 1, 2, 3 });
+				ComplexDoubleVector b = new ComplexDoubleVector(5);
 
-			a.Copy(b);
+				a.Copy(b);
+			});
 		}
 
 		//Test invalid dimensions with swap
 		[Test]
-		[ExpectedException(typeof(System.ArgumentException))]
 		public void SwapException()
 		{
-			ComplexDoubleVector a = new ComplexDoubleVector(new double[4] { 0, 1, 2, 3 });
-			ComplexDoubleVector b = new ComplexDoubleVector(new double[5] { 4, 5, 6, 7, 8 });
+			Assert.Throws(typeof(ArgumentException), () =>
+			{
+				ComplexDoubleVector a = new ComplexDoubleVector(new double[4] { 0, 1, 2, 3 });
+				ComplexDoubleVector b = new ComplexDoubleVector(new double[5] { 4, 5, 6, 7, 8 });
 
-			a.Swap(b);
+				a.Swap(b);
+			});
 		}
 
 		//Test Copy and Swap
@@ -629,13 +647,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		//Test IEnumerable and DoubleVectorEnumerator
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void GetEnumeratorException()
 		{
-			ComplexDoubleVector a = new ComplexDoubleVector(new Complex[4] { 0, 1, 2, 3 });
-			IEnumerator dve = a.GetEnumerator();
+			Assert.Throws(typeof(InvalidOperationException), () =>
+			{
+				ComplexDoubleVector a = new ComplexDoubleVector(new Complex[4] { 0, 1, 2, 3 });
+				IEnumerator dve = a.GetEnumerator();
 
-			Complex b = (Complex)dve.Current;
+				Complex b = (Complex)dve.Current;
+			});
 		}
 
 		//Test IEnumerable and DoubleVectorEnumerator

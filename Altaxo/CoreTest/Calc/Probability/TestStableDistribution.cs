@@ -779,7 +779,7 @@ new double[]{2,1,0,0.163322405649358235},
 new double[]{2,1,0.5,0.16586489168167542},
 new double[]{2,1,4,0.0550494776762009875},
 new double[]{2,1,10,0.0000600054567345840717}
-     };
+		 };
 
 		[Test]
 		public void PdfTestS1()
@@ -1044,8 +1044,8 @@ new double[]{2,1,10,0.999965714364872786},
 		#region Test data
 
 		private static readonly double[][] _dataS0ToFeller =
-      {
-    new double[]{1.421085471520200371742249e-14,-1.0,0,1.421085471520200371742249e-14,0,1.00000000000001753193928,2.232235838725524415666714e-14},
+			{
+		new double[]{1.421085471520200371742249e-14,-1.0,0,1.421085471520200371742249e-14,0,1.00000000000001753193928,2.232235838725524415666714e-14},
 new double[]{1.421085471520200371742249e-14,-1.0,7.888609052210118054117286e-31,1.421085471520200371742249e-14,7.888609052210118054117286e-31,1.00000000000001753193928,2.232235838725524415666714e-14},
 new double[]{1.421085471520200371742249e-14,-0.999999999883584678173065,1.16415321826934814453125e-10,1.421085471354764249231643e-14,1.16415321826934814453125e-10,1.000000000000017531939276,2.232235838465657962107864e-14},
 new double[]{1.421085471520200371742249e-14,-0.9990234375,0.0009765625,1.419697692739418926066719e-14,0.0009765625,1.000000000000017497713931,2.23005592091426902072954e-14},
@@ -1225,7 +1225,7 @@ new double[]{2.0,0.9990234375,0.0009765625,0,0,1.0,0},
 new double[]{2.0,0.999999999883584678173065,1.16415321826934814453125e-10,0,0,1.0,0},
 new double[]{2.0,1.0,7.888609052210118054117286e-31,0,0,1.0,0},
 new double[]{2.0,1.0,0,0,0,1.0,0}
-      };
+			};
 
 		#endregion Test data
 
@@ -1242,7 +1242,7 @@ new double[]{2.0,1.0,0,0,0,1.0,0}
 		[Test]
 		public void TestS0ToFellerConversion()
 		{
-			double tol = DoubleConstants.DBL_EPSILON;
+			//double tol = DoubleConstants.DBL_EPSILON;
 
 			double maxtolgamma = 0, maxtolaga = 0, maxtolsigmaf = 0, maxtolmuf = 0;
 			int maxtolgammai = -1, maxtolagai = -1, maxtolsigmafi = -1, maxtolmufi = -1;
@@ -1338,7 +1338,7 @@ new double[]{2.0,1.0,0,0,0,1.0,0}
 		[Test]
 		public void TestFellerToS0Conversion()
 		{
-			double tol = DoubleConstants.DBL_EPSILON;
+			//double tol = DoubleConstants.DBL_EPSILON;
 
 			double maxtolbeta = 0, maxtolabe = 0, maxtolsigma0 = 0, maxtolmu0 = 0;
 			int maxtolbetai = -1, maxtolabei = -1, maxtolsigma0i = -1, maxtolmu0i = -1;
@@ -1408,7 +1408,7 @@ new double[]{2.0,1.0,0,0,0,1.0,0}
 		#region Text OneMinusExp
 
 		private static readonly double[][] _ONETestData =
-      {
+			{
 new double[]{-50.0,0.999999999999999999999807},
 new double[]{-20.0,0.9999999979388463775614422},
 new double[]{-10.0,0.9999546000702375151484644},
@@ -1439,12 +1439,12 @@ new double[]{2.0,-6.389056098930650227230427},
 new double[]{10.0,-22025.4657948067165169579},
 new double[]{20.0,-4.851651944097902779691068e8},
 new double[]{50.0,-5.184705528587072464086453e21}
-      };
+			};
 
 		[Test]
 		public void TestOneMinusExp()
 		{
-			double tol = DoubleConstants.DBL_EPSILON;
+			//double tol = DoubleConstants.DBL_EPSILON;
 
 			double maxtol = 0;
 			int maxtoli = -1;

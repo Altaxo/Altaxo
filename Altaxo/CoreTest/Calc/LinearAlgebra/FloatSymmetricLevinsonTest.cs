@@ -109,7 +109,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		#region Test Fixture Setup
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void SetupTestCases()
 		{
 			// unit testing values - order 1
@@ -572,18 +572,22 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// Test constructor with a null parameter
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullParameterTestforConstructor1()
 		{
-			FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(null as FloatVector);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(null as FloatVector);
+			});
 		}
 
 		// Test constructor with a null parameter
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullParameterTestforConstructor2()
 		{
-			FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(null as float[]);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(null as float[]);
+			});
 		}
 
 		#endregion Null Parameter Tests for Constructor
@@ -592,20 +596,24 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// Test constructor with a zero length vector parameter
 		[Test]
-		[ExpectedException(typeof(System.RankException))]
 		public void ZeroLengthVectorTestsforConstructor1()
 		{
-			FloatVector dv = new FloatVector(1, 0.0f);
-			dv.RemoveAt(0);
-			FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(dv);
+			Assert.Throws(typeof(System.RankException), () =>
+			{
+				FloatVector dv = new FloatVector(1, 0.0f);
+				dv.RemoveAt(0);
+				FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(dv);
+			});
 		}
 
 		[Test]
-		[ExpectedException(typeof(System.RankException))]
 		public void ZeroLengthVectorTestsforConstructor2()
 		{
-			float[] dv = new float[0];
-			FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(dv);
+			Assert.Throws(typeof(System.RankException), () =>
+			{
+				float[] dv = new float[0];
+				FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(dv);
+			});
 		}
 
 		#endregion Zero Length Vector Tests for Constructor
@@ -1215,11 +1223,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Null Parameter Test for SolveVector
 
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullParameterTestforSolveVector()
 		{
-			FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
-			FloatVector X = fsl.Solve(null as FloatVector);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+				FloatVector X = fsl.Solve(null as FloatVector);
+			});
 		}
 
 		#endregion Null Parameter Test for SolveVector
@@ -1227,11 +1237,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Mismatch Rows Test for SolveVector
 
 		[Test]
-		[ExpectedException(typeof(System.RankException))]
 		public void MismatchRowsTestforSolveVector()
 		{
-			FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
-			FloatVector X = fsl.Solve(X5);
+			Assert.Throws(typeof(System.RankException), () =>
+			{
+				FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+				FloatVector X = fsl.Solve(X5);
+			});
 		}
 
 		#endregion Mismatch Rows Test for SolveVector
@@ -1395,11 +1407,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Null Parameter Test for SolveMatrix
 
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullParameterTestforSolveMatrix()
 		{
-			FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
-			FloatMatrix X = fsl.Solve(null as FloatMatrix);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+				FloatMatrix X = fsl.Solve(null as FloatMatrix);
+			});
 		}
 
 		#endregion Null Parameter Test for SolveMatrix
@@ -1407,11 +1421,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Mismatch Rows Test for SolveMatrix
 
 		[Test]
-		[ExpectedException(typeof(System.RankException))]
 		public void MismatchRowsTestforSolveMatrix()
 		{
-			FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
-			FloatMatrix X = fsl.Solve(I5);
+			Assert.Throws(typeof(System.RankException), () =>
+			{
+				FloatSymmetricLevinson fsl = new FloatSymmetricLevinson(T10);
+				FloatMatrix X = fsl.Solve(I5);
+			});
 		}
 
 		#endregion Mismatch Rows Test for SolveMatrix
@@ -1768,10 +1784,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test null parameter
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveVector1()
 		{
-			FloatVector X = FloatSymmetricLevinson.Solve(null, new float[] { 1.0f, 1.0f });
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				FloatVector X = FloatSymmetricLevinson.Solve(null, new float[] { 1.0f, 1.0f });
+			});
 		}
 
 		#endregion Null Parameter Test 1 for Static SolveVector
@@ -1780,10 +1798,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test null parameter
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveVector2()
 		{
-			FloatVector X = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f }, null as ROFloatVector);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				FloatVector X = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f }, null as ROFloatVector);
+			});
 		}
 
 		#endregion Null Parameter Test for 2 Static SolveVector
@@ -1792,10 +1812,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test mismatching dimensions
 		[Test]
-		[ExpectedException(typeof(RankException))]
 		public void RowMismatchTestforStaticSolveVector()
 		{
-			FloatVector X = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f, 1.0f }, new float[] { 1.0f, 1.0f });
+			Assert.Throws(typeof(RankException), () =>
+			{
+				FloatVector X = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f, 1.0f }, new float[] { 1.0f, 1.0f });
+			});
 		}
 
 		#endregion Row Mismatch Test for Static SolveVector
@@ -1804,10 +1826,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test with Toeplitz matrix which has a singular principal sub-matrix
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void SingularTestforStaticSolveVector()
 		{
-			FloatVector X = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f, 1.0f }, new float[] { 1.0f, 1.0f, 1.0f });
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				FloatVector X = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f, 1.0f }, new float[] { 1.0f, 1.0f, 1.0f });
+			});
 		}
 
 		#endregion Singular Test for Static SolveVector
@@ -1960,13 +1984,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test null parameter
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveMatrix1()
 		{
-			FloatMatrix Y = new FloatMatrix(2);
-			Y[0, 0] = Y[1, 1] = 2.0f;
-			Y[0, 1] = Y[1, 0] = 1.0f;
-			FloatMatrix X = FloatSymmetricLevinson.Solve(null, Y);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				FloatMatrix Y = new FloatMatrix(2);
+				Y[0, 0] = Y[1, 1] = 2.0f;
+				Y[0, 1] = Y[1, 0] = 1.0f;
+				FloatMatrix X = FloatSymmetricLevinson.Solve(null, Y);
+			});
 		}
 
 		#endregion Null Parameter Test 1 for Static SolveMatrix
@@ -1975,10 +2001,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test null parameter
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticSolveMatrix2()
 		{
-			FloatMatrix Y = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f }, null as FloatMatrix);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				FloatMatrix Y = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f }, null as FloatMatrix);
+			});
 		}
 
 		#endregion Null Parameter Test 2 for Static SolveMatrix
@@ -1987,14 +2015,16 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test mismatching dimensions
 		[Test]
-		[ExpectedException(typeof(RankException))]
 		public void RowMismatchTestforStaticSolveMatrix()
 		{
-			FloatMatrix Y = new FloatMatrix(2);
-			Y[0, 0] = Y[1, 1] = 2.0f;
-			Y[0, 1] = Y[1, 0] = 1.0f;
+			Assert.Throws(typeof(RankException), () =>
+			{
+				FloatMatrix Y = new FloatMatrix(2);
+				Y[0, 0] = Y[1, 1] = 2.0f;
+				Y[0, 1] = Y[1, 0] = 1.0f;
 
-			FloatMatrix X = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f, 1.0f }, Y);
+				FloatMatrix X = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f, 1.0f }, Y);
+			});
 		}
 
 		#endregion Row Mismatch Test for Static SolveMatrix
@@ -2003,10 +2033,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test with Toeplitz matrix which has a singular principal sub-matrix
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void SingularTestforStaticSolveMatrix()
 		{
-			FloatMatrix X = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f, 1.0f }, FloatMatrix.CreateIdentity(3));
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				FloatMatrix X = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f, 1.0f }, FloatMatrix.CreateIdentity(3));
+			});
 		}
 
 		#endregion Singular Test for Static SolveMatrix
@@ -2195,10 +2227,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test Yule-Walker with a null reference
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullParameterTestforStaticYuleWalker()
 		{
-			FloatVector Y = FloatSymmetricLevinson.YuleWalker(null);
+			Assert.Throws(typeof(ArgumentNullException), () =>
+			{
+				FloatVector Y = FloatSymmetricLevinson.YuleWalker(null);
+			});
 		}
 
 		#endregion Null Parameter Test for Static YuleWalker
@@ -2207,10 +2241,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test Yule-Walker with order 1 matrix
 		[Test]
-		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void RowTestforStaticYuleWalker()
 		{
-			FloatVector Y = FloatSymmetricLevinson.YuleWalker(new float[] { 1.0f });
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
+			{
+				FloatVector Y = FloatSymmetricLevinson.YuleWalker(new float[] { 1.0f });
+			});
 		}
 
 		#endregion Row Test for Static YuleWalker
@@ -2219,10 +2255,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 		// test Yule-Walker with matrix with singular principal sub-matrix
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void SingularTestforStaticYuleWalker()
 		{
-			FloatVector Y = FloatSymmetricLevinson.YuleWalker(new float[] { 1.0f, 1.0f, 1.0f });
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				FloatVector Y = FloatSymmetricLevinson.YuleWalker(new float[] { 1.0f, 1.0f, 1.0f });
+			});
 		}
 
 		#endregion Singular Test for Static YuleWalker
@@ -2355,10 +2393,12 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Null Prameter Test for Static Inverse
 
 		[Test]
-		[ExpectedException(typeof(System.ArgumentNullException))]
 		public void NullPrameterTestforStaticInverse()
 		{
-			FloatMatrix Y = FloatSymmetricLevinson.Inverse(null);
+			Assert.Throws(typeof(System.ArgumentNullException), () =>
+			{
+				FloatMatrix Y = FloatSymmetricLevinson.Inverse(null);
+			});
 		}
 
 		#endregion Null Prameter Test for Static Inverse
@@ -2366,16 +2406,18 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		#region Singular Test for Static Inverse
 
 		[Test]
-		[ExpectedException(typeof(SingularMatrixException))]
 		public void SingularTestforStaticInverse()
 		{
-			// setup an ill-conditioned system (second order principal submatrix is singular)
-			FloatVector T = new FloatVector(3);
-			T[0] = 1.0f;
-			T[1] = 1.0f;
-			T[2] = 1.0f;
+			Assert.Throws(typeof(SingularMatrixException), () =>
+			{
+				// setup an ill-conditioned system (second order principal submatrix is singular)
+				FloatVector T = new FloatVector(3);
+				T[0] = 1.0f;
+				T[1] = 1.0f;
+				T[2] = 1.0f;
 
-			FloatMatrix Y = FloatSymmetricLevinson.Inverse(T);
+				FloatMatrix Y = FloatSymmetricLevinson.Inverse(T);
+			});
 		}
 
 		#endregion Singular Test for Static Inverse
