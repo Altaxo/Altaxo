@@ -22,14 +22,13 @@
 
 #endregion Copyright
 
-using Altaxo.Calc.Ode;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Calc.Ode
+namespace Altaxo.Calc.Ode
 {
 	[TestFixture]
 	public class OdeGearsBDFTest1
