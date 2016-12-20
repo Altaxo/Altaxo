@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
 		public void Export(int sizeX, int sizeY, ID3D10Scene scene, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream)
 		{
-			var device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport | DeviceCreationFlags.Debug, FeatureLevel.Level_10_0);
+			var device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
 
 			// try to get the highest MSAA level with the highest quality
 			int sampleCount = 32;
