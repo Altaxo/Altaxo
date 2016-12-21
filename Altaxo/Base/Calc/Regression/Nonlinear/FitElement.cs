@@ -426,9 +426,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				string nameOfVariable = null != this.FitFunction && i < this.FitFunction.NumberOfIndependentVariables ? this.FitFunction.IndependentVariableName(i) : string.Empty;
 				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
 					nameOfVariable,
-					_independentVariables[k].Document,
+					_independentVariables[k]?.Document,
 					_independentVariables[k]?.DocumentPath?.LastPartOrDefault,
-					(col, table, group) => { ChildSetMember(ref _independentVariables[k], ReadableColumnProxyBase.FromColumn(col)); DataTable = table; GroupNumber = group; }
+					(col, table, group) =>
+					{
+						if (table != null)
+						{
+							DataTable = table;
+							GroupNumber = group;
+							SetIndependentVariable(k, col);
+						}
+					}
 					);
 			}
 		}
@@ -449,7 +457,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
 					nameOfVariable,
 					_dependentVariables[k]?.Document,
 					_dependentVariables[k]?.DocumentPath?.LastPartOrDefault,
-					(col, table, group) => { ChildSetMember(ref _dependentVariables[k], ReadableColumnProxyBase.FromColumn(col)); DataTable = table; GroupNumber = group; }
+					(col, table, group) =>
+					{
+						if (table != null)
+						{
+							DataTable = table;
+							GroupNumber = group;
+							SetDependentVariable(k, col);
+						}
+					}
 					);
 			}
 		}
@@ -494,7 +510,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// <param name="col">Independent variable column to set.</param>
 		public void SetIndependentVariable(int i, IReadableColumn col)
 		{
-			this._independentVariables[i] = ReadableColumnProxyBase.FromColumn(col);
+			ChildSetMember(ref this._independentVariables[i], ReadableColumnProxyBase.FromColumn(col));
 
 			EhSelfChanged(EventArgs.Empty);
 		}
@@ -517,7 +533,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// <param name="col">Dependent variable column to set.</param>
 		public void SetDependentVariable(int i, IReadableColumn col)
 		{
-			this._dependentVariables[i] = ReadableColumnProxyBase.FromColumn(col);
+			ChildSetMember(ref this._dependentVariables[i], ReadableColumnProxyBase.FromColumn(col));
 
 			if (col != null)
 			{
