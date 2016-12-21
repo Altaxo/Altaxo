@@ -28,10 +28,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 {
 	public class ParameterSetElement : ICloneable
 	{
-		public string Name;
-		public double Parameter;
-		public double Variance;
-		public bool Vary;
+		public string Name { get; set; }
+		public double Parameter { get; set; }
+		public double Variance { get; set; }
+		public bool Vary { get; set; }
 
 		#region Serialization
 
@@ -50,14 +50,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				ParameterSetElement s = o != null ? (ParameterSetElement)o : new ParameterSetElement();
-
-				s.Name = info.GetString("Name");
-				s.Parameter = info.GetDouble("Value");
-				s.Variance = info.GetDouble("Variance");
-				s.Vary = info.GetBoolean("Vary");
-
-				return s;
+				var name = info.GetString("Name");
+				var parameter = info.GetDouble("Value");
+				var variance = info.GetDouble("Variance");
+				var vary = info.GetBoolean("Vary");
+				return new ParameterSetElement(name, parameter, variance, vary);
 			}
 		}
 
@@ -81,6 +78,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			this.Name = name;
 			this.Parameter = value;
 			this.Vary = true;
+		}
+
+		public ParameterSetElement(string name, double value, double variance, bool vary)
+		{
+			this.Name = name;
+			this.Parameter = value;
+			this.Variance = variance;
+			this.Vary = vary;
 		}
 
 		public ParameterSetElement(ParameterSetElement from)

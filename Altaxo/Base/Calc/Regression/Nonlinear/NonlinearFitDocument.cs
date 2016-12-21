@@ -23,11 +23,12 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
 	/// <summary>
-	/// Summary description for NonlinearFitDocument.
+	/// Bundles a <see cref="FitEnsemble"/>, i.e. a set of fit functions, together with the current parameters.
 	/// </summary>
 	public class NonlinearFitDocument
 		:
@@ -112,14 +113,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		{
 			FitElement fitele = _fitEnsemble[idx];
 
-			System.Collections.Hashtable byName = new System.Collections.Hashtable();
+			var byName = new Dictionary<string, double>();
 			for (int i = 0; i < _currentParameters.Count; i++)
 				byName.Add(_currentParameters[i].Name, _currentParameters[i].Parameter);
 
 			double[] result = new double[fitele.NumberOfParameters];
 			for (int i = 0; i < result.Length; ++i)
 			{
-				result[i] = (double)byName[fitele.ParameterName(i)];
+				result[i] = byName[fitele.ParameterName(i)];
 			}
 
 			return result;
