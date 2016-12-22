@@ -46,11 +46,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		private string[] _parameterNames = new string[0];
 
 		/// <summary>
-		/// All parameters sorted by name.
+		/// All parameters of the fit ensemble sorted by name. Key is the parameter name. Value is the position of the parameter.
 		/// </summary>
 		private SortedList<string, int> _parametersSortedByName = new SortedList<string, int>();
 
-		private List<FitElement> _innerList = new List<FitElement>();
+		private List<FitElement> _fitElements = new List<FitElement>();
 
 		#region Serialization
 
@@ -61,8 +61,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			{
 				FitEnsemble s = (FitEnsemble)obj;
 
-				info.CreateArray("FitElements", s._innerList.Count);
-				for (int i = 0; i < s._innerList.Count; ++i)
+				info.CreateArray("FitElements", s._fitElements.Count);
+				for (int i = 0; i < s._fitElements.Count; ++i)
 					info.AddValue("e", s[i]);
 				info.CommitArray();
 			}
@@ -91,19 +91,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			_parametersSortedByName.Clear();
 
 			int nameposition = 0;
-			for (int i = 0; i < _innerList.Count; i++)
+			for (int i = 0; i < _fitElements.Count; ++i)
 			{
 				FitElement ele = this[i];
-				IFitFunction func = ele.FitFunction;
-
-				if (null == func)
-					continue;
-
-				for (int k = 0; k < func.NumberOfParameters; k++)
+				if (null != ele.FitFunction)
 				{
-					if (!(_parametersSortedByName.ContainsKey(ele.ParameterName(k))))
+					for (int k = 0; k < ele.NumberOfParameters; ++k)
 					{
-						_parametersSortedByName.Add(ele.ParameterName(k), nameposition++);
+						var parameterName = ele.ParameterName(k);
+
+						if (!(_parametersSortedByName.ContainsKey(parameterName)))
+						{
+							_parametersSortedByName.Add(parameterName, nameposition++);
+						}
 					}
 				}
 			}
@@ -138,8 +138,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		public object Clone()
 		{
 			FitEnsemble result = new FitEnsemble();
+
 			foreach (FitElement ele in this)
-				result.Add((FitElement)ele.Clone());
+				result._fitElements.Add((FitElement)ele.Clone());
+
+			result.CollectParameterNames();
 
 			return result;
 		}
@@ -152,27 +155,25 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		{
 			get
 			{
-				return _innerList[i];
+				return _fitElements[i];
 			}
 			set
 			{
-				FitElement oldValue = this[i];
-				if (object.ReferenceEquals(oldValue, value))
-					return;
+				if (!object.ReferenceEquals(_fitElements[i], value))
+				{
+					var tempFitElement = _fitElements[i];
+					ChildSetMember(ref tempFitElement, value);
+					_fitElements[i] = tempFitElement;
 
-				_innerList[i] = value;
-				value.ParentObject = this;
-
-				if (null != oldValue)
-					oldValue.Dispose();
-
-				EhSelfChanged(EventArgs.Empty);
+					CollectParameterNames();
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
 		public void Add(FitElement e)
 		{
-			_innerList.Add(e);
+			_fitElements.Add(e);
 			e.ParentObject = this;
 
 			CollectParameterNames();
@@ -181,22 +182,27 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		public void Clear()
 		{
-			_innerList.Clear();
+			if (_fitElements.Count > 0)
+			{
+				_fitElements.Clear();
+				CollectParameterNames();
+				EhSelfChanged(EventArgs.Empty);
+			}
 		}
 
 		public bool Contains(FitElement item)
 		{
-			return _innerList.Contains(item);
+			return _fitElements.Contains(item);
 		}
 
 		public void CopyTo(FitElement[] array, int arrayIndex)
 		{
-			_innerList.CopyTo(array, arrayIndex);
+			_fitElements.CopyTo(array, arrayIndex);
 		}
 
 		public int Count
 		{
-			get { return _innerList.Count; }
+			get { return _fitElements.Count; }
 		}
 
 		public bool IsReadOnly
@@ -206,33 +212,47 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		public bool Remove(FitElement item)
 		{
-			return _innerList.Remove(item);
+			var success = _fitElements.Remove(item);
+			if (success)
+			{
+				item?.Dispose();
+				CollectParameterNames();
+				EhSelfChanged(EventArgs.Empty);
+			}
+
+			return success;
 		}
 
 		public IEnumerator<FitElement> GetEnumerator()
 		{
-			return _innerList.GetEnumerator();
+			return _fitElements.GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return _innerList.GetEnumerator();
+			return _fitElements.GetEnumerator();
 		}
 
 		public int IndexOf(FitElement item)
 		{
-			return _innerList.IndexOf(item);
+			return _fitElements.IndexOf(item);
 		}
 
 		public void Insert(int index, FitElement item)
 		{
-			_innerList.Insert(index, item);
+			_fitElements.Insert(index, item);
 			item.ParentObject = this;
+			CollectParameterNames();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		public void RemoveAt(int index)
 		{
-			_innerList.RemoveAt(index);
+			var tempFitElement = _fitElements[index];
+			_fitElements.RemoveAt(index);
+			tempFitElement?.Dispose();
+			CollectParameterNames();
+			EhSelfChanged(EventArgs.Empty);
 		}
 
 		#endregion IList members
@@ -252,12 +272,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			if (null != _innerList)
+			if (null != _fitElements)
 			{
-				for (int i = 0; i < _innerList.Count; ++i)
+				for (int i = 0; i < _fitElements.Count; ++i)
 				{
-					if (null != _innerList[i])
-						yield return new Main.DocumentNodeAndName(_innerList[i], "FitElement" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+					if (null != _fitElements[i])
+						yield return new Main.DocumentNodeAndName(_fitElements[i], "FitElement" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
 				}
 			}
 		}

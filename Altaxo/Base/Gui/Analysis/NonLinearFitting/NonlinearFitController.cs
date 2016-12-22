@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+using System.Collections.Generic;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
@@ -83,9 +85,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 	/// <summary>
 	/// Summary description for NonlinearFitController.
 	/// </summary>
+	/// <seealso cref="Altaxo.Gui.Analysis.NonLinearFitting.INonlinearFitViewEventSink" />
+	/// <seealso cref="Altaxo.Gui.IMVCAController" />
 	[UserControllerForObject(typeof(NonlinearFitDocument))]
 	[ExpectedTypeOfView(typeof(INonlinearFitView))]
-	public class NonlinearFitController : INonlinearFitViewEventSink, IMVCAController
+	public class NonlinearFitController : INonlinearFitViewEventSink, IMVCANController
 	{
 		private NonlinearFitDocument _doc;
 		private INonlinearFitView _view;
@@ -95,30 +99,58 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		private IFitEnsembleController _fitEnsembleController;
 		private Common.EquallySpacedInterval _generationInterval;
 		private Common.EquallySpacedIntervalController _generationIntervalController;
-
 		private double _chiSquare;
 
-		public NonlinearFitController(NonlinearFitDocument doc)
+		/// <summary>
+		/// If a fit was made, new function plot items with a new Guid identifier are created. This is the identifier of the old function plot items.
+		/// The identifier is used to identify the old function plot items in the layer, and to replace them by the new items.
+		/// </summary>
+		protected string _previousFitDocumentIdentifier;
+
+		private XYPlotLayer _activeLayer;
+
+		public bool InitializeDocument(params object[] args)
 		{
-			_doc = doc;
-			_parameterController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.CurrentParameters }, typeof(IMVCANController));
-			_fitEnsembleController = (IFitEnsembleController)Current.Gui.GetControllerAndControl(new object[] { _doc.FitEnsemble }, typeof(IFitEnsembleController));
+			if (args == null || args.Length == 0)
+				return false;
 
-			_funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count == 0 ? null : _doc.FitEnsemble[0].FitFunction);
-			Current.Gui.FindAndAttachControlTo(_funcselController);
+			if (!(args[0] is NonlinearFitDocument))
+				return false;
 
-			{
-				var fitEnsemble = _doc.FitEnsemble;
-				fitEnsemble.Changed += new WeakEventHandler(EhFitEnsemble_Changed, handler => fitEnsemble.Changed -= handler);
-			}
+			_doc = (NonlinearFitDocument)args[0];
 
-			_generationInterval = new Common.EquallySpacedInterval();
-			_generationIntervalController = new Common.EquallySpacedIntervalController();
-			_generationIntervalController.InitializeDocument(_generationInterval);
+			if (args.Length > 1 && args[1] is string)
+				_previousFitDocumentIdentifier = (string)args[1];
+
+			if (args.Length > 2 && args[2] is XYPlotLayer)
+				_activeLayer = (XYPlotLayer)args[2];
+
+			Initialize(true);
+			return true;
 		}
 
-		public void Initialize()
+		public UseDocument UseDocumentCopy { get; set; }
+
+		public void Initialize(bool initData)
 		{
+			if (initData)
+			{
+				_parameterController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.CurrentParameters }, typeof(IMVCANController));
+				_fitEnsembleController = (IFitEnsembleController)Current.Gui.GetControllerAndControl(new object[] { _doc.FitEnsemble }, typeof(IFitEnsembleController));
+
+				_funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count == 0 ? null : _doc.FitEnsemble[0].FitFunction);
+				Current.Gui.FindAndAttachControlTo(_funcselController);
+
+				{
+					var fitEnsemble = _doc.FitEnsemble;
+					fitEnsemble.Changed += new WeakEventHandler(EhFitEnsemble_Changed, handler => fitEnsemble.Changed -= handler);
+				}
+
+				_generationInterval = new Common.EquallySpacedInterval();
+				_generationIntervalController = new Common.EquallySpacedIntervalController();
+				_generationIntervalController.InitializeDocument(_generationInterval);
+			}
+
 			if (_view != null)
 			{
 				_view.SetParameterControl(_parameterController.ViewObject);
@@ -304,7 +336,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		{
 			FitFunctionScript script = new FitFunctionScript();
 
-		Label_EditScript:
+			Label_EditScript:
 			object scriptAsObject = script;
 			if (Current.Gui.ShowDialog(ref scriptAsObject, "Create fit function"))
 			{
@@ -323,8 +355,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
-		private System.Collections.ArrayList _functionPlotItems = new System.Collections.ArrayList();
-
 		public void OnAfterFittingStep()
 		{
 			_parameterController.InitializeDocument(_doc.CurrentParameters);
@@ -332,50 +362,50 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			if (_view != null)
 				_view.SetChiSquare(this._chiSquare);
 
-			if (_doc.FitContext is Altaxo.Gui.Graph.Gdi.Viewing.IGraphController)
+			if (null != _activeLayer)
 			{
-				// for every dependent variable in the FitEnsemble, create a function graph
-				var graph = _doc.FitContext as Altaxo.Gui.Graph.Gdi.Viewing.IGraphController;
-				var xylayer = graph.ActiveLayer as XYPlotLayer;
+				CreateOrReplaceFunctionPlotItems(_activeLayer);
+			}
+		}
 
-				if (null != xylayer)
+		private void CreateOrReplaceFunctionPlotItems(XYPlotLayer xylayer)
+		{
+			// collect the old plot items and put them into a dictionary whose key is a combination of fit element index and dependentVariableIndex
+			var oldItemsDictionary = new Dictionary<Tuple<int, int>, XYNonlinearFitFunctionPlotItem>();
+			foreach (var pi in TreeNodeExtensions.TakeFromHereToFirstLeaves((IGPlotItem)xylayer.PlotItems))
+			{
+				if (pi is XYNonlinearFitFunctionPlotItem plotItem && plotItem.FitDocumentIdentifier == _previousFitDocumentIdentifier)
 				{
-					int funcNumber = 0;
-					for (int i = 0; i < _doc.FitEnsemble.Count; i++)
-					{
-						FitElement fitEle = _doc.FitEnsemble[i];
+					oldItemsDictionary.Add(new Tuple<int, int>(plotItem.FitElementIndex, plotItem.DependentVariableIndex), plotItem);
+				}
+			}
 
-						for (int k = 0; k < fitEle.NumberOfDependentVariables; k++, funcNumber++)
-						{
-							if (funcNumber < _functionPlotItems.Count && _functionPlotItems[funcNumber] != null)
-							{
-								XYFunctionPlotItem plotItem = (XYFunctionPlotItem)_functionPlotItems[funcNumber];
-								FitFunctionToScalarFunctionDDWrapper wrapper = (FitFunctionToScalarFunctionDDWrapper)plotItem.Data.Function;
-								wrapper.Initialize(fitEle.FitFunction, k, 0, _doc.GetParametersForFitElement(i));
-							}
-							else
-							{
-								FitFunctionToScalarFunctionDDWrapper wrapper = new FitFunctionToScalarFunctionDDWrapper(fitEle.FitFunction, k, _doc.GetParametersForFitElement(i));
-								XYFunctionPlotData plotdata = new XYFunctionPlotData(wrapper);
-								XYFunctionPlotItem plotItem = new XYFunctionPlotItem(plotdata, new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext()));
-								xylayer.PlotItems.Add(plotItem);
-								_functionPlotItems.Add(plotItem);
-							}
-						}
+			var newFitDocumentIdentifier = Guid.NewGuid().ToString(); // used to identify all curves with the same fit document
+
+			// now create a plot item for each dependent variable, reuse if possible the style from the old items
+			int funcNumber = 0;
+			for (int i = 0; i < _doc.FitEnsemble.Count; i++)
+			{
+				FitElement fitEle = _doc.FitEnsemble[i];
+
+				for (int k = 0; k < fitEle.NumberOfDependentVariables; k++, funcNumber++)
+				{
+					oldItemsDictionary.TryGetValue(new Tuple<int, int>(i, k), out var oldPlotItem);
+					var newPlotStyle = oldPlotItem?.Style.Clone() ?? new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext());
+					var newPlotItem = new XYNonlinearFitFunctionPlotItem(newFitDocumentIdentifier, _doc, i, k, newPlotStyle);
+
+					if (null != oldPlotItem)
+					{
+						oldPlotItem.ParentCollection.Replace(oldPlotItem, newPlotItem);
 					}
-
-					// if there are more elements in _functionPlotItems, remove them from the graph
-					for (int i = _functionPlotItems.Count - 1; i >= funcNumber; --i)
+					else
 					{
-						if (_functionPlotItems[i] != null)
-						{
-							xylayer.PlotItems.Remove((IGPlotItem)_functionPlotItems[i]);
-							_functionPlotItems.RemoveAt(i);
-						}
+						xylayer.PlotItems.Add(newPlotItem);
 					}
 				}
-				graph.RefreshGraph();
 			}
+
+			_previousFitDocumentIdentifier = newFitDocumentIdentifier;
 		}
 
 		public void OnSimulation(bool calculateUnusedDependentVariablesAlso)
@@ -408,7 +438,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				Collections.IAscendingIntegerCollection validRows = fitAdapter.GetValidNumericRows(i);
 				nextStartOfDependentValues += validRows.Count * fitEle.NumberOfUsedDependentVariables;
 
-				Altaxo.Data.DataTable parentTable = fitEle.GetParentDataTable();
+				Altaxo.Data.DataTable parentTable = fitEle.DataTable;
 				if (parentTable == null)
 					continue;
 
@@ -466,7 +496,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			{
 				FitElement fitEle = _doc.FitEnsemble[i];
 
-				Altaxo.Data.DataTable parentTable = fitEle.GetParentDataTable();
+				Altaxo.Data.DataTable parentTable = fitEle.DataTable;
 				if (parentTable == null)
 					continue;
 
@@ -665,11 +695,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 				_view = value as INonlinearFitView;
 
-				Initialize();
-
 				if (_view != null)
 				{
 					_view.Controller = this;
+					Initialize(false);
 					_generationIntervalController.ViewObject = _view.GetGenerationIntervalControl();
 				}
 			}

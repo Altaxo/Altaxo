@@ -26,96 +26,8 @@ using System;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
-	public class ParameterSetElement : ICloneable
-	{
-		public string Name { get; set; }
-		public double Parameter { get; set; }
-		public double Variance { get; set; }
-		public bool Vary { get; set; }
-
-		#region Serialization
-
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSetElement), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				ParameterSetElement s = (ParameterSetElement)obj;
-
-				info.AddValue("Name", s.Name);
-				info.AddValue("Value", s.Parameter);
-				info.AddValue("Variance", s.Variance);
-				info.AddValue("Vary", s.Vary);
-			}
-
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				var name = info.GetString("Name");
-				var parameter = info.GetDouble("Value");
-				var variance = info.GetDouble("Variance");
-				var vary = info.GetBoolean("Vary");
-				return new ParameterSetElement(name, parameter, variance, vary);
-			}
-		}
-
-		#endregion Serialization
-
-		/// <summary>
-		/// For deserialization purposes only.
-		/// </summary>
-		protected ParameterSetElement()
-		{
-		}
-
-		public ParameterSetElement(string name)
-		{
-			this.Name = name;
-			this.Vary = true;
-		}
-
-		public ParameterSetElement(string name, double value)
-		{
-			this.Name = name;
-			this.Parameter = value;
-			this.Vary = true;
-		}
-
-		public ParameterSetElement(string name, double value, double variance, bool vary)
-		{
-			this.Name = name;
-			this.Parameter = value;
-			this.Variance = variance;
-			this.Vary = vary;
-		}
-
-		public ParameterSetElement(ParameterSetElement from)
-		{
-			CopyFrom(from);
-		}
-
-		public void CopyFrom(ParameterSetElement from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			this.Name = from.Name;
-			this.Parameter = from.Parameter;
-			this.Variance = from.Variance;
-			this.Vary = from.Vary;
-		}
-
-		#region ICloneable Members
-
-		public object Clone()
-		{
-			return new ParameterSetElement(this);
-		}
-
-		#endregion ICloneable Members
-	}
-
 	/// <summary>
-	/// Summary description for ParameterSet.
+	/// Holds a bunch of <see cref="ParameterSetElement"/>, i.e. a collection of fit parameters together with their values.
 	/// </summary>
 	public class ParameterSet : System.Collections.CollectionBase, ICloneable
 	{
@@ -161,8 +73,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		public void OnInitializationFinished()
 		{
-			if (null != InitializationFinished)
-				InitializationFinished(this, EventArgs.Empty);
+			InitializationFinished?.Invoke(this, EventArgs.Empty);
 		}
 
 		public ParameterSetElement this[int i]

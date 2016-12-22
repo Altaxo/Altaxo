@@ -162,5 +162,21 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		/// Does a complete new drawing of the graph, even if the graph is cached in a bitmap.
 		/// </summary>
 		void RefreshGraph();
+
+		/// <summary>
+		/// Gets the objects currently selected. The returned objects are not the <see cref="HitTestObject"/>s, but the hitted objects itself.
+		/// </summary>
+		/// <value>
+		/// The objects currently selected in the graph.
+		/// </value>
+		IEnumerable<object> SelectedRealObjects { get; }
+
+		/// <summary>
+		/// Gets the objects currently selected. The returned objects are not the <see cref="HitTestObject"/>s, but the hitted objects itself.
+		/// </summary>
+		/// <value>
+		/// The objects currently selected in the graph.
+		/// </value>
+		IList<IHitTestObject> SelectedObjects { get; }
 	}
 }

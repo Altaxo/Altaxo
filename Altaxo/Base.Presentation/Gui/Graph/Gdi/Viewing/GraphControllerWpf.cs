@@ -567,6 +567,23 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		}
 
 		/// <summary>
+		/// Gets the objects currently selected. The returned objects are not the <see cref="HitTestObject"/>s, but the hitted objects itself.
+		/// </summary>
+		/// <value>
+		/// The objects currently selected in the graph.
+		/// </value>
+		public override IEnumerable<object> SelectedRealObjects
+		{
+			get
+			{
+				if (_mouseState is ObjectPointerMouseHandler)
+					return ((ObjectPointerMouseHandler)_mouseState).SelectedObjects.Select(hitTestObject => hitTestObject.HittedObject);
+				else
+					return Enumerable.Empty<object>();
+			}
+		}
+
+		/// <summary>
 		/// Returns the number of selected objects into this graph.
 		/// </summary>
 		public int NumberOfSelectedObjects

@@ -925,6 +925,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
 		public abstract IList<IHitTestObject> SelectedObjects { get; }
 
+		/// <summary>
+		/// Gets the objects currently selected. The returned objects are not the <see cref="HitTestObject"/>s, but the hitted objects itself.
+		/// </summary>
+		/// <value>
+		/// The objects currently selected in the graph.
+		/// </value>
+		public abstract IEnumerable<object> SelectedRealObjects { get; }
+
 		public delegate void ArrangeElement(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds);
 
 		/// <summary>

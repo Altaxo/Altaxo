@@ -925,6 +925,33 @@ namespace Altaxo.Graph.Gdi.Plot
 			_plotItems.Add(item);
 		}
 
+		/// <summary>
+		/// Replaces one plot item, which must be part of this collection, by another plot item.
+		/// </summary>
+		/// <param name="oldItem">The old item.</param>
+		/// <param name="newItem">The new item.</param>
+		/// <exception cref="ArgumentNullException">
+		/// oldItem
+		/// or
+		/// newItem
+		/// </exception>
+		/// <exception cref="ArgumentException">OldItem is not member of the collection - oldItem</exception>
+		public void Replace(IGPlotItem oldItem, IGPlotItem newItem)
+		{
+			if (null == oldItem)
+				throw new ArgumentNullException(nameof(oldItem));
+			if (null == newItem)
+				throw new ArgumentNullException(nameof(newItem));
+
+			var idx = _plotItems.IndexOf(oldItem);
+			if (idx < 0)
+				throw new ArgumentException("OldItem is not member of the collection", nameof(oldItem));
+
+			var tempPlotItem = _plotItems[idx];
+			var changed = ChildSetMember(ref tempPlotItem, newItem);
+			_plotItems[idx] = tempPlotItem; // ObservableList ensures that Changed event is fired
+		}
+
 		public void AddRange(IEnumerable<IGPlotItem> items)
 		{
 			if (items == null)

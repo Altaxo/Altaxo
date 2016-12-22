@@ -37,7 +37,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 	{
 		private FitEnsemble _fitEnsemble;
 		private ParameterSet _currentParameters;
-		private object _fitContext;
 
 		#region Serialization
 
@@ -79,18 +78,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 			_currentParameters = null == from._currentParameters ? null : (ParameterSet)from._currentParameters.Clone();
 			// Note that the fit context is not cloned here.
-		}
-
-		public object FitContext
-		{
-			get
-			{
-				return _fitContext;
-			}
-			set
-			{
-				_fitContext = value;
-			}
 		}
 
 		public FitEnsemble FitEnsemble
