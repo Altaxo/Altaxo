@@ -180,7 +180,7 @@ namespace Altaxo.Graph.Procedures
 		/// <param name="propertyName">Name of the property in the owner class that will return the proxy.</param>
 		private void CollectDataColumnsFromProxyVisit(IProxy proxy, object owner, string propertyName)
 		{
-			if (proxy.IsEmpty)
+			if (null == proxy || proxy.IsEmpty)
 			{
 			}
 			else if (proxy.DocumentObject is Altaxo.Data.DataColumn)
