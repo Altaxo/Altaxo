@@ -233,7 +233,15 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 					where = node.Nodes;
 				}
 
-				BuiltinLeafNode leaf = new BuiltinLeafNode(entry.Name, entry);
+				var creationTime = entry.CreationTime;
+				var nodeText = entry.Name;
+
+				if (null != creationTime)
+				{
+					nodeText += " (" + creationTime.Value.ToString("yyyy-MM-dd HH:mm:ss") + ")";
+				}
+
+				BuiltinLeafNode leaf = new BuiltinLeafNode(nodeText, entry);
 
 				switch (menustyle)
 				{

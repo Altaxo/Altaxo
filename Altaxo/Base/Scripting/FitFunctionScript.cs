@@ -156,6 +156,11 @@ namespace Altaxo.Scripting
 			return base.GetHashCode() + this._fitFunctionCategory.GetHashCode() + this._fitFunctionName.GetHashCode();
 		}
 
+		public override string ToString()
+		{
+			return string.Format("FitFunctionScript {0} (created {1})", FitFunctionName, CreationTime.ToString("yyyy-MM-dd HH:mm:ss"));
+		}
+
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitFunctionScript), 0)]
@@ -424,7 +429,7 @@ namespace Altaxo.Scripting
 				IFitFunction ff = (IFitFunction)_scriptObject;
 
 				this._NumberOfParameters = ff.NumberOfParameters;
-				this._fitFunctionCreationTime = DateTime.Now;
+
 				if (this.IsUsingUserDefinedParameterNames)
 				{
 					if (_UserDefinedParameterNames == null || _UserDefinedParameterNames.Length != ff.NumberOfParameters)

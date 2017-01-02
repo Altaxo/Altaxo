@@ -695,7 +695,7 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(GraphController ctrl)
 		{
-			string result = Altaxo.Graph.Procedures.NonlinearFitting.Fit(ctrl);
+			string result = Altaxo.Graph.Procedures.NonlinearFitting.ShowFitDialog(ctrl);
 			if (null != result)
 				Current.Gui.ErrorMessageBox(result);
 		}

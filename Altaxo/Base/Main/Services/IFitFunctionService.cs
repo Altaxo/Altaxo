@@ -90,6 +90,14 @@ namespace Altaxo.Main.Services
 		string Description { get; }
 
 		/// <summary>
+		/// Gets the creation time of this fit function, or null if no creation time is available (e.g. for builtin fit functions).
+		/// </summary>
+		/// <value>
+		/// The creation time, or null.
+		/// </value>
+		DateTime? CreationTime { get; }
+
+		/// <summary>
 		/// Creates an instances of the fit function this info belongs to.
 		/// </summary>
 		/// <returns>Instance of the fit function. An exception is thrown if the fit function could not be created.</returns>
@@ -126,7 +134,7 @@ namespace Altaxo.Main.Services
 			get { return _category; }
 		}
 
-		public DateTime CreationTime
+		public DateTime? CreationTime
 		{
 			get { return _creationTime; }
 		}
@@ -171,6 +179,11 @@ namespace Altaxo.Main.Services
 		public string Category
 		{
 			get { return _creatorAttrib.Category; }
+		}
+
+		public DateTime? CreationTime
+		{
+			get { return null; }
 		}
 
 		public System.Reflection.MethodInfo Method
@@ -245,7 +258,7 @@ namespace Altaxo.Main.Services
 			get { return _fitFunction.FitFunctionCategory; }
 		}
 
-		public DateTime CreationTime
+		public DateTime? CreationTime
 		{
 			get { return _fitFunction.CreationTime; }
 		}

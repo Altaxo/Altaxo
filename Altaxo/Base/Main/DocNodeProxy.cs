@@ -784,7 +784,7 @@ namespace Altaxo.Main
 
 		protected void EhXmlDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, Main.IDocumentNode documentRoot, bool isFinallyCall)
 		{
-			if (null != this.ResolveDocumentObject(documentRoot))
+			if (null != this.ResolveDocumentObject(documentRoot) || isFinallyCall)
 				info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhXmlDeserializationFinished);
 		}
 

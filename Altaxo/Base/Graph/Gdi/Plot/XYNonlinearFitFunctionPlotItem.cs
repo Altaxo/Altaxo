@@ -39,22 +39,6 @@ namespace Altaxo.Graph.Gdi.Plot
 
 	public class XYNonlinearFitFunctionPlotItem : XYFunctionPlotItem
 	{
-		/// <summary>
-		/// A Guid string that is identical for all fit function elements with the same fit document.
-		/// </summary>
-		protected string _fitDocumentIdentifier;
-
-		/// <summary>The nonlinear fit this function belongs to.</summary>
-		private NonlinearFitDocument _fitDocument;
-
-		/// <summary>Index of the fit element this function belongs to.</summary>
-		private int _fitElementIndex;
-
-		/// <summary>
-		/// Index of the the dependent variable of the fit element that is shown in this plot item.
-		/// </summary>
-		private int _dependentVariableIndex;
-
 		#region Serialization
 
 		/// <summary>
@@ -69,22 +53,14 @@ namespace Altaxo.Graph.Gdi.Plot
 				var s = (XYNonlinearFitFunctionPlotItem)obj;
 				info.AddValue("Data", s._plotData);
 				info.AddValue("Style", s._plotStyles);
-				info.AddValue("FitDocumentIdentifier", s._fitDocumentIdentifier);
-				info.AddValue("FitDocument", s._fitDocument);
-				info.AddValue("FitElementIndex", s._fitElementIndex);
-				info.AddValue("DependentVariableIndex", s._dependentVariableIndex);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				var s = (XYNonlinearFitFunctionPlotItem)o ?? new XYNonlinearFitFunctionPlotItem(info);
 
-				s.Data = (XYFunctionPlotData)info.GetValue("Data", null);
+				s.ChildSetMember(ref s._plotData, (XYNonlinearFitFunctionPlotData)info.GetValue("Data", null));
 				s.Style = (G2DPlotStyleCollection)info.GetValue("Style", null);
-				s._fitDocumentIdentifier = info.GetString("FitDocumentIdentifier");
-				s.ChildSetMember(ref s._fitDocument, (NonlinearFitDocument)info.GetValue("FitDocument", s));
-				s._fitElementIndex = info.GetInt32("FitElementIndex");
-				s._dependentVariableIndex = info.GetInt32("DependentVariableIndex");
 
 				return s;
 			}
@@ -92,38 +68,16 @@ namespace Altaxo.Graph.Gdi.Plot
 
 		#endregion Serialization
 
-		public override bool CopyFrom(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-
-			var copied = base.CopyFrom(obj);
-			if (copied && obj is XYNonlinearFitFunctionPlotItem from)
-			{
-				this._fitDocumentIdentifier = from._fitDocumentIdentifier;
-				ChildCopyToMember(ref this._fitDocument, from._fitDocument);
-				this._fitElementIndex = from._fitElementIndex;
-				this._dependentVariableIndex = from._dependentVariableIndex;
-			}
-			return copied;
-		}
-
-		private System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetLocalDocumentNodeChildrenWithName()
-		{
-			if (null != _fitDocument)
-				yield return new Main.DocumentNodeAndName(_fitDocument, () => _fitDocument = null, "FitDocument");
-		}
-
-		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
-		{
-			return GetLocalDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
-		}
-
 		/// <summary>
 		/// Deserialization constructor.
 		/// </summary>
 		/// <param name="info">The information.</param>
 		protected XYNonlinearFitFunctionPlotItem(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+		{
+		}
+
+		public XYNonlinearFitFunctionPlotItem(XYNonlinearFitFunctionPlotItem from)
+			: base(from)
 		{
 		}
 
@@ -138,12 +92,20 @@ namespace Altaxo.Graph.Gdi.Plot
 		public XYNonlinearFitFunctionPlotItem(string fitDocumentIdentifier, NonlinearFitDocument fitDocument, int fitElementIndex, int dependentVariableIndex, G2DPlotStyleCollection ps)
 			: base()
 		{
-			ChildCloneToMember(ref _fitDocument, fitDocument); // clone here, because we want to have a local copy which can not change.
-			_fitDocumentIdentifier = fitDocumentIdentifier;
-			_fitElementIndex = fitElementIndex;
-			_dependentVariableIndex = dependentVariableIndex;
-			ChildSetMember(ref _plotData, new XYFunctionPlotData(new FitFunctionToScalarFunctionDDWrapper(_fitDocument.FitEnsemble[fitElementIndex].FitFunction, dependentVariableIndex, _fitDocument.GetParametersForFitElement(fitElementIndex))));
+			if (null == fitDocumentIdentifier)
+				throw new ArgumentNullException(nameof(fitDocumentIdentifier));
+			if (null == fitDocument)
+				throw new ArgumentNullException(nameof(fitDocument));
+			if (null == ps)
+				throw new ArgumentNullException(nameof(ps));
+
+			ChildSetMember(ref _plotData, new XYNonlinearFitFunctionPlotData(fitDocumentIdentifier, fitDocument, fitElementIndex, dependentVariableIndex));
 			Style = ps;
+		}
+
+		public override object Clone()
+		{
+			return new XYNonlinearFitFunctionPlotItem(this);
 		}
 
 		/// <summary>
@@ -156,7 +118,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			get
 			{
-				return (NonlinearFitDocument)_fitDocument?.Clone();
+				return ((XYNonlinearFitFunctionPlotData)_plotData).FitDocumentCopy;
 			}
 		}
 
@@ -167,19 +129,19 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			get
 			{
-				return _fitDocumentIdentifier;
+				return ((XYNonlinearFitFunctionPlotData)_plotData).FitDocumentIdentifier;
 			}
 		}
 
 		/// <summary>Index of the fit element of the <see cref="FitDocumentCopy"/> this function belongs to.</summary>
-		public int FitElementIndex { get { return _fitElementIndex; } }
+		public int FitElementIndex { get { return ((XYNonlinearFitFunctionPlotData)_plotData).FitElementIndex; } }
 
 		/// <summary>
 		/// Index of the the dependent variable of the fit element that is shown in this plot item.
 		/// </summary>
 		public int DependentVariableIndex
 		{
-			get { return _dependentVariableIndex; }
+			get { return ((XYNonlinearFitFunctionPlotData)_plotData).DependentVariableIndex; }
 		}
 
 		/// <summary>
@@ -192,8 +154,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		{
 			get
 			{
-				var fitEle = _fitDocument.FitEnsemble[FitElementIndex];
-				return fitEle.DependentVariables(DependentVariableIndex);
+				return ((XYNonlinearFitFunctionPlotData)_plotData).DependentVariableColumn;
 			}
 		}
 

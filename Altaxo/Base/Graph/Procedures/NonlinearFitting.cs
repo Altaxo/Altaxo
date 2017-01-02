@@ -40,18 +40,38 @@ namespace Altaxo.Graph.Procedures
 		private const string FitDocumentPropertyName = "NonlinearFitDocument";
 		private static NonlinearFitDocument _lastFitDocument;
 
-		public static string Fit(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
+		public static string ShowFitDialog(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl)
 		{
 			var tuple = SelectFitDocument(ctrl);
 
 			if (!string.IsNullOrEmpty(tuple.Item1))
 				return tuple.Item1;
 
+			var fitDocument = tuple.Item2;
+			var fitDocumentIdentifier = tuple.Item3;
+			var activeLayer = tuple.Item4;
+
 			// we assume we have a fit document by now
 			if (null == tuple.Item2)
 				throw new InvalidProgramException("At this place, fit document should always be != null");
 
-			var fitController = (Gui.IMVCANController)Current.Gui.GetControllerAndControl(new object[] { tuple.Item2, tuple.Item3, tuple.Item4 }, typeof(Gui.IMVCANController));
+			if (!string.IsNullOrEmpty(fitDocumentIdentifier))
+			{
+				var answer = Current.Gui.YesNoCancelMessageBox(
+					"At least one fit function plot item was found in the document from which the fit document could be retrieved.\r\n" +
+					"When changing the fit or the parameters, these fit function plot items would be changed, too.\r\n" +
+					"Sometimes, you might want to keep the previous fit function plot items, e.g. in order to compare them with the new ones.\r\n" +
+					"\r\n" +
+					"Do you want to keep the previous fit function plot item(s) ?",
+					"Keep previous fit function plot items?", false);
+
+				if (null == answer)
+					return null;
+				if (true == answer)
+					fitDocumentIdentifier = null; // by setting the identifier to null, we will keep the old fit functions
+			}
+
+			var fitController = (Gui.IMVCANController)Current.Gui.GetControllerAndControl(new object[] { fitDocument, fitDocumentIdentifier, activeLayer }, typeof(Gui.IMVCANController));
 
 			if (true == Current.Gui.ShowDialog(fitController, "Non-linear fitting"))
 			{

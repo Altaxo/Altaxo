@@ -123,6 +123,9 @@ namespace Altaxo.Serialization.Clipboard
 			{
 				info.BeginReading(s);
 				readObject = info.GetValue("Object", null);
+
+				info.AnnounceDeserializationEnd(Current.Project, true);
+				info.AnnounceDeserializationHasCompletelyFinished();
 				info.EndReading();
 			}
 

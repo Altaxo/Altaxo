@@ -23,13 +23,14 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
 	/// <summary>
 	/// Holds a bunch of <see cref="ParameterSetElement"/>, i.e. a collection of fit parameters together with their values.
 	/// </summary>
-	public class ParameterSet : System.Collections.CollectionBase, ICloneable
+	public class ParameterSet : System.Collections.CollectionBase, ICloneable, IEnumerable<ParameterSetElement>
 	{
 		/// <summary>
 		/// Event is fired if the main initialization is finished. This event can be fired
@@ -98,6 +99,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				result.Add((ParameterSetElement)this[i].Clone());
 
 			return result;
+		}
+
+		IEnumerator<ParameterSetElement> IEnumerable<ParameterSetElement>.GetEnumerator()
+		{
+			foreach (var e in InnerList)
+				yield return (ParameterSetElement)e;
 		}
 
 		#endregion ICloneable Members
