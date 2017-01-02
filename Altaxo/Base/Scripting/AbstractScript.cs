@@ -24,6 +24,7 @@
 
 using Altaxo.Main.Services;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Altaxo.Scripting
@@ -40,10 +41,6 @@ namespace Altaxo.Scripting
 			get;
 			set;
 		}
-	}
-
-	public class ScriptText
-	{
 	}
 
 	/// <summary>
@@ -128,7 +125,7 @@ namespace Altaxo.Scripting
 		/// <summary>
 		/// Returns the compiler errors as array of strings.
 		/// </summary>
-		string[] Errors
+		IList<string> Errors // TODO NET45 replace with IReadonlyList<string>
 		{
 			get;
 		}
@@ -211,7 +208,7 @@ namespace Altaxo.Scripting
 		/// try to execute the script. That's the reason for holding the compiler error messages
 		/// here and not in the script dialog.</remarks>
 		[NonSerialized()]
-		protected string[] _errors = null;
+		protected IList<string> _errors = null; // TODO NET45 replace with IReadonlyList<string>
 
 		#region Serialization
 
@@ -281,7 +278,7 @@ namespace Altaxo.Scripting
 
 			this._wasTriedToCompile = forModification ? false : from._wasTriedToCompile;
 
-			this._errors = null == from._errors ? null : (string[])from._errors.Clone();
+			this._errors = null == from._errors ? null : new List<string>(from._errors);
 
 			this._compilerResult = forModification ? null : from._compilerResult; // (not cloning is intented here)
 
@@ -297,7 +294,7 @@ namespace Altaxo.Scripting
 		/// <summary>
 		/// Returns the compiler errors as array of strings.
 		/// </summary>
-		public string[] Errors
+		public IList<string> Errors // TODO NET45 replace with IReadonlyList<string>
 		{
 			get { return _errors; }
 		}
@@ -306,7 +303,7 @@ namespace Altaxo.Scripting
 		{
 			get
 			{
-				return _compilerResult == null ? null : _compilerResult.ScriptAssembly;
+				return _compilerResult is IScriptCompilerSuccessfulResult successResult ? successResult.ScriptAssembly : null;
 			}
 		}
 
@@ -512,16 +509,16 @@ namespace Altaxo.Scripting
 			if (_compilerResult != null)
 				return true;
 
-			_compilerResult = ScriptCompilerService.Compile(new string[] { ScriptText }, out _errors);
+			_compilerResult = ScriptCompilerService.Compile(new string[] { ScriptText });
 			bool bSucceeded = (null != _compilerResult);
 
-			if (_compilerResult != null)
+			if (_compilerResult is IScriptCompilerSuccessfulResult successfulCompilerResult)
 			{
 				this._scriptObject = null;
 
 				try
 				{
-					this._scriptObject = _compilerResult.ScriptAssembly.CreateInstance(this.ScriptObjectType);
+					this._scriptObject = successfulCompilerResult.ScriptAssembly.CreateInstance(this.ScriptObjectType);
 					if (null == _scriptObject)
 					{
 						bSucceeded = false;
@@ -535,6 +532,10 @@ namespace Altaxo.Scripting
 					_errors = new string[1];
 					_errors[0] = string.Format("Exception during creation of scripting object: {0}\n", ex.Message);
 				}
+			}
+			else if (_compilerResult is IScriptCompilerFailedResult failedCompilerResult) // compiler result was not successful
+			{
+				_errors = failedCompilerResult.CompileErrors;
 			}
 			return bSucceeded;
 		}

@@ -177,7 +177,7 @@ namespace Altaxo.Gui.Scripting
 				IScriptText compiledDoc = _tempDoc.CloneForModification();
 				bool result = compiledDoc.Compile();
 
-				string[] errors = compiledDoc.Errors;
+				var errors = compiledDoc.Errors;
 				if (result == false)
 				{
 					_compiledDoc = null;
@@ -241,7 +241,7 @@ namespace Altaxo.Gui.Scripting
 
 		public bool HasExecutionErrors()
 		{
-			if (null != _doc.Errors && _doc.Errors.Length > 0)
+			if (null != _doc.Errors && _doc.Errors.Count > 0)
 			{
 				_view.ClearCompilerErrors();
 
@@ -250,7 +250,7 @@ namespace Altaxo.Gui.Scripting
 				Current.Gui.ErrorMessageBox("There were execution errors");
 			}
 
-			return null != _doc.Errors && _doc.Errors.Length > 0;
+			return null != _doc.Errors && _doc.Errors.Count > 0;
 		}
 
 		#endregion IScriptController Members

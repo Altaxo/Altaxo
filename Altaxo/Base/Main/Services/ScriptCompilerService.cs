@@ -31,13 +31,21 @@ namespace Altaxo.Main.Services
 {
 	public interface IScriptCompilerResult
 	{
-		System.Reflection.Assembly ScriptAssembly { get; }
-
 		int ScriptTextCount { get; }
 
 		string ScriptText(int i);
 
 		string ScriptTextHash { get; }
+	}
+
+	public interface IScriptCompilerSuccessfulResult : IScriptCompilerResult
+	{
+		System.Reflection.Assembly ScriptAssembly { get; }
+	}
+
+	public interface IScriptCompilerFailedResult : IScriptCompilerResult
+	{
+		IList<string> CompileErrors { get; } // TODO NET45 replace with IReadonlyList<string>
 	}
 
 	/// <summary>
@@ -159,24 +167,6 @@ namespace Altaxo.Main.Services
 			}
 
 			#endregion IComparable Members
-		}
-
-		#endregion FileHash
-
-		#region ScriptCompilerResult
-
-		private class ScriptCompilerResult : IScriptCompilerResult
-		{
-			private Assembly _scriptAssembly;
-			private string[] _scriptText;
-			private string _scriptTextHash;
-
-			public ScriptCompilerResult(string[] scriptText, string scriptTextHash, Assembly scriptAssembly)
-			{
-				_scriptText = (string[])scriptText.Clone();
-				_scriptAssembly = scriptAssembly;
-				_scriptTextHash = scriptTextHash;
-			}
 
 			public static string ComputeScriptTextHash(string[] scripts)
 			{
@@ -204,6 +194,24 @@ namespace Altaxo.Main.Services
 					}
 				}
 				return new FileHash(hash).BinHexRepresentation;
+			}
+		}
+
+		#endregion FileHash
+
+		#region ScriptCompilerResult
+
+		private class ScriptCompilerSuccessfulResult : IScriptCompilerSuccessfulResult
+		{
+			private Assembly _scriptAssembly;
+			private string[] _scriptText;
+			private string _scriptTextHash;
+
+			public ScriptCompilerSuccessfulResult(string[] scriptText, string scriptTextHash, Assembly scriptAssembly)
+			{
+				_scriptText = (string[])scriptText.Clone();
+				_scriptAssembly = scriptAssembly;
+				_scriptTextHash = scriptTextHash;
 			}
 
 			#region IScriptCompilerResult Members
@@ -240,20 +248,67 @@ namespace Altaxo.Main.Services
 			#endregion IScriptCompilerResult Members
 		}
 
+		private class ScriptCompilerFailedResult : IScriptCompilerResult
+		{
+			private string[] _scriptText;
+			private string _scriptTextHash;
+			private string[] _compileErrors;
+
+			public ScriptCompilerFailedResult(string[] scriptText, string scriptTextHash, string[] compileErrors)
+			{
+				_scriptText = (string[])scriptText.Clone();
+				_scriptTextHash = scriptTextHash;
+				_compileErrors = (string[])compileErrors.Clone();
+			}
+
+			#region IScriptCompilerResult Members
+
+			public string ScriptTextHash
+			{
+				get
+				{
+					return _scriptTextHash;
+				}
+			}
+
+			public Assembly ScriptAssembly
+			{
+				get
+				{
+					return null;
+				}
+			}
+
+			public int ScriptTextCount
+			{
+				get
+				{
+					return _scriptText.Length;
+				}
+			}
+
+			public string ScriptText(int i)
+			{
+				return _scriptText[i];
+			}
+
+			#endregion IScriptCompilerResult Members
+		}
+
 		#endregion ScriptCompilerResult
 
 		#region ConcurrentScriptCompilerDictionary
 
 		private class ConcurrentScriptCompilerDictionary
 		{
-			private Dictionary<string, ScriptCompilerResult> _compilerResultsByTextHash = new Dictionary<string, ScriptCompilerResult>();
-			private Dictionary<Assembly, ScriptCompilerResult> _compilerResultsByAssembly = new Dictionary<Assembly, ScriptCompilerResult>();
-			System.Threading.ReaderWriterLockSlim _lock = new System.Threading.ReaderWriterLockSlim();
+			private Dictionary<string, IScriptCompilerResult> _compilerResultsByTextHash = new Dictionary<string, IScriptCompilerResult>();
+			private Dictionary<Assembly, ScriptCompilerSuccessfulResult> _compilerResultsByAssembly = new Dictionary<Assembly, ScriptCompilerSuccessfulResult>();
+			private System.Threading.ReaderWriterLockSlim _lock = new System.Threading.ReaderWriterLockSlim();
 
-			internal bool TryAdd(ScriptCompilerResult result)
+			internal bool TryAdd(IScriptCompilerResult result)
 			{
 				if (null == result)
-					throw new ArgumentNullException("result");
+					throw new ArgumentNullException(nameof(result));
 
 				_lock.EnterUpgradeableReadLock();
 				try
@@ -268,7 +323,10 @@ namespace Altaxo.Main.Services
 						try
 						{
 							_compilerResultsByTextHash.Add(result.ScriptTextHash, result);
-							_compilerResultsByAssembly.Add(result.ScriptAssembly, result);
+							if (result is ScriptCompilerSuccessfulResult successfulResult)
+							{
+								_compilerResultsByAssembly.Add(successfulResult.ScriptAssembly, successfulResult);
+							}
 							return true;
 						}
 						finally
@@ -283,7 +341,7 @@ namespace Altaxo.Main.Services
 				}
 			}
 
-			internal bool TryGetValue(string scriptTextHash, out ScriptCompilerResult result)
+			internal bool TryGetValue(string scriptTextHash, out IScriptCompilerResult result)
 			{
 				if (string.IsNullOrEmpty(scriptTextHash))
 					throw new ArgumentNullException("scriptTextHash");
@@ -299,10 +357,10 @@ namespace Altaxo.Main.Services
 				}
 			}
 
-			internal bool TryGetValue(Assembly assembly, out ScriptCompilerResult result)
+			internal bool TryGetValue(Assembly assembly, out ScriptCompilerSuccessfulResult result)
 			{
 				if (null == assembly)
-					throw new ArgumentNullException("assembly");
+					throw new ArgumentNullException(nameof(assembly));
 
 				_lock.EnterReadLock();
 				try
@@ -322,9 +380,9 @@ namespace Altaxo.Main.Services
 
 		private static ConcurrentScriptCompilerDictionary _compilerResults = new ConcurrentScriptCompilerDictionary();
 
-		public IScriptCompilerResult GetCompilerResult(Assembly ass)
+		public IScriptCompilerSuccessfulResult GetCompilerResult(Assembly ass)
 		{
-			ScriptCompilerResult result;
+			ScriptCompilerSuccessfulResult result;
 			if (_compilerResults.TryGetValue(ass, out result))
 				return result;
 			else
@@ -338,7 +396,7 @@ namespace Altaxo.Main.Services
 		/// <returns>A hash string which unique identifies the script text.</returns>
 		public static string ComputeScriptTextHash(string scriptText)
 		{
-			return ScriptCompilerResult.ComputeScriptTextHash(new string[] { scriptText });
+			return FileHash.ComputeScriptTextHash(new string[] { scriptText });
 		}
 
 		/// <summary>
@@ -348,15 +406,14 @@ namespace Altaxo.Main.Services
 		/// of a freshly compiled assembly.
 		/// </summary>
 		/// <returns>True if successfully compiles, otherwise false.</returns>
-		public static IScriptCompilerResult Compile(string[] scriptText, out string[] errors)
+		public static IScriptCompilerResult Compile(string[] scriptText)
 		{
-			ScriptCompilerResult result;
+			IScriptCompilerResult result;
 
-			string scriptTextHash = ScriptCompilerResult.ComputeScriptTextHash(scriptText);
+			string scriptTextHash = FileHash.ComputeScriptTextHash(scriptText);
 
 			if (_compilerResults.TryGetValue(scriptTextHash, out result))
 			{
-				errors = null;
 				return result;
 			}
 
@@ -385,20 +442,22 @@ namespace Altaxo.Main.Services
 
 			if (results.Errors.Count > 0)
 			{
-				errors = new string[results.Errors.Count];
+				var errors = new string[results.Errors.Count];
 				int i = 0;
 				foreach (CompilerError err in results.Errors)
 				{
 					errors[i++] = err.ToString();
 				}
 
-				return null;
+				result = new ScriptCompilerFailedResult(scriptText, scriptTextHash, errors);
+				_compilerResults.TryAdd(result);
+
+				return result;
 			}
 			else
 			{
-				result = new ScriptCompilerResult(scriptText, scriptTextHash, results.CompiledAssembly);
+				result = new ScriptCompilerSuccessfulResult(scriptText, scriptTextHash, results.CompiledAssembly);
 				_compilerResults.TryAdd(result);
-				errors = null;
 				return result;
 			}
 		}
