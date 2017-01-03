@@ -382,8 +382,7 @@ namespace Altaxo.Main.Services
 
 		public IScriptCompilerSuccessfulResult GetCompilerResult(Assembly ass)
 		{
-			ScriptCompilerSuccessfulResult result;
-			if (_compilerResults.TryGetValue(ass, out result))
+			if (_compilerResults.TryGetValue(ass, out var result))
 				return result;
 			else
 				return null;
@@ -417,8 +416,10 @@ namespace Altaxo.Main.Services
 				return result;
 			}
 
-			Dictionary<string, string> providerOptions = new Dictionary<string, string>();
-			providerOptions.Add("CompilerVersion", "v4.0");
+			var providerOptions = new Dictionary<string, string>
+			{
+				{ "CompilerVersion", "v4.0" }
+			};
 			Microsoft.CSharp.CSharpCodeProvider codeProvider = new Microsoft.CSharp.CSharpCodeProvider(providerOptions);
 
 			// For Visual Basic Compiler try this :
