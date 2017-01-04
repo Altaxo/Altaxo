@@ -273,7 +273,6 @@ namespace Altaxo.Scripting
 
 			var oldScriptText = _scriptText;
 			this._scriptText = from._scriptText;
-			this._scriptObject = from._scriptObject;
 			this._isDirty = from._isDirty;
 
 			this._wasTriedToCompile = forModification ? false : from._wasTriedToCompile;
@@ -281,6 +280,8 @@ namespace Altaxo.Scripting
 			this._errors = null == from._errors ? null : new List<string>(from._errors);
 
 			this._compilerResult = forModification ? null : from._compilerResult; // (not cloning is intented here)
+
+			this._scriptObject = CreateNewScriptObject(); // we create a new script object, because we are unable to clone it
 
 			if (oldScriptText != _scriptText)
 				EhSelfChanged(EventArgs.Empty);
@@ -496,6 +497,36 @@ namespace Altaxo.Scripting
 		}
 
 		/// <summary>
+		/// Creates a new script object from the compiled assembly.
+		/// </summary>
+		/// <returns>The new script object. If creation fails, an error is set.</returns>
+		private object CreateNewScriptObject()
+		{
+			object scriptObject = null;
+			var assembly = ScriptAssembly;
+
+			if (null != assembly)
+			{
+				try
+				{
+					scriptObject = assembly.CreateInstance(this.ScriptObjectType);
+
+					if (null == scriptObject)
+					{
+						_errors = new string[1];
+						_errors[0] = string.Format("Unable to create scripting object  (expected type: {0}), please verify namespace and class name!\n", this.ScriptObjectType);
+					}
+				}
+				catch (Exception ex)
+				{
+					_errors = new string[1];
+					_errors[0] = string.Format("Exception during creation of scripting object: {0}\n", ex.Message);
+				}
+			}
+			return scriptObject;
+		}
+
+		/// <summary>
 		/// Does the compilation of the script into an assembly.
 		/// If it was not compiled before or is dirty, it is compiled first.
 		/// From the compiled assembly, a new instance of the newly created script class is created
@@ -512,26 +543,9 @@ namespace Altaxo.Scripting
 			_compilerResult = ScriptCompilerService.Compile(new string[] { ScriptText });
 			bool bSucceeded = (null != _compilerResult);
 
-			if (_compilerResult is IScriptCompilerSuccessfulResult successfulCompilerResult)
+			if (_compilerResult is IScriptCompilerSuccessfulResult)
 			{
-				this._scriptObject = null;
-
-				try
-				{
-					this._scriptObject = successfulCompilerResult.ScriptAssembly.CreateInstance(this.ScriptObjectType);
-					if (null == _scriptObject)
-					{
-						bSucceeded = false;
-						_errors = new string[1];
-						_errors[0] = string.Format("Unable to create scripting object  (expected type: {0}), please verify namespace and class name!\n", this.ScriptObjectType);
-					}
-				}
-				catch (Exception ex)
-				{
-					bSucceeded = false;
-					_errors = new string[1];
-					_errors[0] = string.Format("Exception during creation of scripting object: {0}\n", ex.Message);
-				}
+				this._scriptObject = CreateNewScriptObject();
 			}
 			else if (_compilerResult is IScriptCompilerFailedResult failedCompilerResult) // compiler result was not successful
 			{

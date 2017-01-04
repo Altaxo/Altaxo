@@ -239,9 +239,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		public FitElement(FitElement from)
 		{
-			this._fitFunction = from._fitFunction;
-			if (_fitFunction is ICloneable)
-				this._fitFunction = (IFitFunction)((ICloneable)from.FitFunction).Clone();
+			if (from._fitFunction is ICloneable fromFitFunc1)
+			{
+				this._fitFunction = (IFitFunction)fromFitFunc1.Clone();
+				if (this._fitFunction is Main.IDocumentLeafNode thisFitFunc1)
+					thisFitFunc1.ParentObject = this;
+			}
+			else
+			{
+				this._fitFunction = from._fitFunction;
+			}
+
 			if (null != _fitFunction)
 				_fitFunction.Changed += EhFitFunctionChanged;
 
@@ -252,16 +260,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			_independentVariables = new IReadableColumnProxy[from._independentVariables.Length];
 			for (int i = 0; i < _independentVariables.Length; ++i)
 			{
-				if (from._independentVariables[i] != null)
-					_independentVariables[i] = (IReadableColumnProxy)from._independentVariables[i].Clone();
+				ChildCloneToMember(ref _independentVariables[i], from._independentVariables[i]);
 			}
 
 			_dependentVariables = new IReadableColumnProxy[from._dependentVariables.Length];
 			for (int i = 0; i < _dependentVariables.Length; ++i)
 			{
-				if (from._dependentVariables[i] != null)
-					_dependentVariables[i] = (IReadableColumnProxy)from._dependentVariables[i].Clone();
+				ChildCloneToMember(ref _dependentVariables[i], from._dependentVariables[i]);
 			}
+
 			_errorEvaluation = new IVarianceScaling[from._errorEvaluation.Length];
 			for (int i = 0; i < _errorEvaluation.Length; ++i)
 			{
@@ -285,10 +292,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			ChildCloneToMember(ref _rangeOfRows, rowSelection);
 
 			_independentVariables = new IReadableColumnProxy[1];
-			_independentVariables[0] = ReadableColumnProxyBase.FromColumn(xColumn);
+			ChildSetMember(ref _independentVariables[0], ReadableColumnProxyBase.FromColumn(xColumn));
 
 			_dependentVariables = new IReadableColumnProxy[1];
-			_dependentVariables[0] = ReadableColumnProxyBase.FromColumn(yColumn);
+			ChildSetMember(ref _dependentVariables[0], ReadableColumnProxyBase.FromColumn(yColumn));
 
 			_errorEvaluation = new IVarianceScaling[1];
 			_errorEvaluation[0] = new ConstantVarianceScaling();
@@ -615,6 +622,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
 					if (null != _fitFunction)
 					{
 						_fitFunction.Changed -= EhFitFunctionChanged;
+					}
+
+					if (value is ICloneable fromFitFunc1)
+					{
+						this._fitFunction = (IFitFunction)fromFitFunc1.Clone();
+						if (this._fitFunction is Main.IDocumentLeafNode thisFitFunc1)
+							thisFitFunc1.ParentObject = this;
+					}
+					else
+					{
+						this._fitFunction = value;
 					}
 
 					_fitFunction = value;
