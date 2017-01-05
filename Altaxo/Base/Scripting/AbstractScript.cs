@@ -404,10 +404,7 @@ namespace Altaxo.Scripting
 
 		public override bool Equals(object obj)
 		{
-			if (!(obj is AbstractScript))
-				return base.Equals(obj);
-			AbstractScript script = (AbstractScript)obj;
-			return this.ScriptText.GetHashCode() == script.ScriptText.GetHashCode();
+			return obj is AbstractScript from && this.ScriptText == from.ScriptText;
 		}
 
 		public override int GetHashCode()

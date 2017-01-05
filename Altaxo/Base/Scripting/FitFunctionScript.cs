@@ -135,20 +135,10 @@ namespace Altaxo.Scripting
 
 		public override bool Equals(object obj)
 		{
-			if (!(obj is FitFunctionScript))
-				return base.Equals(obj);
-
-			FitFunctionScript from = (FitFunctionScript)obj;
-
-			if (!base.Equals(from))
-				return false;
-
-			if (this.FitFunctionCategory != from.FitFunctionCategory)
-				return false;
-			if (this.FitFunctionName != from.FitFunctionName)
-				return false;
-
-			return true;
+			return obj is FitFunctionScript from &&
+							base.Equals(from) &&
+							this.FitFunctionCategory == from.FitFunctionCategory &&
+							this.FitFunctionName == from.FitFunctionName;
 		}
 
 		public override int GetHashCode()
@@ -418,6 +408,20 @@ namespace Altaxo.Scripting
 		public override string ScriptObjectType
 		{
 			get { return "Altaxo.Calc.MyFitFunction"; }
+		}
+
+		public override string ScriptText
+		{
+			get
+			{
+				return base.ScriptText;
+			}
+			set
+			{
+				if (!IsReadOnly && _scriptText != value)
+					_fitFunctionCreationTime = DateTime.Now;
+				base.ScriptText = value;
+			}
 		}
 
 		public override bool Compile()
@@ -1120,23 +1124,28 @@ namespace Altaxo.Scripting
 
 		public string ParameterName(int i, bool tryUseCompiledObject)
 		{
-			// try to avoid a exception if the script object is not compiled
+			// try to avoid an exception if the script object is not compiled
 			// if (tryUseCompiledObject && IsUsingUserDefinedParameterNames && (_UserDefinedParameterNames == null || i >= this._UserDefinedParameterNames.Length))
 			//   MakeSureWasTriedToCompile();
 
+			string result;
+
 			if (this._scriptObject != null)
 			{
-				return ((IFitFunction)_scriptObject).ParameterName(i);
+				result = ((IFitFunction)_scriptObject).ParameterName(i);
 			}
 			else
 			{
 				if (IsUsingUserDefinedParameterNames)
 				{
-					return this._UserDefinedParameterNames[i];
+					result = this._UserDefinedParameterNames[i];
 				}
 				else
-					return "P[" + i.ToString() + "]";
+				{
+					result = "P[" + i.ToString() + "]";
+				}
 			}
+			return result;
 		}
 
 		public double DefaultParameterValue(int i)

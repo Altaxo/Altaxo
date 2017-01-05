@@ -99,7 +99,8 @@ namespace Altaxo.Graph.Plot.Data
 		/// <param name="fitDocument">The fit document. The document will be cloned before stored in this instance.</param>
 		/// <param name="fitElementIndex">Index of the fit element.</param>
 		/// <param name="dependentVariableIndex">Index of the dependent variable of the fit element.</param>
-		public XYNonlinearFitFunctionPlotData(string fitDocumentIdentifier, NonlinearFitDocument fitDocument, int fitElementIndex, int dependentVariableIndex)
+		/// <param name="dependentVariableTransformation">Transformation, which is applied to the result of the fit function to be then shown in the plot. Can be null.</param>
+		public XYNonlinearFitFunctionPlotData(string fitDocumentIdentifier, NonlinearFitDocument fitDocument, int fitElementIndex, int dependentVariableIndex, IVariantToVariantTransformation dependentVariableTransformation)
 		{
 			if (null == fitDocumentIdentifier)
 				throw new ArgumentNullException(nameof(fitDocumentIdentifier));
@@ -110,7 +111,7 @@ namespace Altaxo.Graph.Plot.Data
 			_fitDocumentIdentifier = fitDocumentIdentifier;
 			_fitElementIndex = fitElementIndex;
 			_dependentVariableIndex = dependentVariableIndex;
-			Function = new XYFunctionPlotData(new FitFunctionToScalarFunctionDDWrapper(_fitDocument.FitEnsemble[fitElementIndex].FitFunction, dependentVariableIndex, _fitDocument.GetParametersForFitElement(fitElementIndex)));
+			Function = new FitFunctionToScalarFunctionDDWrapper(_fitDocument.FitEnsemble[fitElementIndex].FitFunction, dependentVariableIndex, dependentVariableTransformation, _fitDocument.GetParametersForFitElement(fitElementIndex));
 		}
 
 		public XYNonlinearFitFunctionPlotData(XYNonlinearFitFunctionPlotData from)

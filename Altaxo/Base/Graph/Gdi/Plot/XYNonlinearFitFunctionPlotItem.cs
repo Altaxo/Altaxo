@@ -88,8 +88,9 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <param name="fitDocument">The fit document. The document will be cloned before stored in this instance.</param>
 		/// <param name="fitElementIndex">Index of the fit element.</param>
 		/// <param name="dependentVariableIndex">Index of the dependent variable of the fit element.</param>
+		/// <param name="dependentVariableTransformation">Transformation, which is applied to the result of the fit function to be then shown in the plot. Can be null.</param>
 		/// <param name="ps">The ps.</param>
-		public XYNonlinearFitFunctionPlotItem(string fitDocumentIdentifier, NonlinearFitDocument fitDocument, int fitElementIndex, int dependentVariableIndex, G2DPlotStyleCollection ps)
+		public XYNonlinearFitFunctionPlotItem(string fitDocumentIdentifier, NonlinearFitDocument fitDocument, int fitElementIndex, int dependentVariableIndex, IVariantToVariantTransformation dependentVariableTransformation, G2DPlotStyleCollection ps)
 			: base()
 		{
 			if (null == fitDocumentIdentifier)
@@ -99,7 +100,7 @@ namespace Altaxo.Graph.Gdi.Plot
 			if (null == ps)
 				throw new ArgumentNullException(nameof(ps));
 
-			ChildSetMember(ref _plotData, new XYNonlinearFitFunctionPlotData(fitDocumentIdentifier, fitDocument, fitElementIndex, dependentVariableIndex));
+			ChildSetMember(ref _plotData, new XYNonlinearFitFunctionPlotData(fitDocumentIdentifier, fitDocument, fitElementIndex, dependentVariableIndex, dependentVariableTransformation));
 			Style = ps;
 		}
 

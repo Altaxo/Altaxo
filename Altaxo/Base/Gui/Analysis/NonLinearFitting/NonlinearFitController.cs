@@ -33,6 +33,7 @@ using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Scripting;
 using Altaxo.Scripting;
 using System;
+using Altaxo.Data.Transformations;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -372,11 +373,21 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		{
 			// collect the old plot items and put them into a dictionary whose key is a combination of fit element index and dependentVariableIndex
 			var oldItemsDictionary = new Dictionary<Tuple<int, int>, XYNonlinearFitFunctionPlotItem>();
+			// dictionary with holds the available y-data columns of this layer and their transformations.
+			var dataColumnsAndTheirTransformation = new Dictionary<DataColumn, IVariantToVariantTransformation>();
+
 			foreach (var pi in TreeNodeExtensions.TakeFromHereToFirstLeaves((IGPlotItem)xylayer.PlotItems))
 			{
 				if (pi is XYNonlinearFitFunctionPlotItem plotItem && plotItem.FitDocumentIdentifier == _previousFitDocumentIdentifier)
 				{
 					oldItemsDictionary.Add(new Tuple<int, int>(plotItem.FitElementIndex, plotItem.DependentVariableIndex), plotItem);
+				}
+
+				if (pi is XYColumnPlotItem columnPlotItem)
+				{
+					SplitInDataColumnAndTransformation(columnPlotItem.Data.YColumn, out var dataColumn, out var transfo);
+					if (null != dataColumn)
+						dataColumnsAndTheirTransformation[dataColumn] = transfo;
 				}
 			}
 
@@ -384,15 +395,25 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 			// now create a plot item for each dependent variable, reuse if possible the style from the old items
 			int funcNumber = 0;
-			for (int i = 0; i < _doc.FitEnsemble.Count; i++)
+			for (int idxFitEnsemble = 0; idxFitEnsemble < _doc.FitEnsemble.Count; idxFitEnsemble++)
 			{
-				FitElement fitEle = _doc.FitEnsemble[i];
+				FitElement fitEle = _doc.FitEnsemble[idxFitEnsemble];
 
-				for (int k = 0; k < fitEle.NumberOfDependentVariables; k++, funcNumber++)
+				for (int idxDependentVariable = 0; idxDependentVariable < fitEle.NumberOfDependentVariables; idxDependentVariable++, funcNumber++)
 				{
-					oldItemsDictionary.TryGetValue(new Tuple<int, int>(i, k), out var oldPlotItem);
+					oldItemsDictionary.TryGetValue(new Tuple<int, int>(idxFitEnsemble, idxDependentVariable), out var oldPlotItem);
 					var newPlotStyle = oldPlotItem?.Style.Clone() ?? new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext());
-					var newPlotItem = new XYNonlinearFitFunctionPlotItem(newFitDocumentIdentifier, _doc, i, k, newPlotStyle);
+
+					// get the transformation for the plot item
+					IVariantToVariantTransformation functionPlotItemTransformation = null;
+					var depVar = fitEle.DependentVariables(idxDependentVariable);
+					SplitInDataColumnAndTransformation(depVar, out var depVarDataColumn, out var transformationOfFitDependentVariable);
+					if (null != depVarDataColumn && dataColumnsAndTheirTransformation.TryGetValue(depVarDataColumn, out var transformationOfOriginalDataColumn))
+					{
+						functionPlotItemTransformation = GetFitFunctionTransformation(transformationOfOriginalDataColumn, transformationOfFitDependentVariable);
+					}
+
+					var newPlotItem = new XYNonlinearFitFunctionPlotItem(newFitDocumentIdentifier, _doc, idxFitEnsemble, idxDependentVariable, functionPlotItemTransformation, newPlotStyle);
 
 					if (null != oldPlotItem)
 					{
@@ -406,6 +427,47 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 
 			_previousFitDocumentIdentifier = newFitDocumentIdentifier;
+		}
+
+		private IVariantToVariantTransformation GetFitFunctionTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitDependentVariable)
+		{
+			if (null == transformationOfOriginalDataColumn && null == transformationOfFitDependentVariable)
+			{
+				return null;
+			}
+			else if (null != transformationOfOriginalDataColumn && null == transformationOfFitDependentVariable)
+			{
+				return transformationOfOriginalDataColumn;
+			}
+			else if (null == transformationOfOriginalDataColumn && null != transformationOfFitDependentVariable)
+			{
+				return transformationOfFitDependentVariable.BackTransformation;
+			}
+			else // both transformations are not null
+			{
+				return CompoundTransformation.TryGetCompoundTransformationWithSimplification(new[] { transformationOfOriginalDataColumn, transformationOfFitDependentVariable.BackTransformation });
+			}
+		}
+
+		private void SplitInDataColumnAndTransformation(IReadableColumn ycolumn, out DataColumn dataColumn, out IVariantToVariantTransformation transformation)
+		{
+			dataColumn = null;
+			transformation = null;
+
+			if (ycolumn is ITransformedReadableColumn tyc)
+			{
+				var originalDataColumn = tyc.GetUnderlyingDataColumnOrDefault();
+				if (null != originalDataColumn)
+				{
+					dataColumn = originalDataColumn;
+					transformation = tyc.Transformation;
+				}
+			}
+			else if (ycolumn is DataColumn dc)
+			{
+				dataColumn = dc;
+				transformation = null;
+			}
 		}
 
 		public void OnSimulation(bool calculateUnusedDependentVariablesAlso)

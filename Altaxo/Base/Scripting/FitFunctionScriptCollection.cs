@@ -35,7 +35,12 @@ namespace Altaxo.Scripting
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
 		ICollection<FitFunctionScript>
 	{
-		private HashSet<FitFunctionScript> _InnerList = new HashSet<FitFunctionScript>();
+		/// <summary>
+		/// The inner list of fit function scripts. Keys and values are the <b>same instance</b> of a fit function script.
+		/// I use a dictionary in order to be able to retrieve a previous version of a fit function script with exactly
+		/// the same properties (ScriptText, Category and Name).
+		/// </summary>
+		private Dictionary<FitFunctionScript, FitFunctionScript> _innerList = new Dictionary<FitFunctionScript, FitFunctionScript>();
 
 		public FitFunctionScriptCollection(Main.IDocumentNode parent)
 		{
@@ -44,7 +49,7 @@ namespace Altaxo.Scripting
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			foreach (var entry in _InnerList)
+			foreach (var entry in _innerList.Keys)
 			{
 				var asNode = entry as Main.IDocumentLeafNode;
 				if (null != asNode)
@@ -54,11 +59,11 @@ namespace Altaxo.Scripting
 
 		protected override void Dispose(bool isDisposing)
 		{
-			var list = _InnerList;
+			var list = _innerList;
 			if (null != list && list.Count > 0)
 			{
-				_InnerList = new HashSet<FitFunctionScript>();
-				foreach (var item in list)
+				_innerList = new Dictionary<FitFunctionScript, FitFunctionScript>();
+				foreach (var item in list.Keys)
 					item.Dispose();
 			}
 
@@ -88,28 +93,41 @@ namespace Altaxo.Scripting
 			return DateTime.Compare(x.CreationTime, y.CreationTime);
 		}
 
-		public void Add(FitFunctionScript script)
+		/// <summary>
+		/// Adds the specified fit function script.
+		/// </summary>
+		/// <param name="script">The script to add.</param>
+		/// <returns>If this script is new (there is no existing script with the same properties ScriptText, Category and Name), the newly added script is returned.
+		/// Otherwise, the existing script with the same properties is returned.</returns>
+		public FitFunctionScript Add(FitFunctionScript script)
 		{
 			if (null == script)
 				throw new ArgumentNullException();
 
-			if (!Contains(script))
+			if (!_innerList.TryGetValue(script, out var returnValue))
 			{
-				_InnerList.Add(script);
+				_innerList.Add(script, script);
 				script.ParentObject = this;
+				returnValue = script;
 			}
+			return returnValue;
+		}
+
+		void ICollection<FitFunctionScript>.Add(FitFunctionScript script)
+		{
+			Add(script);
 		}
 
 		public bool Contains(FitFunctionScript script)
 		{
-			return _InnerList.Contains(script);
+			return _innerList.ContainsKey(script);
 		}
 
 		public void Remove(FitFunctionScript script)
 		{
-			if (_InnerList.Contains(script))
+			if (_innerList.ContainsKey(script))
 			{
-				_InnerList.Remove(script);
+				_innerList.Remove(script);
 				script.Dispose();
 			}
 		}
@@ -118,12 +136,12 @@ namespace Altaxo.Scripting
 
 		public void CopyTo(FitFunctionScript[] array, int index)
 		{
-			_InnerList.CopyTo(array, index);
+			_innerList.Keys.CopyTo(array, index);
 		}
 
 		public int Count
 		{
-			get { return _InnerList.Count; }
+			get { return _innerList.Count; }
 		}
 
 		public bool IsSynchronized
@@ -144,16 +162,16 @@ namespace Altaxo.Scripting
 
 		public IEnumerator GetEnumerator()
 		{
-			return _InnerList.GetEnumerator();
+			return _innerList.Keys.GetEnumerator();
 		}
 
 		public void Clear()
 		{
-			var list = _InnerList;
+			var list = _innerList;
 			if (null != list && list.Count > 0)
 			{
-				_InnerList = new HashSet<FitFunctionScript>();
-				foreach (var item in list)
+				_innerList = new Dictionary<FitFunctionScript, FitFunctionScript>();
+				foreach (var item in list.Keys)
 					item.Dispose();
 			}
 		}
@@ -165,7 +183,7 @@ namespace Altaxo.Scripting
 
 		bool ICollection<FitFunctionScript>.Remove(FitFunctionScript item)
 		{
-			var success = _InnerList.Remove(item);
+			var success = _innerList.Remove(item);
 			if (success)
 				item.Dispose();
 			return success;
@@ -173,7 +191,7 @@ namespace Altaxo.Scripting
 
 		IEnumerator<FitFunctionScript> IEnumerable<FitFunctionScript>.GetEnumerator()
 		{
-			return _InnerList.GetEnumerator();
+			return _innerList.Keys.GetEnumerator();
 		}
 
 		#endregion IEnumerable Members

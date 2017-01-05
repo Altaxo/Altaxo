@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Graph;
@@ -285,6 +286,25 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				return new NamedColor(GuiHelper.ToAxo(((SolidColorBrush)brush).Color));
 			else
 				return NamedColors.Transparent;
+		}
+
+		public void SelectFitFunction(IFitFunction func)
+		{
+			var mainRoot = (NGTreeNodeCollection)_twFitFunctions.ItemsSource;
+			if (null == mainRoot)
+				return;
+
+			var rootNode = mainRoot.FirstOrDefault(node => node is RootNode rn && rn.RootNodeType == RootNodeType.RootNodeDocument);
+			if (null == rootNode)
+				return;
+
+			var selNode = TreeNodeExtensions.AnyBetweenHereAndLeaves(rootNode, (node) => node is DocumentLeafNode dln && dln.FunctionInstance.Equals(func));
+
+			if (null == selNode)
+				return;
+
+			selNode.IsExpanded = true;
+			selNode.IsSelected = true;
 		}
 
 		#endregion IFitFunctionSelectionView

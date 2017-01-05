@@ -50,6 +50,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		void SetRtfDocumentation(string rtfString);
 
 		NamedColor GetRtfBackgroundColor();
+
+		void SelectFitFunction(IFitFunction func);
 	}
 
 	public interface IFitFunctionSelectionViewEventSink
@@ -105,28 +107,68 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void EhView_EditItem(IFitFunctionInformation selectedtag)
 		{
-			if (selectedtag is DocumentFitFunctionInformation)
-			{
-				EditItem(selectedtag.CreateFitFunction(), false);
-			}
-			else if (selectedtag is FileBasedFitFunctionInformation)
-			{
-				IFitFunction func = Altaxo.Main.Services.FitFunctionService.ReadUserDefinedFitFunction(selectedtag as Altaxo.Main.Services.FileBasedFitFunctionInformation);
-				EditItem(func, false);
-			}
+			EditItemOrItemCopy(selectedtag, false);
 		}
 
 		public void EhView_CreateItemFromHere(IFitFunctionInformation selectedtag)
 		{
+			EditItemOrItemCopy(selectedtag, true);
+		}
+
+		public void EditItemOrItemCopy(IFitFunctionInformation selectedtag, bool editItemCopy)
+		{
+			IFitFunction func = null;
 			if (selectedtag is DocumentFitFunctionInformation)
 			{
-				EditItem(selectedtag.CreateFitFunction(), true);
+				func = selectedtag.CreateFitFunction();
 			}
 			else if (selectedtag is FileBasedFitFunctionInformation)
 			{
-				IFitFunction func = Altaxo.Main.Services.FitFunctionService.ReadUserDefinedFitFunction(selectedtag as Altaxo.Main.Services.FileBasedFitFunctionInformation);
-				EditItem(func, true);
+				func = Altaxo.Main.Services.FitFunctionService.ReadUserDefinedFitFunction(selectedtag as Altaxo.Main.Services.FileBasedFitFunctionInformation);
 			}
+
+			if (null != func)
+			{
+				var editedFunc = Edit(func, editItemCopy);
+
+				if (null != editedFunc)
+				{
+				}
+			}
+		}
+
+		private FitFunctionScript Edit(IFitFunction func, bool editItemCopy)
+		{
+			if (null != func)
+			{
+				if (func is FitFunctionScript)
+					editItemCopy = true; // for scripts, we always edit a copy
+
+				object[] args = new object[] { (editItemCopy && func is ICloneable cfunc) ? cfunc.Clone() : func };
+				if (Current.Gui.ShowDialog(args, "Edit fit function script"))
+				{
+					if (args[0] is FitFunctionScript editedScript)
+					{
+						var ctrl = new Altaxo.Gui.Scripting.FitFunctionNameAndCategoryController();
+						ctrl.InitializeDocument(editedScript);
+						if (Current.Gui.ShowDialog(ctrl, "Store?"))
+						{
+							// add the new script to the list
+							var editedScript2 = Current.Project.FitFunctionScripts.Add(editedScript);
+
+							if (!object.ReferenceEquals(editedScript, editedScript2))
+								Current.Gui.InfoMessageBox("Edited fit function was not added because exactly the same fit function already exists.", "To your information");
+
+							// Note: category and/or name can have changed now, so it is more save to
+							// completely reinitialize the fit function tree
+							Initialize();
+
+							return editedScript2;
+						}
+					}
+				}
+			}
+			return null;
 		}
 
 		public void EhView_RemoveItem(IFitFunctionInformation selectedtag)
@@ -140,31 +182,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			{
 				Current.FitFunctionService.RemoveUserDefinedFitFunction(selectedtag as Altaxo.Main.Services.FileBasedFitFunctionInformation);
 				Initialize();
-			}
-		}
-
-		private void EditItem(IFitFunction func, bool editCopy)
-		{
-			if (null != func)
-			{
-				object[] args = new object[] { (editCopy && (func is ICloneable)) ? ((ICloneable)func).Clone() : func };
-				if (Current.Gui.ShowDialog(args, "Edit fit function script"))
-				{
-					if (args[0] is FitFunctionScript)
-					{
-						var ctrl = new Altaxo.Gui.Scripting.FitFunctionNameAndCategoryController();
-						ctrl.InitializeDocument((FitFunctionScript)args[0]);
-						if (Current.Gui.ShowDialog(ctrl, "Store?"))
-						{
-							// add the new script to the list
-							Current.Project.FitFunctionScripts.Add((FitFunctionScript)args[0]);
-
-							// Note: category and/or name can have changed now, so it is more save to
-							// completely reinitialize the fit function tree
-							Initialize();
-						}
-					}
-				}
 			}
 		}
 
