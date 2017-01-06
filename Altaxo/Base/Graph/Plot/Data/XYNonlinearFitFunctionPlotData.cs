@@ -100,7 +100,9 @@ namespace Altaxo.Graph.Plot.Data
 		/// <param name="fitElementIndex">Index of the fit element.</param>
 		/// <param name="dependentVariableIndex">Index of the dependent variable of the fit element.</param>
 		/// <param name="dependentVariableTransformation">Transformation, which is applied to the result of the fit function to be then shown in the plot. Can be null.</param>
-		public XYNonlinearFitFunctionPlotData(string fitDocumentIdentifier, NonlinearFitDocument fitDocument, int fitElementIndex, int dependentVariableIndex, IVariantToVariantTransformation dependentVariableTransformation)
+		/// <param name="independentVariableIndex">Index of the independent variable of the fit element.</param>
+		/// <param name="independentVariableTransformation">Transformation, which is applied to the x value before it is applied to the fit function. Can be null.</param>
+		public XYNonlinearFitFunctionPlotData(string fitDocumentIdentifier, NonlinearFitDocument fitDocument, int fitElementIndex, int dependentVariableIndex, IVariantToVariantTransformation dependentVariableTransformation, int independentVariableIndex, IVariantToVariantTransformation independentVariableTransformation)
 		{
 			if (null == fitDocumentIdentifier)
 				throw new ArgumentNullException(nameof(fitDocumentIdentifier));
@@ -111,7 +113,7 @@ namespace Altaxo.Graph.Plot.Data
 			_fitDocumentIdentifier = fitDocumentIdentifier;
 			_fitElementIndex = fitElementIndex;
 			_dependentVariableIndex = dependentVariableIndex;
-			Function = new FitFunctionToScalarFunctionDDWrapper(_fitDocument.FitEnsemble[fitElementIndex].FitFunction, dependentVariableIndex, dependentVariableTransformation, _fitDocument.GetParametersForFitElement(fitElementIndex));
+			Function = new FitFunctionToScalarFunctionDDWrapper(_fitDocument.FitEnsemble[fitElementIndex].FitFunction, dependentVariableIndex, dependentVariableTransformation, independentVariableIndex, independentVariableTransformation, _fitDocument.GetParametersForFitElement(fitElementIndex));
 		}
 
 		public XYNonlinearFitFunctionPlotData(XYNonlinearFitFunctionPlotData from)

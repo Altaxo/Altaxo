@@ -34,6 +34,7 @@ using Altaxo.Gui.Scripting;
 using Altaxo.Scripting;
 using System;
 using Altaxo.Data.Transformations;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -140,6 +141,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				_fitEnsembleController = (IFitEnsembleController)Current.Gui.GetControllerAndControl(new object[] { _doc.FitEnsemble }, typeof(IFitEnsembleController));
 
 				_funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count == 0 ? null : _doc.FitEnsemble[0].FitFunction);
+				_funcselController.FitFunctionSelected += EhController_SelectFitFunction;
 				Current.Gui.FindAndAttachControlTo(_funcselController);
 
 				{
@@ -305,11 +307,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 					}
 					else // select as only
 					{
-						_doc.FitEnsemble[0].FitFunction = func;
-						_doc.SetDefaultParametersForFitElement(0);
-
 						for (int i = _doc.FitEnsemble.Count - 1; i >= 1; --i)
 							_doc.FitEnsemble.RemoveAt(i);
+
+						_doc.FitEnsemble[0].FitFunction = func;
+
+						_doc.SetDefaultParametersForFitElement(0);
 
 						changed = true;
 					}
@@ -331,6 +334,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				Select((IFitFunction)_funcselController.ModelObject);
 				_view.SwitchToFitEnsemblePage();
 			}
+		}
+
+		private void EhController_SelectFitFunction(IFitFunctionInformation fitFunctionInformation)
+		{
+			Select(fitFunctionInformation.CreateFitFunction());
+			_view.SwitchToFitEnsemblePage();
 		}
 
 		public void EhView_NewFitFunction()
@@ -374,7 +383,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			// collect the old plot items and put them into a dictionary whose key is a combination of fit element index and dependentVariableIndex
 			var oldItemsDictionary = new Dictionary<Tuple<int, int>, XYNonlinearFitFunctionPlotItem>();
 			// dictionary with holds the available y-data columns of this layer and their transformations.
-			var dataColumnsAndTheirTransformation = new Dictionary<DataColumn, IVariantToVariantTransformation>();
+			var dataColumnsAndTheirTransformation = new Dictionary<Tuple<DataColumn, DataColumn>, Tuple<IVariantToVariantTransformation, IVariantToVariantTransformation>>();
 
 			foreach (var pi in TreeNodeExtensions.TakeFromHereToFirstLeaves((IGPlotItem)xylayer.PlotItems))
 			{
@@ -385,9 +394,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 				if (pi is XYColumnPlotItem columnPlotItem)
 				{
-					SplitInDataColumnAndTransformation(columnPlotItem.Data.YColumn, out var dataColumn, out var transfo);
-					if (null != dataColumn)
-						dataColumnsAndTheirTransformation[dataColumn] = transfo;
+					SplitInDataColumnAndTransformation(columnPlotItem.Data.XColumn, out var xdataColumn, out var xtransfo);
+					SplitInDataColumnAndTransformation(columnPlotItem.Data.YColumn, out var ydataColumn, out var ytransfo);
+					if (null != xdataColumn && null != ydataColumn)
+						dataColumnsAndTheirTransformation[new Tuple<DataColumn, DataColumn>(xdataColumn, ydataColumn)] = new Tuple<IVariantToVariantTransformation, IVariantToVariantTransformation>(xtransfo, ytransfo);
 				}
 			}
 
@@ -405,15 +415,20 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 					var newPlotStyle = oldPlotItem?.Style.Clone() ?? new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext());
 
 					// get the transformation for the plot item
-					IVariantToVariantTransformation functionPlotItemTransformation = null;
+					IVariantToVariantTransformation functionIndepVarPlotItemTransformation = null;
+					IVariantToVariantTransformation functionDepVarPlotItemTransformation = null;
+					var indepVar = fitEle.IndependentVariables(0);
 					var depVar = fitEle.DependentVariables(idxDependentVariable);
-					SplitInDataColumnAndTransformation(depVar, out var depVarDataColumn, out var transformationOfFitDependentVariable);
-					if (null != depVarDataColumn && dataColumnsAndTheirTransformation.TryGetValue(depVarDataColumn, out var transformationOfOriginalDataColumn))
+					SplitInDataColumnAndTransformation(indepVar, out var indepVarDataColumn, out var indepFitVarTransformation);
+					SplitInDataColumnAndTransformation(depVar, out var depVarDataColumn, out var depFitVarTransformation);
+
+					if (null != indepVarDataColumn && null != depVarDataColumn && dataColumnsAndTheirTransformation.TryGetValue(new Tuple<DataColumn, DataColumn>(indepVarDataColumn, depVarDataColumn), out var orgTransformations))
 					{
-						functionPlotItemTransformation = GetFitFunctionTransformation(transformationOfOriginalDataColumn, transformationOfFitDependentVariable);
+						functionIndepVarPlotItemTransformation = GetFitFunctionIndependentTransformation(orgTransformations.Item1, indepFitVarTransformation);
+						functionDepVarPlotItemTransformation = GetFitFunctionDependentTransformation(orgTransformations.Item2, depFitVarTransformation);
 					}
 
-					var newPlotItem = new XYNonlinearFitFunctionPlotItem(newFitDocumentIdentifier, _doc, idxFitEnsemble, idxDependentVariable, functionPlotItemTransformation, newPlotStyle);
+					var newPlotItem = new XYNonlinearFitFunctionPlotItem(newFitDocumentIdentifier, _doc, idxFitEnsemble, idxDependentVariable, functionDepVarPlotItemTransformation, 0, functionIndepVarPlotItemTransformation, newPlotStyle);
 
 					if (null != oldPlotItem)
 					{
@@ -429,7 +444,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			_previousFitDocumentIdentifier = newFitDocumentIdentifier;
 		}
 
-		private IVariantToVariantTransformation GetFitFunctionTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitDependentVariable)
+		private IVariantToVariantTransformation GetFitFunctionDependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitDependentVariable)
 		{
 			if (null == transformationOfOriginalDataColumn && null == transformationOfFitDependentVariable)
 			{
@@ -446,6 +461,26 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			else // both transformations are not null
 			{
 				return CompoundTransformation.TryGetCompoundTransformationWithSimplification(new[] { transformationOfOriginalDataColumn, transformationOfFitDependentVariable.BackTransformation });
+			}
+		}
+
+		private IVariantToVariantTransformation GetFitFunctionIndependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitIndependentVariable)
+		{
+			if (null == transformationOfOriginalDataColumn && null == transformationOfFitIndependentVariable)
+			{
+				return null;
+			}
+			else if (null != transformationOfOriginalDataColumn && null == transformationOfFitIndependentVariable)
+			{
+				return transformationOfOriginalDataColumn.BackTransformation;
+			}
+			else if (null == transformationOfOriginalDataColumn && null != transformationOfFitIndependentVariable)
+			{
+				return transformationOfFitIndependentVariable;
+			}
+			else // both transformations are not null
+			{
+				return CompoundTransformation.TryGetCompoundTransformationWithSimplification(new[] { transformationOfOriginalDataColumn.BackTransformation, transformationOfFitIndependentVariable });
 			}
 		}
 

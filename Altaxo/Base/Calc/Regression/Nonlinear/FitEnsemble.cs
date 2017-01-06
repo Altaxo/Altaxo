@@ -135,16 +135,25 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		#region ICloneable Members
 
+		public FitEnsemble()
+		{
+		}
+
+		public FitEnsemble(FitEnsemble from)
+		{
+			foreach (var ele in from)
+			{
+				var toadd = (FitElement)ele.Clone();
+				toadd.ParentObject = this;
+				_fitElements.Add(toadd);
+			}
+
+			CollectParameterNames();
+		}
+
 		public object Clone()
 		{
-			FitEnsemble result = new FitEnsemble();
-
-			foreach (FitElement ele in this)
-				result._fitElements.Add((FitElement)ele.Clone());
-
-			result.CollectParameterNames();
-
-			return result;
+			return new FitEnsemble(this);
 		}
 
 		#endregion ICloneable Members
@@ -173,8 +182,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		public void Add(FitElement e)
 		{
-			_fitElements.Add(e);
 			e.ParentObject = this;
+			_fitElements.Add(e);
 
 			CollectParameterNames();
 			EhSelfChanged(EventArgs.Empty);
@@ -184,6 +193,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		{
 			if (_fitElements.Count > 0)
 			{
+				foreach (var ele in _fitElements)
+					ele.Dispose();
 				_fitElements.Clear();
 				CollectParameterNames();
 				EhSelfChanged(EventArgs.Empty);
@@ -240,8 +251,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		public void Insert(int index, FitElement item)
 		{
-			_fitElements.Insert(index, item);
 			item.ParentObject = this;
+			_fitElements.Insert(index, item);
 			CollectParameterNames();
 			EhSelfChanged(EventArgs.Empty);
 		}

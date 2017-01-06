@@ -73,9 +73,12 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 			var thisFitFunction = fitdoc.FitEnsemble[_doc.FitElementIndex].FitFunction;
 
+			var thisIndepTransformation = (_doc.Function as FitFunctionToScalarFunctionDDWrapper)?.IndependentVariableTransformation;
 			var thisTransformation = (_doc.Function as FitFunctionToScalarFunctionDDWrapper)?.DependentVariableTransformation;
 
 			stb.AppendFormat("Displayed fit function (from FitElement[{0}]): {1}", _doc.FitElementIndex, thisFitFunction?.ToString());
+			stb.AppendLine();
+			stb.AppendFormat("Independent variable: {0}, fed with: {1} {2}", thisFitFunction?.IndependentVariableName(0), thisIndepTransformation?.RepresentationAsOperator ?? string.Empty, "x_axis_value");
 			stb.AppendLine();
 			stb.AppendFormat("Displayed dependent variable[{0}]: {1} {2}", _doc.DependentVariableIndex, thisTransformation?.RepresentationAsOperator ?? string.Empty, thisFitFunction?.DependentVariableName(_doc.DependentVariableIndex));
 			stb.AppendFormat(" ({0} was fitted to : {1})", thisFitFunction?.DependentVariableName(_doc.DependentVariableIndex), fitdoc.FitEnsemble[_doc.FitElementIndex].DependentVariables(_doc.DependentVariableIndex)?.FullName);

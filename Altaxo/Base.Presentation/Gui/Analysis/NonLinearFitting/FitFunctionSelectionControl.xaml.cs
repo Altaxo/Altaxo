@@ -40,10 +40,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 	/// <summary>
 	/// Interaction logic for FitFunctionSelectionControl.xaml
 	/// </summary>
-	[UserControlForController(typeof(IFitFunctionSelectionViewEventSink))]
 	public partial class FitFunctionSelectionControl : UserControl, IFitFunctionSelectionView
 	{
-		private IFitFunctionSelectionViewEventSink _controller;
+		public event Action<IFitFunctionInformation> SelectionChanged;
+
+		public event Action<IFitFunctionInformation> ItemDoubleClicked;
+
+		public event Action<IFitFunctionInformation> EditItem;
+
+		public event Action<IFitFunctionInformation> EditCopyOfItem;
+
+		public event Action<IFitFunctionInformation> RemoveItem;
 
 		#region Node classes
 
@@ -59,6 +66,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			public virtual bool IsMenuRemoveEnabled { get { return false; } }
 
 			public virtual bool IsMenuEditEnabled { get { return false; } }
+
+			public virtual bool IsMenuEditCopyEnabled { get { return false; } }
 
 			public object MySelf { get { return this; } }
 		}
@@ -99,14 +108,18 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 			private bool _canBeRemoved;
 			private bool _canBeEdited;
+			private bool _canBeACopyEdited;
 
 			public override bool IsMenuEditEnabled { get { return _canBeEdited; } }
 
+			public override bool IsMenuEditCopyEnabled { get { return _canBeACopyEdited; } }
+
 			public override bool IsMenuRemoveEnabled { get { return _canBeRemoved; } }
 
-			public void SetMenuEnabled(bool canBeEdited, bool canBeRemoved)
+			public void SetMenuEnabled(bool canBeEdited, bool canBeACopyEdited, bool canBeRemoved)
 			{
 				_canBeEdited = canBeEdited;
+				_canBeACopyEdited = canBeACopyEdited;
 				_canBeRemoved = canBeRemoved;
 			}
 		}
@@ -162,15 +175,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		private System.Drawing.Graphics _rtfGraphics;
 
-		private void _twFitFunctions_AfterSelect(object sender, RoutedPropertyChangedEventArgs<object> e)
+		private void EhFitFunctions_AfterSelect(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			var node = e.NewValue as NGTreeNode;
 			if (node == null)
 				return;
 			var fitInfo = node.Tag as IFitFunctionInformation;
 
-			if (_controller != null)
-				_controller.EhView_SelectionChanged(fitInfo);
+			SelectionChanged?.Invoke(fitInfo);
 
 			if (fitInfo != null)
 			{
@@ -188,90 +200,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		#region IFitFunctionSelectionView
 
-		public IFitFunctionSelectionViewEventSink Controller
+		public void SetFitFunctions(NGTreeNodeCollection list)
 		{
-			get
-			{
-				return _controller;
-			}
-			set
-			{
-				_controller = value;
-			}
-		}
-
-		public void ClearFitFunctionList()
-		{
-			this._twFitFunctions.ItemsSource = null;
-		}
-
-		public void AddFitFunctionList(string rootname, Altaxo.Main.Services.IFitFunctionInformation[] info, FitFunctionContextMenuStyle menustyle)
-		{
-			if (_twFitFunctions.ItemsSource == null)
-			{
-				_twFitFunctions.ItemsSource = new NGTreeNode().Nodes;
-			}
-			var mainRoot = (NGTreeNodeCollection)_twFitFunctions.ItemsSource;
-
-			// The key of the entries is the FitFunctionAttribute, the value is the type of the fitting function
-			RootNode rnode = new RootNode(rootname, RootNodeType.RootNodeBuiltin);
-			mainRoot.Add(rnode);
-			NGTreeNodeCollection root = rnode.Nodes;
-
-			foreach (Altaxo.Main.Services.IFitFunctionInformation entry in info)
-			{
-				string[] path = entry.Category.Split(new char[] { '\\', '/' });
-
-				var where = root;
-				for (int j = 0; j < path.Length; j++)
-				{
-					var node = GetPathNode(where, path[j]);
-					if (node == null)
-					{
-						node = new CategoryNode(path[j]);
-						where.Add(node);
-					}
-					where = node.Nodes;
-				}
-
-				var creationTime = entry.CreationTime;
-				var nodeText = entry.Name;
-
-				if (null != creationTime)
-				{
-					nodeText += " (" + creationTime.Value.ToString("yyyy-MM-dd HH:mm:ss") + ")";
-				}
-
-				BuiltinLeafNode leaf = new BuiltinLeafNode(nodeText, entry);
-
-				switch (menustyle)
-				{
-					case FitFunctionContextMenuStyle.None:
-						leaf.SetMenuEnabled(false, false);
-						break;
-
-					case FitFunctionContextMenuStyle.EditAndDelete:
-						//	leaf.ContextMenu = _userFileLeafNodeContextMenu;
-						leaf.SetMenuEnabled(true, true);
-						break;
-
-					case FitFunctionContextMenuStyle.Edit:
-						//	leaf.ContextMenu = _appFileLeafNodeContextMenu;
-						leaf.SetMenuEnabled(true, false);
-						break;
-				}
-				where.Add(leaf);
-			}
-		}
-
-		private NGTreeNode GetPathNode(NGTreeNodeCollection coll, string path)
-		{
-			foreach (NGTreeNode node in coll)
-			{
-				if (node.Text == path && node.Tag == null)
-					return node;
-			}
-			return null;
+			this._guiFitFunctions.ItemsSource = list;
 		}
 
 		public void SetRtfDocumentation(string rtfString)
@@ -288,46 +219,42 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				return NamedColors.Transparent;
 		}
 
-		public void SelectFitFunction(IFitFunction func)
-		{
-			var mainRoot = (NGTreeNodeCollection)_twFitFunctions.ItemsSource;
-			if (null == mainRoot)
-				return;
-
-			var rootNode = mainRoot.FirstOrDefault(node => node is RootNode rn && rn.RootNodeType == RootNodeType.RootNodeDocument);
-			if (null == rootNode)
-				return;
-
-			var selNode = TreeNodeExtensions.AnyBetweenHereAndLeaves(rootNode, (node) => node is DocumentLeafNode dln && dln.FunctionInstance.Equals(func));
-
-			if (null == selNode)
-				return;
-
-			selNode.IsExpanded = true;
-			selNode.IsSelected = true;
-		}
-
 		#endregion IFitFunctionSelectionView
 
 		private void EhRemoveItem(object sender, RoutedEventArgs e)
 		{
 			var node = ((FrameworkElement)sender).Tag as NGTreeNode;
-			if (_controller != null && node != null)
-				_controller.EhView_RemoveItem(node.Tag as IFitFunctionInformation);
+
+			if (node != null)
+				RemoveItem?.Invoke(node.Tag as IFitFunctionInformation);
 		}
 
 		private void EhEditItem(object sender, RoutedEventArgs e)
 		{
 			var node = ((FrameworkElement)sender).Tag as NGTreeNode;
-			if (_controller != null && node != null)
-				_controller.EhView_EditItem(node.Tag as IFitFunctionInformation);
+			if (node != null)
+				EditItem?.Invoke(node.Tag as IFitFunctionInformation);
 		}
 
 		private void EhEditCopyOfThisItem(object sender, RoutedEventArgs e)
 		{
 			var node = ((FrameworkElement)sender).Tag as NGTreeNode;
-			if (_controller != null && node != null)
-				_controller.EhView_CreateItemFromHere(node.Tag as IFitFunctionInformation);
+			if (node != null)
+				EditCopyOfItem?.Invoke(node.Tag as IFitFunctionInformation);
+		}
+
+		private void EhMouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			var source = e.OriginalSource as DependencyObject;
+			while (null != source && !(source is TreeView))
+			{
+				if (source is FrameworkElement fwe && fwe.Tag is NGTreeNode ngtn && ngtn.Tag is IFitFunctionInformation ffinfo)
+				{
+					ItemDoubleClicked?.Invoke(ffinfo);
+					break;
+				}
+				source = VisualTreeHelper.GetParent(source);
+			}
 		}
 	}
 }
