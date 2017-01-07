@@ -41,7 +41,7 @@ namespace Altaxo.Graph.Plot.Data
 		ICloneable,
 		Calc.IScalarFunctionDD
 	{
-		private Altaxo.Calc.IScalarFunctionDD _function;
+		protected Altaxo.Calc.IScalarFunctionDD _function;
 
 		#region Serialization
 
@@ -70,7 +70,7 @@ namespace Altaxo.Graph.Plot.Data
 		#endregion Serialization
 
 		/// <summary>
-		/// Only for deserialization purposes.
+		/// Only for derived classes and deserialization.
 		/// </summary>
 		protected XYFunctionPlotData()
 		{
@@ -83,18 +83,27 @@ namespace Altaxo.Graph.Plot.Data
 
 		public XYFunctionPlotData(XYFunctionPlotData from)
 		{
+			if (null == from)
+				throw new ArgumentNullException(nameof(from));
+
 			CopyFrom(from);
 		}
 
-		public void CopyFrom(XYFunctionPlotData from)
+		public virtual bool CopyFrom(object obj)
 		{
-			if (object.ReferenceEquals(this, from))
-				return;
+			if (object.ReferenceEquals(this, obj))
+				return true;
 
-			if (from._function is ICloneable)
-				this.Function = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._function).Clone();
-			else
-				this.Function = from._function;
+			if (obj is XYFunctionPlotData from)
+			{
+				if (from._function is ICloneable)
+					this.Function = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._function).Clone();
+				else
+					this.Function = from._function;
+
+				return true;
+			}
+			return false;
 		}
 
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -141,7 +150,7 @@ namespace Altaxo.Graph.Plot.Data
 
 		#region ICloneable Members
 
-		public object Clone()
+		public virtual object Clone()
 		{
 			return new XYFunctionPlotData(this);
 		}

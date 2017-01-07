@@ -12,7 +12,7 @@
 			<ColumnDefinition Width="4" />
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
-		<TreeView x:Name="_twFitFunctions" Grid.Column="0" MinWidth="120" SelectedItemChanged="_twFitFunctions_AfterSelect">
+		<TreeView x:Name="_guiFitFunctions" Grid.Column="0" MinWidth="120" SelectedItemChanged="EhFitFunctions_AfterSelect" MouseDoubleClick="EhMouseDoubleClick">
 			<ItemsControl.ItemContainerStyle>
 				<Style TargetType="{x:Type TreeViewItem}">
 					<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -28,18 +28,16 @@
 
 			<ItemsControl.Resources>
 				<HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
-					<StackPanel Orientation="Horizontal">
-						<!--Image Width="16" Height="16" Margin="3,0"/ -->
-						<TextBlock Text="{Binding Text}">
-							<TextBlock.ContextMenu>
-								<ContextMenu>
-									<MenuItem Header="Edit" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuEditEnabled}" Click="EhEditItem" />
-									<MenuItem Header="Edit copy of this" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuEditEnabled}" Click="EhEditCopyOfThisItem" />
-									<MenuItem Header="Remove" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuRemoveEnabled}" Click="EhRemoveItem" />
-								</ContextMenu>
-							</TextBlock.ContextMenu>
-						</TextBlock>
-					</StackPanel>
+					<!--Image Width="16" Height="16" Margin="3,0"/ -->
+					<TextBlock Text="{Binding Text}" Tag="{Binding}">
+						<TextBlock.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="Edit" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuEditEnabled}" Click="EhEditItem" />
+								<MenuItem Header="Edit copy of this" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuEditCopyEnabled}" Click="EhEditCopyOfThisItem" />
+								<MenuItem Header="Remove" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuRemoveEnabled}" Click="EhRemoveItem" />
+							</ContextMenu>
+						</TextBlock.ContextMenu>
+					</TextBlock>
 				</HierarchicalDataTemplate>
 			</ItemsControl.Resources>
 		</TreeView>

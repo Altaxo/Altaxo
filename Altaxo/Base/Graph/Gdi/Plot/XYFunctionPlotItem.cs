@@ -128,6 +128,13 @@ namespace Altaxo.Graph.Gdi.Plot
 			this.Style = ps;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="XYFunctionPlotItem"/> class. Intended for use in derived classes.
+		/// </summary>
+		protected XYFunctionPlotItem()
+		{
+		}
+
 		public XYFunctionPlotItem(XYFunctionPlotItem from)
 		{
 			CopyFrom((PlotItem)from);
@@ -139,13 +146,9 @@ namespace Altaxo.Graph.Gdi.Plot
 				return true;
 
 			var copied = base.CopyFrom(obj);
-			if (copied)
+			if (copied && obj is XYFunctionPlotItem from)
 			{
-				var from = obj as XYFunctionPlotItem;
-				if (from != null)
-				{
-					this.Data = from.Data;
-				}
+				ChildCopyToMember(ref _plotData, from._plotData);
 			}
 			return copied;
 		}
@@ -160,7 +163,7 @@ namespace Altaxo.Graph.Gdi.Plot
 			get { return _plotData; }
 		}
 
-		public XYFunctionPlotData Data
+		public virtual XYFunctionPlotData Data
 		{
 			get { return _plotData; }
 			set

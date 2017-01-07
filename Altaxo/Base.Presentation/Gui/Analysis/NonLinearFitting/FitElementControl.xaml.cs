@@ -111,8 +111,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				string fitFuncName = null;
 				if (_fitElement.FitFunction == null)
 					fitFuncName = "?";
-				else if (_fitElement.FitFunction is Altaxo.Scripting.IFitFunctionScriptText)
-					fitFuncName = (_fitElement.FitFunction as Altaxo.Scripting.IFitFunctionScriptText).FitFunctionName;
+				else if (_fitElement.FitFunction is Altaxo.Scripting.IFitFunctionScriptText ffct)
+					fitFuncName = string.Format("{0} (created {1})", ffct.FitFunctionName, ffct.CreationTime.ToString("yyyy-dd-MM HH:mm:ss"));
 				else
 					fitFuncName = _fitElement.FitFunction.ToString();
 

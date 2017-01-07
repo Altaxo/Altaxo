@@ -649,6 +649,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\Plot\Data\XYNonlinearFitFunctionPlotDataControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\Plot\Data\SingleColumnControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1676,6 +1680,9 @@
     </Compile>
     <Compile Include="Gui\Drawing\D3D\PenControlsGlue.cs" />
     <Compile Include="Gui\Graph\Plot\Data\DefaultSeverityColumnColors.cs" />
+    <Compile Include="Gui\Graph\Plot\Data\XYNonlinearFitFunctionPlotDataControl.xaml.cs">
+      <DependentUpon>XYNonlinearFitFunctionPlotDataControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\Plot\Data\SingleColumnControl.xaml.cs">
       <DependentUpon>SingleColumnControl.xaml</DependentUpon>
     </Compile>

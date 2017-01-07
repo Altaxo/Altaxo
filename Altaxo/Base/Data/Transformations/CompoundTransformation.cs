@@ -123,6 +123,68 @@ namespace Altaxo.Data.Transformations
 				return new CompoundTransformation(transformationList);
 		}
 
+		public static IVariantToVariantTransformation TryGetCompoundTransformationWithSimplification(IEnumerable<IVariantToVariantTransformation> transformations)
+		{
+			if (null == transformations)
+				return null;
+
+			var transformationList = new List<IVariantToVariantTransformation>();
+			foreach (var transfo in transformations)
+				AddTransformationToFlattenedList(transfo, transformationList);
+
+			if (transformationList.Count == 0)
+			{
+				return null;
+			}
+			else if (transformationList.Count == 1)
+			{
+				return transformationList[0];
+			}
+			else
+			{
+				SimplifyTransformationList(transformationList);
+
+				if (transformationList.Count == 0)
+					return null;
+				else
+					return new CompoundTransformation(transformationList);
+			}
+		}
+
+		/// <summary>
+		/// Adds a transformation to a flattened list. If the provided transformation is a <see cref="CompoundTransformation"/>, the transformation is unpacked before added to the list.
+		/// </summary>
+		/// <param name="transformation">The transformation.</param>
+		/// <param name="list">The list.</param>
+		private static void AddTransformationToFlattenedList(IVariantToVariantTransformation transformation, List<IVariantToVariantTransformation> list)
+		{
+			if (transformation is CompoundTransformation ct)
+			{
+				foreach (var trans in ct._transformations)
+					AddTransformationToFlattenedList(trans, list);
+			}
+			else if (transformation != null)
+			{
+				list.Add(transformation);
+			}
+		}
+
+		/// <summary>
+		/// Simplifies the transformation list by cancelling transformation / backtransformation pairs.
+		/// </summary>
+		/// <param name="list">The list to simplify.</param>
+		private static void SimplifyTransformationList(List<IVariantToVariantTransformation> list)
+		{
+			for (int i = list.Count - 2; i >= 0; --i)
+			{
+				if (list[i].BackTransformation.Equals(list[i + 1]))
+				{
+					list.RemoveAt(i + 1);
+					list.RemoveAt(i);
+				}
+			}
+		}
+
 		public AltaxoVariant Transform(AltaxoVariant value)
 		{
 			foreach (var item in _transformations)

@@ -23,96 +23,14 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
-	public class ParameterSetElement : ICloneable
-	{
-		public string Name;
-		public double Parameter;
-		public double Variance;
-		public bool Vary;
-
-		#region Serialization
-
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSetElement), 0)]
-		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				ParameterSetElement s = (ParameterSetElement)obj;
-
-				info.AddValue("Name", s.Name);
-				info.AddValue("Value", s.Parameter);
-				info.AddValue("Variance", s.Variance);
-				info.AddValue("Vary", s.Vary);
-			}
-
-			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				ParameterSetElement s = o != null ? (ParameterSetElement)o : new ParameterSetElement();
-
-				s.Name = info.GetString("Name");
-				s.Parameter = info.GetDouble("Value");
-				s.Variance = info.GetDouble("Variance");
-				s.Vary = info.GetBoolean("Vary");
-
-				return s;
-			}
-		}
-
-		#endregion Serialization
-
-		/// <summary>
-		/// For deserialization purposes only.
-		/// </summary>
-		protected ParameterSetElement()
-		{
-		}
-
-		public ParameterSetElement(string name)
-		{
-			this.Name = name;
-			this.Vary = true;
-		}
-
-		public ParameterSetElement(string name, double value)
-		{
-			this.Name = name;
-			this.Parameter = value;
-			this.Vary = true;
-		}
-
-		public ParameterSetElement(ParameterSetElement from)
-		{
-			CopyFrom(from);
-		}
-
-		public void CopyFrom(ParameterSetElement from)
-		{
-			if (object.ReferenceEquals(this, from))
-				return;
-
-			this.Name = from.Name;
-			this.Parameter = from.Parameter;
-			this.Variance = from.Variance;
-			this.Vary = from.Vary;
-		}
-
-		#region ICloneable Members
-
-		public object Clone()
-		{
-			return new ParameterSetElement(this);
-		}
-
-		#endregion ICloneable Members
-	}
-
 	/// <summary>
-	/// Summary description for ParameterSet.
+	/// Holds a bunch of <see cref="ParameterSetElement"/>, i.e. a collection of fit parameters together with their values.
 	/// </summary>
-	public class ParameterSet : System.Collections.CollectionBase, ICloneable
+	public class ParameterSet : System.Collections.CollectionBase, ICloneable, IEnumerable<ParameterSetElement>
 	{
 		/// <summary>
 		/// Event is fired if the main initialization is finished. This event can be fired
@@ -156,8 +74,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		public void OnInitializationFinished()
 		{
-			if (null != InitializationFinished)
-				InitializationFinished(this, EventArgs.Empty);
+			InitializationFinished?.Invoke(this, EventArgs.Empty);
 		}
 
 		public ParameterSetElement this[int i]
@@ -182,6 +99,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				result.Add((ParameterSetElement)this[i].Clone());
 
 			return result;
+		}
+
+		IEnumerator<ParameterSetElement> IEnumerable<ParameterSetElement>.GetEnumerator()
+		{
+			foreach (var e in InnerList)
+				yield return (ParameterSetElement)e;
 		}
 
 		#endregion ICloneable Members
