@@ -399,6 +399,7 @@
     <Compile Include="Calc\Ode\FortranLib.cs" />
     <Compile Include="Calc\Ode\FortranTypes.cs" />
     <Compile Include="Calc\Ode\Gauss.cs" />
+    <Compile Include="Calc\Ode\GearClass.cs" />
     <Compile Include="Calc\Ode\Gear.cs" />
     <Compile Include="Calc\Ode\Matrix.cs" />
     <Compile Include="Calc\Ode\OdeAdamsMoulton.cs" />

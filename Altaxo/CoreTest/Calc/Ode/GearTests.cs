@@ -75,5 +75,43 @@ namespace Altaxo.Calc.Ode
 				Assert.AreEqual(y1_expected, sp.X[1], 1E-3 * y1_expected + 1E-4);
 			}
 		}
+
+		[Test]
+		public void GearTest2a()
+		{
+			const double lambda1 = -1;
+			const double lambda2 = -1000;
+			const double lambda1PlusLambda2By2 = (lambda1 + lambda2) / 2;
+			const double lambda1MinusLambda2By2 = (lambda1 - lambda2) / 2;
+
+			const double C1 = 1;
+			const double C2 = 1;
+
+			var pulse = Ode.GearBDF(
+			0,
+			new Vector(C1 + C2, C1 - C2),
+			(t, y) => new Vector(lambda1PlusLambda2By2 * y[0] + lambda1MinusLambda2By2 * y[1], lambda1MinusLambda2By2 * y[0] + lambda1PlusLambda2By2 * y[1]),
+			new Options { RelativeTolerance = 1e-4, AbsoluteTolerance = 1E-8 });
+
+			var ode = new GearClass();
+
+			ode.Initialize(
+			0,
+			new Vector(C1 + C2, C1 - C2),
+			(t, y) => new Vector(lambda1PlusLambda2By2 * y[0] + lambda1MinusLambda2By2 * y[1], lambda1MinusLambda2By2 * y[0] + lambda1PlusLambda2By2 * y[1]),
+			new Options { RelativeTolerance = 1e-4, AbsoluteTolerance = 1E-8 });
+
+			foreach (var spulse in pulse.SolveTo(100000))
+			{
+				double t = spulse.T;
+				var sp = ode.Evaluate(t);
+
+				var y0_expected = C1 * Math.Exp(lambda1 * sp.T) + C2 * Math.Exp(lambda2 * sp.T);
+				var y1_expected = C1 * Math.Exp(lambda1 * sp.T) - C2 * Math.Exp(lambda2 * sp.T);
+
+				Assert.AreEqual(y0_expected, sp.X[0], 1E-3 * y0_expected + 1E-4);
+				Assert.AreEqual(y1_expected, sp.X[1], 1E-3 * y1_expected + 1E-4);
+			}
+		}
 	}
 }
