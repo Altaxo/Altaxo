@@ -100,7 +100,7 @@ namespace Altaxo.Graph.Graph3D
 			"Graph3D\\DefaultFont",
 			Main.Properties.PropertyLevel.All,
 			typeof(GraphDocument),
-			() => new FontX3D(Gdi.GdiFontManager.GetFont(System.Drawing.FontFamily.GenericSansSerif, 12, System.Drawing.FontStyle.Regular), 12 * 0.0625))
+			() => new FontX3D(Gdi.GdiFontManager.GetFont(Gdi.GdiFontManager.GdiGenericSansSerifFontFamily, 12, System.Drawing.FontStyle.Regular), 12 * 0.0625))
 			{
 				EditingControllerCreation = (doc) =>
 				{
@@ -165,7 +165,7 @@ namespace Altaxo.Graph.Graph3D
 			if (null != context)
 				return context.GetValue(PropertyKeyDefaultFont);
 			else
-				return new FontX3D(Gdi.GdiFontManager.GetFont(System.Drawing.FontFamily.GenericSansSerif, 12, System.Drawing.FontStyle.Regular), 12 * 0.0625);
+				return new FontX3D(Gdi.GdiFontManager.GetFont(Gdi.GdiFontManager.GdiGenericSansSerifFontFamily, 12, System.Drawing.FontStyle.Regular), 12 * 0.0625);
 		}
 
 		/// <summary>

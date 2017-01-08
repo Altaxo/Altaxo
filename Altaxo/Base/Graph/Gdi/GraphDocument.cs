@@ -83,7 +83,7 @@ namespace Altaxo.Graph.Gdi
 				"Graph\\DefaultFont",
 				Main.Properties.PropertyLevel.All,
 				typeof(GraphDocument),
-				() => GdiFontManager.GetFont(FontFamily.GenericSansSerif, 18, FontStyle.Regular))
+				() => GdiFontManager.GetFont(GdiFontManager.GdiGenericSansSerifFontFamily, 18, FontStyle.Regular))
 				{
 					EditingControllerCreation = (doc) =>
 					{
@@ -576,7 +576,7 @@ typeof(GraphDocument),
 			if (null != context)
 				return context.GetValue(PropertyKeyDefaultFont);
 			else
-				return GdiFontManager.GetFont(System.Drawing.FontFamily.GenericSansSerif, 18, FontStyle.Regular);
+				return GdiFontManager.GetFont(GdiFontManager.GdiGenericSansSerifFontFamily, 18, FontStyle.Regular);
 		}
 
 		/// <summary>

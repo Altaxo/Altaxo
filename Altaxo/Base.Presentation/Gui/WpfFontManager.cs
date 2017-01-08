@@ -42,7 +42,7 @@ namespace Altaxo.Gui
 	// GlyphTypeface: corresponds to a specific font file on the disk
 
 	/// <summary>
-	/// Manages Wpf fonts and correspondes them to the Altaxo font class (<see cref="FontX"/>).
+	/// Manages Wpf fonts and corresponds them to the Altaxo font class (<see cref="FontX"/>).
 	/// </summary>
 	public class WpfFontManager : Altaxo.Graph.Gdi.GdiFontManager
 	{
@@ -52,26 +52,26 @@ namespace Altaxo.Gui
 		/// Dictionary that relates the invariant description string (but without size information in it) to the Wpf typeface.
 		/// Key is the invariant description string (without size information in it), value is the typeface.
 		/// </summary>
-		protected ConcurrentDictionary<string, Typeface> _descriptionToWpfTypeface = new ConcurrentDictionary<string, Typeface>();
+		protected ConcurrentDictionary<string, Typeface> _dictDescriptionStringToWpfTypeface = new ConcurrentDictionary<string, Typeface>();
 
 		protected ConcurrentDictionary<string, int> _wpfFontReferenceCounter = new ConcurrentDictionary<string, int>();
 
 		/// <summary>
 		/// This class groups Wpf fonts (typefaces) similar to the Gdi+ font management. Key is the Win32 font family name. Value is a bundle of 4 Wpf typefaces (regular, bold, italic and bolditalic).
 		/// </summary>
-		protected AltaxoFontFamilies _altaxoFontFamilies;
+		protected AltaxoFontFamiliesDictionary _dictWin32FamilyNameToAltaxoFontFamily;
 
 		/// <summary>
 		/// A dictionary with relates typefaces to the corresponding font Uri (normally a file name).
 		/// Key is the Wpf typeface, value is the font Uri.
 		/// </summary>
-		protected Dictionary<Typeface, Uri> _typefacesUri = new Dictionary<Typeface, Uri>();
+		protected Dictionary<Typeface, Uri> _dictTypefaceToUri = new Dictionary<Typeface, Uri>();
 
 		/// <summary>
 		/// Relates the Win32FamilyName to a list of typefaces. Key is the Win32FamilyName, value is a list of typefaces with that Win32 family name.
 		/// The Win32FamilyName was retrieved from the GlyphTypeface's property with the same name.
 		/// </summary>
-		protected Dictionary<string, List<Typeface>> _win32FamilyNamesToTypefaces = new Dictionary<string, List<Typeface>>();
+		protected Dictionary<string, List<Typeface>> _dictWin32FamilyNameToWpfTypefaces = new Dictionary<string, List<Typeface>>();
 
 		/// <summary>
 		/// Stores the font families that are missing in the Gdi system.
@@ -110,6 +110,39 @@ namespace Altaxo.Gui
 			FontManager3D.Instance = new WpfFontManager3D();
 		}
 
+		private static readonly System.Windows.Markup.XmlLanguage[] familyNameLanguagesToTry = new System.Windows.Markup.XmlLanguage[]
+		{
+			System.Windows.Markup.XmlLanguage.GetLanguage("en-us"),
+			System.Windows.Markup.XmlLanguage.GetLanguage("en"),
+			System.Windows.Markup.XmlLanguage.GetLanguage(string.Empty),
+		};
+
+		/// <summary>
+		/// Gets the family name of a Wpf font family.
+		/// </summary>
+		/// <param name="fontFamily">The font family.</param>
+		/// <returns></returns>
+		public static string GetFontFamilyName(FontFamily fontFamily)
+		{
+			var count = fontFamily.FamilyNames.Count;
+			switch (fontFamily.FamilyNames.Count)
+			{
+				case 0: // no family name available, we use the source
+					return fontFamily.Source;
+
+				case 1:
+					return fontFamily.FamilyNames.First().Value; // there is one family name, so we use it
+				default: // there are many family names, we should try the languages above
+					{
+						foreach (var language in familyNameLanguagesToTry)
+							if (fontFamily.FamilyNames.TryGetValue(language, out var familyName))
+								return familyName;
+
+						return fontFamily.FamilyNames.First().Value; // if non of the languages available, use the first
+					}
+			}
+		}
+
 		/// <summary>
 		/// Builds the internal font dictionaries.
 		/// </summary>
@@ -117,14 +150,12 @@ namespace Altaxo.Gui
 		{
 			base.InternalBuildDictionaries();
 
-			_altaxoFontFamilies = new AltaxoFontFamilies();
-			_altaxoFontFamilies.Build();
+			_dictWin32FamilyNameToAltaxoFontFamily = new AltaxoFontFamiliesDictionary();
+			_dictWin32FamilyNameToAltaxoFontFamily.Build(out var sortedListOfKnownTypefaces);
 
-			Dictionary<Typeface, Uri> typefacesUri;
-			Dictionary<string, List<Typeface>> win32FamilyNamesToTypefaces;
-			BuildWin32FamilyToTypefacesAndUris(out typefacesUri, out win32FamilyNamesToTypefaces);
-			_typefacesUri = typefacesUri;
-			_win32FamilyNamesToTypefaces = win32FamilyNamesToTypefaces;
+			BuildWin32FamilyToTypefacesAndUris(sortedListOfKnownTypefaces, out var typefacesUri, out var win32FamilyNamesToTypefaces);
+			_dictTypefaceToUri = typefacesUri;
+			_dictWin32FamilyNameToWpfTypefaces = win32FamilyNamesToTypefaces;
 
 			AmendMissingFamilyNamesToGdiFontFamilies();
 		}
@@ -133,43 +164,46 @@ namespace Altaxo.Gui
 		/// Enumerates all available <see cref="GlyphTypeface"/>s, extracts the Win32FamilyName from it and builds the dictionary that relates Win32FamilyName to a bundle of <see cref="Typeface"/>s.
 		/// Additionally, it extracts the paths of the typeface's files.
 		/// </summary>
+		/// <param name="sortedListOfKnownTypefaces">List of known typefaces (both system and private typefaces), already sorted by <see cref="FontComparerForGroupingIntoAltaxoFontFamilies"/></param>
 		/// <param name="typefacesUri">On return, this is a dictionary which relates typeface to its font file URI.</param>
 		/// <param name="win32FamilyNamesToTypefaces">On return, this is a dictionary which relates the Win32FamilyName to a list of typefaces with that Win32 family name.</param>
-		private void BuildWin32FamilyToTypefacesAndUris(out Dictionary<Typeface, Uri> typefacesUri, out Dictionary<string, List<Typeface>> win32FamilyNamesToTypefaces)
+		private void BuildWin32FamilyToTypefacesAndUris(List<Typeface> sortedListOfKnownTypefaces, out Dictionary<Typeface, Uri> typefacesUri, out Dictionary<string, List<Typeface>> win32FamilyNamesToTypefaces)
 		{
 			typefacesUri = new Dictionary<Typeface, Uri>();
 			win32FamilyNamesToTypefaces = new Dictionary<string, List<Typeface>>();
 
-			// now we build also a dictionary to get the file names of the typefaces
-			var fontList = new List<Typeface>(Fonts.SystemTypefaces);
-
-			// sort all typefaces first for name, then stretch, then weight, and then style (normal style first, then italic, then bold)
-			fontList.Sort(FontComparerForGroupingIntoAltaxoFontFamilies.Compare);
-
-			foreach (var typeface in fontList)
+			foreach (var typeface in sortedListOfKnownTypefaces)
 			{
-				GlyphTypeface gtf;
-
-				if (typeface.TryGetGlyphTypeface(out gtf))
+				if (typeface.TryGetGlyphTypeface(out var glyphTypeFace))
 				{
 					if (!typefacesUri.ContainsKey(typeface))
 					{
-						typefacesUri.Add(typeface, gtf.FontUri);
+						typefacesUri.Add(typeface, glyphTypeFace.FontUri);
 					}
 					else
 					{
 						var tfu = typefacesUri[typeface];
 					}
 
-					foreach (var entry in gtf.Win32FamilyNames)
+					using (var familyNameIterator = glyphTypeFace.Win32FamilyNames.GetEnumerator()) // we can not use foreach here because Linux/Wine throws at some of the family names an exception
 					{
-						List<Typeface> list;
-						if (!win32FamilyNamesToTypefaces.TryGetValue(entry.Value, out list))
+						while (familyNameIterator.MoveNext())
 						{
-							list = new List<Typeface>();
-							win32FamilyNamesToTypefaces.Add(entry.Value, list);
+							try
+							{
+								var entry = familyNameIterator.Current; // sometimes Linux/Wine throws an System.Globalization.CultureNotFoundException here
+
+								if (!win32FamilyNamesToTypefaces.TryGetValue(entry.Value, out var list))
+								{
+									list = new List<Typeface>();
+									win32FamilyNamesToTypefaces.Add(entry.Value, list);
+								}
+								list.Add(typeface);
+							}
+							catch (System.Globalization.CultureNotFoundException) // catch Linux/Wine throws an System.Globalization.CultureNotFoundException here
+							{
+							}
 						}
-						list.Add(typeface);
 					}
 				}
 			}
@@ -180,15 +214,15 @@ namespace Altaxo.Gui
 		/// </summary>
 		protected void AmendMissingFamilyNamesToGdiFontFamilies()
 		{
-			foreach (var entry in _win32FamilyNamesToTypefaces)
+			foreach (var entry in _dictWin32FamilyNameToWpfTypefaces)
 			{
-				if (!_gdiFontFamilies.ContainsKey(entry.Key))
+				if (!_dictWin32FamilyNameToGdiFontFamilyAndPresence.ContainsKey(entry.Key))
 				{
 					// try to create a private font collection
 					System.Drawing.Text.PrivateFontCollection pfc = new System.Drawing.Text.PrivateFontCollection();
 					foreach (var typeface in entry.Value)
 					{
-						var uri = _typefacesUri[typeface];
+						var uri = _dictTypefaceToUri[typeface];
 
 						if (uri.IsFile)
 						{
@@ -211,7 +245,7 @@ namespace Altaxo.Gui
 						if (FontStylePresence.NoStyleAvailable != pres)
 						{
 							_gdiMissingFontFamilies.Add(entry.Key, pfc);
-							_gdiFontFamilies.TryAdd(gdiFontFamily.Name, pres);
+							_dictWin32FamilyNameToGdiFontFamilyAndPresence.TryAdd(gdiFontFamily.Name, new Tuple<System.Drawing.FontFamily, FontStylePresence>(gdiFontFamily, pres));
 						}
 					}
 				}
@@ -229,9 +263,9 @@ namespace Altaxo.Gui
 		{
 			string fontID = fontX.FontFamilyName + ", " + fontX.Style.ToString();
 			Typeface result;
-			if (!_descriptionToWpfTypeface.TryGetValue(fontID, out result))
+			if (!_dictDescriptionStringToWpfTypeface.TryGetValue(fontID, out result))
 			{
-				result = _descriptionToWpfTypeface.AddOrUpdate(fontID,
+				result = _dictDescriptionStringToWpfTypeface.AddOrUpdate(fontID,
 					x => CreateNewTypeface(fontX),
 					(x, y) => y);
 			}
@@ -257,35 +291,16 @@ namespace Altaxo.Gui
 		/// <returns>Gdi font.</returns>
 		protected override System.Drawing.Font InternalGetGdiFontFromInvariantString(string invariantDescriptionString)
 		{
-			var idx = invariantDescriptionString.IndexOf(',');
-			var gdiFontFamilyName = invariantDescriptionString.Substring(0, idx);
-
+			SplitInvariantDescriptionString(invariantDescriptionString, out var gdiFontFamilyName, out var fontSize, out var fontStyle);
 			System.Drawing.Font gdiFont;
+
 			if (_gdiMissingFontFamilies.ContainsKey(gdiFontFamilyName))
 			{
-				var gdiFontFamily = _gdiMissingFontFamilies[gdiFontFamilyName].Families.First();
-				var descriptionParts = invariantDescriptionString.Split(',');
-
-				// extract font size
-				if (descriptionParts.Length < 2)
-					throw new ArgumentException(nameof(invariantDescriptionString) + " has unexpected format");
-				if (!descriptionParts[1].EndsWith("world"))
-					throw new ArgumentException("Size description should end with world");
-				string sizeString = descriptionParts[1].Substring(0, descriptionParts[1].Length - "world".Length);
-				float fontSize = float.Parse(sizeString, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
-
-				// extract font style
-				var fontStyle = System.Drawing.FontStyle.Regular;
-				if (descriptionParts.Length >= 3)
-				{
-					throw new NotImplementedException("Extract font style here");
-				}
-
-				gdiFont = new System.Drawing.Font(gdiFontFamily, fontSize, fontStyle, System.Drawing.GraphicsUnit.World);
+				gdiFont = new System.Drawing.Font(gdiFontFamilyName, (float)fontSize, fontStyle, System.Drawing.GraphicsUnit.World);
 			}
 			else
 			{
-				gdiFont = base.InternalGetGdiFontFromInvariantString(invariantDescriptionString);
+				gdiFont = base.InternalGetGdiFontFromFamilyAndSizeAndStyle(gdiFontFamilyName, fontSize, fontStyle);
 			}
 
 			return gdiFont;
@@ -299,9 +314,9 @@ namespace Altaxo.Gui
 		private Typeface CreateNewTypeface(FontX font)
 		{
 			Typeface tf;
-			if (_altaxoFontFamilies.ContainsKey(font.FontFamilyName))
+			if (_dictWin32FamilyNameToAltaxoFontFamily.ContainsKey(font.FontFamilyName))
 			{
-				var fam = _altaxoFontFamilies[font.FontFamilyName];
+				var fam = _dictWin32FamilyNameToAltaxoFontFamily[font.FontFamilyName];
 
 				tf = null;
 				var style = font.Style;
@@ -319,9 +334,9 @@ namespace Altaxo.Gui
 			}
 
 			//
-			if (_win32FamilyNamesToTypefaces.ContainsKey(font.FontFamilyName))
+			if (_dictWin32FamilyNameToWpfTypefaces.ContainsKey(font.FontFamilyName))
 			{
-				var tflist = _win32FamilyNamesToTypefaces[font.FontFamilyName];
+				var tflist = _dictWin32FamilyNameToWpfTypefaces[font.FontFamilyName];
 
 				tf = null;
 
@@ -381,8 +396,7 @@ namespace Altaxo.Gui
 					 style.HasFlag(FontXStyle.Bold) ? FontWeights.Bold : FontWeights.Normal,
 					 FontStretches.Normal);
 
-				GlyphTypeface gtf;
-				if (result.TryGetGlyphTypeface(out gtf))
+				if (result.TryGetGlyphTypeface(out var gtf))
 					return result; // return typeface only if it has a valid glyphTypefase
 			}
 
@@ -412,7 +426,7 @@ namespace Altaxo.Gui
 			{
 				int result;
 
-				result = string.Compare(f1.FontFamily.Source, f2.FontFamily.Source);
+				result = string.Compare(GetFontFamilyName(f1.FontFamily), GetFontFamilyName(f2.FontFamily));
 				if (0 != result)
 					return result;
 
@@ -439,7 +453,7 @@ namespace Altaxo.Gui
 			/// <returns>True if typefaces f1 and f2 have the same font family and the same stretch value; otherwise false.</returns>
 			public static bool IsSameFamilyAndStretch(Typeface f1, Typeface f2)
 			{
-				return 0 == string.Compare(f1.FontFamily.Source, f2.FontFamily.Source) && f1.Stretch.ToOpenTypeStretch() == f2.Stretch.ToOpenTypeStretch();
+				return 0 == string.Compare(GetFontFamilyName(f1.FontFamily), GetFontFamilyName(f2.FontFamily)) && f1.Stretch.ToOpenTypeStretch() == f2.Stretch.ToOpenTypeStretch();
 			}
 
 			/// <summary>
@@ -450,7 +464,7 @@ namespace Altaxo.Gui
 			/// <returns>True if typefaces f1 and f2 have the same font family and the same stretch and weight value; otherwise false.</returns>
 			public static bool IsSameFamilyAndStretchAndWeight(Typeface f1, Typeface f2)
 			{
-				return 0 == string.Compare(f1.FontFamily.Source, f2.FontFamily.Source) && f1.Stretch.ToOpenTypeStretch() == f2.Stretch.ToOpenTypeStretch() && f1.Weight == f2.Weight;
+				return 0 == string.Compare(GetFontFamilyName(f1.FontFamily), GetFontFamilyName(f2.FontFamily)) && f1.Stretch.ToOpenTypeStretch() == f2.Stretch.ToOpenTypeStretch() && f1.Weight == f2.Weight;
 			}
 
 			/// <summary>
@@ -494,7 +508,7 @@ namespace Altaxo.Gui
 		///  Dictionary of font families that resemble the Gdi+ font families.
 		/// Key is the family name similar to the Gdi family name, value is a bundle of 4 typefaces for the styles (regular, italic, bold, bolditalic).
 		/// </summary>
-		public class AltaxoFontFamilies : SortedDictionary<string, AltaxoFontFamily>
+		public class AltaxoFontFamiliesDictionary : SortedDictionary<string, AltaxoFontFamily>
 		{
 			private static readonly string[] regularStyleNames = new[] { "normal", "regular" };
 
@@ -505,7 +519,7 @@ namespace Altaxo.Gui
 			/// <returns>The font family name that should be identical to the font family name of the Gdi+ font family.</returns>
 			private string GetFontFamilyName(Typeface regularTypeface)
 			{
-				string familyName = regularTypeface.FontFamily.Source + " " + regularTypeface.FaceNames.First().Value;
+				string familyName = regularTypeface.FontFamily.FamilyNames.First().Value + " " + regularTypeface.FaceNames.First().Value;
 
 				familyName = familyName.Trim();
 
@@ -523,12 +537,18 @@ namespace Altaxo.Gui
 			/// <summary>
 			/// Builds this instance.
 			/// </summary>
+			/// <param name="fontList">On return, this is a list of typefaces that Altaxo knows of (both system typefaces and private typefaces).</param>
 			/// <exception cref="System.InvalidOperationException"></exception>
-			public void Build()
+			public void Build(out List<Typeface> fontList)
 			{
 				Clear();
 
-				var fontList = new List<Typeface>(Fonts.SystemTypefaces);
+				fontList = new List<Typeface>(Fonts.SystemTypefaces);
+
+				// add private fonts
+				string fontpath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), @"..\data\resources\fonts\");
+				var privateFontFamilies = Fonts.GetTypefaces(fontpath);
+				fontList.AddRange(privateFontFamilies);
 
 				// sort all typefaces first for name, then stretch, then weight, and then style (normal style first, then italic, then bold)
 				fontList.Sort(FontComparerForGroupingIntoAltaxoFontFamilies.Compare);

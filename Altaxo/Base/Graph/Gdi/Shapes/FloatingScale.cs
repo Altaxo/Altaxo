@@ -527,13 +527,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 		private void PaintErrorInvalidLayerType(Graphics g, object obj)
 		{
 			string errorMsg = "FloatingScale:Error: Invalid layer type";
-			var font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Regular, GraphicsUnit.World);
+			var font = new Font(GdiFontManager.GdiGenericSansSerifFontFamily, 10, FontStyle.Regular, GraphicsUnit.World);
 			var size = g.MeasureString(errorMsg, font);
 			if (obj is HostLayer)
 			{
 				var destSizeX = 0.2 * ((HostLayer)obj).Size.X;
 				var factor = destSizeX / size.Width;
-				font = new Font(FontFamily.GenericSansSerif, (float)(font.Size * factor), FontStyle.Regular, GraphicsUnit.World);
+				font = new Font(GdiFontManager.GdiGenericSansSerifFontFamily, (float)(font.Size * factor), FontStyle.Regular, GraphicsUnit.World);
 			}
 
 			g.DrawString(errorMsg, font, Brushes.Red, (PointF)this.Position);

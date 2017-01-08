@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Graph
 	public class GdiFontGlue
 	{
 		private double _fontSize = 12;
-		private sd.FontFamily _fontFamily = sd.FontFamily.GenericSansSerif;
+		private sd.FontFamily _fontFamily = GdiFontManager.GdiGenericSansSerifFontFamily;
 		private FontXStyle _fontStyle = FontXStyle.Regular;
 
 		public double FontSize
