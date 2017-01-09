@@ -531,6 +531,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		{
 			Calc.Optimization.NelderMead nm = new Altaxo.Calc.Optimization.NelderMead(new NelderMeadCostFunction(this));
 			nm.Minimize(new Calc.LinearAlgebra.DoubleVector(this._cachedVaryingParameters));
+			for (int i = 0; i < _cachedVaryingParameters.Length; ++i)
+				_cachedVaryingParameters[i] = nm.SolutionVector[i];
+			_resultingSumChiSquare = nm.SolutionValue;
+
 		}
 
 		/// <summary>
