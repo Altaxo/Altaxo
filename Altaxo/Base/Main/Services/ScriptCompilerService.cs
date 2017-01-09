@@ -248,7 +248,7 @@ namespace Altaxo.Main.Services
 			#endregion IScriptCompilerResult Members
 		}
 
-		private class ScriptCompilerFailedResult : IScriptCompilerResult
+		private class ScriptCompilerFailedResult : IScriptCompilerFailedResult
 		{
 			private string[] _scriptText;
 			private string _scriptTextHash;
@@ -290,6 +290,14 @@ namespace Altaxo.Main.Services
 			public string ScriptText(int i)
 			{
 				return _scriptText[i];
+			}
+
+			public IList<string> CompileErrors
+			{
+				get
+				{
+					return _compileErrors;
+				}
 			}
 
 			#endregion IScriptCompilerResult Members

@@ -538,17 +538,22 @@ namespace Altaxo.Scripting
 				return true;
 
 			_compilerResult = ScriptCompilerService.Compile(new string[] { ScriptText });
-			bool bSucceeded = (null != _compilerResult);
+			bool bSucceeded = (_compilerResult is IScriptCompilerSuccessfulResult);
 
 			if (_compilerResult is IScriptCompilerSuccessfulResult)
 			{
 				this._scriptObject = CreateNewScriptObject();
+				return true;
 			}
 			else if (_compilerResult is IScriptCompilerFailedResult failedCompilerResult) // compiler result was not successful
 			{
 				_errors = failedCompilerResult.CompileErrors;
+				return false;
 			}
-			return bSucceeded;
+			else
+			{
+				throw new InvalidProgramException("Unkown compiler result");
+			}
 		}
 	} // end of class AbstractScript
 }
