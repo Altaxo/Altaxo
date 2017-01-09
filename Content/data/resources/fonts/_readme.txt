@@ -1,0 +1,1 @@
+You can place your own private fonts in this folder, if you don't want to install them system-wide.

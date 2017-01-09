@@ -145,6 +145,7 @@
     <Content Include="data\layouts\Default.xml" />
     <Content Include="data\layouts\LayoutConfig.xml" />
     <Content Include="data\layouts\Plain.xml" />
+    <Content Include="data\resources\fonts\_readme.txt" />
     <Content Include="data\templates\file\VB\FileCategorySortOrder.xml" />
     <Content Include="data\templates\project\AddInWritingHelp.txt" />
     <Content Include="data\templates\project\CSharp\DefaultAssemblyInfo.cs" />
@@ -485,9 +486,7 @@
       <Name>ICSharpCode.SharpZLib</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="data\resources\fonts\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
