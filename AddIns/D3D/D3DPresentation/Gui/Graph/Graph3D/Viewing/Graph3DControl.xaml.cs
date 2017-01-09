@@ -50,7 +50,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 			_scene = new D3D10Scene();
 			var imageSource = new D3D10ImageSource();
-			_renderer = new D3D10RendererToImageSource(_scene, imageSource);
 			_d3dCanvas.Source = imageSource;
 		}
 
@@ -143,12 +142,20 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 		private void EhGraphPanel_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			var s = e.NewSize;
+			OnGraphPanel_SizeChanged(new PointD2D(e.NewSize.Width, e.NewSize.Height));
+		}
 
-			if (!(s.Width > 0 && s.Height > 0))
+		private void OnGraphPanel_SizeChanged(PointD2D newSize)
+		{
+			if (!(newSize.X > 0 && newSize.Y > 0))
 				return;
 
-			_cachedGraphSize_96thInch = new PointD2D(s.Width, s.Height);
+			if (null == _renderer)
+			{
+				_renderer = new D3D10RendererToImageSource(_scene, (D3D10ImageSource)_d3dCanvas.Source);
+			}
+
+			_cachedGraphSize_96thInch = newSize;
 			var screenResolution = Current.Gui.ScreenResolutionDpi;
 			var graphSizePixels = screenResolution * _cachedGraphSize_96thInch / 96.0;
 			_cachedGraphSize_Pixels = new System.Drawing.Size((int)graphSizePixels.X, (int)graphSizePixels.Y);
@@ -164,10 +171,28 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 			if (_isGraphVisible)
 			{
+				OnGraphPanel_SizeChanged(_cachedGraphSize_96thInch);
 			}
 			else
 			{
+				var tempRenderer = _renderer;
+				_renderer = null;
+				tempRenderer?.Dispose();
 			}
+		}
+
+		public static void DisposeObject(ref IDisposable obj)
+		{
+			var tempObj = obj;
+			obj = null;
+			tempObj?.Dispose();
+		}
+
+		private void EhControlUnloaded(object sender, RoutedEventArgs e)
+		{
+			var tempRenderer = _renderer;
+			_renderer = null;
+			tempRenderer?.Dispose();
 		}
 
 		#endregion Graph panel size and visibility
@@ -343,7 +368,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		/// </summary>
 		public void TriggerRendering()
 		{
-			Current.Gui.Execute(_renderer.TriggerRendering);
+			if (_isGraphVisible && null != _renderer)
+				Current.Gui.Execute(_renderer.TriggerRendering);
 		}
 
 		public void SetSceneBackColor(Altaxo.Drawing.AxoColor sceneBackColor)

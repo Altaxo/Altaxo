@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Altaxo.Gui.Graph.Graph3D.Viewing"
 						 xmlns:axogg3c="clr-namespace:Altaxo.Gui.Graph.Graph3D.Common"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" Unloaded="EhControlUnloaded">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />

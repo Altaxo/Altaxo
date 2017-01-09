@@ -70,6 +70,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
 		private bool _isDisposed;
 
+		public int InstanceID { get; private set; }
+		private static int _instanceCounter;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="D3D10RendererToImageSource"/> class.
 		/// </summary>
@@ -79,6 +82,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 		/// </exception>
 		public D3D10RendererToImageSource(IScene scene, D3D10ImageSource d3dImageSource)
 		{
+			InstanceID = ++_instanceCounter;
+
 			if (null == scene)
 				throw new ArgumentNullException(nameof(scene));
 
@@ -88,6 +93,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 			this.Scene = scene;
 			this._d3dImageSource = d3dImageSource;
 			this._d3dImageSource.IsFrontBufferAvailableChanged += EhIsFrontBufferAvailableChanged;
+		}
+
+		~D3D10RendererToImageSource()
+		{
+			if (!_isDisposed)
+				throw new InvalidProgramException("Object was not disposed!");
 		}
 
 		public void Dispose()
