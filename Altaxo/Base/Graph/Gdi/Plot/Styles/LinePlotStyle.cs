@@ -840,13 +840,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				GraphicsState gs = g.Save();
 				g.TranslateTransform(bounds.X + 0.5f * bounds.Width, bounds.Y + 0.5f * bounds.Height);
 				float halfwidth = bounds.Width / 2;
-				float symsize = (float)(_symbolSize);
-
 				if (this.UseSymbolGap == true)
 				{
 					// plot a line with the length of symbolsize from
-					PaintLine(g, new PointF(-halfwidth, 0), new PointF(-symsize, 0));
-					PaintLine(g, new PointF(symsize, 0), new PointF(halfwidth, 0));
+					var symGap = (float)(_symbolGapOffset + _symbolGapFactor * _symbolSize);
+					PaintLine(g, new PointF(-halfwidth, 0), new PointF(-symGap/2, 0));
+					PaintLine(g, new PointF(symGap/2, 0), new PointF(halfwidth, 0));
 				}
 				else // no gap
 				{
