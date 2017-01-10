@@ -35,6 +35,7 @@ using Altaxo.Scripting;
 using System;
 using Altaxo.Data.Transformations;
 using Altaxo.Main.Services;
+using System.Threading;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -218,6 +219,64 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
+		private class ReportCostMonitor : IExternalDrivenBackgroundMonitor
+		{
+			private CancellationTokenSource _cancellationTokenSource;
+
+			private string _reportText = "Operation in progress - please wait ...";
+			private bool _reportTextDirty = true;
+
+			public ReportCostMonitor()
+			{
+				_cancellationTokenSource = new CancellationTokenSource();
+			}
+
+			public CancellationToken GetCancellationToken()
+			{
+				return _cancellationTokenSource.Token;
+			}
+
+			public void NewMinimumCostValueAvailable(double minCost)
+			{
+				_reportText = string.Format("Minimum cost value so far: {0}", minCost);
+				_reportTextDirty = true;
+			}
+
+			public bool CancellationPending => _cancellationTokenSource.IsCancellationRequested;
+
+			public bool HasReportText => _reportTextDirty;
+
+			public bool ShouldReportNow => _reportTextDirty;
+
+			public double GetProgressFraction()
+			{
+				return 0;
+			}
+
+			public string GetReportText()
+			{
+				return _reportText;
+			}
+
+			public void ReportProgress(string text)
+			{
+			}
+
+			public void ReportProgress(string text, double progressValue)
+			{
+			}
+
+			public void SetCancellationPending()
+			{
+				_cancellationTokenSource.Cancel();
+			}
+
+			public void SetShouldReportNow()
+			{
+				_reportTextDirty = true;
+			}
+		}
+
 		public void EhView_DoSimplex()
 		{
 			if (true == this._parameterController.Apply(false))
@@ -226,9 +285,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 				LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
-				var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(fitAdapter.DoSimplexMinimization));
+				var reportMonitor = new ReportCostMonitor();
+				var threadStart = new System.Threading.ThreadStart(() => fitAdapter.DoSimplexMinimization(reportMonitor.GetCancellationToken(), reportMonitor.NewMinimumCostValueAvailable));
+				var fitThread = new System.Threading.Thread(threadStart);
 				fitThread.Start();
-				Current.Gui.ShowBackgroundCancelDialog(10000, null, fitThread);
+				Current.Gui.ShowBackgroundCancelDialog(10000, reportMonitor, fitThread);
 				if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
 				{
 					this._chiSquare = fitAdapter.ResultingChiSquare;

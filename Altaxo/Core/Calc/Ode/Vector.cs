@@ -15,7 +15,7 @@ namespace Altaxo.Calc.Ode
 	/// <summary>Vector implementation. This is thin wrapper over 1D array</summary>
 	public struct Vector
 	{
-		private double[] v;
+		public double[] v { get; private set; }
 
 		/// <summary>Gets number of components in a vector</summary>
 		/// <exception cref="NullReferenceException">Thrown when vector constructed by default constructor and not assigned yet</exception>

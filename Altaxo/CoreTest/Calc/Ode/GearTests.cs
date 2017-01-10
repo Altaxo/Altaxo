@@ -93,7 +93,7 @@ namespace Altaxo.Calc.Ode
 			(t, y) => new Vector(lambda1PlusLambda2By2 * y[0] + lambda1MinusLambda2By2 * y[1], lambda1MinusLambda2By2 * y[0] + lambda1PlusLambda2By2 * y[1]),
 			new Options { RelativeTolerance = 1e-4, AbsoluteTolerance = 1E-8 });
 
-			var ode = new GearClass();
+			var ode = new GearsBDF();
 
 			ode.Initialize(
 			0,
@@ -106,11 +106,11 @@ namespace Altaxo.Calc.Ode
 				double t = spulse.T;
 				var sp = ode.Evaluate(t);
 
-				var y0_expected = C1 * Math.Exp(lambda1 * sp.T) + C2 * Math.Exp(lambda2 * sp.T);
-				var y1_expected = C1 * Math.Exp(lambda1 * sp.T) - C2 * Math.Exp(lambda2 * sp.T);
+				var y0_expected = C1 * Math.Exp(lambda1 * t) + C2 * Math.Exp(lambda2 * t);
+				var y1_expected = C1 * Math.Exp(lambda1 * t) - C2 * Math.Exp(lambda2 * t);
 
-				Assert.AreEqual(y0_expected, sp.X[0], 1E-3 * y0_expected + 1E-4);
-				Assert.AreEqual(y1_expected, sp.X[1], 1E-3 * y1_expected + 1E-4);
+				Assert.AreEqual(y0_expected, sp[0], 1E-3 * y0_expected + 1E-4);
+				Assert.AreEqual(y1_expected, sp[1], 1E-3 * y1_expected + 1E-4);
 			}
 		}
 	}

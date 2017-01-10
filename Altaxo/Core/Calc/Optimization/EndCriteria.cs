@@ -204,7 +204,7 @@ namespace Altaxo.Calc.Optimization
 		///</remarks>
 		public bool CheckStationaryPoint(double fold, double fnew)
 		{
-			bool test = (System.Math.Abs(fold - fnew) < minFunctionEpsilon);
+			bool test = !((System.Math.Abs(fold - fnew) >= minFunctionEpsilon));
 			if (test)
 				stationaryPointIterationsCounter++;
 			else if (stationaryPointIterationsCounter != 0)

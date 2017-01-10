@@ -33,6 +33,7 @@
 
 using Altaxo.Calc.LinearAlgebra;
 using System;
+using System.Threading;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -168,6 +169,11 @@ namespace Altaxo.Calc.Optimization
 			Minimize(CreateSimplex(initialvector));
 		}
 
+		public void Minimize(DoubleVector initialvector, CancellationToken cancellationToken, Action<double> newMinimalValueFound)
+		{
+			Minimize(CreateSimplex(initialvector), cancellationToken, newMinimalValueFound);
+		}
+
 		///<summary> Minimize the given cost function </summary>
 		public void Minimize(DoubleVector[] initialsimplex, double rho, double chi, double psi, double sigma)
 		{
@@ -181,14 +187,29 @@ namespace Altaxo.Calc.Optimization
 		///<summary> Minimize the given cost function </summary>
 		public void Minimize(DoubleVector[] initialsimplex)
 		{
+			Minimize(initialsimplex, CancellationToken.None, null);
+		}
+
+		///<summary> Minimize the given cost function </summary>
+		public void Minimize(DoubleVector[] initialsimplex, CancellationToken cancellationToken, Action<double> newMinimalValueFound)
+		{
 			endCriteria_.Reset();
 			InitializeMethod(initialsimplex);
+
+			var minCostSoFar = fx[0];
+
 			// Iterate the optimization method
 			do
 			{
 				endCriteria_.iterationCounter++;
 				IterateMethod();
-			} while (endCriteria_.CheckCriteria(iterationValues_[endCriteria_.iterationCounter - 1], iterationValues_[endCriteria_.iterationCounter]));
+
+				if (fx[0] < minCostSoFar)
+				{
+					minCostSoFar = fx[0];
+					newMinimalValueFound?.Invoke(minCostSoFar);
+				}
+			} while (!cancellationToken.IsCancellationRequested && !double.IsNaN(fx[0]) && endCriteria_.CheckCriteria(iterationValues_[endCriteria_.iterationCounter - 1], iterationValues_[endCriteria_.iterationCounter]));
 		}
 
 		///<summary> Initialize the optimization method </summary>

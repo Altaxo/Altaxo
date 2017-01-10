@@ -4,6 +4,8 @@
 // Microsoft Research License, see license file "MSR-LA - Open Solving Library for ODEs.rtf"
 // This file originates from project OSLO - Open solving libraries for ODEs - 1.1
 
+// Modified by D. Lellinger 2017
+
 #endregion Copyright
 
 using System;
@@ -15,7 +17,7 @@ using System.Runtime.CompilerServices;
 
 namespace Altaxo.Calc.Ode
 {
-	public class GearClass
+	public class GearsBDF
 	{
 		/// <summary>
 		/// Representation of current state in Nordsieck's method
@@ -156,21 +158,59 @@ namespace Altaxo.Calc.Ode
 		private bool isIterationFailed;
 		private int n;
 		private Options opts;
-		private double tout;
+		private double tout = double.NaN;
 		private Func<double, Vector, Vector> f;
 		private Vector xout;
 		private double r;
 
 		/// <summary>
-		/// Implementation of Gear's BDF method with dynamically changed step size and order. Order changes between 1 and 3.
+		/// Initialize Gear's BDF method with dynamically changed step size and order. Order changes between 1 and 3.
 		/// </summary>
 		/// <param name="t0">Initial time point</param>
-		/// <param name="x0">Initial phase vector</param>
-		/// <param name="f">Right parts of the system</param>
+		/// <param name="y0">Initial values (at time <paramref name="t0"/>).</param>
+		/// <param name="dydt">Evaluation function for the derivatives. First argument is the time, second argument are the current y values. The third argument is an array where the derivatives are expected to be placed into.</param>
 		/// <returns>Sequence of infinite number of solution points.</returns>
-		public SolutionPoint Initialize(double t0, Vector x0, Func<double, Vector, Vector> f)
+		public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt)
 		{
-			return Initialize(t0, x0, f, Options.Default);
+			Initialize(t0, y0, dydt, Options.Default);
+		}
+
+		/// <summary>
+		/// Initialize Gear's BDF method with dynamically changed step size and order. Order changes between 1 and 3.
+		/// </summary>
+		/// <param name="t0">Initial time point</param>
+		/// <param name="y0">Initial values (at time <paramref name="t0"/>).</param>
+		/// <param name="dydt">Evaluation function for the derivatives. First argument is the time, second argument are the current y values. The third argument is an array where the derivatives are expected to be placed into.</param>
+		/// <param name="opts">Options for accuracy control and initial step size</param>
+		public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt, Options opts)
+		{
+			var adapter = new Adapter1(dydt, y0.Length);
+			Initialize(t0, y0, adapter.EvaluateDyDt, opts);
+		}
+
+		[Obsolete]
+		public void Initialize(double t0, Vector x0, Func<double, Vector, Vector> f)
+		{
+			Initialize(t0, x0, f, Options.Default);
+		}
+
+		private class Adapter1
+		{
+			private Action<double, double[], double[]> _func;
+			//private Vector dydt;
+
+			public Adapter1(Action<double, double[], double[]> ff, int dim)
+			{
+				_func = ff;
+				//dydt = new Vector(new double[dim]);
+			}
+
+			public Vector EvaluateDyDt(double t, Vector y)
+			{
+				var dydt = new Vector(new double[y.Length]);
+				_func(t, y.v, dydt.v);
+				return dydt;
+			}
 		}
 
 		/// <summary>
@@ -181,11 +221,13 @@ namespace Altaxo.Calc.Ode
 		/// <param name="f">Right parts of the system</param>
 		/// <param name="opts">Options for accuracy control and initial step size</param>
 		/// <returns>Sequence of infinite number of solution points.</returns>
-		public SolutionPoint Initialize(double t0, Vector x0, Func<double, Vector, Vector> f, Options opts)
+		[Obsolete]
+		public void Initialize(double t0, Vector x0, Func<double, Vector, Vector> f, Options opts)
 		{
 			double t = t0;
 			Vector x = x0.Clone();
 			this.n = x0.Length;
+
 			this.f = f;
 			this.opts = opts;
 
@@ -256,10 +298,10 @@ namespace Altaxo.Calc.Ode
 			// ---------------------------------------------------------------------------------------------------
 
 			// Firstly, return initial point
-			return Evaluate(t0, true);
+			Evaluate(t0, true);
 		}
 
-		public SolutionPoint Evaluate(double t_sol)
+		public double[] Evaluate(double t_sol)
 		{
 			if (!(t_sol >= tout))
 				throw new ArgumentOutOfRangeException(nameof(t_sol), "t must be greater than or equal than the last evaluated t");
@@ -267,7 +309,7 @@ namespace Altaxo.Calc.Ode
 			return Evaluate(t_sol, false);
 		}
 
-		private SolutionPoint Evaluate(double t_sol, bool isFirstEvaluation)
+		private double[] Evaluate(double t_sol, bool isFirstEvaluation)
 		{
 			tout = t_sol;
 
@@ -278,7 +320,7 @@ namespace Altaxo.Calc.Ode
 				// Output data
 				if (currstate.tn <= tout && tout <= currstate.tn + currstate.dt)
 				{
-					return new SolutionPoint(tout, Vector.Lerp(tout, currstate.tn, xout, currstate.tn + currstate.dt, currstate.xn));
+					return Vector.Lerp(tout, currstate.tn, xout, currstate.tn + currstate.dt, currstate.xn).v;
 				}
 				Vector.Copy(currstate.xn, xout);
 
@@ -350,7 +392,7 @@ namespace Altaxo.Calc.Ode
 						// Output data
 						if (currstate.tn <= tout && tout <= currstate.tn + currstate.dt)
 						{
-							return new SolutionPoint(tout, Vector.Lerp(tout, currstate.tn, xout, currstate.tn + currstate.dt, currstate.xn));
+							return Vector.Lerp(tout, currstate.tn, xout, currstate.tn + currstate.dt, currstate.xn).v;
 						}
 						Vector.Copy(currstate.xn, xout);
 

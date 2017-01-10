@@ -20,6 +20,7 @@ namespace Altaxo.Calc.Ode
 	/// the Gear’s BDF method.
 	/// dy(i)/dt = f(i,t,y(1),y(2),...,y(N)).
 	/// </summary>
+	[Obsolete]
 	public sealed class OdeGearsBDF : xBaseOdeGearsAndAdamsMoulton
 	{
 		#region Constructor

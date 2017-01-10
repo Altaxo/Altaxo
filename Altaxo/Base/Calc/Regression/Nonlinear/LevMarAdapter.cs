@@ -527,14 +527,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
 			}
 		}
 
-		public void DoSimplexMinimization()
+		public void DoSimplexMinimization(System.Threading.CancellationToken cancellationToken, Action<double> newMinimalCostValueFound)
 		{
 			Calc.Optimization.NelderMead nm = new Altaxo.Calc.Optimization.NelderMead(new NelderMeadCostFunction(this));
-			nm.Minimize(new Calc.LinearAlgebra.DoubleVector(this._cachedVaryingParameters));
+			nm.Minimize(new LinearAlgebra.DoubleVector(this._cachedVaryingParameters), cancellationToken, newMinimalCostValueFound);
 			for (int i = 0; i < _cachedVaryingParameters.Length; ++i)
 				_cachedVaryingParameters[i] = nm.SolutionVector[i];
 			_resultingSumChiSquare = nm.SolutionValue;
-
 		}
 
 		/// <summary>
