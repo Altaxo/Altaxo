@@ -226,17 +226,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 		#endregion Serialization
 
-		public FitElement()
-		{
-			_independentVariables = new IReadableColumnProxy[0];
-
-			_dependentVariables = new IReadableColumnProxy[0];
-
-			_errorEvaluation = new IVarianceScaling[0];
-
-			_rangeOfRows = new AllRows();
-		}
-
 		public FitElement(FitElement from)
 		{
 			if (from._fitFunction is ICloneable fromFitFunc1)
@@ -278,6 +267,21 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 			_parameterNames = (string[])from._parameterNames.Clone();
 			_parameterNameStart = from._parameterNameStart;
+		}
+
+		public FitElement() : this(new AllRows())
+		{
+		}
+
+		public FitElement(IRowSelection rowSelection)
+		{
+			_independentVariables = new IReadableColumnProxy[0];
+
+			_dependentVariables = new IReadableColumnProxy[0];
+
+			_errorEvaluation = new IVarianceScaling[0];
+
+			_rangeOfRows = (IRowSelection)(rowSelection?.Clone()) ?? new AllRows();
 		}
 
 		public FitElement(DataTable table, int groupNumber, IRowSelection rowSelection, IReadableColumn xColumn, IReadableColumn yColumn)

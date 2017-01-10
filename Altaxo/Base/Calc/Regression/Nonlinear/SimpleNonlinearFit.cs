@@ -117,14 +117,35 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// </summary>
 		/// <param name="fitFunc">Fitting function.</param>
 		/// <param name="parameter">Array of default parameters (length must match the expected number of parameter of fitFunc).</param>
+		/// <param name="start">First point to be used for fitting.</param>
+		/// <param name="count">Number of points to be used for fitting.</param>
+		public SimpleNonlinearFit(FitEvaluationFunction fitFunc, double[] parameter, int start, int count)
+			: this(fitFunc, parameter, null, 0, null, null, start, count)
+		{
+		}
+
+		/// <summary>
+		/// Creates an instance of this class. This constructor needs either
+		/// <paramref name="dataTable"/>, <paramref name="xCol"/> and <paramref name="yCol"/> to be valid, or all to be null.
+		/// If all null, consider to use the other provided constructor.
+		/// </summary>
+		/// <param name="fitFunc">Fitting function.</param>
+		/// <param name="parameter">Array of default parameters (length must match the expected number of parameter of fitFunc).</param>
+		/// <param name="dataTable">The data table from which the provided <paramref name="xCol"/> and <paramref name="yCol"/> originate.</param>
+		/// <param name="groupNumber">The group number of the columns <paramref name="xCol"/> and <paramref name="yCol"/>.</param>
 		/// <param name="xCol">Data column of independent values.</param>
 		/// <param name="yCol">Data column of dependent values.</param>
 		/// <param name="start">First point to be used for fitting.</param>
 		/// <param name="count">Number of points to be used for fitting.</param>
-		public SimpleNonlinearFit(FitEvaluationFunction fitFunc, double[] parameter, Altaxo.Data.INumericColumn xCol, Altaxo.Data.INumericColumn yCol, int start, int count)
+		public SimpleNonlinearFit(FitEvaluationFunction fitFunc, double[] parameter, Altaxo.Data.DataTable dataTable, int groupNumber, Altaxo.Data.INumericColumn xCol, Altaxo.Data.INumericColumn yCol, int start, int count)
 		{
 			_fitDoc = new NonlinearFitDocument();
-			_fitEle = new FitElement(null, 0, Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(start, count), xCol, yCol);
+
+			if (null == dataTable && null == xCol && null == yCol)
+				_fitEle = new FitElement(Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(start, count));
+			else
+				_fitEle = new FitElement(dataTable, groupNumber, Altaxo.Data.Selections.RangeOfRowIndices.FromStartAndCount(start, count), xCol, yCol);
+
 			_fitEle.FitFunction = new DummyFitFunc(fitFunc, parameter);
 			_fitDoc.FitEnsemble.Add(_fitEle);
 			_fitDoc.SetDefaultParametersForFitElement(0);
