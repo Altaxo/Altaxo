@@ -29,6 +29,12 @@ namespace Altaxo.Serialization.AutoUpdates
 				case "4.6":
 					return IsVersion46Installed();
 
+				case "4.6.1":
+					return IsVersion461Installed();
+
+				case "4.6.2":
+					return IsVersion462Installed();
+
 				default:
 					return false;
 			}
@@ -85,6 +91,25 @@ namespace Altaxo.Serialization.AutoUpdates
 				return false;
 			else
 				return release >= 393273;
+		}
+
+		public static bool IsVersion461Installed()
+		{
+			var release = GetFramework45ReleaseNumber();
+			if (!release.HasValue)
+				return false;
+			else
+				return release >= 394254;
+		}
+
+		public static bool IsVersion462Installed()
+		{
+			var release = GetFramework45ReleaseNumber();
+			if (!release.HasValue)
+				return false;
+			else
+				return release >= 394802
+;
 		}
 	}
 }
