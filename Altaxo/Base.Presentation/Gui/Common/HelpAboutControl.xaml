@@ -17,7 +17,7 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Label Grid.Row="0" Grid.RowSpan="3" Content="Altaxo" FontFamily="Times New Roman" FontSize="32" HorizontalAlignment="Center" />
-		<Label Grid.Row="0" Content="(C) 2002-2014 Dr. Dirk Lellinger" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right" Margin="0,-4,0,-4" />
+		<Label Grid.Row="0" Content="(C) 2002-2017 Dr. Dirk Lellinger" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right" Margin="0,-4,0,-4" />
 		<Label Grid.Row="1" Content="{Binding Path=VersionString, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type axogc:HelpAboutControl}}}" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right"  Margin="0,-4,0,-4" />
 		<Label Grid.Row="2" Content="{Binding Path=RevisionString, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type axogc:HelpAboutControl}}}" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right"  Margin="0,-4,0,-4" />
 		<Label Grid.Row="3" Content="data processing / data plotting program" FontFamily="Times New Roman" FontSize="24" HorizontalAlignment="Center" />
@@ -56,6 +56,15 @@
 						</ListItem>
 						<ListItem>
 							<Paragraph>Lim Bio Liong for the excellent article 'Building COM Servers in .NET'. Furthermore  the author of 'Dazzled-Box', guangboo49, for the example how to make a graphical COM server as .NET program.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Angus Johnson for the excellent polygon clipping library (Clipperlib).</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>The contributors to the Poly2Tri library, a polygon triangulation library.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Microsoft and the Moscow State University for providing code for solving ordinary differential equations (project OSLO).</Paragraph>
 						</ListItem>
 						<ListItem>
 							<Paragraph>The authors of the projects that I have forgotten (sorry!), and the authors of the
