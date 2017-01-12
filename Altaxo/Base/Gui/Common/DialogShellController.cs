@@ -146,6 +146,8 @@ namespace Altaxo.Gui.Common
 
 			if (!bSuccess)
 				e.Cancel = true;
+			else
+				View = null;
 		}
 
 		/// <summary>
@@ -154,6 +156,7 @@ namespace Altaxo.Gui.Common
 		public void EhCancel()
 		{
 			_hostedController.Revert(true);
+			View = null;
 		}
 
 		/// <summary>
