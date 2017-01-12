@@ -67,6 +67,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		{
 			var stb = new StringBuilder();
 
+			var culture = Altaxo.Settings.GuiCulture.Instance;
+
 			var fitdoc = _doc.FitDocumentCopy;
 
 			var parameters = fitdoc.CurrentParameters;
@@ -76,25 +78,25 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			var thisIndepTransformation = (_doc.Function as FitFunctionToScalarFunctionDDWrapper)?.IndependentVariableTransformation;
 			var thisTransformation = (_doc.Function as FitFunctionToScalarFunctionDDWrapper)?.DependentVariableTransformation;
 
-			stb.AppendFormat("Displayed fit function (from FitElement[{0}]): {1}", _doc.FitElementIndex, thisFitFunction?.ToString());
+			stb.AppendFormat(culture, "Displayed fit function (from FitElement[{0}]): {1}", _doc.FitElementIndex, thisFitFunction?.ToString());
 			stb.AppendLine();
-			stb.AppendFormat("Independent variable: {0}, fed with: {1} {2}", thisFitFunction?.IndependentVariableName(0), thisIndepTransformation?.RepresentationAsOperator ?? string.Empty, "x_axis_value");
+			stb.AppendFormat(culture, "Independent variable: {0}, fed with: {1} {2}", thisFitFunction?.IndependentVariableName(0), thisIndepTransformation?.RepresentationAsOperator ?? string.Empty, "x_axis_value");
 			stb.AppendLine();
-			stb.AppendFormat("Displayed dependent variable[{0}]: {1} {2}", _doc.DependentVariableIndex, thisTransformation?.RepresentationAsOperator ?? string.Empty, thisFitFunction?.DependentVariableName(_doc.DependentVariableIndex));
-			stb.AppendFormat(" ({0} was fitted to : {1})", thisFitFunction?.DependentVariableName(_doc.DependentVariableIndex), fitdoc.FitEnsemble[_doc.FitElementIndex].DependentVariables(_doc.DependentVariableIndex)?.FullName);
+			stb.AppendFormat(culture, "Displayed dependent variable[{0}]: {1} {2}", _doc.DependentVariableIndex, thisTransformation?.RepresentationAsOperator ?? string.Empty, thisFitFunction?.DependentVariableName(_doc.DependentVariableIndex));
+			stb.AppendFormat(culture, " ({0} was fitted to : {1})", thisFitFunction?.DependentVariableName(_doc.DependentVariableIndex), fitdoc.FitEnsemble[_doc.FitElementIndex].DependentVariables(_doc.DependentVariableIndex)?.FullName);
 			stb.AppendLine();
 			stb.AppendLine();
 
-			stb.AppendFormat("Parameters:");
+			stb.AppendFormat(culture, "Parameters:");
 			stb.AppendLine();
 			stb.Append("--------------------------------------------");
 			stb.AppendLine();
-			stb.AppendFormat("{0,24}{1,24}{2,24}{3,24}", "Name", "Value", "Variance", "Vary?");
+			stb.AppendFormat(culture, "{0,24}{1,24}{2,24}{3,24}", "Name", "Value", "Variance", "Vary?");
 			stb.AppendLine();
 
 			foreach (ParameterSetElement parameter in parameters)
 			{
-				stb.AppendFormat("{0,24}{1,24}{2,24}{3,24}", parameter.Name, parameter.Parameter, parameter.Variance, parameter.Vary);
+				stb.AppendFormat(culture, "{0,24}{1,24}{2,24}{3,24}", parameter.Name, parameter.Parameter, parameter.Variance, parameter.Vary);
 				stb.AppendLine();
 			}
 
@@ -107,31 +109,31 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 			for (int iFitElement = 0; iFitElement < fitdoc.FitEnsemble.Count; ++iFitElement)
 			{
-				stb.AppendFormat("Fit element[{0}]:", iFitElement);
+				stb.AppendFormat(culture, "Fit element[{0}]:", iFitElement);
 				stb.AppendLine();
 				stb.Append("----------------------");
 				stb.AppendLine();
 
 				var fitElement = fitdoc.FitEnsemble[iFitElement];
-				stb.AppendFormat("Fit function: {0}", fitElement.FitFunction?.ToString());
+				stb.AppendFormat(culture, "Fit function: {0}", fitElement.FitFunction?.ToString());
 				stb.AppendLine();
 
-				stb.AppendFormat("DataTable: {0}", fitElement.DataTable?.Name);
+				stb.AppendFormat(culture, "DataTable: {0}", fitElement.DataTable?.Name);
 				stb.AppendLine();
-				stb.AppendFormat("Group number: {0}", fitElement.GroupNumber);
+				stb.AppendFormat(culture, "Group number: {0}", fitElement.GroupNumber);
 				stb.AppendLine();
-				stb.AppendFormat("Row selection: {0}", fitElement.DataRowSelection);
+				stb.AppendFormat(culture, "Row selection: {0}", fitElement.DataRowSelection);
 				stb.AppendLine();
 
 				for (int i = 0; i < fitElement.NumberOfIndependentVariables; ++i)
 				{
-					stb.AppendFormat("IndependentVariable[{0}]: {1} ---> {2}", i, fitElement.FitFunction?.IndependentVariableName(i), fitElement.IndependentVariables(i)?.FullName);
+					stb.AppendFormat(culture, "IndependentVariable[{0}]: {1} ---> {2}", i, fitElement.FitFunction?.IndependentVariableName(i), fitElement.IndependentVariables(i)?.FullName);
 					stb.AppendLine();
 				}
 
 				for (int i = 0; i < fitElement.NumberOfDependentVariables; ++i)
 				{
-					stb.AppendFormat("DependentVariable[{0}]: {1} ---> {2}", i, fitElement.FitFunction?.DependentVariableName(i), fitElement.DependentVariables(i)?.FullName);
+					stb.AppendFormat(culture, "DependentVariable[{0}]: {1} ---> {2}", i, fitElement.FitFunction?.DependentVariableName(i), fitElement.DependentVariables(i)?.FullName);
 					stb.AppendLine();
 				}
 
