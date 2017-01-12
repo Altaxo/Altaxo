@@ -32,10 +32,10 @@ namespace Altaxo.Data.Selections
 {
 	public class RangeOfNumericalValues : Main.SuspendableDocumentNodeWithEventArgs, IRowSelection
 	{
-		private double _lowerValue;
+		private AltaxoVariant _lowerValue;
 		private bool _isLowerInclusive;
 
-		private double _upperValue;
+		private AltaxoVariant _upperValue;
 		private bool _isUpperInclusive;
 
 		private IReadableColumnProxy _columnProxy;
