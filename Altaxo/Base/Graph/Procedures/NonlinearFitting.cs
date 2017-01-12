@@ -73,6 +73,9 @@ namespace Altaxo.Graph.Procedures
 
 			var fitController = (Gui.IMVCANController)Current.Gui.GetControllerAndControl(new object[] { fitDocument, fitDocumentIdentifier, activeLayer }, typeof(Gui.IMVCANController));
 
+			// before showing the fit dialog, deselect all objects selected
+			ctrl.SelectedObjects.Clear();
+
 			if (true == Current.Gui.ShowDialog(fitController, "Non-linear fitting"))
 			{
 				var localdoc = fitController.ModelObject as NonlinearFitDocument;
