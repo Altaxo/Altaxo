@@ -118,7 +118,6 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
 		/// <param name="font">Font used.</param>
-		/// <param name="strfmt">String format used.</param>
 		/// <param name="items">Array of items to be drawn.</param>
 		/// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
 		public override IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, AltaxoVariant[] items)

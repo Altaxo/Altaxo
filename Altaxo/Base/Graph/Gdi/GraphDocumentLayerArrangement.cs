@@ -49,7 +49,7 @@ namespace Altaxo.Graph.Gdi
 
 	/// <summary>
 	/// Holds the information how to arrange layers in a graph document.
-	/// Is used by the <see cref="Altaxo.Gui.Graph.ArrangeLayersController" /> controller.
+	/// Is used by the <see cref="Altaxo.Gui.Graph.Gdi.ArrangeLayersController" /> controller.
 	/// </summary>
 	public class ArrangeLayersDocument : Main.ICopyFrom
 	{

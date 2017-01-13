@@ -104,12 +104,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>The rotation around z-axis of the label.</summary>
 		protected double _rotationZ;
 
-		/// <summary>The x offset in EM units.</summary>
+		/// <summary>The x offset in EM units.
 		/// Total offset is calculated according to:
 		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
 		protected double _offsetX_EmUnits;
 
-		/// <summary>The x offset int points.</summary>
+		/// <summary>The x offset int points.
 		/// Total offset is calculated according to:
 		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
 		protected double _offsetX_Points;
@@ -122,7 +122,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>The y offset in EM units.</summary>
 		protected double _offsetY_EmUnits;
 
-		/// <summary>The y offset int points.</summary>
+		/// <summary>The y offset int points.
 		/// Total offset is calculated according to:
 		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
 		protected double _offsetY_Points;
@@ -135,7 +135,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// <summary>The z offset in EM units.</summary>
 		protected double _offsetZ_EmUnits;
 
-		/// <summary>The z offset int points.</summary>
+		/// <summary>The z offset int points.
 		/// Total offset is calculated according to:
 		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
 		protected double _offsetZ_Points;
@@ -645,7 +645,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		/// <summary>The x offset in points.</summary>
+		/// <summary>The x offset in points.
 		/// Total offset is calculated according to:
 		/// totalOffset = <see cref="OffsetXPoints"/> +  <see cref="OffsetXEmUnits"/> * emSize + <see cref="OffsetXSymbolSizeUnits"/> * symbolSize</summary>
 		public double OffsetXPoints
@@ -681,7 +681,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		/// <summary>The x offset in symbol size units.</summary>
+		/// <summary>The x offset in symbol size units.
 		/// Total offset is calculated according to:
 		/// totalOffset = <see cref="OffsetXPoints"/> +  <see cref="OffsetXEmUnits"/> * emSize + <see cref="OffsetXSymbolSizeUnits"/> * symbolSize</summary>
 		public double OffsetXSymbolSizeUnits
@@ -700,7 +700,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		/// <summary>The y offset in points.</summary>
+		/// <summary>The y offset in points.
 		/// Total offset is calculated according to:
 		/// totalOffset = <see cref="OffsetYPoints"/> +  <see cref="OffsetYEmUnits"/> * emSize + <see cref="OffsetYSymbolSizeUnits"/> * symbolSize</summary>
 		public double OffsetYPoints
@@ -734,7 +734,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		/// <summary>The y offset in symbol size units.</summary>
+		/// <summary>The y offset in symbol size units.
 		/// Total offset is calculated according to:
 		/// totalOffset = <see cref="OffsetYPoints"/> +  <see cref="OffsetYEmUnits"/> * emSize + <see cref="OffsetYSymbolSizeUnits"/> * symbolSize</summary>
 		public double OffsetYSymbolSizeUnits
@@ -753,7 +753,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		/// <summary>The z offset in points.</summary>
+		/// <summary>The z offset in points.
 		/// Total offset is calculated according to:
 		/// totalOffset = <see cref="OffsetZPoints"/> +  <see cref="OffsetZEmUnits"/> * emSize + <see cref="OffsetZSymbolSizeUnits"/> * symbolSize</summary>
 		public double OffsetZPoints
@@ -787,7 +787,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 		}
 
-		/// <summary>The z offset in symbol size units.</summary>
+		/// <summary>The z offset in symbol size units.
 		/// Total offset is calculated according to:
 		/// totalOffset = <see cref="OffsetZPoints"/> +  <see cref="OffsetZEmUnits"/> * emSize + <see cref="OffsetZSymbolSizeUnits"/> * symbolSize</summary>
 		public double OffsetZSymbolSizeUnits
@@ -978,6 +978,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// </summary>
 		/// <param name="g"></param>
 		/// <param name="label"></param>
+		/// <param name="symbolSize">The symbol size used to calculate the offset.</param>
 		/// <param name="variableTextBrush">If not null, this argument provides the text brush that should be used now. If null, then the <see cref="_material"/> is used instead.</param>
 		/// <param name="variableBackBrush"></param>
 		public void Paint(IGraphicsContext3D g, string label, double symbolSize, IMaterial variableTextBrush, IMaterial variableBackBrush)

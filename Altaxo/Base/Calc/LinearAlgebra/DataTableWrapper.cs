@@ -594,7 +594,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Counts the number of valid rows from the array that is returned by for instance <see cref="GetValidNumericRows(INumericColumn[], IAscendingIntegerCollection, int)" />.
+		/// Counts the number of valid rows from the array that is returned by for instance <see cref="GetValidNumericRows(INumericColumn[], IAscendingIntegerCollection, IEnumerable{int}, int)" />.
 		/// </summary>
 		/// <param name="array">The boolean array.</param>
 		/// <returns>The number of valid numeric rows, i.e. the number of elements in the array which have the value of true.</returns>
@@ -611,7 +611,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Gets the collection of valid rows from the array that is returned by <see cref="GetValidNumericRows(INumericColumn[], IAscendingIntegerCollection, int)" />.
+		/// Gets the collection of valid rows from the array that is returned by <see cref="GetValidNumericRows(IReadableColumn[], IAscendingIntegerCollection, IEnumerable{int}, int)" />.
 		/// </summary>
 		/// <param name="array">The boolean array.</param>
 		/// <returns>An collection of ascending integer values. These values are the indizes of valid numeric rows, i.e. the number of elements in the array which have the value of true.</returns>
@@ -634,8 +634,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>An collection of ascending integer values. These values are the indizes of valid numeric rows, i.e. the number of elements in the array which have the value of true.</returns>
 		public static AscendingIntegerCollection GetCollectionOfValidNumericRows(DataColumnCollection table, IAscendingIntegerCollection selectedCols)
 		{
-			int rowCount;
-			VerifyAllColumnsNumeric(table, selectedCols, out rowCount);
+			VerifyAllColumnsNumeric(table, selectedCols, out int rowCount);
 
 			return GetCollectionOfValidNumericRows(GetValidNumericRows(table, selectedCols, rowCount));
 		}

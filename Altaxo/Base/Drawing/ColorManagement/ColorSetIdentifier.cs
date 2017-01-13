@@ -30,7 +30,7 @@ using System.Text;
 namespace Altaxo.Drawing.ColorManagement
 {
 	/// <summary>
-	/// Structure that stores <see cref="ColorSetLevel"/> and name of a color set. This is used as key value in the internal dictionaries.
+	/// Structure that stores <see cref="Altaxo.Main.ItemDefinitionLevel"/> and name of a color set. This is used as key value in the internal dictionaries.
 	/// </summary>
 	[System.ComponentModel.ImmutableObject(true)]
 	public class ColorSetIdentifier : IEquatable<ColorSetIdentifier>, IComparable<ColorSetIdentifier>, Main.IImmutable

@@ -157,7 +157,6 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
 		/// <param name="font">The font that is used to draw the item.</param>
-		/// <param name="strfmt">String format used to draw the item.</param>
 		/// <param name="mtick">The item to draw.</param>
 		/// <param name="morg">The location the item will be drawn.</param>
 		/// <returns>The size of the item if it would be drawn.</returns>
@@ -186,7 +185,6 @@ namespace Altaxo.Graph.Graph3D.LabelFormatting
 		/// </summary>
 		/// <param name="g">Graphics context.</param>
 		/// <param name="font">Font used.</param>
-		/// <param name="strfmt">String format used.</param>
 		/// <param name="items">Array of items to be drawn.</param>
 		/// <returns>An array of <see cref="IMeasuredLabelItem" /> that can be used to determine the size of each item and to draw it.</returns>
 		public virtual IMeasuredLabelItem[] GetMeasuredItems(IGraphicsContext3D g, FontX3D font, AltaxoVariant[] items)

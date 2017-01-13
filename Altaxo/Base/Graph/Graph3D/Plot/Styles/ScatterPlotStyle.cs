@@ -413,7 +413,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			if (!ScatterSymbols.NoSymbol.Instance.Equals(_symbolShape))
 			{
 				PointD3D pos = PointD3D.Empty;
-				VectorD3D diff;
 
 				if (null == _cachedSymbolSizeForIndexFunction && null == _cachedColorForIndexFunction) // using a constant symbol size
 				{

@@ -64,7 +64,6 @@ namespace Altaxo.Graph.Gdi
 			return (float)Math.Sqrt(dx * dx + dy * dy);
 		}
 
-
 		public static float DistanceSquaredTo(this PointF p, PointF q)
 		{
 			var dx = p.X - q.X;
@@ -442,18 +441,18 @@ namespace Altaxo.Graph.Gdi
 			}
 		}
 
-
 		/// <summary>
 		/// Gets the fractional index into points of a polyline by searching a point along the polyline that has a specified distance to the start point of the polyline.
 		/// </summary>
 		/// <param name="points">The points of the polyline curve.</param>
 		/// <param name="distanceFromStart">The distance to the start point of the polyline curve, i.e. to the point at index 0.</param>
-		/// <returns>The fractional index of the global polyline curve where the point at this fractional index has a distance of <paramref name="distanceFromEnd"/> to the start point at index 0.
+		/// <returns>The fractional index of the global polyline curve where the point at this fractional index has a distance of <paramref name="distanceFromStart"/> to the start point at index 0.
 		/// The return value is in the range [0..points.Length-1]. If no such point is found, then double.NaN is returned.</returns>
 		public static double GetFractionalIndexFromDistanceFromStartOfPolylineCurve(PointF[] points, double distanceFromStart)
 		{
-			return GetFractionalIndexFromDistanceFromStartOfPartialPolylineCurve(points, 0, points.Length-1, distanceFromStart);
+			return GetFractionalIndexFromDistanceFromStartOfPartialPolylineCurve(points, 0, points.Length - 1, distanceFromStart);
 		}
+
 		/// <summary>
 		/// Gets the fractional index into points of a partial polyline by searching a point along the partial polyline that has a specified distance to the start point of the partial polyline.
 		/// </summary>
@@ -468,7 +467,6 @@ namespace Altaxo.Graph.Gdi
 		{
 			if (0 == distanceFromStart)
 				return startIndex; // speed-up, but also fix a problem when the segment from startIndex to startIndex+1 has a length of zero
-
 
 			var pivot = points[startIndex];
 			var dsqr = distanceFromStart * distanceFromStart;
@@ -494,7 +492,7 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		/// <param name="points">The points of the polyline curve.</param>
 		/// <param name="distanceFromEnd">The distance from the end point of the polyline curve, i.e. from the point at index <paramref name="points"/>].Length-1</param>
-		/// <returns>The fractional index of the global polyline curve where the point at this fractional index has a distance of <paramref name="distanceFromEnd"/> from the point at index <paramref name="endStartIndex"/>.
+		/// <returns>The fractional index of the global polyline curve where the point at this fractional index has a distance of <paramref name="distanceFromEnd"/> from the point at index <paramref name="points"/>.Length-1.
 		/// The return value is in the range [0..points.Length-1]. If no such points is found, then double.NaN is returned.</returns>
 		public static double GetFractionalIndexFromDistanceFromEndOfPolylineCurve(PointF[] points, double distanceFromEnd)
 		{
@@ -581,7 +579,6 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>The shortened polyline, or null if the polyline was shortened to zero length.</returns>
 		public static PointF[] ShortenPartialPolylineByDistanceFromStartAndEnd(this PointF[] points, int startIndex, int endIndex, double distanceFromStart, double distanceFromEnd)
 		{
-
 			var fractionalIndexStart = GetFractionalIndexFromDistanceFromStartOfPartialPolylineCurve(points, startIndex, endIndex, distanceFromStart);
 			if (double.IsNaN(fractionalIndexStart))
 				return null; // there is no curve left after shortening
@@ -592,7 +589,6 @@ namespace Altaxo.Graph.Gdi
 
 			if (!(fractionalIndexStart < fractionalIndexEnd))
 				return null; // there is no curve left after shortening
-
 
 			int segmentStart = (int)Math.Floor(fractionalIndexStart);
 			int segmentLast = Math.Min((int)Math.Floor(fractionalIndexEnd), endIndex - 1);
@@ -627,7 +623,6 @@ namespace Altaxo.Graph.Gdi
 			}
 			return result;
 		}
-
 
 		#endregion Polyline constituted by an array of PointF
 
@@ -684,7 +679,7 @@ namespace Altaxo.Graph.Gdi
 		#region CardialSpline to BezierSegments
 
 		// see also source of wine at: http://source.winehq.org/source/dlls/gdiplus/graphicspath.c#L445
-		// 
+		//
 
 		/// <summary>
 		/// Calculates Bezier points from cardinal spline endpoints.
@@ -694,9 +689,9 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="tension">The tension.</param>
 		/// <returns></returns>
 		/// <remarks>Original name in Wine sources: calc_curve_bezier_endp</remarks>
-		static PointF Calc_Curve_Bezier_Endpoint(PointF end, PointF adj, float tension)
+		private static PointF Calc_Curve_Bezier_Endpoint(PointF end, PointF adj, float tension)
 		{
-			// tangent at endpoints is the line from the endpoint to the adjacent point 
+			// tangent at endpoints is the line from the endpoint to the adjacent point
 			return new PointF(
 			(tension * (adj.X - end.X) + end.X),
 			(tension * (adj.Y - end.Y) + end.Y));
@@ -711,7 +706,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="p1">The Bezier control point that controls the slope towards the point <paramref name="pts"/>[i+1].</param>
 		/// <param name="p2">The Bezier control point that controls the slope outwards from the point <paramref name="pts"/>[i+1].</param>
 		/// <remarks>Original name in Wine source: calc_curve_bezier</remarks>
-		static void Calc_Curve_Bezier(PointF[] pts, int i, float tension, out PointF p1, out PointF p2)
+		private static void Calc_Curve_Bezier(PointF[] pts, int i, float tension, out PointF p1, out PointF p2)
 		{
 			/* calculate tangent */
 			var diffX = pts[2 + i].X - pts[i].X;
@@ -721,7 +716,6 @@ namespace Altaxo.Graph.Gdi
 			p1 = new PointF(pts[1 + i].X - tension * diffX, pts[1 + i].Y - tension * diffY);
 			p2 = new PointF(pts[1 + i].X + tension * diffX, pts[1 + i].Y + tension * diffY);
 		}
-
 
 		/// <summary>
 		/// Calculates the control points of the incoming and outgoing Bezier segment around the original point <paramref name="p1"/>.
@@ -733,7 +727,7 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="p1">The Bezier control point that controls the slope towards the point <paramref name="pts1"/>.</param>
 		/// <param name="p2">The Bezier control point that controls the slope outwards from the point <paramref name="pts1"/>.</param>
 		/// <remarks>This function is not in the original Wine sources. It is introduced here for optimization to avoid allocation of a new array when converting closed cardinal spline curves.</remarks>
-		static void Calc_Curve_Bezier(PointF pts0, PointF pts1, PointF pts2, float tension, out PointF p1, out PointF p2)
+		private static void Calc_Curve_Bezier(PointF pts0, PointF pts1, PointF pts2, float tension, out PointF p1, out PointF p2)
 		{
 			/* calculate tangent */
 			var diffX = pts2.X - pts0.X;
@@ -744,7 +738,6 @@ namespace Altaxo.Graph.Gdi
 			p1 = new PointF(pts1.X - tension * diffX, pts1.Y - tension * diffY);
 			p2 = new PointF(pts1.X + tension * diffX, pts1.Y + tension * diffY);
 		}
-
 
 		/// <summary>
 		/// Converts an open cardinal spline, given by the points in <paramref name="points"/>, to Bezier segments.
@@ -848,8 +841,6 @@ namespace Altaxo.Graph.Gdi
 			pt[0] = points[0]; // first point
 			pt[1] = p2; // outgoing control point
 
-
-
 			return pt;
 		}
 
@@ -890,7 +881,6 @@ namespace Altaxo.Graph.Gdi
 
 			return new Tuple<PointF, PointF, PointF, PointF>(new PointF(PS1X, PS1Y), new PointF(PS2X, PS2Y), new PointF(PS3X, PS3Y), new PointF(PS4X, PS4Y));
 		}
-
 
 		/// <summary>
 		/// Flattens a bezier segment, using only an absolute tolerance. The flattened points are stored together with their curve parameter t.
@@ -956,7 +946,10 @@ namespace Altaxo.Graph.Gdi
 			return false;
 		}
 
-		private static float Pow2(float x) { return x * x; }
+		private static float Pow2(float x)
+		{
+			return x * x;
+		}
 
 		/// <summary>
 		/// If a line segment is given by this parametric equation: p(t)=(1-t)*p0 + t*p1, this function calculates the parameter t at which
@@ -1004,7 +997,6 @@ namespace Altaxo.Graph.Gdi
 				else
 					return double.NaN;
 			}
-
 		}
 
 		public static double GetFractionalIndexFromDistanceFromStartOfBezierCurve(PointF[] points, double distanceFromStart)
@@ -1135,7 +1127,7 @@ namespace Altaxo.Graph.Gdi
 			return result;
 		}
 
-		#endregion
+		#endregion CardialSpline to BezierSegments
 	}
 
 	/// <summary>
@@ -1195,6 +1187,5 @@ namespace Altaxo.Graph.Gdi
 			Center.X += dx;
 			Center.Y += dy;
 		}
-
 	}
 }

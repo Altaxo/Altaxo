@@ -68,14 +68,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		private ValueInterpretation _meaningOfValues;
 
-
 		protected bool _independentSkipFrequency;
 
 		/// <summary>
 		/// Skip frequency.
 		/// </summary>
 		protected int _skipFrequency = 1;
-
 
 		/// <summary>
 		/// If true, treat missing points as if not present (e.g. connect lines over missing points, count skip seamlessly over missing points)
@@ -135,8 +133,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		private double _lineWidth1Offset;
 		private double _lineWidth1Factor;
-
-
 
 		/// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
 		private double _cachedLogicalShiftX;
@@ -906,7 +902,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			SkipFrequencyGroupStyle.AddLocalGroupStyle(externalGroups, localGroups); // (local group only)
 			IgnoreMissingDataPointsGroupStyle.AddLocalGroupStyle(externalGroups, localGroups);
-
 		}
 
 		public void PrepareGroupStyles(Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection externalGroups, Altaxo.Graph.Gdi.Plot.Groups.PlotGroupStyleCollection localGroups, IPlotArea layer, Altaxo.Graph.Gdi.Plot.Data.Processed2DPlotData pdata)
@@ -920,7 +915,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			// IgnoreMissingDataPoints should be the same for all sub plot styles, so there is no "private" property
 			IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
 
-
 			// note: symbol size and barposition are only applied, but not prepared
 			// this item can not be used as provider of a symbol size
 		}
@@ -929,7 +923,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			// IgnoreMissingDataPoints is the same for all sub plot styles
 			IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
-
 
 			_cachedColorForIndexFunction = null;
 			_cachedSymbolSizeForIndexFunction = null;
@@ -990,10 +983,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_cachedLogicalShiftX = _cachedLogicalShiftY = 0;
 			}
 
-
 			PlotRangeList rangeList = pdata.RangeList;
-
-
 
 			if (this._ignoreMissingDataPoints)
 			{
@@ -1039,7 +1029,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			Region oldClippingRegion = g.Clip;
 			Region newClip = (Region)oldClippingRegion.Clone();
-
 
 			int lower = range.LowerBound;
 			int upper = range.UpperBound;
@@ -1187,7 +1176,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					PointF[] shortenedPathPoints = null;
 					bool shortenedPathPointsCalculated = false;
 
-
 					if (_useSymbolGap)
 					{
 						double gap = _symbolGapOffset + _symbolGapFactor * symbolSize;
@@ -1203,7 +1191,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 								var shortTheLineBy = Math.Max(0, totalLineLength - 0.125 * strokePen.Width);
 								shortenedPathPoints = GdiExtensionMethods.ShortenedBy(pathPoints, RADouble.NewAbs(shortTheLineBy), RADouble.NewAbs(0));
 							}
-
 						}
 					}
 
@@ -1222,7 +1209,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 
 			g.Clip = oldClippingRegion;
-
 		}
 
 		public System.Drawing.RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds)
@@ -1324,6 +1310,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Deserialization constructor
 		/// </summary>
+		/// <param name="posErrorColumn">The positive error column.</param>
+		/// <param name="negErrorColumn">The negative error column.</param>
 		/// <param name="info">The information.</param>
 		public ErrorBarXPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy posErrorColumn, IReadableColumnProxy negErrorColumn) : base(info, posErrorColumn, negErrorColumn)
 		{
@@ -1389,6 +1377,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>
 		/// Deserialization constructor
 		/// </summary>
+		/// <param name="posErrorColumn">The positive error column.</param>
+		/// <param name="negErrorColumn">The negative error column.</param>
 		/// <param name="info">The information.</param>
 		public ErrorBarYPlotStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, IReadableColumnProxy posErrorColumn, IReadableColumnProxy negErrorColumn) : base(info, posErrorColumn, negErrorColumn)
 		{

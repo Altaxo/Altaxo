@@ -40,11 +40,6 @@ namespace Altaxo.Graph.Gdi
 		/// <summary>The instance used by the static methods of this class. Is not neccessarily of type <see cref="GdiFontManager"/>, but could also be a derived type.</summary>
 		protected static GdiFontManager _instance;
 
-		/// <summary>
-		/// Converter. Converts invariant font strings to Gdi fonts and vice versa.
-		/// </summary>
-		// protected FontConverter _gdiFontConverter = new FontConverter();
-
 		/// <summary>Corresponds the font's invariant description string with the Gdi+ font instance.
 		/// Key is the invariant description string, value is the Gdi font instance with the specific style and size.
 		/// </summary>

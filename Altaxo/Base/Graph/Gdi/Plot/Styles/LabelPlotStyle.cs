@@ -100,11 +100,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>The rotation of the label.</summary>
 		protected double _rotation;
 
-		/// Total offset is calculated according to:
+		/// <summary>The x offset Em-Units. Total offset is calculated according to:
 		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
 		protected double _offsetX_EmUnits;
 
-		/// <summary>The x offset int points.</summary>
+		/// <summary>The x offset int points.
 		/// Total offset is calculated according to:
 		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
 		protected double _offsetX_Points;
@@ -117,7 +117,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>The y offset in EM units.</summary>
 		protected double _offsetY_EmUnits;
 
-		/// <summary>The y offset int points.</summary>
+		/// <summary>The y offset int points.
 		/// Total offset is calculated according to:
 		/// totalOffset = _offset_Points + _offset_EmUnits * emSize + _offset_SymbolSizeUnits * symbolSize;</summary>
 		protected double _offsetY_Points;
@@ -935,7 +935,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		/// <summary>The x offset in points.</summary>
+		/// <summary>The x offset in points.
 		/// Total offset is calculated according to:
 		/// totalOffset = <see cref="OffsetXPoints"/> +  <see cref="OffsetXEmUnits"/> * emSize + <see cref="OffsetXSymbolSizeUnits"/> * symbolSize</summary>
 		public double OffsetXPoints
@@ -971,7 +971,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		/// <summary>The x offset in symbol size units.</summary>
+		/// <summary>The x offset in symbol size units.
 		/// Total offset is calculated according to:
 		/// totalOffset = <see cref="OffsetXPoints"/> +  <see cref="OffsetXEmUnits"/> * emSize + <see cref="OffsetXSymbolSizeUnits"/> * symbolSize</summary>
 		public double OffsetXSymbolSizeUnits
@@ -990,7 +990,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		/// <summary>The y offset in points.</summary>
+		/// <summary>The y offset in points.
 		/// Total offset is calculated according to:
 		/// totalOffset = <see cref="OffsetYPoints"/> +  <see cref="OffsetYEmUnits"/> * emSize + <see cref="OffsetYSymbolSizeUnits"/> * symbolSize</summary>
 		public double OffsetYPoints
@@ -1024,7 +1024,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		/// <summary>The y offset in symbol size units.</summary>
+		/// <summary>The y offset in symbol size units.
 		/// Total offset is calculated according to:
 		/// totalOffset = <see cref="OffsetYPoints"/> +  <see cref="OffsetYEmUnits"/> * emSize + <see cref="OffsetYSymbolSizeUnits"/> * symbolSize</summary>
 		public double OffsetYSymbolSizeUnits
@@ -1186,8 +1186,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 		}
 
-
-
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
 			// adjust the skip frequency if it was not set appropriate
@@ -1199,10 +1197,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_cachedLogicalShiftX = _cachedLogicalShiftY = 0;
 			}
 
-
 			PlotRangeList rangeList = pdata.RangeList;
-
-
 
 			if (this._ignoreMissingDataPoints)
 			{
@@ -1260,7 +1255,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			int lower = range.LowerBound;
 			int upper = range.UpperBound;
-			for (int j = lower; j < upper; j+=_skipFrequency)
+			for (int j = lower; j < upper; j += _skipFrequency)
 			{
 				int originalRowIndex = range.GetOriginalRowIndexFromPlotPointIndex(j);
 				string label;
@@ -1326,7 +1321,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					}
 					else
 					{
-						PointD3D pt;
 						layer.CoordinateSystem.LogicalToLayerCoordinates(r3d, out xpre, out ypre);
 					}
 				}
@@ -1348,7 +1342,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 				if (this._rotation != 0)
 					g.RotateTransform((float)this._rotation);
-
 			}
 
 			g.Restore(gs); // Restore the graphics state
@@ -1359,6 +1352,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// </summary>
 		/// <param name="g"></param>
 		/// <param name="label"></param>
+		/// <param name="symbolSize">Symbol size used to calculate the offset positions.</param>
 		/// <param name="variableTextBrush">If not null, this argument provides the text brush that should be used now. If null, then the <see cref="_brush"/> is used instead.</param>
 		/// <param name="variableBackBrush"></param>
 		public void PaintOneItem(Graphics g, string label, double symbolSize, BrushX variableTextBrush, BrushX variableBackBrush)
@@ -1505,7 +1499,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			// IgnoreMissingDataPoints is the same for all sub plot styles
 			IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
-
 
 			// SkipFrequency should be the same for all sub plot styles, so there is no "private" property
 			if (!_independentSkipFrequency)

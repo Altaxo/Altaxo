@@ -42,13 +42,13 @@ namespace Altaxo.Graph.Plot.Data
 
 		/// <summary>
 		/// First index of a contiguous plot range in the plot point array (i.e. in the array of processed plot point data, <b>not</b> in the original data column).
-		/// To calculate from which row index in the original data column this comes from, add to this value <see cref="OffsetToOriginal"/>.
+		/// To calculate from which row index in the original data column this comes from, use <see cref="GetOriginalRowIndexFromPlotPointIndex(int)"/>.
 		/// </summary>
 		int LowerBound { get; }
 
 		/// <summary>
 		/// Last index + 1 of a contiguous plot range in the plot point array (i.e. in the array of processed plot point data, <b>not</b> in the original data column).
-		/// To calculate from which row index in the original data column this comes from, add to this value <see cref="OffsetToOriginal"/>.
+		/// To calculate from which row index in the original data column this comes from, use <see cref="GetOriginalRowIndexFromPlotPointIndex(int)"/>.
 		/// </summary>
 		int UpperBound { get; }
 

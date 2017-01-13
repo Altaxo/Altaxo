@@ -121,6 +121,7 @@ namespace Altaxo.Geometry
 		/// <param name="linePoints">The line points.</param>
 		/// <param name="startWestVector">The start west vector. Has to be normalized. This is not checked!</param>
 		/// <param name="startNorthVector">The start north vector. Has to be normalized. This is not checked!</param>
+		/// <param name="startForwardVector">The start forward vector (direction in which the line is advancing). Has to be normalized. This is not checked!</param>
 		/// <returns>The polyline points, amended with west and north vector (Item1: polyline point, Item2: west vector, Item3: north vector).
 		/// The number of points may be smaller than the original number of points, because empty line segments are not returned.
 		/// The west and north vectors are valid for the segment going from the previous point to the current point (thus for the first and the second point the returned west and north vectors are equal).</returns>
@@ -136,6 +137,7 @@ namespace Altaxo.Geometry
 		/// <param name="startVectorsProvided">If true, the start west vector and start north vectors are provided in the following arguments.</param>
 		/// <param name="startWestVector">The start west vector if provided (otherwise it may be VectorD3D.Empty).</param>
 		/// <param name="startNorthVector">The start north vector if provided (otherwise it may be VectorD3D.Empty).</param>
+		/// <param name="startForwardVector">The start forward vector (direction in which the line is advancing). Has to be normalized. This is not checked!</param>
 		/// <returns>The polyline points, amended with west and north vector (Item1: polyline point, Item2: west vector, Item3: north vector).
 		/// The number of points may be smaller than the original number of points, because empty line segments are not returned.
 		/// The west and north vectors are valid for the segment going from the previous point to the current point (thus for the first and the second point the returned west and north vectors are equal).</returns>

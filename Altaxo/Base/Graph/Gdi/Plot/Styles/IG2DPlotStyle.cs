@@ -119,7 +119,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		void PrepareScales(IPlotArea layer);
 
 		/// <summary>
-		/// Copies from a template style, but either with or without data references. If the choice is without data references, data references, as for instance in <see cref="ErrorBarZPlotStyle"/>, are left alone, i.e. have the same value as before this call.
+		/// Copies from a template style, but either with or without data references. If the choice is without data references, data references, as for instance in <see cref="ErrorBarYPlotStyle"/>, are left alone, i.e. have the same value as before this call.
 		/// </summary>
 		/// <param name="from">The style to copy from.</param>
 		/// <param name="copyWithDataReferences">If true, data references are copyied from the template style to this style. If false, the data references of this style are left as they are.</param>
@@ -127,7 +127,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		bool CopyFrom(object from, bool copyWithDataReferences);
 
 		/// <summary>
-		/// Clones the style, but either with or without data references. Thus, if <paramref name="copyWithDataReferences"/> is false, data references, as for instance in <see cref="ErrorBarZPlotStyle"/>, are left empty in the cloned instance.
+		/// Clones the style, but either with or without data references. Thus, if <paramref name="copyWithDataReferences"/> is false, data references, as for instance in <see cref="ErrorBarYPlotStyle"/>, are left empty in the cloned instance.
 		/// </summary>
 		/// <param name="copyWithDataReferences">If true, data references are cloned to the new instance. If false, data references in the cloned instance are empty.</param>
 		/// <returns>Cloned instance, but either with cloned data references or with empty data references, depending on <paramref name="copyWithDataReferences"/>.</returns>

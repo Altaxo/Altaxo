@@ -40,17 +40,6 @@ namespace Altaxo.Drawing.D3D
 		private static readonly VectorD3D _yVector = new VectorD3D(0, 1, 0);
 		private static readonly VectorD3D _zVector = new VectorD3D(0, 0, 1);
 
-		private ICrossSectionOfLine _crossSection;
-		private IList<PointD3D> _linePoints;
-
-		private VectorD3D _endWestVector;
-		private VectorD3D _endNorthVector;
-		private VectorD3D _endAdvanceVector;
-
-		public VectorD3D EndWestVector { get { return _endWestVector; } }
-		public VectorD3D EndNorthVector { get { return _endNorthVector; } }
-		public VectorD3D EndAdvanceVector { get { return _endAdvanceVector; } }
-
 		private SolidPolylineDashSegment _dashSegment;
 
 		public void AddWithNormals(
