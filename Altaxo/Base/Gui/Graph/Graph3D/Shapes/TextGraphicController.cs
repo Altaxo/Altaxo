@@ -52,11 +52,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
 		string EditText { get; set; }
 
-		string SelectedFontFamily { get; set; }
-
-		double SelectedFontSize { get; set; }
-
-		double SelectedFontDepth { get; set; }
+		FontX3D SelectedFont { get; set; }
 
 		double SelectedLineSpacing { get; set; }
 
@@ -140,11 +136,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 				_view.EditText = _doc.Text;
 
 				// fill the font name combobox with all fonts
-				_view.SelectedFontFamily = _doc.Font.FontFamilyName;
-
-				_view.SelectedFontSize = _doc.Font.Size;
-
-				_view.SelectedFontDepth = _doc.Font.Depth;
+				_view.SelectedFont = _doc.Font;
 
 				_view.SelectedLineSpacing = _doc.LineSpacing;
 
@@ -264,34 +256,31 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
 		public void EhView_FontFamilyChanged()
 		{
-			string fontFamilyName = _view.SelectedFontFamily;
-
-			var ff = new FontFamily(fontFamilyName);
+			var font = _view.SelectedFont;
+			string ff = font.FontFamilyName;
 
 			// make sure that regular style is available
-			if (ff.IsStyleAvailable(FontStyle.Regular))
-				this._doc.Font = FontManager3D.Instance.GetFont(fontFamilyName, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Regular);
-			else if (ff.IsStyleAvailable(FontStyle.Bold))
-				this._doc.Font = FontManager3D.Instance.GetFont(fontFamilyName, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Bold);
-			else if (ff.IsStyleAvailable(FontStyle.Italic))
-				this._doc.Font = FontManager3D.Instance.GetFont(fontFamilyName, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Italic);
+			if (Altaxo.Graph.Gdi.GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
+				this._doc.Font = FontManager3D.Instance.GetFont(ff, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Regular);
+			else if (Altaxo.Graph.Gdi.GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold))
+				this._doc.Font = FontManager3D.Instance.GetFont(ff, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Bold);
+			else if (Altaxo.Graph.Gdi.GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Italic))
+				this._doc.Font = FontManager3D.Instance.GetFont(ff, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Italic);
+			else if (Altaxo.Graph.Gdi.GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold | FontXStyle.Italic))
+				this._doc.Font = FontManager3D.Instance.GetFont(ff, this._doc.Font.Size, this._doc.Font.Depth, FontXStyle.Bold | FontXStyle.Italic);
 
 			_view.InvalidatePreviewPanel();
 		}
 
 		public void EhView_FontSizeChanged()
 		{
-			var newSize = _view.SelectedFontSize;
-			var oldFont = this._doc.Font;
-			this._doc.Font = oldFont.WithSize(newSize);
+			this._doc.Font = this._doc.Font.WithSize(_view.SelectedFont.Size);
 			_view.InvalidatePreviewPanel();
 		}
 
 		public void EhView_FontDepthChanged()
 		{
-			var newSize = _view.SelectedFontDepth;
-			var oldFont = this._doc.Font;
-			this._doc.Font = oldFont.WithDepth(newSize);
+			this._doc.Font = this._doc.Font.WithDepth(_view.SelectedFont.Depth);
 			_view.InvalidatePreviewPanel();
 		}
 

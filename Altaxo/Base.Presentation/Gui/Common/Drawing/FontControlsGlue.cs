@@ -66,7 +66,7 @@ namespace Altaxo.Gui.Drawing
 			{
 				FontX = value;
 
-				if (null != CbFontFamily) CbFontFamily.SelectedFontFamily = GdiFontManager.GdiFontFamily(FontX);
+				if (null != CbFontFamily) CbFontFamily.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(FontX);
 				if (null != _cbFontStyle) CbFontStyle.SelectedFontStyle = FontX.Style;
 				if (null != CbFontSize) CbFontSize.SelectedQuantityAsValueInPoints = FontX.Size;
 			}
@@ -91,7 +91,7 @@ namespace Altaxo.Gui.Drawing
 			get { return _cbFontFamily; }
 			set
 			{
-				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(FontFamilyComboBox.SelectedFontFamilyProperty, typeof(FontFamilyComboBox));
+				var dpd = System.ComponentModel.DependencyPropertyDescriptor.FromProperty(FontFamilyComboBox.SelectedFontFamilyNameProperty, typeof(FontFamilyComboBox));
 				if (null == dpd)
 					throw new InvalidOperationException("DependencePropertyDescriptor is null! Please check the corresponding DependencyProperty");
 
@@ -100,7 +100,7 @@ namespace Altaxo.Gui.Drawing
 
 				_cbFontFamily = value;
 				if (FontX != null && _cbFontFamily != null)
-					_cbFontFamily.SelectedFontFamily = GdiFontManager.GdiFontFamily(FontX);
+					_cbFontFamily.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(FontX);
 
 				if (_cbFontFamily != null)
 					dpd.AddValueChanged(_cbFontFamily, EhFontFamily_SelectionChangeCommitted);
@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Drawing
 		{
 			if (FontX != null)
 			{
-				FontX = FontX.WithFamily(_cbFontFamily.SelectedFontFamily.Name);
+				FontX = FontX.WithFamily(_cbFontFamily.SelectedFontFamilyName);
 				OnSelectedFontChanged();
 			}
 		}
@@ -231,7 +231,7 @@ namespace Altaxo.Gui.Drawing
 			{
 				_fontX3D = value;
 
-				if (null != CbFontFamily) CbFontFamily.SelectedFontFamily = GdiFontManager.GdiFontFamily(FontX);
+				if (null != CbFontFamily) CbFontFamily.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(FontX);
 				if (null != CbFontStyle) CbFontStyle.SelectedFontStyle = FontX.Style;
 				if (null != CbFontSize) CbFontSize.SelectedQuantityAsValueInPoints = FontX.Size;
 				if (null != CbFontDepth) CbFontDepth.SelectedQuantityAsValueInPoints = FontX3D.Depth;

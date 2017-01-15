@@ -50,9 +50,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
 		string EditText { get; set; }
 
-		System.Drawing.FontFamily SelectedFontFamily { get; set; }
-
-		double SelectedFontSize { get; set; }
+		FontX SelectedFont { get; set; }
 
 		double SelectedLineSpacing { get; set; }
 
@@ -134,9 +132,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 				_view.EditText = _doc.Text;
 
 				// fill the font name combobox with all fonts
-				_view.SelectedFontFamily = GdiFontManager.GdiFontFamily(_doc.Font);
+				_view.SelectedFont = _doc.Font;
 
-				_view.SelectedFontSize = _doc.Font.Size;
 				_view.SelectedLineSpacing = _doc.LineSpacing;
 
 				// fill the font size combobox with reasonable values
@@ -266,23 +263,24 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
 		public void EhView_FontFamilyChanged()
 		{
-			FontFamily ff = _view.SelectedFontFamily;
+			var ff = _view.SelectedFont.FontFamilyName;
+
 			// make sure that regular style is available
-			if (ff.IsStyleAvailable(FontStyle.Regular))
-				this._doc.Font = GdiFontManager.GetFont(ff, this._doc.Font.Size, FontStyle.Regular);
-			else if (ff.IsStyleAvailable(FontStyle.Bold))
-				this._doc.Font = GdiFontManager.GetFont(ff, this._doc.Font.Size, FontStyle.Bold);
-			else if (ff.IsStyleAvailable(FontStyle.Italic))
-				this._doc.Font = GdiFontManager.GetFont(ff, this._doc.Font.Size, FontStyle.Italic);
+			if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
+				this._doc.Font = GdiFontManager.GetFontX(ff, this._doc.Font.Size, FontXStyle.Regular);
+			else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold))
+				this._doc.Font = GdiFontManager.GetFontX(ff, this._doc.Font.Size, FontXStyle.Bold);
+			else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Italic))
+				this._doc.Font = GdiFontManager.GetFontX(ff, this._doc.Font.Size, FontXStyle.Italic);
+			else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold | FontXStyle.Italic))
+				this._doc.Font = GdiFontManager.GetFontX(ff, this._doc.Font.Size, FontXStyle.Bold | FontXStyle.Italic);
 
 			_view.InvalidatePreviewPanel();
 		}
 
 		public void EhView_FontSizeChanged()
 		{
-			var newSize = _view.SelectedFontSize;
-			FontX oldFont = this._doc.Font;
-			this._doc.Font = oldFont.WithSize(newSize);
+			this._doc.Font = this._doc.Font.WithSize(_view.SelectedFont.Size);
 			_view.InvalidatePreviewPanel();
 		}
 

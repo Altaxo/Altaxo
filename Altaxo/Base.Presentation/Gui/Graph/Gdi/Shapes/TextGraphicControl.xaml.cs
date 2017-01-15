@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using Altaxo.Gui.Graph.Gdi.Background;
 using System;
 using System.Collections.Generic;
@@ -187,35 +188,24 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 		{
 			get
 			{
-				return m_edText.Text;
+				return _guiText.Text;
 			}
 			set
 			{
-				m_edText.Text = value;
+				_guiText.Text = value;
 			}
 		}
 
-		public System.Drawing.FontFamily SelectedFontFamily
+		public FontX SelectedFont
 		{
 			get
 			{
-				return m_cbFonts.SelectedFontFamily;
+				return Altaxo.Graph.Gdi.GdiFontManager.GetFontX(m_cbFonts.SelectedFontFamilyName, m_cbFontSize.SelectedQuantityAsValueInPoints, FontXStyle.Regular);
 			}
 			set
 			{
-				m_cbFonts.SelectedFontFamily = value;
-			}
-		}
-
-		public double SelectedFontSize
-		{
-			get
-			{
-				return m_cbFontSize.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				m_cbFontSize.SelectedQuantityAsValueInPoints = value;
+				m_cbFonts.SelectedFontFamilyName = Altaxo.Graph.Gdi.GdiFontManager.GetValidFontFamilyName(value);
+				m_cbFontSize.SelectedQuantityAsValueInPoints = value.Size;
 			}
 		}
 
@@ -233,38 +223,38 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
 		public void InsertBeforeAndAfterSelectedText(string insbefore, string insafter)
 		{
-			if (0 != this.m_edText.SelectionLength)
+			if (0 != this._guiText.SelectionLength)
 			{
 				// insert \b( at beginning of selection and ) at the end of the selection
-				int len = m_edText.Text.Length;
-				int start = m_edText.SelectionStart;
-				int end = m_edText.SelectionStart + m_edText.SelectionLength;
-				m_edText.Text = m_edText.Text.Substring(0, start) + insbefore + m_edText.Text.Substring(start, end - start) + insafter + m_edText.Text.Substring(end, len - end);
+				int len = _guiText.Text.Length;
+				int start = _guiText.SelectionStart;
+				int end = _guiText.SelectionStart + _guiText.SelectionLength;
+				_guiText.Text = _guiText.Text.Substring(0, start) + insbefore + _guiText.Text.Substring(start, end - start) + insafter + _guiText.Text.Substring(end, len - end);
 
 				// now select the text plus the text before and after
-				m_edText.Focus(); // necassary to show the selected area
-				m_edText.Select(start, end - start + insbefore.Length + insafter.Length);
+				_guiText.Focus(); // necassary to show the selected area
+				_guiText.Select(start, end - start + insbefore.Length + insafter.Length);
 			}
 		}
 
 		public void RevertToNormal()
 		{
 			// remove a backslash x ( at the beginning and the closing brace at the end of the selection
-			if (this.m_edText.SelectionLength >= 4)
+			if (this._guiText.SelectionLength >= 4)
 			{
-				int len = m_edText.Text.Length;
-				int start = m_edText.SelectionStart;
-				int end = m_edText.SelectionStart + m_edText.SelectionLength;
+				int len = _guiText.Text.Length;
+				int start = _guiText.SelectionStart;
+				int end = _guiText.SelectionStart + _guiText.SelectionLength;
 
-				if (m_edText.Text[start] == '\\' && m_edText.Text[start + 2] == '(' && m_edText.Text[end - 1] == ')')
+				if (_guiText.Text[start] == '\\' && _guiText.Text[start + 2] == '(' && _guiText.Text[end - 1] == ')')
 				{
-					m_edText.Text = m_edText.Text.Substring(0, start)
-						+ m_edText.Text.Substring(start + 3, end - start - 4)
-						+ m_edText.Text.Substring(end, len - end);
+					_guiText.Text = _guiText.Text.Substring(0, start)
+						+ _guiText.Text.Substring(start + 3, end - start - 4)
+						+ _guiText.Text.Substring(end, len - end);
 
 					// now select again the rest of the text
-					m_edText.Focus(); // neccessary to show the selected area
-					m_edText.Select(start, end - start - 4);
+					_guiText.Focus(); // neccessary to show the selected area
+					_guiText.Select(start, end - start - 4);
 				}
 			}
 		}
@@ -285,7 +275,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
 		private void EhLoaded(object sender, RoutedEventArgs e)
 		{
-			this.m_edText.Focus();
+			this._guiText.Focus();
 		}
 
 		private void EhMoreModifiersClicked(object sender, RoutedEventArgs e)
@@ -293,7 +283,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 			var menu = sender as MenuItem;
 			if (null != menu && menu.Tag is string)
 			{
-				m_edText.AppendText((string)menu.Tag);
+				_guiText.AppendText((string)menu.Tag);
 			}
 		}
 

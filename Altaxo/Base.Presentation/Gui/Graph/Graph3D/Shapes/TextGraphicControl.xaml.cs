@@ -204,39 +204,20 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 			}
 		}
 
-		public string SelectedFontFamily
+		public FontX3D SelectedFont
 		{
 			get
 			{
-				return m_cbFonts.SelectedFontFamily.Name;
+				var fontFamily = m_cbFonts.SelectedFontFamilyName;
+				var size = m_cbFontSize.SelectedQuantityAsValueInPoints;
+				var depth = m_cbFontDepth.SelectedQuantityAsValueInPoints;
+				return FontManager3D.Instance.GetFont(fontFamily, size, depth, Altaxo.Drawing.FontXStyle.Regular);
 			}
 			set
 			{
-				m_cbFonts.SelectedFontFamily = new System.Drawing.FontFamily(value);
-			}
-		}
-
-		public double SelectedFontSize
-		{
-			get
-			{
-				return m_cbFontSize.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				m_cbFontSize.SelectedQuantityAsValueInPoints = value;
-			}
-		}
-
-		public double SelectedFontDepth
-		{
-			get
-			{
-				return m_cbFontDepth.SelectedQuantityAsValueInPoints;
-			}
-			set
-			{
-				m_cbFontDepth.SelectedQuantityAsValueInPoints = value;
+				m_cbFonts.SelectedFontFamilyName = Altaxo.Graph.Gdi.GdiFontManager.GetValidFontFamilyName(value.Font);
+				m_cbFontSize.SelectedQuantityAsValueInPoints = value.Size;
+				m_cbFontDepth.SelectedQuantityAsValueInPoints = value.Depth;
 			}
 		}
 

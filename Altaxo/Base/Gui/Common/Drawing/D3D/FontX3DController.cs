@@ -36,7 +36,7 @@ namespace Altaxo.Gui.Common.Drawing.D3D
 {
 	public interface IFontX3DView
 	{
-		System.Drawing.FontFamily SelectedFontFamily { get; set; }
+		string SelectedFontFamilyName { get; set; }
 
 		double SelectedFontSize { get; set; }
 
@@ -61,7 +61,7 @@ namespace Altaxo.Gui.Common.Drawing.D3D
 			if (null != _view)
 			{
 				// fill the font name combobox with all fonts
-				_view.SelectedFontFamily = GdiFontManager.GdiFontFamily(_doc.Font);
+				_view.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(_doc.Font);
 				_view.SelectedFontSize = _doc.Size;
 				_view.SelectedFontDepth = _doc.Depth;
 			}
@@ -69,14 +69,17 @@ namespace Altaxo.Gui.Common.Drawing.D3D
 
 		private void ApplyFontFamily()
 		{
-			FontFamily ff = _view.SelectedFontFamily;
+			var ff = _view.SelectedFontFamilyName;
+
 			// make sure that regular style is available
-			if (ff.IsStyleAvailable(FontStyle.Regular))
-				this._doc = _doc.WithFamily(ff.Name).WithStyle(FontXStyle.Regular);
-			else if (ff.IsStyleAvailable(FontStyle.Bold))
-				this._doc = _doc.WithFamily(ff.Name).WithStyle(FontXStyle.Bold);
-			else if (ff.IsStyleAvailable(FontStyle.Italic))
-				this._doc = _doc.WithFamily(ff.Name).WithStyle(FontXStyle.Italic);
+			if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
+				this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Regular);
+			else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold))
+				this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Bold);
+			else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Italic))
+				this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Italic);
+			else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold | FontXStyle.Italic))
+				this._doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Bold | FontXStyle.Italic);
 		}
 
 		private void ApplyFontSize()

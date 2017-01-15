@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Graph
 	public class GdiFontGlue
 	{
 		private double _fontSize = 12;
-		private sd.FontFamily _fontFamily = GdiFontManager.GdiGenericSansSerifFontFamily;
+		private string _fontFamilyName = GdiFontManager.GenericSansSerifFontFamilyName;
 		private FontXStyle _fontStyle = FontXStyle.Regular;
 
 		public double FontSize
@@ -53,15 +53,15 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public sd.FontFamily FontFamily
+		public string FontFamilyName
 		{
-			get { return _fontFamily; }
+			get { return _fontFamilyName; }
 			set
 			{
-				var oldValue = _fontFamily;
-				_fontFamily = value;
+				var oldValue = _fontFamilyName;
+				_fontFamilyName = value;
 				if (null != _guiFontFamily && oldValue != value)
-					_guiFontFamily.SelectedFontFamily = value;
+					_guiFontFamily.SelectedFontFamilyName = value;
 			}
 		}
 
@@ -83,13 +83,13 @@ namespace Altaxo.Gui.Graph
 		{
 			get
 			{
-				return GdiFontManager.GetFont(_fontFamily.Name, _fontSize, _fontStyle);
+				return GdiFontManager.GetFontX(_fontFamilyName, _fontSize, _fontStyle);
 			}
 			set
 			{
 				FontSize = value.Size;
 				FontStyle = value.Style;
-				FontFamily = GdiFontManager.GdiFontFamily(value);
+				FontFamilyName = GdiFontManager.GetValidFontFamilyName(value);
 			}
 		}
 
@@ -119,13 +119,13 @@ namespace Altaxo.Gui.Graph
 			set
 			{
 				if (null != _guiFontFamily)
-					_guiFontFamily.SelectedFontFamilyChanged -= _guiFontStyle_SelectedFontFamilyChanged;
+					_guiFontFamily.SelectedFontFamilyNameChanged -= _guiFontStyle_SelectedFontFamilyNameChanged;
 
 				_guiFontFamily = value;
-				_guiFontFamily.SelectedFontFamily = _fontFamily;
+				_guiFontFamily.SelectedFontFamilyName = _fontFamilyName;
 
 				if (null != _guiFontFamily)
-					_guiFontFamily.SelectedFontFamilyChanged += _guiFontStyle_SelectedFontFamilyChanged;
+					_guiFontFamily.SelectedFontFamilyNameChanged += _guiFontStyle_SelectedFontFamilyNameChanged;
 			}
 		}
 
@@ -164,11 +164,11 @@ namespace Altaxo.Gui.Graph
 				OnFontChanged();
 		}
 
-		private void _guiFontStyle_SelectedFontFamilyChanged(object sender, DependencyPropertyChangedEventArgs e)
+		private void _guiFontStyle_SelectedFontFamilyNameChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var oldFontFamily = _fontFamily;
-			_fontFamily = _guiFontFamily.SelectedFontFamily;
-			if (oldFontFamily != _fontFamily)
+			var oldFontFamily = _fontFamilyName;
+			_fontFamilyName = _guiFontFamily.SelectedFontFamilyName;
+			if (oldFontFamily != _fontFamilyName)
 				OnFontChanged();
 		}
 

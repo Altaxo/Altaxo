@@ -40,6 +40,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 
 namespace Altaxo.Graph.Commands
 {
@@ -1203,8 +1204,8 @@ namespace Altaxo.Graph.Commands
 			comboBox.KeyDown += EhKeyDown;
 
 			// Fill with all available font families
-			foreach (FontFamily fam in FontFamily.Families)
-				comboBox.Items.Add(fam.Name);
+			foreach (var famName in GdiFontManager.EnumerateAvailableGdiFontFamilyNames().OrderBy(x => x))
+				comboBox.Items.Add(famName);
 		}
 
 		private void EhKeyDown(object sender, System.Windows.Input.KeyEventArgs e)

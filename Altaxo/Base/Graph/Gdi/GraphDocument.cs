@@ -83,7 +83,7 @@ namespace Altaxo.Graph.Gdi
 				"Graph\\DefaultFont",
 				Main.Properties.PropertyLevel.All,
 				typeof(GraphDocument),
-				() => GdiFontManager.GetFont(GdiFontManager.GdiGenericSansSerifFontFamily, 18, FontStyle.Regular))
+				() => GdiFontManager.GetFontX(GdiFontManager.GenericSansSerifFontFamilyName, 18, FontXStyle.Regular))
 				{
 					EditingControllerCreation = (doc) =>
 					{
@@ -576,7 +576,7 @@ typeof(GraphDocument),
 			if (null != context)
 				return context.GetValue(PropertyKeyDefaultFont);
 			else
-				return GdiFontManager.GetFont(GdiFontManager.GdiGenericSansSerifFontFamily, 18, FontStyle.Regular);
+				return GdiFontManager.GetFontX(GdiFontManager.GenericSansSerifFontFamilyName, 18, FontXStyle.Regular);
 		}
 
 		/// <summary>
@@ -593,7 +593,7 @@ typeof(GraphDocument),
 				var font = context.GetValue(PropertyKeyDefaultFont);
 				using (var path = new GraphicsPath())
 				{
-					path.AddString("-", GdiFontManager.GdiFontFamily(font), (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
+					path.AddString("-", GdiFontManager.ToGdi(font).FontFamily, (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
 					var bounds = path.GetBounds();
 
 					if (bounds.Height > 0)
@@ -660,7 +660,7 @@ typeof(GraphDocument),
 				var font = context.GetValue(PropertyKeyDefaultFont);
 				using (var path = new GraphicsPath())
 				{
-					path.AddString("0", GdiFontManager.GdiFontFamily(font), (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
+					path.AddString("0", GdiFontManager.ToGdi(font).FontFamily, (int)font.Style, (float)font.Size, new PointF(0, 0), StringFormat.GenericTypographic);
 					var bounds = path.GetBounds();
 
 					if (bounds.Width > 0)

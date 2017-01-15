@@ -107,7 +107,7 @@ namespace Altaxo.Drawing.D3D
 
 		public FontX3D GetFont(string fontFamilyName, double size, double depth, FontXStyle style)
 		{
-			return new FontX3D(Altaxo.Graph.Gdi.GdiFontManager.GetFont(fontFamilyName, size, style), depth);
+			return new FontX3D(Altaxo.Graph.Gdi.GdiFontManager.GetFontX(fontFamilyName, size, style), depth);
 		}
 
 		protected const double FontSizeForCaching = 1024;

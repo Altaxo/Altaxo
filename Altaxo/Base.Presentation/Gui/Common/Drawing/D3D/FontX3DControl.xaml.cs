@@ -40,15 +40,15 @@ namespace Altaxo.Gui.Common.Drawing.D3D
 			InitializeComponent();
 		}
 
-		public System.Drawing.FontFamily SelectedFontFamily
+		public string SelectedFontFamilyName
 		{
 			get
 			{
-				return _guiFontFamily.SelectedFontFamily;
+				return _guiFontFamily.SelectedFontFamilyName;
 			}
 			set
 			{
-				_guiFontFamily.SelectedFontFamily = value;
+				_guiFontFamily.SelectedFontFamilyName = value;
 			}
 		}
 

@@ -55,17 +55,14 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				if (value == null)
 					return Binding.DoNothing;
-
-				if (value is sd.FontFamily sysDrawFontFamily)
+				if (value is string fontFamilyName)
 				{
-					return FontFamilyComboBox._cachedItems[sysDrawFontFamily.Name];
-				}
-				else if (value is FontFamily wpfFontFamily)
-				{
-					return FontFamilyComboBox._cachedItems[WpfFontManager.GetFontFamilyName(wpfFontFamily)];
+					return FontFamilyComboBox._cachedItems[fontFamilyName];
 				}
 				else
+				{
 					throw new ApplicationException("Unexpected type to convert: " + value.GetType());
+				}
 			}
 
 			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -81,7 +78,6 @@ namespace Altaxo.Gui.Common.Drawing
 		public class FontComboBoxItem : ImageComboBoxItem
 		{
 			private static char[] _defaultChars;
-
 			private ImageSource _imgSource;
 
 			static FontComboBoxItem()
@@ -94,9 +90,9 @@ namespace Altaxo.Gui.Common.Drawing
 				_defaultChars = chars.ToArray();
 			}
 
-			public FontComboBoxItem(sd.FontFamily fontFamily)
+			public FontComboBoxItem(string familyName)
 			{
-				Value = fontFamily;
+				Value = familyName;
 			}
 
 			public override ImageSource Image
@@ -104,7 +100,7 @@ namespace Altaxo.Gui.Common.Drawing
 				get
 				{
 					if (null == _imgSource)
-						_imgSource = GetImage((sd.FontFamily)Value);
+						_imgSource = GetImage((string)Value);
 					return _imgSource;
 				}
 			}
@@ -113,7 +109,7 @@ namespace Altaxo.Gui.Common.Drawing
 			{
 				get
 				{
-					return ((sd.FontFamily)Value).Name;
+					return (string)Value;
 				}
 			}
 
@@ -134,13 +130,11 @@ namespace Altaxo.Gui.Common.Drawing
 				return chars.ToArray();
 			}
 
-			private static ImageSource GetImage(sd.FontFamily fontFamily)
+			private static ImageSource GetImage(string fontFamilyName)
 			{
 				const double height = 1;
 				const double width = 2;
 				const double fontSize = 1;
-
-				string fontFamilyName = fontFamily.Name;
 
 				var drawingGroup = new DrawingGroup();
 
@@ -150,7 +144,7 @@ namespace Altaxo.Gui.Common.Drawing
 				geometryDrawing.Pen = new Pen(Brushes.Transparent, 0);
 				drawingGroup.Children.Add(geometryDrawing);
 
-				var fontX = WpfFontManager.GetFont(fontFamily, 12, sd.FontStyle.Regular);
+				var fontX = WpfFontManager.GetFontX(fontFamilyName, 12, Altaxo.Drawing.FontXStyle.Regular);
 				Typeface typeface = WpfFontManager.ToWpf(fontX);
 				if (!typeface.TryGetGlyphTypeface(out var glyphTypeFace))
 					glyphTypeFace = null;
@@ -203,22 +197,22 @@ namespace Altaxo.Gui.Common.Drawing
 		private static List<FontComboBoxItem> _allItems = new List<FontComboBoxItem>();
 		private static Dictionary<string, FontComboBoxItem> _cachedItems = new Dictionary<string, FontComboBoxItem>();
 
-		public event DependencyPropertyChangedEventHandler SelectedFontFamilyChanged;
+		public event DependencyPropertyChangedEventHandler SelectedFontFamilyNameChanged;
 
 		static FontFamilyComboBox()
 		{
-			var list = new List<sd.FontFamily>(Altaxo.Graph.Gdi.GdiFontManager.EnumerateAvailableGdiFontFamilies());
-			list.Sort((x, y) => string.Compare(x.Name, y.Name));
+			var list = new List<string>(Altaxo.Graph.Gdi.GdiFontManager.EnumerateAvailableGdiFontFamilyNames());
+			list.Sort();
 
 			// note: it seems always possible to get from a Gdi font family name and the Gdi font style a
 			// System.Windows.Media.Typeface using the constructor with one string argument
 			// the string argument must be the Gdi font family name, and appended to this "Bold" or "Italic" or "Bold Italic"
 
-			foreach (var fontFam in list)
+			foreach (var fontFamName in list)
 			{
-				var item = new FontComboBoxItem(fontFam);
+				var item = new FontComboBoxItem(fontFamName);
 				_allItems.Add(item);
-				_cachedItems.Add(fontFam.Name, item);
+				_cachedItems.Add(fontFamName, item);
 			}
 		}
 
@@ -230,52 +224,37 @@ namespace Altaxo.Gui.Common.Drawing
 
 			var binding = new Binding();
 			binding.Source = this;
-			binding.Path = new PropertyPath(_nameOfValueProp);
+			binding.Path = new PropertyPath(nameof(SelectedFontFamilyName));
 			binding.Converter = new Converter(this);
 			this.SetBinding(ComboBox.SelectedItemProperty, binding);
 		}
 
 		#region Dependency property
 
-		private const string _nameOfValueProp = "SelectedFontFamily";
-
-		public FontFamily SelectedWpfFontFamily
+		public string SelectedFontFamilyName
 		{
 			get
 			{
-				var gdiFF = (sd.FontFamily)GetValue(SelectedFontFamilyProperty);
-				return new System.Windows.Media.Typeface(gdiFF.Name).FontFamily;
+				return (string)GetValue(SelectedFontFamilyNameProperty);
 			}
 			set
 			{
+				SetValue(SelectedFontFamilyNameProperty, value);
 			}
 		}
 
-		public sd.FontFamily SelectedFontFamily
+		public static readonly DependencyProperty SelectedFontFamilyNameProperty =
+				DependencyProperty.Register(nameof(SelectedFontFamilyName), typeof(string), typeof(FontFamilyComboBox),
+				new FrameworkPropertyMetadata(Altaxo.Graph.Gdi.GdiFontManager.GenericSansSerifFontFamilyName, EhSelectedFontFamilyNameChanged));
+
+		private static void EhSelectedFontFamilyNameChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			get
-			{
-				return (sd.FontFamily)GetValue(SelectedFontFamilyProperty);
-			}
-			set
-			{
-				SetValue(SelectedFontFamilyProperty, value);
-			}
+			((FontFamilyComboBox)obj).OnSelectedFontFamilyNameChanged(obj, args);
 		}
 
-		public static readonly DependencyProperty SelectedFontFamilyProperty =
-				DependencyProperty.Register(_nameOfValueProp, typeof(sd.FontFamily), typeof(FontFamilyComboBox),
-				new FrameworkPropertyMetadata(Altaxo.Graph.Gdi.GdiFontManager.GdiGenericSansSerifFontFamily, EhSelectedFontFamilyChanged));
-
-		private static void EhSelectedFontFamilyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		protected virtual void OnSelectedFontFamilyNameChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
-			((FontFamilyComboBox)obj).OnSelectedFontFamilyChanged(obj, args);
-		}
-
-		protected virtual void OnSelectedFontFamilyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-		{
-			if (null != SelectedFontFamilyChanged)
-				SelectedFontFamilyChanged(obj, args);
+			SelectedFontFamilyNameChanged?.Invoke(obj, args);
 		}
 
 		#endregion Dependency property

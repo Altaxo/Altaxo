@@ -100,7 +100,7 @@ namespace Altaxo.Graph.Graph3D
 			"Graph3D\\DefaultFont",
 			Main.Properties.PropertyLevel.All,
 			typeof(GraphDocument),
-			() => new FontX3D(Gdi.GdiFontManager.GetFont(Gdi.GdiFontManager.GdiGenericSansSerifFontFamily, 12, System.Drawing.FontStyle.Regular), 12 * 0.0625))
+			() => new FontX3D(Gdi.GdiFontManager.GetFontXGenericSansSerif(12, FontXStyle.Regular), 12 * 0.0625))
 			{
 				EditingControllerCreation = (doc) =>
 				{
@@ -165,7 +165,7 @@ namespace Altaxo.Graph.Graph3D
 			if (null != context)
 				return context.GetValue(PropertyKeyDefaultFont);
 			else
-				return new FontX3D(Gdi.GdiFontManager.GetFont(Gdi.GdiFontManager.GdiGenericSansSerifFontFamily, 12, System.Drawing.FontStyle.Regular), 12 * 0.0625);
+				return new FontX3D(Gdi.GdiFontManager.GetFontXGenericSansSerif(12, FontXStyle.Regular), 12 * 0.0625);
 		}
 
 		/// <summary>
@@ -182,7 +182,7 @@ namespace Altaxo.Graph.Graph3D
 				var font = context.GetValue(PropertyKeyDefaultFont);
 				using (var path = new System.Drawing.Drawing2D.GraphicsPath())
 				{
-					path.AddString("-", Gdi.GdiFontManager.GdiFontFamily(font.Font), (int)font.Style, (float)font.Size, new System.Drawing.PointF(0, 0), System.Drawing.StringFormat.GenericTypographic);
+					path.AddString("-", Gdi.GdiFontManager.ToGdi(font.Font).FontFamily, (int)font.Style, (float)font.Size, new System.Drawing.PointF(0, 0), System.Drawing.StringFormat.GenericTypographic);
 					var bounds = path.GetBounds();
 
 					if (bounds.Height > 0)
@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Graph3D
 				var font = context.GetValue(PropertyKeyDefaultFont);
 				using (var path = new System.Drawing.Drawing2D.GraphicsPath())
 				{
-					path.AddString("0", Gdi.GdiFontManager.GdiFontFamily(font.Font), (int)font.Style, (float)font.Size, new System.Drawing.PointF(0, 0), System.Drawing.StringFormat.GenericTypographic);
+					path.AddString("0", Gdi.GdiFontManager.ToGdi(font.Font).FontFamily, (int)font.Style, (float)font.Size, new System.Drawing.PointF(0, 0), System.Drawing.StringFormat.GenericTypographic);
 					var bounds = path.GetBounds();
 
 					if (bounds.Width > 0)
@@ -234,7 +234,7 @@ namespace Altaxo.Graph.Graph3D
 				var font = context.GetValue(PropertyKeyDefaultFont);
 				using (var path = new System.Drawing.Drawing2D.GraphicsPath())
 				{
-					path.AddString("x", Gdi.GdiFontManager.GdiFontFamily(font.Font), (int)font.Style, (float)font.Size, new System.Drawing.PointF(0, 0), System.Drawing.StringFormat.GenericTypographic);
+					path.AddString("x", Gdi.GdiFontManager.ToGdi(font.Font).FontFamily, (int)font.Style, (float)font.Size, new System.Drawing.PointF(0, 0), System.Drawing.StringFormat.GenericTypographic);
 					var bounds = path.GetBounds();
 
 					if (bounds.Height > 0)

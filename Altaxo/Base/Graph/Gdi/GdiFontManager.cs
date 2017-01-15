@@ -37,6 +37,25 @@ namespace Altaxo.Graph.Gdi
 	/// </summary>
 	public class GdiFontManager
 	{
+		#region Constants and members
+
+		/// <summary>The index into the FontFamily array for the regular style.</summary>
+		protected const int IdxRegular = 0;
+
+		/// <summary>The index into the FontFamily array for the bold style.</summary>
+		protected const int IdxBold = 1;
+
+		/// <summary>The index into the FontFamily array for the italic style.</summary>
+		protected const int IdxItalic = 2;
+
+		/// <summary>The index into the FontFamily array for the bold-italic style.</summary>
+		protected const int IdxBoldItalic = 3;
+
+		/// <summary>
+		/// List of family names that are considered to represent generic sans families.
+		/// </summary>
+		private static readonly string[] _genericSansSerifFamilyNames = new string[] { "Microsoft Sans Serif", "Liberation Sans", "Verdana", "Arial", "Helvetica" };
+
 		/// <summary>The instance used by the static methods of this class. Is not neccessarily of type <see cref="GdiFontManager"/>, but could also be a derived type.</summary>
 		protected static GdiFontManager _instance;
 
@@ -50,9 +69,19 @@ namespace Altaxo.Graph.Gdi
 		protected ConcurrentDictionary<string, int> _gdiFontReferenceCounter = new ConcurrentDictionary<string, int>();
 
 		/// <summary>
-		/// Dictionary of the Gdi font families. Key is the Win32FamilyName, value is a Tuple of the Gdi FontFamily and an indicator which styles of that font family are present.
+		/// Dictionary of the Gdi font families. Key is the Win32FamilyName, value is an array[4] of FontFamily with represent
+		/// the styles regular, bold, italic, and bold-Italic. For system fonts, the 4 font family instances will be identical,
+		/// but due to a bug in Windows 10, to create a private font family we need to load each font file in a separate PrivateFontCollection,
+		/// thus creating a separate FontFamily for each style.
 		/// </summary>
-		protected ConcurrentDictionary<string, Tuple<FontFamily, FontStylePresence>> _dictWin32FamilyNameToGdiFontFamilyAndPresence;
+		protected ConcurrentDictionary<string, FontFamily[]> _dictWin32FamilyNameToGdiFontFamilyAndPresence;
+
+		/// <summary>Font family name of a generic sans family that is present on this computer.</summary>
+		private string _gdiGenericSansSerifFontFamilyName;
+
+		#endregion Constants and members
+
+		#region Public static functions and properties
 
 		/// <summary>
 		/// Registers this instance with the <see cref="FontX"/> font system.
@@ -83,6 +112,114 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
+		/// Gets the family name from a <see cref="FontX"/> instance. If this font family name does not exist, a generic sans serif font family name is returned instead.
+		/// </summary>
+		/// <param name="font">The font.</param>
+		/// <returns>Font family name, either the original name from the provided font, or if that is not valid, a valid generic font family name.</returns>
+		public static string GetValidFontFamilyName(FontX font)
+		{
+			if (_instance._dictWin32FamilyNameToGdiFontFamilyAndPresence.ContainsKey(font.FontFamilyName))
+				return font.FontFamilyName;
+			else
+				return GenericSansSerifFontFamilyName;
+		}
+
+		/// <summary>
+		/// Enumerates the available GDI font family names.
+		/// </summary>
+		/// <returns>Available GDI font family names</returns>
+		public static IEnumerable<string> EnumerateAvailableGdiFontFamilyNames()
+		{
+			return _instance._dictWin32FamilyNameToGdiFontFamilyAndPresence.Keys;
+		}
+
+		/// <summary>
+		/// Determines whether a font family with the provided name is available.
+		/// </summary>
+		/// <param name="fontFamilyName">Name of the font family to test.</param>
+		/// <returns>
+		///   <c>true</c> if a font family with the given font family name is available; otherwise, <c>false</c>.
+		/// </returns>
+		public static bool IsFontFamilyAvailable(string fontFamilyName)
+		{
+			return _instance.InternalIsFontFamilyAvailable(fontFamilyName);
+		}
+
+		/// <summary>
+		/// Determines whether a font with the given font family name and font style is available.
+		/// </summary>
+		/// <param name="fontFamilyName">Name of the font family.</param>
+		/// <param name="style">The font style to test for (underline and strikeout are always available, thus they are not tested).</param>
+		/// <returns>
+		///   <c>true</c> if a font with the provided family name and style is available; otherwise, <c>false</c>.
+		/// </returns>
+		public static bool IsFontFamilyAndStyleAvailable(string fontFamilyName, FontXStyle style)
+		{
+			return _instance.InternalIsFontFamilyAndStyleAvailable(fontFamilyName, style);
+		}
+
+		/// <summary>
+		/// Constructs a font from a font family name, the size and font style.
+		/// </summary>
+		/// <param name="fontFamilyName">Name of the font family.</param>
+		/// <param name="fontSize">Size of the font.</param>
+		/// <param name="fontStyle">The font style.</param>
+		/// <returns>A <see cref="FontX"/> instance describing the font. It can then be used with the FontManager to get a Gdi+ font instance.</returns>
+		public static FontX GetFontX(string fontFamilyName, double fontSize, FontXStyle fontStyle)
+		{
+			return FontX.InternalCreateFromNameSizeStyle(fontFamilyName, fontSize, fontStyle);
+		}
+
+		/// <summary>
+		/// Retrieves the Gdi+ font instance that the provided <see cref="FontX"/> argument is describing.
+		/// </summary>
+		/// <param name="fontX">The fontX instance.</param>
+		/// <returns>The Gdi+ font instance that corresponds with the argument. If the font family of the fontX argument is not found, a default font (Microsoft Sans Serif) is returned.</returns>
+		public static Font ToGdi(FontX fontX)
+		{
+			return _instance.InternalToGdi(fontX);
+		}
+
+		/// <summary>
+		/// Gets the GDI generic sans serif font family name
+		/// </summary>
+		/// <value>
+		/// The GDI generic sans serif font family name.
+		/// </value>
+		public static string GenericSansSerifFontFamilyName
+		{
+			get
+			{
+				if (null == _instance._gdiGenericSansSerifFontFamilyName)
+					_instance._gdiGenericSansSerifFontFamilyName = _instance.InternalGetFontFamilyNameGenericSansSerif();
+
+				return _instance._gdiGenericSansSerifFontFamilyName;
+			}
+		}
+
+		/// <summary>
+		/// Gets a <see cref="FontX"/> instance of a generic sans serif font with the provided size and style.
+		/// </summary>
+		/// <param name="fontSize">Size of the font.</param>
+		/// <param name="style">The style.</param>
+		/// <returns>A <see cref="FontX"/> instance of a generic sans serif font with the provided size and style.</returns>
+		public static FontX GetFontXGenericSansSerif(double fontSize, FontXStyle style)
+		{
+			return GetFontX(GenericSansSerifFontFamilyName, fontSize, style);
+		}
+
+		/// <summary>Gets the height of the font in points (1/72 inch).</summary>
+		/// <param name="fontX">The font instance.</param>
+		public static double GetHeight(FontX fontX)
+		{
+			return ToGdi(fontX).GetHeight(72);
+		}
+
+		#endregion Public static functions and properties
+
+		#region Instance functions and properties
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="GdiFontManager" /> class.
 		/// </summary>
 		protected GdiFontManager()
@@ -108,9 +245,8 @@ namespace Altaxo.Graph.Gdi
 		/// </summary>
 		protected virtual void InternalBuildDictionaries()
 		{
-			var dict = new ConcurrentDictionary<string, Tuple<FontFamily, FontStylePresence>>();
+			var dict = new ConcurrentDictionary<string, FontFamily[]>();
 			AddSystemGdiFontFamilies(dict);
-			AddPrivateFontFamilies(dict);
 			_dictWin32FamilyNameToGdiFontFamilyAndPresence = dict;
 		}
 
@@ -118,37 +254,64 @@ namespace Altaxo.Graph.Gdi
 		/// Builds the GDI font families dictionary.
 		/// </summary>
 		/// <returns>The Gdi font family dictionary.</returns>
-		protected virtual void AddSystemGdiFontFamilies(ConcurrentDictionary<string, Tuple<FontFamily, FontStylePresence>> dict)
+		protected virtual void AddSystemGdiFontFamilies(ConcurrentDictionary<string, FontFamily[]> dict)
 		{
 			foreach (var fontFamily in System.Drawing.FontFamily.Families)
 			{
-				FontStylePresence pres = GetFontStylePresence(fontFamily);
+				var isAtLeastOneStylePresent = GetFontStylePresence(fontFamily, out var familyArray);
 
-				if (FontStylePresence.NoStyleAvailable != pres)
-					dict.TryAdd(fontFamily.Name, new Tuple<FontFamily, FontStylePresence>(fontFamily, pres));
+				if (isAtLeastOneStylePresent)
+					dict.TryAdd(fontFamily.Name, familyArray);
 			}
 		}
 
-		protected virtual void AddPrivateFontFamilies(ConcurrentDictionary<string, Tuple<FontFamily, FontStylePresence>> dict)
+		/// <summary>
+		/// Finds out which font styles are available for the given Gdi font family.
+		/// </summary>
+		/// <param name="fontFamily">The Gdi font family.</param>
+		/// <param name="fontFamilyArray">On return, contains an array of length 4, in which the 4 items correspond to font style regular, bold, italic, and bold-italic.
+		/// The items of this array are either null (if the corresponding font style is unavailable), or set to <paramref name="fontFamily"/> if the corresponding font style is available.</param>
+		/// <returns>True if at least one font style is available; otherwise, false.</returns>
+		protected static bool GetFontStylePresence(FontFamily fontFamily, out FontFamily[] fontFamilyArray)
 		{
-			string basepath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-			string fontpath = System.IO.Path.Combine(basepath, @"..\data\resources\fonts");
-			var fontdir = new System.IO.DirectoryInfo(fontpath);
-
-			var privateFontCollection = new System.Drawing.Text.PrivateFontCollection();
-
-			foreach (var file in fontdir.GetFiles("*.ttf"))
+			fontFamilyArray = new FontFamily[4];
+			bool fontStylePresent = false;
+			if (fontFamily.IsStyleAvailable(FontStyle.Regular))
 			{
-				privateFontCollection.AddFontFile(file.FullName);
+				fontStylePresent = true;
+				fontFamilyArray[IdxRegular] = fontFamily;
+			}
+			if (fontFamily.IsStyleAvailable(FontStyle.Bold))
+			{
+				fontStylePresent = true;
+				fontFamilyArray[IdxBold] = fontFamily;
 			}
 
-			foreach (var fontFamily in privateFontCollection.Families)
+			if (fontFamily.IsStyleAvailable(FontStyle.Italic))
 			{
-				FontStylePresence pres = GetFontStylePresence(fontFamily);
-
-				if (FontStylePresence.NoStyleAvailable != pres)
-					dict.TryAdd(fontFamily.Name, new Tuple<FontFamily, FontStylePresence>(fontFamily, pres));
+				fontStylePresent = true;
+				fontFamilyArray[IdxItalic] = fontFamily;
 			}
+			if (fontFamily.IsStyleAvailable(FontStyle.Bold | FontStyle.Italic))
+			{
+				fontStylePresent = true;
+				fontFamilyArray[IdxBoldItalic] = fontFamily;
+			}
+			return fontStylePresent;
+		}
+
+		protected static FontStylePresence FontFamilyArrayToFontStylePresence(FontFamily[] fontFamilyArray)
+		{
+			FontStylePresence pres = FontStylePresence.NoStyleAvailable;
+			if (null != fontFamilyArray[IdxRegular])
+				pres |= FontStylePresence.RegularStyleAvailable;
+			if (null != fontFamilyArray[IdxBold])
+				pres |= FontStylePresence.BoldStyleAvailable;
+			if (null != fontFamilyArray[IdxItalic])
+				pres |= FontStylePresence.ItalicStyleAvailable;
+			if (null != fontFamilyArray[IdxBoldItalic])
+				pres |= FontStylePresence.BoldAndItalicStyleAvailable;
+			return pres;
 		}
 
 		/// <summary>
@@ -177,39 +340,7 @@ namespace Altaxo.Graph.Gdi
 		protected virtual void InternalGetAvailableFontFamilies(IDictionary<string, FontStylePresence> dictionaryToStoreTheResult)
 		{
 			foreach (var entry in _dictWin32FamilyNameToGdiFontFamilyAndPresence)
-				dictionaryToStoreTheResult.Add(entry.Key, entry.Value.Item2);
-		}
-
-		/// <summary>
-		/// Gets all available font families and stores them in the provided dictionary.
-		/// </summary>
-		/// <param name="dictionaryToStoreTheResult">The dictionary to store the result.</param>
-		public static void GetAvailableFontFamilies(IDictionary<string, FontStylePresence> dictionaryToStoreTheResult)
-		{
-			if (null == dictionaryToStoreTheResult)
-				throw new ArgumentNullException("Argument dictionaryToStoreTheResult is null");
-			if (dictionaryToStoreTheResult.Count != 0)
-				throw new ArgumentException("The provided dictionary is not empty");
-
-			_instance.InternalGetAvailableFontFamilies(dictionaryToStoreTheResult);
-		}
-
-		/// <summary>
-		/// Enumerates the available GDI font family names.
-		/// </summary>
-		/// <returns></returns>
-		public static IEnumerable<string> EnumerateAvailableGdiFontFamilyNames()
-		{
-			return _instance._dictWin32FamilyNameToGdiFontFamilyAndPresence.Keys;
-		}
-
-		/// <summary>
-		/// Enumerates the available GDI font families.
-		/// </summary>
-		/// <returns></returns>
-		public static IEnumerable<FontFamily> EnumerateAvailableGdiFontFamilies()
-		{
-			return _instance._dictWin32FamilyNameToGdiFontFamilyAndPresence.Values.Select(tuple => tuple.Item1);
+				dictionaryToStoreTheResult.Add(entry.Key, FontFamilyArrayToFontStylePresence(entry.Value));
 		}
 
 		/// <summary>
@@ -225,18 +356,6 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
-		/// Determines whether a font family with the provided name is available.
-		/// </summary>
-		/// <param name="fontFamilyName">Name of the font family to test.</param>
-		/// <returns>
-		///   <c>true</c> if a font family with the given font family name is available; otherwise, <c>false</c>.
-		/// </returns>
-		public static bool IsFontFamilyAvailable(string fontFamilyName)
-		{
-			return _instance.InternalIsFontFamilyAvailable(fontFamilyName);
-		}
-
-		/// <summary>
 		/// Determines whether a font with the given font family name and font style is available.
 		/// </summary>
 		/// <param name="fontFamilyName">Name of the font family.</param>
@@ -246,20 +365,7 @@ namespace Altaxo.Graph.Gdi
 		/// </returns>
 		protected virtual bool InternalIsFontFamilyAndStyleAvailable(string fontFamilyName, FontXStyle style)
 		{
-			return _dictWin32FamilyNameToGdiFontFamilyAndPresence.TryGetValue(fontFamilyName, out var val) && val.Item2.HasFlag(ConvertFontXStyleToFontStylePresence(style));
-		}
-
-		/// <summary>
-		/// Determines whether a font with the given font family name and font style is available.
-		/// </summary>
-		/// <param name="fontFamilyName">Name of the font family.</param>
-		/// <param name="style">The font style to test for (underline and strikeout are always available, thus they are not tested).</param>
-		/// <returns>
-		///   <c>true</c> if a font with the provided family name and style is available; otherwise, <c>false</c>.
-		/// </returns>
-		public static bool IsFontFamilyAndStyleAvailable(string fontFamilyName, FontXStyle style)
-		{
-			return _instance.InternalIsFontFamilyAndStyleAvailable(fontFamilyName, style);
+			return _dictWin32FamilyNameToGdiFontFamilyAndPresence.TryGetValue(fontFamilyName, out var val) && FontFamilyArrayToFontStylePresence(val).HasFlag(ConvertFontXStyleToFontStylePresence(style));
 		}
 
 		/// <summary>
@@ -270,7 +376,7 @@ namespace Altaxo.Graph.Gdi
 		/// <returns>
 		/// The converted <see cref="FontStylePresence"/> instance.
 		/// </returns>
-		private static FontStylePresence ConvertFontXStyleToFontStylePresence(FontXStyle style)
+		protected static FontStylePresence ConvertFontXStyleToFontStylePresence(FontXStyle style)
 		{
 			FontStylePresence result;
 			if (style.HasFlag(FontXStyle.Bold) && style.HasFlag(FontXStyle.Italic))
@@ -286,29 +392,12 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
-		/// Constructs a font from a font family, size and style.
+		/// Splits an invariant description string into its parts
 		/// </summary>
-		/// <param name="fontFamily">The font family.</param>
+		/// <param name="invariantDescriptionString">The invariant description string to split.</param>
+		/// <param name="gdiFontFamilyName">Name of the Gdi font family.</param>
 		/// <param name="fontSize">Size of the font.</param>
 		/// <param name="fontStyle">The font style.</param>
-		/// <returns>A <see cref="FontX"/> instance describing the font. It can then be used with the FontManager to get a Gdi+ font instance.</returns>
-		public static FontX GetFont(FontFamily fontFamily, double fontSize, FontStyle fontStyle)
-		{
-			return FontX.InternalCreateFromNameSizeStyle(fontFamily.Name, fontSize, (FontXStyle)fontStyle);
-		}
-
-		/// <summary>
-		/// Constructs a font from a font family name, the size and font style.
-		/// </summary>
-		/// <param name="fontFamilyName">Name of the font family.</param>
-		/// <param name="fontSize">Size of the font.</param>
-		/// <param name="fontStyle">The font style.</param>
-		/// <returns>A <see cref="FontX"/> instance describing the font. It can then be used with the FontManager to get a Gdi+ font instance.</returns>
-		public static FontX GetFont(string fontFamilyName, double fontSize, FontXStyle fontStyle)
-		{
-			return FontX.InternalCreateFromNameSizeStyle(fontFamilyName, fontSize, fontStyle);
-		}
-
 		protected void SplitInvariantDescriptionString(string invariantDescriptionString, out string gdiFontFamilyName, out double fontSize, out System.Drawing.FontStyle fontStyle)
 		{
 			var descriptionParts = invariantDescriptionString.Split(',');
@@ -367,6 +456,27 @@ namespace Altaxo.Graph.Gdi
 			return InternalGetGdiFontFromFamilyAndSizeAndStyle(gdiFontFamilyName, fontSize, fontStyle);
 		}
 
+		protected static int FontStyleToIndex(FontStyle fontStyle)
+		{
+			switch (fontStyle)
+			{
+				case FontStyle.Regular:
+					return IdxRegular;
+
+				case FontStyle.Bold:
+					return IdxBold;
+
+				case FontStyle.Italic:
+					return IdxItalic;
+
+				case (FontStyle.Italic | FontStyle.Bold):
+					return IdxBoldItalic;
+
+				default:
+					throw new InvalidProgramException("This function should be called only with regular, bold, italic, and bold-italic");
+			}
+		}
+
 		/// <summary>
 		/// Gets a GDI font from the the family name, size and style.
 		/// </summary>
@@ -374,17 +484,20 @@ namespace Altaxo.Graph.Gdi
 		/// <param name="fontSize">The font size.</param>
 		/// <param name="fontStyle">The style of the font.</param>
 		/// <returns>Gdi font.</returns>
-		protected virtual System.Drawing.Font InternalGetGdiFontFromFamilyAndSizeAndStyle(string gdiFontFamilyName, double fontSize, FontStyle fontStyle)
+		protected virtual Font InternalGetGdiFontFromFamilyAndSizeAndStyle(string gdiFontFamilyName, double fontSize, FontStyle fontStyle)
 		{
 			Font gdiFont;
 
-			if (_dictWin32FamilyNameToGdiFontFamilyAndPresence.TryGetValue(gdiFontFamilyName, out var familyEntryValue))
+			var familyIndex = FontStyleToIndex(fontStyle);
+
+			if (_dictWin32FamilyNameToGdiFontFamilyAndPresence.TryGetValue(gdiFontFamilyName, out var fontFamilyArray))
 			{
-				gdiFont = new Font(familyEntryValue.Item1, (float)fontSize, fontStyle, GraphicsUnit.World);
+				gdiFont = new Font(fontFamilyArray[familyIndex], (float)fontSize, fontStyle, GraphicsUnit.World);
 			}
 			else
 			{
-				gdiFont = new Font(GdiGenericSansSerifFontFamily, (float)fontSize, fontStyle, GraphicsUnit.World);
+				var genericFamily = _dictWin32FamilyNameToGdiFontFamilyAndPresence[GenericSansSerifFontFamilyName];
+				gdiFont = new Font(genericFamily[familyIndex], (float)fontSize, fontStyle, GraphicsUnit.World);
 			}
 			return gdiFont;
 		}
@@ -408,71 +521,26 @@ namespace Altaxo.Graph.Gdi
 			return result;
 		}
 
-		/// <summary>
-		/// Retrieves the Gdi+ font instance that the provided <see cref="FontX"/> argument is describing.
-		/// </summary>
-		/// <param name="fontX">The fontX instance.</param>
-		/// <returns>The Gdi+ font instance that corresponds with the argument. If the font family of the fontX argument is not found, a default font (Microsoft Sans Serif) is returned.</returns>
-		public static Font ToGdi(FontX fontX)
+		protected virtual string InternalGetFontFamilyNameGenericSansSerif()
 		{
-			return _instance.InternalToGdi(fontX);
-		}
-
-		/// <summary>
-		/// Gets the GDI generic sans serif font family.
-		/// </summary>
-		/// <value>
-		/// The GDI generic sans serif font family.
-		/// </value>
-		public static FontFamily GdiGenericSansSerifFontFamily
-		{
-			get
+			foreach (var familyName in _genericSansSerifFamilyNames)
 			{
-				if (null == _instance._gdiGenericSansSerifFontFamily)
-					_instance._gdiGenericSansSerifFontFamily = _instance.InternalGetFontFamilyGenericSansSerif();
-
-				return _instance._gdiGenericSansSerifFontFamily;
-			}
-		}
-
-		private readonly string[] genericSansSerifFamilyNames = new string[] { "Microsoft Sans Serif", "Liberation Sans", "Verdana", "Arial", "Helvetica" };
-		private FontFamily _gdiGenericSansSerifFontFamily;
-
-		protected virtual FontFamily InternalGetFontFamilyGenericSansSerif()
-		{
-			foreach (var familyName in genericSansSerifFamilyNames)
-			{
-				if (_dictWin32FamilyNameToGdiFontFamilyAndPresence.TryGetValue(familyName, out var entryVal))
-					if (entryVal.Item2 == (FontStylePresence.RegularStyleAvailable | FontStylePresence.BoldStyleAvailable | FontStylePresence.ItalicStyleAvailable | FontStylePresence.BoldAndItalicStyleAvailable))
-						return entryVal.Item1;
+				if (_dictWin32FamilyNameToGdiFontFamilyAndPresence.TryGetValue(familyName, out var entryValue))
+				{
+					if (null != entryValue[IdxRegular] && null != entryValue[IdxBold] && null != entryValue[IdxItalic] && null != entryValue[IdxBoldItalic])
+						return familyName;
+				}
 			}
 
 			// if there is no font with the names to try, then use the first font in the dictionary that has all 4 styles
 
 			foreach (var entry in _dictWin32FamilyNameToGdiFontFamilyAndPresence)
 			{
-				if (entry.Value.Item2 == (FontStylePresence.RegularStyleAvailable | FontStylePresence.BoldStyleAvailable | FontStylePresence.ItalicStyleAvailable | FontStylePresence.BoldAndItalicStyleAvailable))
-					return entry.Value.Item1;
+				if (null != entry.Value[IdxRegular] && null != entry.Value[IdxBold] && null != entry.Value[IdxItalic] && null != entry.Value[IdxBoldItalic])
+					return entry.Key;
 			}
 
 			throw new InvalidProgramException("Crazy - there is not one font which as all 4 styles (regular, bold, italic and bold-italic");
-		}
-
-		/// <summary>Gets the height of the font in points (1/72 inch).</summary>
-		/// <param name="fontX">The font instance.</param>
-		public static double Height(FontX fontX)
-		{
-			return ToGdi(fontX).GetHeight(72);
-		}
-
-		/// <summary>
-		/// Gets the font family of the provided <see cref="FontX"/> instance. Be aware that the returned font family can differ from the font family which is coded within the <see cref="FontX"/> invariant description string.
-		/// </summary>
-		/// <param name="fontX">The provided FontX instance.</param>
-		/// <returns>The Gdi font family of the Gdi font which is associated with the provided FontX instance.</returns>
-		public static FontFamily GdiFontFamily(FontX fontX)
-		{
-			return ToGdi(fontX).FontFamily;
 		}
 
 		/// <summary>
@@ -494,8 +562,7 @@ namespace Altaxo.Graph.Gdi
 			if (0 == refCount)
 			{
 				_gdiFontReferenceCounter.TryRemove(fontID, out refCount);
-				Font gdiFont;
-				_dictDescriptionStringToGdiFont.TryRemove(fontID, out gdiFont);
+				_dictDescriptionStringToGdiFont.TryRemove(fontID, out var gdiFont);
 			}
 		}
 
@@ -508,5 +575,7 @@ namespace Altaxo.Graph.Gdi
 		{
 			InternalBuildDictionaries();
 		}
+
+		#endregion Instance functions and properties
 	}
 }

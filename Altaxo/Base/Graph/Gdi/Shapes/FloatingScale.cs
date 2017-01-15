@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Data;
+using Altaxo.Drawing;
 using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Graph.Gdi.Background;
@@ -527,13 +528,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 		private void PaintErrorInvalidLayerType(Graphics g, object obj)
 		{
 			string errorMsg = "FloatingScale:Error: Invalid layer type";
-			var font = new Font(GdiFontManager.GdiGenericSansSerifFontFamily, 10, FontStyle.Regular, GraphicsUnit.World);
+			var font = GdiFontManager.ToGdi(GdiFontManager.GetFontXGenericSansSerif(10, FontXStyle.Regular));
 			var size = g.MeasureString(errorMsg, font);
 			if (obj is HostLayer)
 			{
 				var destSizeX = 0.2 * ((HostLayer)obj).Size.X;
 				var factor = destSizeX / size.Width;
-				font = new Font(GdiFontManager.GdiGenericSansSerifFontFamily, (float)(font.Size * factor), FontStyle.Regular, GraphicsUnit.World);
+				font = GdiFontManager.ToGdi(GdiFontManager.GetFontXGenericSansSerif(font.Size * factor, FontXStyle.Regular));
 			}
 
 			g.DrawString(errorMsg, font, Brushes.Red, (PointF)this.Position);

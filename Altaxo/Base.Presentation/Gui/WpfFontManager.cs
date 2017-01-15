@@ -46,6 +46,15 @@ namespace Altaxo.Gui
 	/// </summary>
 	public class WpfFontManager : Altaxo.Graph.Gdi.GdiFontManager
 	{
+		#region Constants and members
+
+		protected static readonly System.Windows.Markup.XmlLanguage[] _familyNameLanguagesToTry = new System.Windows.Markup.XmlLanguage[]
+		{
+			System.Windows.Markup.XmlLanguage.GetLanguage("en-us"),
+			System.Windows.Markup.XmlLanguage.GetLanguage("en"),
+			System.Windows.Markup.XmlLanguage.GetLanguage(string.Empty),
+		};
+
 		protected static new WpfFontManager _instance;
 
 		/// <summary>
@@ -57,9 +66,11 @@ namespace Altaxo.Gui
 		protected ConcurrentDictionary<string, int> _wpfFontReferenceCounter = new ConcurrentDictionary<string, int>();
 
 		/// <summary>
-		/// This class groups Wpf fonts (typefaces) similar to the Gdi+ font management. Key is the Win32 font family name. Value is a bundle of 4 Wpf typefaces (regular, bold, italic and bolditalic).
+		/// This class groups Wpf fonts (typefaces) similar to the Gdi+ font management.
+		/// Key is the Win32 font family name.
+		/// Value is a bundle of 4 Wpf typefaces (regular, bold, italic and bolditalic).
 		/// </summary>
-		protected AltaxoFontFamiliesDictionary _dictWin32FamilyNameToAltaxoFontFamily;
+		protected ConcurrentDictionary<string, Typeface[]> _dictWin32FamilyNameToAltaxoFontFamily;
 
 		/// <summary>
 		/// A dictionary with relates typefaces to the corresponding font Uri (normally a file name).
@@ -77,6 +88,10 @@ namespace Altaxo.Gui
 		/// Stores the font families that are missing in the Gdi system.
 		/// </summary>
 		protected Dictionary<string, System.Drawing.Text.PrivateFontCollection> _gdiMissingFontFamilies = new Dictionary<string, System.Drawing.Text.PrivateFontCollection>();
+
+		#endregion Constants and members
+
+		#region Public static functions and properties
 
 		/// <summary>
 		/// Registers this instance with the <see cref="FontX"/> font system.
@@ -105,24 +120,31 @@ namespace Altaxo.Gui
 			}
 		}
 
+		/// <summary>
+		/// Retrieves a Wpf <see cref="System.Windows.Media.Typeface"/> from a given <see cref="FontX"/> instance. Since a <see cref="System.Windows.Media.Typeface"/> doesn't contain
+		/// information about the font size, you are responsible for drawing the font with the intended size. You can use <see cref="FontX.Size"/>, but be aware that the size is returned in units
+		/// of points (1/72 inch), but Wpf expects units of 1/96 inch.
+		/// </summary>
+		/// <param name="fontX">The font to convert to a Wpf typeface.</param>
+		/// <returns>The Wpf typeface that corresponds to the provided <see cref="FontX"/> instance.</returns>
+		public static Typeface ToWpf(FontX fontX)
+		{
+			return _instance.InternalToWpf(fontX);
+		}
+
+		#endregion Public static functions and properties
+
 		public WpfFontManager()
 		{
 			FontManager3D.Instance = new WpfFontManager3D();
 		}
-
-		private static readonly System.Windows.Markup.XmlLanguage[] familyNameLanguagesToTry = new System.Windows.Markup.XmlLanguage[]
-		{
-			System.Windows.Markup.XmlLanguage.GetLanguage("en-us"),
-			System.Windows.Markup.XmlLanguage.GetLanguage("en"),
-			System.Windows.Markup.XmlLanguage.GetLanguage(string.Empty),
-		};
 
 		/// <summary>
 		/// Gets the family name of a Wpf font family.
 		/// </summary>
 		/// <param name="fontFamily">The font family.</param>
 		/// <returns></returns>
-		public static string GetFontFamilyName(FontFamily fontFamily)
+		protected static string GetFontFamilyName(FontFamily fontFamily)
 		{
 			var count = fontFamily.FamilyNames.Count;
 			switch (fontFamily.FamilyNames.Count)
@@ -134,7 +156,7 @@ namespace Altaxo.Gui
 					return fontFamily.FamilyNames.First().Value; // there is one family name, so we use it
 				default: // there are many family names, we should try the languages above
 					{
-						foreach (var language in familyNameLanguagesToTry)
+						foreach (var language in _familyNameLanguagesToTry)
 							if (fontFamily.FamilyNames.TryGetValue(language, out var familyName))
 								return familyName;
 
@@ -148,16 +170,91 @@ namespace Altaxo.Gui
 		/// </summary>
 		protected override void InternalBuildDictionaries()
 		{
-			base.InternalBuildDictionaries();
+			_dictWin32FamilyNameToAltaxoFontFamily = new ConcurrentDictionary<string, Typeface[]>();
 
-			_dictWin32FamilyNameToAltaxoFontFamily = new AltaxoFontFamiliesDictionary();
-			_dictWin32FamilyNameToAltaxoFontFamily.Build(out var sortedListOfKnownTypefaces);
+			var fontList = new List<Typeface>(Fonts.SystemTypefaces);
+			fontList.Sort(FontComparerForGroupingIntoAltaxoFontFamilies.Compare); // sort all typefaces first for name, then stretch, then weight, and then style (normal style first, then italic, then bold)
+			AddToAltaxoFontFamilies(_dictWin32FamilyNameToAltaxoFontFamily, fontList);
 
-			BuildWin32FamilyToTypefacesAndUris(sortedListOfKnownTypefaces, out var typefacesUri, out var win32FamilyNamesToTypefaces);
+			// add private fonts
+			string fontpath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), @"..\data\resources\fonts\");
+			var privateFontList = new List<Typeface>(Fonts.GetTypefaces(fontpath));
+			privateFontList.Sort(FontComparerForGroupingIntoAltaxoFontFamilies.Compare);// sort all typefaces first for name, then stretch, then weight, and then style (normal style first, then italic, then bold)
+			AddToAltaxoFontFamilies(_dictWin32FamilyNameToAltaxoFontFamily, privateFontList);
+
+			// put all fonts together
+			fontList.AddRange(privateFontList);
+			fontList.Sort(FontComparerForGroupingIntoAltaxoFontFamilies.Compare); // sort all typefaces first for name, then stretch, then weight, and then style (normal style first, then italic, then bold)
+
+			BuildWin32FamilyToTypefacesAndUris(fontList, out var typefacesUri, out var win32FamilyNamesToTypefaces);
 			_dictTypefaceToUri = typefacesUri;
 			_dictWin32FamilyNameToWpfTypefaces = win32FamilyNamesToTypefaces;
 
+			// this is something like base.InternalBuildDictionaries
+			var dict = new ConcurrentDictionary<string, System.Drawing.FontFamily[]>();
+			AddSystemGdiFontFamilies(dict);
+			AddPrivateGdiFontFamilies(dict, privateFontList);
+			_dictWin32FamilyNameToGdiFontFamilyAndPresence = dict;
+
 			AmendMissingFamilyNamesToGdiFontFamilies();
+		}
+
+		/// <summary>
+		/// Tries to get the local file path of this font, or null if it could not be retrieved.
+		/// </summary>
+		/// <param name="typeface">The typeface.</param>
+		/// <returns>Local file name of the font file which is associated with this typeface, or null if it couldn't be retrieved.</returns>
+		private string TryGetPath(Typeface typeface)
+		{
+			if (typeface.TryGetGlyphTypeface(out var glyphTypeface))
+			{
+				var fontUri = glyphTypeface.FontUri;
+				if (fontUri.IsFile)
+					return fontUri.LocalPath;
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Adds the private fonts to the Gdi font families collection.
+		/// </summary>
+		/// <param name="gdiFontDictionary">The Gdi font dictionary.</param>
+		/// <param name="privateFonts">The private fonts.</param>
+		protected virtual void AddPrivateGdiFontFamilies(ConcurrentDictionary<string, System.Drawing.FontFamily[]> gdiFontDictionary, IEnumerable<Typeface> privateFonts)
+		{
+			// due to a bug in windows 10, there is no way to fill a private font collection in a correct way
+			// we need some additional information, which is available here in the Wpf subsystem
+			// thus we leave it to the WpfFontManager to override this function.
+			// Background: to go around this bug, we need to put each individual private font file in a separate
+			// instance of PrivateFontCollection and then use the FontFamily from this instance solely for the intended style (regular, bold, italic, and bold-italic).
+
+			var hashOfPrivateTypefaces = new HashSet<Typeface>(privateFonts);
+
+			foreach (var altaxoFamilyEntry in _dictWin32FamilyNameToAltaxoFontFamily)
+			{
+				var altaxoFam = altaxoFamilyEntry.Value;
+				if (hashOfPrivateTypefaces.Contains(altaxoFam[IdxRegular])) // then this AltaxoFamily is from a private font
+				{
+					var sdFamilies = new System.Drawing.FontFamily[4];
+
+					for (int i = 0; i < 4; ++i)
+					{
+						var fileNameForStyle = TryGetPath(altaxoFam[i]);
+
+						if (null != fileNameForStyle)
+						{
+							var fc = new System.Drawing.Text.PrivateFontCollection(); // due to the above mentioned bug, we need to load each individual font file into a separate PrivateFontCollection
+							fc.AddFontFile(fileNameForStyle);
+							sdFamilies[i] = fc.Families[0]; // and then extract the FontFamily out of it (but this FontFamily is only valid for exactly this font style)
+						}
+					}
+
+					if (null != sdFamilies[IdxRegular] || null != sdFamilies[IdxBold] || null != sdFamilies[IdxItalic] || null != sdFamilies[IdxBoldItalic])
+					{
+						gdiFontDictionary[altaxoFamilyEntry.Key] = sdFamilies;
+					}
+				}
+			}
 		}
 
 		/// <summary>
@@ -214,6 +311,7 @@ namespace Altaxo.Gui
 		/// </summary>
 		protected void AmendMissingFamilyNamesToGdiFontFamilies()
 		{
+			/*
 			foreach (var entry in _dictWin32FamilyNameToWpfTypefaces)
 			{
 				if (!_dictWin32FamilyNameToGdiFontFamilyAndPresence.ContainsKey(entry.Key))
@@ -241,15 +339,15 @@ namespace Altaxo.Gui
 
 					if (null != gdiFontFamily)
 					{
-						FontStylePresence pres = GetFontStylePresence(gdiFontFamily);
-						if (FontStylePresence.NoStyleAvailable != pres)
+						if (GetFontStylePresence(gdiFontFamily, out var fontFamilyArray))
 						{
 							_gdiMissingFontFamilies.Add(entry.Key, pfc);
-							_dictWin32FamilyNameToGdiFontFamilyAndPresence.TryAdd(gdiFontFamily.Name, new Tuple<System.Drawing.FontFamily, FontStylePresence>(gdiFontFamily, pres));
+							_dictWin32FamilyNameToGdiFontFamilyAndPresence.TryAdd(gdiFontFamily.Name, fontFamilyArray);
 						}
 					}
 				}
 			}
+			*/
 		}
 
 		/// <summary>
@@ -270,18 +368,6 @@ namespace Altaxo.Gui
 					(x, y) => y);
 			}
 			return result;
-		}
-
-		/// <summary>
-		/// Retrieves a Wpf <see cref="System.Windows.Media.Typeface"/> from a given <see cref="FontX"/> instance. Since a <see cref="System.Windows.Media.Typeface"/> doesn't contain
-		/// information about the font size, you are responsible for drawing the font with the intended size. You can use <see cref="FontX.Size"/>, but be aware that the size is returned in units
-		/// of points (1/72 inch), but Wpf expects units of 1/96 inch.
-		/// </summary>
-		/// <param name="fontX">The font X to convert to a Wpf typeface.</param>
-		/// <returns>The Wpf typeface that corresponds to the provided <see cref="FontX"/> instance.</returns>
-		public static Typeface ToWpf(FontX fontX)
-		{
-			return _instance.InternalToWpf(fontX);
 		}
 
 		/// <summary>
@@ -321,13 +407,13 @@ namespace Altaxo.Gui
 				tf = null;
 				var style = font.Style;
 				if (style.HasFlag(FontXStyle.Italic) && style.HasFlag(FontXStyle.Italic) && null == tf)
-					tf = fam.BoldItalic;
+					tf = fam[IdxBoldItalic];
 				if (style.HasFlag(FontXStyle.Bold) && null == tf)
-					tf = fam.Bold;
+					tf = fam[IdxBold];
 				if (style.HasFlag(FontXStyle.Italic) && null == tf)
-					tf = fam.Italic;
+					tf = fam[IdxItalic];
 				if (null == tf)
-					tf = fam.Normal;
+					tf = fam[IdxRegular];
 
 				if (null != tf)
 					return tf;
@@ -486,124 +572,87 @@ namespace Altaxo.Gui
 			}
 		}
 
+		private static readonly string[] _regularStyleNames = new[] { "normal", "regular" };
+
 		/// <summary>
-		/// Bundle of 4 typefaces (regular, italic, bold and bolditalic) that resemble a Gdi+ font family. Please not that not all 4 typefaces have to be non-null.
+		/// Gets the font family name from the name of the regular type face.
 		/// </summary>
-		public class AltaxoFontFamily
+		/// <param name="regularTypeface">The typeface of the regular font style.</param>
+		/// <returns>The font family name that should be identical to the font family name of the Gdi+ font family.</returns>
+		protected static string GetFontFamilyName(Typeface regularTypeface)
 		{
-			/// <summary>Typeface for the regular style.</summary>
-			public Typeface Normal { get; set; }
+			string familyName = regularTypeface.FontFamily.FamilyNames.First().Value + " " + regularTypeface.FaceNames.First().Value;
 
-			/// <summary>Typeface for the italic style.</summary>
-			public Typeface Italic { get; set; }
+			familyName = familyName.Trim();
 
-			/// <summary>Typeface for the bold style.</summary>
-			public Typeface Bold { get; set; }
-
-			/// <summary>Typeface for the bolditalic style.</summary>
-			public Typeface BoldItalic { get; set; }
+			foreach (var regularStyleName in _regularStyleNames)
+			{
+				if (familyName.ToLowerInvariant().EndsWith(regularStyleName))
+				{
+					familyName = familyName.Substring(0, familyName.Length - regularStyleName.Length);
+					break;
+				}
+			}
+			return familyName.Trim();
 		}
 
 		/// <summary>
-		///  Dictionary of font families that resemble the Gdi+ font families.
-		/// Key is the family name similar to the Gdi family name, value is a bundle of 4 typefaces for the styles (regular, italic, bold, bolditalic).
+		/// Builds this instance.
 		/// </summary>
-		public class AltaxoFontFamiliesDictionary : SortedDictionary<string, AltaxoFontFamily>
+		/// <param name="fontList">List of typefaces which are used to build the dictionary.</param>
+		/// <exception cref="System.InvalidOperationException"></exception>
+		protected static void AddToAltaxoFontFamilies(ConcurrentDictionary<string, Typeface[]> altaxoFontFamilies, IList<Typeface> fontList) // TODO NET45 Replace with IReadonlyList
 		{
-			private static readonly string[] regularStyleNames = new[] { "normal", "regular" };
+			Typeface[] fam;
 
-			/// <summary>
-			/// Gets the font family name from the name of the regular type face.
-			/// </summary>
-			/// <param name="regularTypeface">The typeface of the regular font style.</param>
-			/// <returns>The font family name that should be identical to the font family name of the Gdi+ font family.</returns>
-			private string GetFontFamilyName(Typeface regularTypeface)
+			for (int ii = 0; ii < fontList.Count; ++ii)
 			{
-				string familyName = regularTypeface.FontFamily.FamilyNames.First().Value + " " + regularTypeface.FaceNames.First().Value;
-
-				familyName = familyName.Trim();
-
-				foreach (var regularStyleName in regularStyleNames)
+				// because it is ensured by the sorting that the normal styles comes before all other styles of a font family,
+				// having a normal style here will start a new AltaxoFontFamily
+				if (fontList[ii].Style == FontStyles.Normal)
 				{
-					if (familyName.ToLowerInvariant().EndsWith(regularStyleName))
+					fam = new Typeface[4] { fontList[ii], null, null, null }; // start the new font family with the regular style
+					int j = ii + 1;
+					for (; j < fontList.Count && FontComparerForGroupingIntoAltaxoFontFamilies.IsSameFamilyAndStretchAndWeight(fam[IdxRegular], fontList[j]); ++j)
 					{
-						familyName = familyName.Substring(0, familyName.Length - regularStyleName.Length);
-						break;
+						if (fontList[j].Style == FontStyles.Italic || fontList[j].Style == FontStyles.Oblique) // next style is expected to be the italic style (because of the sorting algorithm)
+						{
+							fam[IdxItalic] = fontList[j];
+							++j;
+							break;
+						}
 					}
-				}
-				return familyName.Trim();
-			}
-
-			/// <summary>
-			/// Builds this instance.
-			/// </summary>
-			/// <param name="fontList">On return, this is a list of typefaces that Altaxo knows of (both system typefaces and private typefaces).</param>
-			/// <exception cref="System.InvalidOperationException"></exception>
-			public void Build(out List<Typeface> fontList)
-			{
-				Clear();
-
-				fontList = new List<Typeface>(Fonts.SystemTypefaces);
-
-				// add private fonts
-				string fontpath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), @"..\data\resources\fonts\");
-				var privateFontFamilies = Fonts.GetTypefaces(fontpath);
-				fontList.AddRange(privateFontFamilies);
-
-				// sort all typefaces first for name, then stretch, then weight, and then style (normal style first, then italic, then bold)
-				fontList.Sort(FontComparerForGroupingIntoAltaxoFontFamilies.Compare);
-
-				AltaxoFontFamily fam;
-
-				for (int ii = 0; ii < fontList.Count; ++ii)
-				{
-					// because it is ensured by the sorting that the normal styles comes before all other styles of a font family,
-					// having a normal style here will start a new AltaxoFontFamily
-					if (fontList[ii].Style == FontStyles.Normal)
+					for (; j < fontList.Count && FontComparerForGroupingIntoAltaxoFontFamilies.IsSameFamilyAndStretch(fam[IdxRegular], fontList[j]); ++j)
 					{
-						fam = new AltaxoFontFamily() { Normal = fontList[ii] }; // start the new font family with the regular style
-						int j = ii + 1;
-						for (; j < fontList.Count && FontComparerForGroupingIntoAltaxoFontFamilies.IsSameFamilyAndStretchAndWeight(fam.Normal, fontList[j]); ++j)
+						if (fontList[j].Weight != fam[IdxRegular].Weight && fontList[j].Style == FontStyles.Normal) //  // next style is expected to be the bold style - which is a normal style with heavier weight (because of the sorting algorithm)
 						{
-							if (fontList[j].Style == FontStyles.Italic || fontList[j].Style == FontStyles.Oblique) // next style is expected to be the italic style (because of the sorting algorithm)
-							{
-								fam.Italic = fontList[j];
-								++j;
-								break;
-							}
+							fam[IdxBold] = fontList[j];
+							++j;
+							break;
 						}
-						for (; j < fontList.Count && FontComparerForGroupingIntoAltaxoFontFamilies.IsSameFamilyAndStretch(fam.Normal, fontList[j]); ++j)
+					}
+					for (; j < fontList.Count && null != fam[IdxBold] && FontComparerForGroupingIntoAltaxoFontFamilies.IsSameFamilyAndStretchAndWeight(fam[IdxBold], fontList[j]); ++j)
+					{
+						if (fontList[j].Style == FontStyles.Italic || fontList[j].Style == FontStyles.Oblique) // and finally the italic style with heavier weight
 						{
-							if (fontList[j].Weight != fam.Normal.Weight && fontList[j].Style == FontStyles.Normal) //  // next style is expected to be the bold style - which is a normal style with heavier weight (because of the sorting algorithm)
-							{
-								fam.Bold = fontList[j];
-								++j;
-								break;
-							}
+							fam[IdxBoldItalic] = fontList[j];
+							++j;
+							break;
 						}
-						for (; j < fontList.Count && null != fam.Bold && FontComparerForGroupingIntoAltaxoFontFamilies.IsSameFamilyAndStretchAndWeight(fam.Bold, fontList[j]); ++j)
-						{
-							if (fontList[j].Style == FontStyles.Italic || fontList[j].Style == FontStyles.Oblique) // and finally the italic style with heavier weight
-							{
-								fam.BoldItalic = fontList[j];
-								++j;
-								break;
-							}
-						}
+					}
 
-						// if all 4 styles have corresponding typefaces (and only then), we consider this as an AltaxoFontFamily and add it to the collection
-						if (null != fam.Italic && null != fam.Bold && null != fam.BoldItalic)
+					// if all 4 styles have corresponding typefaces (and only then), we consider this as an AltaxoFontFamily and add it to the collection
+					if (null != fam[IdxItalic] && null != fam[IdxBold] && null != fam[IdxBoldItalic])
+					{
+						string familyName = GetFontFamilyName(fam[IdxRegular]);
+						if (altaxoFontFamilies.ContainsKey(familyName))
 						{
-							string familyName = GetFontFamilyName(fam.Normal);
-							if (this.ContainsKey(familyName))
-							{
-								// throw new InvalidOperationException(string.Format("Try to add family name that already exists: {0}", familyName));
-								Current.Console.WriteLine("Warning (from WpfFontManager): Try to add family name that already exists: {0}", familyName);
-							}
-							else
-							{
-								this.Add(familyName, fam);
-							}
+							// throw new InvalidOperationException(string.Format("Try to add family name that already exists: {0}", familyName));
+							Current.Console.WriteLine("Warning (from WpfFontManager): Try to add family name that already exists: {0}", familyName);
+						}
+						else
+						{
+							altaxoFontFamilies.TryAdd(familyName, fam);
 						}
 					}
 				}
