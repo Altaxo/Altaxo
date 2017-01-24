@@ -109,6 +109,7 @@ namespace Altaxo.Gui.Scripting
 				return false;
 
 			_doc = doc;
+
 			_tempDoc = _doc.CloneForModification();
 			_compiledDoc = null;
 
@@ -235,8 +236,8 @@ namespace Altaxo.Gui.Scripting
 
 		public void Execute(IProgressReporter progress)
 		{
-			if (null != _scriptExecutionHandler)
-				_scriptExecutionHandler(_doc, progress);
+			_doc.Errors?.Clear();
+			_scriptExecutionHandler?.Invoke(_doc, progress);
 		}
 
 		public bool HasExecutionErrors()
