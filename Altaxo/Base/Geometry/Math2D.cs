@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Geometry
 {
@@ -99,6 +100,33 @@ namespace Altaxo.Geometry
 				return false;
 			else
 				return SquareDistanceLineToPoint(point, lineOrg, lineEnd) <= distance * distance;
+		}
+
+		/// <summary>
+		/// Determines whether or not a given point is into a certain distance of a polyline.
+		/// </summary>
+		/// <param name="point">The point.</param>
+		/// <param name="distance">The distance.</param>
+		/// <param name="polyline">The polyline.</param>
+		/// <returns>
+		///   <c>true</c> if the distance  between point and polyline is less than or equal to the specified distance; otherwise, <c>false</c>.
+		/// </returns>
+		public static bool IsPointIntoDistance(PointD2D point, double distance, IEnumerable<PointD2D> polyline)
+		{
+			using (var iterator = polyline.GetEnumerator())
+			{
+				if (!iterator.MoveNext())
+					return false; // no points in polyline
+				var prevPoint = iterator.Current;
+
+				while (iterator.MoveNext())
+				{
+					if (IsPointIntoDistance(point, distance, iterator.Current, prevPoint))
+						return true;
+					prevPoint = iterator.Current;
+				}
+			}
+			return false;
 		}
 	}
 }

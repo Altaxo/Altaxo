@@ -1128,6 +1128,93 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		#endregion CardialSpline to BezierSegments
+
+		#region Distance Line to Point
+
+		/// <summary>
+		/// Calculates the squared distance between a finite line and a point.
+		/// </summary>
+		/// <param name="point">The location of the point.</param>
+		/// <param name="lineOrg">The location of the line origin.</param>
+		/// <param name="lineEnd">The location of the line end.</param>
+		/// <returns>The squared distance between the line (threated as having a finite length) and the point.</returns>
+		public static double SquareDistanceLineToPoint(PointF point, PointF lineOrg, PointF lineEnd)
+		{
+			var linex = lineEnd.X - lineOrg.X;
+			var liney = lineEnd.Y - lineOrg.Y;
+			var pointx = point.X - lineOrg.X;
+			var pointy = point.Y - lineOrg.Y;
+
+			var rsquare = linex * linex + liney * liney;
+			var xx = linex * pointx + liney * pointy;
+			if (xx <= 0) // the point is located before the line, so use
+			{         // the distance of the line origin to the point
+				return pointx * pointx + pointy * pointy;
+			}
+			else if (xx >= rsquare) // the point is located after the line, so use
+			{                   // the distance of the line end to the point
+				pointx = point.X - lineEnd.X;
+				pointy = point.Y - lineEnd.Y;
+				return pointx * pointx + pointy * pointy;
+			}
+			else // the point is located in the middle of the line, use the
+			{     // distance from the line to the point
+				var yy = liney * pointx - linex * pointy;
+				return yy * yy / rsquare;
+			}
+		}
+
+		/// <summary>
+		/// Determines whether or not a given point (<c>point</c>) is into a <c>distance</c> to a finite line, that is spanned between
+		/// two points <c>lineOrg</c> and <c>lineEnd</c>.
+		/// </summary>
+		/// <param name="point">Point under test.</param>
+		/// <param name="distance">Distance.</param>
+		/// <param name="lineOrg">Starting point of the line.</param>
+		/// <param name="lineEnd">End point of the line.</param>
+		/// <returns>True if the distance between point <c>point</c> and the line between <c>lineOrg</c> and <c>lineEnd</c> is less or equal to <c>distance</c>.</returns>
+		public static bool IsPointIntoDistance(PointF point, double distance, PointF lineOrg, PointF lineEnd)
+		{
+			// first a quick test if the point is far outside the circle
+			// that is spanned from the middle of the line and has at least
+			// a radius of half of the line length plus the distance
+			var xm = (lineOrg.X + lineEnd.X) / 2;
+			var ym = (lineOrg.Y + lineEnd.Y) / 2;
+			var r = Math.Abs(lineOrg.X - xm) + Math.Abs(lineOrg.Y - ym) + distance;
+			if (Math.Max(Math.Abs(point.X - xm), Math.Abs(point.Y - ym)) > r)
+				return false;
+			else
+				return SquareDistanceLineToPoint(point, lineOrg, lineEnd) <= distance * distance;
+		}
+
+		/// <summary>
+		/// Determines whether or not a given point is into a certain distance of a polyline.
+		/// </summary>
+		/// <param name="point">The point.</param>
+		/// <param name="distance">The distance.</param>
+		/// <param name="polyline">The polyline.</param>
+		/// <returns>
+		///   <c>true</c> if the distance  between point and polyline is less than or equal to the specified distance; otherwise, <c>false</c>.
+		/// </returns>
+		public static bool IsPointIntoDistance(PointF point, double distance, IEnumerable<PointF> polyline)
+		{
+			using (var iterator = polyline.GetEnumerator())
+			{
+				if (!iterator.MoveNext())
+					return false; // no points in polyline
+				var prevPoint = iterator.Current;
+
+				while (iterator.MoveNext())
+				{
+					if (IsPointIntoDistance(point, distance, iterator.Current, prevPoint))
+						return true;
+					prevPoint = iterator.Current;
+				}
+			}
+			return false;
+		}
+
+		#endregion Distance Line to Point
 	}
 
 	/// <summary>

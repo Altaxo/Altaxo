@@ -234,10 +234,10 @@ namespace Altaxo.Graph.Gdi.Plot
 
 			if (ptArray.Length < 2048)
 			{
-				GraphicsPath gp = new GraphicsPath();
-				gp.AddLines(ptArray);
-				if (gp.IsOutlineVisible((PointF)hitpoint, new Pen(Color.Black, 5)))
+				if (GdiExtensionMethods.IsPointIntoDistance((PointF)hitpoint, 2.5, ptArray))
 				{
+					GraphicsPath gp = new GraphicsPath();
+					gp.AddLines(ptArray);
 					gp.Widen(new Pen(Color.Black, 5));
 					return new HitTestObject(gp, this);
 				}
