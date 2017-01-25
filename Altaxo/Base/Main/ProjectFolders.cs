@@ -881,7 +881,9 @@ namespace Altaxo.Main
 				{
 					var existingItem = Current.Project.TryGetExistingItemWithSameTypeAndName(clonedItem);
 					if (null != existingItem)
-						Current.Project.RemoveItem(existingItem);
+					{
+						Current.ProjectService.DeleteDocument(existingItem, true);
+					}
 				}
 
 				Current.Project.AddItem(clonedItem);
