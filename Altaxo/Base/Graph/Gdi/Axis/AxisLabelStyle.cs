@@ -830,7 +830,7 @@ namespace Altaxo.Graph.Gdi.Axis
 		public virtual IHitTestObject HitTest(IPlotArea layer, HitTestRectangularData parentHitData)
 		{
 			GraphicsPath gp = GetSelectionPath();
-			if (parentHitData.IsCovering(gp.PathPoints))
+			if (gp.PointCount > 0 && parentHitData.IsCovering(gp.PathPoints))
 				return new HitTestObject(gp, this);
 			else
 				return null;
