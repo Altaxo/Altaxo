@@ -25,6 +25,7 @@
 using Altaxo.Data;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Altaxo.Serialization
@@ -42,14 +43,14 @@ namespace Altaxo.Serialization
 		{
 			if (null != Current.PropertyService)
 			{
-				Current.PropertyService.PropertyChanged += new Action<string>(EhPropertyService_PropertyChanged);
-				EhPropertyService_PropertyChanged(Altaxo.Settings.CultureSettings.PropertyKeyUICulture.GuidString);
+				Current.PropertyService.PropertyChanged += EhPropertyService_PropertyChanged;
+				EhPropertyService_PropertyChanged(null, new PropertyChangedEventArgs(Altaxo.Settings.CultureSettings.PropertyKeyUICulture.GuidString));
 			}
 		}
 
-		private static void EhPropertyService_PropertyChanged(string key)
+		private static void EhPropertyService_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (key == Altaxo.Settings.CultureSettings.PropertyKeyUICulture.GuidString)
+			if (e.PropertyName == Altaxo.Settings.CultureSettings.PropertyKeyUICulture.GuidString)
 			{
 				_cultureSettings = Current.PropertyService.GetValue<Altaxo.Settings.CultureSettings>(Altaxo.Settings.CultureSettings.PropertyKeyUICulture, Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin).Culture;
 			}

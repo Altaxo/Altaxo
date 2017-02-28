@@ -100,6 +100,11 @@ namespace Altaxo.Main
 		System.Runtime.InteropServices.ComTypes.IDataObject GetDocumentsDataObjectForDocument(object altaxoObject);
 
 		/// <summary>
+		/// Starts the ComManager.
+		/// </summary>
+		void StartLocalServer();
+
+		/// <summary>
 		/// Stops the ComManager.
 		/// </summary>
 		void StopLocalServer();

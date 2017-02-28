@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Workbench;
 using System;
 
 namespace Altaxo.Gui.Pads
@@ -31,7 +32,7 @@ namespace Altaxo.Gui.Pads
 	/// Controls the Output window pad which shows the Altaxo text output.
 	/// </summary>
 	public class OutputWindowController :
-		ICSharpCode.SharpDevelop.Gui.IPadContent,
+		IPadContent,
 		Altaxo.Main.Services.IOutputService
 	{
 		private System.Windows.Controls.TextBox _view;
@@ -68,6 +69,11 @@ namespace Altaxo.Gui.Pads
 			}
 		}
 
+		public object GetService(Type serviceType)
+		{
+			throw new NotImplementedException();
+		}
+
 		#endregion IPadContent Members
 
 		#region IDisposable Members
@@ -90,7 +96,7 @@ namespace Altaxo.Gui.Pads
 
 			if (!_view.IsVisible || _view.Parent == null)
 			{
-				ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+				var ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 
 				WorkbenchSingleton.Workbench.GetPad(this.GetType())?.BringPadToFront();
 

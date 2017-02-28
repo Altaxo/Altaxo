@@ -98,9 +98,31 @@ namespace Altaxo.Com
 			InvokeGuiThread(() =>
 			{
 				ComDebug.ReportInfo("Make main window visible");
-				((System.Windows.Window)Current.Workbench.ViewObject).Visibility = System.Windows.Visibility.Visible;
-				((System.Windows.Window)Current.Workbench.ViewObject).ShowInTaskbar = true;
-				((System.Windows.Window)Current.Workbench.ViewObject).BringIntoView();
+
+				var mainWindow = System.Windows.Application.Current.MainWindow;
+
+				mainWindow.Visibility = System.Windows.Visibility.Visible;
+				mainWindow.ShowInTaskbar = true;
+				mainWindow.BringIntoView();
+
+				// how to bring a window to the front ?
+				// see http://stackoverflow.com/questions/257587/bring-a-window-to-the-front-in-wpf
+
+				if (!mainWindow.IsVisible)
+				{
+					mainWindow.Show();
+				}
+
+				if (mainWindow.WindowState == System.Windows.WindowState.Minimized)
+				{
+					mainWindow.WindowState = System.Windows.WindowState.Normal;
+				}
+
+				mainWindow.Activate();
+				mainWindow.Topmost = true;  // important
+				mainWindow.Topmost = false; // important
+				mainWindow.Focus();         // important
+
 				ComDebug.ReportInfo("Make main window visible - done!");
 			});
 		}

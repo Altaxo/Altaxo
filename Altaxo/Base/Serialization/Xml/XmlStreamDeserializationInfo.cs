@@ -653,6 +653,11 @@ namespace Altaxo.Serialization.Xml
 			}
 		}
 
+		public string GetElementAsOuterXml(string name)
+		{
+			return _xmlReader.ReadOuterXml();
+		}
+
 		#endregion IXmlSerializationInfo Members
 	}
 }

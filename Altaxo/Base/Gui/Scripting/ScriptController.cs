@@ -22,8 +22,11 @@
 
 #endregion Copyright
 
+using Altaxo.Main.Services.ScriptCompilation;
 using Altaxo.Scripting;
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 
 namespace Altaxo.Gui.Scripting
@@ -35,20 +38,24 @@ namespace Altaxo.Gui.Scripting
 	/// </summary>
 	public delegate bool ScriptExecutionHandler(IScriptText script, IProgressReporter reporter);
 
-	public interface IScriptView
+	public interface IScriptView : IPureScriptView
 	{
-		IScriptViewEventSink Controller { get; set; }
+		/// <summary>
+		/// Occurs when a compiler message was clicked, and the view can not handle this by itself.
+		/// </summary>
+		event Action<string> CompilerMessageClicked;
 
-		void AddPureScriptView(object scriptView);
+		/// <summary>
+		/// Compiles the code text. If the view can not compile the text by itself, it should return null.
+		/// In this case the controller is responsible for compiling the text, and set the error messages in the view.
+		/// </summary>
+		IScriptCompilerResult Compile();
 
-		void ClearCompilerErrors();
-
-		void AddCompilerError(string s);
-	}
-
-	public interface IScriptViewEventSink
-	{
-		void EhView_GotoCompilerError(string message);
+		/// <summary>
+		/// Sets the compiler errors. Tuple.Item1: line, Tuple.Item2=column, Tuple.Item3: severity level, Tuple.Item4: severity string, Tuple.Item5: message
+		/// </summary>
+		/// <param name="errors">The errors.</param>
+		void SetCompilerErrors(IEnumerable<ICompilerDiagnostic> errors);
 	}
 
 	public interface IScriptController : IMVCANController
@@ -73,7 +80,7 @@ namespace Altaxo.Gui.Scripting
 	/// </summary>
 	[UserControllerForObject(typeof(IScriptText), 200)]
 	[ExpectedTypeOfView(typeof(IScriptView))]
-	public class ScriptController : IScriptViewEventSink, IScriptController
+	public class ScriptController : IScriptController
 	{
 		private IScriptView _view;
 		private IScriptText _doc;
@@ -81,7 +88,7 @@ namespace Altaxo.Gui.Scripting
 		private IScriptText _compiledDoc;
 		protected ScriptExecutionHandler _scriptExecutionHandler;
 
-		private IPureScriptController _pureScriptController;
+		//private IPureScriptController _pureScriptController;
 		private Regex _compilerErrorRegex = new Regex(@".*\((?<line>\d+),(?<column>\d+)\) : (?<msg>.+)", RegexOptions.Compiled);
 
 		public ScriptController()
@@ -100,6 +107,16 @@ namespace Altaxo.Gui.Scripting
 
 		#region IMVCANController Members
 
+		public void AttachView()
+		{
+			_view.CompilerMessageClicked += EhView_GotoCompilerError;
+		}
+
+		public void DetachView()
+		{
+			_view.CompilerMessageClicked -= EhView_GotoCompilerError; ;
+		}
+
 		public bool InitializeDocument(params object[] args)
 		{
 			if (args == null || args.Length == 0)
@@ -113,7 +130,7 @@ namespace Altaxo.Gui.Scripting
 			_tempDoc = _doc.CloneForModification();
 			_compiledDoc = null;
 
-			_pureScriptController = (IPureScriptController)Current.Gui.GetControllerAndControl(new object[] { _tempDoc }, typeof(IPureScriptText), typeof(IPureScriptController), UseDocument.Copy);
+			//_pureScriptController = (IPureScriptController)Current.Gui.GetControllerAndControl(new object[] { _tempDoc }, typeof(IPureScriptText), typeof(IPureScriptController), UseDocument.Copy);
 			_scriptExecutionHandler = args.Length <= 1 ? null : args[1] as ScriptExecutionHandler;
 
 			return true;
@@ -128,16 +145,17 @@ namespace Altaxo.Gui.Scripting
 
 		public void SetText(string text)
 		{
-			_pureScriptController.SetText(text);
+			if (_view != null)
+				_view.ScriptText = text;
 		}
 
 		public void Initialize()
 		{
 			if (_view != null)
 			{
-				_view.ClearCompilerErrors();
-				_view.AddPureScriptView(_pureScriptController.ViewObject);
-				_pureScriptController.SetInitialScriptCursorLocation(_tempDoc.UserAreaScriptOffset);
+				_view.ScriptText = _doc.ScriptText;
+				_view.SetCompilerErrors(null);
+				_view.InitialScriptCursorLocation = _tempDoc.UserAreaScriptOffset;
 			}
 		}
 
@@ -153,7 +171,7 @@ namespace Altaxo.Gui.Scripting
 				int line = int.Parse(sline);
 				int col = int.Parse(scol);
 
-				_pureScriptController.SetScriptCursorLocation(line, col); // line and col are starting with "1" here
+				_view.SetScriptCursorLocation(line, col);
 			}
 			catch (Exception)
 			{
@@ -166,67 +184,70 @@ namespace Altaxo.Gui.Scripting
 
 		public void Compile()
 		{
-			_compiledDoc = null;
+			var result = _view?.Compile();
 
-			if (_pureScriptController.Apply(false))
+			if (null == result) // compilation must be handled by this controller
 			{
-				_tempDoc.ScriptText = _pureScriptController.Model.ScriptText;
-
-				if (null != _view)
-					_view.ClearCompilerErrors();
-
-				IScriptText compiledDoc = _tempDoc.CloneForModification();
-				bool result = compiledDoc.Compile();
-
-				var errors = compiledDoc.Errors;
-				if (result == false)
+				InternalCompiling();
+			}
+			else // Compilation was handled by the view
+			{
+				_tempDoc.ScriptText = result.ScriptText(0);
+				if (result is IScriptCompilerSuccessfulResult succResult)
+				{
+					_compiledDoc = _tempDoc.CloneForModification();
+					_compiledDoc.SetCompilerResult(result);
+				}
+				else // not successful
 				{
 					_compiledDoc = null;
-
-					foreach (string s in errors)
-					{
-						System.Text.RegularExpressions.Match match = _compilerErrorRegex.Match(s);
-						if (match.Success)
-						{
-							string news = match.Result("(${line},${column}) : ${msg}");
-
-							_view.AddCompilerError(news);
-						}
-						else
-						{
-							_view.AddCompilerError(s);
-						}
-					}
-
-					Current.Gui.ErrorMessageBox("There were compilation errors");
-					return;
 				}
-				else
-				{
-					_compiledDoc = compiledDoc;
+			}
+		}
 
-					_view.AddCompilerError(DateTime.Now.ToLongTimeString() + " : Compilation successful.");
-				}
+		public void InternalCompiling()
+		{
+			_compiledDoc = null;
+
+			_tempDoc.ScriptText = _view.ScriptText;
+
+			if (null != _view)
+				_view.SetCompilerErrors(null);
+
+			IScriptText compiledDoc = _tempDoc.CloneForModification();
+			bool result = compiledDoc.Compile();
+
+			var errors = compiledDoc.Errors;
+			if (result == false)
+			{
+				_compiledDoc = null;
+				_view.SetCompilerErrors(compiledDoc.Errors);
+				Current.Gui.ErrorMessageBox("There were compilation errors");
+				return;
+			}
+			else
+			{
+				_compiledDoc = compiledDoc;
+
+				_view.SetCompilerErrors(ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Info, DateTime.Now.ToLongTimeString() + " : Compilation successful.")));
 			}
 		}
 
 		public void Update()
 		{
-			if (_pureScriptController.Apply(false))
-			{
-				_tempDoc.ScriptText = this._pureScriptController.Model.ScriptText;
+			_tempDoc.ScriptText = _view.ScriptText;
 
-				if (null != _compiledDoc && _tempDoc.ScriptText == _compiledDoc.ScriptText)
-				{
-					_doc = _compiledDoc;
-				}
-				else if (_doc.ScriptText != _pureScriptController.Model.ScriptText)
-				{
-					if (_doc.IsReadOnly)
-						_doc = _doc.CloneForModification();
-					_doc.ScriptText = _pureScriptController.Model.ScriptText;
-				}
+			if (null != _compiledDoc && _tempDoc.ScriptText == _compiledDoc.ScriptText)
+			{
+				_doc = _compiledDoc;
 			}
+			else if (_doc.ScriptText != _view.ScriptText)
+			{
+				if (_doc.IsReadOnly)
+					_doc = _doc.CloneForModification();
+				_doc.ScriptText = _view.ScriptText;
+			}
+
 			_tempDoc = (IScriptText)_doc.Clone();
 		}
 
@@ -236,7 +257,7 @@ namespace Altaxo.Gui.Scripting
 
 		public void Execute(IProgressReporter progress)
 		{
-			_doc.Errors?.Clear();
+			_doc.ClearErrors();
 			_scriptExecutionHandler?.Invoke(_doc, progress);
 		}
 
@@ -244,10 +265,7 @@ namespace Altaxo.Gui.Scripting
 		{
 			if (null != _doc.Errors && _doc.Errors.Count > 0)
 			{
-				_view.ClearCompilerErrors();
-
-				foreach (string s in _doc.Errors)
-					_view.AddCompilerError(s);
+				_view.SetCompilerErrors(_doc.Errors);
 				Current.Gui.ErrorMessageBox("There were execution errors");
 			}
 
@@ -275,14 +293,17 @@ namespace Altaxo.Gui.Scripting
 			set
 			{
 				if (_view != null)
-					_view.Controller = null;
+				{
+					DetachView();
+				}
 
 				_view = value as IScriptView;
 
-				Initialize();
-
-				if (_view != null)
-					_view.Controller = this;
+				if (null != _view)
+				{
+					Initialize();
+					AttachView();
+				}
 			}
 		}
 
@@ -298,24 +319,22 @@ namespace Altaxo.Gui.Scripting
 		{
 			bool applyresult = false;
 
-			if (_pureScriptController.Apply(disposeController))
+			_tempDoc.ScriptText = _view.ScriptText;
+			if (null != _compiledDoc && _tempDoc.ScriptText == _compiledDoc.ScriptText)
 			{
-				_tempDoc.ScriptText = this._pureScriptController.Model.ScriptText;
-				if (null != _compiledDoc && _tempDoc.ScriptText == _compiledDoc.ScriptText)
+				_doc = _compiledDoc;
+				applyresult = true;
+			}
+			else
+			{
+				Compile();
+				if (null != _compiledDoc)
 				{
 					_doc = _compiledDoc;
 					applyresult = true;
 				}
-				else
-				{
-					Compile();
-					if (null != _compiledDoc)
-					{
-						_doc = _compiledDoc;
-						applyresult = true;
-					}
-				}
 			}
+
 			return applyresult;
 		}
 

@@ -70,6 +70,14 @@ namespace Altaxo.Gui.Common
 		event EventHandler ActiveWorkbenchWindowChanged;
 
 		/// <summary>
+		/// Gets or sets a value indicating whether the workbench is shown full screen, or not.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if the workbench is shown full screen; otherwise, <c>false</c>.
+		/// </value>
+		bool FullScreen { get; set; }
+
+		/// <summary>
 		/// Object for executing methods on the main thread.
 		/// </summary>
 		System.ComponentModel.ISynchronizeInvoke SynchronizingObject { get; }

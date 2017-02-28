@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using ICSharpCode.SharpDevelop.Workbench;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 	/// <summary>
 	/// Interaction logic for FileScoutControl.xaml
 	/// </summary>
-	public partial class FileBrowserControl : UserControl, ICSharpCode.SharpDevelop.Gui.IPadContent, IFileTreeView, IFileListView
+	public partial class FileBrowserControl : UserControl, IPadContent, IFileTreeView, IFileListView
 	{
 		private FileBrowserController _controller;
 
@@ -61,6 +62,11 @@ namespace Altaxo.Gui.Pads.FileBrowser
 		public object InitiallyFocusedControl
 		{
 			get { return _treeView; }
+		}
+
+		public object GetService(Type serviceType)
+		{
+			throw new NotImplementedException();
 		}
 
 		public void Dispose()

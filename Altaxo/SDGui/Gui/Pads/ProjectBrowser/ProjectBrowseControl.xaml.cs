@@ -24,6 +24,7 @@
 
 using GongSolutions.Wpf.DragDrop;
 using ICSharpCode.Core.Presentation;
+using ICSharpCode.SharpDevelop.Workbench;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -40,7 +41,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	/// <summary>
 	/// Interaction logic for UserControl1.xaml
 	/// </summary>
-	public partial class ProjectBrowseControl : UserControl, IProjectBrowseView, ICSharpCode.SharpDevelop.Gui.IPadContent
+	public partial class ProjectBrowseControl : UserControl, IProjectBrowseView, IPadContent
 	{
 		private ProjectBrowseController _controller;
 

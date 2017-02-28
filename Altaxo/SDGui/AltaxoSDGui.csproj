@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -28,7 +28,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -55,7 +55,7 @@
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo</DefineConstants>
-    <DocumentationFile>..\..\rtDir\bin\AltaxoSDGui.XML</DocumentationFile>
+    <DocumentationFile>..\..\rtDir\bin\AltaxoSDGui.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -66,6 +66,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\..\rtDir\bin\</OutputPath>
@@ -75,7 +76,7 @@
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>TRACE;ModifiedForAltaxo</DefineConstants>
-    <DocumentationFile>..\..\rtDir\bin\AltaxoSDGui.XML</DocumentationFile>
+    <DocumentationFile>..\..\rtDir\bin\AltaxoSDGui.xml</DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -87,6 +88,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -104,6 +106,7 @@
     <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
     <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>..\..\rtDir\bin\</OutputPath>
@@ -121,6 +124,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
     <DocumentationFile>..\..\rtDir\bin\AltaxoSDGui.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -128,6 +132,11 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\AssembliesOnly\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -145,31 +154,19 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\..\Libraries\SD\AddIns\DisplayBindings\AvalonEdit.AddIn\AvalonEdit.AddIn.csproj">
-      <Project>{0162E499-42D0-409B-AA25-EED21F75336B}</Project>
-      <Name>AvalonEdit.AddIn</Name>
+    <ProjectReference Include="..\..\Libraries\AvalonDock\AvalonDock\AvalonDock.csproj">
+      <Project>{87e61430-4243-45f2-b74e-0a4c096cebf3}</Project>
+      <Name>AvalonDock</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\SD\Libraries\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
-      <Project>{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}</Project>
-      <Name>ICSharpCode.AvalonEdit</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\SD\Main\Core\Project\ICSharpCode.Core.csproj">
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.Core\ICSharpCode.Core.csproj">
       <Project>{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}</Project>
       <Name>ICSharpCode.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\SD\Main\ICSharpCode.Core.Presentation\ICSharpCode.Core.Presentation.csproj">
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.Core.Presentation\ICSharpCode.Core.Presentation.csproj">
       <Project>{7E4A7172-7FF5-48D0-B719-7CD959DD1AC9}</Project>
       <Name>ICSharpCode.Core.Presentation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\SD\Main\ICSharpCode.Core.WinForms\ICSharpCode.Core.WinForms.csproj">
-      <Project>{857CA1A3-FC88-4BE0-AB6A-D1EE772AB288}</Project>
-      <Name>ICSharpCode.Core.WinForms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\SD\Main\ICSharpCode.SharpDevelop.Dom\Project\ICSharpCode.SharpDevelop.Dom.csproj">
-      <Project>{924EE450-603D-49C1-A8E5-4AFAA31CE6F3}</Project>
-      <Name>ICSharpCode.SharpDevelop.Dom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\SD\Main\Base\Project\ICSharpCode.SharpDevelop.csproj">
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.Base\ICSharpCode.SharpDevelop.csproj">
       <Project>{2748AD25-9C63-4E12-877B-4DCE96FBED54}</Project>
       <Name>ICSharpCode.SharpDevelop</Name>
     </ProjectReference>
@@ -185,11 +182,16 @@
       <Project>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</Project>
       <Name>AltaxoBase</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CodeEditing\AltaxoCodeEditing.csproj">
+      <Project>{3e93faf9-d791-4f48-b925-623257b6fcbe}</Project>
+      <Name>AltaxoCodeEditing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\AltaxoCore.csproj">
       <Name>AltaxoCore</Name>
       <Project>{7045C197-9DA8-4FA4-886C-992ACADD838F}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
@@ -208,6 +210,15 @@
     <Compile Include="Com\OleObjectBase.cs" />
     <Compile Include="Com\RegistryHelper.cs" />
     <Compile Include="Com\RunningObjectTableHelper.cs" />
+    <Compile Include="Gui\Common\CustomDialog.xaml.cs">
+      <DependentUpon>CustomDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\SaveErrorInformDialog.xaml.cs">
+      <DependentUpon>SaveErrorInformDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\SaveErrorChooseDialog.xaml.cs">
+      <DependentUpon>SaveErrorChooseDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Pads\LightingPad\LightingControl.xaml.cs">
       <DependentUpon>LightingControl.xaml</DependentUpon>
     </Compile>
@@ -218,6 +229,48 @@
     <Compile Include="Gui\Pads\ProjectBrowser\ListView_DragHandler.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\TreeView_DropHandler.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\ListView_DropHandler.cs" />
+    <Compile Include="Gui\Workbench\ExceptionBox.xaml.cs">
+      <DependentUpon>ExceptionBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Main\Services\MessageServiceImpl.cs" />
+    <Compile Include="Main\Services\PropertyService.cs" />
+    <Compile Include="Main\Services\RoslynScriptCompilerService.cs" />
+    <Compile Include="Gui\Startup\AltaxoStartupMain.cs" />
+    <Compile Include="Gui\Startup\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Startup\CallHelper.cs" />
+    <Compile Include="Gui\Startup\FileEventArgs.cs" />
+    <Compile Include="Gui\Startup\SharpDevelopHost.cs" />
+    <Compile Include="Gui\Startup\SplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\Startup\StartupSettings.cs" />
+    <Compile Include="Gui\Workbench\AvalonDockLayout.cs" />
+    <Compile Include="Gui\Workbench\AvalonPadContent.cs" />
+    <Compile Include="Gui\Workbench\AvalonWorkbenchWindow.cs" />
+    <Compile Include="Gui\Workbench\ChooseLayoutComboBox.cs" />
+    <Compile Include="Gui\Workbench\DispatcherMessageLoop.cs" />
+    <Compile Include="Gui\Workbench\DisplayBinding\AutoDetectDisplayBinding.cs" />
+    <Compile Include="Gui\Workbench\DisplayBinding\DisplayBindingDoozer.cs" />
+    <Compile Include="Gui\Workbench\DisplayBinding\DisplayBindingService.cs" />
+    <Compile Include="Gui\Workbench\DisplayBinding\ShellExecuteDisplayBinding.cs" />
+    <Compile Include="Gui\Workbench\FileService.cs" />
+    <Compile Include="Gui\Workbench\FileServiceOpenedFile.cs" />
+    <Compile Include="Gui\Workbench\FullScreenEnabledWindow.cs" />
+    <Compile Include="Gui\Workbench\IDialogMessageService.cs" />
+    <Compile Include="Gui\Workbench\IWorkbenchLayout.cs" />
+    <Compile Include="Gui\Workbench\LayoutConfiguration.cs" />
+    <Compile Include="Gui\Workbench\PadServiceProvider.cs" />
+    <Compile Include="Gui\Workbench\RecentOpen.cs" />
+    <Compile Include="Gui\Workbench\RunWorkbenchException.cs" />
+    <Compile Include="Gui\Workbench\SDStatusBar.cs" />
+    <Compile Include="Gui\Workbench\ShutdownService.cs" />
+    <Compile Include="Gui\Workbench\StatusBarService.cs" />
+    <Compile Include="Gui\Workbench\WorkbenchSettings.cs" />
+    <Compile Include="Gui\Workbench\WorkbenchStartup.cs" />
+    <Compile Include="Gui\Workbench\WpfSynchronizeInvoke.cs" />
+    <Compile Include="Gui\Workbench\AltaxoWorkbench.cs" />
     <Compile Include="Main\MenuCommands\EmbeddedObjectModeEvaluator.cs" />
     <Compile Include="Main\MenuCommands\TableDataSourcePresentCondition.cs" />
     <Compile Include="Main\IProjectItemDisplayBindingDescriptor.cs" />
@@ -277,13 +330,16 @@
     <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.xaml.cs">
       <DependentUpon>ProjectBrowseControl.xaml</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Resources\SplashScreen.jpg" />
+    <Content Include="AltaxoCore.addin">
+      <SubType>Designer</SubType>
+    </Content>
     <Compile Include="Gui\Scripting\SDPureScriptControlWpf.xaml.cs">
       <DependentUpon>SDPureScriptControlWpf.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Settings\SettingsController.cs" />
-    <Compile Include="Gui\SharpDevelop\AltaxoSDWorkbench.cs" />
     <Compile Include="Gui\SharpDevelop\SDGraphViewContent.cs" />
-    <Compile Include="Gui\SharpDevelop\SDWorksheetViewContentWpf.cs" />
+    <Compile Include="Gui\SharpDevelop\SDWorksheetViewContent.cs" />
     <Compile Include="Main\ColorSetDoozer.cs" />
     <Compile Include="Main\NamedColorDoozer.cs" />
     <Compile Include="Main\OptionPanelDoozer.cs" />
@@ -319,8 +375,7 @@
     <Compile Include="Main\ProjectService.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Main\Services\ParserServiceConnector.cs" />
-    <Compile Include="Main\Services\PropertyService.cs" />
+    <None Include="Main\Services\ParserServiceConnector.cs" />
     <Compile Include="Main\TextureDoozer.cs" />
     <Compile Include="Main\ZippedStreamWrapper.cs">
       <SubType>Code</SubType>
@@ -344,6 +399,18 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Gui\Common\CustomDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\SaveErrorInformDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\SaveErrorChooseDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Pads\FileBrowser\FileBrowserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -360,15 +427,35 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Startup\App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Workbench\AltaxoWorkbench.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Workbench\ExceptionBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\AltaxoBitmap.resources" />
+    <EmbeddedResource Include="Resources\AltaxoString.resources" />
+    <EmbeddedResource Include="Resources\BitmapResources.resources" />
+    <EmbeddedResource Include="Resources\StringResources.resources" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
   <Target Name="BeforeBuild">
     <GitVersionFile TemplateFile="AssemblyInfo.cs" DestinationFile="AssemblyInfo.autogenerated.cs" SettingsFile="..\..\MSBuildVersioning.xml" />
   </Target>
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>if not exist $(SolutionDir)rtDir\AddIns mkdir $(SolutionDir)rtDir\AddIns
+copy $(ProjectDir)AltaxoCore.addin $(SolutionDir)rtDir\AddIns
+del $(SolutionDir)rtDir\AddIns\ICSharpCode.SharpDevelop.addin</PreBuildEvent>
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>

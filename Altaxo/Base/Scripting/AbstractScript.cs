@@ -23,8 +23,10 @@
 #endregion Copyright
 
 using Altaxo.Main.Services;
+using Altaxo.Main.Services.ScriptCompilation;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Reflection;
 
 namespace Altaxo.Scripting
@@ -122,13 +124,20 @@ namespace Altaxo.Scripting
 		/// <returns>True if successfully compiles, otherwise false.</returns>
 		bool Compile();
 
+		bool SetCompilerResult(IScriptCompilerResult result);
+
 		/// <summary>
 		/// Returns the compiler errors as array of strings.
 		/// </summary>
-		IList<string> Errors // TODO NET45 replace with IReadonlyList<string>
+		IReadOnlyList<ICompilerDiagnostic> Errors
 		{
 			get;
 		}
+
+		/// <summary>
+		/// Clears the errors.
+		/// </summary>
+		void ClearErrors();
 
 		/// <summary>
 		/// Copies the content of a script to here.
@@ -208,7 +217,7 @@ namespace Altaxo.Scripting
 		/// try to execute the script. That's the reason for holding the compiler error messages
 		/// here and not in the script dialog.</remarks>
 		[NonSerialized()]
-		protected IList<string> _errors = null; // TODO NET45 replace with IReadonlyList<string>
+		protected IReadOnlyList<ICompilerDiagnostic> _errors = ImmutableArray<ICompilerDiagnostic>.Empty;
 
 		#region Serialization
 
@@ -277,7 +286,7 @@ namespace Altaxo.Scripting
 
 			this._wasTriedToCompile = forModification ? false : from._wasTriedToCompile;
 
-			this._errors = null == from._errors ? null : new List<string>(from._errors);
+			this._errors = from._errors; // immutable
 
 			this._compilerResult = forModification ? null : from._compilerResult; // (not cloning is intented here)
 
@@ -295,9 +304,14 @@ namespace Altaxo.Scripting
 		/// <summary>
 		/// Returns the compiler errors as array of strings.
 		/// </summary>
-		public IList<string> Errors // TODO NET45 replace with IReadonlyList<string>
+		public IReadOnlyList<ICompilerDiagnostic> Errors
 		{
 			get { return _errors; }
+		}
+
+		public void ClearErrors()
+		{
+			_errors = ImmutableArray<ICompilerDiagnostic>.Empty;
 		}
 
 		public Assembly ScriptAssembly
@@ -398,7 +412,7 @@ namespace Altaxo.Scripting
 				{
 					_scriptText = this.CodeHeader + this.CodeStart + this.CodeUserDefault + this.CodeEnd + this.CodeTail;
 				}
-				return Main.Services.ScriptCompilerService.ComputeScriptTextHash(_scriptText);
+				return Main.Services.ScriptCompilation.ScriptCompilerService.ComputeScriptTextHash(_scriptText);
 			}
 		}
 
@@ -510,14 +524,12 @@ namespace Altaxo.Scripting
 
 					if (null == scriptObject)
 					{
-						_errors = new string[1];
-						_errors[0] = string.Format("Unable to create scripting object  (expected type: {0}), please verify namespace and class name!\n", this.ScriptObjectType);
+						_errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, string.Format("Unable to create scripting object  (expected type: {0}), please verify namespace and class name!\n", this.ScriptObjectType)));
 					}
 				}
 				catch (Exception ex)
 				{
-					_errors = new string[1];
-					_errors[0] = string.Format("Exception during creation of scripting object: {0}\n", ex.Message);
+					_errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, string.Format("Exception during creation of scripting object: {0}\n", ex.Message)));
 				}
 			}
 			return scriptObject;
@@ -537,7 +549,13 @@ namespace Altaxo.Scripting
 			if (_compilerResult != null)
 				return true;
 
-			_compilerResult = ScriptCompilerService.Compile(new string[] { ScriptText });
+			return SetCompilerResult(ScriptCompilerService.Compile(new string[] { ScriptText }));
+		}
+
+		public virtual bool SetCompilerResult(IScriptCompilerResult result)
+		{
+			_scriptText = result.ScriptText(0);
+			_compilerResult = result;
 			bool bSucceeded = (_compilerResult is IScriptCompilerSuccessfulResult);
 
 			if (_compilerResult is IScriptCompilerSuccessfulResult)

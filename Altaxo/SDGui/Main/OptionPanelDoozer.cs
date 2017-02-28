@@ -127,7 +127,7 @@ namespace Altaxo.Main
 			{
 				if (args.Codon.Properties.Contains("class"))
 				{
-					return new DefaultOptionPanelDescriptor(id, StringParser.Parse(label), args.AddIn, args.Caller, args.Codon["class"]);
+					return new DefaultOptionPanelDescriptor(id, StringParser.Parse(label), args.AddIn, null, args.Codon["class"]);
 				}
 				else
 				{

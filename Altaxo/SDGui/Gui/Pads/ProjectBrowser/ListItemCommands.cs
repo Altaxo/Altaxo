@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using ICSharpCode.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,7 +112,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 	}
 
-	public class CmdViewOnSelectListNodeOff : ProjectBrowseControllerCommand, ICSharpCode.Core.ICheckableMenuCommand
+	public class CmdViewOnSelectListNodeOff : ProjectBrowseControllerCommand, ICheckableMenuCommand
 	{
 		public event EventHandler IsCheckedChanged;
 
@@ -124,15 +125,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		#region ICheckableMenuCommand Members
 
-		public bool IsChecked
+		public bool IsChecked(object parameter)
 		{
-			get
-			{
-				return !Ctrl.ViewOnSelectListNodeOn;
-			}
-			set
-			{
-			}
+			return ((ProjectBrowseController)parameter).ViewOnSelectListNodeOn;
 		}
 
 		#endregion ICheckableMenuCommand Members
@@ -168,15 +163,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		#region ICheckableMenuCommand Members
 
-		public bool IsChecked
+		public bool IsChecked(object parameter)
 		{
-			get
-			{
-				return Ctrl.ViewOnSelectListNodeOn;
-			}
-			set
-			{
-			}
+			return ((ProjectBrowseController)parameter).ViewOnSelectListNodeOn;
 		}
 
 		#endregion ICheckableMenuCommand Members

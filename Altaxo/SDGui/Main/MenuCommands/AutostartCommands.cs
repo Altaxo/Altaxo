@@ -66,7 +66,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 
 		private static void ShowWinFormContextMenu(object parent, object owner, string addInPath, double x, double y)
 		{
-			ICSharpCode.Core.WinForms.MenuService.ShowContextMenu(owner, addInPath, (System.Windows.Forms.Control)parent, (int)x, (int)y);
+			throw new NotImplementedException(); //			ICSharpCode.Core.WinForms.MenuService.ShowContextMenu(owner, addInPath, (System.Windows.Forms.Control)parent, (int)x, (int)y);
 		}
 
 		private static void ShowWpfContextMenu(object parent, object owner, string addInPath, double x, double y)
@@ -90,7 +90,9 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 				if (entry.Item2)
 					ColorSetManager.Instance.DeclareAsPlotColorList(storedList);
 			}
-			Altaxo.Main.Services.ParserServiceConnector.Initialize();
+
+			Altaxo.Main.Services.ScriptCompilation.ScriptCompilerService.Instance = new Altaxo.Main.Services.ScriptCompilation.RoslynScriptCompilerService();
+
 			Altaxo.Serialization.AutoUpdates.UpdateDownloaderStarter.Run();
 		}
 
@@ -107,7 +109,8 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 
 			public System.Drawing.Bitmap GetBitmap(string name)
 			{
-				return ICSharpCode.Core.WinForms.WinFormsResourceService.GetBitmap(name);
+				var result = ICSharpCode.SharpDevelop.SD.ResourceService.GetImageResource(name);
+				return (System.Drawing.Bitmap)result;
 			}
 		}
 

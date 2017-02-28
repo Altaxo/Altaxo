@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -28,7 +28,7 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -43,7 +43,8 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\rtDir\bin\</OutputPath>
@@ -53,7 +54,7 @@
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <DocumentationFile>..\..\rtDir\bin\AltaxoBase.XML</DocumentationFile>
+    <DocumentationFile>..\..\rtDir\bin\AltaxoBase.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -64,6 +65,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\..\rtDir\bin\</OutputPath>
@@ -73,7 +75,7 @@
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>..\..\rtDir\bin\AltaxoBase.XML</DocumentationFile>
+    <DocumentationFile>..\..\rtDir\bin\AltaxoBase.xml</DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -85,6 +87,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DesignTimeDebugging|AnyCPU' ">
     <OutputPath>..\..\rtDir\bin\</OutputPath>
@@ -94,7 +97,7 @@
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\rtDir\bin\AltaxoBase.XML</DocumentationFile>
+    <DocumentationFile>..\..\rtDir\bin\AltaxoBase.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
@@ -106,6 +109,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -122,6 +126,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
     <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>..\..\rtDir\bin\</OutputPath>
@@ -139,6 +144,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <DocumentationFile>..\..\rtDir\bin\AltaxoBase.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DesignTimeDebugging|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -155,11 +161,16 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <DocumentationFile>..\..\rtDir\bin\AltaxoBase.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System">
       <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\AssembliesOnly\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -810,18 +821,30 @@
     <Compile Include="Gui\Analysis\Fourier\RealFourierTransformation2DController.cs" />
     <Compile Include="Gui\UserInteractionLevel.cs" />
     <Compile Include="Gui\Worksheet\ImportAsciiDataSourceController.cs" />
+    <Compile Include="Main\CallbackOnDispose.cs" />
     <Compile Include="Main\Commands\TestAllProjectsInFolder.cs" />
     <Compile Include="Main\DocumentNodeAndName.cs" />
     <Compile Include="Main\IProjectItemCollection.cs" />
     <Compile Include="Main\IProjectItemImageExporter.cs" />
     <Compile Include="Main\IProjectItemViewModel.cs" />
     <Compile Include="Main\ItemDefinitionLevel.cs" />
+    <Compile Include="Main\Properties\PropertyBagLazyLoaded.cs" />
     <Compile Include="Main\RelativeDocumentPath.cs" />
     <Compile Include="Main\EventInterfaces.cs" />
     <Compile Include="Main\SelfAccumulateableEventArgs.cs" />
     <Compile Include="Main\IProjectItem.cs" />
+    <Compile Include="Main\Services\ScriptCompilation\CodeTextsWithHash.cs" />
+    <Compile Include="Main\Services\ScriptCompilation\CompilerDiagnostic.cs" />
+    <Compile Include="Main\Services\ScriptCompilation\ConcurrentScriptCompilerResultDictionary.cs" />
+    <Compile Include="Main\Services\ScriptCompilation\ICompilerDiagnostic.cs" />
+    <Compile Include="Main\Services\ScriptCompilation\IScriptCompilerFailedResult.cs" />
+    <Compile Include="Main\Services\ScriptCompilation\IScriptCompilerResult.cs" />
+    <Compile Include="Main\Services\ScriptCompilation\IScriptCompilerService.cs" />
     <Compile Include="Main\Services\OutputServiceBase.cs" />
     <Compile Include="Main\Services\OutputServiceTemporary.cs" />
+    <Compile Include="Main\Services\ScriptCompilation\IScriptCompilerSuccessfulResult.cs" />
+    <Compile Include="Main\Services\ScriptCompilation\ScriptCompilerFailedResult.cs" />
+    <Compile Include="Main\Services\ScriptCompilation\ScriptCompilerSuccessfulResult.cs" />
     <Compile Include="Main\SimpleCollectionChangedEventArgs.cs" />
     <Compile Include="Main\SuspendableDocumentLeafNode.cs" />
     <Compile Include="Main\SuspendableDocumentLeafNodeWithEventArgs.cs" />
@@ -1189,7 +1212,7 @@
     <Compile Include="Main\Services\ReflectionService.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Main\Services\ScriptCompilerService.cs" />
+    <Compile Include="Main\Services\ScriptCompilation\ScriptCompilerService.cs" />
     <Compile Include="Root\Current.cs">
       <SubType>Code</SubType>
     </Compile>

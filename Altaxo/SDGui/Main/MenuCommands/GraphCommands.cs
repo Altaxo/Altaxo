@@ -36,11 +36,12 @@ using Altaxo.Gui.Scripting;
 using Altaxo.Main;
 using Altaxo.Scripting;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpZipLib.Zip;
 using System;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Windows.Input;
 
 namespace Altaxo.Graph.Commands
 {
@@ -1080,34 +1081,41 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
-	public class FontSizeChooser : AbstractComboBoxCommand
+	public class FontSizeChooser : System.Windows.Controls.ComboBox, ICommand
 	{
-		private System.Windows.Controls.ComboBox comboBox;
+		public event EventHandler CanExecuteChanged;
 
-		protected override void OnOwnerChanged(EventArgs e)
+		public FontSizeChooser()
 		{
-			base.OnOwnerChanged(e);
+			Initialize();
+		}
 
-			comboBox = (System.Windows.Controls.ComboBox)this.ComboBox;
-			comboBox.IsEditable = true;
+		protected void Initialize()
+		{
+			this.IsEditable = true;
 
-			comboBox.Items.Add("8 pt");
-			comboBox.Items.Add("10 pt");
-			comboBox.Items.Add("12 pt");
-			comboBox.Items.Add("24 pt");
+			this.Items.Add("8 pt");
+			this.Items.Add("10 pt");
+			this.Items.Add("12 pt");
+			this.Items.Add("24 pt");
 
-			comboBox.KeyDown += comboBox_KeyDown;
+			this.KeyDown += comboBox_KeyDown;
 		}
 
 		private void comboBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
 		{
 			if (e.Key == System.Windows.Input.Key.Enter)
-				Run();
+				Execute(null);
 		}
 
-		public override void Run()
+		public bool CanExecute(object parameter)
 		{
-			if (string.IsNullOrEmpty(comboBox.Text))
+			return true;
+		}
+
+		public void Execute(object parameter)
+		{
+			if (string.IsNullOrEmpty(this.Text))
 				return;
 
 			Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl
@@ -1120,8 +1128,8 @@ namespace Altaxo.Graph.Commands
 			Altaxo.Serialization.LengthUnit unit = Altaxo.Serialization.LengthUnit.Point;
 			string number;
 			double value;
-			if (Altaxo.Serialization.GUIConversion.IsDouble(comboBox.Text, out value) ||
-				(Altaxo.Serialization.LengthUnit.TryParse(comboBox.Text, out unit, out number) &&
+			if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out value) ||
+				(Altaxo.Serialization.LengthUnit.TryParse(this.Text, out unit, out number) &&
 					Altaxo.Serialization.GUIConversion.IsDouble(number, out value)))
 			{
 				if (unit != null)
@@ -1131,39 +1139,47 @@ namespace Altaxo.Graph.Commands
 
 				ctrl.Controller.SetSelectedObjectsProperty(new RoutedSetterProperty<double>("FontSize", value));
 
-				if (!comboBox.Items.Contains(normalizedEntry))
-					comboBox.Items.Add(normalizedEntry);
+				if (!this.Items.Contains(normalizedEntry))
+					this.Items.Add(normalizedEntry);
 			}
 		}
 	}
 
-	public class StrokeWidthChooser : AbstractComboBoxCommand
+	public class StrokeWidthChooser : System.Windows.Controls.ComboBox, ICommand
 	{
-		private System.Windows.Controls.ComboBox comboBox;
+		public event EventHandler CanExecuteChanged;
 
-		protected override void OnOwnerChanged(EventArgs e)
+		public StrokeWidthChooser()
 		{
-			base.OnOwnerChanged(e);
-			comboBox = (System.Windows.Controls.ComboBox)this.ComboBox;
-			comboBox.IsEditable = true;
+			Initialize();
+		}
 
-			comboBox.Items.Add("8 pt");
-			comboBox.Items.Add("10 pt");
-			comboBox.Items.Add("12 pt");
-			comboBox.Items.Add("24 pt");
+		protected void Initialize()
+		{
+			IsEditable = true;
 
-			comboBox.KeyDown += EhKeyDown;
+			Items.Add("8 pt");
+			Items.Add("10 pt");
+			Items.Add("12 pt");
+			Items.Add("24 pt");
+
+			KeyDown += EhKeyDown;
 		}
 
 		private void EhKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
 		{
 			if (e.Key == System.Windows.Input.Key.Enter)
-				Run();
+				Execute(null);
 		}
 
-		public override void Run()
+		public bool CanExecute(object parameter)
 		{
-			if (string.IsNullOrEmpty(comboBox.Text))
+			return true;
+		}
+
+		public void Execute(object parameter)
+		{
+			if (string.IsNullOrEmpty(this.Text))
 				return;
 
 			Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl
@@ -1176,8 +1192,8 @@ namespace Altaxo.Graph.Commands
 			Altaxo.Serialization.LengthUnit unit = Altaxo.Serialization.LengthUnit.Point;
 			string number;
 			double value;
-			if (Altaxo.Serialization.GUIConversion.IsDouble(comboBox.Text, out value) ||
-				(Altaxo.Serialization.LengthUnit.TryParse(comboBox.Text, out unit, out number) &&
+			if (Altaxo.Serialization.GUIConversion.IsDouble(this.Text, out value) ||
+				(Altaxo.Serialization.LengthUnit.TryParse(this.Text, out unit, out number) &&
 					Altaxo.Serialization.GUIConversion.IsDouble(number, out value)))
 			{
 				if (unit != null)
@@ -1187,36 +1203,44 @@ namespace Altaxo.Graph.Commands
 
 				ctrl.Controller.SetSelectedObjectsProperty(new RoutedSetterProperty<double>("StrokeWidth", value));
 
-				if (!comboBox.Items.Contains(normalizedEntry))
-					comboBox.Items.Add(normalizedEntry);
+				if (!this.Items.Contains(normalizedEntry))
+					this.Items.Add(normalizedEntry);
 			}
 		}
 	}
 
-	public class FontFamilyChooser : AbstractComboBoxCommand
+	public class FontFamilyChooser : System.Windows.Controls.ComboBox, ICommand
 	{
-		private System.Windows.Controls.ComboBox comboBox;
+		public event EventHandler CanExecuteChanged;
 
-		protected override void OnOwnerChanged(EventArgs e)
+		public FontFamilyChooser()
 		{
-			base.OnOwnerChanged(e);
-			comboBox = (System.Windows.Controls.ComboBox)this.ComboBox;
-			comboBox.KeyDown += EhKeyDown;
+			Initialize();
+		}
+
+		protected void Initialize()
+		{
+			KeyDown += EhKeyDown;
 
 			// Fill with all available font families
 			foreach (var famName in GdiFontManager.EnumerateAvailableGdiFontFamilyNames().OrderBy(x => x))
-				comboBox.Items.Add(famName);
+				Items.Add(famName);
 		}
 
 		private void EhKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
 		{
 			if (e.Key == System.Windows.Input.Key.Enter)
-				Run();
+				Execute(null);
 		}
 
-		public override void Run()
+		public bool CanExecute(object parameter)
 		{
-			if (string.IsNullOrEmpty(comboBox.Text))
+			return true;
+		}
+
+		public void Execute(object parameter)
+		{
+			if (string.IsNullOrEmpty(this.Text))
 				return;
 
 			Altaxo.Gui.SharpDevelop.SDGraphViewContent ctrl
@@ -1225,7 +1249,7 @@ namespace Altaxo.Graph.Commands
 			if (null == ctrl)
 				return;
 
-			ctrl.Controller.SetSelectedObjectsProperty(new RoutedSetterProperty<string>("FontFamily", comboBox.Text));
+			ctrl.Controller.SetSelectedObjectsProperty(new RoutedSetterProperty<string>("FontFamily", this.Text));
 		}
 	}
 }

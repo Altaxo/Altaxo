@@ -124,6 +124,8 @@ namespace Altaxo.Serialization.Xml
 
 		void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent);
 
+		string GetElementAsOuterXml(string name);
+
 		/// <summary>
 		/// Gets the property dictionary. This is a dictionary where some string/value pairs could be stored, and used during or after deserialization
 		/// </summary>

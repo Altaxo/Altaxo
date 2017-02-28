@@ -160,9 +160,9 @@ namespace Altaxo.Graph.Graph3D.Commands
 	/// <summary>
 	/// Taken from Commands.MenuItemBuilders. See last line for change.
 	/// </summary>
-	public class LayerItemsBuilder : ICSharpCode.Core.Presentation.IMenuItemBuilder
+	public class LayerItemsBuilder : IMenuItemBuilder
 	{
-		public System.Collections.ICollection BuildItems(Codon codon, object owner)
+		public IEnumerable<object> BuildItems(Codon codon, object owner)
 		{
 			var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraph3DViewContent;
 			if (null == ctrl)
@@ -173,7 +173,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 
 			int actPA = ctrl.Controller.CurrentPlotNumber;
 			int len = activeLayer.PlotItems.Flattened.Length;
-			var items = new System.Collections.ArrayList();
+			var items = new List<object>();
 			for (int i = 0; i < len; i++)
 			{
 				IGPlotItem pa = activeLayer.PlotItems.Flattened[i];

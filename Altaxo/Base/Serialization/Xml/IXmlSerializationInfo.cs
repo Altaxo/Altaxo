@@ -100,5 +100,11 @@ namespace Altaxo.Serialization.Xml
 		void AddBaseValueStandalone(string name, object o, System.Type basetype);
 
 		XmlArrayEncoding DefaultArrayEncoding { get; set; }
+
+		/// <summary>
+		/// Writes a raw Xml string. This can be used for instance if the string to write was lazy loaded from another Xml document.
+		/// </summary>
+		/// <param name="rawXmlString">The raw XML string.</param>
+		void WriteRaw(string rawXmlString);
 	}
 }

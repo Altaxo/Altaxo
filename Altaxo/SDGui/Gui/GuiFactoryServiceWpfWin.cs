@@ -74,16 +74,16 @@ namespace Altaxo.Gui
 			}
 		}
 
-		internal bool? InternalShowModalWindow(System.Windows.Window w)
+		internal bool? InternalShowModalWindow(System.Windows.Window window)
 		{
-			if (null == w)
-				throw new ArgumentNullException("w");
+			if (null == window)
+				throw new ArgumentNullException(nameof(window));
 
-			w.Owner = TopmostModalWindow;
-			_modalWindows.Push(w);
+			window.Owner = TopmostModalWindow;
+			_modalWindows.Push(window);
 			try
 			{
-				return w.ShowDialog();
+				return window.ShowDialog();
 			}
 			finally
 			{
@@ -131,6 +131,16 @@ namespace Altaxo.Gui
 		public override IAsyncResult BeginInvoke(Delegate act, object[] args)
 		{
 			return Current.Workbench.SynchronizingObject.BeginInvoke(act, args);
+		}
+
+		/// <summary>
+		/// Shows a window as a modal window.
+		/// </summary>
+		/// <param name="window">The window.</param>
+		/// <returns></returns>
+		public bool? ShowDialog(System.Windows.Window window)
+		{
+			return Evaluate(InternalShowModalWindow, window);
 		}
 
 		/// <summary>

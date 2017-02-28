@@ -117,7 +117,7 @@ namespace Altaxo.Com
 
 			Action guiAction;
 			System.Threading.AutoResetEvent myEvent;
-			for (; ; )
+			for (;;)
 			{
 				lock (data)
 				{

@@ -24,7 +24,8 @@
 
 using Altaxo.Graph.Gdi;
 using Altaxo.Gui.Graph.Gdi.Viewing;
-using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.WinForms;
+using ICSharpCode.SharpDevelop.Workbench;
 using System;
 using System.Collections.Generic;
 

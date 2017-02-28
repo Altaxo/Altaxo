@@ -23,7 +23,8 @@
 #endregion Copyright
 
 using Altaxo.Graph.Graph3D;
-using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.WinForms;
+using ICSharpCode.SharpDevelop.Workbench;
 using System;
 using System.Collections.Generic;
 

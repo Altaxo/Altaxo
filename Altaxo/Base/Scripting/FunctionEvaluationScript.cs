@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+using Altaxo.Main.Services.ScriptCompilation;
 using System;
+using System.Collections.Immutable;
 
 namespace Altaxo.Scripting
 {
@@ -194,7 +196,7 @@ namespace Altaxo.Scripting
 
 			if (null == _scriptObject)
 			{
-				_errors = new string[1] { "Script Object is null" };
+				_errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
 				return double.NaN;
 			}
 

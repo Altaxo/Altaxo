@@ -25,6 +25,8 @@
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.WinForms;
+using ICSharpCode.SharpDevelop.Workbench;
 using System;
 using System.IO;
 
@@ -310,7 +312,7 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 				{
 					string fileName = fdiag.FileName;
 
-					if (!FileService.CheckFileName(fileName))
+					if (!SD.FileService.CheckFileName(fileName))
 					{
 						return;
 					}

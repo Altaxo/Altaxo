@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Workbench;
 using System;
 
 namespace Altaxo.Gui.Pads
@@ -31,7 +32,7 @@ namespace Altaxo.Gui.Pads
 	/// Responsible for showing the notes of worksheets and graph windows.
 	/// </summary>
 	public class NotesController :
-		ICSharpCode.SharpDevelop.Gui.IPadContent
+		IPadContent
 	{
 		private System.Windows.Controls.TextBox _view;
 
@@ -79,6 +80,9 @@ namespace Altaxo.Gui.Pads
 		{
 			SaveTextBoxTextToNotes(); // Saves the old text
 
+			if (null == _view)
+				return; // can happen during shutdown
+
 			// Clears the old binding
 			_textBinding = null; // to avoid updates when the text changed in the next line, and then the TextChanged event of the TextBox is triggered
 			System.Windows.Data.BindingOperations.ClearBinding(_view, System.Windows.Controls.TextBox.TextProperty);
@@ -107,10 +111,10 @@ namespace Altaxo.Gui.Pads
 
 			if (enable && _view.Text.Length > 0)
 			{
-				ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+				var ww = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 
 				var pad = WorkbenchSingleton.Workbench.GetPad(this.GetType());
-				WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(pad);
+				WorkbenchSingleton.Workbench.ActivatePad(pad);
 
 				// now focus back to the formerly active workbench window.
 				ww.SelectWindow();
@@ -160,6 +164,11 @@ namespace Altaxo.Gui.Pads
 			{
 				return null;
 			}
+		}
+
+		public object GetService(Type serviceType)
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion IPadContent Members

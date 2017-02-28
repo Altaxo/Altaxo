@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2017 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -37,10 +37,7 @@ namespace Altaxo
 		[STAThread]
 		private static void Main(string[] args)
 		{
-			string applicationFileName = System.Reflection.Assembly.GetEntryAssembly().Location;
-			var path = System.IO.Path.GetDirectoryName(applicationFileName);
-			var otherAppFileName = System.IO.Path.Combine(path, "AltaxoStartup.exe");
-			AppDomain.CurrentDomain.ExecuteAssembly(otherAppFileName, args);
+			Altaxo.Gui.Startup.AltaxoStartupMain.Main(args);
 		}
 	}
 }

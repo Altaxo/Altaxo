@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Workbench;
 using System;
 
 namespace Altaxo.Gui.Pads.LightingPad
@@ -30,7 +31,7 @@ namespace Altaxo.Gui.Pads.LightingPad
 	/// <summary>
 	/// Responsible for showing the notes of worksheets and graph windows.
 	/// </summary>
-	public class LightingController : ICSharpCode.SharpDevelop.Gui.IPadContent
+	public class LightingController : IPadContent
 	{
 		private LightingControl _view;
 
@@ -85,6 +86,9 @@ namespace Altaxo.Gui.Pads.LightingPad
 
 		private void EhActiveWorkbenchWindowChanged(object sender, EventArgs e)
 		{
+			if (null == _view)
+				return; // happens during shutdown
+
 			_currentActiveViewContent = new WeakReference(Current.Workbench.ActiveViewContent);
 
 			bool enable = true;
@@ -139,6 +143,11 @@ namespace Altaxo.Gui.Pads.LightingPad
 			{
 				return null;
 			}
+		}
+
+		public object GetService(Type serviceType)
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion IPadContent Members

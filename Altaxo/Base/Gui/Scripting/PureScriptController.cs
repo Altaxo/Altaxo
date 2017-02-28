@@ -31,8 +31,6 @@ namespace Altaxo.Gui.Scripting
 
 	public interface IPureScriptView
 	{
-		IPureScriptViewEventSink Controller { get; set; }
-
 		string ScriptText { get; set; }
 
 		int ScriptCursorLocation { set; }
@@ -42,10 +40,6 @@ namespace Altaxo.Gui.Scripting
 		void SetScriptCursorLocation(int line, int column);
 
 		void MarkText(int pos1, int pos2);
-	}
-
-	public interface IPureScriptViewEventSink
-	{
 	}
 
 	public interface IPureScriptController : IMVCANController
@@ -80,7 +74,7 @@ namespace Altaxo.Gui.Scripting
 	/// </summary>
 	[UserControllerForObject(typeof(IPureScriptText))]
 	[ExpectedTypeOfView(typeof(IPureScriptView))]
-	public class PureScriptController : IPureScriptController, IPureScriptViewEventSink
+	public class PureScriptController : IPureScriptController
 	{
 		private IPureScriptView _view;
 		private IPureScriptText _doc;
@@ -128,6 +122,14 @@ namespace Altaxo.Gui.Scripting
 				_view.ScriptText = _doc.ScriptText;
 		}
 
+		public void AttachView()
+		{
+		}
+
+		public void DetachView()
+		{
+		}
+
 		#region IMVCController Members
 
 		public object ModelObject
@@ -146,15 +148,18 @@ namespace Altaxo.Gui.Scripting
 			}
 			set
 			{
-				if (_view != null)
-					_view.Controller = null;
+				if (null != _view)
+				{
+					DetachView();
+				}
 
 				_view = value as IPureScriptView;
 
-				Initialize();
-
-				if (_view != null)
-					_view.Controller = this;
+				if (null != _view)
+				{
+					Initialize();
+					AttachView();
+				}
 			}
 		}
 

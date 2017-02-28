@@ -7,6 +7,9 @@
 	</Manifest>
 
 	<Runtime>
+		<Import assembly=":AltaxoBase" />
+		<Import assembly=":AltaxoBase.Presentation" />
+		<Import assembly=":AltaxoSDGui" />
 		<Import assembly="D3DPresentation.dll">
 			<Doozer name="Graph3DDisplayBinding" class="Altaxo.Main.Graph3DDisplayBindingDoozer" />
 			<Doozer name="Graph3DExportBinding" class="Altaxo.Main.Graph3DExportBindingDoozer" />

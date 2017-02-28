@@ -371,7 +371,7 @@ namespace Altaxo.Serialization.Xml
 						m_Writer.WriteAttributeString("Encoding", "Base64");
 						m_Writer.WriteStartElement("Base64");
 						int remainingBytes = count * sizeofelement;
-						for (int pos = 0; pos < remainingBytes; )
+						for (int pos = 0; pos < remainingBytes;)
 						{
 							int bytesToWrite = Math.Min(m_BufferSize, remainingBytes - pos);
 							System.Buffer.BlockCopy(val, pos, m_Buffer, 0, bytesToWrite);
@@ -387,7 +387,7 @@ namespace Altaxo.Serialization.Xml
 						m_Writer.WriteAttributeString("Encoding", "BinHex");
 						m_Writer.WriteStartElement("BinHex");
 						int remainingBytes = count * sizeofelement;
-						for (int pos = 0; pos < remainingBytes; )
+						for (int pos = 0; pos < remainingBytes;)
 						{
 							int bytesToWrite = Math.Min(m_BufferSize, remainingBytes - pos);
 							System.Buffer.BlockCopy(val, pos, m_Buffer, 0, bytesToWrite);
@@ -486,6 +486,15 @@ namespace Altaxo.Serialization.Xml
 				ss.Serialize(o, this);
 				m_Writer.WriteEndElement();
 			}
+		}
+
+		/// <summary>
+		/// Writes a raw Xml string. This can be used for instance if the string to write was lazy loaded from another Xml document.
+		/// </summary>
+		/// <param name="rawXmlString">The raw XML string.</param>
+		public void WriteRaw(string rawXmlString)
+		{
+			m_Writer.WriteRaw(rawXmlString);
 		}
 
 		#endregion IXmlSerializationInfo Members

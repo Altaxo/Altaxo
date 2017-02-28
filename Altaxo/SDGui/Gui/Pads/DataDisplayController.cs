@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Workbench;
 using System;
 
 namespace Altaxo.Gui.Pads
@@ -31,7 +32,7 @@ namespace Altaxo.Gui.Pads
 	/// Controls the data display window pad that shows the data obtained from the data reader.
 	/// </summary>
 	public class DataDisplayController :
-		ICSharpCode.SharpDevelop.Gui.IPadContent,
+		IPadContent,
 		Altaxo.Main.Services.IDataDisplayService
 	{
 		private System.Windows.Controls.TextBox _view;
@@ -65,6 +66,11 @@ namespace Altaxo.Gui.Pads
 			{
 				return null;
 			}
+		}
+
+		public object GetService(Type serviceType)
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion IPadContent Members

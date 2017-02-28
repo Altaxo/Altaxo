@@ -255,4 +255,12 @@ namespace Altaxo.Main.Commands
 				new WindowCommands.GraphTableNameComparer());
 		}
 	}
+
+	public class ToggleFullscreenCommand : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			Current.Workbench.FullScreen = !Current.Workbench.FullScreen;
+		}
+	}
 }

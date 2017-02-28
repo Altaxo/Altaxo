@@ -1,376 +1,354 @@
-﻿#region Copyright
-
-/////////////////////////////////////////////////////////////////////////////
-//    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with this program; if not, write to the Free Software
-//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//
-/////////////////////////////////////////////////////////////////////////////
-
-#endregion Copyright
-
+﻿using System.Threading.Tasks;
+using System.Text;
+using System.Linq;
+using System.Collections.Generic;
+using System;
 using Altaxo.Main.Properties;
 using ICSharpCode.Core;
+using ICSharpCode.SharpDevelop;
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
+using System.ComponentModel;
+using System.IO;
+using System.Threading;
+using System.Xml;
 
 namespace Altaxo.Main.Services
 {
-	public class PropertyService : Altaxo.Main.Services.IPropertyService
+	public class PropertyService : Altaxo.Main.Services.IPropertyService, ICSharpCode.Core.IPropertyService
 	{
-		/// <summary>Occurs when a property changed, argument is the key to the property that changed.</summary>
-		public event Action<string> PropertyChanged;
+		#region SharpDevelops member
 
-		#region Inner classes
+		/// <summary>
+		/// Key to store the <see cref="properties"/> collection inside the Altaxo user settings.
+		/// </summary>
+		private const string SharpDevelopsPropertiesKey = "BDD7395F-088C-4D14-9B41-4996AC0A4996_App-SDProperties";
 
-		private class PropertyBagWrapper : IPropertyBag
-		{
-			public PropertyService _parent;
+		private readonly ICSharpCode.Core.Properties properties;
 
-			protected Dictionary<string, object> _properties;
-			protected Dictionary<string, string> _guidToName;
+		private DirectoryName dataDirectory;
+		private DirectoryName configDirectory;
+		private FileName propertiesFileName;
 
-			public event EventHandler Changed;
+		#endregion SharpDevelops member
 
-			public PropertyBagWrapper(PropertyService s)
-			{
-				_parent = s;
-				_guidToName = new Dictionary<string, string>();
-				_properties = new Dictionary<string, object>();
-			}
+		#region Altaxo members
 
-			/// <summary>
-			/// Get a string that designates a temporary property (i.e. a property that is not stored permanently). If any property key starts with this prefix,
-			/// the propery is not serialized when saving the project to file.
-			/// </summary>
-			/// <value>
-			/// Temporary property prefix.
-			/// </value>
-			public string TemporaryPropertyPrefix
-			{
-				get
-				{
-					return PropertyBag.TemporaryPropertyPrefixString;
-				}
-			}
+		/// <summary>
+		/// The user settings bag is a bag that loads the properties lazy (as Xml string) during creation of this service.
+		/// See remarks for why this is neccessary.
+		/// </summary>
+		/// <remarks>The properties in UserSettings are lazy loaded, i.e. the property values are stored as string first. Only if the property is needed, the xml string
+		/// is converted into a regular value. This is neccessary, because some of the property values will required access
+		/// to other property values during deserialization. But the user settings are deserialized in the constructor of the property service,
+		/// and the property service is not installed in this moment. This will lead to NullReferenceException when the first deserialized
+		/// property value try to get the property service.</remarks>
+		protected PropertyBagLazyLoaded _userSettings;
 
-			public void Clear()
-			{
-				_guidToName.Clear();
-				_properties.Clear();
-			}
-
-			public int Count
-			{
-				get { return _properties.Count; }
-			}
-
-			public bool TryGetValue<T>(PropertyKey<T> p, out T value)
-			{
-				return TryGetValue<T>(p.GuidString, out value);
-			}
-
-			public bool TryGetValue<T>(string propName, out T value)
-			{
-				object resultObject;
-				if (_properties.TryGetValue(propName, out resultObject))
-				{
-					value = (T)resultObject;
-					return true;
-				}
-
-				if (_parent.TryGet<T>(propName, out value))
-				{
-					_properties[propName] = value;
-
-					if (value is Main.IDocumentLeafNode)
-						((Main.IDocumentLeafNode)value).ParentObject = SuspendableDocumentNode.StaticInstance;
-					return true;
-				}
-				return false;
-			}
-
-			public T GetValue<T>(PropertyKey<T> p)
-			{
-				T result;
-				if (TryGetValue<T>(p, out result))
-					return result;
-				else
-					return default(T);
-			}
-
-			public T GetValue<T>(PropertyKey<T> p, T defaultValue)
-			{
-				T result;
-				if (TryGetValue<T>(p, out result))
-					return result;
-				else
-					return defaultValue;
-			}
-
-			public T GetValue<T>(string propName)
-			{
-				T result;
-				if (TryGetValue<T>(propName, out result))
-					return result;
-				else
-					return default(T);
-			}
-
-			public bool RemoveValue<T>(PropertyKey<T> p)
-			{
-				return RemoveValue(p.GuidString);
-			}
-
-			public bool RemoveValue(string propName)
-			{
-				bool b1 = _properties.Remove(propName);
-				bool b2 = ICSharpCode.Core.PropertyService.Remove(propName);
-				return b1 | b2;
-			}
-
-			public void SetValue<T>(PropertyKey<T> p, T value)
-			{
-				if (Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(typeof(T), p.PropertyType))
-				{
-					SetValue<T>(p.GuidString, value);
-				}
-				else
-				{
-					throw new ArgumentException(string.Format("Type of the provided value is not compatible with the registered property"));
-				}
-			}
-
-			public void SetValue<T>(string propName, T value)
-			{
-				_properties[propName] = value;
-
-				if (!propName.StartsWith(TemporaryPropertyPrefix))
-					_parent.Set<T>(propName, value);
-			}
-
-			public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
-			{
-				return _properties.GetEnumerator();
-			}
-
-			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-			{
-				return _properties.GetEnumerator();
-			}
-
-			public void Dispose()
-			{
-			}
-
-			public bool CopyFrom(object from)
-			{
-				return false;
-			}
-
-			public object Clone()
-			{
-				return this;
-			}
-
-			public object ParentObject
-			{
-				get
-				{
-					return _parent;
-				}
-				set
-				{
-					_parent = value as PropertyService;
-				}
-			}
-
-			#region Change handling
-
-			protected virtual void OnChanged()
-			{
-				var p = _parent as Main.IChildChangedEventSink;
-				if (null != p)
-					p.EhChildChanged(this, EventArgs.Empty);
-
-				var ev = Changed;
-				if (null != ev)
-					ev(this, EventArgs.Empty);
-			}
-
-			#endregion Change handling
-		}
-
-		#endregion Inner classes
-
-		public IPropertyBag UserSettings { get; private set; }
+		public IPropertyBag UserSettings { get { return _userSettings; } }
 
 		public IPropertyBag ApplicationSettings { get; private set; }
 
 		public IPropertyBag BuiltinSettings { get; private set; }
 
-		public PropertyService()
-		{
-			ICSharpCode.Core.PropertyService.PropertyChanged += new PropertyChangedEventHandler(PropertyService_PropertyChanged);
+		#endregion Altaxo members
 
-			UserSettings = new PropertyBagWrapper(this);
+		public PropertyService(DirectoryName configDirectory, DirectoryName dataDirectory, string propertiesName)
+		{
+			this.dataDirectory = dataDirectory;
+			this.configDirectory = configDirectory;
+			this.propertiesFileName = configDirectory.CombineFile(propertiesName + ".xml");
+
+			_userSettings = InternalLoadUserSettingsBag(propertiesFileName);
 			ApplicationSettings = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
 			BuiltinSettings = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
+
+			if (!UserSettings.TryGetValue(SharpDevelopsPropertiesKey, out properties))
+			{
+				properties = new ICSharpCode.Core.Properties();
+			}
+			properties.PropertyChanged += EhSharpDevelopProperties_Changed;
 		}
 
-		private void PropertyService_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void EhSharpDevelopProperties_Changed(object sender, PropertyChangedEventArgs e)
 		{
-			if (null != PropertyChanged)
-				PropertyChanged(e.Key);
+			PropertyChanged?.Invoke(this, e);
 		}
 
-		public string ConfigDirectory
+		#region Methods/properties common to both property services
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		string Altaxo.Main.Services.IPropertyService.ConfigDirectory
 		{
 			get
 			{
-				return ICSharpCode.Core.PropertyService.ConfigDirectory;
+				return configDirectory;
 			}
 		}
 
-		public string Get(string property)
+		public DirectoryName ConfigDirectory
 		{
-			return ICSharpCode.Core.PropertyService.Get(property);
-		}
-
-		public bool TryGet<T>(string property, out T result)
-		{
-			// we first have to try if it is an Altaxo object
-			try
+			get
 			{
-				var wrapp = ICSharpCode.Core.PropertyService.Get<Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper>(property, null);
-				if (wrapp != null && wrapp.WrappedObject != null)
-				{
-					result = (T)wrapp.WrappedObject;
-					return true;
-				}
-				else
-				{
-					result = default(T);
-					return false;
-				}
-			}
-			catch (Exception)
-			{
-			}
-
-			// obviously our try for an Altaxo object failed, thus we try it the SharpDevelop way...
-			{
-				T defau = default(T);
-				result = ICSharpCode.Core.PropertyService.Get<T>(property, defau);
-				if (null == result)
-					return false;
-				if (null == defau)
-					return true;
-				bool returnValue = !defau.Equals(result);
-
-				if (result is Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper)
-				{
-					var wrapper = result as Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper;
-					result = (T)wrapper.WrappedObject;
-				}
-
-				return returnValue;
+				return configDirectory;
 			}
 		}
 
-		public T Get<T>(string property, T defaultValue)
+		public T Get<T>(string key, T defaultValue)
 		{
-			T result;
-			if (TryGet<T>(property, out result))
+			if (UserSettings.TryGetValue<T>(key, out var result))
+				return result;
+			else if (ApplicationSettings.TryGetValue<T>(key, out result))
+				return result;
+			else if (BuiltinSettings.TryGetValue<T>(key, out result))
 				return result;
 			else
 				return defaultValue;
 		}
 
-		public void Set<T>(string property, T value)
+		public void Set<T>(string key, T value)
 		{
-			if (null != value && Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper.IsSerializableType(value.GetType()))
-			{
-				ICSharpCode.Core.PropertyService.Set(property, new Altaxo.Serialization.Xml.FrameworkXmlSerializationWrapper(value));
-			}
-			else if (null != value)
-			{
-				ICSharpCode.Core.PropertyService.Set(property, value);
-			}
+			UserSettings.SetValue<T>(key, value);
+		}
+
+		#endregion Methods/properties common to both property services
+
+		#region Altaxo's IPropertyService
+
+		public string Get(string property)
+		{
+			return Get<string>(property, null);
+		}
+
+		public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind)
+		{
+			if (kind == RuntimePropertyKind.UserAndApplicationAndBuiltin && UserSettings.TryGetValue<T>(p, out var result))
+				return result;
+			else if (kind == RuntimePropertyKind.ApplicationAndBuiltin && ApplicationSettings.TryGetValue<T>(p, out result))
+				return result;
+			else if (BuiltinSettings.TryGetValue<T>(p, out result))
+				return result;
 			else
-			{
-				ICSharpCode.Core.PropertyService.Remove(property);
-			}
+				throw new ArgumentOutOfRangeException(nameof(p), string.Format("No entry found for property key {0}", p));
 		}
 
-		/// <summary>
-		/// Gets a value. First UserSettings, then ApplicationSettings, and then BuiltinSettings is searched.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="p">The p.</param>
-		/// <param name="propKind">Designates where to search for the property value.</param>
-		/// <returns></returns>
-		public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind propKind)
+		public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T> ValueCreationIfNotFound)
 		{
-			return GetValue<T>(p, propKind, null);
-		}
-
-		/// <summary>
-		/// Gets a value. First UserSettings, then ApplicationSettings, and then BuiltinSettings is searched.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="p">The p.</param>
-		/// <param name="propKind">Designates where to search for the property value.</param>
-		/// <param name="ValueCreationIfNotFound">Function to create a new property value if no property value was found. May be <c>null</c>, in this case the default(T) operator is used to create the default value.</param>
-		/// <returns></returns>
-		public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind propKind, Func<T> ValueCreationIfNotFound)
-		{
-			T result;
-			IPropertyBag[] bags;
-
-			switch (propKind)
-			{
-				case RuntimePropertyKind.UserAndApplicationAndBuiltin:
-					bags = new IPropertyBag[] { UserSettings, ApplicationSettings, BuiltinSettings };
-					break;
-
-				case RuntimePropertyKind.ApplicationAndBuiltin:
-					bags = new IPropertyBag[] { ApplicationSettings, BuiltinSettings };
-					break;
-
-				case RuntimePropertyKind.Builtin:
-					bags = new IPropertyBag[] { BuiltinSettings };
-					break;
-
-				default:
-					throw new NotImplementedException();
-			}
-
-			foreach (var pb in bags)
-			{
-				if (pb.TryGetValue<T>(p, out result))
-					return result;
-			}
-
-			if (null != ValueCreationIfNotFound)
+			if (kind == RuntimePropertyKind.UserAndApplicationAndBuiltin && UserSettings.TryGetValue<T>(p, out var result))
+				return result;
+			else if (kind == RuntimePropertyKind.ApplicationAndBuiltin && ApplicationSettings.TryGetValue<T>(p, out result))
+				return result;
+			else if (BuiltinSettings.TryGetValue<T>(p, out result))
+				return result;
+			else if (null != ValueCreationIfNotFound)
 				return ValueCreationIfNotFound();
 			else
-				return default(T);
+				throw new ArgumentOutOfRangeException(nameof(p), string.Format("No entry found for property key {0}", p));
 		}
+
+		public void SetValue<T>(PropertyKey<T> p, T value)
+		{
+			UserSettings.SetValue(p, value);
+		}
+
+		#endregion Altaxo's IPropertyService
+
+		#region SharpDevelop's IPropertyService
+
+		public DirectoryName DataDirectory
+		{
+			get
+			{
+				return dataDirectory;
+			}
+		}
+
+		public ICSharpCode.Core.Properties MainPropertiesContainer => properties;
+
+		public bool Contains(string key)
+		{
+			return properties.Contains(key);
+		}
+
+		public IReadOnlyList<T> GetList<T>(string key)
+		{
+			return properties.GetList<T>(key);
+		}
+
+		public void SetList<T>(string key, IEnumerable<T> value)
+		{
+			properties.SetList(key, value);
+		}
+
+		public virtual ICSharpCode.Core.Properties LoadExtraProperties(string key)
+		{
+			return new ICSharpCode.Core.Properties();
+		}
+
+		public ICSharpCode.Core.Properties NestedProperties(string key)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Remove(string key)
+		{
+			UserSettings.RemoveValue(key);
+		}
+
+		public virtual void Save()
+		{
+			using (LockPropertyFile())
+			{
+				InternalSaveUserSettingsBag();
+			}
+		}
+
+		public virtual void SaveExtraProperties(string key, ICSharpCode.Core.Properties p)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void SetNestedProperties(string key, ICSharpCode.Core.Properties nestedProperties)
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion SharpDevelop's IPropertyService
+
+		#region Extra methods
+
+		/// <summary>
+		/// Acquires an exclusive lock on the properties file so that it can be opened safely.
+		/// </summary>
+		private static IDisposable LockPropertyFile()
+		{
+			Mutex mutex = new Mutex(false, "PropertyServiceSave-30F32619-F92D-4BC0-BF49-AA18BF4AC313");
+			mutex.WaitOne();
+			return new CallbackOnDispose(
+				delegate
+				{
+					mutex.ReleaseMutex();
+					mutex.Close();
+				});
+		}
+
+		protected virtual PropertyBagLazyLoaded InternalLoadUserSettingsBag(FileName fileName)
+		{
+			if (!File.Exists(fileName))
+			{
+				return new PropertyBagLazyLoaded() { ParentObject = SuspendableDocumentNode.StaticInstance };
+			}
+			try
+			{
+				using (LockPropertyFile())
+				{
+					using (var str = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo())
+					{
+						str.BeginReading(new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read));
+						var result = (PropertyBagLazyLoaded)str.GetValue("UserSettings", null);
+						result.ParentObject = SuspendableDocumentNode.StaticInstance;
+						str.EndReading();
+						return result;
+					}
+				}
+			}
+			catch (XmlException ex)
+			{
+				SD.MessageService.ShowError("Error loading properties: " + ex.Message + "\nSettings have been restored to default values.");
+			}
+			catch (IOException ex)
+			{
+				SD.MessageService.ShowError("Error loading properties: " + ex.Message + "\nSettings have been restored to default values.");
+			}
+			catch (Exception ex)
+			{
+				SD.MessageService.ShowError("Error loading properties: " + ex.Message + "\nSettings have been restored to default values.");
+			}
+			return new PropertyBagLazyLoaded() { ParentObject = SuspendableDocumentNode.StaticInstance };
+		}
+
+		protected virtual void InternalSaveUserSettingsBag()
+		{
+			using (LockPropertyFile())
+			{
+				if (properties.Count > 0)
+					UserSettings.SetValue(SharpDevelopsPropertiesKey, properties);
+				else
+					UserSettings.RemoveValue(SharpDevelopsPropertiesKey);
+
+				using (var stream = new System.IO.FileStream(propertiesFileName, System.IO.FileMode.Create, System.IO.FileAccess.Write))
+				{
+					Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+					info.BeginWriting(stream);
+					info.AddValue("UserSettings", UserSettings);
+					info.EndWriting();
+					stream.Close();
+				}
+			}
+		}
+
+		#endregion Extra methods
+
+		#region Serialization of Sharpdevelops Properties
+
+		/// <summary>
+		/// 2014-01-22 Initial version
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ICSharpCode.Core.Properties), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (ICSharpCode.Core.Properties)obj;
+
+				var keyList = new HashSet<string>();
+				foreach (var entry in s.DictionaryEntries)
+				{
+					if (!info.IsSerializable(entry.Value))
+						continue;
+					keyList.Add(entry.Key);
+				}
+
+				info.CreateArray("Properties", keyList.Count);
+				foreach (var entry in s.DictionaryEntries)
+				{
+					if (keyList.Contains(entry.Key))
+					{
+						info.CreateElement("e");
+						info.AddValue("Key", entry.Key);
+						info.AddValue("Value", entry.Value);
+						info.CommitElement();
+					}
+				}
+				info.CommitArray();
+			}
+
+			public void Deserialize(ICSharpCode.Core.Properties s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				int count = info.OpenArray("Properties");
+
+				for (int i = 0; i < count; ++i)
+				{
+					info.OpenElement(); // "e"
+					string propkey = info.GetString("Key");
+					object propval = info.GetValue("Value", s);
+					info.CloseElement(); // "e"
+					s.Set(propkey, propval);
+				}
+				info.CloseArray(count);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = o as ICSharpCode.Core.Properties ?? new ICSharpCode.Core.Properties();
+				Deserialize(s, info, parent);
+				return s;
+			}
+		}
+
+		#endregion Serialization of Sharpdevelops Properties
 	}
 }

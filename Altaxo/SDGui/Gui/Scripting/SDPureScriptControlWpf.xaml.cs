@@ -22,12 +22,14 @@
 
 #endregion Copyright
 
-using ICSharpCode.AvalonEdit.AddIn;
-using ICSharpCode.SharpDevelop;
+using Altaxo.CodeEditing.ExternalHelp;
+using Altaxo.Main.Services.ScriptCompilation;
+using ICSharpCode.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,69 +39,87 @@ namespace Altaxo.Gui.Scripting
 	/// <summary>
 	/// Interaction logic for SDPureScriptControlWpf.xaml
 	/// </summary>
-	[UserControlForController(typeof(IPureScriptViewEventSink), 120)]
-	public partial class SDPureScriptControlWpf : UserControl, IPureScriptView
+
+	public partial class SDPureScriptControlWpf : UserControl, IScriptView
 	{
-		private AvalonEditViewContent _editViewContent;
-		private ICSharpCode.AvalonEdit.AddIn.CodeEditor _codeView;
+		protected static CodeEditing.CodeTextEditorFactory _factory;
+
+		private Window _parentForm;
+
+		protected static Assembly[] _additionalReferencedAssemblies;
+
+		private Altaxo.Gui.CodeEditing.CodeEditorWithDiagnostics _codeView;
+
+		/// <summary>
+		/// Not used here because this is handled by the view.
+		/// </summary>
+		public event Action<string> CompilerMessageClicked;
+
+		static SDPureScriptControlWpf()
+		{
+			_factory = new CodeEditing.CodeTextEditorFactory();
+
+			_additionalReferencedAssemblies = new Assembly[]
+			{
+				typeof(Altaxo.Calc.RMath).Assembly, // Core
+				typeof(Altaxo.Data.DataTable).Assembly, // Base
+				typeof(Altaxo.Gui.GuiHelper).Assembly, // Presentation
+				typeof(SDPureScriptControlWpf).Assembly // SDGui
+			};
+		}
 
 		public SDPureScriptControlWpf()
 		{
 			InitializeComponent();
+
+			Unloaded += EhControl_Unloaded;
 		}
 
 		private void InitializeEditor(string initialText, string scriptName)
 		{
-			// The trick is here to create an untitled file, so that the binary content is used,
-			// but at the same time to give the file an unique name in order to get processed by the parser
-			var openFile = FileService.CreateUntitledOpenedFile(scriptName, StringToByte(initialText));
-
-			_editViewContent = new AvalonEditViewContent(openFile);
-			this._codeView = _editViewContent.CodeEditor;
-
+			this._codeView = _factory.NewCodeEditorWithDiagnostics(initialText, _additionalReferencedAssemblies);
 			this._codeView.IsVisibleChanged += new System.Windows.DependencyPropertyChangedEventHandler(edFormula_IsVisibleChanged);
 			this._codeView.Name = "edFormula";
+			this._codeView.Adapter.ExternalHelpRequired += EhExternalHelpRequired;
 			this.Content = _codeView;
 		}
 
-		private bool _registered;
-
-		private void Register()
+		private void UninitializeEditor()
 		{
-			if (!_registered)
-			{
-				_registered = true;
-				ParserService.RegisterModalContent(_editViewContent);
-			}
+			_factory.Uninitialize(this._codeView);
+			_codeView = null;
+			this.Content = null;
 		}
 
-		private void Unregister()
+		private void EhControl_Unloaded(object sender, RoutedEventArgs e)
 		{
-			ParserService.UnregisterModalContent();
-			_registered = false;
+			UninitializeEditor();
+		}
+
+		private void EhExternalHelpRequired(ExternalHelpItem helpItem)
+		{
+			if (null == helpItem.GetOneOfTheseAssembliesOrNull(_additionalReferencedAssemblies))
+				return;
+
+			string fileName = FileUtility.ApplicationRootPath +
+				Path.DirectorySeparatorChar + "doc" +
+				Path.DirectorySeparatorChar + "help" +
+				Path.DirectorySeparatorChar + "AltaxoClassRef.chm";
+			if (FileUtility.TestFileExists(fileName))
+			{
+				string topic = "html/" + helpItem.DocumentationReferenceIdentifier + ".htm";
+
+				System.Windows.Forms.Help.ShowHelp(null, fileName, topic);
+			}
 		}
 
 		#region IPureScriptView Members
-
-		private IPureScriptViewEventSink _controller;
-
-		public IPureScriptViewEventSink Controller
-		{
-			get
-			{
-				return _controller;
-			}
-			set
-			{
-				_controller = value;
-			}
-		}
 
 		public string ScriptText
 		{
 			get
 			{
-				return this._codeView.Document.Text;
+				return this._codeView.DocumentText;
 			}
 			set
 			{
@@ -108,9 +128,9 @@ namespace Altaxo.Gui.Scripting
 					string scriptName = System.Guid.NewGuid().ToString() + ".cs";
 					InitializeEditor(value, scriptName);
 				}
-				else if (this._codeView.Document.Text != value)
+				else if (this._codeView.DocumentText != value)
 				{
-					this._codeView.Document.Text = value;
+					this._codeView.DocumentText = value;
 				}
 			}
 		}
@@ -119,9 +139,7 @@ namespace Altaxo.Gui.Scripting
 		{
 			set
 			{
-				var location = _codeView.Document.GetLocation(value);
-				_codeView.PrimaryTextEditor.TextArea.Caret.Location = location;
-				_codeView.PrimaryTextEditor.ScrollToLine(location.Line);
+				_codeView.SetCaretOffsetWithScrolling(value);
 			}
 		}
 
@@ -140,29 +158,15 @@ namespace Altaxo.Gui.Scripting
 		/// <param name="column">Script column (1-based).</param>
 		public void SetScriptCursorLocation(int line, int column)
 		{
-			/* to mark the word that causes the error
-			var offset = _codeView.Document.GetOffset(line, column);
-			var textLine = _codeView.Document.GetLineByNumber(line);
-			var lineStartOffset = textLine.Offset;
-			var lineLength = textLine.Length;
-			string stringAfterCursor = _codeView.Document.GetText(offset, lineLength - (offset - lineStartOffset));
-			string stringBeforeCursor = _codeView.Document.GetText(lineStartOffset, (offset - lineStartOffset));
-			// _codeView.PrimaryTextEditor.TextArea.Selection = new ICSharpCode.AvalonEdit.Editing.SimpleSelection();
-			*/
-
-			_codeView.PrimaryTextEditor.TextArea.Caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(line, column);
-			_codeView.PrimaryTextEditor.ScrollToLine(line);
-			_codeView.PrimaryTextEditor.TextArea.Focus();
+			_codeView.SetCaretOffsetWithScrolling(line, column);
 		}
 
 		public void MarkText(int pos1, int pos2)
 		{
-			_codeView.PrimaryTextEditor.TextArea.Selection = ICSharpCode.AvalonEdit.Editing.Selection.Create(_codeView.PrimaryTextEditor.TextArea, pos1, pos2);
+			_codeView.MarkText(pos1, pos2);
 		}
 
 		#endregion IPureScriptView Members
-
-		private Window _parentForm;
 
 		private void edFormula_IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
 		{
@@ -172,8 +176,6 @@ namespace Altaxo.Gui.Scripting
 				{
 					_parentForm = Window.GetWindow(this);
 					_parentForm.Closing += _parentForm_Closing;
-
-					Register();
 				}
 			}
 		}
@@ -181,7 +183,6 @@ namespace Altaxo.Gui.Scripting
 		private void _parentForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			_parentForm.Closing -= _parentForm_Closing;
-			Unregister();
 		}
 
 		public static byte[] StringToByte(string fileContent)
@@ -191,6 +192,26 @@ namespace Altaxo.Gui.Scripting
 			tw.Write(fileContent);
 			tw.Flush();
 			return memoryStream.ToArray();
+		}
+
+		public IScriptCompilerResult Compile()
+		{
+			var result = _codeView.Compile(texts => new CodeTextsWithHash(texts).Hash, Altaxo.Settings.Scripting.ReferencedAssemblies.All);
+			var scriptTextsWithHash = new CodeTextsWithHash(result.CodeText);
+
+			if (result.CompiledAssembly != null)
+			{
+				return new ScriptCompilerSuccessfulResult(scriptTextsWithHash, result.CompiledAssembly);
+			}
+			else
+			{
+				return new ScriptCompilerFailedResult(scriptTextsWithHash,
+					result.Diagnostics.Select(diag => new CompilerDiagnostic(diag.Line, diag.Column, (DiagnosticSeverity)diag.Severity, diag.MessageText)));
+			}
+		}
+
+		public void SetCompilerErrors(IEnumerable<ICompilerDiagnostic> errors)
+		{
 		}
 	}
 }

@@ -29,11 +29,12 @@ using System;
 namespace Altaxo.Main.Commands
 {
 	using Altaxo.Data;
+	using System.Collections.Generic;
 
 	/// <summary>
 	/// Loader for altaxo project files
 	/// </summary>
-	public class LoadProject : ICSharpCode.SharpDevelop.Project.IProjectLoader
+	public class LoadProject
 	{
 		public void Load(string fileName)
 		{
@@ -44,7 +45,7 @@ namespace Altaxo.Main.Commands
 	/// <summary>
 	/// Loader for altaxo project files
 	/// </summary>
-	public class LoadWorksheet : ICSharpCode.SharpDevelop.Project.IProjectLoader
+	public class LoadWorksheet
 	{
 		public void Load(string fileName)
 		{
@@ -55,7 +56,7 @@ namespace Altaxo.Main.Commands
 	/// <summary>
 	/// Loader for altaxo project files
 	/// </summary>
-	public class LoadGraph : ICSharpCode.SharpDevelop.Project.IProjectLoader
+	public class LoadGraph
 	{
 		public void Load(string fileName)
 		{
@@ -170,7 +171,7 @@ namespace Altaxo.Main.Commands
 			if (true == openFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
 			{
 				Current.ProjectService.OpenProject(openFileDialog1.FileName, false);
-				FileService.RecentOpen.AddLastProject(openFileDialog1.FileName);
+				SD.FileService.RecentOpen.AddRecentProject(FileName.Create(openFileDialog1.FileName));
 			}
 			else // in case the user cancels the open file dialog
 			{
@@ -261,29 +262,28 @@ namespace Altaxo.Main.Commands
 	/// <summary>
 	/// Taken from Commands.MenuItemBuilders. See last line for change.
 	/// </summary>
-	public class RecentProjectsMenuBuilder : ICSharpCode.Core.Presentation.IMenuItemBuilder
+	public class RecentProjectsMenuBuilder : IMenuItemBuilder
 	{
-		public System.Collections.ICollection BuildItems(Codon codon, object owner)
+		public IEnumerable<object> BuildItems(Codon codon, object owner)
 		{
-			RecentOpen recentOpen = FileService.RecentOpen;
+			var recentOpen = SD.FileService.RecentOpen;
 
-			if (recentOpen.RecentProject.Count > 0)
+			if (recentOpen.RecentFiles.Count > 0)
 			{
-				var items = new System.Windows.Controls.MenuItem[recentOpen.RecentProject.Count];
+				var items = new System.Windows.Controls.MenuItem[recentOpen.RecentFiles.Count];
 
-				for (int i = 0; i < recentOpen.RecentProject.Count; ++i)
+				for (int i = 0; i < recentOpen.RecentFiles.Count; ++i)
 				{
 					// variable inside loop, so that anonymous method refers to correct recent file
-					string recentProject = recentOpen.RecentProject[i];
+					string recentFile = recentOpen.RecentFiles[i];
 					string accelaratorKeyPrefix = i < 10 ? "_" + ((i + 1) % 10) + " " : "";
 					items[i] = new System.Windows.Controls.MenuItem()
 					{
-						Header = accelaratorKeyPrefix + recentProject
+						Header = accelaratorKeyPrefix + recentFile
 					};
 					items[i].Click += delegate
 					{
-						// Original SharpDevelop: ProjectService.LoadSolution(recentProject);
-						FileUtility.ObservedLoad(new NamedFileOperationDelegate(fileName => Current.ProjectService.OpenProject(fileName, false)), recentProject);
+						FileService.OpenFile(recentFile);
 					};
 				}
 				return items;
@@ -291,32 +291,10 @@ namespace Altaxo.Main.Commands
 			else
 			{
 				return new[] { new System.Windows.Controls.MenuItem {
-						Header = StringParser.Parse("${res:Dialog.Componnents.RichMenuItem.NoRecentProjectsString}"),
+						Header = StringParser.Parse("${res:Dialog.Componnents.RichMenuItem.NoRecentFilesString}"),
 						IsEnabled = false
 					} };
 			}
-
-			/*
-
-			if (recentOpen.RecentProject.Count > 0)
-			{
-				MenuCommand[] items = new MenuCommand[recentOpen.RecentProject.Count];
-				for (int i = 0; i < recentOpen.RecentProject.Count; ++i)
-				{
-					string accelaratorKeyPrefix = i < 10 ? "&" + ((i + 1) % 10) + " " : "";
-					items[i] = new MenuCommand(accelaratorKeyPrefix + recentOpen.RecentProject[i], new EventHandler(LoadRecentProject));
-					items[i].Tag = recentOpen.RecentProject[i].ToString();
-					items[i].Description = StringParser.Parse(ResourceService.GetString("Dialog.Componnents.RichMenuItem.LoadProjectDescription"),
-																										new string[,] { { "PROJECT", recentOpen.RecentProject[i].ToString() } });
-				}
-				return items;
-			}
-
-			MenuCommand defaultMenu = new MenuCommand("${res:Dialog.Componnents.RichMenuItem.NoRecentProjectsString}");
-			defaultMenu.Enabled = false;
-
-			return new MenuCommand[] { defaultMenu };
-			*/
 		}
 	}
 

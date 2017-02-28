@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Altaxo</RootNamespace>
     <AssemblyName>D3DPresentation</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -136,17 +138,17 @@
       <Name>AltaxoSDGui</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Libraries\SD\Main\Base\Project\ICSharpCode.SharpDevelop.csproj">
+    <ProjectReference Include="..\..\..\Libraries\ICSharpCode.Base\ICSharpCode.SharpDevelop.csproj">
       <Project>{2748ad25-9c63-4e12-877b-4dce96fbed54}</Project>
       <Name>ICSharpCode.SharpDevelop</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Libraries\SD\Main\Core\Project\ICSharpCode.Core.csproj">
+    <ProjectReference Include="..\..\..\Libraries\ICSharpCode.Core\ICSharpCode.Core.csproj">
       <Project>{35cef10f-2d4c-45f2-9dd1-161e0fec583c}</Project>
       <Name>ICSharpCode.Core</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Libraries\SD\Main\ICSharpCode.Core.Presentation\ICSharpCode.Core.Presentation.csproj">
+    <ProjectReference Include="..\..\..\Libraries\ICSharpCode.Core.Presentation\ICSharpCode.Core.Presentation.csproj">
       <Project>{7e4a7172-7ff5-48d0-b719-7cd959dd1ac9}</Project>
       <Name>ICSharpCode.Core.Presentation</Name>
       <Private>False</Private>

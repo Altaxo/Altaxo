@@ -28,6 +28,7 @@ using Altaxo.Gui.Graph.Gdi.Viewing;
 using ICSharpCode.Core;
 using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Workbench;
 using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,35 @@ namespace Altaxo.Main
 
 		public ProjectService()
 		{
+		}
+
+		/// <summary>
+		/// Determines whether the provided extension is an extension that belongs to an Altaxo project file.
+		/// </summary>
+		/// <param name="fileExtension">The file extension.</param>
+		/// <returns>
+		///   <c>true</c> if the provided extension is an extension that belongs to an Altaxo project file.; otherwise, <c>false</c>.
+		/// </returns>
+		public bool IsAltaxoProjectFileExtension(string fileExtension)
+		{
+			fileExtension = fileExtension.ToUpperInvariant();
+
+			return fileExtension == ".AXOPRJ" || fileExtension == ".AXOPRZ";
+		}
+
+		/// <summary>
+		/// Gets all possible file extensions that belong to an Altaxo project file.
+		/// </summary>
+		/// <value>
+		/// The project extensions.
+		/// </value>
+		public IEnumerable<string> AltaxoProjectFileExtensions
+		{
+			get
+			{
+				yield return ".axoprj";
+				yield return ".axoprz";
+			}
 		}
 
 		/// <summary>
@@ -196,7 +226,7 @@ namespace Altaxo.Main
 					System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
 					info.BeginReading(zipinpstream);
 					object readedobject = info.GetValue("Table", null);
-					if (readedobject is ICSharpCode.SharpDevelop.Gui.IViewContent)
+					if (readedobject is IViewContent)
 						restoredControllers.Add(readedobject);
 					else if (readedobject is GraphViewLayout)
 						restoredControllers.Add(readedobject);
@@ -281,19 +311,25 @@ namespace Altaxo.Main
 					return;
 			}
 
-			WorkbenchSingleton.Workbench.StatusBar.SetMessage("${res:MainWindow.StatusBar.OpeningCombineMessage}");
+			SD.StatusBar.SetMessage("${res:MainWindow.StatusBar.OpeningCombineMessage}");
 
 			try
 			{
-				if (Path.GetExtension(filename).ToUpper() == ".AXOPRJ")
+				bool wasValidProjectLoaded = false;
+				foreach (var projFileExtension in AltaxoProjectFileExtensions)
 				{
-					string validproject = Path.ChangeExtension(filename, ".axoprj");
-					if (File.Exists(validproject))
+					if (Path.GetExtension(filename).ToUpperInvariant() == projFileExtension.ToUpperInvariant())
 					{
-						Load(validproject);
+						string validproject = Path.ChangeExtension(filename, projFileExtension);
+						if (File.Exists(validproject))
+						{
+							Load(validproject);
+							wasValidProjectLoaded = true;
+							break;
+						}
 					}
 				}
-				else
+				if (!wasValidProjectLoaded)
 				{
 					Load(filename);
 				}
@@ -306,7 +342,7 @@ namespace Altaxo.Main
 					Current.Gui.ErrorMessageBox(ex.Message);
 			}
 
-			WorkbenchSingleton.Workbench.StatusBar.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
+			SD.StatusBar.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
 		}
 
 		/// <summary>
@@ -325,7 +361,7 @@ namespace Altaxo.Main
 			if (errorText.Length != 0)
 				throw new ApplicationException(errorText);
 
-			FileService.RecentOpen.AddLastProject(filename);
+			SD.FileService.RecentOpen.AddRecentProject(FileName.Create(filename));
 		}
 
 		/// <summary>
@@ -427,6 +463,11 @@ namespace Altaxo.Main
 				errorText.Append(exc.ToString());
 			}
 			return errorText.ToString();
+		}
+
+		private void Save(FileName fileName)
+		{
+			Save((string)fileName);
 		}
 
 		/// <summary>
@@ -532,7 +573,7 @@ namespace Altaxo.Main
 				OnProjectChanged(new ProjectRenamedEventArgs(this._currentProject, oldFileName, filename));
 
 			FileUtility.ObservedSave(new NamedFileOperationDelegate(this.Save),
-				filename,
+				FileName.Create(filename),
 				ResourceService.GetString("Altaxo.Project.CantSaveProjectErrorText"),
 				FileErrorPolicy.ProvideAlternative);
 		}
@@ -553,7 +594,7 @@ namespace Altaxo.Main
 				string filename = fdiag.FileName;
 				SaveProject(filename);
 				//FileService.RecentOpen.AddLastProject(filename);
-				WorkbenchSingleton.Workbench.StatusBar.SetMessage(filename + ": " + ResourceService.GetString("Altaxo.Project.ProjectSavedMessage"));
+				SD.StatusBar.SetMessage(filename + ": " + ResourceService.GetString("Altaxo.Project.ProjectSavedMessage"));
 				//MessageService.ShowMessage(filename, ResourceService.GetString("Altaxo.Project.ProjectSavedMessage"));
 			}
 		}
@@ -576,9 +617,9 @@ namespace Altaxo.Main
 
 				FileUtility.ObservedSave(
 					new NamedFileOperationDelegate(this.Save),
-					filename,
+					FileName.Create(filename),
 					ResourceService.GetString("Altaxo.Project.CantSaveProjectErrorText"),
-					FileErrorPolicy.ProvideAlternative); FileService.RecentOpen.AddLastProject(filename);
+					FileErrorPolicy.ProvideAlternative); SD.FileService.RecentOpen.AddRecentProject(FileName.Create(filename));
 			}
 		}
 
@@ -874,7 +915,7 @@ namespace Altaxo.Main
 			if (!Current.Project.ContainsItem(document))
 				Current.Project.AddItemWithThisOrModifiedName(document);
 
-			var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ICSharpCode.SharpDevelop.Gui.AbstractViewContent));
+			var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(AbstractViewContent));
 			System.Reflection.ConstructorInfo cinfo = null;
 			object viewContent = null;
 			foreach (Type type in types)

@@ -386,5 +386,22 @@ namespace Altaxo.Main
 		/// <see cref="ProjectClosed" />, <see cref="ProjectRenamed" />, and <see cref="ProjectDirtyChanged" />.
 		/// </summary>
 		event ProjectEventHandler ProjectChanged;
+
+		/// <summary>
+		/// Determines whether the provided file extension is a project extension.
+		/// </summary>
+		/// <param name="extension">The file extension (with point as the first character).</param>
+		/// <returns>
+		///   <c>true</c> if the specified extension is a project extension; otherwise, <c>false</c>.
+		/// </returns>
+		bool IsAltaxoProjectFileExtension(string extension);
+
+		/// <summary>
+		/// Gets all possible file extensions for Altaxo project files.
+		/// </summary>
+		/// <value>
+		/// All possible file extensions for Altaxo project files.
+		/// </value>
+		IEnumerable<string> AltaxoProjectFileExtensions { get; }
 	}
 }

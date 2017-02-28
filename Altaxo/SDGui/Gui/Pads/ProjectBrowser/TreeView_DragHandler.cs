@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using GongSolutions.Wpf.DragDrop;
+using ICSharpCode.SharpDevelop.Workbench;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
-	public partial class ProjectBrowseControl : UserControl, IProjectBrowseView, ICSharpCode.SharpDevelop.Gui.IPadContent
+	public partial class ProjectBrowseControl : UserControl, IProjectBrowseView, IPadContent
 	{
 		public class TreeView_DragHandler : IDragSource
 		{

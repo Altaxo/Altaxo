@@ -240,14 +240,17 @@ namespace Altaxo.Gui.Pads.FileBrowser
 		{
 			foreach (FileListItem item in _fileList.Where(x => x.IsSelected))
 			{
-				switch (Path.GetExtension(item.FullName).ToLower())
-				{
-					case ".axoprj":
-					case ".axoprz":
-						Current.ProjectService.OpenProject(item.FullName, false);
-						break;
+				var fileExtension = Path.GetExtension(item.FullName).ToUpperInvariant();
 
-					case ".spc":
+				if (Current.ProjectService.IsAltaxoProjectFileExtension(fileExtension))
+				{
+					Current.ProjectService.OpenProject(item.FullName, false);
+					break;
+				}
+
+				switch (fileExtension)
+				{
+					case ".SPC":
 						if (Current.Workbench.ActiveViewContent is Altaxo.Gui.SharpDevelop.SDWorksheetViewContent)
 						{
 							var ctrl = (Altaxo.Gui.Worksheet.Viewing.WorksheetController)Current.Workbench.ActiveViewContent;
@@ -256,9 +259,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 						}
 						break;
 
-					case ".dat":
-					case ".txt":
-					case ".csv":
+					case ".DAT":
+					case ".TXT":
+					case ".CSV":
 						{
 							Altaxo.Serialization.Ascii.AsciiImporter.ImportFilesIntoSeparateNewTables(Altaxo.Main.ProjectFolder.RootFolder, new string[] { item.FullName }, true, true);
 						}

@@ -110,6 +110,7 @@ namespace Altaxo.UnmanagedApi.Ole32
 		public const int DV_E_FORMATETC = unchecked((int)0x80040064);
 		public const int DV_E_TYMED = unchecked((int)0x80040069);
 		public const int DV_E_CLIPFORMAT = unchecked((int)0x8004006A);
+		public const int DATA_S_SAMEFORMATETC = unchecked((int)0x00040130);
 
 		public const int DV_E_DVASPECT = unchecked((int)0x8004006B);
 

@@ -194,9 +194,9 @@ namespace Altaxo.Com
 		{
 			ComDebug.ReportInfo("{0}.IDataObject.GetCanonicalFormatEtc {1}", this.GetType().Name, DataObjectHelper.FormatEtcToString(formatIn));
 
-			formatOut = formatIn;
+			formatOut = default(FORMATETC);
 
-			return ComReturnValue.DV_E_FORMATETC;
+			return ComReturnValue.DATA_S_SAMEFORMATETC;
 		}
 
 		public void GetData(ref FORMATETC format, out STGMEDIUM medium)

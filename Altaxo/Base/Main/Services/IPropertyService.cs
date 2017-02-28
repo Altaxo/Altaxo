@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Altaxo.Main.Services
@@ -52,7 +53,7 @@ namespace Altaxo.Main.Services
 		void Set<T>(string property, T value);
 
 		/// <summary>Occurs when a property has changed. Argument is the property key.</summary>
-		event Action<string> PropertyChanged;
+		event PropertyChangedEventHandler PropertyChanged;
 
 		/// <summary>
 		/// Returns the property bag with user settings. These are typically stored in the user's application settings directory.
@@ -96,5 +97,13 @@ namespace Altaxo.Main.Services
 		/// <param name="ValueCreationIfNotFound">Function used to create a default value if the property value was not found.</param>
 		/// <returns></returns>
 		T GetValue<T>(Altaxo.Main.Properties.PropertyKey<T> p, RuntimePropertyKind kind, Func<T> ValueCreationIfNotFound);
+
+		/// <summary>
+		/// Sets a value belonging to a property key
+		/// </summary>
+		/// <typeparam name="T">The value type.</typeparam>
+		/// <param name="p">The property key.</param>
+		/// <param name="value">The value.</param>
+		void SetValue<T>(Altaxo.Main.Properties.PropertyKey<T> p, T value);
 	}
 }

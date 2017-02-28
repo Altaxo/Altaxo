@@ -22,10 +22,12 @@
 
 #endregion Copyright
 
+using Altaxo.Main.Services.ScriptCompilation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -34,30 +36,27 @@ namespace Altaxo.Gui.Scripting
 	/// <summary>
 	/// Interaction logic for ScriptControl.xaml
 	/// </summary>
-	[UserControlForController(typeof(IScriptViewEventSink))]
 	public partial class ScriptControl : UserControl, IScriptView
 	{
-		private IScriptViewEventSink _controller;
-		private Control _scriptView;
+		public event Action<string> CompilerMessageClicked;
+
+		private IPureScriptView _scriptView;
+
+		public string ScriptText
+		{
+			get { return _scriptView?.ScriptText; }
+			set { if (null != _scriptView) _scriptView.ScriptText = value; }
+		}
+
+		public int ScriptCursorLocation { set { if (null != _scriptView) _scriptView.ScriptCursorLocation = value; } }
+		public int InitialScriptCursorLocation { set { if (null != _scriptView) _scriptView.InitialScriptCursorLocation = value; } }
 
 		public ScriptControl()
 		{
 			InitializeComponent();
 		}
 
-		public IScriptViewEventSink Controller
-		{
-			get
-			{
-				return _controller;
-			}
-			set
-			{
-				_controller = value;
-			}
-		}
-
-		public void AddPureScriptView(object scriptView)
+		public void AddPureScriptView(IPureScriptView scriptView)
 		{
 			if (object.Equals(_scriptView, scriptView))
 			{
@@ -65,33 +64,46 @@ namespace Altaxo.Gui.Scripting
 			}
 
 			if (null != _scriptView)
-				this._grid.Children.Remove(_scriptView);
+				this._grid.Children.Remove((UIElement)_scriptView);
 
-			_scriptView = (Control)scriptView;
+			_scriptView = scriptView;
 			if (null != _scriptView)
 			{
-				_scriptView.SetValue(Grid.RowProperty, 0);
-				_grid.Children.Add(_scriptView);
-				_scriptView.Focus();
+				((UIElement)_scriptView).SetValue(Grid.RowProperty, 0);
+				_grid.Children.Add((UIElement)_scriptView);
+				((UIElement)_scriptView).Focus();
 			}
 		}
 
-		public void ClearCompilerErrors()
+		public IScriptCompilerResult Compile()
 		{
-			lbCompilerErrors.Items.Clear();
+			return null; // we are unable to compile here; compilation must be handled by the controller.
 		}
 
-		public void AddCompilerError(string s)
+		public void SetCompilerErrors(IEnumerable<ICompilerDiagnostic> errors)
 		{
-			this.lbCompilerErrors.Items.Add(s);
+			if (null != errors)
+				lbCompilerErrors.ItemsSource = new List<ICompilerDiagnostic>(errors);
+			else
+				lbCompilerErrors.ItemsSource = null;
 		}
 
 		private void EhCompilerErrorDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			string msg = lbCompilerErrors.SelectedItem as string;
+			CompilerMessageClicked?.Invoke(msg);
+		}
 
-			if (null != _controller && null != msg)
-				_controller.EhView_GotoCompilerError(msg);
+		public void SetScriptCursorLocation(int line, int column)
+		{
+			if (null != _scriptView)
+				_scriptView.SetScriptCursorLocation(line, column);
+		}
+
+		public void MarkText(int pos1, int pos2)
+		{
+			if (null != _scriptView)
+				_scriptView.MarkText(pos1, pos2);
 		}
 	}
 }

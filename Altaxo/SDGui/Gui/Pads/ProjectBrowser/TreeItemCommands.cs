@@ -45,15 +45,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		#region ICheckableMenuCommand Members
 
-		public bool IsChecked
+		public bool IsChecked(object parameter)
 		{
-			get
-			{
-				return Ctrl.ViewOnSelectTreeNode == ViewOnSelect.Off;
-			}
-			set
-			{
-			}
+			return ((ProjectBrowseController)parameter).ViewOnSelectTreeNode == ViewOnSelect.Off;
 		}
 
 		#endregion ICheckableMenuCommand Members
@@ -89,22 +83,15 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		protected override void Run(ProjectBrowseController ctrl)
 		{
 			_lastKnownValue = ViewOnSelect.ItemsInFolder;
-			Ctrl.ViewOnSelectTreeNode = _lastKnownValue;
-			if (null != IsCheckedChanged)
-				IsCheckedChanged(this, EventArgs.Empty);
+			ctrl.ViewOnSelectTreeNode = _lastKnownValue;
+			IsCheckedChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		#region ICheckableMenuCommand Members
 
-		public bool IsChecked
+		public bool IsChecked(object parameter)
 		{
-			get
-			{
-				return Ctrl.ViewOnSelectTreeNode == ViewOnSelect.ItemsInFolder;
-			}
-			set
-			{
-			}
+			return ((ProjectBrowseController)parameter).ViewOnSelectTreeNode == ViewOnSelect.ItemsInFolder;
 		}
 
 		#endregion ICheckableMenuCommand Members
@@ -140,23 +127,15 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		protected override void Run(ProjectBrowseController ctrl)
 		{
 			_lastKnownValue = ViewOnSelect.ItemsInFolderAndSubfolders;
-			Ctrl.ViewOnSelectTreeNode = _lastKnownValue;
-			if (null != IsCheckedChanged)
-				IsCheckedChanged(this, EventArgs.Empty);
+			ctrl.ViewOnSelectTreeNode = _lastKnownValue;
+			IsCheckedChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		#region ICheckableMenuCommand Members
 
-		public bool IsChecked
+		public bool IsChecked(object parameter)
 		{
-			get
-			{
-				return Ctrl.ViewOnSelectTreeNode == ViewOnSelect.ItemsInFolderAndSubfolders;
-			}
-			set
-			{
-				throw new NotImplementedException();
-			}
+			return ((ProjectBrowseController)parameter).ViewOnSelectTreeNode == ViewOnSelect.ItemsInFolderAndSubfolders;
 		}
 
 		#endregion ICheckableMenuCommand Members

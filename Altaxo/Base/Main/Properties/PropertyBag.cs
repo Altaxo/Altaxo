@@ -203,7 +203,7 @@ namespace Altaxo.Main.Properties
 		/// <summary>
 		/// Removes all properties in this instance.
 		/// </summary>
-		public void Clear()
+		public virtual void Clear()
 		{
 			_properties.Clear();
 		}
@@ -214,7 +214,7 @@ namespace Altaxo.Main.Properties
 		/// <value>
 		/// Number of properties in this instance.
 		/// </value>
-		public int Count
+		public virtual int Count
 		{
 			get
 			{
@@ -232,7 +232,7 @@ namespace Altaxo.Main.Properties
 		/// <returns>
 		/// The property.
 		/// </returns>
-		public T GetValue<T>(PropertyKey<T> p)
+		public virtual T GetValue<T>(PropertyKey<T> p)
 		{
 			if (_properties.ContainsKey(p.GuidString))
 				return (T)_properties[p.GuidString];
@@ -240,7 +240,7 @@ namespace Altaxo.Main.Properties
 				throw new KeyNotFoundException(string.Format("The property key {0} was not found in this collection", p.PropertyName));
 		}
 
-		public T GetValue<T>(PropertyKey<T> p, T defaultValue)
+		public virtual T GetValue<T>(PropertyKey<T> p, T defaultValue)
 		{
 			if (_properties.ContainsKey(p.GuidString))
 				return (T)_properties[p.GuidString];
@@ -257,7 +257,7 @@ namespace Altaxo.Main.Properties
 		/// <returns>
 		///   <c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.
 		/// </returns>
-		public bool TryGetValue<T>(PropertyKey<T> p, out T value)
+		public virtual bool TryGetValue<T>(PropertyKey<T> p, out T value)
 		{
 			object o;
 			var isPresent = _properties.TryGetValue(p.GuidString, out o);
@@ -280,7 +280,7 @@ namespace Altaxo.Main.Properties
 		/// <param name="p">The property key.</param>
 		/// <param name="value">The value of the property.</param>
 		/// <exception cref="System.ArgumentException">Thrown if the type of the provided value is not compatible with the registered property.</exception>
-		public void SetValue<T>(PropertyKey<T> p, T value)
+		public virtual void SetValue<T>(PropertyKey<T> p, T value)
 		{
 			if (Altaxo.Main.Services.ReflectionService.IsSubClassOfOrImplements(typeof(T), p.PropertyType))
 			{
@@ -303,7 +303,7 @@ namespace Altaxo.Main.Properties
 		/// <typeparam name="T">Type of the property value.</typeparam>
 		/// <param name="p">The property key.</param>
 		/// <returns><c>True</c> if the property has been successful removed, <c>false</c> if the property has not been found in this collection.</returns>
-		public bool RemoveValue<T>(PropertyKey<T> p)
+		public virtual bool RemoveValue<T>(PropertyKey<T> p)
 		{
 			var removed = _properties.Remove(p.GuidString);
 
@@ -325,7 +325,7 @@ namespace Altaxo.Main.Properties
 		/// <returns>
 		/// The property.
 		/// </returns>
-		public T GetValue<T>(string propName)
+		public virtual T GetValue<T>(string propName)
 		{
 			var result = _properties[propName];
 			return (T)result;
@@ -340,7 +340,7 @@ namespace Altaxo.Main.Properties
 		/// <returns>
 		///   <c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.
 		/// </returns>
-		public bool TryGetValue<T>(string propName, out T value)
+		public virtual bool TryGetValue<T>(string propName, out T value)
 		{
 			object o;
 			var isPresent = _properties.TryGetValue(propName, out o);
@@ -362,7 +362,7 @@ namespace Altaxo.Main.Properties
 		/// <typeparam name="T">Type of the property value.</typeparam>
 		/// <param name="propName">The property name.</param>
 		/// <param name="value">The value of the property.</param>
-		public void SetValue<T>(string propName, T value)
+		public virtual void SetValue<T>(string propName, T value)
 		{
 			if (string.IsNullOrEmpty(propName))
 				throw new ArgumentNullException("propName is null or empty");
@@ -383,7 +383,7 @@ namespace Altaxo.Main.Properties
 		/// <returns>
 		///   <c>True</c> if the property has been successful removed, <c>false</c> if the property has not been found in this collection.
 		/// </returns>
-		public bool RemoveValue(string propName)
+		public virtual bool RemoveValue(string propName)
 		{
 			bool removed = _properties.Remove(propName);
 
@@ -401,14 +401,14 @@ namespace Altaxo.Main.Properties
 		/// <returns>
 		/// A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
 		/// </returns>
-		public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+		public virtual IEnumerator<KeyValuePair<string, object>> GetEnumerator()
 		{
 			return _properties.GetEnumerator();
 		}
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
-			return _properties.GetEnumerator();
+			return this.GetEnumerator();
 		}
 
 		/// <summary>

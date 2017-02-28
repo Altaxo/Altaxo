@@ -63,32 +63,39 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		private bool EvaluateSelCount(object caller, string cond)
 		{
-			// the first character of cond have to be <, = or >
-			// the rest of cond should be an integer
-			if (string.IsNullOrEmpty(cond))
-				return true; // no restriction concerning the number of items
-			if (cond.Length <= 1)
-				return false;
-
-			int condNumber;
-			if (!int.TryParse(cond.Substring(1), out condNumber))
-				return false;
-
-			int currItems = ((ProjectBrowseController)caller).GetNumberOfSelectedListItems();
-
-			switch (cond[0])
+			if (caller is ProjectBrowseController projectBrowseController)
 			{
-				case '<':
-					return currItems < condNumber;
-
-				case '=':
-					return currItems == condNumber;
-
-				case '>':
-					return currItems > condNumber;
-
-				default:
+				// the first character of cond have to be <, = or >
+				// the rest of cond should be an integer
+				if (string.IsNullOrEmpty(cond))
+					return true; // no restriction concerning the number of items
+				if (cond.Length <= 1)
 					return false;
+
+				int condNumber;
+				if (!int.TryParse(cond.Substring(1), out condNumber))
+					return false;
+
+				int currItems = projectBrowseController.GetNumberOfSelectedListItems();
+
+				switch (cond[0])
+				{
+					case '<':
+						return currItems < condNumber;
+
+					case '=':
+						return currItems == condNumber;
+
+					case '>':
+						return currItems > condNumber;
+
+					default:
+						return false;
+				}
+			}
+			else
+			{
+				return false;
 			}
 		}
 

@@ -1,0 +1,51 @@
+﻿<Window x:Class="Altaxo.Gui.Workbench.ExceptionBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Altaxo.Gui.Common"
+        mc:Ignorable="d"
+        Title="Unhandled exception has occured"
+				Width="850" Height="504">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="224" />
+			<ColumnDefinition Width="8" />
+			<ColumnDefinition Width="600" />
+			<ColumnDefinition Width="4" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="464" />
+		</Grid.RowDefinitions>
+		<Image x:Name="_guiImage" />
+		<Grid Grid.Column="2">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="48" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="95" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="8" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="1" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<TextBlock x:Name="label" Grid.Row="0" Grid.ColumnSpan="3" TextWrapping="WrapWithOverflow" />
+			<TextBlock x:Name="label2" Grid.Row="2" Grid.ColumnSpan="3" TextWrapping="WrapWithOverflow" />
+			<TextBlock x:Name="label3" Grid.Row="4" Grid.ColumnSpan="3" TextWrapping="WrapWithOverflow" />
+			<TextBox x:Name="exceptionTextBox" Grid.Row="6" Grid.ColumnSpan="3" AcceptsReturn="True" IsReadOnly="true" TextWrapping="WrapWithOverflow" VerticalScrollBarVisibility="Visible" />
+			<CheckBox x:Name="copyErrorCheckBox" Grid.Row="8" Grid.ColumnSpan="3" IsChecked="True" />
+			<Button x:Name="reportButton" Grid.Row="10" Grid.Column="0" Click="EhReportButton_Click" />
+			<Button x:Name="closeButton" Grid.Row="10" Grid.Column="1" Margin="8,0,8,0" Click="EhCloseButton_Click" />
+			<Button x:Name="continueButton" Grid.Row="10" Grid.Column="2" Click="EhContinueButton_Click" />
+		</Grid>
+	</Grid>
+</Window>
