@@ -214,15 +214,14 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Keys\RoslynInternalKey.Private.snk" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
       <Project>{6c55b776-26d4-4db3-a6ab-87e783b2f3d1}</Project>
       <Name>ICSharpCode.AvalonEdit</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Keys\RoslynInternalKey.Private.snk" />
-  </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Page Include="Gui\CodeEditing\DiagnosticMessageControl.xaml">
       <SubType>Designer</SubType>

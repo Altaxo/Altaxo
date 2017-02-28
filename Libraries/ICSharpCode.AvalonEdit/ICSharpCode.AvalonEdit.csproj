@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -33,11 +33,11 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'Net40' ">
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <DefineConstants>DOTNET4</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'WithNRefactory' ">
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <DefineConstants>DOTNET4;NREFACTORY</DefineConstants>
     <AssemblyOriginatorKeyFile>..\..\NRefactory\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -65,17 +65,27 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Net40'">
     <OutputPath>..\..\rtDir\</OutputPath>
     <DocumentationFile>..\..\rtDir\ICSharpCode.AvalonEdit.xml</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Net40'">
     <OutputPath>..\..\rtDir\</OutputPath>
     <DocumentationFile>..\..\rtDir\ICSharpCode.AvalonEdit.xml</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Net35'">
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|WithNRefactory'">
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Net35'">
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|WithNRefactory'">
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj" Condition="$(DefineConstants.Contains('NREFACTORY'))">
-      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
-      <Name>ICSharpCode.NRefactory</Name>
-    </ProjectReference>
     <Reference Include="Microsoft.CSharp">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -97,7 +107,6 @@
     <Reference Include="System.Printing">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Web" Condition="!$(DefineConstants.Contains('DOTNET4'))" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
