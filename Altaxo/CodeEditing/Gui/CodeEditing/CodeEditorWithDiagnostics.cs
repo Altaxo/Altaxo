@@ -110,5 +110,15 @@ namespace Altaxo.Gui.CodeEditing
 
 			return result;
 		}
+
+		/// <summary>
+		/// Sets diagnostic messages that are then showed in the diagnostic window from an external source.
+		/// All old messages in the diagnostic window will be overwritten.
+		/// </summary>
+		/// <param name="diagnosticMessages">The diagnostic messages.</param>
+		public void SetDiagnosticMessages(IReadOnlyList<AltaxoDiagnostic> diagnosticMessages)
+		{
+			_messageControl.SetMessages(diagnosticMessages);
+		}
 	}
 }

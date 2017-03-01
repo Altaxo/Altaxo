@@ -22,11 +22,13 @@
 
 #endregion Copyright
 
+using Altaxo.CodeEditing.CompilationHandling;
 using Altaxo.CodeEditing.ExternalHelp;
 using Altaxo.Main.Services.ScriptCompilation;
 using ICSharpCode.Core;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -187,6 +189,17 @@ namespace Altaxo.Gui.Scripting
 
 		public void SetCompilerErrors(IEnumerable<ICompilerDiagnostic> errors)
 		{
+			var arr = ImmutableArray.Create<AltaxoDiagnostic>();
+			arr = arr.AddRange(ConvertToAltaxoDiagnostic(errors));
+			_codeView.SetDiagnosticMessages(arr);
+		}
+
+		private static IEnumerable<AltaxoDiagnostic> ConvertToAltaxoDiagnostic(IEnumerable<ICompilerDiagnostic> diagnostics)
+		{
+			foreach (var d in diagnostics ?? Enumerable.Empty<ICompilerDiagnostic>())
+			{
+				yield return new AltaxoDiagnostic(d.Line, d.Column, null, (int)d.Severity, d.SeverityText, d.MessageText);
+			}
 		}
 	}
 }

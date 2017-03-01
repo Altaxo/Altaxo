@@ -77,12 +77,32 @@ namespace Altaxo.CodeEditing.CompilationHandling
 		{
 		}
 
+		public AltaxoDiagnostic(int? line, int? column, int? caretPosition, int severity, string severityText, string messageText)
+		{
+			this.Line = line;
+			this.Column = column;
+			this.CaretPosition = caretPosition;
+			this.Severity = severity;
+			this.SeverityText = severityText;
+			this.MessageText = messageText;
+		}
+
 		public static AltaxoDiagnostic CreateInfoMessage(string message)
 		{
 			return new AltaxoDiagnostic()
 			{
 				Severity = 1,
 				SeverityText = "Info",
+				MessageText = message
+			};
+		}
+
+		public static AltaxoDiagnostic CreateErrorMessage(string message)
+		{
+			return new AltaxoDiagnostic()
+			{
+				Severity = 3,
+				SeverityText = "Error",
 				MessageText = message
 			};
 		}
