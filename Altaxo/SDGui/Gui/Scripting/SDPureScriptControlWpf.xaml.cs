@@ -44,8 +44,6 @@ namespace Altaxo.Gui.Scripting
 	{
 		protected static CodeEditing.CodeTextEditorFactory _factory;
 		protected static Assembly[] _additionalReferencedAssemblies;
-
-		private Window _parentForm;
 		private Altaxo.Gui.CodeEditing.CodeEditorWithDiagnostics _codeView;
 
 		/// <summary>
@@ -70,13 +68,12 @@ namespace Altaxo.Gui.Scripting
 		{
 			InitializeComponent();
 
-			Unloaded += EhControl_Unloaded;
+			Unloaded += (s, e) => UninitializeEditor();
 		}
 
 		private void InitializeEditor(string initialText, string scriptName)
 		{
 			this._codeView = _factory.NewCodeEditorWithDiagnostics(initialText, _additionalReferencedAssemblies);
-			this._codeView.IsVisibleChanged += new System.Windows.DependencyPropertyChangedEventHandler(edFormula_IsVisibleChanged);
 			this._codeView.Name = "edFormula";
 			this._codeView.Adapter.ExternalHelpRequired += EhExternalHelpRequired;
 			this.Content = _codeView;
@@ -87,17 +84,11 @@ namespace Altaxo.Gui.Scripting
 			this._codeView.Adapter.ExternalHelpRequired -= EhExternalHelpRequired;
 			_factory?.Uninitialize(this._codeView);
 			_codeView = null;
-			_parentForm = null;
 			CompilerMessageClicked = null;
 			this.Content = null;
 		}
 
-		private void EhControl_Unloaded(object sender, RoutedEventArgs e)
-		{
-			UninitializeEditor();
-		}
-
-		private void EhExternalHelpRequired(ExternalHelpItem helpItem)
+		private static void EhExternalHelpRequired(ExternalHelpItem helpItem)
 		{
 			if (null == helpItem.GetOneOfTheseAssembliesOrNull(_additionalReferencedAssemblies))
 				return;
@@ -168,23 +159,6 @@ namespace Altaxo.Gui.Scripting
 		}
 
 		#endregion IPureScriptView Members
-
-		private void edFormula_IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
-		{
-			if (_codeView.IsVisible)
-			{
-				if (null == _parentForm)
-				{
-					_parentForm = Window.GetWindow(this);
-					_parentForm.Closing += _parentForm_Closing;
-				}
-			}
-		}
-
-		private void _parentForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			_parentForm.Closing -= _parentForm_Closing;
-		}
 
 		public static byte[] StringToByte(string fileContent)
 		{
