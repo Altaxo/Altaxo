@@ -66,6 +66,14 @@ namespace Altaxo.Gui.CodeEditing
 			this.Children.Add(_messageControl);
 		}
 
+		protected override void OnUnloaded()
+		{
+			_messageControl.DiagnosticClicked -= EhDiagnosticClicked;
+			_messageControl = null;
+
+			base.OnUnloaded();
+		}
+
 		private void EhDiagnosticClicked(AltaxoDiagnostic diag)
 		{
 			if (diag.Line.HasValue)

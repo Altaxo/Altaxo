@@ -43,11 +43,9 @@ namespace Altaxo.Gui.Scripting
 	public partial class SDPureScriptControlWpf : UserControl, IScriptView
 	{
 		protected static CodeEditing.CodeTextEditorFactory _factory;
-
-		private Window _parentForm;
-
 		protected static Assembly[] _additionalReferencedAssemblies;
 
+		private Window _parentForm;
 		private Altaxo.Gui.CodeEditing.CodeEditorWithDiagnostics _codeView;
 
 		/// <summary>
@@ -86,8 +84,11 @@ namespace Altaxo.Gui.Scripting
 
 		private void UninitializeEditor()
 		{
-			_factory.Uninitialize(this._codeView);
+			this._codeView.Adapter.ExternalHelpRequired -= EhExternalHelpRequired;
+			_factory?.Uninitialize(this._codeView);
 			_codeView = null;
+			_parentForm = null;
+			CompilerMessageClicked = null;
 			this.Content = null;
 		}
 

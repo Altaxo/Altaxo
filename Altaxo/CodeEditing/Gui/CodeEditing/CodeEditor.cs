@@ -40,6 +40,11 @@ namespace Altaxo.Gui.CodeEditing
 {
 	public class CodeEditor : Grid, IDisposable, ICaretOffsetProvider
 	{
+		public event EventHandler DocumentChanged;
+
+		public event EventHandler CaretPositionChanged;
+
+		public ICodeEditorViewAdapter _adapter;
 		private QuickClassBrowser quickClassBrowser;
 		public CodeEditorView primaryTextEditor { get; private set; }
 		public CodeEditorView secondaryTextEditor { get; private set; }
@@ -50,7 +55,57 @@ namespace Altaxo.Gui.CodeEditing
 
 		private TextDocument document;
 
-		public event EventHandler CaretPositionChanged;
+		public CodeEditor()
+		{
+			//CodeEditorOptions.Instance.PropertyChanged += CodeEditorOptions_Instance_PropertyChanged;
+			//CustomizedHighlightingColor.ActiveColorsChanged += CustomizedHighlightingColor_ActiveColorsChanged;
+			//ParserService.ParseInformationUpdated += ParserServiceParseInformationUpdated;
+
+			this.FlowDirection = FlowDirection.LeftToRight; // code editing is always left-to-right
+			this.CommandBindings.Add(new CommandBinding(RoutedCommands.SplitView, OnSplitView));
+
+			//textMarkerService = new TextMarkerService(this);
+			//iconBarManager = new IconBarManager();
+			//if (CodeEditorOptions.Instance.EnableChangeMarkerMargin)
+			//{
+			//	changeWatcher = new DefaultChangeWatcher();
+			//}
+			primaryTextEditor = CreateTextEditor();
+			//primaryTextEditorAdapter = (CodeEditorAdapter)primaryTextEditor.TextArea.GetService(typeof(ITextEditor));
+			//Debug.Assert(primaryTextEditorAdapter != null);
+			activeTextEditor = primaryTextEditor;
+
+			this.Document = primaryTextEditor.Document;
+			primaryTextEditor.SetBinding(TextEditor.DocumentProperty, new Binding("Document") { Source = this });
+
+			this.ColumnDefinitions.Add(new ColumnDefinition());
+			this.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+			this.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star), MinHeight = minRowHeight });
+			SetRow(primaryTextEditor, 1);
+
+			quickClassBrowser = new QuickClassBrowser();
+			quickClassBrowser.JumpAction += this.EhQuickClassBrowser_JumpTo;
+			this.Children.Add(quickClassBrowser);
+
+			this.Children.Add(primaryTextEditor);
+
+			this.Unloaded += (s, e) => OnUnloaded();
+		}
+
+		protected virtual void OnUnloaded()
+		{
+			DocumentChanged = null;
+			CaretPositionChanged = null;
+			quickClassBrowser.JumpAction -= this.EhQuickClassBrowser_JumpTo;
+			this.Adapter = null;
+			this.Document = null;
+
+			primaryTextEditor = null;
+			secondaryTextEditor = null;
+			activeTextEditor = null;
+			quickClassBrowser = null;
+			this.Children.Clear();
+		}
 
 		public CodeEditorView ActiveTextEditor
 		{
@@ -107,10 +162,6 @@ namespace Altaxo.Gui.CodeEditing
 			}
 		}
 
-		public event EventHandler DocumentChanged;
-
-		public ICodeEditorViewAdapter _adapter;
-
 		/// <summary>
 		/// Gets or sets the adapter. The adapter is responsible for all the high level functions that make out the code editor,
 		/// like completion, insight in function arguments, folding etc.
@@ -140,6 +191,10 @@ namespace Altaxo.Gui.CodeEditing
 
 					if (null != secondaryTextEditor)
 						secondaryTextEditor.Adapter = _adapter;
+
+					// update QuickClassBrowser
+					var syntaxTree = _adapter.GetDocumentSyntaxTreeAsync().Result;
+					quickClassBrowser.Update(syntaxTree.GetRoot());
 				}
 			}
 		}
@@ -151,41 +206,6 @@ namespace Altaxo.Gui.CodeEditing
 			{
 				secondaryTextEditor.TextArea.TextView.Redraw(segment, priority);
 			}
-		}
-
-		public CodeEditor()
-		{
-			//CodeEditorOptions.Instance.PropertyChanged += CodeEditorOptions_Instance_PropertyChanged;
-			//CustomizedHighlightingColor.ActiveColorsChanged += CustomizedHighlightingColor_ActiveColorsChanged;
-			//ParserService.ParseInformationUpdated += ParserServiceParseInformationUpdated;
-
-			this.FlowDirection = FlowDirection.LeftToRight; // code editing is always left-to-right
-			this.CommandBindings.Add(new CommandBinding(RoutedCommands.SplitView, OnSplitView));
-
-			//textMarkerService = new TextMarkerService(this);
-			//iconBarManager = new IconBarManager();
-			//if (CodeEditorOptions.Instance.EnableChangeMarkerMargin)
-			//{
-			//	changeWatcher = new DefaultChangeWatcher();
-			//}
-			primaryTextEditor = CreateTextEditor();
-			//primaryTextEditorAdapter = (CodeEditorAdapter)primaryTextEditor.TextArea.GetService(typeof(ITextEditor));
-			//Debug.Assert(primaryTextEditorAdapter != null);
-			activeTextEditor = primaryTextEditor;
-
-			this.Document = primaryTextEditor.Document;
-			primaryTextEditor.SetBinding(TextEditor.DocumentProperty, new Binding("Document") { Source = this });
-
-			this.ColumnDefinitions.Add(new ColumnDefinition());
-			this.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-			this.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star), MinHeight = minRowHeight });
-			SetRow(primaryTextEditor, 1);
-
-			quickClassBrowser = new QuickClassBrowser();
-			quickClassBrowser.JumpAction += this.EhQuickClassBrowser_JumpTo;
-			this.Children.Add(quickClassBrowser);
-
-			this.Children.Add(primaryTextEditor);
 		}
 
 		/// <summary>
