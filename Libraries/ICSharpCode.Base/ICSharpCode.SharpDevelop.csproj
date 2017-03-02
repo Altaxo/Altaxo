@@ -44,6 +44,7 @@
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TRACE;PUBLICINTERPROCESS</DefineConstants>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
