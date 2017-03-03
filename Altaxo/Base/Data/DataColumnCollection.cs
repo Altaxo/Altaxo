@@ -1058,6 +1058,12 @@ namespace Altaxo.Data
 			for (int i = _columnsByNumber.Count - 1; i >= lastRangeStart; i--)
 				((DataColumnInfo)_columnInfoByColumn[_columnsByNumber[i]]).Number = i;
 
+			// first, before we dispose the columns, set all columns to DisposeInProgress
+			// to prevent access e.g. to parent properties
+			foreach (var col in colsToDispose)
+				col.SetDisposeInProgress();
+
+			// now dispose all the columns
 			foreach (var col in colsToDispose)
 				col.Dispose();
 

@@ -803,7 +803,16 @@ namespace Altaxo.Data
 
 				var c = _dataColumns[i].Document as DataColumn;
 				if (c == null)
+				{
 					continue; // not yet resolved, leave it as it is
+				}
+
+				if (c.IsDisposeInProgress)
+				{
+					// column is disposed or is about to be disposed, thus remove it
+					InternalRemoveDataColumnAt(i);
+					continue;
+				}
 
 				var coll = DataColumnCollection.GetParentDataColumnCollectionOf(c);
 				if (null == coll || !object.ReferenceEquals(coll, tableDataColumns))
