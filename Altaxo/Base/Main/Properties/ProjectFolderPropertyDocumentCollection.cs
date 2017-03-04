@@ -96,6 +96,31 @@ namespace Altaxo.Main.Properties
 			return _itemsByName.TryGetValue(itemName, out doc);
 		}
 
+		/// <summary>
+		/// Ensures the existence of a certain <see cref="ProjectFolderPropertyDocument"/>. If the document already exists,
+		/// the existing <see cref="ProjectFolderPropertyDocument"/> is returned; otherwise a new <see cref="ProjectFolderPropertyDocument"/> is
+		/// created, added to the collection, and returned.
+		/// </summary>
+		/// <param name="itemName">Name of the <see cref="ProjectFolderPropertyDocument"/>.
+		/// An exception is thrown if the name is not a folder name (it has to end with a backslash).
+		/// </param>
+		/// <returns>If the document with the given name already exists,
+		/// the existing <see cref="ProjectFolderPropertyDocument"/> is returned; otherwise a new <see cref="ProjectFolderPropertyDocument"/> is
+		/// created, added to the collection, and returned.</returns>
+		public ProjectFolderPropertyDocument EnsureExistence(string itemName)
+		{
+			if (_itemsByName.TryGetValue(itemName, out var doc))
+			{
+				return doc;
+			}
+			else
+			{
+				doc = new ProjectFolderPropertyDocument(itemName);
+				Add(doc);
+				return doc;
+			}
+		}
+
 		public void Add(ProjectFolderPropertyDocument item)
 		{
 			if (!string.IsNullOrEmpty(item.Name) && _itemsByName.ContainsKey(item.Name) && object.ReferenceEquals(item, _itemsByName[item.Name]))
