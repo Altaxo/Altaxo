@@ -20,6 +20,14 @@ namespace Altaxo.Main.Properties
 		/// </summary>
 		private Dictionary<string, string> _propertiesLazyLoaded = new Dictionary<string, string>();
 
+		/// <summary>
+		/// Gets the assembly version this property bag was loaded from, i.e. the version of Altaxo that has serialized this bag before it was loaded again.
+		/// </summary>
+		/// <value>
+		/// The assembly version of Altaxo this bag was loaded from, or null if this is the default bag.
+		/// </value>
+		public Version AssemblyVersionLoadedFrom { get; private set; }
+
 		#region Serialization
 
 		/// <summary>
@@ -31,6 +39,8 @@ namespace Altaxo.Main.Properties
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				var s = (PropertyBagLazyLoaded)obj;
+
+				var assemblyVersion = s.GetType().Assembly.GetName().Version;
 				var keyList = new HashSet<string>();
 				foreach (var entry in s._properties)
 				{
@@ -48,6 +58,7 @@ namespace Altaxo.Main.Properties
 				}
 
 				info.CreateArray("Properties", keyList.Count);
+				info.AddAttributeValue("AssemblyVersion", assemblyVersion.ToString());
 				foreach (var key in keyList)
 				{
 					info.CreateElement("e");
@@ -67,6 +78,9 @@ namespace Altaxo.Main.Properties
 
 			public void Deserialize(PropertyBagLazyLoaded s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
+				var assemblyVersionString = info.GetStringAttribute("AssemblyVersion");
+				s.AssemblyVersionLoadedFrom = Version.Parse(assemblyVersionString);
+
 				int count = info.OpenArray("Properties");
 
 				for (int i = 0; i < count; i++)

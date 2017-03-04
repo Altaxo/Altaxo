@@ -272,6 +272,13 @@ namespace Altaxo.Main.Services
 
 		protected virtual void InternalSaveUserSettingsBag()
 		{
+			var thisVersion = UserSettings.GetType().Assembly.GetName().Version;
+
+			if (null != _userSettings.AssemblyVersionLoadedFrom && thisVersion < _userSettings.AssemblyVersionLoadedFrom)
+			{
+				return; // User settings are not stored again if they originate from a newer version of Altaxo
+			}
+
 			using (LockPropertyFile())
 			{
 				if (properties.Count > 0)
