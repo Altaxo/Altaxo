@@ -2,6 +2,8 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, RoslynHost.cs
 
+// Strongly revised for the Altaxo project, Copyright Dr. D. Lellinger, 2017
+
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
