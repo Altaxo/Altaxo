@@ -268,22 +268,22 @@ namespace Altaxo.Main.Commands
 		{
 			var recentOpen = SD.FileService.RecentOpen;
 
-			if (recentOpen.RecentFiles.Count > 0)
+			if (recentOpen.RecentProjects.Count > 0)
 			{
-				var items = new System.Windows.Controls.MenuItem[recentOpen.RecentFiles.Count];
+				var items = new System.Windows.Controls.MenuItem[recentOpen.RecentProjects.Count];
 
-				for (int i = 0; i < recentOpen.RecentFiles.Count; ++i)
+				for (int i = 0; i < recentOpen.RecentProjects.Count; ++i)
 				{
 					// variable inside loop, so that anonymous method refers to correct recent file
-					string recentFile = recentOpen.RecentFiles[i];
-					string accelaratorKeyPrefix = i < 10 ? "_" + ((i + 1) % 10) + " " : "";
+					string recentProjectFile = recentOpen.RecentProjects[i];
+					string acceleratorKeyPrefix = i < 10 ? "_" + ((i + 1) % 10) + " " : "";
 					items[i] = new System.Windows.Controls.MenuItem()
 					{
-						Header = accelaratorKeyPrefix + recentFile
+						Header = acceleratorKeyPrefix + recentProjectFile
 					};
 					items[i].Click += delegate
 					{
-						FileService.OpenFile(recentFile);
+						Current.ProjectService.OpenProject(recentProjectFile, false);
 					};
 				}
 				return items;
