@@ -75,7 +75,7 @@ namespace Altaxo.Gui.Scripting
 
 		private void InitializeEditor(string initialText, string scriptName)
 		{
-			this._codeView = _factory.NewCodeEditorWithDiagnostics(initialText, _additionalReferencedAssemblies);
+			this._codeView = _factory.NewCodeEditorWithDiagnostics(initialText, Altaxo.Settings.Scripting.ReferencedAssemblies.All);
 			this._codeView.Name = "edFormula";
 			this._codeView.Adapter.ExternalHelpRequired += EhExternalHelpRequired;
 			this.Content = _codeView;

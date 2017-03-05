@@ -12,22 +12,100 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
+using System.Collections.Generic;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Altaxo.CodeEditing
 {
-	public sealed class AltaxoWorkspace : Workspace
+	/// <summary>
+	/// Workspace for script Dlls. Contains exactly one solution, and one project.
+	/// </summary>
+	/// <seealso cref="Microsoft.CodeAnalysis.Workspace" />
+	public class AltaxoWorkspace : Workspace
 	{
+		/// <summary>
+		/// Gets the static references, i.e. all the references that are not stated in the code.
+		/// </summary>
+		/// <value>
+		/// The default references.
+		/// </value>
+		public ImmutableArray<MetadataReference> StaticReferences { get; }
+
+		/// <summary>
+		/// Dictionary that holds all references directives that comes from the code (by #r statements).
+		/// </summary>
 		private readonly ConcurrentDictionary<string, DirectiveInfo> _referencesDirectives;
 
 		public RoslynHost RoslynHost { get; }
+
 		public DocumentId OpenDocumentId { get; private set; }
 
-		internal AltaxoWorkspace(HostServices host, RoslynHost roslynHost)
-				: base(host, WorkspaceKind.Host)
+		/// <summary>
+		/// The project Id of the single project that is contained in this workspace.
+		/// </summary>
+		public ProjectId ProjectId { get; private set; }
+
+		protected Dictionary<DocumentId, Action<SourceText>> _sourceTextChangedHandlers = new Dictionary<DocumentId, Action<SourceText>>();
+
+		private static readonly ImmutableArray<string> PreprocessorSymbols = ImmutableArray.CreateRange(new[] { "TRACE", "DEBUG" });
+
+		public AltaxoWorkspace(RoslynHost roslynHost, string workingDirectory, IEnumerable<MetadataReference> staticReferences)
+				: base(roslynHost.MefHost, WorkspaceKind.Host)
 		{
 			_referencesDirectives = new ConcurrentDictionary<string, DirectiveInfo>();
-
 			RoslynHost = roslynHost;
+			StaticReferences = staticReferences.ToImmutableArray();
+
+			var compilationOptions = CreateCompilationOptions(workingDirectory);
+			var parseOptions = new CSharpParseOptions(kind: SourceCodeKind.Script, preprocessorSymbols: PreprocessorSymbols);
+			CreateInitialProject(compilationOptions, parseOptions);
+		}
+
+		private void CreateInitialProject(CSharpCompilationOptions compilationOptions, CSharpParseOptions parseOptions)
+		{
+			var name = "Prj" + Guid.NewGuid().ToString();
+			ProjectId = ProjectId.CreateNewId(name);
+			var projectInfo = ProjectInfo.Create(
+				ProjectId,
+				VersionStamp.Create(),
+				name, // project name
+				name, // assembly name
+				LanguageNames.CSharp, // language
+				parseOptions: parseOptions,
+				compilationOptions: compilationOptions.WithScriptClassName(name),
+				metadataReferences: StaticReferences
+				);
+
+			var newSolution = this.CurrentSolution.AddProject(projectInfo);
+			base.SetCurrentSolution(newSolution);
+		}
+
+		public Document CreateDocument(SourceTextContainer textContainer, Action<SourceText> onTextUpdated)
+		{
+			var project = this.CurrentSolution.GetProject(ProjectId);
+			var documentId = DocumentId.CreateNewId(ProjectId);
+			var newSolution = project.Solution.AddDocument(documentId, project.Name, textContainer.CurrentText);
+			this.SetCurrentSolution(newSolution);
+			this.OpenDocument(documentId, textContainer);
+			OpenDocumentId = documentId;
+
+			if (null != onTextUpdated)
+			{
+				_sourceTextChangedHandlers[documentId] = onTextUpdated;
+			}
+
+			return newSolution.GetDocument(documentId);
+		}
+
+		private CSharpCompilationOptions CreateCompilationOptions(string workingDirectory)
+		{
+			var metadataReferenceResolver = RoslynHost.CreateMetadataReferenceResolver(this, workingDirectory);
+			var compilationOptions = new CSharpCompilationOptions(OutputKind.NetModule,
+					usings: null,
+					allowUnsafe: true,
+					sourceReferenceResolver: new SourceFileResolver(ImmutableArray<string>.Empty, workingDirectory),
+					metadataReferenceResolver: metadataReferenceResolver);
+			return compilationOptions;
 		}
 
 		public new void SetCurrentSolution(Solution solution)
@@ -58,23 +136,21 @@ namespace Altaxo.CodeEditing
 			OnDocumentContextUpdated(documentId);
 		}
 
-		public event Action<DocumentId, SourceText> ApplyingTextChange;
+		//public event Action<DocumentId, SourceText> ApplyingTextChange;
 
 		protected override void Dispose(bool finalize)
 		{
 			base.Dispose(finalize);
 
-			ApplyingTextChange = null;
+			// ApplyingTextChange = null;
 		}
 
 		protected override void ApplyDocumentTextChanged(DocumentId document, SourceText newText)
 		{
-			if (OpenDocumentId != document)
-			{
-				return;
-			}
+			if (_sourceTextChangedHandlers.TryGetValue(document, out var action) && null != action)
+				action.Invoke(newText);
 
-			ApplyingTextChange?.Invoke(document, newText);
+			// ApplyingTextChange?.Invoke(document, newText);
 
 			OnDocumentTextChanged(document, newText, PreservationMode.PreserveIdentity);
 		}
@@ -114,6 +190,14 @@ namespace Altaxo.CodeEditing
 			}
 		}
 
+		/// <summary>
+		/// Processes the reference directives. Searches the provided document for #r directives. Then it
+		/// updates the <see cref="_referencesDirectives"/> dictionary. Directives no longer in the document are marked as passive
+		/// in the reference dictionary, all that are there are marked active. If changes have occured, the project is updated
+		/// to reference all active references.
+		/// </summary>
+		/// <param name="document">The document.</param>
+		/// <returns></returns>
 		internal async Task ProcessReferenceDirectives(Document document)
 		{
 			var project = document.Project;
@@ -150,7 +234,8 @@ namespace Altaxo.CodeEditing
 				}
 			}
 
-			if (!changed) return;
+			if (!changed)
+				return;
 
 			lock (_referencesDirectives)
 			{
@@ -160,9 +245,29 @@ namespace Altaxo.CodeEditing
 								.Select(x => x.Value.MetadataReference)
 								.WhereNotNull();
 				var newSolution = solution.WithProjectMetadataReferences(project.Id,
-						RoslynHost.DefaultReferences.Concat(references));
+						this.StaticReferences.Concat(references));
 
 				SetCurrentSolution(newSolution);
+			}
+		}
+
+		/// <summary>
+		/// Gets all references currently references by the project, i.e. the <see cref="StaticReferences"/> plus the references
+		/// referenced in the code by #r directives.
+		/// </summary>
+		/// <value>
+		/// All references.
+		/// </value>
+		public IEnumerable<MetadataReference> AllReferences
+		{
+			get
+			{
+				return this.StaticReferences.Concat(
+					_referencesDirectives
+						.Where(x => x.Value.IsActive)
+						.Select(x => x.Value.MetadataReference)
+						.WhereNotNull()
+						);
 			}
 		}
 

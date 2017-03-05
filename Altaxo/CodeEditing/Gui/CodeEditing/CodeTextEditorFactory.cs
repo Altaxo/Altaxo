@@ -45,7 +45,7 @@ namespace Altaxo.Gui.CodeEditing
 			_roslynHost = new RoslynHost(null);
 		}
 
-		public CodeEditorView NewFromFileName(string fileName, IEnumerable<System.Reflection.Assembly> additionalReferencedAssemblies)
+		public CodeEditorView NewFromFileName(string fileName, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
 		{
 			var editor = new CodeEditorView();
 			editor.FontFamily = new FontFamily("Consolas");
@@ -53,13 +53,17 @@ namespace Altaxo.Gui.CodeEditing
 
 			// create the source text container that is connected with this editor
 			var sourceTextContainer = new RoslynSourceTextContainerAdapter(editor.Document, editor); // DocumentView.xaml.cs line 82
-			var documentId = _roslynHost.AddDocument(
-				sourceTextContainer,
-				_workingDirectory,
-				text => sourceTextContainer.UpdateText(text),
-				additionalReferences: additionalReferencedAssemblies?.Select(ass => _roslynHost.CreateMetadataReference(ass.Location))); // OpenDocumentViewModel line 305
-			editor.Adapter = new CodeEditorViewAdapterCSharp(_roslynHost, documentId, sourceTextContainer);
 
+			var workspace = new AltaxoWorkspace(
+				_roslynHost,
+				_workingDirectory,
+				referencedAssemblies?.Select(ass => _roslynHost.CreateMetadataReference(ass.Location))
+				);
+
+			var document = workspace.CreateDocument(sourceTextContainer, sourceTextContainer.UpdateText);
+			workspace.RoslynHost.AddWorkspace(workspace);
+
+			editor.Adapter = new CodeEditorViewAdapterCSharp(_roslynHost, document.Id, sourceTextContainer);
 			editor.OpenFile(fileName); // maybe wrong?
 			editor.Document.UndoStack.ClearAll(); // DocumentView.xaml.cs line 94
 
@@ -70,7 +74,7 @@ namespace Altaxo.Gui.CodeEditing
 			return editor;
 		}
 
-		public CodeEditor NewCodeEditor(string fileName, IEnumerable<System.Reflection.Assembly> additionalReferencedAssemblies = null)
+		public CodeEditor NewCodeEditor(string fileName, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
 		{
 			var codeEditor = new CodeEditor();
 
@@ -80,20 +84,23 @@ namespace Altaxo.Gui.CodeEditing
 
 			// create the source text container that is connected with this editor
 			var sourceTextContainer = new RoslynSourceTextContainerAdapter(codeEditor.Document, codeEditor); // DocumentView.xaml.cs line 82
-			var documentId = _roslynHost.AddDocument(
-				sourceTextContainer,
-				_workingDirectory,
-				text => sourceTextContainer.UpdateText(text),
-				additionalReferences: additionalReferencedAssemblies?.Select(ass => _roslynHost.CreateMetadataReference(ass.Location))
-				); // OpenDocumentViewModel line 305
-			codeEditor.Adapter = new CodeEditorViewAdapterCSharp(_roslynHost, documentId, sourceTextContainer);
 
+			var workspace = new AltaxoWorkspace(
+				_roslynHost,
+				_workingDirectory,
+				referencedAssemblies?.Select(ass => _roslynHost.CreateMetadataReference(ass.Location))
+				);
+
+			var document = workspace.CreateDocument(sourceTextContainer, sourceTextContainer.UpdateText);
+			workspace.RoslynHost.AddWorkspace(workspace);
+
+			codeEditor.Adapter = new CodeEditorViewAdapterCSharp(_roslynHost, document.Id, sourceTextContainer);
 			editor.Document.UndoStack.ClearAll(); // DocumentView.xaml.cs line 94
 
 			return codeEditor;
 		}
 
-		public CodeEditorWithDiagnostics NewCodeEditorWithDiagnostics(string initialText, IEnumerable<System.Reflection.Assembly> additionalReferencedAssemblies = null)
+		public CodeEditorWithDiagnostics NewCodeEditorWithDiagnostics(string initialText, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
 		{
 			var codeEditor = new CodeEditorWithDiagnostics();
 			codeEditor.DocumentText = initialText;
@@ -104,13 +111,15 @@ namespace Altaxo.Gui.CodeEditing
 
 			// create the source text container that is connected with this editor
 			var sourceTextContainer = new RoslynSourceTextContainerAdapter(codeEditor.Document, codeEditor); // DocumentView.xaml.cs line 82
-			var documentId = _roslynHost.AddDocument(
-				sourceTextContainer,
-				_workingDirectory,
-				text => sourceTextContainer.UpdateText(text),
-				additionalReferences: additionalReferencedAssemblies?.Select(ass => _roslynHost.CreateMetadataReference(ass.Location))
-				); // OpenDocumentViewModel line 305
-			codeEditor.Adapter = new CodeEditorViewAdapterCSharp(_roslynHost, documentId, sourceTextContainer);
+			var workspace = new AltaxoWorkspace(
+			_roslynHost,
+			_workingDirectory,
+			referencedAssemblies?.Select(ass => _roslynHost.CreateMetadataReference(ass.Location))
+			);
+
+			var document = workspace.CreateDocument(sourceTextContainer, sourceTextContainer.UpdateText);
+			workspace.RoslynHost.AddWorkspace(workspace);
+			codeEditor.Adapter = new CodeEditorViewAdapterCSharp(_roslynHost, document.Id, sourceTextContainer);
 
 			editor.Document.UndoStack.ClearAll(); // DocumentView.xaml.cs line 94
 
