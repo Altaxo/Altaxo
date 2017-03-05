@@ -44,6 +44,6 @@ namespace Altaxo.CodeEditing.LiveDocumentFormatting
 		/// <param name="caretPosition">The caret position after (!) the trigger char.</param>
 		/// <param name="triggerChar">The trigger char.</param>
 		/// <returns></returns>
-		Task FormatDocumentAfterEnteringTriggerChar(RoslynHost roslynHost, DocumentId documentId, RoslynSourceTextContainerAdapter sourceText, int caretPosition, char triggerChar);
+		Task FormatDocumentAfterEnteringTriggerChar(Workspace workspace, DocumentId documentId, RoslynSourceTextContainerAdapter sourceText, int caretPosition, char triggerChar);
 	}
 }

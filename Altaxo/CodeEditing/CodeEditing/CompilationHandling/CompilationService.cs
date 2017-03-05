@@ -103,7 +103,7 @@ namespace Altaxo.CodeEditing.CompilationHandling
 			IEnumerable<Assembly> referenceAssemblies
 			)
 		{
-			var parseOptions = new CSharpParseOptions().WithKind(SourceCodeKind.Regular).WithPreprocessorSymbols(RoslynHost.PreprocessorSymbols);
+			var parseOptions = new CSharpParseOptions().WithKind(SourceCodeKind.Regular).WithPreprocessorSymbols(new[] { "DEBUG", "TRACE" });
 			var trees = codes.Select(code => SyntaxFactory.ParseSyntaxTree(code, parseOptions, string.Empty));
 
 			var compilationOptions = new CSharpCompilationOptions(

@@ -100,6 +100,8 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeEditing\AltaxoWorkspaceBase.cs" />
+    <Compile Include="CodeEditing\AltaxoWorkspaceForCSharpScripts.cs" />
     <Compile Include="CodeEditing\BraceMatching\AbstractBraceMatcher.cs" />
     <Compile Include="CodeEditing\BraceMatching\AbstractDirectiveTriviaBraceMatcher.cs" />
     <Compile Include="CodeEditing\BraceMatching\BraceCharacterAndKind.cs" />
@@ -138,6 +140,7 @@
     <Compile Include="CodeEditing\Diagnostics\DiagnosticsUpdatedArgs.cs" />
     <Compile Include="CodeEditing\Diagnostics\DiagnosticsUpdatedKind.cs" />
     <Compile Include="CodeEditing\Diagnostics\IDiagnosticService.cs" />
+    <Compile Include="CodeEditing\Diagnostics\IDiagnosticsEventSink.cs" />
     <Compile Include="CodeEditing\Diagnostics\UpdatedEventArgs.cs" />
     <Compile Include="CodeEditing\Diagnostics\WorkspaceDiagnosticAnalyzerProviderService.cs" />
     <Compile Include="CodeEditing\Documentation\DocumentationProviderServiceFactory.cs" />
@@ -145,6 +148,7 @@
     <Compile Include="CodeEditing\ExternalHelp\ExternalHelpProvider.cs" />
     <Compile Include="CodeEditing\ExternalHelp\IExternalHelpProvider.cs" />
     <Compile Include="CodeEditing\Folding\SyntaxTreeFoldingManager.cs" />
+    <Compile Include="CodeEditing\IAltaxoWorkspace.cs" />
     <Compile Include="CodeEditing\ICaretOffsetProvider.cs" />
     <Compile Include="CodeEditing\ICodeEditorViewAdapter.cs" />
     <Compile Include="CodeEditing\LanguageService\ExportLanguageService.cs" />
@@ -190,7 +194,7 @@
       <DependentUpon>RenameSymbolDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\CodeEditing\RoutedCommands.cs" />
-    <Compile Include="Gui\CodeEditing\AltaxoWorkspace.cs" />
+    <Compile Include="CodeEditing\AltaxoWorkspaceForCSharpRegularDll.cs" />
     <Compile Include="Gui\CodeEditing\DiagnosticWrapper.cs" />
     <Compile Include="Gui\CodeEditing\ICodeEditorCompletionProvider.cs" />
     <Compile Include="Gui\CodeEditing\ICompletionDataEx.cs" />

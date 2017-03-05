@@ -59,11 +59,11 @@ namespace Altaxo.CodeEditing.CompilationHandling
 
 		public CSharpParseOptions ParseOptions { get; }
 
-		public CompilationFactorySimple(string code, string workingDirectory, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
+		public CompilationFactorySimple(IAltaxoWorkspace workspace, string code, string workingDirectory, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
 		{
 			OutputKind = OutputKind.DynamicallyLinkedLibrary;
 			Platform = Platform.AnyCpu;
-			ParseOptions = new CSharpParseOptions().WithKind(SourceCodeKind.Script).WithPreprocessorSymbols(RoslynHost.PreprocessorSymbols);
+			ParseOptions = new CSharpParseOptions().WithKind(SourceCodeKind.Script).WithPreprocessorSymbols(workspace.PreprocessorSymbols);
 			FilePath = string.Empty;
 			Usings = ImmutableArray<string>.Empty;
 
@@ -110,7 +110,7 @@ namespace Altaxo.CodeEditing.CompilationHandling
 
 		public static AltaxoCompilationResultWithAssembly GetCompilation(CodeEditorView editControl, string scriptClassName)
 		{
-			var factory = new CompilationFactorySimple(null, null, new System.Reflection.Assembly[] { typeof(object).Assembly });
+			var factory = new CompilationFactorySimple(editControl.Adapter.Workspace, null, null, new System.Reflection.Assembly[] { typeof(object).Assembly });
 			return factory.GetCompilation(editControl.Document.Text, scriptClassName);
 		}
 

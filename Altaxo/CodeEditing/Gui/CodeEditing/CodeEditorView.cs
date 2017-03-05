@@ -459,10 +459,14 @@ namespace Altaxo.Gui.CodeEditing
 
 		protected virtual async Task AsyncToolTipRequestDefaultImpl(ToolTipRequestEventArgs arg)
 		{
-			var info = await _adapter?.GetToolTipAsync(arg.Position);
-			if (null != info)
+			var adapter = _adapter;
+			if (null != adapter)
 			{
-				arg.SetToolTip(info.Create());
+				var info = await adapter.GetToolTipAsync(arg.Position);
+				if (null != info)
+				{
+					arg.SetToolTip(info.Create());
+				}
 			}
 		}
 

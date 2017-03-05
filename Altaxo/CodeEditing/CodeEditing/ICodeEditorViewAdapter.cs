@@ -44,6 +44,14 @@ namespace Altaxo.CodeEditing
 	public interface ICodeEditorViewAdapter
 	{
 		/// <summary>
+		/// Gets the workspace where the document (see <see cref="DocumentId"/> is contained.
+		/// </summary>
+		/// <value>
+		/// The workspace.
+		/// </value>
+		AltaxoWorkspaceBase Workspace { get; }
+
+		/// <summary>
 		/// Gets the document identifier of the underlying document.
 		/// </summary>
 		/// <value>

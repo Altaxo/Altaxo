@@ -54,17 +54,15 @@ namespace Altaxo.Gui.CodeEditing
 			// create the source text container that is connected with this editor
 			var sourceTextContainer = new RoslynSourceTextContainerAdapter(editor.Document, editor); // DocumentView.xaml.cs line 82
 
-			var workspace = new AltaxoWorkspace(
+			var workspace = new AltaxoWorkspaceForCSharpRegularDll(
 				_roslynHost,
 				_workingDirectory,
 				referencedAssemblies?.Select(ass => _roslynHost.CreateMetadataReference(ass.Location))
 				);
 
-			var document = workspace.CreateDocument(sourceTextContainer, sourceTextContainer.UpdateText);
-			workspace.RoslynHost.AddWorkspace(workspace);
+			var document = workspace.CreateAndOpenDocument(sourceTextContainer, sourceTextContainer.UpdateText);
 
-			editor.Adapter = new CodeEditorViewAdapterCSharp(_roslynHost, document.Id, sourceTextContainer);
-			editor.OpenFile(fileName); // maybe wrong?
+			editor.Adapter = new CodeEditorViewAdapterCSharp(workspace, document.Id, sourceTextContainer);
 			editor.Document.UndoStack.ClearAll(); // DocumentView.xaml.cs line 94
 
 			// editor.TextArea.TextView.LineTransformers.Insert(0, new RoslynHighlightingColorizer(_viewModel.DocumentId, _roslynHost));
@@ -85,16 +83,15 @@ namespace Altaxo.Gui.CodeEditing
 			// create the source text container that is connected with this editor
 			var sourceTextContainer = new RoslynSourceTextContainerAdapter(codeEditor.Document, codeEditor); // DocumentView.xaml.cs line 82
 
-			var workspace = new AltaxoWorkspace(
+			var workspace = new AltaxoWorkspaceForCSharpRegularDll(
 				_roslynHost,
 				_workingDirectory,
 				referencedAssemblies?.Select(ass => _roslynHost.CreateMetadataReference(ass.Location))
 				);
 
-			var document = workspace.CreateDocument(sourceTextContainer, sourceTextContainer.UpdateText);
-			workspace.RoslynHost.AddWorkspace(workspace);
+			var document = workspace.CreateAndOpenDocument(sourceTextContainer, sourceTextContainer.UpdateText);
 
-			codeEditor.Adapter = new CodeEditorViewAdapterCSharp(_roslynHost, document.Id, sourceTextContainer);
+			codeEditor.Adapter = new CodeEditorViewAdapterCSharp(workspace, document.Id, sourceTextContainer);
 			editor.Document.UndoStack.ClearAll(); // DocumentView.xaml.cs line 94
 
 			return codeEditor;
@@ -111,15 +108,14 @@ namespace Altaxo.Gui.CodeEditing
 
 			// create the source text container that is connected with this editor
 			var sourceTextContainer = new RoslynSourceTextContainerAdapter(codeEditor.Document, codeEditor); // DocumentView.xaml.cs line 82
-			var workspace = new AltaxoWorkspace(
+			var workspace = new AltaxoWorkspaceForCSharpRegularDll(
 			_roslynHost,
 			_workingDirectory,
 			referencedAssemblies?.Select(ass => _roslynHost.CreateMetadataReference(ass.Location))
 			);
 
-			var document = workspace.CreateDocument(sourceTextContainer, sourceTextContainer.UpdateText);
-			workspace.RoslynHost.AddWorkspace(workspace);
-			codeEditor.Adapter = new CodeEditorViewAdapterCSharp(_roslynHost, document.Id, sourceTextContainer);
+			var document = workspace.CreateAndOpenDocument(sourceTextContainer, sourceTextContainer.UpdateText);
+			codeEditor.Adapter = new CodeEditorViewAdapterCSharp(workspace, document.Id, sourceTextContainer);
 
 			editor.Document.UndoStack.ClearAll(); // DocumentView.xaml.cs line 94
 
@@ -132,10 +128,13 @@ namespace Altaxo.Gui.CodeEditing
 		/// <param name="codeEditor">The code editor.</param>
 		public void Uninitialize(CodeEditorWithDiagnostics codeEditor)
 		{
-			var documentId = codeEditor?.Adapter?.DocumentId;
-			if (null != documentId)
+			var adapter = codeEditor.Adapter;
+			codeEditor.Adapter = null;
+			if (null != adapter)
 			{
-				_roslynHost.CloseDocument(documentId);
+				adapter.Workspace.CloseDocument(adapter.DocumentId);
+				if (null == adapter.Workspace.GetOpenDocumentIds().FirstOrDefault()) // dispose workspace if it has no open documents
+					adapter.Workspace.Dispose();
 			}
 		}
 
@@ -145,10 +144,13 @@ namespace Altaxo.Gui.CodeEditing
 		/// <param name="codeEditor">The code editor.</param>
 		public void Uninitialize(CodeEditor codeEditor)
 		{
-			var documentId = codeEditor?.Adapter?.DocumentId;
-			if (null != documentId)
+			var adapter = codeEditor.Adapter;
+			codeEditor.Adapter = null;
+			if (null != adapter)
 			{
-				_roslynHost.CloseDocument(documentId);
+				adapter.Workspace.CloseDocument(adapter.DocumentId);
+				if (null == adapter.Workspace.GetOpenDocumentIds().FirstOrDefault()) // dispose workspace if it has no open documents
+					adapter.Workspace.Dispose();
 			}
 		}
 
@@ -158,10 +160,13 @@ namespace Altaxo.Gui.CodeEditing
 		/// <param name="codeEditor">The code editor.</param>
 		public void Uninitialize(CodeEditorView codeEditor)
 		{
-			var documentId = codeEditor?.Adapter?.DocumentId;
-			if (null != documentId)
+			var adapter = codeEditor.Adapter;
+			codeEditor.Adapter = null;
+			if (null != adapter)
 			{
-				_roslynHost.CloseDocument(documentId);
+				adapter.Workspace.CloseDocument(adapter.DocumentId);
+				if (null == adapter.Workspace.GetOpenDocumentIds().FirstOrDefault()) // dispose workspace if it has no open documents
+					adapter.Workspace.Dispose();
 			}
 		}
 	}

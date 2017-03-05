@@ -26,10 +26,9 @@ namespace Altaxo.CodeEditing.Diagnostics
 		// ReSharper disable once UnusedParameter.Local
 		private void OnDiagnosticsUpdated(object sender, Microsoft.CodeAnalysis.Diagnostics.DiagnosticsUpdatedArgs e)
 		{
-			DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedArgs(e));
+			if (e.Solution.Workspace is IDiagnosticsEventSink diagnosticsEventSink)
+				diagnosticsEventSink.OnDiagnosticsUpdated(this, new DiagnosticsUpdatedArgs(e));
 		}
-
-		public event EventHandler<DiagnosticsUpdatedArgs> DiagnosticsUpdated;
 
 		public IEnumerable<DiagnosticData> GetDiagnostics(Workspace workspace, ProjectId projectId, DocumentId documentId, object id,
 				bool includeSuppressedDiagnostics, CancellationToken cancellationToken)

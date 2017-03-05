@@ -43,11 +43,9 @@ namespace Altaxo.CodeEditing.LiveDocumentFormatting
 		/// </summary>
 		/// <param name="caretPosition">The caret position after (!) the trigger char.</param>
 		/// <returns></returns>
-		public async Task FormatDocumentAfterEnteringTriggerChar(RoslynHost roslynHost, DocumentId documentId, RoslynSourceTextContainerAdapter sourceText, int caretPosition, char triggerChar)
+		public async Task FormatDocumentAfterEnteringTriggerChar(Workspace workspace, DocumentId documentId, RoslynSourceTextContainerAdapter sourceText, int caretPosition, char triggerChar)
 		{
-			var document = roslynHost?.GetDocument(documentId);
-			var workspace = roslynHost.GetWorkspace(documentId);
-
+			var document = workspace.CurrentSolution.GetDocument(documentId);
 			var syntaxTree = await document.GetSyntaxRootAsync();
 
 			TextSpan? textSpanToFormat = null;
@@ -68,7 +66,7 @@ namespace Altaxo.CodeEditing.LiveDocumentFormatting
 			if (textSpanToFormat.HasValue)
 			{
 				var textChanges = await Formatter.GetFormattedTextChangesAsync(syntaxTree, textSpanToFormat.Value, workspace);
-				sourceText.ApplyTextChanges(textChanges, (modifiedSourceText) => roslynHost.UpdateDocument(document.WithText(modifiedSourceText)));
+				sourceText.ApplyTextChanges(textChanges, (modifiedSourceText) => workspace.TryApplyChanges(document.WithText(modifiedSourceText).Project.Solution));
 			}
 		}
 

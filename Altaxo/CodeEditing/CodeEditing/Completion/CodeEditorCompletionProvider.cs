@@ -38,12 +38,14 @@ namespace Altaxo.CodeEditing.Completion
 	internal sealed class CodeEditorCompletionProvider : ICodeEditorCompletionProvider
 	{
 		private readonly DocumentId _documentId;
+		private readonly Workspace _workspace;
 		private readonly RoslynHost _roslynHost;
 		private readonly AltaxoSnippetInfoService _snippetService;
 
-		public CodeEditorCompletionProvider(DocumentId documentId, RoslynHost roslynHost)
+		public CodeEditorCompletionProvider(RoslynHost roslynHost, Workspace workspace, DocumentId documentId)
 		{
 			_documentId = documentId;
+			_workspace = workspace;
 			_roslynHost = roslynHost;
 			_snippetService = (AltaxoSnippetInfoService)_roslynHost.GetService<ICSharpEditSnippetInfoService>();
 		}
@@ -53,7 +55,7 @@ namespace Altaxo.CodeEditing.Completion
 			IList<ICompletionDataEx> completionData = null;
 			IOverloadProviderEx overloadProvider = null;
 
-			var document = _roslynHost.GetDocument(_documentId);
+			var document = _workspace.CurrentSolution.GetDocument(_documentId);
 			if (useSignatureHelp || triggerChar != null)
 			{
 				var signatureHelpProvider = _roslynHost.GetService<ISignatureHelpProvider>();

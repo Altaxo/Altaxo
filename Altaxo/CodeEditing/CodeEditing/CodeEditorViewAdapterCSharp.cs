@@ -55,6 +55,8 @@ namespace Altaxo.CodeEditing
 	{
 		protected RoslynHost _roslynHost;
 
+		public AltaxoWorkspaceBase Workspace { get; }
+
 		/// <summary>
 		/// Gets or sets the document identifier of the underlying document.
 		/// </summary>
@@ -95,9 +97,10 @@ namespace Altaxo.CodeEditing
 		/// </summary>
 		public event Action<ExternalHelp.ExternalHelpItem> ExternalHelpRequired;
 
-		public CodeEditorViewAdapterCSharp(RoslynHost roslynHost, Microsoft.CodeAnalysis.DocumentId documentID, RoslynSourceTextContainerAdapter sourceText)
+		public CodeEditorViewAdapterCSharp(AltaxoWorkspaceBase workspace, Microsoft.CodeAnalysis.DocumentId documentID, RoslynSourceTextContainerAdapter sourceText)
 		{
-			_roslynHost = roslynHost;
+			Workspace = workspace;
+			_roslynHost = workspace.RoslynHost;
 			DocumentId = documentID;
 			SourceTextAdapter = sourceText;
 
@@ -105,13 +108,13 @@ namespace Altaxo.CodeEditing
 			FoldingStrategy = new SyntaxTreeFoldingStrategy();
 			BraceMatchingService = _roslynHost.GetService<IBraceMatchingService>();
 			ReferenceHighlightService = new ReferenceHighlighting.CSharp.CSharpDocumentHighlightsService();
-			CompletionProvider = new Completion.CodeEditorCompletionProvider(DocumentId, _roslynHost);
+			CompletionProvider = new Completion.CodeEditorCompletionProvider(_roslynHost, Workspace, DocumentId);
 			RenamingService = new Renaming.RenamingService();
 			IndentationStrategy = new ICSharpCode.AvalonEdit.Indentation.CSharp.CSharpIndentationStrategy();
 			LiveDocumentFormatter = new LiveDocumentFormatterCSharp();
 			ExternalHelpProvider = new ExternalHelp.ExternalHelpProvider();
 
-			_roslynHost.SubscribeToDiagnosticsUpdateNotification(DocumentId, EhDiagnosticsUpdated);
+			Workspace.SubscribeToDiagnosticsUpdateNotification(DocumentId, EhDiagnosticsUpdated);
 		}
 
 		#region Syntax highlighting
@@ -131,7 +134,7 @@ namespace Altaxo.CodeEditing
 		public virtual async Task<QuickInfo.QuickInfoItem> GetToolTipAsync(int cursorPosition)
 		{
 			// TODO: consider invoking this with a delay, then showing the tool-tip without one
-			var document = _roslynHost.GetDocument(DocumentId);
+			var document = Workspace.CurrentSolution.GetDocument(DocumentId);
 			var quickInfoProvider = QuickInfoProvider;
 			if (null != quickInfoProvider)
 			{
@@ -156,7 +159,7 @@ namespace Altaxo.CodeEditing
 		/// </returns>
 		public IEnumerable<NewFolding> GetNewFoldings()
 		{
-			var document = _roslynHost.GetDocument(DocumentId);
+			var document = Workspace.CurrentSolution.GetDocument(DocumentId);
 			//var text = document.GetTextAsync().Result;
 
 			var syntaxTree = document.GetSyntaxTreeAsync().Result;
@@ -179,7 +182,7 @@ namespace Altaxo.CodeEditing
 
 			if (null != service)
 			{
-				return await service.GetMatchingBracesAsync(_roslynHost.GetDocument(DocumentId), position, cancellationToken);
+				return await service.GetMatchingBracesAsync(Workspace.CurrentSolution.GetDocument(DocumentId), position, cancellationToken);
 			}
 			else
 			{
@@ -220,7 +223,7 @@ namespace Altaxo.CodeEditing
 			if (null == service)
 				return ImmutableArray<DocumentHighlights>.Empty;
 
-			var document = _roslynHost.GetDocument(DocumentId);
+			var document = Workspace.CurrentSolution.GetDocument(DocumentId);
 
 			var builder = ImmutableHashSet<Document>.Empty.ToBuilder();
 			builder.Add(document);
@@ -252,7 +255,7 @@ namespace Altaxo.CodeEditing
 
 			if (null != service)
 			{
-				await service.RenameSymbol(_roslynHost, DocumentId, SourceTextAdapter, caretPositionOrSelectionStart, topLevelWindow, FocusBackOnEditor).ConfigureAwait(false);
+				await service.RenameSymbol(Workspace, DocumentId, SourceTextAdapter, caretPositionOrSelectionStart, topLevelWindow, FocusBackOnEditor).ConfigureAwait(false);
 			}
 		}
 
@@ -265,7 +268,7 @@ namespace Altaxo.CodeEditing
 		/// </summary>
 		public virtual async Task<SyntaxTree> GetDocumentSyntaxTreeAsync()
 		{
-			var document = _roslynHost.GetDocument(DocumentId);
+			var document = Workspace.CurrentSolution.GetDocument(DocumentId);
 			return await document.GetSyntaxTreeAsync();
 		}
 
@@ -275,11 +278,11 @@ namespace Altaxo.CodeEditing
 
 		public async Task FormatDocument()
 		{
-			var document = _roslynHost?.GetDocument(this.DocumentId);
+			var document = Workspace.CurrentSolution.GetDocument(this.DocumentId);
 
 			var formattedDocument = await Formatter.FormatAsync(document).ConfigureAwait(false);
 
-			_roslynHost.UpdateDocument(formattedDocument);
+			Workspace.TryApplyChanges(formattedDocument.Project.Solution);
 		}
 
 		/// <summary>
@@ -294,7 +297,7 @@ namespace Altaxo.CodeEditing
 
 			if (null != formatter)
 			{
-				await formatter.FormatDocumentAfterEnteringTriggerChar(_roslynHost, this.DocumentId, SourceTextAdapter, caretPosition, triggerChar).ConfigureAwait(false);
+				await formatter.FormatDocumentAfterEnteringTriggerChar(Workspace, DocumentId, SourceTextAdapter, caretPosition, triggerChar).ConfigureAwait(false);
 			}
 		}
 
@@ -313,7 +316,7 @@ namespace Altaxo.CodeEditing
 
 			if (null != helpProvider) // && null != ExternalHelpRequired)
 			{
-				var document = _roslynHost.GetDocument(DocumentId);
+				var document = Workspace.CurrentSolution.GetDocument(DocumentId);
 				var helpItem = await helpProvider.GetExternalHelpItem(document, caretPosition, CancellationToken.None).ConfigureAwait(false);
 				if (null != helpItem)
 				{

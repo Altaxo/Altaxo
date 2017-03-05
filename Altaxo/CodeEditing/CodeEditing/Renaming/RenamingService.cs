@@ -13,9 +13,9 @@ namespace Altaxo.CodeEditing.Renaming
 {
 	public class RenamingService : IRenamingService
 	{
-		public async Task RenameSymbol(RoslynHost roslynHost, DocumentId documentId, RoslynSourceTextContainerAdapter sourceText, int caretPosition, object topLevelWindow, Action FocusOnEditor)
+		public async Task RenameSymbol(Workspace workspace, DocumentId documentId, RoslynSourceTextContainerAdapter sourceText, int caretPosition, object topLevelWindow, Action FocusOnEditor)
 		{
-			var document = roslynHost.GetDocument(documentId);
+			var document = workspace.CurrentSolution.GetDocument(documentId);
 			var symbol = await RenameHelper.GetRenameSymbol(document, caretPosition).ConfigureAwait(true); // we need Gui context
 			if (symbol == null)
 				return;
@@ -30,7 +30,7 @@ namespace Altaxo.CodeEditing.Renaming
 
 				var renameLocations = await Renamer.GetRenameLocationsAsync(document.Project.Solution, new Microsoft.CodeAnalysis.FindSymbols.SymbolAndProjectId(symbol, document.Project.Id), null, CancellationToken.None).ConfigureAwait(true); // we need Gui context afterwards
 				var textChanges = renameLocations.Locations.Select(loc => new TextChange(loc.Location.SourceSpan, newSymbolName));
-				sourceText.ApplyTextChanges(textChanges, (modifiedSourceText) => roslynHost.UpdateDocument(document.WithText(modifiedSourceText)));
+				sourceText.ApplyTextChanges(textChanges, (modifiedSourceText) => workspace.TryApplyChanges(document.WithText(modifiedSourceText).Project.Solution));
 
 				/*
 

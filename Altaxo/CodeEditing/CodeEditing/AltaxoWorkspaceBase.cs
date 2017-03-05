@@ -14,20 +14,48 @@ using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp;
+using Altaxo.CodeEditing.Diagnostics;
 
 namespace Altaxo.CodeEditing
 {
 	/// <summary>
-	/// Workspace for script Dlls. Contains exactly one solution, and one project.
+	/// Abstract workspace that is the base for different kind of workspaces.
 	/// </summary>
 	/// <seealso cref="Microsoft.CodeAnalysis.Workspace" />
-	public class AltaxoWorkspace : Workspace
+	public abstract class AltaxoWorkspaceBase : Workspace, IAltaxoWorkspace, IDiagnosticsEventSink
 	{
+		protected static readonly ImmutableArray<Type> _defaultReferenceAssemblyTypes = new[] {
+						typeof(object), // mscorlib
+						typeof(System.Threading.Thread), // mscorlib
+						typeof(Task), // mscorlib
+						typeof(List<>), // mscorlib
+						typeof(System.Text.RegularExpressions.Regex), // system
+						typeof(System.Text.StringBuilder), // mscorlib
+						typeof(Uri), // system
+						typeof(Enumerable), // system.core
+						typeof(System.Collections.IEnumerable), // mscorlib
+						typeof(Path), // mscorlib
+						typeof(Assembly), // mscorlib
+				}.ToImmutableArray();
+
 		/// <summary>
-		/// Gets the static references, i.e. all the references that are not stated in the code.
+		/// Gets a proposal for the default assemblies that should be referenced in compilations.
 		/// </summary>
 		/// <value>
-		/// The default references.
+		/// The default reference assemblies.
+		/// </value>
+		public static ImmutableArray<Assembly> DefaultReferenceAssemblies { get; protected set; } =
+				_defaultReferenceAssemblyTypes.Select(x => x.Assembly).Concat(new[]
+				{
+								Assembly.Load("System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"),
+								typeof(Microsoft.CSharp.RuntimeBinder.Binder).Assembly,
+				}).Distinct().ToImmutableArray();
+
+		/// <summary>
+		/// Gets the static references of the project, i.e. all references that are not stated in the code by #r statements.
+		/// </summary>
+		/// <value>
+		/// The static references.
 		/// </value>
 		public ImmutableArray<MetadataReference> StaticReferences { get; }
 
@@ -36,58 +64,61 @@ namespace Altaxo.CodeEditing
 		/// </summary>
 		private readonly ConcurrentDictionary<string, DirectiveInfo> _referencesDirectives;
 
+		/// <summary>
+		/// Gets the reference to the roslyn host.
+		/// </summary>
+		/// <value>
+		/// The roslyn host.
+		/// </value>
 		public RoslynHost RoslynHost { get; }
-
-		public DocumentId OpenDocumentId { get; private set; }
 
 		/// <summary>
 		/// The project Id of the single project that is contained in this workspace.
 		/// </summary>
 		public ProjectId ProjectId { get; private set; }
 
+		public string WorkingDirectory { get; }
+
+		/// <summary>
+		/// Stores for each document in this workspace a handler that is called when the text has changed.
+		/// </summary>
 		protected Dictionary<DocumentId, Action<SourceText>> _sourceTextChangedHandlers = new Dictionary<DocumentId, Action<SourceText>>();
 
-		private static readonly ImmutableArray<string> PreprocessorSymbols = ImmutableArray.CreateRange(new[] { "TRACE", "DEBUG" });
+		/// <summary>Dictionary that holds for source document IDs an action that is called if the diagnostics for that source document has been updated.</summary>
+		protected ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>> _diagnosticsUpdatedNotifiers = new ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>>();
 
-		public AltaxoWorkspace(RoslynHost roslynHost, string workingDirectory, IEnumerable<MetadataReference> staticReferences)
+		private static readonly ImmutableArray<string> DefaultPreprocessorSymbols = ImmutableArray.CreateRange(new[] { "TRACE", "DEBUG" });
+
+		/// <summary>
+		/// Gets the preprocessor symbols that are used for parsing and compilation.
+		/// </summary>
+		/// <value>
+		/// The preprocessor symbols.
+		/// </value>
+		public ImmutableArray<string> PreprocessorSymbols { get; }
+
+		public AltaxoWorkspaceBase(RoslynHost roslynHost, string workingDirectory, IEnumerable<MetadataReference> staticReferences)
 				: base(roslynHost.MefHost, WorkspaceKind.Host)
 		{
 			_referencesDirectives = new ConcurrentDictionary<string, DirectiveInfo>();
 			RoslynHost = roslynHost;
+			WorkingDirectory = workingDirectory;
 			StaticReferences = staticReferences.ToImmutableArray();
-
-			var compilationOptions = CreateCompilationOptions(workingDirectory);
-			var parseOptions = new CSharpParseOptions(kind: SourceCodeKind.Script, preprocessorSymbols: PreprocessorSymbols);
-			CreateInitialProject(compilationOptions, parseOptions);
+			PreprocessorSymbols = DefaultPreprocessorSymbols;
+			ProjectId = CreateInitialProject();
 		}
 
-		private void CreateInitialProject(CSharpCompilationOptions compilationOptions, CSharpParseOptions parseOptions)
-		{
-			var name = "Prj" + Guid.NewGuid().ToString();
-			ProjectId = ProjectId.CreateNewId(name);
-			var projectInfo = ProjectInfo.Create(
-				ProjectId,
-				VersionStamp.Create(),
-				name, // project name
-				name, // assembly name
-				LanguageNames.CSharp, // language
-				parseOptions: parseOptions,
-				compilationOptions: compilationOptions.WithScriptClassName(name),
-				metadataReferences: StaticReferences
-				);
+		protected abstract ProjectId CreateInitialProject();
 
-			var newSolution = this.CurrentSolution.AddProject(projectInfo);
-			base.SetCurrentSolution(newSolution);
-		}
+		public abstract Compilation GetCompilation(string assemblyName);
 
-		public Document CreateDocument(SourceTextContainer textContainer, Action<SourceText> onTextUpdated)
+		public virtual Document CreateAndOpenDocument(SourceTextContainer textContainer, Action<SourceText> onTextUpdated)
 		{
 			var project = this.CurrentSolution.GetProject(ProjectId);
 			var documentId = DocumentId.CreateNewId(ProjectId);
 			var newSolution = project.Solution.AddDocument(documentId, project.Name, textContainer.CurrentText);
 			this.SetCurrentSolution(newSolution);
 			this.OpenDocument(documentId, textContainer);
-			OpenDocumentId = documentId;
 
 			if (null != onTextUpdated)
 			{
@@ -97,15 +128,13 @@ namespace Altaxo.CodeEditing
 			return newSolution.GetDocument(documentId);
 		}
 
-		private CSharpCompilationOptions CreateCompilationOptions(string workingDirectory)
+		/// <summary>
+		/// Updates the document. The workspace containing the document is updated with the new document version.
+		/// </summary>
+		/// <param name="document">The updated document.</param>
+		public virtual void UpdateDocument(Document document)
 		{
-			var metadataReferenceResolver = RoslynHost.CreateMetadataReferenceResolver(this, workingDirectory);
-			var compilationOptions = new CSharpCompilationOptions(OutputKind.NetModule,
-					usings: null,
-					allowUnsafe: true,
-					sourceReferenceResolver: new SourceFileResolver(ImmutableArray<string>.Empty, workingDirectory),
-					metadataReferenceResolver: metadataReferenceResolver);
-			return compilationOptions;
+			this.TryApplyChanges(document.Project.Solution);
 		}
 
 		public new void SetCurrentSolution(Solution solution)
@@ -129,28 +158,73 @@ namespace Altaxo.CodeEditing
 			}
 		}
 
+		/// <summary>
+		/// Brings the document in the opened state.
+		/// </summary>
+		/// <param name="documentId">The document identifier.</param>
+		/// <param name="textContainer">The text container.</param>
 		public void OpenDocument(DocumentId documentId, SourceTextContainer textContainer)
 		{
-			OpenDocumentId = documentId;
 			OnDocumentOpened(documentId, textContainer);
 			OnDocumentContextUpdated(documentId);
 		}
 
-		//public event Action<DocumentId, SourceText> ApplyingTextChange;
+		public override void CloseDocument(DocumentId documentId)
+		{
+			base.CloseDocument(documentId);
+			OnDocumentClosed(documentId, TextLoader.From(TextAndVersion.Create(CurrentSolution.GetDocument(documentId).GetTextAsync().Result, VersionStamp.Create())));
+		}
+
+		/// <summary>
+		/// Is called by the roslyn host if the diagnostics for a document of this workspace has been updated.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="diagnosticsUpdatedArgs">The diagnostics updated arguments.</param>
+		public void OnDiagnosticsUpdated(object sender, DiagnosticsUpdatedArgs diagnosticsUpdatedArgs)
+		{
+			var documentId = diagnosticsUpdatedArgs?.DocumentId;
+			if (documentId != null)
+			{
+				if (_diagnosticsUpdatedNotifiers.TryGetValue(documentId, out var notifier))
+				{
+					var document = CurrentSolution.GetDocument(documentId);
+					ProcessReferenceDirectives(document).ConfigureAwait(false);
+					notifier(diagnosticsUpdatedArgs);
+				}
+			}
+		}
+
+		public void SubscribeToDiagnosticsUpdateNotification(DocumentId documentId, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated)
+		{
+			if (null == documentId)
+				throw new ArgumentNullException(nameof(documentId));
+			if (null == onDiagnosticsUpdated)
+				throw new ArgumentNullException(nameof(onDiagnosticsUpdated));
+
+			if (!_diagnosticsUpdatedNotifiers.TryAdd(documentId, onDiagnosticsUpdated))
+			{
+				if (_diagnosticsUpdatedNotifiers.TryGetValue(documentId, out var handler))
+				{
+					handler -= onDiagnosticsUpdated; // in case it is already registed
+					handler += onDiagnosticsUpdated;
+					throw new NotImplementedException("The previous code needs verification");
+				}
+			}
+
+			// enable diagnostics now, if not already enabled
+			DiagnosticProvider.Enable(this, DiagnosticProvider.Options.Semantic);
+		}
 
 		protected override void Dispose(bool finalize)
 		{
+			DiagnosticProvider.Disable(this);
 			base.Dispose(finalize);
-
-			// ApplyingTextChange = null;
 		}
 
 		protected override void ApplyDocumentTextChanged(DocumentId document, SourceText newText)
 		{
 			if (_sourceTextChangedHandlers.TryGetValue(document, out var action) && null != action)
 				action.Invoke(newText);
-
-			// ApplyingTextChange?.Invoke(document, newText);
 
 			OnDocumentTextChanged(document, newText, PreservationMode.PreserveIdentity);
 		}
@@ -177,7 +251,7 @@ namespace Altaxo.CodeEditing
 
 		public ImmutableArray<string> ReferencesDirectives => _referencesDirectives.Select(x => x.Key).ToImmutableArray();
 
-		private class DirectiveInfo
+		protected class DirectiveInfo
 		{
 			public MetadataReference MetadataReference { get; }
 
@@ -198,7 +272,7 @@ namespace Altaxo.CodeEditing
 		/// </summary>
 		/// <param name="document">The document.</param>
 		/// <returns></returns>
-		internal async Task ProcessReferenceDirectives(Document document)
+		public virtual async Task ProcessReferenceDirectives(Document document)
 		{
 			var project = document.Project;
 			var directives = ((CompilationUnitSyntax)await document.GetSyntaxRootAsync().ConfigureAwait(false))
@@ -271,7 +345,7 @@ namespace Altaxo.CodeEditing
 			}
 		}
 
-		private MetadataReference ResolveReference(string name)
+		protected virtual MetadataReference ResolveReference(string name)
 		{
 			if (File.Exists(name))
 			{
@@ -293,7 +367,7 @@ namespace Altaxo.CodeEditing
 			}
 		}
 
-		public bool HasReference(string text)
+		public virtual bool HasReference(string text)
 		{
 			DirectiveInfo info;
 			if (_referencesDirectives.TryGetValue(text, out info))
@@ -301,6 +375,20 @@ namespace Altaxo.CodeEditing
 				return info.IsActive;
 			}
 			return false;
+		}
+
+		public static MetadataReferenceResolver CreateMetadataReferenceResolver(Workspace workspace, string workingDirectory)
+		{
+			var resolver = Activator.CreateInstance(
+					// can't access this type due to a name collision with Scripting assembly
+					// can't use extern alias because of project.json
+					// ReSharper disable once AssignNullToNotNullAttribute
+					Type.GetType("Microsoft.CodeAnalysis.RelativePathResolver, Microsoft.CodeAnalysis.Workspaces"),
+					ImmutableArray<string>.Empty,
+					workingDirectory);
+			return (MetadataReferenceResolver)Activator.CreateInstance(typeof(WorkspaceMetadataFileReferenceResolver),
+					workspace.Services.GetService<IMetadataService>(),
+					resolver);
 		}
 	}
 }
