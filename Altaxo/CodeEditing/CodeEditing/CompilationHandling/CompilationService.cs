@@ -73,13 +73,22 @@ namespace Altaxo.CodeEditing.CompilationHandling
 					return null;
 				}
 
-				foreach (var referencedAssembly in compilation.References.Select(
-						x => new { Key = x, Value = compilation.GetAssemblyOrModuleSymbol(x) }))
+				foreach (var referencedAssembly in compilation.References)
 				{
-					var path = (referencedAssembly.Key as PortableExecutableReference)?.FilePath;
+					var path = (referencedAssembly as PortableExecutableReference)?.FilePath;
 					if (path != null)
 					{
-						_assemblyLoader.RegisterDependency(((IAssemblySymbol)referencedAssembly.Value).Identity, path);
+						var assemblySymbol = (IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(referencedAssembly);
+						if (null != assemblySymbol)
+						{
+							_assemblyLoader.RegisterDependency(assemblySymbol.Identity, path);
+						}
+						else
+						{
+							// this can happen if the original reference is to an assembly that is GAC'ed,
+							// in this case the new MetaDataReference points to the assembly in the GAC, so its location
+							// is different from the original one.
+						}
 					}
 				}
 

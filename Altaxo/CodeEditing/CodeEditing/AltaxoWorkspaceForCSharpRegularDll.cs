@@ -24,7 +24,7 @@ namespace Altaxo.CodeEditing
 	public class AltaxoWorkspaceForCSharpRegularDll : AltaxoWorkspaceBase
 	{
 		public AltaxoWorkspaceForCSharpRegularDll(RoslynHost roslynHost, string workingDirectory, IEnumerable<MetadataReference> staticReferences)
-				: base(roslynHost, workingDirectory, staticReferences)
+				: base(roslynHost, staticReferences, workingDirectory)
 		{
 		}
 
@@ -54,12 +54,11 @@ namespace Altaxo.CodeEditing
 
 		private CSharpCompilationOptions CreateCompilationOptions()
 		{
-			var metadataReferenceResolver = CreateMetadataReferenceResolver(this, WorkingDirectory);
 			var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary,
 					usings: null,
 					allowUnsafe: true,
-					sourceReferenceResolver: new SourceFileResolver(ImmutableArray<string>.Empty, WorkingDirectory),
-					metadataReferenceResolver: metadataReferenceResolver);
+					sourceReferenceResolver: new SourceFileResolver(ImmutableArray<string>.Empty, WorkingDirectory)
+				);
 			return compilationOptions;
 		}
 
