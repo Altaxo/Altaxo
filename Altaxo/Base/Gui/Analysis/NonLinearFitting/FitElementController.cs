@@ -35,31 +35,33 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 	public interface IFitElementView
 	{
-		IFitElementViewEventSink Controller { get; set; }
-
 		void Initialize(FitElement fitElement);
 
 		void Refresh();
 
 		bool FitFunctionSelected { set; }
-	}
 
-	public interface IFitElementViewEventSink
-	{
-		void EhView_ChooseErrorFunction(int idx);
+		event Action<int> ChooseErrorFunction;
 
-		void EhView_ChooseFitFunction();
+		event Action ChooseFitFunction;
 
-		void EhView_ChooseExternalParameter(int idx);
+		event Action<int> ChooseExternalParameter;
 
-		void EhView_SetupVariablesAndRange();
+		event Action SetupVariablesAndRange;
 
-		void EhView_EditFitFunction();
+		event Action EditFitFunction;
+
+		event Action DeleteThisFitElement;
 	}
 
 	public interface IFitElementController : IMVCAController
 	{
 		event EventHandler FitFunctionSelectionChange;
+
+		/// <summary>
+		/// Occurs when the deletion of this fit element is requested by the user.
+		/// </summary>
+		event Action<FitElement> DeletionOfThisFitElementRequested;
 
 		bool FitFunctionSelected { set; }
 	}
@@ -71,22 +73,56 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 	/// </summary>
 	[UserControllerForObject(typeof(FitElement))]
 	[ExpectedTypeOfView(typeof(IFitElementView))]
-	public class FitElementController : IFitElementViewEventSink, IFitElementController
+	public class FitElementController : IFitElementController
 	{
 		private IFitElementView _view;
 		private FitElement _doc;
+
+		public event EventHandler FitFunctionSelectionChange;
+
+		public event Action<FitElement> DeletionOfThisFitElementRequested;
 
 		public FitElementController(FitElement doc)
 		{
 			_doc = doc;
 		}
 
-		public void Initialize()
+		public void Initialize(bool initData)
 		{
 			if (_view != null)
 			{
 				_view.Initialize(_doc);
 			}
+		}
+
+		private void AttachView()
+		{
+			_view.ChooseErrorFunction += EhView_ChooseErrorFunction;
+
+			_view.ChooseFitFunction += EhView_ChooseFitFunction;
+
+			_view.ChooseExternalParameter += EhView_ChooseExternalParameter;
+
+			_view.SetupVariablesAndRange += EhView_SetupVariablesAndRange;
+
+			_view.EditFitFunction += EhView_EditFitFunction;
+
+			_view.DeleteThisFitElement += EhView_DeleteThisFitElement;
+		}
+
+		private void DetachView()
+		{
+			_view.ChooseErrorFunction -= EhView_ChooseErrorFunction;
+
+			_view.ChooseFitFunction -= EhView_ChooseFitFunction;
+
+			_view.ChooseExternalParameter -= EhView_ChooseExternalParameter;
+
+			_view.SetupVariablesAndRange -= EhView_SetupVariablesAndRange;
+
+			_view.EditFitFunction -= EhView_EditFitFunction;
+
+			_view.DeleteThisFitElement -= EhView_DeleteThisFitElement;
 		}
 
 		public bool FitFunctionSelected
@@ -150,12 +186,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				_doc.FitFunction = (IFitFunction)fitFunc;
 		}
 
-		public event EventHandler FitFunctionSelectionChange;
+		private void EhView_DeleteThisFitElement()
+		{
+			DeletionOfThisFitElementRequested?.Invoke(_doc);
+		}
 
 		public void EhView_ChooseFitFunction()
 		{
-			if (null != FitFunctionSelectionChange)
-				FitFunctionSelectionChange(this, EventArgs.Empty);
+			FitFunctionSelectionChange?.Invoke(this, EventArgs.Empty);
 
 			_view.Refresh();
 		}
@@ -173,14 +211,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			set
 			{
 				if (_view != null)
-					_view.Controller = null;
+				{
+					DetachView();
+				}
 
 				_view = value as IFitElementView;
 
-				Initialize();
-
-				if (_view != null)
-					_view.Controller = this;
+				if (null != _view)
+				{
+					Initialize(false);
+					AttachView();
+				}
 			}
 		}
 

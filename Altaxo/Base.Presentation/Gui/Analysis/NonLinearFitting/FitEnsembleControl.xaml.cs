@@ -34,7 +34,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 	/// <summary>
 	/// Interaction logic for FitEnsembleControl.xaml
 	/// </summary>
-	[UserControlForController(typeof(IFitEnsembleViewEventSink))]
 	public partial class FitEnsembleControl : UserControl, IFitEnsembleView
 	{
 		public FitEnsembleControl()
@@ -44,21 +43,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		#region IFitEnsembleView
 
-		private IFitEnsembleViewEventSink _controller;
-
-		public IFitEnsembleViewEventSink Controller
-		{
-			get
-			{
-				return _controller;
-			}
-			set
-			{
-				_controller = value;
-			}
-		}
-
-		public void Initialize(Calc.Regression.Nonlinear.FitEnsemble ensemble, object[] fitEleControls)
+		public void Initialize(Calc.Regression.Nonlinear.FitEnsemble ensemble, IEnumerable<object> fitEleControls)
 		{
 			_itemsHost.Children.Clear();
 
