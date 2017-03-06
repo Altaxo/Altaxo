@@ -33,7 +33,7 @@
     <RootNamespaceContainer>True</RootNamespaceContainer>
     <PresentationStyle>VS2013</PresentationStyle>
     <Preliminary>False</Preliminary>
-    <NamingMethod>HashedMemberName</NamingMethod>
+    <NamingMethod>MemberName</NamingMethod>
     <HelpTitle>Altaxo Class Library</HelpTitle>
     <ContentPlacement>AboveNamespaces</ContentPlacement>
     <FooterText>Altaxo is hosted on &amp;lt%3ba href=&amp;quot%3bhttp://sourceforge.net/projects/altaxo&amp;quot%3b target=&amp;quot%3b_blank&amp;quot%3b&amp;gt%3b&amp;lt%3bimg src=&amp;quot%3bhttp://sflogo.sourceforge.net/sflogo.php%3fgroup_id=73395&amp;amp%3bamp%3btype=10&amp;quot%3b width=&amp;quot%3b80&amp;quot%3b height=&amp;quot%3b15&amp;quot%3b alt=&amp;quot%3bGet Altaxo Data Processing/Plotting Program at SourceForge.net. Fast, secure and Free Open Source software downloads&amp;quot%3b /&amp;gt%3b&amp;lt%3b/a&amp;gt%3b</FooterText>
@@ -51,7 +51,7 @@
     <WorkingPath>C:\Temp\SandCastleTemp\</WorkingPath>
     <MissingTags>AutoDocumentCtors, AutoDocumentDispose</MissingTags>
     <BuildLogFile>..\help\BuildLog_Web.txt</BuildLogFile>
-    <FrameworkVersion>.NET Framework 4.0</FrameworkVersion>
+    <FrameworkVersion>.NET Framework 4.6</FrameworkVersion>
     <MaximumGroupParts>2</MaximumGroupParts>
     <NamespaceGrouping>True</NamespaceGrouping>
     <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>

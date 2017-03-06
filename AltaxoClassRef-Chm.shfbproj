@@ -13,7 +13,7 @@
     <RootNamespace>Documentation</RootNamespace>
     <Name>Documentation</Name>
     <!-- SHFB properties -->
-    <FrameworkVersion>.NET Framework 4.0</FrameworkVersion>
+    <FrameworkVersion>.NET Framework 4.6</FrameworkVersion>
     <OutputPath>rtDir\doc\help\</OutputPath>
     <HtmlHelpName>AltaxoClassRef</HtmlHelpName>
     <Language>en-US</Language>
