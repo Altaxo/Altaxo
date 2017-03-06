@@ -205,7 +205,7 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return Main.AbsoluteDocumentPath.GetPathString(this, 3);
+				return this.IsDisposeInProgress ? string.Empty : Main.AbsoluteDocumentPath.GetPathString(this, 3);
 			}
 		}
 

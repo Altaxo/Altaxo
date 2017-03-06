@@ -38,9 +38,24 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 	/// <summary>
 	/// Interaction logic for FitElementControl.xaml
 	/// </summary>
-	[UserControlForController(typeof(IFitElementViewEventSink))]
 	public partial class FitElementControl : UserControl, IFitElementView
 	{
+		#region events to controller
+
+		public event Action<int> ChooseErrorFunction;
+
+		public event Action ChooseFitFunction;
+
+		public event Action<int> ChooseExternalParameter;
+
+		public event Action SetupVariablesAndRange;
+
+		public event Action EditFitFunction;
+
+		public event Action DeleteThisFitElement;
+
+		#endregion events to controller
+
 		#region Members
 
 		private const int idxVariablesColumn = 0;
@@ -120,6 +135,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				item.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
 				item.VerticalContentAlignment = System.Windows.VerticalAlignment.Center;
 				item.Click += new RoutedEventHandler(EhClickOnFitFunction);
+
+				// context menu for the button
+				var menuItem = new MenuItem() { Header = "Delete this fit element" };
+				menuItem.Click += EhDeleteFitElement;
+				var contextMenu = new ContextMenu();
+				contextMenu.Items.Add(menuItem);
+				item.ContextMenu = contextMenu;
 				_grid.Children.Add(item);
 			}
 
@@ -359,48 +381,39 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
+		private void EhDeleteFitElement(object sender, RoutedEventArgs e)
+		{
+			DeleteThisFitElement?.Invoke();
+		}
+
 		private void EhClickOnFitFunction(object sender, RoutedEventArgs e)
 		{
-			_controller.EhView_ChooseFitFunction();
-			_controller.EhView_EditFitFunction();
+			ChooseFitFunction?.Invoke();
+			EditFitFunction?.Invoke();
 		}
 
 		private void EhSetupVariablesAndRange(object sender, RoutedEventArgs e)
 		{
-			_controller.EhView_SetupVariablesAndRange();
+			SetupVariablesAndRange?.Invoke();
 		}
 
 		private void EhClickOnParameter(object sender, RoutedEventArgs e)
 		{
 			int idx = (int)((FrameworkElement)sender).Tag;
-			_controller.EhView_ChooseExternalParameter(idx);
+			ChooseExternalParameter?.Invoke(idx);
 			((ContentControl)sender).Content = GetTextShownForParameter(idx);
 		}
 
 		private void EhClickOnErrorFunction(object sender, RoutedEventArgs e)
 		{
 			int idx = (int)((FrameworkElement)sender).Tag;
-			_controller.EhView_ChooseErrorFunction(idx);
+			ChooseErrorFunction?.Invoke(idx);
 			((ContentControl)sender).Content = GetTextShownForErrorEvaluation(idx);
 		}
 
 		#endregion Work
 
 		#region IFitElementView
-
-		private IFitElementViewEventSink _controller;
-
-		public IFitElementViewEventSink Controller
-		{
-			get
-			{
-				return _controller;
-			}
-			set
-			{
-				_controller = value;
-			}
-		}
 
 		public void Initialize(Calc.Regression.Nonlinear.FitElement fitElement)
 		{

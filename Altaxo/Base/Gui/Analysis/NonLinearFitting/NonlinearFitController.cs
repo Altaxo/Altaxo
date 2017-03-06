@@ -331,7 +331,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			Current.Gui.ShowBackgroundCancelDialog(10000, null, simulationThread);
 		}
 
-		private enum SelectionChoice { SelectAsOnly, SelectAsAdditional };
+		private enum SelectionChoice { SelectAsOnly, SelectAsAdditional, SelectAsReplacementForAllExisting };
 
 		private SelectionChoice _lastSelectionChoice = SelectionChoice.SelectAsOnly;
 
@@ -358,24 +358,47 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				if (Current.Gui.ShowDialog(ref selchoice, "As only or as additional?"))
 				{
 					_lastSelectionChoice = (SelectionChoice)selchoice;
-					if (_lastSelectionChoice == SelectionChoice.SelectAsAdditional)
+
+					switch (_lastSelectionChoice)
 					{
-						FitElement newele = new FitElement();
-						newele.FitFunction = func;
-						_doc.FitEnsemble.Add(newele);
-						_doc.SetDefaultParametersForFitElement(_doc.FitEnsemble.Count - 1);
-						changed = true;
-					}
-					else // select as only
-					{
-						for (int i = _doc.FitEnsemble.Count - 1; i >= 1; --i)
-							_doc.FitEnsemble.RemoveAt(i);
+						case SelectionChoice.SelectAsOnly:
+							{
+								for (int i = _doc.FitEnsemble.Count - 1; i >= 1; --i)
+									_doc.FitEnsemble.RemoveAt(i);
 
-						_doc.FitEnsemble[0].FitFunction = func;
+								_doc.FitEnsemble[0].FitFunction = func;
 
-						_doc.SetDefaultParametersForFitElement(0);
+								_doc.SetDefaultParametersForFitElement(0);
 
-						changed = true;
+								changed = true;
+							}
+							break;
+
+						case SelectionChoice.SelectAsAdditional:
+							{
+								FitElement newele = new FitElement();
+								newele.FitFunction = func;
+								_doc.FitEnsemble.Add(newele);
+								_doc.SetDefaultParametersForFitElement(_doc.FitEnsemble.Count - 1);
+								changed = true;
+							}
+							break;
+
+						case SelectionChoice.SelectAsReplacementForAllExisting:
+							{
+								// we have to replace the fit function in all existing fit functions by the new function
+								for (int i = _doc.FitEnsemble.Count - 1; i >= 0; --i)
+								{
+									_doc.FitEnsemble[i].FitFunction = func;
+								}
+								changed = true;
+							}
+							break;
+
+						default:
+							{
+								throw new NotImplementedException();
+							}
 					}
 				}
 			}

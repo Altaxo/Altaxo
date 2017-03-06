@@ -24,6 +24,7 @@
 
 using Altaxo.Calc.Regression.Nonlinear;
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -31,13 +32,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 	public interface IFitEnsembleView
 	{
-		IFitEnsembleViewEventSink Controller { get; set; }
-
-		void Initialize(FitEnsemble ensemble, object[] fitEleControls);
-	}
-
-	public interface IFitEnsembleViewEventSink
-	{
+		void Initialize(FitEnsemble ensemble, IEnumerable<object> fitEleControls);
 	}
 
 	public interface IFitEnsembleController : IMVCAController
@@ -52,64 +47,105 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 	/// </summary>
 	[UserControllerForObject(typeof(FitEnsemble))]
 	[ExpectedTypeOfView(typeof(IFitEnsembleView))]
-	public class FitEnsembleController : IFitEnsembleController, IFitEnsembleViewEventSink
+	public class FitEnsembleController : IFitEnsembleController
 	{
 		private IFitEnsembleView _view;
 		private FitEnsemble _doc;
 
-		private IFitElementController[] _fitEleController;
+		private List<IFitElementController> _fitEleController;
+		private List<object> _fitEleControls;
 		private int _currentFitFunctionSelIndex;
 
 		public FitEnsembleController(FitEnsemble doc)
 		{
 			_doc = doc;
-			Initialize();
+			Initialize(true);
 		}
 
 		private void Uninitialize()
 		{
 			if (_fitEleController != null)
 			{
-				for (int i = 0; i < _fitEleController.Length; i++)
+				for (int i = 0; i < _fitEleController.Count; i++)
 				{
-					_fitEleController[i].FitFunctionSelectionChange -= new EventHandler(EhFitFunctionSelectionChange);
-					_fitEleController[i] = null;
+					DetachFitElementController(_fitEleController[i]);
 				}
+			}
+			_fitEleController = new List<IFitElementController>();
+		}
+
+		public void Initialize(bool initData)
+		{
+			if (initData)
+			{
+				Uninitialize();
+
+				_fitEleController = new List<IFitElementController>(_doc.Count);
+				_fitEleControls = new List<object>(_doc.Count);
+
+				for (int i = 0; i < _doc.Count; i++)
+				{
+					_fitEleController.Add((IFitElementController)Current.Gui.GetControllerAndControl(new object[] { _doc[i] }, typeof(IFitElementController)));
+					_fitEleControls.Add(_fitEleController[i].ViewObject);
+					AttachFitElementController(_fitEleController[i]);
+				}
+			}
+			if (_view != null)
+			{
+				_view.Initialize(_doc, _fitEleControls);
 			}
 		}
 
-		public void Initialize()
+		private void AttachView()
 		{
-			Uninitialize();
+		}
 
-			_fitEleController = new IFitElementController[_doc.Count];
+		private void DetachView()
+		{
+		}
 
-			object[] fitEleControls = new object[_doc.Count];
-			for (int i = 0; i < _doc.Count; i++)
-			{
-				_fitEleController[i] = (IFitElementController)Current.Gui.GetControllerAndControl(new object[] { _doc[i] }, typeof(IFitElementController));
-				fitEleControls[i] = _fitEleController[i].ViewObject;
+		private void AttachFitElementController(IFitElementController c)
+		{
+			c.FitFunctionSelectionChange += EhFitFunctionSelectionChange;
+			c.DeletionOfThisFitElementRequested += EhDeletionOfFitElementRequested;
+		}
 
-				_fitEleController[i].FitFunctionSelectionChange += new EventHandler(EhFitFunctionSelectionChange);
-			}
-
-			if (_view != null)
-				_view.Initialize(_doc, fitEleControls);
+		private void DetachFitElementController(IFitElementController c)
+		{
+			c.FitFunctionSelectionChange -= EhFitFunctionSelectionChange;
+			c.DeletionOfThisFitElementRequested -= EhDeletionOfFitElementRequested;
 		}
 
 		private void EhFitFunctionSelectionChange(object sender, System.EventArgs e)
 		{
 			_currentFitFunctionSelIndex = GetIndexOfController(sender);
 
-			for (int i = 0; i < _fitEleController.Length; i++)
+			for (int i = 0; i < _fitEleController.Count; i++)
 			{
 				_fitEleController[i].FitFunctionSelected = (_currentFitFunctionSelIndex == i);
 			}
 		}
 
+		private void EhDeletionOfFitElementRequested(FitElement fitElement)
+		{
+			for (int i = _doc.Count - 1; i >= 0; --i)
+			{
+				if (object.ReferenceEquals(_doc[i], fitElement))
+				{
+					_doc.RemoveAt(i);
+					DetachFitElementController(_fitEleController[i]);
+					_fitEleController.RemoveAt(i);
+					_fitEleControls.RemoveAt(i);
+					break;
+				}
+			}
+
+			_view.Initialize(_doc, _fitEleControls);
+		}
+
 		private int GetIndexOfController(object sender)
 		{
-			for (int i = 0; i < _fitEleController.Length; i++)
+			for (int i = 0; i < _fitEleController.Count; i++)
 				if (object.ReferenceEquals(sender, _fitEleController[i]))
 					return i;
 
@@ -118,7 +154,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		public void Refresh()
 		{
-			Initialize();
+			Initialize(true);
 		}
 
 		#region IMVCController Members
@@ -132,14 +168,18 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			set
 			{
 				if (_view != null)
-					_view.Controller = null;
+				{
+					DetachView();
+				}
 
 				_view = value as IFitEnsembleView;
 
-				Initialize();
-
 				if (_view != null)
-					_view.Controller = this;
+				{
+					Initialize(false);
+
+					AttachView();
+				}
 			}
 		}
 
