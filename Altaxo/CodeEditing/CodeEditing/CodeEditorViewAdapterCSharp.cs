@@ -280,9 +280,9 @@ namespace Altaxo.CodeEditing
 		{
 			var document = Workspace.CurrentSolution.GetDocument(this.DocumentId);
 
-			var formattedDocument = await Formatter.FormatAsync(document).ConfigureAwait(false);
-
-			Workspace.TryApplyChanges(formattedDocument.Project.Solution);
+			var syntaxTree = await document.GetSyntaxRootAsync();
+			var textChanges = await Formatter.GetFormattedTextChangesAsync(syntaxTree, Workspace);
+			SourceTextAdapter.ApplyTextChanges(textChanges, (modifiedSourceText) => Workspace.TryApplyChanges(document.WithText(modifiedSourceText).Project.Solution));
 		}
 
 		/// <summary>

@@ -45,8 +45,19 @@ namespace Altaxo.CodeEditing
 	/// <seealso cref="Microsoft.CodeAnalysis.Workspace" />
 	public class AltaxoWorkspaceForCSharpRegularDll : AltaxoWorkspaceBase
 	{
-		public AltaxoWorkspaceForCSharpRegularDll(RoslynHost roslynHost, string workingDirectory, IEnumerable<MetadataReference> staticReferences)
+		public AltaxoWorkspaceForCSharpRegularDll(
+			RoslynHost roslynHost,
+			string workingDirectory,
+			IEnumerable<MetadataReference> staticReferences)
 				: base(roslynHost, staticReferences, workingDirectory)
+		{
+		}
+
+		public AltaxoWorkspaceForCSharpRegularDll(
+		RoslynHost roslynHost,
+		string workingDirectory,
+		IEnumerable<System.Reflection.Assembly> staticReferences)
+			: base(roslynHost, staticReferences, workingDirectory)
 		{
 		}
 

@@ -245,7 +245,6 @@ namespace Altaxo.Gui.CodeEditing
 			// textView.Services.AddService(typeof(ISyntaxHighlighter), new AvalonEditSyntaxHighlighterAdapter(textView));
 
 			codeEditorView.TextArea.MouseRightButtonDown += TextAreaMouseRightButtonDown;
-			codeEditorView.TextArea.ContextMenuOpening += TextAreaContextMenuOpening;
 			codeEditorView.TextArea.TextCopied += textEditor_TextArea_TextCopied;
 			codeEditorView.GotFocus += textEditor_GotFocus;
 
@@ -340,12 +339,6 @@ namespace Altaxo.Gui.CodeEditing
 			{
 				textEditor.TextArea.Caret.Position = position.Value;
 			}
-		}
-
-		private void TextAreaContextMenuOpening(object sender, ContextMenuEventArgs e)
-		{
-			//ITextEditor adapter = GetAdapterFromSender(sender);
-			//MenuService.ShowContextMenu(sender as UIElement, adapter, contextMenuPath);
 		}
 
 		public event EventHandler<TextEventArgs> TextCopied;

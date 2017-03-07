@@ -116,6 +116,12 @@ namespace Altaxo.CodeEditing
 		Task<SyntaxTree> GetDocumentSyntaxTreeAsync();
 
 		/// <summary>
+		/// Formats the complete document.
+		/// </summary>
+		/// <returns></returns>
+		Task FormatDocument();
+
+		/// <summary>
 		/// Formats the document after entering a trigger character. Trigger chars are e.g. closing curly brace (then format whole paragraph)
 		/// or semicolon (then format line).
 		/// </summary>

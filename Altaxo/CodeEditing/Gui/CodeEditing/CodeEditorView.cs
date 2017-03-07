@@ -142,6 +142,8 @@ namespace Altaxo.Gui.CodeEditing
 			TextArea.TextEntering += OnTextEntering;
 			TextArea.TextEntered += OnTextEntered;
 
+			TextArea.MouseWheel += OnTextArea_MouseWheel;
+
 			ToolTipService.SetInitialShowDelay(this, 0);
 			// SearchReplacePanel.Install(this);
 
@@ -171,6 +173,43 @@ namespace Altaxo.Gui.CodeEditing
 			//this.TextArea.Caret.PositionChanged += CaretOnPositionChanged;
 
 			ReferencesHighlightRenderer_Initialize();
+
+			BuildTextAreaContextMenu();
+		}
+
+		/// <summary>
+		/// Builds the context menu for the text area.
+		/// </summary>
+		/// <returns>The context menu for the text area (can be used to chain the building).</returns>
+		protected virtual ContextMenu BuildTextAreaContextMenu()
+		{
+			var contextMenu = this.TextArea.ContextMenu ?? (this.TextArea.ContextMenu = new ContextMenu());
+
+			MenuItem menuItem;
+			menuItem = new MenuItem { Header = "Format all" };
+			menuItem.Click += EhFormatCodeTextAll;
+
+			contextMenu.Items.Add(menuItem);
+
+			return contextMenu;
+		}
+
+		private void OnTextArea_MouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+			{
+				this.TextArea.FontSize *= Math.Exp(0.0002 * e.Delta);
+				e.Handled = true;
+			}
+		}
+
+		private async void EhFormatCodeTextAll(object sender, RoutedEventArgs e)
+		{
+			var adapter = _adapter;
+			if (null != adapter)
+			{
+				await adapter.FormatDocument();
+			}
 		}
 
 		public virtual void Dispose()

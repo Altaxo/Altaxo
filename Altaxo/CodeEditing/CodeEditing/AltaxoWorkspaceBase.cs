@@ -93,6 +93,20 @@ namespace Altaxo.CodeEditing
 		/// <param name="roslynHost">The roslyn host.</param>
 		/// <param name="staticReferences">The static references, i.e. project references that are not stated in the code by #r statements.</param>
 		/// <param name="workingDirectory">The working directory. Is used only for script workspaces, otherwise, it can be null.</param>
+		public AltaxoWorkspaceBase(RoslynHost roslynHost, IEnumerable<System.Reflection.Assembly> staticReferences, string workingDirectory)
+				: this(
+						roslynHost,
+						staticReferences?.Select(ass => roslynHost.CreateMetadataReference(ass.Location)),
+						workingDirectory)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="AltaxoWorkspaceBase"/> class.
+		/// </summary>
+		/// <param name="roslynHost">The roslyn host.</param>
+		/// <param name="staticReferences">The static references, i.e. project references that are not stated in the code by #r statements.</param>
+		/// <param name="workingDirectory">The working directory. Is used only for script workspaces, otherwise, it can be null.</param>
 		public AltaxoWorkspaceBase(RoslynHost roslynHost, IEnumerable<MetadataReference> staticReferences, string workingDirectory)
 				: base(roslynHost.MefHost, WorkspaceKind.Host)
 		{

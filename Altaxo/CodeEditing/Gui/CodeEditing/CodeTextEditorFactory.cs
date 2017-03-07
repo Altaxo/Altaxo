@@ -34,96 +34,225 @@ using Microsoft.CodeAnalysis;
 
 namespace Altaxo.Gui.CodeEditing
 {
+	/// <summary>
+	/// Helper class to create instances of <see cref="CodeEditorView"/>, <see cref="CodeEditor"/> or <see cref="CodeEditorWithDiagnostics"/>.
+	/// </summary>
 	public class CodeTextEditorFactory
 	{
-		private RoslynHost _roslynHost;
+		/// <summary>
+		/// Gets the roslyn host. (it is set either by a parameter in the constructor, or a new roslyn host is created for this instance).
+		/// </summary>
+		/// <value>
+		/// The roslyn host.
+		/// </value>
+		public RoslynHost RoslynHost { get; }
 
-		private string _workingDirectory = Environment.CurrentDirectory;
+		/// <summary>
+		/// Gets the working directory.
+		/// </summary>
+		/// <value>
+		/// The working directory.
+		/// </value>
+		public string WorkingDirectory { get; } = Environment.CurrentDirectory;
 
-		public CodeTextEditorFactory()
+		protected FontFamily _defaultFont = new FontFamily("Consolas");
+
+		protected double _defaultFontSize = 12;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CodeTextEditorFactory"/> class. A new <see cref="RoslynHost"/> is created and referenced in this instance.
+		/// </summary>
+		public CodeTextEditorFactory() : this(null)
 		{
-			_roslynHost = new RoslynHost(null);
 		}
 
-		public CodeEditorView NewFromFileName(string fileName, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CodeTextEditorFactory"/> class.
+		/// </summary>
+		/// <param name="host">The roslyn host. If this argument is null, a new instance of <see cref="RoslynHost"/> is created and stored in this instance.</param>
+		public CodeTextEditorFactory(RoslynHost host)
 		{
+			RoslynHost = host ?? new RoslynHost(null);
+		}
+
+		/// <summary>
+		/// Gets or sets the default font for the code editor.
+		/// </summary>
+		/// <value>
+		/// The default font for the code editor.
+		/// </value>
+		/// <exception cref="ArgumentNullException">value</exception>
+		public FontFamily DefaultFont
+		{
+			get
+			{
+				return _defaultFont;
+			}
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+				_defaultFont = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the default size of the font for the code editor.
+		/// </summary>
+		/// <value>
+		/// The default size of the font for the code editor.
+		/// </value>
+		/// <exception cref="ArgumentException">value out of range - value</exception>
+		public double DefaultFontSize
+		{
+			get
+			{
+				return _defaultFontSize;
+			}
+			set
+			{
+				if (!(_defaultFontSize > 0 && _defaultFontSize < double.MaxValue))
+					throw new ArgumentException("value out of range", nameof(value));
+				_defaultFontSize = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets a new instance of the code editor view. This is the lowest level code editor control (only code editor, no quick class browser, no error message window).
+		/// </summary>
+		/// <param name="initialText">The initial code text.</param>
+		/// <param name="referencedAssemblies">The  assemblies referenced by the code.</param>
+		/// <returns>New instance of a code editor view.</returns>
+		public CodeEditorView NewCodeEditorView(string initialText, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
+		{
+			var workspace = new AltaxoWorkspaceForCSharpRegularDll(RoslynHost, WorkingDirectory, referencedAssemblies);
+			return NewCodeEditorView(workspace, initialText);
+		}
+
+		/// <summary>
+		/// Gets a new instance of the code editor view. This is the lowest level code editor control.
+		/// </summary>
+		/// <param name="workspace">The workspace (contains solution, project and referenced assemblies).</param>
+		/// <param name="initialText">The initial code text.</param>
+		/// <param name="fontFamily">The font family used for the code editor.</param>
+		/// <param name="fontSize">Size of the font used for the code editor.</param>
+		/// <returns>New instance of the code editor view.</returns>
+		/// <exception cref="ArgumentNullException">workspace</exception>
+		public CodeEditorView NewCodeEditorView(AltaxoWorkspaceBase workspace, string initialText, FontFamily fontFamily = null, double? fontSize = null)
+		{
+			if (null == workspace)
+				throw new ArgumentNullException(nameof(workspace));
+
 			var editor = new CodeEditorView();
-			editor.FontFamily = new FontFamily("Consolas");
-			editor.FontSize = 12;
+			editor.Document.Text = initialText;
+
+			editor.FontFamily = fontFamily ?? _defaultFont;
+			editor.FontSize = fontSize ?? _defaultFontSize;
 
 			// create the source text container that is connected with this editor
-			var sourceTextContainer = new RoslynSourceTextContainerAdapter(editor.Document, editor); // DocumentView.xaml.cs line 82
-
-			var workspace = new AltaxoWorkspaceForCSharpRegularDll(
-				_roslynHost,
-				_workingDirectory,
-				referencedAssemblies?.Select(ass => _roslynHost.CreateMetadataReference(ass.Location))
-				);
+			var sourceTextContainer = new RoslynSourceTextContainerAdapter(editor.Document, editor);
 
 			var document = workspace.CreateAndOpenDocument(sourceTextContainer, sourceTextContainer.UpdateText);
 
 			editor.Adapter = new CodeEditorViewAdapterCSharp(workspace, document.Id, sourceTextContainer);
-			editor.Document.UndoStack.ClearAll(); // DocumentView.xaml.cs line 94
-
-			// editor.TextArea.TextView.LineTransformers.Insert(0, new RoslynHighlightingColorizer(_viewModel.DocumentId, _roslynHost));
-
-			//editor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("C#");
+			editor.Document.UndoStack.ClearAll();
 
 			return editor;
 		}
 
-		public CodeEditor NewCodeEditor(string fileName, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
+		/// <summary>
+		/// Gets a new instance of a code editor. This is the medium level code editor control (code editor, splittable, with quick class browser, but without error message window).
+		/// </summary>
+		/// <param name="initialText">The initial code text.</param>
+		/// <param name="referencedAssemblies">The  assemblies referenced by the code.</param>
+		/// <returns>New instance of a code editor.</returns>
+		public CodeEditor NewCodeEditor(string initialText, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
 		{
-			var codeEditor = new CodeEditor();
-
-			var editor = codeEditor.primaryTextEditor;
-			editor.FontFamily = new FontFamily("Consolas");
-			editor.FontSize = 12;
-
-			// create the source text container that is connected with this editor
-			var sourceTextContainer = new RoslynSourceTextContainerAdapter(codeEditor.Document, codeEditor); // DocumentView.xaml.cs line 82
-
-			var workspace = new AltaxoWorkspaceForCSharpRegularDll(
-				_roslynHost,
-				_workingDirectory,
-				referencedAssemblies?.Select(ass => _roslynHost.CreateMetadataReference(ass.Location))
-				);
-
-			var document = workspace.CreateAndOpenDocument(sourceTextContainer, sourceTextContainer.UpdateText);
-
-			codeEditor.Adapter = new CodeEditorViewAdapterCSharp(workspace, document.Id, sourceTextContainer);
-			editor.Document.UndoStack.ClearAll(); // DocumentView.xaml.cs line 94
-
-			return codeEditor;
+			var workspace = new AltaxoWorkspaceForCSharpRegularDll(RoslynHost, WorkingDirectory, referencedAssemblies);
+			return NewCodeEditor(workspace, initialText);
 		}
 
-		public CodeEditorWithDiagnostics NewCodeEditorWithDiagnostics(string initialText, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
+		/// <summary>
+		/// Gets a new instance of the code editor. This is the medium level code editor control (code editor, splittable, with quick class browser, but without error message window).
+		/// </summary>
+		/// <param name="workspace">The workspace (contains solution, project and referenced assemblies).</param>
+		/// <param name="initialText">The initial code text.</param>
+		/// <param name="fontFamily">The font family used for the code editor.</param>
+		/// <param name="fontSize">Size of the font used for the code editor.</param>
+		/// <returns>New instance of the code editor view.</returns>
+		/// <exception cref="ArgumentNullException">workspace</exception>
+		public CodeEditor NewCodeEditor(AltaxoWorkspaceBase workspace, string initialText, FontFamily fontFamily = null, double? fontSize = null)
 		{
-			var codeEditor = new CodeEditorWithDiagnostics();
-			codeEditor.DocumentText = initialText;
+			if (null == workspace)
+				throw new ArgumentNullException(nameof(workspace));
+
+			var codeEditor = new CodeEditor()
+			{
+				DocumentText = initialText
+			};
 
 			var editor = codeEditor.primaryTextEditor;
-			editor.FontFamily = new FontFamily("Consolas");
-			editor.FontSize = 12;
+			editor.FontFamily = fontFamily ?? _defaultFont;
+			editor.FontSize = fontSize ?? _defaultFontSize;
 
 			// create the source text container that is connected with this editor
-			var sourceTextContainer = new RoslynSourceTextContainerAdapter(codeEditor.Document, codeEditor); // DocumentView.xaml.cs line 82
-			var workspace = new AltaxoWorkspaceForCSharpRegularDll(
-			_roslynHost,
-			_workingDirectory,
-			referencedAssemblies?.Select(ass => _roslynHost.CreateMetadataReference(ass.Location))
-			);
+			var sourceTextContainer = new RoslynSourceTextContainerAdapter(codeEditor.Document, codeEditor);
 
 			var document = workspace.CreateAndOpenDocument(sourceTextContainer, sourceTextContainer.UpdateText);
-			codeEditor.Adapter = new CodeEditorViewAdapterCSharp(workspace, document.Id, sourceTextContainer);
 
-			editor.Document.UndoStack.ClearAll(); // DocumentView.xaml.cs line 94
+			codeEditor.Adapter = new CodeEditorViewAdapterCSharp(workspace, document.Id, sourceTextContainer);
+			editor.Document.UndoStack.ClearAll();
 
 			return codeEditor;
 		}
 
 		/// <summary>
-		/// Uninitializes the specified code editor and removes the corresponding workspace from Roslyn.
+		/// Gets a new instance of a code editor with diagnostics. This is the highest level code editor control (code editor, splittable, with quick class browser and error message window).
+		/// </summary>
+		/// <param name="initialText">The initial code text.</param>
+		/// <param name="referencedAssemblies">The  assemblies referenced by the code.</param>
+		/// <returns>New instance of a code editor with diagnostics.</returns>
+		public CodeEditorWithDiagnostics NewCodeEditorWithDiagnostics(string initialText, IEnumerable<System.Reflection.Assembly> referencedAssemblies)
+		{
+			var workspace = new AltaxoWorkspaceForCSharpRegularDll(RoslynHost, WorkingDirectory, referencedAssemblies);
+			return NewCodeEditorWithDiagnostics(workspace, initialText);
+		}
+
+		/// <summary>
+		/// Gets a new instance of the code editor with diagnostics. This is the highest level code editor control (code editor, splittable, with quick class browser and error message window).
+		/// </summary>
+		/// <param name="workspace">The workspace (contains solution, project and referenced assemblies).</param>
+		/// <param name="initialText">The initial code text.</param>
+		/// <param name="fontFamily">The font family used for the code editor.</param>
+		/// <param name="fontSize">Size of the font used for the code editor.</param>
+		/// <returns>New instance of the code editor with diagnostics.</returns>
+		/// <exception cref="ArgumentNullException">workspace</exception>
+		public CodeEditorWithDiagnostics NewCodeEditorWithDiagnostics(AltaxoWorkspaceBase workspace, string initialText, FontFamily fontFamily = null, double? fontSize = null)
+		{
+			if (null == workspace)
+				throw new ArgumentNullException(nameof(workspace));
+
+			var codeEditor = new CodeEditorWithDiagnostics()
+			{
+				DocumentText = initialText
+			};
+
+			var editor = codeEditor.primaryTextEditor;
+			editor.FontFamily = fontFamily ?? _defaultFont;
+			editor.FontSize = fontSize ?? _defaultFontSize;
+
+			// create the source text container that is connected with this editor
+			var sourceTextContainer = new RoslynSourceTextContainerAdapter(codeEditor.Document, codeEditor);
+			var document = workspace.CreateAndOpenDocument(sourceTextContainer, sourceTextContainer.UpdateText);
+			codeEditor.Adapter = new CodeEditorViewAdapterCSharp(workspace, document.Id, sourceTextContainer);
+
+			editor.Document.UndoStack.ClearAll();
+
+			return codeEditor;
+		}
+
+		/// <summary>
+		/// Uninitializes the specified code editor with diagnostics and (if there is no other document open) removes the corresponding workspace from Roslyn.
 		/// </summary>
 		/// <param name="codeEditor">The code editor.</param>
 		public void Uninitialize(CodeEditorWithDiagnostics codeEditor)
@@ -139,7 +268,7 @@ namespace Altaxo.Gui.CodeEditing
 		}
 
 		/// <summary>
-		/// Uninitializes the specified code editor and removes the corresponding workspace from Roslyn.
+		/// Uninitializes the specified code editor and  (if there is no other document open)  removes the corresponding workspace from Roslyn.
 		/// </summary>
 		/// <param name="codeEditor">The code editor.</param>
 		public void Uninitialize(CodeEditor codeEditor)
@@ -155,7 +284,7 @@ namespace Altaxo.Gui.CodeEditing
 		}
 
 		/// <summary>
-		/// Uninitializes the specified code editor and removes the corresponding workspace from Roslyn.
+		/// Uninitializes the specified code editor view and (if there is no other document open) removes the corresponding workspace from Roslyn.
 		/// </summary>
 		/// <param name="codeEditor">The code editor.</param>
 		public void Uninitialize(CodeEditorView codeEditor)
