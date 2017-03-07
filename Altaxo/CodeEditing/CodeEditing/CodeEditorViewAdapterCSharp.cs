@@ -67,6 +67,14 @@ namespace Altaxo.CodeEditing
 
 		public RoslynSourceTextContainerAdapter SourceTextAdapter { get; }
 
+		/// <summary>
+		/// Gets the highlighting colorizer to colorize the code.
+		/// </summary>
+		/// <value>
+		/// The highlighting colorizer.
+		/// </value>
+		public ICSharpCode.AvalonEdit.Highlighting.HighlightingColorizer HighlightingColorizer { get; }
+
 		public QuickInfo.IQuickInfoProvider QuickInfoProvider { get; set; }
 
 		public SyntaxTreeFoldingStrategy FoldingStrategy { get; set; }
@@ -104,6 +112,7 @@ namespace Altaxo.CodeEditing
 			DocumentId = documentID;
 			SourceTextAdapter = sourceText;
 
+			HighlightingColorizer = new SyntaxHighlighting.SemanticHighlightingColorizer(Workspace, DocumentId);
 			QuickInfoProvider = _roslynHost.GetService<QuickInfo.IQuickInfoProvider>();
 			FoldingStrategy = new SyntaxTreeFoldingStrategy();
 			BraceMatchingService = _roslynHost.GetService<IBraceMatchingService>();

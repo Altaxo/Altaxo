@@ -129,7 +129,7 @@
     <Compile Include="CodeEditing\Completion\CodeEditorCompletionProvider.cs" />
     <Compile Include="CodeEditing\Completion\CompletionHelper.cs" />
     <Compile Include="CodeEditing\Completion\CompletionItemExtensions.cs" />
-    <Compile Include="CodeEditing\Completion\RoslynSourceTextContainerAdapter.cs" />
+    <Compile Include="CodeEditing\RoslynSourceTextContainerAdapter.cs" />
     <Compile Include="CodeEditing\Completion\Glyph.cs" />
     <Compile Include="CodeEditing\Completion\GlyphExtensions.cs" />
     <Compile Include="CodeEditing\Completion\RoslynCompletionData.cs" />
@@ -183,6 +183,8 @@
     <Compile Include="CodeEditing\SnippetHandling\SnippetInfo.cs" />
     <Compile Include="CodeEditing\SnippetHandling\SnippetInfoService.cs" />
     <Compile Include="CodeEditing\SnippetHandling\SnippetManager.cs" />
+    <Compile Include="CodeEditing\SyntaxHighlighting\SemanticHighlighter.cs" />
+    <Compile Include="CodeEditing\SyntaxHighlighting\SemanticHightlightingColorizer.cs" />
     <Compile Include="CodeEditing\Utilities\NotificationObject.cs" />
     <Compile Include="Gui\CodeEditing\BraceMatching\BracketHighlightRenderer.cs" />
     <Compile Include="Gui\CodeEditing\CaretHighlightAdorner.cs" />
@@ -208,6 +210,7 @@
     <Compile Include="Gui\CodeEditing\ReferenceHighlighting\ExpressionHighlightRenderer.cs" />
     <Compile Include="Gui\CodeEditing\SymbolDisplayPartExtensions.cs" />
     <Compile Include="Gui\CodeEditing\CodeEditorWithDiagnostics.cs" />
+    <Compile Include="Gui\CodeEditing\SyntaxHighlighting\TextHightlightingColors.cs" />
     <Compile Include="Gui\CodeEditing\TextMarkerHandling\TextMarker.cs" />
     <Compile Include="Gui\CodeEditing\TextMarkerHandling\TextMarkerService.cs" />
     <Compile Include="Gui\CodeEditing\TextMarkerHandling\TextMarkerToolTipProvider.cs" />

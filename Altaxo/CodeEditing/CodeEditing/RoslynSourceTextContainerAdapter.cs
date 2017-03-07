@@ -14,7 +14,7 @@ using ICSharpCode.AvalonEdit.Document;
 using Microsoft.CodeAnalysis.Text;
 using TextChangeEventArgs = Microsoft.CodeAnalysis.Text.TextChangeEventArgs;
 
-namespace Altaxo.CodeEditing.Completion
+namespace Altaxo.CodeEditing
 {
 	/// <summary>
 	/// Adapter class Roslyn's <see cref="SourceTextContainer"/> from/to AvalonEdits <see cref="TextDocument"/>.

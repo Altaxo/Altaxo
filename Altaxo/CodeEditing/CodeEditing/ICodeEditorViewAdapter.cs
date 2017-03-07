@@ -68,6 +68,14 @@ namespace Altaxo.CodeEditing
 		ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition HighlightingService { get; }
 
 		/// <summary>
+		/// Gets the highlighting colorizer to colorize the code.
+		/// </summary>
+		/// <value>
+		/// The highlighting colorizer.
+		/// </value>
+		ICSharpCode.AvalonEdit.Highlighting.HighlightingColorizer HighlightingColorizer { get; }
+
+		/// <summary>
 		/// Gets the quick info tool tip.
 		/// </summary>
 		/// <param name="cursorPosition">The cursor position.</param>
