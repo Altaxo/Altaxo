@@ -781,14 +781,8 @@ namespace Altaxo.Gui.CodeEditing
 
 		public void JumpTo(int caretOffset)
 		{
-			// closes Debugger popup on debugger step
-			TryCloseExistingPopups(true);
-
-			// the adapter sets the caret position and takes care of scrolling
-			this.CaretOffset = caretOffset;
-			this.Focus();
-
-			Dispatcher.BeginInvoke(DispatcherPriority.Background, (Action)DisplayCaretHighlightAnimation);
+			var location = this.TextArea.Document.GetLocation(caretOffset);
+			JumpTo(location.Line, location.Column);
 		}
 
 		public void JumpTo(int line, int column)
