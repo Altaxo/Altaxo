@@ -1,23 +1,28 @@
-﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2017 Dr. Dirk Lellinger
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-// software and associated documentation files (the "Software"), to deal in the Software
-// without restriction, including without limitation the rights to use, copy, modify, merge,
-// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
-// to whom the Software is furnished to do so, subject to the following conditions:
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
 //
-// The above copyright notice and this permission notice shall be included in all copies or
-// substantial portions of the Software.
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
 //
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
-// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-// DEALINGS IN THE SOFTWARE.
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,13 +31,13 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Text;
-using TextDocument = ICSharpCode.AvalonEdit.Document.TextDocument;
 using Altaxo.Gui.CodeEditing.SyntaxHighlighting;
 
 namespace Altaxo.CodeEditing.SyntaxHighlighting
 {
 	/// <summary>
-	/// Responsible for colorization and application of text attributes to the code text, using semantic information.
+	/// Probably the simplest version of a semantic highlighter using Roslyn's <see cref="Classifier"/>.
+	/// The hightlighting is done in the Gui thread. Caching is enabled, but used mostly while scrolling the document.
 	/// </summary>
 	/// <seealso cref="ICSharpCode.AvalonEdit.Highlighting.IHighlighter" />
 	public class SemanticHighlighter : IHighlighter
@@ -40,13 +45,11 @@ namespace Altaxo.CodeEditing.SyntaxHighlighting
 		private Workspace _workspace;
 		private readonly IDocument _avalonEditTextDocument;
 		private readonly DocumentId _documentId;
-		private readonly List<CachedLine> _cachedLines;
-		private readonly SemaphoreSlim _semaphoreToNudgeWorkerThread;
-		private readonly ConcurrentQueue<HighlightedLine> _queue;
-		private readonly SynchronizationContext _synchronizationContext;
-		private CancellationTokenSource _cancellationTokenSource;
 
-		private bool _inHighlightingGroup;
+		/// <summary>
+		/// The cached lines with highlighting information. Key is the line number, Value is the highlighted line.
+		/// </summary>
+		private readonly Dictionary<int, CachedLine> _cachedLines = new Dictionary<int, CachedLine>();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SemanticHighlighter" /> class.
@@ -59,198 +62,195 @@ namespace Altaxo.CodeEditing.SyntaxHighlighting
 			_workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
 			_documentId = documentId ?? throw new ArgumentNullException(nameof(documentId));
 			_avalonEditTextDocument = avalonEditTextDocument ?? throw new ArgumentNullException(nameof(avalonEditTextDocument));
-			_semaphoreToNudgeWorkerThread = new SemaphoreSlim(0);
-			_queue = new ConcurrentQueue<HighlightedLine>();
-
-			if (_avalonEditTextDocument is TextDocument)
-			{
-				// Use the cache only for the live AvalonEdit document
-				// Highlighting in read-only documents (e.g. search results) does
-				// not need the cache as it does not need to highlight the same line multiple times
-				_cachedLines = new List<CachedLine>();
-			}
-
-			_synchronizationContext = SynchronizationContext.Current;
-			_cancellationTokenSource = new CancellationTokenSource();
-			var cancellationToken = _cancellationTokenSource.Token;
-			Task.Run(() => Worker(cancellationToken), cancellationToken);
 		}
 
-		public void Dispose()
-		{
-			if (_cancellationTokenSource != null)
-			{
-				_cancellationTokenSource.Cancel();
-				_cancellationTokenSource.Dispose();
-				_cancellationTokenSource = null;
-			}
-		}
+		#region IHighlighter interface
 
+		/// <summary>
+		/// Notification when the highlighter detects that the highlighting state at the
+		/// <b>beginning</b> of the specified lines has changed.
+		/// <c>fromLineNumber</c> and <c>toLineNumber</c> are both inclusive;
+		/// the common case of a single-line change is represented by <c>fromLineNumber == toLineNumber</c>.
+		///
+		/// During highlighting, the highlighting of line X will cause this event to be raised
+		/// for line X+1 if the highlighting state at the end of line X has changed from its previous state.
+		/// This event may also be raised outside of the highlighting process to signalize that
+		/// changes to external data (not the document text; but e.g. semantic information)
+		/// require a re-highlighting of the specified lines.
+		/// </summary>
+		/// <remarks>
+		/// For implementers: there is the requirement that, during highlighting,
+		/// if there was no state changed reported for the beginning of line X,
+		/// and there were no document changes between the start of line X and the start of line Y (with Y > X),
+		/// then this event must not be raised for any line between X and Y (inclusive).
+		///
+		/// Equal input state + unchanged line = Equal output state.
+		///
+		/// See the comment in the HighlightingColorizer.OnHighlightStateChanged implementation
+		/// for details about the requirements for a correct custom IHighlighter.
+		///
+		/// Outside of the highlighting process, this event can be raised without such restrictions.
+		/// </remarks>
 		public event HighlightingStateChangedEventHandler HighlightingStateChanged;
 
-		private void OnHighlightingStateChanged(int fromLineNumber, int toLineNumber)
+		/// <summary>
+		/// Gets the underlying text document.
+		/// </summary>
+		public IDocument Document
 		{
-			_synchronizationContext.Post(o => HighlightingStateChanged?.Invoke(fromLineNumber, toLineNumber), null);
-		}
-
-		IDocument IHighlighter.Document => _avalonEditTextDocument;
-
-		IEnumerable<HighlightingColor> IHighlighter.GetColorStack(int lineNumber) => null;
-
-		void IHighlighter.UpdateHighlightingState(int lineNumber)
-		{
-		}
-
-		public HighlightedLine HighlightLine(int lineNumber)
-		{
-			var documentLine = _avalonEditTextDocument.GetLineByNumber(lineNumber);
-			var newVersion = _avalonEditTextDocument.Version;
-			CachedLine cachedLine = null;
-			if (_cachedLines != null)
+			get
 			{
-				for (var i = 0; i < _cachedLines.Count; i++)
-				{
-					var line = _cachedLines[i];
-					if (line.DocumentLine != documentLine) continue;
-					if (newVersion == null || !newVersion.BelongsToSameDocumentAs(line.OldVersion))
-					{
-						// cannot list changes from old to new: we can't update the cache, so we'll remove it
-						_cachedLines.RemoveAt(i);
-					}
-					else
-					{
-						cachedLine = line;
-					}
-				}
-
-				if (cachedLine != null && cachedLine.IsValid && newVersion.CompareAge(cachedLine.OldVersion) == 0 &&
-						cachedLine.DocumentLine.Length == documentLine.Length)
-				{
-					// the file hasn't changed since the cache was created, so just reuse the old highlighted line
-					return cachedLine.HighlightedLine;
-				}
-			}
-
-			var wasInHighlightingGroup = _inHighlightingGroup;
-			if (!_inHighlightingGroup)
-			{
-				BeginHighlighting();
-			}
-			try
-			{
-				return DoHighlightLine(documentLine);
-			}
-			finally
-			{
-				if (!wasInHighlightingGroup)
-					EndHighlighting();
+				return _avalonEditTextDocument;
 			}
 		}
 
-		private HighlightedLine DoHighlightLine(IDocumentLine documentLine)
+		/// <summary>
+		/// Gets the default color of the text.
+		/// </summary>
+		/// <value>
+		/// The default color of the text.
+		/// </value>
+		public HighlightingColor DefaultTextColor
 		{
-			var line = new HighlightedLine(_avalonEditTextDocument, documentLine);
-
-			// since we don't want to block the UI thread
-			// we'll enqueue the request and process it asynchornously
-			EnqueueLine(line);
-
-			CacheLine(line);
-			return line;
-		}
-
-		private void EnqueueLine(HighlightedLine line)
-		{
-			_queue.Enqueue(line);
-			_semaphoreToNudgeWorkerThread.Release();
-		}
-
-		private async Task Worker(CancellationToken cancellationToken)
-		{
-			while (true)
+			get
 			{
-				cancellationToken.ThrowIfCancellationRequested();
-
-				await _semaphoreToNudgeWorkerThread.WaitAsync(cancellationToken).ConfigureAwait(true);
-
-				if (!_queue.TryDequeue(out HighlightedLine line))
-					continue;
-
-				var documentLine = line.DocumentLine;
-				IEnumerable<ClassifiedSpan> spans;
-				try
-				{
-					spans = await GetClassifiedSpansAsync(documentLine).ConfigureAwait(false);
-				}
-				catch (Exception ex)
-				{
-					continue;
-				}
-
-				foreach (var classifiedSpan in spans)
-				{
-					if (IsOutsideLine(classifiedSpan, documentLine))
-					{
-						continue;
-					}
-					line.Sections.Add(new HighlightedSection
-					{
-						Color = TextHighlightingColors.GetColor(classifiedSpan.ClassificationType),
-						Offset = classifiedSpan.TextSpan.Start,
-						Length = classifiedSpan.TextSpan.Length
-					});
-				}
-
-				OnHighlightingStateChanged(documentLine.LineNumber, documentLine.LineNumber);
+				return TextHighlightingColors.DefaultColor;
 			}
 		}
 
-		private static bool IsOutsideLine(ClassifiedSpan classifiedSpan, IDocumentLine documentLine)
-		{
-			return classifiedSpan.TextSpan.Start < documentLine.Offset ||
-						 classifiedSpan.TextSpan.Start > documentLine.EndOffset ||
-						 classifiedSpan.TextSpan.End > documentLine.EndOffset;
-		}
-
-		private void CacheLine(HighlightedLine line)
-		{
-			if (_cachedLines != null && _avalonEditTextDocument.Version != null)
-			{
-				_cachedLines.Add(new CachedLine(line, _avalonEditTextDocument.Version));
-			}
-		}
-
-		private async Task<IEnumerable<ClassifiedSpan>> GetClassifiedSpansAsync(IDocumentLine documentLine)
-		{
-			var document = _workspace.CurrentSolution.GetDocument(_documentId);
-			//			var text = await document.GetTextAsync().ConfigureAwait(false);
-			if (_avalonEditTextDocument.TextLength >= documentLine.Offset + documentLine.TotalLength)
-			{
-				return await Classifier.GetClassifiedSpansAsync(document,
-						new TextSpan(documentLine.Offset, documentLine.TotalLength), CancellationToken.None)
-						.ConfigureAwait(false);
-			}
-			return Array.Empty<ClassifiedSpan>();
-		}
-
-		HighlightingColor IHighlighter.DefaultTextColor => TextHighlightingColors.DefaultColor;
-
+		/// <summary>
+		/// Begins the highlighting.
+		/// </summary>
 		public void BeginHighlighting()
 		{
-			if (_inHighlightingGroup)
-				throw new InvalidOperationException();
-			_inHighlightingGroup = true;
 		}
 
+		/// <summary>
+		/// Ends the highlighting.
+		/// </summary>
 		public void EndHighlighting()
 		{
-			_inHighlightingGroup = false;
-			// TODO use this to remove cached lines which are no longer visible
-			// var visibleDocumentLines = new HashSet<IDocumentLine>(syntaxHighlighter.GetVisibleDocumentLines());
-			// cachedLines.RemoveAll(c => !visibleDocumentLines.Contains(c.DocumentLine));
 		}
 
-		public HighlightingColor GetNamedColor(string name) => null;
+		/// <summary>
+		/// Releases unmanaged and - optionally - managed resources.
+		/// </summary>
+		public void Dispose()
+		{
+			HighlightingStateChanged = null;
+		}
+
+		/// <summary>
+		/// Gets the stack of active colors (the colors associated with the active spans) at the end of the specified line.
+		/// -> GetColorStack(1) returns the colors at the start of the second line.
+		/// </summary>
+		/// <remarks>
+		/// GetColorStack(0) is valid and will return the empty stack.
+		/// The elements are returned in inside-out order (first element of result enumerable is the color of the innermost span).
+		/// </remarks>
+		public IEnumerable<HighlightingColor> GetColorStack(int lineNumber)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets the color of the named.
+		/// </summary>
+		/// <param name="name">The name.</param>
+		/// <returns></returns>
+		public HighlightingColor GetNamedColor(string name)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Highlights the specified document line.
+		/// </summary>
+		/// <param name="lineNumber">The line to highlight.</param>
+		/// <returns>A <see cref="HighlightedLine"/> line object that represents the highlighted sections.</returns>
+		public HighlightedLine HighlightLine(int lineNumber)
+		{
+			return HighlightLineAsync(lineNumber).Result;
+		}
+
+		public async Task<HighlightedLine> HighlightLineAsync(int lineNumber)
+		{
+			var documentLine = _avalonEditTextDocument.GetLineByNumber(lineNumber);
+			var currentDocumentVersion = _avalonEditTextDocument.Version;
+
+			// line properties to evaluate in Gui context
+			var documentTextLength = _avalonEditTextDocument.TextLength;
+			var offset = documentLine.Offset;
+			var totalLength = documentLine.TotalLength;
+			var endOffset = documentLine.EndOffset;
+
+			if (_cachedLines.TryGetValue(lineNumber, out var cachedLine) && cachedLine.OldVersion == currentDocumentVersion)
+			{
+				//System.Diagnostics.Debug.WriteLine("SemanticHightlighter2 Line[{0}] from cache.", lineNumber);
+				return cachedLine.HighlightedLine; // old info is still valid, thus we return it
+			}
+			else
+			{
+				//System.Diagnostics.Debug.WriteLine("SemanticHightlighter2 Line[{0}] from fresh.", lineNumber);
+			}
+			// get classified spans
+
+			var document = _workspace.CurrentSolution.GetDocument(_documentId);
+			if (documentTextLength >= offset + totalLength)
+			{
+				var classifiedSpans = await Classifier.GetClassifiedSpansAsync(
+						document,
+						new TextSpan(offset, totalLength),
+						CancellationToken.None).ConfigureAwait(true); // back to Gui context
+
+				var highlightedLine = new HighlightedLine(_avalonEditTextDocument, documentLine);
+				foreach (var classifiedSpan in classifiedSpans)
+				{
+					if (!IsOutsideLine(classifiedSpan, offset, endOffset))
+					{
+						highlightedLine.Sections.Add(new HighlightedSection
+						{
+							Color = TextHighlightingColors.GetColor(classifiedSpan.ClassificationType),
+							Offset = classifiedSpan.TextSpan.Start,
+							Length = classifiedSpan.TextSpan.Length
+						});
+					}
+				}
+
+				_cachedLines[lineNumber] = new CachedLine(highlightedLine, currentDocumentVersion);
+
+				return highlightedLine;
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		private static bool IsOutsideLine(ClassifiedSpan classifiedSpan, int documentLineOffset, int documentLineEndOffset)
+		{
+			return classifiedSpan.TextSpan.Start < documentLineOffset ||
+						 classifiedSpan.TextSpan.Start > documentLineEndOffset ||
+						 classifiedSpan.TextSpan.End > documentLineEndOffset;
+		}
+
+		/// <summary>
+		/// Enforces a highlighting state update (triggering the HighlightingStateChanged event if necessary)
+		/// for all lines up to (and inclusive) the specified line number.
+		/// </summary>
+		public void UpdateHighlightingState(int lineNumber)
+		{
+			if (lineNumber > 0)
+			{
+				var cnt = Math.Min(_cachedLines.Count - 1, lineNumber);
+				for (int i = 0; i <= cnt; ++i)
+					_cachedLines.Remove(i);
+
+				HighlightingStateChanged?.Invoke(1, lineNumber);
+			}
+		}
+
+		#endregion IHighlighter interface
 
 		#region Caching
 
@@ -263,24 +263,10 @@ namespace Altaxo.CodeEditing.SyntaxHighlighting
 			public readonly HighlightedLine HighlightedLine;
 			public readonly ITextSourceVersion OldVersion;
 
-			/// <summary>
-			/// Gets whether the cache line is valid (no document changes since it was created).
-			/// This field gets set to false when Update() is called.
-			/// </summary>
-			public readonly bool IsValid;
-
-			public IDocumentLine DocumentLine => HighlightedLine.DocumentLine;
-
 			public CachedLine(HighlightedLine highlightedLine, ITextSourceVersion fileVersion)
 			{
-				if (highlightedLine == null)
-					throw new ArgumentNullException(nameof(highlightedLine));
-				if (fileVersion == null)
-					throw new ArgumentNullException(nameof(fileVersion));
-
-				HighlightedLine = highlightedLine;
-				OldVersion = fileVersion;
-				IsValid = true;
+				HighlightedLine = highlightedLine ?? throw new ArgumentNullException(nameof(highlightedLine));
+				OldVersion = fileVersion ?? throw new ArgumentNullException(nameof(fileVersion));
 			}
 		}
 

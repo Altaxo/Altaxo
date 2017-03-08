@@ -59,6 +59,7 @@ namespace Altaxo.CodeEditing
 		/// </value>
 		Microsoft.CodeAnalysis.DocumentId DocumentId { get; }
 
+		/*
 		/// <summary>
 		/// Gets the highlighting service.
 		/// </summary>
@@ -66,6 +67,7 @@ namespace Altaxo.CodeEditing
 		/// The highlighting service.
 		/// </value>
 		ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition HighlightingService { get; }
+		*/
 
 		/// <summary>
 		/// Gets the highlighting colorizer to colorize the code.

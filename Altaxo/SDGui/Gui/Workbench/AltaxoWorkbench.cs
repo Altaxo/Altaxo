@@ -1118,7 +1118,7 @@ namespace Altaxo.Gui.Workbench
 			this.MainWindow.Title = title.ToString();
 		}
 
-		public ISynchronizeInvoke SynchronizingObject { get; private set; }
+		public ISynchronizeInvoke SynchronizingObject { get; }
 
 		#endregion Altaxo.Gui.Common.IWorkbench Members
 	}

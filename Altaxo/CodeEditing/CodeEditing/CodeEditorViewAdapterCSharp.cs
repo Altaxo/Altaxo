@@ -68,7 +68,7 @@ namespace Altaxo.CodeEditing
 		public RoslynSourceTextContainerAdapter SourceTextAdapter { get; }
 
 		/// <summary>
-		/// Gets the highlighting colorizer to colorize the code.
+		/// Gets the highlighting colorizer to colorize the code by it's syntax or sematics.
 		/// </summary>
 		/// <value>
 		/// The highlighting colorizer.
@@ -128,6 +128,7 @@ namespace Altaxo.CodeEditing
 
 		#region Syntax highlighting
 
+		/*
 		/// <summary>
 		/// Gets the highlighting service.
 		/// </summary>
@@ -135,6 +136,7 @@ namespace Altaxo.CodeEditing
 		/// The highlighting service.
 		/// </value>
 		public ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition HighlightingService { get; set; } = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(".cs");
+		*/
 
 		#endregion Syntax highlighting
 
