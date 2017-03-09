@@ -373,9 +373,13 @@ namespace Altaxo.Gui.CodeEditing
 
 		private async void ReferencesHighlightRenderer_TimerTick(object sender, EventArgs e)
 		{
-			this._referenceHighlightRenderer_DelayTimer.Stop();
-			var referencesToBeHighlighted = await _adapter?.FindReferencesInCurrentFile(this.TextArea.Caret.Offset);
-			this._referencesHighlightRenderer.SetHighlight(referencesToBeHighlighted);
+			var adapter = _adapter;
+			if (null != adapter)
+			{
+				this._referenceHighlightRenderer_DelayTimer.Stop();
+				var referencesToBeHighlighted = await adapter.FindReferencesInCurrentFile(this.TextArea.Caret.Offset);
+				this._referencesHighlightRenderer.SetHighlight(referencesToBeHighlighted);
+			}
 		}
 
 		private async void ReferencesHighlightRenderer_TimerMoveTick(object sender, EventArgs e)
