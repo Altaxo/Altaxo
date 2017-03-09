@@ -182,7 +182,10 @@ namespace Altaxo.Gui.CodeEditing
 					primaryTextEditor.Adapter = null;
 					if (null != secondaryTextEditor)
 						secondaryTextEditor.Adapter = null;
+
+					_adapter.SourceTextChanged -= EhSourceTextChanged;
 				}
+
 				_adapter = value;
 
 				if (null != _adapter)
@@ -192,6 +195,12 @@ namespace Altaxo.Gui.CodeEditing
 					if (null != secondaryTextEditor)
 						secondaryTextEditor.Adapter = _adapter;
 
+					_adapter.SourceTextChanged += EhSourceTextChanged;
+				}
+
+				// if an adapter is coupled
+				if (null != _adapter)
+				{
 					// update QuickClassBrowser
 					var syntaxTree = _adapter.GetDocumentSyntaxTreeAsync().Result;
 					quickClassBrowser.Update(syntaxTree.GetRoot());
@@ -222,7 +231,6 @@ namespace Altaxo.Gui.CodeEditing
 			textView.Services.AddService(typeof(CodeEditor), this);
 
 			//codeEditorView.TextArea.TextEntering += TextAreaTextEntering;
-			codeEditorView.TextArea.TextEntered += TextAreaTextEntered;
 			codeEditorView.TextArea.Caret.PositionChanged += TextAreaCaretPositionChanged;
 			//codeEditorView.TextArea.DefaultInputHandler.CommandBindings.Add(new CommandBinding(CustomCommands.CtrlSpaceCompletion, OnCodeCompletion));
 			//codeEditorView.TextArea.DefaultInputHandler.NestedInputHandlers.Add(new SearchInputHandler(codeEditorView.TextArea));
@@ -296,7 +304,7 @@ namespace Altaxo.Gui.CodeEditing
 			primaryTextEditor.TextArea.Selection = Selection.Create(primaryTextEditor.TextArea, pos1, pos2);
 		}
 
-		private async void TextAreaTextEntered(object sender, TextCompositionEventArgs e)
+		private async void EhSourceTextChanged(object sender, Microsoft.CodeAnalysis.Text.TextChangeEventArgs e)
 		{
 			var adapter = Adapter;
 			if (null != adapter)

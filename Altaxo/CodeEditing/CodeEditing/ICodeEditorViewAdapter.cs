@@ -106,6 +106,11 @@ namespace Altaxo.CodeEditing
 		event Action<DiagnosticsUpdatedArgs> DiagnosticsUpdated;
 
 		/// <summary>
+		/// Occurs after the source text has changed. This event is routed from the <see cref="SourceTextAdapter"/>.
+		/// </summary>
+		event EventHandler<Microsoft.CodeAnalysis.Text.TextChangeEventArgs> SourceTextChanged;
+
+		/// <summary>
 		/// Finds references to resolved expression in the current file.
 		/// </summary>
 		Task<ImmutableArray<DocumentHighlights>> FindReferencesInCurrentFile(int cursorPosition);

@@ -100,9 +100,10 @@ namespace Altaxo.Gui.CodeEditing
 				{
 					// SyntaxHighlighting = null;
 					this.TextArea.TextView.LineTransformers.Remove(_adapter.HighlightingColorizer);
+					this.TextArea.IndentationStrategy = null;
 
 					_adapter.DiagnosticsUpdated -= EhDiagnosticsUpdated;
-					this.TextArea.IndentationStrategy = null;
+					_adapter.SourceTextChanged += EhSourceTextChanged;
 				}
 				_adapter = value;
 
@@ -111,8 +112,10 @@ namespace Altaxo.Gui.CodeEditing
 					this.TextArea.TextView.LineTransformers.Insert(0, _adapter.HighlightingColorizer);
 					//SyntaxHighlighting = _adapter.HighlightingService;
 
-					_adapter.DiagnosticsUpdated += EhDiagnosticsUpdated;
 					this.TextArea.IndentationStrategy = _adapter.IndentationStrategy;
+
+					_adapter.DiagnosticsUpdated += EhDiagnosticsUpdated;
+					_adapter.SourceTextChanged += EhSourceTextChanged;
 
 					// now use the adapter to do all the little things
 
@@ -449,6 +452,17 @@ namespace Altaxo.Gui.CodeEditing
 
 		#endregion Reference highlighting (all identical items are highlighted)
 
+		#region Folding
+
+		private void EhSourceTextChanged(object sender, Microsoft.CodeAnalysis.Text.TextChangeEventArgs e)
+		{
+			// update foldings
+			var newFoldings = _adapter?.GetNewFoldings();
+			_foldingManager.UpdateFoldings(newFoldings, -1);
+		}
+
+		#endregion Folding
+
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			base.OnKeyDown(e);
@@ -648,10 +662,6 @@ namespace Altaxo.Gui.CodeEditing
 					adapter.FormatDocumentAfterEnteringTriggerChar(CaretOffset, lastChar);
 				}
 			}
-
-			// update foldings
-			var newFoldings = _adapter?.GetNewFoldings();
-			_foldingManager.UpdateFoldings(newFoldings, -1);
 		}
 
 		private async Task ShowCompletion(TriggerMode triggerMode)

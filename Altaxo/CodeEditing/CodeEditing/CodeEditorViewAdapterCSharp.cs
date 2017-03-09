@@ -53,8 +53,17 @@ namespace Altaxo.CodeEditing
 	/// <seealso cref="Altaxo.CodeEditing.ICodeEditorViewAdapter" />
 	public class CodeEditorViewAdapterCSharp : ICodeEditorViewAdapter
 	{
+		/// <summary>
+		/// Shortcut to the roslyn host. Can also be retrieved by using <see cref="AltaxoWorkspaceBase.RoslynHost"/>.
+		/// </summary>
 		protected RoslynHost _roslynHost;
 
+		/// <summary>
+		/// Gets the workspace where the document (see <see cref="DocumentId" /> is contained.
+		/// </summary>
+		/// <value>
+		/// The workspace.
+		/// </value>
 		public AltaxoWorkspaceBase Workspace { get; }
 
 		/// <summary>
@@ -65,6 +74,12 @@ namespace Altaxo.CodeEditing
 		/// </value>
 		public Microsoft.CodeAnalysis.DocumentId DocumentId { get; }
 
+		/// <summary>
+		/// Gets the source text, suitable both for use with AvalonEdit and with Roslyn.
+		/// </summary>
+		/// <value>
+		/// The source text adapter.
+		/// </value>
 		public RoslynSourceTextContainerAdapter SourceTextAdapter { get; }
 
 		/// <summary>
@@ -75,20 +90,76 @@ namespace Altaxo.CodeEditing
 		/// </value>
 		public ICSharpCode.AvalonEdit.Highlighting.HighlightingColorizer HighlightingColorizer { get; }
 
+		/// <summary>
+		/// Gets or sets the quick information provider.
+		/// (If the mouse hovers over an item, it displays short information about the item).
+		/// </summary>
+		/// <value>
+		/// The quick information provider.
+		/// </value>
 		public QuickInfo.IQuickInfoProvider QuickInfoProvider { get; set; }
 
+		/// <summary>
+		/// Gets or sets the folding strategy.
+		/// Responsible for getting the code spans where foldings occur.
+		/// </summary>
+		/// <value>
+		/// The folding strategy.
+		/// </value>
 		public SyntaxTreeFoldingStrategy FoldingStrategy { get; set; }
 
+		/// <summary>
+		/// Gets or sets the brace matching service.
+		/// Responsible for highlighting matching pairs of braces, brackets, etc.
+		/// </summary>
+		/// <value>
+		/// The brace matching service.
+		/// </value>
 		public IBraceMatchingService BraceMatchingService { get; set; }
 
+		/// <summary>
+		/// Gets or sets the reference highlight service.
+		/// Responsible for highlighting all identical items, e.g. variable names, if the cursor is inside such an item.
+		/// </summary>
+		/// <value>
+		/// The reference highlight service.
+		/// </value>
 		public IDocumentHighlightsService ReferenceHighlightService { get; set; }
 
+		/// <summary>
+		/// Gets or sets the completion provider.
+		/// Responsible for displaying proposals for writing code.
+		/// </summary>
+		/// <value>
+		/// The completion provider.
+		/// </value>
 		public ICodeEditorCompletionProvider CompletionProvider { get; set; }
 
+		/// <summary>
+		/// Gets or sets the renaming service.
+		/// Responsible for renaming members, local variables, classes, parameters, etc.
+		/// </summary>
+		/// <value>
+		/// The renaming service.
+		/// </value>
 		public Renaming.IRenamingService RenamingService { get; set; }
 
+		/// <summary>
+		/// Gets the indentation strategy.
+		/// Responsible for determination of the indent of the next line if the user enters a newline.
+		/// </summary>
+		/// <value>
+		/// The indentation strategy.
+		/// </value>
 		public IIndentationStrategy IndentationStrategy { get; set; }
 
+		/// <summary>
+		/// Gets or sets the live document formatter.
+		/// Responsible for formatting the code if the user enters a trigger char, like a semicolon or a closing brace.
+		/// </summary>
+		/// <value>
+		/// The live document formatter.
+		/// </value>
 		public ILiveDocumentFormatter LiveDocumentFormatter { get; set; }
 
 		/// <summary>
@@ -105,12 +176,24 @@ namespace Altaxo.CodeEditing
 		/// </summary>
 		public event Action<ExternalHelp.ExternalHelpItem> ExternalHelpRequired;
 
+		/// <summary>
+		/// Occurs when the diagnostics was updated and new diagnostics is available (diagnostics is responsible for the wriggles under the text
+		/// that show in advance the errors in code).
+		/// </summary>
+		public event Action<DiagnosticsUpdatedArgs> DiagnosticsUpdated;
+
+		/// <summary>
+		/// Occurs after the source text has changed. This event is routed from the <see cref="SourceTextAdapter"/>.
+		/// </summary>
+		public event EventHandler<TextChangeEventArgs> SourceTextChanged;
+
 		public CodeEditorViewAdapterCSharp(AltaxoWorkspaceBase workspace, Microsoft.CodeAnalysis.DocumentId documentID, RoslynSourceTextContainerAdapter sourceText)
 		{
-			Workspace = workspace;
+			Workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
+			DocumentId = documentID ?? throw new ArgumentNullException(nameof(documentID));
+			SourceTextAdapter = sourceText ?? throw new ArgumentNullException(nameof(sourceText));
 			_roslynHost = workspace.RoslynHost;
-			DocumentId = documentID;
-			SourceTextAdapter = sourceText;
+			SourceTextAdapter.TextChanged += EhSourceTextAdapter_TextChanged;
 
 			HighlightingColorizer = new SyntaxHighlighting.SemanticHighlightingColorizer(Workspace, DocumentId);
 			QuickInfoProvider = _roslynHost.GetService<QuickInfo.IQuickInfoProvider>();
@@ -124,6 +207,11 @@ namespace Altaxo.CodeEditing
 			ExternalHelpProvider = new ExternalHelp.ExternalHelpProvider();
 
 			Workspace.SubscribeToDiagnosticsUpdateNotification(DocumentId, EhDiagnosticsUpdated);
+		}
+
+		private void EhSourceTextAdapter_TextChanged(object sender, TextChangeEventArgs e)
+		{
+			SourceTextChanged?.Invoke(sender, e);
 		}
 
 		#region Syntax highlighting
@@ -204,12 +292,6 @@ namespace Altaxo.CodeEditing
 		#endregion Brace matching
 
 		#region Diagnostics
-
-		/// <summary>
-		/// Occurs when the diagnostics was updated and new diagnostics is available (diagnostics is responsible for the wriggles under the text
-		/// that show in advance the errors in code).
-		/// </summary>
-		public event Action<DiagnosticsUpdatedArgs> DiagnosticsUpdated;
 
 		/// <summary>
 		/// Called from the roslyn host when diagnostics was updated.
