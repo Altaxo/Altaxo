@@ -102,6 +102,19 @@ namespace Altaxo.Main.Properties
 			}
 		}
 
+		public void AddLazyPropertiesFromObsolete40XXProperties(Dictionary<string, string> obsoleteProperties)
+		{
+			if (null == obsoleteProperties)
+				throw new ArgumentNullException(nameof(obsoleteProperties));
+			foreach (var entry in obsoleteProperties)
+			{
+				if (!string.IsNullOrEmpty(entry.Key) && !string.IsNullOrEmpty(entry.Value))
+				{
+					_propertiesLazyLoaded[entry.Key] = entry.Value;
+				}
+			}
+		}
+
 		#endregion Serialization
 
 		#region Conversion from Lazy

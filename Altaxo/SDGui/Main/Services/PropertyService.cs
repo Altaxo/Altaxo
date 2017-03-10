@@ -239,7 +239,10 @@ namespace Altaxo.Main.Services
 		{
 			if (!File.Exists(fileName))
 			{
-				return new PropertyBagLazyLoaded() { ParentObject = SuspendableDocumentNode.StaticInstance };
+				var result = new PropertyBagLazyLoaded() { ParentObject = SuspendableDocumentNode.StaticInstance };
+				var dict = InternalLoadObsoleteV40XXProperties(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(fileName), "SharpDevelopProperties.xml"));
+				result.AddLazyPropertiesFromObsolete40XXProperties(dict);
+				return result;
 			}
 			try
 			{
@@ -357,5 +360,68 @@ namespace Altaxo.Main.Services
 		}
 
 		#endregion Serialization of Sharpdevelops Properties
+
+		#region Load obsolete SharpDevelop user settings (Version 4.0.x.x)
+
+		protected virtual Dictionary<string, string> InternalLoadObsoleteV40XXProperties(string fileName)
+		{
+			var dict = new Dictionary<string, string>();
+
+			try
+			{
+				if (File.Exists(fileName))
+				{
+					using (var str = new System.IO.FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+					{
+						using (var tr = new XmlTextReader(str))
+						{
+							tr.WhitespaceHandling = WhitespaceHandling.Significant;
+							tr.MoveToContent();
+
+							tr.ReadStartElement("SharpDevelopProperties");
+
+							while (tr.LocalName != "SharpDevelopProperties")
+							{
+								if (tr.LocalName == "SerializedValue")
+								{
+									var keyName = tr.GetAttribute("name");
+									string value = null;
+									tr.ReadStartElement("SerializedValue");
+									{
+										if (tr.LocalName == "FrameworkXmlSerializationWrapper")
+										{
+											tr.ReadStartElement("FrameworkXmlSerializationWrapper");
+											{
+												value = tr.ReadOuterXml();
+											}
+											tr.ReadEndElement(); // "FrameworkXmlSerializationWrapper"
+										}
+										else
+										{
+											tr.ReadOuterXml();
+										}
+									}
+									tr.ReadEndElement(); // "SerializedValue"
+
+									if (!string.IsNullOrEmpty(keyName) && !string.IsNullOrEmpty(value))
+										dict[keyName] = value;
+								}
+								else
+								{
+									tr.ReadOuterXml();
+								}
+							}
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+			}
+
+			return dict;
+		}
+
+		#endregion Load obsolete SharpDevelop user settings (Version 4.0.x.x)
 	}
 }
