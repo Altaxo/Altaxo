@@ -8,12 +8,15 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.CodeAnalysis.Classification;
 
-namespace Altaxo.Gui.CodeEditing.SyntaxHighlighting
+namespace Altaxo.Gui.CodeEditing.SemanticHighlighting
 {
-	public static class TextHighlightingColors
+	public class TextHighlightingColorsVisualStudioStyle : ISemanticHighlightingColors
 	{
-		public static HighlightingColor DefaultColor { get; } = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Black) }.AsFrozen();
+		public static TextHighlightingColorsVisualStudioStyle Instance { get; } = new TextHighlightingColorsVisualStudioStyle();
 
+		public HighlightingColor DefaultColor { get { return DefaultTextColor; } }
+
+		private static readonly HighlightingColor DefaultTextColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Black) }.AsFrozen();
 		private static readonly HighlightingColor TypeColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Teal) }.AsFrozen();
 		private static readonly HighlightingColor CommentColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Green) }.AsFrozen();
 		private static readonly HighlightingColor XmlCommentColor = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.Gray) }.AsFrozen();
@@ -23,6 +26,10 @@ namespace Altaxo.Gui.CodeEditing.SyntaxHighlighting
 
 		private static readonly ImmutableDictionary<string, HighlightingColor> _map = new Dictionary<string, HighlightingColor>
 		{
+			[ClassificationTypeNames.Identifier] = DefaultTextColor,
+			[ClassificationTypeNames.NumericLiteral] = DefaultTextColor,
+			[ClassificationTypeNames.Operator] = DefaultTextColor,
+			[ClassificationTypeNames.Keyword] = KeywordColor,
 			[ClassificationTypeNames.ClassName] = TypeColor,
 			[ClassificationTypeNames.StructName] = TypeColor,
 			[ClassificationTypeNames.InterfaceName] = TypeColor,
@@ -47,20 +54,10 @@ namespace Altaxo.Gui.CodeEditing.SyntaxHighlighting
 			[ClassificationTypeNames.VerbatimStringLiteral] = StringColor
 		}.ToImmutableDictionary();
 
-		public static HighlightingColor GetColor(string classificationTypeName)
+		public HighlightingColor GetColor(string classificationTypeName)
 		{
-			HighlightingColor color;
-			_map.TryGetValue(classificationTypeName, out color);
+			_map.TryGetValue(classificationTypeName, out HighlightingColor color);
 			return color ?? DefaultColor;
-		}
-
-		private static HighlightingColor AsFrozen(this HighlightingColor color)
-		{
-			if (!color.IsFrozen)
-			{
-				color.Freeze();
-			}
-			return color;
 		}
 	}
 }

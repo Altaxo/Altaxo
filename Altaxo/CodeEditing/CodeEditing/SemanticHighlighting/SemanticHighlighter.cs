@@ -31,9 +31,11 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Text;
-using Altaxo.Gui.CodeEditing.SyntaxHighlighting;
+using Altaxo.Gui.CodeEditing.SemanticHighlighting;
 
-namespace Altaxo.CodeEditing.SyntaxHighlighting
+using Altaxo.Gui.CodeEditing.SemanticHighlighting;
+
+namespace Altaxo.CodeEditing.SemanticHighlighting
 {
 	/// <summary>
 	/// Probably the simplest version of a semantic highlighter using Roslyn's <see cref="Classifier"/>.
@@ -45,6 +47,7 @@ namespace Altaxo.CodeEditing.SyntaxHighlighting
 		private Workspace _workspace;
 		private readonly IDocument _avalonEditTextDocument;
 		private readonly DocumentId _documentId;
+		private ISemanticHighlightingColors _highlightingColors;
 
 		/// <summary>
 		/// The cached lines with highlighting information. Key is the line number, Value is the highlighted line.
@@ -57,11 +60,24 @@ namespace Altaxo.CodeEditing.SyntaxHighlighting
 		/// <param name="workspace">The workspace containing the document to highlight.</param>
 		/// <param name="documentId">The document identifier.</param>
 		/// <param name="avalonEditTextDocument">The corresponsing avalon edit text document.</param>
-		public SemanticHighlighter(Workspace workspace, DocumentId documentId, IDocument avalonEditTextDocument)
+		public SemanticHighlighter(Workspace workspace, DocumentId documentId, IDocument avalonEditTextDocument, ISemanticHighlightingColors highlightingColors = null)
 		{
 			_workspace = workspace ?? throw new ArgumentNullException(nameof(workspace));
 			_documentId = documentId ?? throw new ArgumentNullException(nameof(documentId));
 			_avalonEditTextDocument = avalonEditTextDocument ?? throw new ArgumentNullException(nameof(avalonEditTextDocument));
+			_highlightingColors = highlightingColors ?? TextHighlightingColorsAltaxoStyle.Instance;
+		}
+
+		public ISemanticHighlightingColors HighlightingColors
+		{
+			get
+			{
+				return _highlightingColors;
+			}
+			set
+			{
+				_highlightingColors = value ?? throw new ArgumentNullException(nameof(value));
+			}
 		}
 
 		#region IHighlighter interface
@@ -114,7 +130,7 @@ namespace Altaxo.CodeEditing.SyntaxHighlighting
 		{
 			get
 			{
-				return TextHighlightingColors.DefaultColor;
+				return _highlightingColors.DefaultColor;
 			}
 		}
 
@@ -210,7 +226,7 @@ namespace Altaxo.CodeEditing.SyntaxHighlighting
 					{
 						highlightedLine.Sections.Add(new HighlightedSection
 						{
-							Color = TextHighlightingColors.GetColor(classifiedSpan.ClassificationType),
+							Color = _highlightingColors.GetColor(classifiedSpan.ClassificationType),
 							Offset = classifiedSpan.TextSpan.Start,
 							Length = classifiedSpan.TextSpan.Length
 						});

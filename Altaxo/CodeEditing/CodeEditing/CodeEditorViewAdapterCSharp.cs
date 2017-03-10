@@ -195,7 +195,7 @@ namespace Altaxo.CodeEditing
 			_roslynHost = workspace.RoslynHost;
 			SourceTextAdapter.TextChanged += EhSourceTextAdapter_TextChanged;
 
-			HighlightingColorizer = new SyntaxHighlighting.SemanticHighlightingColorizer(Workspace, DocumentId);
+			HighlightingColorizer = new SemanticHighlighting.SemanticHighlightingColorizer(Workspace, DocumentId);
 			QuickInfoProvider = _roslynHost.GetService<QuickInfo.IQuickInfoProvider>();
 			FoldingStrategy = new SyntaxTreeFoldingStrategy();
 			BraceMatchingService = _roslynHost.GetService<IBraceMatchingService>();
@@ -225,6 +225,18 @@ namespace Altaxo.CodeEditing
 		/// </value>
 		public ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition HighlightingService { get; set; } = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(".cs");
 		*/
+
+		public Gui.CodeEditing.SemanticHighlighting.ISemanticHighlightingColors SemanticHighlightingColors
+		{
+			set
+			{
+				if (null == value)
+					throw new ArgumentNullException(nameof(value));
+
+				if (HighlightingColorizer is SemanticHighlighting.SemanticHighlightingColorizer shc)
+					shc.HighlightingColors = value;
+			}
+		}
 
 		#endregion Syntax highlighting
 
