@@ -33,6 +33,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -47,6 +48,10 @@ namespace Altaxo.Gui.Scripting
 		protected static CodeEditing.CodeTextEditorFactory _factory;
 		protected static Assembly[] _additionalReferencedAssemblies;
 		private Altaxo.Gui.CodeEditing.CodeEditorWithDiagnostics _codeView;
+
+		protected static AppDomain _helpViewerAppDomain;
+		protected static Altaxo.Gui.HelpViewing.HelpViewerStarter _helpViewerStarter;
+		protected static Thread _helpViewerMainThread;
 
 		/// <summary>
 		/// Not used here because this is handled by the view.
@@ -95,16 +100,43 @@ namespace Altaxo.Gui.Scripting
 			if (null == helpItem.GetOneOfTheseAssembliesOrNull(_additionalReferencedAssemblies))
 				return;
 
-			string fileName = FileUtility.ApplicationRootPath +
+			string chmFileName = FileUtility.ApplicationRootPath +
 				Path.DirectorySeparatorChar + "doc" +
 				Path.DirectorySeparatorChar + "help" +
 				Path.DirectorySeparatorChar + "AltaxoClassRef.chm";
-			if (FileUtility.TestFileExists(fileName))
+			if (FileUtility.TestFileExists(chmFileName))
 			{
 				string topic = "html/" + helpItem.DocumentationReferenceIdentifier + ".htm";
 
-				System.Windows.Forms.Help.ShowHelp(null, fileName, topic);
+				ShowClassRefHelpFromChmFile(chmFileName, topic);
 			}
+		}
+
+		protected static void ShowClassRefHelpFromChmFile(string chmFileName, string chmTopic)
+		{
+			if (null == _helpViewerAppDomain)
+			{
+				_helpViewerAppDomain = AppDomain.CreateDomain("AltaxoHelpViewer");
+			}
+			if (null == _helpViewerStarter || null == _helpViewerMainThread || !_helpViewerMainThread.IsAlive)
+			{
+				_helpViewerStarter = (Altaxo.Gui.HelpViewing.HelpViewerStarter)_helpViewerAppDomain.CreateInstanceAndUnwrap("AltaxoHelpViewer", typeof(Altaxo.Gui.HelpViewing.HelpViewerStarter).FullName);
+				_helpViewerMainThread = new Thread(_helpViewerStarter.Start);
+				_helpViewerMainThread.SetApartmentState(ApartmentState.STA); // required to show a hidden Windows Forms
+				_helpViewerMainThread.IsBackground = true; // we want HelpViewer to be ended if Altaxo ends
+				_helpViewerMainThread.Start();
+
+				// wait until the Helper App is loaded
+				bool isLoaded = false;
+				while (!isLoaded)
+				{
+					_helpViewerStarter.GetState(out var isDisp, out isLoaded);
+					Thread.Sleep(50);
+				}
+			}
+
+			// show the help topic
+			_helpViewerStarter.ShowHelpTopic(chmFileName, chmTopic);
 		}
 
 		#region IPureScriptView Members

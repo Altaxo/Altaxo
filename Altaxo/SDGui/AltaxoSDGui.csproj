@@ -127,6 +127,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HelpViewer\AltaxoHelpViewer.csproj">
+      <Project>{8953c478-8a41-4bd2-9bbd-99bfbe638b73}</Project>
+      <Name>AltaxoHelpViewer</Name>
+    </ProjectReference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System">
