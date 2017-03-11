@@ -61,6 +61,10 @@ namespace Altaxo.Main.Properties
 				info.AddAttributeValue("AssemblyVersion", assemblyVersion.ToString());
 				foreach (var key in keyList)
 				{
+					// Since this is a lazy bag, each property is deserialized individually. Thus we must serialize it individually, too.
+					// ClearProperties clears all properties left by former serializations so that each item is serialized as if serialized individually.
+					info.ClearProperties();
+
 					info.CreateElement("e");
 					info.AddValue("Key", key);
 

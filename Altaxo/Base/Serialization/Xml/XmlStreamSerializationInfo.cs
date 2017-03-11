@@ -111,6 +111,16 @@ namespace Altaxo.Serialization.Xml
 			return m_Properties[propertyname];
 		}
 
+		/// <summary>
+		/// Clears the property dictionary. Useful if the serialization info should be used to serialize multiple values.
+		/// If you clear the properties before the serialization of each value, the serialization behaves as if each value is
+		/// serialized independent of each other.
+		/// </summary>
+		public void ClearProperties()
+		{
+			m_Properties.Clear();
+		}
+
 		#region IXmlSerializationInfo Members
 
 		public XmlArrayEncoding DefaultArrayEncoding
