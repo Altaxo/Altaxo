@@ -195,7 +195,7 @@ namespace Altaxo.Geometry
 		/// <param name="dashPatternScale">The dash pattern scale.</param>
 		/// <param name="dashPatternStartAbsolute">An absolute length. This parameter is similar to <paramref name="dashPatternOffset"/>, but in absolute units.</param>
 		/// <returns></returns>
-		public static IEnumerable<LineD3D> DissectStraightLineWithDashPattern(LineD3D line, IList<double> dashPattern, double dashPatternOffset, double dashPatternScale, double dashPatternStartAbsolute)
+		public static IEnumerable<LineD3D> DissectStraightLineWithDashPattern(LineD3D line, IReadOnlyList<double> dashPattern, double dashPatternOffset, double dashPatternScale, double dashPatternStartAbsolute)
 		{
 			int dashIndex = 0;
 			int dashCount = dashPattern.Count;

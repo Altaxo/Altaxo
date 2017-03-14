@@ -766,7 +766,7 @@ namespace Altaxo.Geometry
 		public static IEnumerable<List<PolylinePointD3D>> DissectPolylineWithDashPattern(
 			IEnumerable<PointD3D> linePoints,
 			double startIndex, double endIndex,
-			IList<double> dashPattern,
+			IReadOnlyList<double> dashPattern,
 			double dashPatternOffset,
 			double dashPatternScale,
 			double dashPatternStartAbsolute,

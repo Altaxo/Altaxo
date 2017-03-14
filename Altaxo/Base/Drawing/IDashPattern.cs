@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Altaxo.Drawing
 {
-	public interface IDashPattern : IList<double>, Main.IImmutable, ICloneable // TODO NET45 replace with IReadonlyList
+	public interface IDashPattern : IReadOnlyList<double>, Main.IImmutable, ICloneable
 	{
 		double DashOffset { get; }
 	}
