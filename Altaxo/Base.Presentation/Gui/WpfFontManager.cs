@@ -597,11 +597,13 @@ namespace Altaxo.Gui
 		}
 
 		/// <summary>
-		/// Builds this instance.
+		/// From a list of (Wpf) typefaces, this methods try to detect groups of four typefaces that can form an Altaxo font family (regular, italic, bold, and bold-italic).
+		/// All Altaxo font families that are detected in this way are added then to the provided <paramref name="altaxoFontFamilies"/> dictionary.
 		/// </summary>
-		/// <param name="fontList">List of typefaces which are used to build the dictionary.</param>
+		/// <param name="altaxoFontFamilies">Dictionary to add the Altaxo font families to.</param>
+		/// <param name="fontList">List of (Wpf) typefaces which are used to build the Altaxo font families wich are then added to the dictionary <paramref name="altaxoFontFamilies"/>.</param>
 		/// <exception cref="System.InvalidOperationException"></exception>
-		protected static void AddToAltaxoFontFamilies(ConcurrentDictionary<string, Typeface[]> altaxoFontFamilies, IList<Typeface> fontList) // TODO NET45 Replace with IReadonlyList
+		protected static void AddToAltaxoFontFamilies(ConcurrentDictionary<string, Typeface[]> altaxoFontFamilies, IReadOnlyList<Typeface> fontList)
 		{
 			Typeface[] fam;
 
