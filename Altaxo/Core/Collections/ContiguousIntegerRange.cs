@@ -33,7 +33,7 @@ namespace Altaxo.Collections
 	/// <summary>
 	/// Represents a contiguous range of integers.
 	/// </summary>
-	public interface IContiguousIntegerRange : IEnumerable<int>, IROVector<int>, IAscendingIntegerCollection
+	public interface IContiguousIntegerRange : IReadOnlyList<int>, IAscendingIntegerCollection
 	{
 		/// <summary>
 		/// Gets the first element of this integer range.

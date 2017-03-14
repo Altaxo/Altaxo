@@ -30,7 +30,7 @@ namespace Altaxo.Collections
 	/// <summary>
 	/// Sorted collection of integers, sorted so that the smallest integers come first.
 	/// </summary>
-	public interface IAscendingIntegerCollection : ICloneable, IEnumerable<int>, IROVector<int>
+	public interface IAscendingIntegerCollection : ICloneable, IReadOnlyList<int>
 	{
 		/// <summary>
 		/// Returns true if the integer <code>nValue</code> is contained in this collection.
