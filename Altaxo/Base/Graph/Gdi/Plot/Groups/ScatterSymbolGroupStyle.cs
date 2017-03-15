@@ -28,6 +28,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Groups
 {
+	using Collections;
 	using Drawing;
 	using Graph.Plot.Groups;
 	using Graph2D.Plot.Groups;

@@ -285,7 +285,7 @@ namespace Altaxo.Gui.Drawing.D3D
 			return false;
 		}
 
-		protected static List<object> GetFilteredList(IList<NamedColor> originalList, MaterialWithUniformColor materialTemplate, string filterString)
+		protected static List<object> GetFilteredList(IReadOnlyList<NamedColor> originalList, MaterialWithUniformColor materialTemplate, string filterString)
 		{
 			var result = new List<object>();
 
@@ -298,7 +298,7 @@ namespace Altaxo.Gui.Drawing.D3D
 			return result;
 		}
 
-		protected static List<object> GetFilteredList(IList<IMaterial> originalList, string filterString, bool showPlotColorsOnly)
+		protected static List<object> GetFilteredList(IReadOnlyList<IMaterial> originalList, string filterString, bool showPlotColorsOnly)
 		{
 			var result = new List<object>();
 			filterString = filterString.ToLowerInvariant();

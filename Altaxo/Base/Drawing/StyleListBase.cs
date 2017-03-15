@@ -31,7 +31,7 @@ using System.Text;
 
 namespace Altaxo.Drawing
 {
-	public class StyleListBase<T> : IStyleList<T> where T : Main.IImmutable // TODO NET45 replace IList with IReadonlyList
+	public class StyleListBase<T> : IStyleList<T> where T : Main.IImmutable
 	{
 		protected string _name;
 		protected IList<T> _list;
@@ -154,7 +154,7 @@ namespace Altaxo.Drawing
 
 		#region Structural comparison
 
-		public static bool AreListsStructuralEquivalent(IList<T> l1, IList<T> l2) // TODO NET45 Replace with IReadonlyList
+		public static bool AreListsStructuralEquivalent(IReadOnlyList<T> l1, IReadOnlyList<T> l2)
 		{
 			if (l1 == null || l2 == null)
 				return false;
@@ -171,7 +171,7 @@ namespace Altaxo.Drawing
 			return true;
 		}
 
-		public bool IsStructuralEquivalentTo(IEnumerable<T> l1) // TODO NET45 Replace with IReadonlyList
+		public bool IsStructuralEquivalentTo(IEnumerable<T> l1)
 		{
 			if (l1 == null)
 				return false;

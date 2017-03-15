@@ -125,7 +125,7 @@ namespace Altaxo.Collections
 		/// <param name="list">List to operate onto.</param>
 		/// <param name="IsSelected">Function that determines for each item index if it is selected or not.</param>
 		/// <returns>The number of steps that all selected items can be moved towards lower indices, so that the selected item with the lowest index is moved to index 0.</returns>
-		public static int GetPossibleStepsToMoveTowardsLowerIndices<T>(this IList<T> list, Func<int, bool> IsSelected)
+		public static int GetPossibleStepsToMoveTowardsLowerIndices<T>(this IReadOnlyList<T> list, Func<int, bool> IsSelected)
 		{
 			int first = -1;
 			// find out the first index that is selected
@@ -151,7 +151,7 @@ namespace Altaxo.Collections
 		/// <param name="list">List to operate onto.</param>
 		/// <param name="IsSelected">Function that determines for each item index if it is selected or not.</param>
 		/// <returns>The number of steps that all selected items can be moved towards higher indices, so that the selected item with the highest index is moved to the end of the list (at index list.Count-1).</returns>
-		public static int GetPossibleStepsToMoveTowardsHigherIndices<T>(this IList<T> list, Func<int, bool> IsSelected)
+		public static int GetPossibleStepsToMoveTowardsHigherIndices<T>(this IReadOnlyList<T> list, Func<int, bool> IsSelected)
 		{
 			int last = -1;
 			// find out the last index that is selected
@@ -178,7 +178,7 @@ namespace Altaxo.Collections
 		/// <param name="IsSelected">Function that determines for each item index if it is selected or not.</param>
 		public static void MoveSelectedItemsToMinimumIndex<T>(this IList<T> list, Func<int, bool> IsSelected)
 		{
-			int steps = GetPossibleStepsToMoveTowardsLowerIndices(list, IsSelected);
+			int steps = GetPossibleStepsToMoveTowardsLowerIndices((IReadOnlyList<T>)list, IsSelected);
 			MoveSelectedItemsTowardsLowerIndices(list, IsSelected, steps);
 		}
 
@@ -190,7 +190,7 @@ namespace Altaxo.Collections
 		/// <param name="IsSelected">Function that determines for each item index if it is selected or not.</param>
 		public static void MoveSelectedItemsToMaximumIndex<T>(this IList<T> list, Func<int, bool> IsSelected)
 		{
-			int steps = GetPossibleStepsToMoveTowardsHigherIndices(list, IsSelected);
+			int steps = GetPossibleStepsToMoveTowardsHigherIndices((IReadOnlyList<T>)list, IsSelected);
 			MoveSelectedItemsTowardsHigherIndices(list, IsSelected, steps);
 		}
 
@@ -249,6 +249,27 @@ namespace Altaxo.Collections
 				if (isSelected(i))
 					MoveItemToIndex(list, i, i + steps);
 			}
+		}
+
+		/// <summary>
+		/// Gets the index of an item in a enumeration or list.
+		/// </summary>
+		/// <typeparam name="T">Type of the item to search for.</typeparam>
+		/// <param name="list">The item list.</param>
+		/// <param name="searchedItem">The searched item.</param>
+		/// <returns>Index of the first occurence of the searched item in the list (0 for the first item). If the item is not found in the list, a negative value is returned.</returns>
+		public static int IndexOf<T>(this IEnumerable<T> list, T searchedItem)
+		{
+			int i = 0;
+			foreach (var item in list)
+			{
+				if (EqualityComparer<T>.Default.Equals(item, searchedItem))
+				{
+					return i;
+				}
+				++i;
+			}
+			return -1;
 		}
 
 		/// <summary>

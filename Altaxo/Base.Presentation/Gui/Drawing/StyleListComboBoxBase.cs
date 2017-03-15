@@ -549,7 +549,7 @@ namespace Altaxo.Gui.Drawing
 			}
 		}
 
-		protected List<object> GetFilteredList(IList<TItem> originalList, string filterString)
+		protected List<object> GetFilteredList(IReadOnlyList<TItem> originalList, string filterString)
 		{
 			var result = new List<object>();
 			filterString = filterString.ToLowerInvariant();

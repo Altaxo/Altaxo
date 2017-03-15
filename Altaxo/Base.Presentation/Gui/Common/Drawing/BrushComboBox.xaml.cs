@@ -247,7 +247,7 @@ namespace Altaxo.Gui.Common.Drawing
 			return false;
 		}
 
-		protected static List<object> GetFilteredList(IList<NamedColor> originalList, string filterString)
+		protected static List<object> GetFilteredList(IReadOnlyList<NamedColor> originalList, string filterString)
 		{
 			var result = new List<object>();
 			filterString = filterString.ToLowerInvariant();

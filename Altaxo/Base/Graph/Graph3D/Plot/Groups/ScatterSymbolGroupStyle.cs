@@ -28,6 +28,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Graph3D.Plot.Groups
 {
+	using Collections;
 	using Drawing;
 	using Graph.Plot.Groups;
 	using Styles;

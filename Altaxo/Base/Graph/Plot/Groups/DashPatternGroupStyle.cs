@@ -28,6 +28,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Plot.Groups
 {
+	using Collections;
 	using Drawing;
 	using Drawing.DashPatternManagement;
 

@@ -11,7 +11,7 @@ namespace Altaxo.Drawing
 	/// </summary>
 	/// <typeparam name="T">Type of the style.</typeparam>
 	/// <seealso cref="System.Collections.Generic.IList{T}" />
-	public interface IStyleList<T> : IList<T>, Main.IImmutable where T : Main.IImmutable // TODO NET45 replace with IReadonlyList<T>
+	public interface IStyleList<T> : IReadOnlyList<T>, Main.IImmutable where T : Main.IImmutable
 	{
 		string Name { get; }
 
