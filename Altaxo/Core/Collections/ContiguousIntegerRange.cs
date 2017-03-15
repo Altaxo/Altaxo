@@ -28,8 +28,6 @@ using System.Text;
 
 namespace Altaxo.Collections
 {
-	// TODO NET45 derive from IReadonlyList<int>
-
 	/// <summary>
 	/// Represents a contiguous range of integers.
 	/// </summary>

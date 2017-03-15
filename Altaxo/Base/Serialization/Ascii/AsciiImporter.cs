@@ -451,14 +451,14 @@ namespace Altaxo.Serialization.Ascii
 
 			using (var memstream = new MemoryStream())
 			{
-				using (var textwriter = new StreamWriter(memstream, System.Text.Encoding.UTF8, 512))
+				using (var textwriter = new StreamWriter(memstream, System.Text.Encoding.UTF8, 512, true))
 				{
 					textwriter.Write(asciiText);
-					textwriter.Flush();  // do not close the textwriter here.  TODO NET45 we can close textwriter here if we provide true in as 4th argument in the constructor
-
-					memstream.Position = 0;
-					ImportFromAsciiStream(dataTable, memstream, "Ascii text", importOptions);
+					textwriter.Flush();
 				}
+
+				memstream.Position = 0;
+				ImportFromAsciiStream(dataTable, memstream, "Ascii text", importOptions);
 			}
 		}
 
@@ -477,14 +477,13 @@ namespace Altaxo.Serialization.Ascii
 
 			using (var memstream = new MemoryStream())
 			{
-				using (var textwriter = new StreamWriter(memstream, System.Text.Encoding.UTF8, 512))
+				using (var textwriter = new StreamWriter(memstream, System.Text.Encoding.UTF8, 512, true))
 				{
 					textwriter.Write(asciiText);
-					textwriter.Flush();  // do not close the textwriter here.  TODO NET45 we can close textwriter here if we provide true in as 4th argument in the constructor
-
-					memstream.Position = 0;
-					ImportFromAsciiStream(dataTable, memstream, "Ascii text", out importOptions);
+					textwriter.Flush();
 				}
+				memstream.Position = 0;
+				ImportFromAsciiStream(dataTable, memstream, "Ascii text", out importOptions);
 			}
 		}
 
@@ -1063,15 +1062,13 @@ namespace Altaxo.Serialization.Ascii
 		{
 			using (var memstream = new MemoryStream())
 			{
-				using (var textwriter = new StreamWriter(memstream, System.Text.Encoding.UTF8, 512))
+				using (var textwriter = new StreamWriter(memstream, System.Text.Encoding.UTF8, 512, true))
 				{
 					textwriter.Write(text);
-					textwriter.Flush(); // do not close the textwriter here.  TODO NET45 we can close textwriter here if we provide true in as 4th argument in the constructor
-
-					memstream.Position = 0;
-
-					return InternalImportStreamIntoNewTable(memstream, "text", null);
-				} // leave the textwriter open to leave the stream open during read
+					textwriter.Flush();
+				}
+				memstream.Position = 0;
+				return InternalImportStreamIntoNewTable(memstream, "text", null);
 			}
 		}
 

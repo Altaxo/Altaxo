@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Altaxo.Graph
 {
-	public class CSPlaneIDList : IList<CSPlaneID> // TODO NET45 replace with IReadonlyList
+	public class CSPlaneIDList : IReadOnlyList<CSPlaneID>
 	{
 		private List<CSPlaneID> _innerList = new List<CSPlaneID>();
 
@@ -104,41 +104,17 @@ namespace Altaxo.Graph
 			return _innerList.IndexOf(item);
 		}
 
-		public void Insert(int index, CSPlaneID item)
-		{
-			throw new InvalidOperationException("Readonly");
-		}
-
-		public void RemoveAt(int index)
-		{
-			throw new InvalidOperationException("Readonly");
-		}
-
 		public CSPlaneID this[int index]
 		{
 			get
 			{
 				return _innerList[index];
 			}
-			set
-			{
-				throw new InvalidOperationException("Readonly");
-			}
 		}
 
 		#endregion IList<CSPlaneID> Members
 
 		#region ICollection<CSPlaneID> Members
-
-		public void Add(CSPlaneID item)
-		{
-			throw new InvalidOperationException("Readonly");
-		}
-
-		public void Clear()
-		{
-			throw new InvalidOperationException("Readonly");
-		}
 
 		public bool Contains(CSPlaneID item)
 		{
@@ -158,11 +134,6 @@ namespace Altaxo.Graph
 		public bool IsReadOnly
 		{
 			get { return true; }
-		}
-
-		public bool Remove(CSPlaneID item)
-		{
-			throw new InvalidOperationException("Readonly");
 		}
 
 		#endregion ICollection<CSPlaneID> Members
