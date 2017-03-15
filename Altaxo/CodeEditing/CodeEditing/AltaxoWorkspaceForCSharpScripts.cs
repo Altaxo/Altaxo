@@ -76,6 +76,11 @@ namespace Altaxo.CodeEditing
 
 		public static ImmutableArray<string> DefaultImports { get; } = _defaultReferenceAssemblyTypes.Select(x => x.Namespace).Distinct().ToImmutableArray();
 
+		private static readonly ImmutableArray<MetadataReference> DefaultReferences = DefaultReferenceAssemblies.Select(x => x.Location)
+								.Concat(RoslynHost.Instance.TryGetFacadeAssemblies())
+								.Select(RoslynHost.Instance.CreateMetadataReference)
+								.ToImmutableArray();
+
 		public AltaxoWorkspaceForCSharpScripts(RoslynHost roslynHost, string workingDirectory, IEnumerable<MetadataReference> staticReferences)
 			:
 			base(roslynHost, staticReferences, workingDirectory)

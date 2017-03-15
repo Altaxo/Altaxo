@@ -29,6 +29,8 @@ namespace Altaxo.CodeEditing
 {
 	public class RoslynHost
 	{
+		public static RoslynHost Instance { get; private set; }
+
 		/// <summary>
 		/// In order to have access to DocumentationProviderService, which is located inside a sealed internal class, you have i) to name the assembly "RoslynETAHost" and ii) sign the assembly with the roslyn private key.
 		/// </summary>
@@ -37,13 +39,18 @@ namespace Altaxo.CodeEditing
 		/// <summary>
 		/// Path to the framework assemblies. Used by the documentation service to get the xml documentation of the framework assemblies.
 		/// </summary>
-		private static readonly string _referenceAssembliesPath = GetReferenceAssembliesPath();
+		private readonly string _referenceAssembliesPath = GetReferenceAssembliesPath();
 
 		private readonly CompositionHost _compositionContext;
 
 		private IDiagnosticService _diagnosticsService;
 
 		public MefHostServices MefHost { get; }
+
+		public static void InitializeInstance(IEnumerable<Assembly> additionalAssembliesToIncludeInComposition = null)
+		{
+			Instance = new RoslynHost(additionalAssembliesToIncludeInComposition);
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RoslynHost"/> class.
@@ -83,7 +90,6 @@ namespace Altaxo.CodeEditing
 
 			_compositionContext = new ContainerConfiguration()
 					.WithParts(partTypes)
-					.WithDefaultConventions(new AttributeFilterProvider())
 					.CreateContainer();
 
 			MefHost = MefHostServices.Create(_compositionContext);
@@ -93,7 +99,7 @@ namespace Altaxo.CodeEditing
 			_diagnosticsService = GetService<IDiagnosticService>(); // instantiate diagnostics service to get it working
 		}
 
-		public static string GetReferenceAssembliesPath()
+		private static string GetReferenceAssembliesPath()
 		{
 			var programFiles =
 					Environment.GetFolderPath(Environment.Is64BitOperatingSystem
@@ -102,10 +108,40 @@ namespace Altaxo.CodeEditing
 			var path = Path.Combine(programFiles, @"Reference Assemblies\Microsoft\Framework\.NETFramework");
 			if (Directory.Exists(path))
 			{
-				var directories = Directory.EnumerateDirectories(path).OrderByDescending(Path.GetFileName);
-				return directories.FirstOrDefault();
+				var directory = Directory.EnumerateDirectories(path)
+						.Select(x => new { path = x, version = GetFxVersionFromPath(x) })
+						.OrderByDescending(x => x.version)
+						.FirstOrDefault(x => File.Exists(Path.Combine(x.path, "System.dll")) &&
+																 File.Exists(Path.Combine(x.path, "System.xml")));
+				return directory?.path;
 			}
 			return null;
+		}
+
+		private static Version GetFxVersionFromPath(string path)
+		{
+			var name = Path.GetFileName(path);
+			if (name?.StartsWith("v", StringComparison.OrdinalIgnoreCase) == true)
+			{
+				Version version;
+				if (Version.TryParse(name.Substring(1), out version))
+				{
+					return version;
+				}
+			}
+
+			return new Version(0, 0, 0);
+		}
+
+		public IEnumerable<string> TryGetFacadeAssemblies()
+		{
+			var facadesPath = Path.Combine(_referenceAssembliesPath, "Facades");
+			if (Directory.Exists(facadesPath))
+			{
+				return Directory.EnumerateFiles(facadesPath, "*.dll");
+			}
+
+			return Array.Empty<string>();
 		}
 
 		/// <summary>
@@ -139,28 +175,5 @@ namespace Altaxo.CodeEditing
 		{
 			return _compositionContext.GetExport<TService>();
 		}
-
-		#region Inner classes
-
-		/// <summary>
-		/// See 'Completion service too hard to instantiate - need improvements to MSBuildWorkspace.Create' (<see href="https://github.com/dotnet/roslyn/issues/12218"/>)
-		/// for why this class is needed.
-		/// </summary>
-		private class AttributeFilterProvider : AttributedModelProvider
-		{
-			public override IEnumerable<Attribute> GetCustomAttributes(Type reflectedType, MemberInfo member)
-			{
-				var customAttributes = member.GetCustomAttributes().Where(x => !(x is ExtensionOrderAttribute)).ToArray();
-				return customAttributes;
-			}
-
-			public override IEnumerable<Attribute> GetCustomAttributes(Type reflectedType, ParameterInfo member)
-			{
-				var customAttributes = member.GetCustomAttributes().Where(x => !(x is ExtensionOrderAttribute)).ToArray();
-				return customAttributes;
-			}
-		}
-
-		#endregion Inner classes
 	}
 }

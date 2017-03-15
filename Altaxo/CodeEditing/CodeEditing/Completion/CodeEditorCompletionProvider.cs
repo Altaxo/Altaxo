@@ -54,6 +54,7 @@ namespace Altaxo.CodeEditing.Completion
 		{
 			IList<ICompletionDataEx> completionData = null;
 			IOverloadProviderEx overloadProvider = null;
+			var useHardSelection = true;
 
 			var document = _workspace.CurrentSolution.GetDocument(_documentId);
 			if (useSignatureHelp || triggerChar != null)
@@ -88,6 +89,7 @@ namespace Altaxo.CodeEditing.Completion
 						).ConfigureAwait(false);
 				if (data != null && data.Items.Any())
 				{
+					useHardSelection = data.SuggestionModeItem == null;
 					var helper = CompletionHelper.GetHelper(document, completionService);
 					var text = await document.GetTextAsync().ConfigureAwait(false);
 					var textSpanToText = new Dictionary<TextSpan, string>();
@@ -103,7 +105,7 @@ namespace Altaxo.CodeEditing.Completion
 				}
 			}
 
-			return new CompletionResult(completionData, overloadProvider);
+			return new CompletionResult(completionData, overloadProvider, useHardSelection);
 		}
 
 		private static bool MatchesFilterText(CompletionHelper helper, CompletionItem item, SourceText text, Dictionary<TextSpan, string> textSpanToText)

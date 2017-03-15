@@ -55,7 +55,7 @@ namespace Altaxo.CodeEditing.Completion
 			}
 
 			var changes = await CompletionService.GetService(_document)
-					.GetChangeAsync(_document, _item, _completionChar).ConfigureAwait(false);
+					.GetChangeAsync(_document, _item, _completionChar).ConfigureAwait(true);
 			var textChange = changes.TextChange;
 			var document = textArea.Document;
 			using (document.RunUpdate())
