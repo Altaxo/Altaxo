@@ -431,5 +431,30 @@ namespace Altaxo.CodeEditing
 		}
 
 		#endregion External Help
+
+		#region GoToDefinition
+
+		private GoToDefinition.IGoToDefinitionService _goToDefinitionService;
+
+		/// <summary>
+		/// Try to go to the definition of the symbol under the caret. This function is designed here for solutions
+		/// containing only of a single code document.
+		/// </summary>
+		/// <param name="caretOffset">The caret offset.</param>
+		/// <returns>The position of the symbol in the document where it is defined. If the symbol under the caret is not defined in the document,
+		/// the return value is null.</returns>
+		public int? GoToDefinition(int caretOffset)
+		{
+			if (null == _goToDefinitionService)
+				_goToDefinitionService = new GoToDefinition.CSharp.CSharpGoToDefinitionService();
+
+			var document = Workspace.CurrentSolution.GetDocument(DocumentId);
+			var definitions = _goToDefinitionService.FindDefinitionsAsync(document, caretOffset, CancellationToken.None).Result;
+			var location = definitions.FirstOrDefault();
+
+			return location?.SourceSpan.Start;
+		}
+
+		#endregion GoToDefinition
 	}
 }

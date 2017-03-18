@@ -162,5 +162,14 @@ namespace Altaxo.CodeEditing
 		/// <param name="caretPositionOrSelectionStart">The caret position or selection start.</param>
 		/// <returns></returns>
 		Task RenameSymbol(int caretPositionOrSelectionStart, object topLevelWindow, Action FocusBackOnEditor);
+
+		/// <summary>
+		/// Try to go to the definition of the symbol under the caret. This function is designed here for solutions
+		/// containing only of a single code document.
+		/// </summary>
+		/// <param name="caretOffset">The caret offset.</param>
+		/// <returns>The position of the symbol in the document where it is defined. If the symbol under the caret is not defined in the document,
+		/// the return value is null.</returns>
+		int? GoToDefinition(int caretOffset);
 	}
 }

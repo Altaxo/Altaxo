@@ -492,6 +492,15 @@ namespace Altaxo.Gui.CodeEditing
 				var topLevelWindow = GetTopLevelWindow(this);
 				_adapter.RenameSymbol(CaretOffset, topLevelWindow, () => this.Focus());
 			}
+			// F12 - GoToDefinitiion
+			else if (e.Key == Key.F12 && null != _adapter)
+			{
+				int? jumpTo = _adapter.GoToDefinition(CaretOffset);
+				if (jumpTo.HasValue)
+				{
+					JumpTo(jumpTo.Value);
+				}
+			}
 		}
 
 		private static Window GetTopLevelWindow(DependencyObject ctrl)
