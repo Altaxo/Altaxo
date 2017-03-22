@@ -328,6 +328,219 @@ namespace Altaxo.Drawing
 		}
 
 		#endregion Conversion operators
+
+		#region Conversion to/from other color models
+
+		/// <summary>
+		/// Creates a Color from alpha, hue, saturation and lightness (AHSL model).
+		/// </summary>
+		/// <param name="alpha">The alpha channel value.</param>
+		/// <param name="hue">The hue value (0..1).</param>
+		/// <param name="saturation">The saturation value (0..1).</param>
+		/// <param name="lightness">The lightness value (0..1).</param>
+		/// <returns>A Color with the given values.</returns>
+		public static AxoColor FromAHSL(byte alpha, float hue, float saturation, float lightness)
+		{
+			if (!(alpha >= 0 && alpha <= 255))
+				throw new ArgumentOutOfRangeException(nameof(alpha), alpha, "Value must be within a range of 0 - 255.");
+
+			if (!(hue >= 0 && hue <= 1))
+				throw new ArgumentOutOfRangeException(nameof(hue), hue, "Value must be within a range of 0 - 1.");
+
+			if (!(saturation >= 0 && saturation <= 1))
+				throw new ArgumentOutOfRangeException(nameof(saturation), saturation, "Value must be within a range of 0 - 1.");
+
+			if (!(lightness >= 0 && lightness <= 1))
+				throw new ArgumentOutOfRangeException(nameof(lightness), lightness, "Value must be within a range of 0 - 1.");
+
+			if (0 == saturation)
+			{
+				return AxoColor.FromArgb(alpha, NormFloatToByte(lightness), NormFloatToByte(lightness), NormFloatToByte(lightness));
+			}
+
+			float fMax, fMid, fMin;
+			byte iSextant, iMax, iMid, iMin;
+
+			if (0.5 < lightness)
+			{
+				fMax = lightness - (lightness * saturation) + saturation;
+				fMin = lightness + (lightness * saturation) - saturation;
+			}
+			else
+			{
+				fMax = lightness + (lightness * saturation);
+				fMin = lightness - (lightness * saturation);
+			}
+
+			hue *= 6;
+			iSextant = (byte)Math.Floor(hue);
+			if (hue >= 5)
+			{
+				hue -= 6;
+			}
+			hue -= 2 * (float)Math.Floor((double)((iSextant + 1) % 6) / 2);
+			if (0 == iSextant % 2)
+			{
+				fMid = (hue * (fMax - fMin)) + fMin;
+			}
+			else
+			{
+				fMid = fMin - (hue * (fMax - fMin));
+			}
+
+			iMax = NormFloatToByte(fMax);
+			iMid = NormFloatToByte(fMid);
+			iMin = NormFloatToByte(fMin);
+
+			switch (iSextant)
+			{
+				case 1:
+					return AxoColor.FromArgb(alpha, iMid, iMax, iMin);
+
+				case 2:
+					return AxoColor.FromArgb(alpha, iMin, iMax, iMid);
+
+				case 3:
+					return AxoColor.FromArgb(alpha, iMin, iMid, iMax);
+
+				case 4:
+					return AxoColor.FromArgb(alpha, iMid, iMin, iMax);
+
+				case 5:
+					return AxoColor.FromArgb(alpha, iMax, iMin, iMid);
+
+				default:
+					return AxoColor.FromArgb(alpha, iMax, iMid, iMin);
+			}
+		}
+
+		/// <summary>
+		/// Creates a Color from alpha, hue, saturation and brightness (AHSB model).
+		/// </summary>
+		/// <param name="alpha">The alpha channel value.</param>
+		/// <param name="hue">The hue value (0..1).</param>
+		/// <param name="saturation">The saturation value (0..1).</param>
+		/// <param name="brightness">The brightness value (0..1).</param>
+		/// <returns>A Color with the given values.</returns>
+		public static AxoColor FromAHSB(byte alpha, float hue, float saturation, float brightness)
+		{
+			byte r = 0, g = 0, b = 0;
+			if (saturation == 0)
+			{
+				r = g = b = NormFloatToByte(brightness);
+			}
+			else
+			{
+				float h = (hue - (float)Math.Floor(hue)) * 6;
+				float f = h - (float)Math.Floor(h);
+				float p = brightness * (1 - saturation);
+				float q = brightness * (1 - saturation * f);
+				float t = brightness * (1 - (saturation * (1 - f)));
+				switch ((int)h)
+				{
+					case 0:
+						r = NormFloatToByte(brightness);
+						g = NormFloatToByte(t);
+						b = NormFloatToByte(p);
+						break;
+
+					case 1:
+						r = NormFloatToByte(q);
+						g = NormFloatToByte(brightness);
+						b = NormFloatToByte(p);
+						break;
+
+					case 2:
+						r = NormFloatToByte(p);
+						g = NormFloatToByte(brightness);
+						b = NormFloatToByte(t);
+						break;
+
+					case 3:
+						r = NormFloatToByte(p);
+						g = NormFloatToByte(q);
+						b = NormFloatToByte(brightness);
+						break;
+
+					case 4:
+						r = NormFloatToByte(t);
+						g = NormFloatToByte(p);
+						b = NormFloatToByte(brightness);
+						break;
+
+					case 5:
+						r = NormFloatToByte(brightness);
+						g = NormFloatToByte(p);
+						b = NormFloatToByte(q);
+						break;
+				}
+			}
+			return AxoColor.FromArgb(alpha, r, g, b);
+		}
+
+		/// <summary>
+		/// Converts the color to the AHSB model, with alpha (0..255), Hue (0..1), Saturation (0..1) and Brightness (0..1).
+		/// </summary>
+		/// <returns></returns>
+		/// <exception cref="System.InvalidProgramException"></exception>
+		public Tuple<byte, float, float, float> ToAHSB()
+		{
+			byte a = this.A;
+			float hue = 0, saturation = 0, brightness = 0;
+
+			var r = ByteToNormFloat(this.R);
+			var g = ByteToNormFloat(this.G);
+			var b = ByteToNormFloat(this.B);
+
+			var max = Math.Max(Math.Max(r, g), b);
+			var min = Math.Min(Math.Min(r, g), b);
+
+			if (max == min)
+			{
+				hue = 0;
+			}
+			if (max == r)
+			{
+				hue = (g - b) / (max - min);
+			}
+			else if (max == g)
+			{
+				hue = 2 + (b - r) / (max - min);
+			}
+			else if (max == b)
+			{
+				hue = 4 + (r - g) / (max - min);
+			}
+			else
+			{
+				throw new InvalidProgramException();
+			}
+
+			if (hue < 0)
+				hue += 6;
+			hue /= 6;
+
+			saturation = (max - min) / max;
+
+			brightness = max;
+
+			return new Tuple<byte, float, float, float>(a, hue, saturation, brightness);
+		}
+
+		public static byte NormFloatToByte(float f)
+		{
+			if (f < 1)
+				return (byte)(f * 256);
+			else
+				return 255;
+		}
+
+		public static float ByteToNormFloat(byte val)
+		{
+			return (float)(val / 256.0 + 1 / 512.0);
+		}
+
+		#endregion Conversion to/from other color models
 	}
 
 	public static class AxoColors

@@ -491,6 +491,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Drawing\ColorManagement\Color1DSurfaceControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Drawing\ColorManagement\Color2DSurfaceControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Drawing\ColorManagement\ColorModelControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Drawing\D3D\LineCaps\LineCapComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1228,6 +1240,16 @@
     </Compile>
     <Compile Include="Gui\Data\Selections\RowSelectionItemControl.xaml.cs">
       <DependentUpon>RowSelectionItemControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Drawing\ColorManagement\Color1DSurfaceControl.xaml.cs">
+      <DependentUpon>Color1DSurfaceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Drawing\ColorManagement\Color2DSurfaceControl.xaml.cs">
+      <DependentUpon>Color2DSurfaceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Drawing\ColorManagement\ColorBitmapCreator.cs" />
+    <Compile Include="Gui\Drawing\ColorManagement\ColorModelControl.xaml.cs">
+      <DependentUpon>ColorModelControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternComboBox.xaml.cs">
       <DependentUpon>DashPatternComboBox.xaml</DependentUpon>
