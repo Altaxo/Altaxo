@@ -499,7 +499,7 @@ namespace Altaxo.Drawing
 			{
 				hue = 0;
 			}
-			if (max == r)
+			else if (max == r)
 			{
 				hue = (g - b) / (max - min);
 			}

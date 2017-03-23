@@ -47,7 +47,7 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Label  Grid.Row="0" Grid.Column="0" Content="Model:" />
-		<ComboBox x:Name="_guiColorModel" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" />
+		<ComboBox x:Name="_guiColorModel" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" SelectionChanged="EhColorModelSelectionChanged" />
 		<local:Color2DSurfaceControl x:Name="_gui2DColorControl" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Grid.RowSpan="15" />
 		<local:Color1DSurfaceControl x:Name="_gui1DColorControl" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" Grid.RowSpan="15" />
 		<Grid  Grid.Row="0" Grid.RowSpan="3" Grid.Column="6" Grid.ColumnSpan="7">

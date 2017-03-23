@@ -76,6 +76,11 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			SetRectanglesRightTopOnCanvas();
 		}
 
+		public void Set1DColorImage(ImageSource imageSource)
+		{
+			_guiImage.Source = imageSource;
+		}
+
 		/// <summary>Gets/sets where the selection rectangle is currently located in y-direction (0: top, 1: bottom)</summary>
 		public double SelectionRectangleRelativePosition
 		{

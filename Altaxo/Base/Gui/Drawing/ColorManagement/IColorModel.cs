@@ -15,7 +15,7 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with ctrl program; if not, write to the Free Software
+//    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
@@ -29,45 +29,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	public static class ColorBitmapCreator
+	public interface IColorModel
 	{
-		public static BitmapSource GetBitmap(Func<PointD2D, AxoColor> colorFunction)
-		{
-			const int width = 32;
-			const int height = 32;
+		AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor baseColor);
 
-			WriteableBitmap wbitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgra32, null);
-			byte[] pixels = new byte[height * width * 4];
+		AxoColor GetColorFor1DColorSurfaceFromRelativePosition(double relativePosition);
 
-			for (int row = 0; row < height; ++row)
-			{
-				var h = (height - 1 - row) / (float)(height - 1);
-				for (int col = 0; col < width; ++col)
-				{
-					int idx = (row * width + col) * 4;
-					var w = (col) / (float)(width - 1);
+		Tuple<PointD2D, double> GetRelativePositionsFor2Dand1DColorSurfaceFromColor(AxoColor color);
 
-					var cc = colorFunction(new PointD2D(w, h));
+		string[] GetNamesOfComponents();
 
-					pixels[idx + 0] = cc.B;  // B
-					pixels[idx + 1] = cc.G; // G
-					pixels[idx + 2] = cc.R; // R
-					pixels[idx + 3] = 255;  // A
-				}
-			}
+		int[] GetComponentsForColor(AxoColor color);
 
-			// Update writeable bitmap with the colorArray to the image.
-			Int32Rect rect = new Int32Rect(0, 0, width, height);
-			int stride = 4 * width;
-			wbitmap.WritePixels(rect, pixels, stride, 0);
-
-			return wbitmap;
-		}
+		AxoColor GetColorFromComponents(int[] components);
 	}
 }

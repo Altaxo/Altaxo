@@ -39,21 +39,30 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+	using Altaxo.Collections;
+	using Altaxo.Drawing;
 	using Altaxo.Geometry;
 	using Altaxo.Gui.Common;
 
 	/// <summary>
 	/// Interaction logic for ColorModelControl.xaml
 	/// </summary>
-	public partial class ColorModelControl : UserControl
+	public partial class ColorModelControl : UserControl, IColorModelView
 	{
 		private Int32UpDown[] _guiComponents = new Int32UpDown[4];
 		private TextBox[] _guiAltComponents = new TextBox[4];
 		private Label[] _guiLabelForComponents = new Label[4];
 		private Label[] _guiLabelForAltComponents = new Label[4];
 
-		private IColorModel _colorModel = new ColorModelRGB();
-		private IColorModel _altColorModel = new ColorModelRGB();
+		private IColorModel _colorModel;
+		private IColorModel _altColorModel;
+		private AxoColor _currentColor;
+
+		public AxoColor CurrentColor { get { return _currentColor; } }
+
+		public event Action ColorModelSelectionChanged;
+
+		public bool _isLoaded;
 
 		public ColorModelControl()
 		{
@@ -78,6 +87,16 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			_guiAltComponents[1] = _guiAltComponent1;
 			_guiAltComponents[2] = _guiAltComponent2;
 			_guiAltComponents[3] = _guiAltComponent3;
+
+			_colorModel = new ColorModelRGB();
+			_altColorModel = new ColorModelRGB();
+
+			this.Loaded += EhLoaded;
+		}
+
+		private void EhLoaded(object sender, RoutedEventArgs e)
+		{
+			_isLoaded = true;
 		}
 
 		/// <summary>
@@ -87,6 +106,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		/// <param name="e">The <see cref="RoutedPropertyChangedEventArgs{System.Int32}"/> instance containing the event data.</param>
 		private void EhComponentChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
 		{
+			if (!_isLoaded)
+				return;
+
 			var color = _colorModel.GetColorFromComponents(_guiComponents.Select(c => c.Value).ToArray());
 			var pos = _colorModel.GetRelativePositionsFor2Dand1DColorSurfaceFromColor(color);
 
@@ -149,6 +171,66 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			_guiComponent1.ValueChanged += EhComponentChanged;
 			_guiComponent2.ValueChanged += EhComponentChanged;
 			_guiComponent3.ValueChanged += EhComponentChanged;
+		}
+
+		private void UpdateColorSurfacePositions(double position1D, PointD2D position2D)
+		{
+			_gui1DColorControl.SelectionRectangleRelativePositionChanged -= Eh1DColorControl_ValueChanged;
+			_gui2DColorControl.SelectionRectangleRelativePositionChanged -= Eh2DColorControl_ValueChanged;
+
+			_gui2DColorControl.SelectionRectangleRelativePosition = position2D;
+			_gui1DColorControl.SelectionRectangleRelativePosition = position1D;
+
+			_gui1DColorControl.SelectionRectangleRelativePositionChanged += Eh1DColorControl_ValueChanged;
+			_gui2DColorControl.SelectionRectangleRelativePositionChanged += Eh2DColorControl_ValueChanged;
+		}
+
+		private void UpdateAllAccordingToCurrentModelAndCurrentColor()
+		{
+			var positions = _colorModel.GetRelativePositionsFor2Dand1DColorSurfaceFromColor(_currentColor);
+
+			// update color surfaces
+			UpdateColorSurfacePositions(positions.Item2, positions.Item1);
+			var baseColor = _colorModel.GetColorFor1DColorSurfaceFromRelativePosition(positions.Item2);
+			var imgSource1D = ColorBitmapCreator.GetBitmap(p => _colorModel.GetColorFor1DColorSurfaceFromRelativePosition(p.Y));
+			_gui1DColorControl.Set1DColorImage(imgSource1D);
+			var imgSource2D = ColorBitmapCreator.GetBitmap(relPos => _colorModel.GetColorFor2DColorSurfaceFromRelativePosition(relPos, baseColor));
+			_gui2DColorControl.Set2DColorImage(imgSource2D);
+
+			// now update components
+			var components = _colorModel.GetComponentsForColor(_currentColor);
+			UpdateComponentValues(() =>
+			{
+				for (int i = 0; i < components.Length; ++i)
+					_guiComponents[i].Value = components[i];
+			}
+			);
+		}
+
+		public void InitializeAvailableColorModels(SelectableListNodeList listOfColorModels)
+		{
+			GuiHelper.Initialize(_guiColorModel, listOfColorModels);
+		}
+
+		public void InitializeColorModel(IColorModel colorModel, bool silentSet)
+		{
+			_colorModel = colorModel;
+
+			if (!silentSet)
+				UpdateAllAccordingToCurrentModelAndCurrentColor();
+		}
+
+		public void InitializeCurrentColor(AxoColor color, string colorName)
+		{
+			_currentColor = color;
+			_guiColorName.Text = colorName;
+			UpdateAllAccordingToCurrentModelAndCurrentColor();
+		}
+
+		private void EhColorModelSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			GuiHelper.SynchronizeSelectionFromGui(_guiColorModel);
+			ColorModelSelectionChanged?.Invoke();
 		}
 	}
 }

@@ -525,13 +525,17 @@ namespace Altaxo.Gui.Common.Drawing
 				newColor = InternalSelectedColor;
 				return false;
 			}
-
+			/*
 			var SelectedWpfColor = GuiHelper.ToWpf(InternalSelectedColor);
 			ColorController ctrl = new ColorController(SelectedWpfColor);
 			ctrl.ViewObject = new ColorPickerControl(SelectedWpfColor);
+			*/
+			var ctrl = new ColorModelController();
+			ctrl.InitializeDocument(InternalSelectedColor);
+			Current.Gui.FindAndAttachControlTo(ctrl);
 			if (Current.Gui.ShowDialog(ctrl, "Select a color", false))
 			{
-				newColor = new NamedColor(GuiHelper.ToAxo((Color)ctrl.ModelObject));
+				newColor = (NamedColor)ctrl.ModelObject;
 				return true;
 			}
 			else
