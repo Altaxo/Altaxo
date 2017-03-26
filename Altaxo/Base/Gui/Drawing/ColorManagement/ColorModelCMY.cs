@@ -32,11 +32,11 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	public class ColorModelRGB : IColorModel
+	public class ColorModelCMY : IColorModel
 	{
 		public AxoColor GetColorFor1DColorSurfaceFromRelativePosition(double relativePosition)
 		{
-			return AxoColor.FromAHSB(255, (float)relativePosition, 1, 1);
+			return AxoColor.FromAHSB(255, (float)(relativePosition), 1, 1);
 		}
 
 		public AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor c)
@@ -52,17 +52,17 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 		public int[] GetComponentsForColor(AxoColor color)
 		{
-			return new int[] { color.R, color.G, color.B };
+			return new int[] { 255 - color.R, 255 - color.G, 255 - color.B };
 		}
 
 		public AxoColor GetColorFromComponents(int[] components)
 		{
-			return AxoColor.FromArgb(255, (byte)components[0], (byte)components[1], (byte)components[2]);
+			return AxoColor.FromArgb(255, (byte)(255 - components[0]), (byte)(255 - components[1]), (byte)(255 - components[2]));
 		}
 
 		public string[] GetNamesOfComponents()
 		{
-			return new string[] { "R", "G", "B" };
+			return new string[] { "C", "M", "Y" };
 		}
 	}
 }

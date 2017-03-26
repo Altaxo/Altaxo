@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 		static Color1DSurfaceControl()
 		{
-			SelectionRectangleRelativePositionProperty = DependencyProperty.Register("SelectionRectangleRelativeY", typeof(double), typeof(Color1DSurfaceControl), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, EhSelectionRectangleRelativePositionChanged, EhSelectionRectangleRelativePositionCoerce));
+			SelectionRectangleRelativePositionProperty = DependencyProperty.Register(nameof(SelectionRectangleRelativePosition), typeof(double), typeof(Color1DSurfaceControl), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, EhSelectionRectangleRelativePositionChanged, EhSelectionRectangleRelativePositionCoerce));
 		}
 
 		public Color1DSurfaceControl()
@@ -73,7 +73,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		private void EhLoaded(object sender, RoutedEventArgs e)
 		{
 			this.Loaded -= EhLoaded;
-			SetRectanglesRightTopOnCanvas();
+			SetRectanglesLeftBottomOnCanvas();
 		}
 
 		public void Set1DColorImage(ImageSource imageSource)
@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			_guiImage.Source = imageSource;
 		}
 
-		/// <summary>Gets/sets where the selection rectangle is currently located in y-direction (0: top, 1: bottom)</summary>
+		/// <summary>Gets/sets where the selection rectangle is currently located in y-direction (0: bottom, 1: top)</summary>
 		public double SelectionRectangleRelativePosition
 		{
 			get { return (double)GetValue(SelectionRectangleRelativePositionProperty); }
@@ -95,7 +95,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 		private static void EhSelectionRectangleRelativePositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			((Color1DSurfaceControl)d).SetRectanglesRightTopOnCanvas();
+			((Color1DSurfaceControl)d).SetRectanglesLeftBottomOnCanvas();
 			((Color1DSurfaceControl)d).OnSelectionRectangleRelativePositionChanged((double)e.NewValue);
 		}
 
@@ -125,8 +125,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 		private void SetRectanglePosition(Point currentMousePosition)
 		{
-			var currentRectanglePositionX = (-currentMousePosition.X + _initialMousePosition.Value.X) + _initialRectanglePosition.X;
-			var currentRectanglePositionY = (currentMousePosition.Y - _initialMousePosition.Value.Y) + _initialRectanglePosition.Y;
+			var currentRectanglePositionX = (currentMousePosition.X - _initialMousePosition.Value.X) + _initialRectanglePosition.X;
+			var currentRectanglePositionY = (-currentMousePosition.Y + _initialMousePosition.Value.Y) + _initialRectanglePosition.Y;
 
 			if (currentRectanglePositionY < 0)
 				currentRectanglePositionY = 0;
@@ -136,15 +136,14 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			this.SelectionRectangleRelativePosition = currentRectanglePositionY / _guiCanvas.ActualHeight;
 		}
 
-		private void SetRectanglesRightTopOnCanvas()
+		private void SetRectanglesLeftBottomOnCanvas()
 		{
-			double currentRectanglePositionX = 0;
 			double currentRectanglePositionY = this.SelectionRectangleRelativePosition * _guiCanvas.ActualHeight;
 
-			Canvas.SetRight(_guiSelectionRectangle1, currentRectanglePositionX - 0.5 * _guiSelectionRectangle1.ActualWidth);
-			Canvas.SetTop(_guiSelectionRectangle1, currentRectanglePositionY - 0.5 * _guiSelectionRectangle1.ActualHeight);
-			Canvas.SetRight(_guiSelectionRectangle2, currentRectanglePositionX - 0.5 * _guiSelectionRectangle2.ActualWidth);
-			Canvas.SetTop(_guiSelectionRectangle2, currentRectanglePositionY - 0.5 * _guiSelectionRectangle2.ActualHeight);
+			Canvas.SetLeft(_guiSelectionRectangle1, 0.5 * _guiCanvas.ActualWidth - 0.5 * _guiSelectionRectangle1.ActualWidth);
+			Canvas.SetBottom(_guiSelectionRectangle1, currentRectanglePositionY - 0.5 * _guiSelectionRectangle1.ActualHeight);
+			Canvas.SetLeft(_guiSelectionRectangle2, 0.5 * _guiCanvas.ActualWidth - 0.5 * _guiSelectionRectangle2.ActualWidth);
+			Canvas.SetBottom(_guiSelectionRectangle2, currentRectanglePositionY - 0.5 * _guiSelectionRectangle2.ActualHeight);
 		}
 
 		private void EhRectangle_MouseUp(object sender, MouseButtonEventArgs e)

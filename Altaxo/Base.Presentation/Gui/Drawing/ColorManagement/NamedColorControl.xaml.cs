@@ -15,54 +15,53 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with this program; if not, write to the Free Software
+//    along with ctrl program; if not, write to the Free Software
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
 
 #endregion Copyright
 
-using Altaxo.Drawing;
-using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	public class ColorModelRGB : IColorModel
+	/// <summary>
+	/// Interaction logic for NamedColorControl.xaml
+	/// </summary>
+	public partial class NamedColorControl : UserControl, INamedColorView
 	{
-		public AxoColor GetColorFor1DColorSurfaceFromRelativePosition(double relativePosition)
+		public NamedColorControl()
 		{
-			return AxoColor.FromAHSB(255, (float)relativePosition, 1, 1);
+			InitializeComponent();
 		}
 
-		public AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor c)
+		public void InitializeSubViews(IEnumerable<Tuple<string, object>> tabsNamesAndViews)
 		{
-			return AxoColor.FromAHSB(255, c.GetHue(), (float)(relativePosition.X), (float)(relativePosition.Y));
+			_guiTabControl.Items.Clear();
+
+			foreach (var item in tabsNamesAndViews)
+			{
+				var tab = new TabItem() { Header = item.Item1, Content = item.Item2 };
+				_guiTabControl.Items.Add(tab);
+			}
 		}
 
-		public (double position1D, PointD2D position2D) GetRelativePositionsFor1Dand2DColorSurfaceFromColor(AxoColor color)
+		private void EhAlphaValueChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
 		{
-			var (alpha, hue, saturation, brightness) = color.ToAHSB();
-			return (hue, new PointD2D(saturation, brightness));
-		}
-
-		public int[] GetComponentsForColor(AxoColor color)
-		{
-			return new int[] { color.R, color.G, color.B };
-		}
-
-		public AxoColor GetColorFromComponents(int[] components)
-		{
-			return AxoColor.FromArgb(255, (byte)components[0], (byte)components[1], (byte)components[2]);
-		}
-
-		public string[] GetNamesOfComponents()
-		{
-			return new string[] { "R", "G", "B" };
 		}
 	}
 }

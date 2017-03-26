@@ -81,6 +81,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\AssembliesOnly\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -502,6 +506,10 @@
     <Page Include="Gui\Drawing\ColorManagement\ColorModelControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Drawing\ColorManagement\NamedColorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Drawing\D3D\LineCaps\LineCapComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1250,6 +1258,9 @@
     <Compile Include="Gui\Drawing\ColorManagement\ColorBitmapCreator.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelControl.xaml.cs">
       <DependentUpon>ColorModelControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Drawing\ColorManagement\NamedColorControl.xaml.cs">
+      <DependentUpon>NamedColorControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternComboBox.xaml.cs">
       <DependentUpon>DashPatternComboBox.xaml</DependentUpon>

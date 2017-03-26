@@ -479,15 +479,55 @@ namespace Altaxo.Drawing
 		}
 
 		/// <summary>
+		/// Gets the hue value of the color.
+		/// </summary>
+		/// <returns></returns>
+		/// <exception cref="System.InvalidProgramException"></exception>
+		public float GetHue()
+		{
+			float hue = 0;
+			var r = ByteToNormFloat(this.R);
+			var g = ByteToNormFloat(this.G);
+			var b = ByteToNormFloat(this.B);
+
+			var max = Math.Max(Math.Max(r, g), b);
+			var min = Math.Min(Math.Min(r, g), b);
+
+			if (max == min)
+			{
+				hue = 0;
+			}
+			else if (max == r)
+			{
+				hue = (g - b) / (max - min);
+			}
+			else if (max == g)
+			{
+				hue = 2 + (b - r) / (max - min);
+			}
+			else if (max == b)
+			{
+				hue = 4 + (r - g) / (max - min);
+			}
+			else
+			{
+				throw new InvalidProgramException();
+			}
+
+			if (hue < 0)
+				hue += 6;
+
+			return hue / 6;
+		}
+
+		/// <summary>
 		/// Converts the color to the AHSB model, with alpha (0..255), Hue (0..1), Saturation (0..1) and Brightness (0..1).
 		/// </summary>
 		/// <returns></returns>
 		/// <exception cref="System.InvalidProgramException"></exception>
-		public Tuple<byte, float, float, float> ToAHSB()
+		public (byte alpha, float hue, float saturation, float brightness) ToAHSB()
 		{
-			byte a = this.A;
 			float hue = 0, saturation = 0, brightness = 0;
-
 			var r = ByteToNormFloat(this.R);
 			var g = ByteToNormFloat(this.G);
 			var b = ByteToNormFloat(this.B);
@@ -520,24 +560,21 @@ namespace Altaxo.Drawing
 				hue += 6;
 			hue /= 6;
 
-			saturation = (max - min) / max;
+			saturation = 0 == max ? 0 : (max - min) / max;
 
 			brightness = max;
 
-			return new Tuple<byte, float, float, float>(a, hue, saturation, brightness);
+			return (this.A, hue, saturation, brightness);
 		}
 
 		public static byte NormFloatToByte(float f)
 		{
-			if (f < 1)
-				return (byte)(f * 256);
-			else
-				return 255;
+			return (byte)(f * 255 + 0.5f);
 		}
 
 		public static float ByteToNormFloat(byte val)
 		{
-			return (float)(val / 256.0 + 1 / 512.0);
+			return val / 255.0f;
 		}
 
 		#endregion Conversion to/from other color models

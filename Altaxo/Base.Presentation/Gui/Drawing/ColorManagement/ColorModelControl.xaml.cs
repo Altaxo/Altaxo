@@ -110,26 +110,28 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 				return;
 
 			var color = _colorModel.GetColorFromComponents(_guiComponents.Select(c => c.Value).ToArray());
-			var pos = _colorModel.GetRelativePositionsFor2Dand1DColorSurfaceFromColor(color);
+			var (pos1D, pos2D) = _colorModel.GetRelativePositionsFor1Dand2DColorSurfaceFromColor(color);
 
 			_gui1DColorControl.SelectionRectangleRelativePositionChanged -= Eh1DColorControl_ValueChanged;
 			_gui2DColorControl.SelectionRectangleRelativePositionChanged -= Eh2DColorControl_ValueChanged;
 
-			_gui2DColorControl.SelectionRectangleRelativePosition = pos.Item1;
-			_gui1DColorControl.SelectionRectangleRelativePosition = pos.Item2;
+			_gui1DColorControl.SelectionRectangleRelativePosition = pos1D;
+			_gui2DColorControl.SelectionRectangleRelativePosition = pos2D;
 
 			_gui1DColorControl.SelectionRectangleRelativePositionChanged += Eh1DColorControl_ValueChanged;
 			_gui2DColorControl.SelectionRectangleRelativePositionChanged += Eh2DColorControl_ValueChanged;
 		}
 
-		private void Eh2DColorControl_ValueChanged(PointD2D relPos)
+		private void Eh1DColorControl_ValueChanged(double relValue)
 		{
-			double relValue = _gui1DColorControl.SelectionRectangleRelativePosition;
 			var baseColor = _colorModel.GetColorFor1DColorSurfaceFromRelativePosition(relValue);
-			var currentColor = _colorModel.GetColorFor2DColorSurfaceFromRelativePosition(relPos, baseColor);
+			var imgSource = ColorBitmapCreator.GetBitmap(relPos => _colorModel.GetColorFor2DColorSurfaceFromRelativePosition(relPos, baseColor));
+			_gui2DColorControl.Set2DColorImage(imgSource);
+
+			_currentColor = _colorModel.GetColorFor2DColorSurfaceFromRelativePosition(_gui2DColorControl.SelectionRectangleRelativePosition, baseColor);
 
 			// now calculate components
-			var components = _colorModel.GetComponentsForColor(currentColor);
+			var components = _colorModel.GetComponentsForColor(_currentColor);
 
 			UpdateComponentValues(() =>
 			{
@@ -139,16 +141,14 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			);
 		}
 
-		private void Eh1DColorControl_ValueChanged(double relValue)
+		private void Eh2DColorControl_ValueChanged(PointD2D relPos)
 		{
-			var baseColor = _colorModel.GetColorFor1DColorSurfaceFromRelativePosition(relValue);
-			var imgSource = ColorBitmapCreator.GetBitmap(relPos => _colorModel.GetColorFor2DColorSurfaceFromRelativePosition(relPos, baseColor));
-			_gui2DColorControl.Set2DColorImage(imgSource);
-
-			var currentColor = _colorModel.GetColorFor2DColorSurfaceFromRelativePosition(_gui2DColorControl.SelectionRectangleRelativePosition, baseColor);
+			double pos1D = _gui1DColorControl.SelectionRectangleRelativePosition;
+			var baseColor = _colorModel.GetColorFor1DColorSurfaceFromRelativePosition(pos1D);
+			_currentColor = _colorModel.GetColorFor2DColorSurfaceFromRelativePosition(relPos, baseColor);
 
 			// now calculate components
-			var components = _colorModel.GetComponentsForColor(currentColor);
+			var components = _colorModel.GetComponentsForColor(_currentColor);
 
 			UpdateComponentValues(() =>
 			{
@@ -187,11 +187,11 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 		private void UpdateAllAccordingToCurrentModelAndCurrentColor()
 		{
-			var positions = _colorModel.GetRelativePositionsFor2Dand1DColorSurfaceFromColor(_currentColor);
+			var (pos1D, pos2D) = _colorModel.GetRelativePositionsFor1Dand2DColorSurfaceFromColor(_currentColor);
 
 			// update color surfaces
-			UpdateColorSurfacePositions(positions.Item2, positions.Item1);
-			var baseColor = _colorModel.GetColorFor1DColorSurfaceFromRelativePosition(positions.Item2);
+			UpdateColorSurfacePositions(pos1D, pos2D);
+			var baseColor = _colorModel.GetColorFor1DColorSurfaceFromRelativePosition(pos1D);
 			var imgSource1D = ColorBitmapCreator.GetBitmap(p => _colorModel.GetColorFor1DColorSurfaceFromRelativePosition(p.Y));
 			_gui1DColorControl.Set1DColorImage(imgSource1D);
 			var imgSource2D = ColorBitmapCreator.GetBitmap(relPos => _colorModel.GetColorFor2DColorSurfaceFromRelativePosition(relPos, baseColor));
@@ -205,6 +205,18 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 					_guiComponents[i].Value = components[i];
 			}
 			);
+			// update labels
+			var labels = _colorModel.GetNamesOfComponents();
+			for (int i = 0; i < labels.Length; ++i)
+			{
+				_guiLabelForComponents[i].Content = labels[i];
+			}
+
+			// update visibility
+			for (int i = 0; i < 4; ++i)
+			{
+				_guiLabelForComponents[i].Visibility = _guiComponents[i].Visibility = i < components.Length ? Visibility.Visible : Visibility.Hidden;
+			}
 		}
 
 		public void InitializeAvailableColorModels(SelectableListNodeList listOfColorModels)

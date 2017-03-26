@@ -32,13 +32,29 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
+	/// <summary>
+	/// Gets the color model to be used with <see cref="ColorModelController"/>.
+	/// </summary>
 	public interface IColorModel
 	{
-		AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor baseColor);
-
+		/// <summary>
+		/// Gets the color for the 1D color surface from the relative position. The position 0 designates the lower position,
+		/// the position 1 the upper position.
+		/// </summary>
+		/// <param name="relativePosition">The relative position. The value has to be in the range [0, 1].</param>
+		/// <returns>The color at the relative position</returns>
 		AxoColor GetColorFor1DColorSurfaceFromRelativePosition(double relativePosition);
 
-		Tuple<PointD2D, double> GetRelativePositionsFor2Dand1DColorSurfaceFromColor(AxoColor color);
+		/// <summary>
+		/// Gets the color for the 2D color surface from the relative position. The meaning is defined so that
+		/// the argument (1, 1) returns the <paramref name="baseColor"/>, whereas (0,0) returns black.
+		/// </summary>
+		/// <param name="relativePosition">The relative position. Both components have to be in the range [0, 1].</param>
+		/// <param name="baseColor">Base color, i.e. the color returned from the 1D color surface.</param>
+		/// <returns></returns>
+		AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor baseColor);
+
+		(double position1D, PointD2D position2D) GetRelativePositionsFor1Dand2DColorSurfaceFromColor(AxoColor color);
 
 		string[] GetNamesOfComponents();
 

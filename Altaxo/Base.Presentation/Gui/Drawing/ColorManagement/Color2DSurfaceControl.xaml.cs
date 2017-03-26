@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		private void EhLoaded(object sender, RoutedEventArgs e)
 		{
 			this.Loaded -= EhLoaded;
-			SetRectanglesRightTopOnCanvas();
+			SetRectanglesLeftBottomOnCanvas();
 		}
 
 		public void Set2DColorImage(ImageSource imageSource)
@@ -82,7 +82,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			_guiImage.Source = imageSource;
 		}
 
-		/// <summary>Gets/sets where the selection rectangle is currently located in x-direction (0: right (!), 1: left)</summary>
+		/// <summary>Gets/sets where the selection rectangle is currently located
+		/// in x-direction (0: left, 1: right) and
+		/// in y-direction (0: bottom, 1: top).</summary>
 		public PointD2D SelectionRectangleRelativePosition
 		{
 			get { return (PointD2D)GetValue(SelectionRectangleRelativePositionProperty); }
@@ -91,13 +93,17 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 		private static void EhSelectionRectangleRelativePositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			((Color2DSurfaceControl)d).SetRectanglesRightTopOnCanvas();
+			((Color2DSurfaceControl)d).SetRectanglesLeftBottomOnCanvas();
 			((Color2DSurfaceControl)d).OnSelectionRectangleRelativePositionChanged((PointD2D)e.NewValue);
 		}
 
 		private static object EhSelectionRectangleRelativePositionCoerce(DependencyObject d, object baseValue)
 		{
 			var val = (PointD2D)baseValue;
+
+			if (double.IsNaN(val.X) || double.IsNaN(val.Y))
+				throw new ArgumentException("Component x or y of value is NaN, therefore Coerce is impossible");
+
 			return new PointD2D(Altaxo.Calc.RMath.ClampToInterval(val.X, 0, 1), Altaxo.Calc.RMath.ClampToInterval(val.Y, 0, 1));
 		}
 
@@ -126,8 +132,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 		private void SetRectanglePosition(Point currentMousePosition)
 		{
-			var currentRectanglePositionX = (-currentMousePosition.X + _initialMousePosition.Value.X) + _initialRectanglePosition.X;
-			var currentRectanglePositionY = (currentMousePosition.Y - _initialMousePosition.Value.Y) + _initialRectanglePosition.Y;
+			var currentRectanglePositionX = (currentMousePosition.X - _initialMousePosition.Value.X) + _initialRectanglePosition.X;
+			var currentRectanglePositionY = (-currentMousePosition.Y + _initialMousePosition.Value.Y) + _initialRectanglePosition.Y;
 
 			// Clip rectangle position
 			if (currentRectanglePositionX < 0)
@@ -143,15 +149,15 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			this.SelectionRectangleRelativePosition = new PointD2D(currentRectanglePositionX / _guiCanvas.ActualWidth, currentRectanglePositionY / _guiCanvas.ActualHeight);
 		}
 
-		private void SetRectanglesRightTopOnCanvas()
+		private void SetRectanglesLeftBottomOnCanvas()
 		{
 			double currentRectanglePositionX = this.SelectionRectangleRelativePosition.X * _guiCanvas.ActualWidth;
 			double currentRectanglePositionY = this.SelectionRectangleRelativePosition.Y * _guiCanvas.ActualHeight;
 
-			Canvas.SetRight(_guiSelectionRectangle1, currentRectanglePositionX - 0.5 * _guiSelectionRectangle1.ActualWidth);
-			Canvas.SetTop(_guiSelectionRectangle1, currentRectanglePositionY - 0.5 * _guiSelectionRectangle1.ActualHeight);
-			Canvas.SetRight(_guiSelectionRectangle2, currentRectanglePositionX - 0.5 * _guiSelectionRectangle2.ActualWidth);
-			Canvas.SetTop(_guiSelectionRectangle2, currentRectanglePositionY - 0.5 * _guiSelectionRectangle2.ActualHeight);
+			Canvas.SetLeft(_guiSelectionRectangle1, currentRectanglePositionX - 0.5 * _guiSelectionRectangle1.ActualWidth);
+			Canvas.SetBottom(_guiSelectionRectangle1, currentRectanglePositionY - 0.5 * _guiSelectionRectangle1.ActualHeight);
+			Canvas.SetLeft(_guiSelectionRectangle2, currentRectanglePositionX - 0.5 * _guiSelectionRectangle2.ActualWidth);
+			Canvas.SetBottom(_guiSelectionRectangle2, currentRectanglePositionY - 0.5 * _guiSelectionRectangle2.ActualHeight);
 		}
 
 		private void EhRectangle_MouseUp(object sender, MouseButtonEventArgs e)

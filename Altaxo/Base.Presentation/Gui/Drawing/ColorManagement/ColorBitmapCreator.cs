@@ -47,14 +47,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 			for (int row = 0; row < height; ++row)
 			{
-				var h = (height - 1 - row) / (float)(height - 1);
+				var h = (height - 1 - row) / (float)(height - 1); // h is 0 on the lower edge, 1 on the upper edge
 				for (int col = 0; col < width; ++col)
 				{
-					int idx = (row * width + col) * 4;
-					var w = (col) / (float)(width - 1);
-
+					var w = (col) / (float)(width - 1); // w is 0 on the left edge, 1 on the right edge
 					var cc = colorFunction(new PointD2D(w, h));
 
+					int idx = (row * width + col) * 4;
 					pixels[idx + 0] = cc.B;  // B
 					pixels[idx + 1] = cc.G; // G
 					pixels[idx + 2] = cc.R; // R

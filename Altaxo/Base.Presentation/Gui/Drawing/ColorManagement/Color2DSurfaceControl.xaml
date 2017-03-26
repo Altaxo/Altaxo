@@ -11,8 +11,8 @@
 			<Image x:Name="_guiImage" Width="200" Height="200" Stretch="Fill" />
 			<Rectangle Stroke="Black" StrokeThickness="1" Width="{Binding ElementName=_guiImage, Path=ActualWidth}" Height="{Binding ElementName=_guiImage, Path=ActualHeight}" />
 			<Canvas x:Name="_guiCanvas" PreviewMouseMove="EhRectangle_MouseMove" PreviewMouseUp="EhRectangle_MouseUp" Width="{Binding ElementName=_guiImage, Path=ActualWidth}" Height="{Binding ElementName=_guiImage, Path=ActualHeight}" Background="Transparent">
-				<Rectangle x:Name="_guiSelectionRectangle1" Canvas.Right="0" Canvas.Top="0" Stroke="Black" StrokeDashArray="4,4" StrokeThickness="1" Width="10" Height="10" Fill="Transparent" />
-				<Rectangle x:Name="_guiSelectionRectangle2" Canvas.Right="0" Canvas.Top="0" Stroke="White" StrokeDashArray="4,4" StrokeDashOffset="4" StrokeThickness="1" Width="10" Height="10" Fill="Transparent" PreviewMouseDown="EhRectangle_MouseDown" />
+				<Rectangle x:Name="_guiSelectionRectangle1" Stroke="Black" StrokeDashArray="4,4" StrokeThickness="1" Width="10" Height="10" Fill="Transparent" />
+				<Rectangle x:Name="_guiSelectionRectangle2" Stroke="White" StrokeDashArray="4,4" StrokeDashOffset="4" StrokeThickness="1" Width="10" Height="10" Fill="Transparent" PreviewMouseDown="EhRectangle_MouseDown" />
 			</Canvas>
 		</Grid>
 	</Border>
