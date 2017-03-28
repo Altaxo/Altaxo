@@ -10,31 +10,27 @@
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="4" />
-			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="16" />
+			<ColumnDefinition Width="*" MinWidth="60" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*" />
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<TabControl x:Name="_guiTabControl" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" />
+		<TabControl x:Name="_guiTabControl" Grid.Row="0" Grid.Column="0" MinWidth="200" />
 
-		<Grid Grid.Row="2" Grid.Column="0">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="4" />
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
+		<DockPanel Grid.Row="2" Grid.Column="0"  HorizontalAlignment="Right">
+			<Label Grid.Row="2" Content="Color Name:" />
+			<TextBox x:Name="_guiColorName" Text="Aqua" MinWidth="120" DockPanel.Dock="Right" />
+		</DockPanel>
+		<Grid Grid.Row="0" Grid.RowSpan="3" Grid.Column="2">
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="4" />
-				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
-			<Label Grid.Row="0" Grid.Column="0" Content="Alpha:" />
-			<axogc:Int32UpDown x:Name="_guiAlphaValue" Grid.Row="0" Grid.Column="2" Value="255" Minimum="0" Maximum="255" ValueChanged="EhAlphaValueChanged" />
-			<Label Grid.Row="2" Grid.Column="0" Content="Name:" />
-			<TextBox x:Name="_guiColorName" Grid.Row="2" Grid.Column="2" Text="Aqua" />
+			<Rectangle x:Name="_guiOldColorRectangle" Grid.Row="0" Fill="Yellow" />
+			<Rectangle x:Name="_guiNewColorRectangle" Grid.Row="1" Fill="Red" />
 		</Grid>
 	</Grid>
 </UserControl>

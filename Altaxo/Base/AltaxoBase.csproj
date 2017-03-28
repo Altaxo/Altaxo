@@ -667,8 +667,10 @@
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelController.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelCMY.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelRGB.cs" />
+    <Compile Include="Gui\Drawing\ColorManagement\ColorPickerController.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\IColorModel.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\NamedColorController.cs" />
+    <Compile Include="Gui\Drawing\ColorManagement\TextOnlyColorModels.cs" />
     <Compile Include="Gui\Drawing\D3D\MaterialController.cs" />
     <Compile Include="Gui\Drawing\D3D\Material\MaterialWithUniformColorController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\DropLinePlotStyleController.cs" />

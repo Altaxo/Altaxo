@@ -567,6 +567,43 @@ namespace Altaxo.Drawing
 			return (this.A, hue, saturation, brightness);
 		}
 
+		/// <summary>
+		/// Provides a quick and dirty conversion from the CMYK color model to an <see cref="AxoColor"/>. No color conversion profile is used here!
+		/// </summary>
+		/// <param name="alpha">The alpha value in the range [0, 1].</param>
+		/// <param name="c">The calpha value in the range [0, 1].</param>
+		/// <param name="y">The yalpha value in the range [0, 1].</param>
+		/// <param name="m">The malpha value in the range [0, 1].</param>
+		/// <param name="k">The kalpha value in the range [0, 1].</param>
+		/// <returns></returns>
+		public AxoColor FromACMYK(float alpha, float c, float y, float m, float k)
+		{
+			var r = 1 - Math.Min(1, c * (1 - k) + k);
+			var g = 1 - Math.Min(1, m * (1 - k) + k);
+			var b = 1 - Math.Min(1, y * (1 - k) + k);
+
+			return AxoColor.FromArgb(NormFloatToByte(alpha), NormFloatToByte(r), NormFloatToByte(g), NormFloatToByte(b));
+		}
+
+		/// <summary>
+		/// Provides a quick and dirty conversion from an <see cref="AxoColor"/> to the CMYK model. No color conversion profile is used here!
+		/// </summary>
+		/// <returns>The components for alpha, C, M, Y and K. All components are in the range [0, 1].</returns>
+		public (float alpha, float c, float m, float y, float k) ToACMYK()
+		{
+			var c = 255 - this.R;
+			var m = 255 - this.G;
+			var y = 255 - this.B;
+			var min = Math.Min(c, Math.Min(m, y));
+
+			var cc = ((c - min) / (255.0f - min));
+			var mm = ((m - min) / (255.0f - min));
+			var yy = ((y - min) / (255.0f - min));
+			var kk = min;
+
+			return (ByteToNormFloat(this.A), cc, mm, yy, kk);
+		}
+
 		public static byte NormFloatToByte(float f)
 		{
 			return (byte)(f * 255 + 0.5f);

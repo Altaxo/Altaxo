@@ -36,18 +36,29 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 	{
 		void InitializeAvailableColorModels(SelectableListNodeList listOfColorModels);
 
+		void InitializeAvailableTextOnlyColorModels(SelectableListNodeList listOfTextOnlyColorModels);
+
 		void InitializeColorModel(IColorModel colorModel, bool silentSet);
 
-		void InitializeCurrentColor(AxoColor color, string colorName);
+		void InitializeTextOnlyColorModel(ITextOnlyColorModel colorModel, bool silentSet);
+
+		void InitializeCurrentColor(AxoColor color);
 
 		event Action ColorModelSelectionChanged;
+
+		event Action TextOnlyColorModelSelectionChanged;
+
+		event Action<AxoColor> CurrentColorChanged;
 	}
 
 	[ExpectedTypeOfView(typeof(IColorModelView))]
-	public class ColorModelController : MVCANControllerEditImmutableDocBase<NamedColor, IColorModelView>
+	public class ColorModelController : MVCANDControllerEditImmutableDocBase<AxoColor, IColorModelView>
 	{
 		private SelectableListNodeList _availableColorModels;
+		private SelectableListNodeList _availableTextOnlyColorModels;
+
 		private IColorModel _currentColorModel;
+		private ITextOnlyColorModel _currentTextOnlyColorModel;
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -64,17 +75,29 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 				var models = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IColorModel));
 
+				_currentColorModel = new ColorModelRGB();
 				foreach (var modelType in models)
 				{
-					_availableColorModels.Add(new SelectableListNode(modelType.Name, modelType, modelType == typeof(ColorModelRGB)));
+					_availableColorModels.Add(new SelectableListNode(modelType.Name, modelType, modelType == _currentColorModel.GetType()));
 				}
-				_currentColorModel = new ColorModelRGB();
+
+				// Text only color models
+				_availableTextOnlyColorModels = new SelectableListNodeList();
+				var textOnlyModels = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ITextOnlyColorModel));
+
+				_currentTextOnlyColorModel = new RGBColorTextModel();
+				foreach (var modelType in textOnlyModels)
+				{
+					_availableTextOnlyColorModels.Add(new SelectableListNode(modelType.Name, modelType, modelType == _currentTextOnlyColorModel.GetType()));
+				}
 			}
 			if (null != _view)
 			{
 				_view.InitializeAvailableColorModels(_availableColorModels);
-				_view.InitializeColorModel(_currentColorModel, true);
-				_view.InitializeCurrentColor(_doc.Color, _doc.Name);
+				_view.InitializeAvailableTextOnlyColorModels(_availableTextOnlyColorModels);
+				_view.InitializeColorModel(_currentColorModel, false);
+				_view.InitializeTextOnlyColorModel(_currentTextOnlyColorModel, true);
+				_view.InitializeCurrentColor(_doc);
 			}
 		}
 
@@ -88,11 +111,15 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			base.AttachView();
 
 			_view.ColorModelSelectionChanged += EhColorModelSelectionChanged;
+			_view.TextOnlyColorModelSelectionChanged += EhTextOnlyColorModelSelectionChanged;
+			_view.CurrentColorChanged += EhCurrentColorChanged;
 		}
 
 		protected override void DetachView()
 		{
 			_view.ColorModelSelectionChanged -= EhColorModelSelectionChanged;
+			_view.TextOnlyColorModelSelectionChanged -= EhTextOnlyColorModelSelectionChanged;
+			_view.CurrentColorChanged -= EhCurrentColorChanged;
 
 			base.DetachView();
 		}
@@ -107,6 +134,24 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 				_currentColorModel = newColorModel;
 				_view.InitializeColorModel(_currentColorModel, false);
 			}
+		}
+
+		private void EhTextOnlyColorModelSelectionChanged()
+		{
+			var node = _availableTextOnlyColorModels.FirstSelectedNode;
+
+			if (null != node && (Type)node.Tag != _currentTextOnlyColorModel.GetType())
+			{
+				var newTextOnlyColorModel = (ITextOnlyColorModel)Activator.CreateInstance((Type)node.Tag);
+				_currentTextOnlyColorModel = newTextOnlyColorModel;
+				_view.InitializeTextOnlyColorModel(_currentTextOnlyColorModel, false);
+			}
+		}
+
+		private void EhCurrentColorChanged(AxoColor color)
+		{
+			_doc = color;
+			OnMadeDirty();
 		}
 	}
 }

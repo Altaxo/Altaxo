@@ -33,6 +33,26 @@ using System.Threading.Tasks;
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
 	/// <summary>
+	/// Implements a model which can split or express a color in components. The components are provided as text.
+	/// </summary>
+	public interface ITextOnlyColorModel
+	{
+		/// <summary>
+		/// Gets the names of components of this color model.
+		/// </summary>
+		/// <returns>Names of components of this color model.</returns>
+		string[] GetNamesOfComponents();
+
+		/// <summary>
+		/// Gets the components (in text form) for the provided color.
+		/// </summary>
+		/// <param name="color">The color.</param>
+		/// <param name="formatProvider">The format provider.</param>
+		/// <returns>The components (in text form) for the provided color.</returns>
+		string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider);
+	}
+
+	/// <summary>
 	/// Gets the color model to be used with <see cref="ColorModelController"/>.
 	/// </summary>
 	public interface IColorModel

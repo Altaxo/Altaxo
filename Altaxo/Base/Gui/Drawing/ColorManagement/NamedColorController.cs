@@ -34,12 +34,20 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 	public interface INamedColorView
 	{
 		void InitializeSubViews(IEnumerable<Tuple<string, object>> tabsNamesAndViews);
+
+		void SetOldColor(AxoColor oldColor);
+
+		void SetNewColor(AxoColor oldColor);
+
+		void SetColorName(string name);
 	}
 
 	[ExpectedTypeOfView(typeof(INamedColorView))]
-	public class NamedColorController1 : MVCANControllerEditImmutableDocBase<NamedColor, INamedColorView>
+	public class NamedColorController : MVCANControllerEditImmutableDocBase<NamedColor, INamedColorView>
 	{
 		private ColorModelController _subControllerColorModel;
+
+		private NamedColor _initialColor;
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
@@ -52,12 +60,17 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 			if (initData)
 			{
+				_initialColor = _doc;
+
 				_subControllerColorModel = new ColorModelController();
-				_subControllerColorModel.InitializeDocument(_doc);
+				_subControllerColorModel.InitializeDocument(_doc.Color);
+				_subControllerColorModel.MadeDirty += EhController_Dirty;
 			}
 			if (null != _view)
 			{
 				_view.InitializeSubViews(GetTabNamesAndViews());
+				_view.SetOldColor(_initialColor);
+				_view.SetNewColor(_doc);
 			}
 		}
 
@@ -75,6 +88,16 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		public override bool Apply(bool disposeController)
 		{
 			return ApplyEnd(true, disposeController);
+		}
+
+		private void EhController_Dirty(IMVCANDController ctrl)
+		{
+			var color = (AxoColor)ctrl.ModelObject;
+			_doc = new NamedColor(color);
+
+			_view?.SetNewColor(color);
+
+			_view.SetColorName(_doc.Name);
 		}
 	}
 }

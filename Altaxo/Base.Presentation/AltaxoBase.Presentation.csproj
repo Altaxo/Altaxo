@@ -195,7 +195,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Common\Drawing\ColorCombControl.xaml">
+    <Page Include="Gui\Drawing\ColorManagement\ColorCombControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -203,7 +203,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Common\Drawing\ColorPickerControl.xaml">
+    <Page Include="Gui\Drawing\ColorManagement\ColorPickerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1428,11 +1428,10 @@
     <Compile Include="Gui\Common\Drawing\BrushTypeComboBox.xaml.cs">
       <DependentUpon>BrushTypeComboBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Common\Drawing\ColorCombControl.xaml.cs">
+    <Compile Include="Gui\Drawing\ColorManagement\ColorCombControl.xaml.cs">
       <DependentUpon>ColorCombControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Common\Drawing\ColorController.cs" />
-    <Compile Include="Gui\Common\Drawing\ColorPickerControl.xaml.cs">
+    <Compile Include="Gui\Drawing\ColorManagement\ColorPickerControl.xaml.cs">
       <DependentUpon>ColorPickerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Common\Drawing\ColorScaleComboBox.xaml.cs">

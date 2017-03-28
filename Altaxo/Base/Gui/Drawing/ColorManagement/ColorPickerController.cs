@@ -15,7 +15,7 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with ctrl program; if not, write to the Free Software
+//    along with this program; if not, write to the Free Software
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
@@ -27,57 +27,62 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	/// <summary>
-	/// Interaction logic for NamedColorControl.xaml
-	/// </summary>
-	public partial class NamedColorControl : UserControl, INamedColorView
+	public interface IColorPickerView
 	{
-		public NamedColorControl()
+		AxoColor SelectedColor { get; set; }
+
+		event Action<AxoColor> CurrentColorChanged;
+	}
+
+	/// <summary>
+	/// Controller to pick up a custom color
+	/// </summary>
+	[ExpectedTypeOfView(typeof(IColorPickerView))]
+	public class ColorPickerController : MVCANDControllerEditImmutableDocBase<AxoColor, IColorPickerView>
+	{
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			InitializeComponent();
+			yield break;
 		}
 
-		public void InitializeSubViews(IEnumerable<Tuple<string, object>> tabsNamesAndViews)
+		protected override void Initialize(bool initData)
 		{
-			_guiTabControl.Items.Clear();
+			base.Initialize(initData);
 
-			foreach (var item in tabsNamesAndViews)
+			if (null != _view)
 			{
-				var tab = new TabItem() { Header = item.Item1, Content = item.Item2 };
-				_guiTabControl.Items.Add(tab);
+				_view.SelectedColor = _doc;
 			}
 		}
 
-		private void EhAlphaValueChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
+		public override bool Apply(bool disposeController)
 		{
+			_doc = _view.SelectedColor;
+
+			return ApplyEnd(true, disposeController);
 		}
 
-		public void SetOldColor(AxoColor oldColor)
+		protected override void AttachView()
 		{
-			_guiOldColorRectangle.Fill = new SolidColorBrush(GuiHelper.ToWpf(oldColor));
+			base.AttachView();
+
+			_view.CurrentColorChanged += EhCurrentColorChanged;
 		}
 
-		public void SetNewColor(AxoColor newColor)
+		protected override void DetachView()
 		{
-			_guiNewColorRectangle.Fill = new SolidColorBrush(GuiHelper.ToWpf(newColor));
+			_view.CurrentColorChanged -= EhCurrentColorChanged;
+
+			base.DetachView();
 		}
 
-		public void SetColorName(string name)
+		private void EhCurrentColorChanged(AxoColor color)
 		{
-			_guiColorName.Text = name;
+			_doc = color;
+			OnMadeDirty();
 		}
 	}
 }

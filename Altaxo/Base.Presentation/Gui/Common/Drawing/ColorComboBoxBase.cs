@@ -530,7 +530,7 @@ namespace Altaxo.Gui.Common.Drawing
 			ColorController ctrl = new ColorController(SelectedWpfColor);
 			ctrl.ViewObject = new ColorPickerControl(SelectedWpfColor);
 			*/
-			var ctrl = new NamedColorController1();
+			var ctrl = new Gui.Drawing.ColorManagement.NamedColorController();
 			ctrl.InitializeDocument(InternalSelectedColor);
 			Current.Gui.FindAndAttachControlTo(ctrl);
 			if (Current.Gui.ShowDialog(ctrl, "Select a color", false))
