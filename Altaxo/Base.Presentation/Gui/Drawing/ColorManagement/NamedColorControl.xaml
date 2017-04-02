@@ -18,7 +18,7 @@
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<TabControl x:Name="_guiTabControl" Grid.Row="0" Grid.Column="0" MinWidth="200" />
+		<TabControl x:Name="_guiTabControl" Grid.Row="0" Grid.Column="0" MinWidth="200" SelectionChanged="EhTabControl_SelectionChanged" />
 
 		<DockPanel Grid.Row="2" Grid.Column="0"  HorizontalAlignment="Right">
 			<Label Grid.Row="2" Content="Color Name:" />

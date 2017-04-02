@@ -45,6 +45,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 	/// </summary>
 	public partial class NamedColorControl : UserControl, INamedColorView
 	{
+		public event Action<object> SubViewChanged;
+
 		public NamedColorControl()
 		{
 			InitializeComponent();
@@ -75,9 +77,24 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			_guiNewColorRectangle.Fill = new SolidColorBrush(GuiHelper.ToWpf(newColor));
 		}
 
-		public void SetColorName(string name)
+		public string ColorName
 		{
-			_guiColorName.Text = name;
+			get
+			{
+				return _guiColorName.Text;
+			}
+			set
+			{
+				_guiColorName.Text = value;
+			}
+		}
+
+		private void EhTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count == 1 && e.AddedItems[0] is TabItem newTabItem)
+			{
+				SubViewChanged?.Invoke(newTabItem.Content);
+			}
 		}
 	}
 }

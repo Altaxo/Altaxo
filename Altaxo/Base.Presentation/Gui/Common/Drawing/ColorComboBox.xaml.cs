@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Common.Drawing
 			set
 			{
 				AxoColor c = GuiHelper.ToAxo(value);
-				SetValue(SelectedColorProperty, new NamedColor(c, NamedColor.GetColorName(c)));
+				SetValue(SelectedColorProperty, new NamedColor(c));
 			}
 		}
 
@@ -106,7 +106,7 @@ namespace Altaxo.Gui.Common.Drawing
 			set
 			{
 				AxoColor c = GuiHelper.ToAxo(value);
-				SetValue(SelectedColorProperty, new NamedColor(c, NamedColor.GetColorName(c)));
+				SetValue(SelectedColorProperty, new NamedColor(c));
 			}
 		}
 

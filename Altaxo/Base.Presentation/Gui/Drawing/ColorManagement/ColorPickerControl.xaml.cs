@@ -53,8 +53,20 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 		public AxoColor SelectedColor
 		{
-			get { return _newColor; }
-			set { _newColor = value; }
+			get
+			{
+				return _newColor;
+			}
+			set
+			{
+				if (value != _newColor)
+				{
+					_newColor = value;
+
+					UpdateControlValues();
+					UpdateControlVisuals();
+				}
+			}
 		}
 
 		// Completes initialization after all XAML member vars have been initialized.
@@ -68,8 +80,6 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			colorComb.ColorSelected += new EventHandler<ColorEventArgs>(EhColorCombControl_ColorSelected);
 			brightnessSlider.ValueChanged += new RoutedPropertyChangedEventHandler<double>(EhBrightnessSlider_ValueChanged);
 			opacitySlider.ValueChanged += new RoutedPropertyChangedEventHandler<double>(EhOpacitySlider_ValueChanged);
-
-			rectangle2.Fill = new System.Windows.Media.SolidColorBrush(GuiHelper.ToWpf(_oldColor));
 		}
 
 		//
@@ -120,8 +130,6 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			LinearGradientBrush lgb2 = sb2.Background as LinearGradientBrush;
 			lgb2.GradientStops[0].Color = c2a;
 			lgb2.GradientStops[1].Color = c2b;
-
-			rectangle1.Fill = new System.Windows.Media.SolidColorBrush(c);
 		}
 
 		//
@@ -142,6 +150,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 			_newColor = AxoColor.FromScRgb(a, r, g, b);
 			UpdateControlVisuals();
+			CurrentColorChanged?.Invoke(_newColor);
 		}
 
 		private void EhBrightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -159,6 +168,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 			_newColor = AxoColor.FromScRgb(a, r, g, b);
 			UpdateControlVisuals();
+			CurrentColorChanged?.Invoke(_newColor);
 		}
 
 		private void EhOpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -170,6 +180,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 			_newColor = AxoColor.FromScRgb(a, c.ScR, c.ScG, c.ScB);
 			UpdateControlVisuals();
+			CurrentColorChanged?.Invoke(_newColor);
 		}
 	}
 }

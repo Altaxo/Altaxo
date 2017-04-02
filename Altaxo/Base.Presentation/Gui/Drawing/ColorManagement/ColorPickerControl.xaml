@@ -57,32 +57,12 @@
 
 		<axogcd:ColorCombControl x:Name="colorComb" Grid.RowSpan="5" Margin="0,0,10,0" />
 
-		<GroupBox Grid.Column="1" Grid.Row="0" Header="Preview" Margin="0">
-			<Border CornerRadius="3" BorderBrush="{x:Static SystemColors.ControlDarkDarkBrush}" BorderThickness="1" Margin="5" Background="{StaticResource CheckerboardBrush}"  SnapsToDevicePixels="True">
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition />
-						<RowDefinition />
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto" />
-						<ColumnDefinition Width="100*" />
-					</Grid.ColumnDefinitions>
-					<Label Content="New:" Background="#AFFF" />
-					<Label Content="Current:" Background="#AFFF" Grid.Row="1" />
-					<StackPanel Name="stackPanel1" Grid.RowSpan="2" Grid.Column="1" Grid.Row="0">
-						<Rectangle Height="38" Name="rectangle1" Fill="Red" />
-						<Rectangle Height="38" Name="rectangle2" Fill="Blue" />
-					</StackPanel>
-				</Grid>
-			</Border>
-		</GroupBox>
-		<GroupBox Grid.Column="1" Grid.Row="3" Header="_Brightness" Margin="0,35,0,0">
+		<GroupBox Grid.Column="1" Grid.Row="1" Header="_Brightness" Margin="0,35,0,0">
 			<Border CornerRadius="3" BorderBrush="{x:Static SystemColors.ControlDarkDarkBrush}" BorderThickness="1" Margin="5" Background="{StaticResource BrightnessGradient}" SnapsToDevicePixels="True">
 				<Slider Name="brightnessSlider" Margin="3" Orientation="Horizontal" IsMoveToPointEnabled="True" Minimum="0.0" Maximum="1.0" />
 			</Border>
 		</GroupBox>
-		<GroupBox Grid.Column="1" Grid.Row="5" Header="_Opacity" Margin="0,7,0,0">
+		<GroupBox Grid.Column="1" Grid.Row="3" Header="_Opacity" Margin="0,7,0,0">
 			<Border CornerRadius="3" BorderBrush="{x:Static SystemColors.ControlDarkDarkBrush}" BorderThickness="1" Margin="5" Background="{StaticResource CheckerboardBrush}" SnapsToDevicePixels="True">
 				<Border Margin="0" Background="{StaticResource OpacityGradient}">
 					<Slider Name="opacitySlider" Margin="3" Orientation="Horizontal" IsMoveToPointEnabled="True" Minimum="0.0" Maximum="1.0" />
