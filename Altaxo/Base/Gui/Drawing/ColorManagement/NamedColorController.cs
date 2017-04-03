@@ -52,6 +52,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 	{
 		private ColorModelController _subControllerColorModel;
 
+		private ColorCircleController _subControllerColorCircle;
+
 		private ColorPickerController _subControllerColorPicker;
 
 		private NamedColor _initialColor;
@@ -59,6 +61,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
 			yield return new ControllerAndSetNullMethod(_subControllerColorModel, () => _subControllerColorModel = null);
+			yield return new ControllerAndSetNullMethod(_subControllerColorCircle, () => _subControllerColorCircle = null);
+			yield return new ControllerAndSetNullMethod(_subControllerColorPicker, () => _subControllerColorPicker = null);
 		}
 
 		protected override void Initialize(bool initData)
@@ -72,6 +76,10 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 				_subControllerColorModel = new ColorModelController();
 				_subControllerColorModel.InitializeDocument(_doc.Color);
 				_subControllerColorModel.MadeDirty += EhController_Dirty;
+
+				_subControllerColorCircle = new ColorCircleController();
+				_subControllerColorCircle.InitializeDocument(_doc.Color);
+				_subControllerColorCircle.MadeDirty += EhController_Dirty;
 
 				_subControllerColorPicker = new ColorPickerController();
 				_subControllerColorPicker.InitializeDocument(_doc.Color);
@@ -94,6 +102,14 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 					Current.Gui.FindAndAttachControlTo(_subControllerColorModel);
 				if (_subControllerColorModel.ViewObject != null)
 					yield return new Tuple<string, object>("Models", _subControllerColorModel.ViewObject);
+			}
+
+			if (null != _subControllerColorCircle)
+			{
+				if (_subControllerColorCircle.ViewObject == null)
+					Current.Gui.FindAndAttachControlTo(_subControllerColorCircle);
+				if (_subControllerColorCircle.ViewObject != null)
+					yield return new Tuple<string, object>("Circle", _subControllerColorCircle.ViewObject);
 			}
 
 			if (null != _subControllerColorPicker)
@@ -135,7 +151,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		private void EhSubViewChanged(object obj)
 		{
 			// Find controller correspondig to subview
-			foreach (var ctrl in new IMVCANDController[] { _subControllerColorModel, _subControllerColorPicker })
+			foreach (var ctrl in new IMVCANDController[] { _subControllerColorModel, _subControllerColorCircle, _subControllerColorPicker })
 			{
 				if (object.ReferenceEquals(obj, ctrl.ViewObject))
 				{

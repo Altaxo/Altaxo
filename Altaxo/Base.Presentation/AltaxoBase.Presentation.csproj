@@ -195,6 +195,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Drawing\ColorManagement\ColorCircleSurfaceControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Drawing\ColorManagement\ColorCombControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -202,6 +206,10 @@
     <Page Include="Gui\Common\Drawing\ColorComboBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Drawing\ColorManagement\ColorCircleControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Drawing\ColorManagement\ColorPickerControl.xaml">
       <SubType>Designer</SubType>
@@ -1256,6 +1264,12 @@
       <DependentUpon>Color2DSurfaceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\ColorManagement\ColorBitmapCreator.cs" />
+    <Compile Include="Gui\Drawing\ColorManagement\ColorCircleSurfaceControl.xaml.cs">
+      <DependentUpon>ColorCircleSurfaceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Drawing\ColorManagement\ColorCircleControl.xaml.cs">
+      <DependentUpon>ColorCircleControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelControl.xaml.cs">
       <DependentUpon>ColorModelControl.xaml</DependentUpon>
     </Compile>

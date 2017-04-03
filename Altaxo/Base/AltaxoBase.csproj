@@ -664,10 +664,14 @@
     <Compile Include="Gui\Data\Selections\RowSelectionController.cs" />
     <Compile Include="Gui\Data\Transformations\VariantToVariantTransformationController.cs" />
     <Compile Include="Gui\DragDropDelegateTypes.cs" />
+    <Compile Include="Gui\Drawing\ColorManagement\ColorCircleController.cs" />
+    <Compile Include="Gui\Drawing\ColorManagement\ColorCircleModels.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelController.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelCMY.cs" />
+    <Compile Include="Gui\Drawing\ColorManagement\ColorModelHSB.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelRGB.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorPickerController.cs" />
+    <Compile Include="Gui\Drawing\ColorManagement\ColorVariationModels.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\IColorModel.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\NamedColorController.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\TextOnlyColorModels.cs" />

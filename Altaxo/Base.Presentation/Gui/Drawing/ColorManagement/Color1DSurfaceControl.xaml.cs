@@ -111,6 +111,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			{
 				_initialRectanglePosition = new Point(0, this.SelectionRectangleRelativePosition * _guiCanvas.ActualHeight);
 				_initialMousePosition = e.GetPosition(_guiCanvas);
+				_guiCanvas.CaptureMouse();
 				e.Handled = true;
 			}
 		}
@@ -150,8 +151,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		{
 			if (e.LeftButton == MouseButtonState.Released && _initialMousePosition.HasValue)
 			{
+				_guiCanvas.ReleaseMouseCapture();
 				SetRectanglePosition(e.GetPosition(_guiCanvas));
-
 				_initialMousePosition = null;
 				e.Handled = true;
 			}
