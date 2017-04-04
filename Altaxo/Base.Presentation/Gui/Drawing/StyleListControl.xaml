@@ -10,6 +10,10 @@
 		<DataTemplate x:Key="CurrentItemsTemplateResource">
 			<TextBlock Text="{Binding Text}" />
 		</DataTemplate>
+
+		<HierarchicalDataTemplate x:Key="AvailableItemsTemplateResource" DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
+			<TextBlock Text="{Binding Text}" ToolTip="{Binding ToolTip}" />
+		</HierarchicalDataTemplate>
 	</UserControl.Resources>
 
 	<Grid>
@@ -83,7 +87,8 @@
 
 		<TreeView x:Name="_guiAvailableSymbols" Grid.Row="8" Grid.RowSpan="7" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible"
 			dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableItemsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
-			dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding AvailableItemsDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
+			dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding AvailableItemsDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+			ItemTemplate="{Binding AvailableItemsTemplate, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
 				<Style TargetType="{x:Type TreeViewItem}">
@@ -97,12 +102,6 @@
 					</Style.Triggers>
 				</Style>
 			</ItemsControl.ItemContainerStyle>
-
-			<ItemsControl.Resources>
-				<HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
-					<TextBlock Text="{Binding Text}" ToolTip="{Binding ToolTip}" />
-				</HierarchicalDataTemplate>
-			</ItemsControl.Resources>
 		</TreeView>
 
 		<Button  Grid.Row="8" Grid.Column="2"  ToolTip="Adds the item to the list" Click="EhAvailableItem_AddToCurrent">

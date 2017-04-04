@@ -22,50 +22,44 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using Altaxo.Drawing;
-using Altaxo.Drawing.D3D;
-using Altaxo.Drawing.DashPatternManagement;
-using Altaxo.Graph.Graph3D.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
-	public interface IDashPatternListView : IStyleListView
+	public interface IDashPatternView
 	{
-		event Action<IDashPattern> UserRequest_AddCustomColorToList;
+		IDashPattern SelectedItem { get; set; }
 	}
 
-	[ExpectedTypeOfView(typeof(IDashPatternListView))]
-	[UserControllerForObject(typeof(DashPatternList))]
-	public class DashPatternListController : StyleListController<DashPatternListManager, DashPatternList, IDashPattern>
+	[ExpectedTypeOfView(typeof(IDashPatternView))]
+	[UserControllerForObject(typeof(IDashPattern))]
+	public class DashPatternController : MVCANControllerEditImmutableDocBase<IDashPattern, IDashPatternView>
 	{
-		public DashPatternListController()
-			: base(DashPatternListManager.Instance)
+		protected override void Initialize(bool initData)
 		{
+			base.Initialize(initData);
+
+			if (null != _view)
+			{
+				_view.SelectedItem = _doc;
+			}
 		}
 
-		protected override void AttachView()
+		public override bool Apply(bool disposeController)
 		{
-			base.AttachView();
+			_doc = _view.SelectedItem;
 
-			((IDashPatternListView)_view).UserRequest_AddCustomColorToList += EhUserRequest_AddCustomDashPatternToList;
+			return ApplyEnd(true, disposeController);
 		}
 
-		protected override void DetachView()
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
-			((IDashPatternListView)_view).UserRequest_AddCustomColorToList -= EhUserRequest_AddCustomDashPatternToList;
-
-			base.DetachView();
-		}
-
-		private void EhUserRequest_AddCustomDashPatternToList(IDashPattern dashPattern)
-		{
-			_currentItems.Add(new SelectableListNode(ToDisplayName(dashPattern), dashPattern, false));
-			SetListDirty();
+			yield break;
 		}
 	}
 }

@@ -35,13 +35,75 @@ using System.Text;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	[ExpectedTypeOfView(typeof(IStyleListView))]
+	public interface IColorListView : IStyleListView
+	{
+		void SetCustomColorView(object guiCustomColorViewObject);
+
+		event Action UserRequest_AddCustomColorToList;
+	}
+
+	[ExpectedTypeOfView(typeof(IColorListView))]
 	[UserControllerForObject(typeof(IColorSet))]
 	public class ColorSetController : StyleListController<ColorSetManager, IColorSet, NamedColor>
 	{
+		private NamedColorController _customColorController;
+
 		public ColorSetController()
 			: base(ColorSetManager.Instance)
 		{
+			_customColorController = new NamedColorController();
+			Current.Gui.FindAndAttachControlTo(_customColorController);
+		}
+
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+		{
+			IEnumerable<ControllerAndSetNullMethod> GetMySubControllers()
+			{
+				yield return new ControllerAndSetNullMethod(_customColorController, () => _customColorController = null);
+			}
+
+			return base.GetSubControllers().Concat(GetMySubControllers());
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
+			if (initData)
+			{
+				_customColorController = new NamedColorController();
+				_customColorController.InitializeDocument(NamedColors.White);
+			}
+
+			if (null != _view)
+			{
+				if (null == _customColorController.ViewObject)
+					Current.Gui.FindAndAttachControlTo(_customColorController);
+				((IColorListView)_view).SetCustomColorView(_customColorController.ViewObject);
+			}
+		}
+
+		protected override void AttachView()
+		{
+			base.AttachView();
+			((IColorListView)_view).UserRequest_AddCustomColorToList += EhUserRequest_AddCustomColorToList;
+		}
+
+		protected override void DetachView()
+		{
+			((IColorListView)_view).UserRequest_AddCustomColorToList -= EhUserRequest_AddCustomColorToList;
+
+			base.DetachView();
+		}
+
+		private void EhUserRequest_AddCustomColorToList()
+		{
+			if (_customColorController.Apply(false))
+			{
+				var namedColor = (NamedColor)_customColorController.ModelObject;
+				_currentItems.Add(new SelectableListNode(ToDisplayName(namedColor), namedColor, false));
+				SetListDirty();
+			}
 		}
 
 		protected override string ToDisplayName(NamedColor item)

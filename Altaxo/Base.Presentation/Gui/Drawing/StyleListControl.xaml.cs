@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2017 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -458,6 +458,28 @@ namespace Altaxo.Gui.Drawing
 			set
 			{
 				_currentItemsTemplate = value;
+			}
+		}
+
+		private HierarchicalDataTemplate _availableItemsTemplate;
+
+		/// <summary>
+		/// Gets or sets the data template for the current items. Controls that use this class can set the items template to a value of choice.
+		/// </summary>
+		/// <value>
+		/// The current items template.
+		/// </value>
+		public virtual HierarchicalDataTemplate AvailableItemsTemplate
+		{
+			get
+			{
+				if (null == _availableItemsTemplate)
+					_currentItemsTemplate = this.FindResource("AvailableItemsTemplateResource") as HierarchicalDataTemplate;
+				return _availableItemsTemplate;
+			}
+			set
+			{
+				_availableItemsTemplate = value;
 			}
 		}
 	}

@@ -161,22 +161,41 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 			const double width = 2;
 			const double lineWidth = height / 5;
 
-			var val = (IDashPattern)value;
+			DashStyle dashStyle = null;
 
-			DashStyle dashStyle;
+			if (value is IDashPattern val)
+			{
+				val = (IDashPattern)value;
 
-			if (val is Solid)
-				dashStyle = DashStyles.Solid;
-			else if (val is Dash)
-				dashStyle = DashStyles.Dash;
-			else if (val is Dot)
-				dashStyle = DashStyles.Dot;
-			else if (val is DashDot)
-				dashStyle = DashStyles.DashDot;
-			else if (val is DashDotDot)
-				dashStyle = DashStyles.DashDotDot;
-			else
-				dashStyle = new DashStyle(val, 0);
+				if (val is Solid)
+					dashStyle = DashStyles.Solid;
+				else if (val is Dash)
+					dashStyle = DashStyles.Dash;
+				else if (val is Dot)
+					dashStyle = DashStyles.Dot;
+				else if (val is DashDot)
+					dashStyle = DashStyles.DashDot;
+				else if (val is DashDotDot)
+					dashStyle = DashStyles.DashDotDot;
+				else
+					dashStyle = new DashStyle(val, 0);
+			}
+			else if (value is System.Type ty)
+			{
+				if (ty == typeof(Solid))
+					dashStyle = DashStyles.Solid;
+				else if (ty == typeof(Dash))
+					dashStyle = DashStyles.Dash;
+				else if (ty == typeof(Dot))
+					dashStyle = DashStyles.Dot;
+				else if (ty == typeof(DashDot))
+					dashStyle = DashStyles.DashDot;
+				else if (ty == typeof(DashDotDot))
+					dashStyle = DashStyles.DashDotDot;
+			}
+
+			if (null == dashStyle)
+				return null;
 
 			// draws a transparent outline to fix the borders
 			var drawingGroup = new DrawingGroup();

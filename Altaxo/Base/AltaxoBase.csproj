@@ -677,6 +677,7 @@
     <Compile Include="Gui\Drawing\ColorManagement\TextOnlyColorModels.cs" />
     <Compile Include="Gui\Drawing\D3D\MaterialController.cs" />
     <Compile Include="Gui\Drawing\D3D\Material\MaterialWithUniformColorController.cs" />
+    <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\DropLinePlotStyleController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\DropAreaPlotStyleController.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\ScatterPlotStyleController.cs" />

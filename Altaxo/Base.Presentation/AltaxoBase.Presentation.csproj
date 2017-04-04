@@ -519,6 +519,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Drawing\ColorManagement\ColorListControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Drawing\D3D\LineCaps\LineCapComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -534,6 +538,10 @@
     <Page Include="Gui\Drawing\D3D\Material\MaterialWithUniformColorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Drawing\DashPatternManagement\DashPatternListControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Drawing\DashPatternManagement\InnerDashPatternComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1273,8 +1281,15 @@
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelControl.xaml.cs">
       <DependentUpon>ColorModelControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Drawing\ColorManagement\ColorToImageSourceConverter.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\NamedColorControl.xaml.cs">
       <DependentUpon>NamedColorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Drawing\ColorManagement\ColorListControl.xaml.cs">
+      <DependentUpon>ColorListControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternListControl.xaml.cs">
+      <DependentUpon>DashPatternListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\DashPatternManagement\DashPatternComboBox.xaml.cs">
       <DependentUpon>DashPatternComboBox.xaml</DependentUpon>

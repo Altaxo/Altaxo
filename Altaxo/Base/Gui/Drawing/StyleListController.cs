@@ -445,9 +445,13 @@ namespace Altaxo.Gui.Drawing
 
 		private void EhCurrentItem_Remove()
 		{
-			var node = _currentItems.FirstSelectedNode;
-			if (node != null)
+			var selNodes = _currentItems.Where((node) => node.IsSelected).ToArray();
+
+			foreach (var node in selNodes)
+			{
 				_currentItems.Remove(node);
+			}
+
 			SetListDirty();
 		}
 

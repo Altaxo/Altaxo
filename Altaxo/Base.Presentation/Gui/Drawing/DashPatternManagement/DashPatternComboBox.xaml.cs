@@ -44,7 +44,7 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
-	public partial class DashPatternComboBox : DashPatternComboBoxBase
+	public partial class DashPatternComboBox : DashPatternComboBoxBase, IDashPatternView
 	{
 		private DashPatternToItemNameConverter _itemToItemNameConverter;
 
