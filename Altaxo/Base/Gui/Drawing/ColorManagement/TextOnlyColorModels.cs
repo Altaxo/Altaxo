@@ -31,7 +31,7 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	public class RGBColorTextModel : ITextOnlyColorModel
+	public class TextOnlyColorModelRGB : ITextOnlyColorModel
 	{
 		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
 		{
@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		}
 	}
 
-	public class CMYColorTextModel : ITextOnlyColorModel
+	public class TextOnlyColorModelCMY : ITextOnlyColorModel
 	{
 		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
 		{
@@ -57,7 +57,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		}
 	}
 
-	public class CMYKColorTextModel : ITextOnlyColorModel
+	public class TextOnlyColorModelCMYK : ITextOnlyColorModel
 	{
 		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
 		{
@@ -80,7 +80,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		}
 	}
 
-	public class HSBColorTextModel : ITextOnlyColorModel
+	public class TextOnlyColorModelHSB : ITextOnlyColorModel
 	{
 		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
 		{
@@ -94,7 +94,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		}
 	}
 
-	public class HexColorTextModel : ITextOnlyColorModel
+	public class TextOnlyColorModelRGBHex : ITextOnlyColorModel
 	{
 		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
 		{
@@ -103,7 +103,20 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 		public string[] GetNamesOfComponents()
 		{
-			return new[] { "Hex" };
+			return new[] { "RGB_Hex" };
+		}
+	}
+
+	public class TextOnlyColorModelARGBHex : ITextOnlyColorModel
+	{
+		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
+		{
+			return new string[] { string.Format(formatProvider, "#{0:X02}{1:X02}{2:X02}{2:X02}", color.A, color.R, color.G, color.B) };
+		}
+
+		public string[] GetNamesOfComponents()
+		{
+			return new[] { "ARGB_Hex" };
 		}
 	}
 }

@@ -349,6 +349,14 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 		public event Action UserRequest_AddCustomColorToList;
 
+		public event Action<double> UserRequest_ForAllSelectedItemsSetOpacity;
+
+		public event Action<double> UserRequest_ForAllSelectedItemsShiftHue;
+
+		public event Action<double> UserRequest_ForAllSelectedItemsSetSaturation;
+
+		public event Action<double> UserRequest_ForAllSelectedItemsSetBrightness;
+
 		#endregion New Interface
 
 		public virtual DataTemplate CurrentItemsTemplate
@@ -362,6 +370,26 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		private void EhAddCustomColorToList(object sender, RoutedEventArgs e)
 		{
 			UserRequest_AddCustomColorToList?.Invoke();
+		}
+
+		private void EhSetAlphaValueForAllSelectedItems(object sender, RoutedEventArgs e)
+		{
+			UserRequest_ForAllSelectedItemsSetOpacity?.Invoke(_guiAlphaValueForAllSelectedItems.Value / 100);
+		}
+
+		private void EhForAllSelectedItemsShiftHue(object sender, RoutedEventArgs e)
+		{
+			UserRequest_ForAllSelectedItemsShiftHue?.Invoke(_guiForAllSelectedItemsHueShift.Value / 100);
+		}
+
+		private void EhForAllSelectedItemsSetSaturation(object sender, RoutedEventArgs e)
+		{
+			UserRequest_ForAllSelectedItemsSetSaturation?.Invoke(_guiForAllSelectedItemsSaturationValue.Value / 100);
+		}
+
+		private void EhForAllSelectedItemsSetBrightness(object sender, RoutedEventArgs e)
+		{
+			UserRequest_ForAllSelectedItemsSetBrightness?.Invoke(_guiForAllSelectedItemsBrightnessValue.Value / 100);
 		}
 	}
 }

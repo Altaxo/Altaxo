@@ -119,7 +119,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 				_availableTextOnlyColorModels = new SelectableListNodeList();
 				var textOnlyModels = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ITextOnlyColorModel));
 
-				_currentTextOnlyColorModel = new RGBColorTextModel();
+				_currentTextOnlyColorModel = new TextOnlyColorModelRGB();
 				foreach (var modelType in textOnlyModels)
 				{
 					_availableTextOnlyColorModels.Add(new SelectableListNode(modelType.Name, modelType, modelType == _currentTextOnlyColorModel.GetType()));
@@ -150,7 +150,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 				_view.InitializeAvailableColorModels(_availableColorModels);
 				_view.InitializeAvailableTextOnlyColorModels(_availableTextOnlyColorModels);
 				_view.InitializeColorModel(_currentColorModel, false);
-				_view.InitializeTextOnlyColorModel(_currentTextOnlyColorModel, true);
+				_view.InitializeTextOnlyColorModel(_currentTextOnlyColorModel, false);
 
 				_view.InitializeAvailableColorCircleModels(_availableColorCircleModels);
 				_hueValues = _view.InitializeCurrentColorCircleModel(_currentColorCircleModel, false);

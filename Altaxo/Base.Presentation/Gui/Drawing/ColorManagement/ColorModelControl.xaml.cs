@@ -93,7 +93,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			_guiAltComponents[3] = _guiAltComponent3;
 
 			_colorModel = new ColorModelRGB();
-			_altColorModel = new RGBColorTextModel();
+			_altColorModel = new TextOnlyColorModelRGB();
 
 			this.Loaded += EhLoaded;
 		}
@@ -240,6 +240,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			}
 			);
 			// update labels
+			_guiLabelComponentsType.Content = Current.Gui.GetUserFriendlyClassName(_colorModel.GetType());
 			var labels = _colorModel.GetNamesOfComponents();
 			for (int i = 0; i < labels.Length; ++i)
 			{

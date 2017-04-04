@@ -40,6 +40,14 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		void SetCustomColorView(object guiCustomColorViewObject);
 
 		event Action UserRequest_AddCustomColorToList;
+
+		event Action<double> UserRequest_ForAllSelectedItemsSetOpacity;
+
+		event Action<double> UserRequest_ForAllSelectedItemsShiftHue;
+
+		event Action<double> UserRequest_ForAllSelectedItemsSetSaturation;
+
+		event Action<double> UserRequest_ForAllSelectedItemsSetBrightness;
 	}
 
 	[ExpectedTypeOfView(typeof(IColorListView))]
@@ -87,11 +95,19 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		{
 			base.AttachView();
 			((IColorListView)_view).UserRequest_AddCustomColorToList += EhUserRequest_AddCustomColorToList;
+			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetOpacity += EhUserRequest_ForAllSelectedItemSetOpacity;
+			((IColorListView)_view).UserRequest_ForAllSelectedItemsShiftHue += EhUserRequest_ForAllSelectedItemShiftHue;
+			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetSaturation += EhUserRequest_ForAllSelectedItemSetSaturation;
+			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetBrightness += EhUserRequest_ForAllSelectedItemSetBrightness;
 		}
 
 		protected override void DetachView()
 		{
 			((IColorListView)_view).UserRequest_AddCustomColorToList -= EhUserRequest_AddCustomColorToList;
+			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetOpacity -= EhUserRequest_ForAllSelectedItemSetOpacity;
+			((IColorListView)_view).UserRequest_ForAllSelectedItemsShiftHue -= EhUserRequest_ForAllSelectedItemShiftHue;
+			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetSaturation -= EhUserRequest_ForAllSelectedItemSetSaturation;
+			((IColorListView)_view).UserRequest_ForAllSelectedItemsSetBrightness -= EhUserRequest_ForAllSelectedItemSetBrightness;
 
 			base.DetachView();
 		}
@@ -104,6 +120,105 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 				_currentItems.Add(new SelectableListNode(ToDisplayName(namedColor), namedColor, false));
 				SetListDirty();
 			}
+		}
+
+		private void EhUserRequest_ForAllSelectedItemSetOpacity(double opacity)
+		{
+			var alphaValue = AxoColor.NormFloatToByte((float)opacity);
+
+			bool anyChange = false;
+			foreach (var item in _currentItems.Where(node => node.IsSelected))
+			{
+				var color = ((NamedColor)item.Tag).Color;
+				if (color.A != alphaValue)
+				{
+					color.A = alphaValue;
+					var ncolor = new NamedColor(color);
+					item.Tag = ncolor;
+					item.Text = ToDisplayName(ncolor);
+
+					anyChange = true;
+				}
+			}
+
+			if (anyChange)
+				SetListDirty();
+		}
+
+		private void EhUserRequest_ForAllSelectedItemShiftHue(double hueShift)
+		{
+			if (0 == hueShift || -1 == hueShift || 1 == hueShift)
+				return;
+
+			bool anyChange = false;
+			foreach (var item in _currentItems.Where(node => node.IsSelected))
+			{
+				var color = ((NamedColor)item.Tag).Color;
+				var (a, h, s, b) = color.ToAHSB();
+				h += (float)hueShift;
+				h -= (float)Math.Floor(h); // Normalize hue to 0..1
+
+				color = AxoColor.FromAHSB(a, h, s, b);
+
+				var ncolor = new NamedColor(color);
+				item.Tag = ncolor;
+				item.Text = ToDisplayName(ncolor);
+
+				anyChange = true;
+			}
+
+			if (anyChange)
+				SetListDirty();
+		}
+
+		private void EhUserRequest_ForAllSelectedItemSetSaturation(double saturation)
+		{
+			bool anyChange = false;
+			foreach (var item in _currentItems.Where(node => node.IsSelected))
+			{
+				var color = ((NamedColor)item.Tag).Color;
+				var (a, h, s, b) = color.ToAHSB();
+
+				if (s != saturation)
+				{
+					s = (float)saturation;
+					color = AxoColor.FromAHSB(a, h, s, b);
+
+					var ncolor = new NamedColor(color);
+					item.Tag = ncolor;
+					item.Text = ToDisplayName(ncolor);
+
+					anyChange = true;
+				}
+			}
+
+			if (anyChange)
+				SetListDirty();
+		}
+
+		private void EhUserRequest_ForAllSelectedItemSetBrightness(double brightness)
+		{
+			bool anyChange = false;
+			foreach (var item in _currentItems.Where(node => node.IsSelected))
+			{
+				var color = ((NamedColor)item.Tag).Color;
+				var (a, h, s, b) = color.ToAHSB();
+
+				if (b != brightness)
+				{
+					b = (float)brightness;
+					color = AxoColor.FromAHSB(a, h, s, b);
+
+					var ncolor = new NamedColor(color);
+					item.Tag = ncolor;
+					item.Text = ToDisplayName(ncolor);
+
+					anyChange = true;
+				}
+			}
+
+			if (anyChange)
+				SetListDirty();
 		}
 
 		protected override string ToDisplayName(NamedColor item)

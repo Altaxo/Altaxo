@@ -110,7 +110,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			_guiShadesStackPanels[4] = _guiColorShades4;
 
 			_colorModel = new ColorModelRGB();
-			_altColorModel = new RGBColorTextModel();
+			_altColorModel = new TextOnlyColorModelRGB();
 
 			_guiColorCircleSurface.HueValuesChanged += EhColorCircleSurface_HueValuesChanged;
 		}
@@ -242,6 +242,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 			if (!silentSet)
 			{
+				_guiLabelComponentsType.Content = Current.Gui.GetUserFriendlyClassName(colorModel.GetType());
+
 				// update labels
 				var labels = _colorModel.GetNamesOfComponents();
 				for (int i = 0; i < labels.Length; ++i)
@@ -345,8 +347,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 					if (j >= numPresentChilds)
 					{
 						var newRect = new Rectangle() { Width = 16, Height = 16, Stroke = Brushes.Black, StrokeThickness = 0.5 };
-						newRect.MouseEnter += (s, e) => { ((Rectangle)s).Stroke = Brushes.Orange; };
-						newRect.MouseLeave += (s, e) => { ((Rectangle)s).Stroke = Brushes.Black; };
+						newRect.MouseEnter += EhColorShade_MouseEnter;
+						newRect.MouseLeave += EhColorShade_MouseLeave;
 						newRect.MouseDown += EhColorShadeRectangle_MouseDown;
 						sp.Children.Add(newRect);
 					}
@@ -367,10 +369,47 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			}
 		}
 
-		private void EhColorShadeRectangle_MouseDown(object sender, MouseButtonEventArgs e)
+		private void EhColorShade_MouseEnter(object sender, MouseEventArgs e)
 		{
 			var rect = (Rectangle)sender;
 			var color = (AxoColor)rect.Tag;
+
+			var newTag = new Tuple<AxoColor, AxoColor>(color, _currentColor);
+			rect.Tag = newTag;
+			rect.Stroke = Brushes.Orange;
+
+			ChangeCurrentColor(color, false, false, true, true);
+		}
+
+		private void EhColorShade_MouseLeave(object sender, MouseEventArgs e)
+		{
+			var rect = (Rectangle)sender;
+			var colors = (Tuple<AxoColor, AxoColor>)rect.Tag;
+
+			var myColor = colors.Item1;
+			var savedCurrentColor = colors.Item2;
+
+			rect.Tag = myColor;
+			rect.Stroke = Brushes.Black;
+
+			ChangeCurrentColor(savedCurrentColor, false, false, true, true);
+		}
+
+		private void EhColorShadeRectangle_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			var rect = (Rectangle)sender;
+			AxoColor color;
+
+			if (rect.Tag is Tuple<AxoColor, AxoColor> t)
+			{
+				color = t.Item1;
+				rect.Tag = new Tuple<AxoColor, AxoColor>(color, color); // make the color permanent
+			}
+			else
+			{
+				throw new InvalidProgramException();
+			}
+
 			color.A = (byte)_guiAlphaValue.Value;
 
 			ChangeCurrentColor(color, false, false, true, true);

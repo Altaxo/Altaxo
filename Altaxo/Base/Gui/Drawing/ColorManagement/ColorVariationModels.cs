@@ -87,24 +87,6 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
 		{
 			var red = baseColor.R;
-
-			// make warmer = more red
-
-			int numberOfItems = variations.Length;
-
-			variations[0] = baseColor;
-			for (int i = 1; i < numberOfItems; ++i)
-			{
-				var newRed = (byte)(red + (255 - red) * (i / (float)numberOfItems));
-				variations[i] = AxoColor.FromArgb(baseColor.A, newRed, baseColor.G, baseColor.B);
-			}
-		}
-	}
-
-	public class ColorVariationModelColder : IColorVariationModel
-	{
-		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
-		{
 			var blue = baseColor.B;
 
 			// make warmer = more red
@@ -114,8 +96,30 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			variations[0] = baseColor;
 			for (int i = 1; i < numberOfItems; ++i)
 			{
+				var newRed = (byte)(red + (255 - red) * (i / (float)numberOfItems));
+				var newBlue = (byte)(blue * (1 - i / (float)numberOfItems));
+				variations[i] = AxoColor.FromArgb(baseColor.A, newRed, baseColor.G, newBlue);
+			}
+		}
+	}
+
+	public class ColorVariationModelColder : IColorVariationModel
+	{
+		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
+		{
+			var blue = baseColor.B;
+			var red = baseColor.R;
+
+			// make warmer = more red
+
+			int numberOfItems = variations.Length;
+
+			variations[0] = baseColor;
+			for (int i = 1; i < numberOfItems; ++i)
+			{
 				var newBlue = (byte)(blue + (255 - blue) * (i / (float)numberOfItems));
-				variations[i] = AxoColor.FromArgb(baseColor.A, baseColor.R, baseColor.G, newBlue);
+				var newRed = (byte)(red * (1 - i / (float)numberOfItems));
+				variations[i] = AxoColor.FromArgb(baseColor.A, newRed, baseColor.G, newBlue);
 			}
 		}
 	}

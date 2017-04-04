@@ -576,7 +576,7 @@ namespace Altaxo.Drawing
 		/// <param name="m">The malpha value in the range [0, 1].</param>
 		/// <param name="k">The kalpha value in the range [0, 1].</param>
 		/// <returns></returns>
-		public AxoColor FromACMYK(float alpha, float c, float y, float m, float k)
+		public static AxoColor FromACMYK(float alpha, float c, float y, float m, float k)
 		{
 			var r = 1 - Math.Min(1, c * (1 - k) + k);
 			var g = 1 - Math.Min(1, m * (1 - k) + k);

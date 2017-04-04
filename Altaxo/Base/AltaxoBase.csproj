@@ -666,6 +666,7 @@
     <Compile Include="Gui\DragDropDelegateTypes.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorCircleController.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorCircleModels.cs" />
+    <Compile Include="Gui\Drawing\ColorManagement\ColorModelCMYK.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelController.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelCMY.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelHSB.cs" />
