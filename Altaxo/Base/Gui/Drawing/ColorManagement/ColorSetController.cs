@@ -154,11 +154,11 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			foreach (var item in _currentItems.Where(node => node.IsSelected))
 			{
 				var color = ((NamedColor)item.Tag).Color;
-				var (a, h, s, b) = color.ToAHSB();
+				var (a, h, s, b) = color.ToAhsb();
 				h += (float)hueShift;
 				h -= (float)Math.Floor(h); // Normalize hue to 0..1
 
-				color = AxoColor.FromAHSB(a, h, s, b);
+				color = AxoColor.FromAhsb(a, h, s, b);
 
 				var ncolor = new NamedColor(color);
 				item.Tag = ncolor;
@@ -177,12 +177,12 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			foreach (var item in _currentItems.Where(node => node.IsSelected))
 			{
 				var color = ((NamedColor)item.Tag).Color;
-				var (a, h, s, b) = color.ToAHSB();
+				var (a, h, s, b) = color.ToAhsb();
 
 				if (s != saturation)
 				{
 					s = (float)saturation;
-					color = AxoColor.FromAHSB(a, h, s, b);
+					color = AxoColor.FromAhsb(a, h, s, b);
 
 					var ncolor = new NamedColor(color);
 					item.Tag = ncolor;
@@ -202,12 +202,12 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			foreach (var item in _currentItems.Where(node => node.IsSelected))
 			{
 				var color = ((NamedColor)item.Tag).Color;
-				var (a, h, s, b) = color.ToAHSB();
+				var (a, h, s, b) = color.ToAhsb();
 
 				if (b != brightness)
 				{
 					b = (float)brightness;
-					color = AxoColor.FromAHSB(a, h, s, b);
+					color = AxoColor.FromAhsb(a, h, s, b);
 
 					var ncolor = new NamedColor(color);
 					item.Tag = ncolor;

@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 	{
 		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
 		{
-			var (alpha, hue, saturation, brightness) = baseColor.ToAHSB();
+			var (alpha, hue, saturation, brightness) = baseColor.ToAhsb();
 
 			// desaturate, but still the last item should have a rest of saturation left
 
@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			for (int i = 1; i < numberOfItems; ++i)
 			{
 				var newSaturation = saturation * (1 - i / (float)numberOfItems);
-				variations[i] = AxoColor.FromAHSB(alpha, hue, newSaturation, brightness);
+				variations[i] = AxoColor.FromAhsb(alpha, hue, newSaturation, brightness);
 			}
 		}
 	}
@@ -67,7 +67,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 	{
 		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
 		{
-			var (alpha, hue, saturation, brightness) = baseColor.ToAHSB();
+			var (alpha, hue, saturation, brightness) = baseColor.ToAhsb();
 
 			// make darker, but still the last item should have a rest of color left (i.e. it should not be completely black)
 
@@ -77,7 +77,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			for (int i = 1; i < numberOfItems; ++i)
 			{
 				var newBrightness = brightness * (1 - i / (float)numberOfItems);
-				variations[i] = AxoColor.FromAHSB(alpha, hue, saturation, newBrightness);
+				variations[i] = AxoColor.FromAhsb(alpha, hue, saturation, newBrightness);
 			}
 		}
 	}
@@ -86,8 +86,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 	{
 		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
 		{
-			var red = baseColor.R;
-			var blue = baseColor.B;
+			var red = baseColor.ScR;
+			var blue = baseColor.ScB;
 
 			// make warmer = more red
 
@@ -96,9 +96,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			variations[0] = baseColor;
 			for (int i = 1; i < numberOfItems; ++i)
 			{
-				var newRed = (byte)(red + (255 - red) * (i / (float)numberOfItems));
-				var newBlue = (byte)(blue * (1 - i / (float)numberOfItems));
-				variations[i] = AxoColor.FromArgb(baseColor.A, newRed, baseColor.G, newBlue);
+				var newRed = (red + (1 - red) * (i / (float)numberOfItems));
+				var newBlue = (blue * (1 - i / (float)numberOfItems));
+				variations[i] = AxoColor.FromScRgb(baseColor.ScA, newRed, baseColor.ScG, newBlue);
 			}
 		}
 	}
@@ -107,8 +107,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 	{
 		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
 		{
-			var blue = baseColor.B;
-			var red = baseColor.R;
+			var blue = baseColor.ScB;
+			var red = baseColor.ScR;
 
 			// make warmer = more red
 
@@ -117,9 +117,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			variations[0] = baseColor;
 			for (int i = 1; i < numberOfItems; ++i)
 			{
-				var newBlue = (byte)(blue + (255 - blue) * (i / (float)numberOfItems));
-				var newRed = (byte)(red * (1 - i / (float)numberOfItems));
-				variations[i] = AxoColor.FromArgb(baseColor.A, newRed, baseColor.G, newBlue);
+				var newBlue = (blue + (1 - blue) * (i / (float)numberOfItems));
+				var newRed = (red * (1 - i / (float)numberOfItems));
+				variations[i] = AxoColor.FromScRgb(baseColor.ScA, newRed, baseColor.ScG, newBlue);
 			}
 		}
 	}

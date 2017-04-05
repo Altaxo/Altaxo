@@ -36,30 +36,30 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 	{
 		public AxoColor GetColorFor1DColorSurfaceFromRelativePosition(double relativePosition)
 		{
-			return AxoColor.FromAHSB(255, (float)(relativePosition), 1, 1);
+			return AxoColor.FromAhsb(1, (float)(relativePosition), 1, 1);
 		}
 
 		public AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor c)
 		{
-			return AxoColor.FromAHSB(255, c.GetHue(), (float)(relativePosition.X), (float)(relativePosition.Y));
+			return AxoColor.FromAhsb(1, c.GetHue(), (float)(relativePosition.X), (float)(relativePosition.Y));
 		}
 
 		public (double position1D, PointD2D position2D) GetRelativePositionsFor1Dand2DColorSurfaceFromColor(AxoColor color)
 		{
-			var (alpha, hue, saturation, brightness) = color.ToAHSB();
+			var (alpha, hue, saturation, brightness) = color.ToAhsb();
 			return (hue, new PointD2D(saturation, brightness));
 		}
 
 		public int[] GetComponentsForColor(AxoColor color)
 		{
-			var (a, c, m, y, k) = color.ToACMYK();
+			var (a, c, m, y, k) = color.ToAcmyk();
 
 			return new int[] { AxoColor.NormFloatToByte(c), AxoColor.NormFloatToByte(m), AxoColor.NormFloatToByte(y), AxoColor.NormFloatToByte(k) };
 		}
 
 		public AxoColor GetColorFromComponents(int[] components)
 		{
-			return AxoColor.FromACMYK(1, AxoColor.ByteToNormFloat((byte)components[0]), AxoColor.ByteToNormFloat((byte)components[1]), AxoColor.ByteToNormFloat((byte)components[2]), AxoColor.ByteToNormFloat((byte)components[3]));
+			return AxoColor.FromAcmyk(1, AxoColor.ByteToNormFloat((byte)components[0]), AxoColor.ByteToNormFloat((byte)components[1]), AxoColor.ByteToNormFloat((byte)components[2]), AxoColor.ByteToNormFloat((byte)components[3]));
 		}
 
 		public string[] GetNamesOfComponents()

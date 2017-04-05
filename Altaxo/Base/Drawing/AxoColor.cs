@@ -78,21 +78,31 @@ namespace Altaxo.Drawing
 
 		public float ScA { get { return _scA; } set { _scA = value; _a = A2I(value); _isFromArgb = false; } }
 
-		public float ScR { get { return _scR; } set { _scR = value; _r = C2I(value); _isFromArgb = false; } }
+		public float ScR { get { return _scR; } set { _scR = value; _r = GammaCorrectedFromLinear(value); _isFromArgb = false; } }
 
-		public float ScG { get { return _scG; } set { _scG = value; _g = C2I(value); _isFromArgb = false; } }
+		public float ScG { get { return _scG; } set { _scG = value; _g = GammaCorrectedFromLinear(value); _isFromArgb = false; } }
 
-		public float ScB { get { return _scB; } set { _scB = value; _b = C2I(value); _isFromArgb = false; } }
+		public float ScB { get { return _scB; } set { _scB = value; _b = GammaCorrectedFromLinear(value); _isFromArgb = false; } }
 
 		public byte A { get { return _a; } set { _a = value; _scA = I2A(value); } }
 
-		public byte R { get { return _r; } set { _r = value; _scR = I2C(value); } }
+		public byte R { get { return _r; } set { _r = value; _scR = LinearFromGammaCorrected(value); } }
 
-		public byte G { get { return _g; } set { _g = value; _scG = I2C(value); } }
+		public byte G { get { return _g; } set { _g = value; _scG = LinearFromGammaCorrected(value); } }
 
-		public byte B { get { return _b; } set { _b = value; _scB = I2C(value); } }
+		public byte B { get { return _b; } set { _b = value; _scB = LinearFromGammaCorrected(value); } }
 
-		public bool IsFromArgb { get { return _isFromArgb; } }
+		public bool IsFromArgb
+		{
+			get
+			{
+				return _isFromArgb;
+			}
+			set
+			{
+				_isFromArgb = value;
+			}
+		}
 
 		/// <summary>
 		/// Converts a color in given as ARGB integer into the linear SC ARGB space.
@@ -104,7 +114,7 @@ namespace Altaxo.Drawing
 		/// <returns></returns>
 		public static Tuple<float, float, float, float> ToScARGBFromIARGB(byte a, byte r, byte g, byte b)
 		{
-			return new Tuple<float, float, float, float>(I2A(a), I2C(r), I2C(g), I2C(b));
+			return new Tuple<float, float, float, float>(I2A(a), LinearFromGammaCorrected(r), LinearFromGammaCorrected(g), LinearFromGammaCorrected(b));
 		}
 
 		/// <summary>
@@ -112,7 +122,7 @@ namespace Altaxo.Drawing
 		/// </summary>
 		/// <param name="x"></param>
 		/// <returns>Gamma corrected values (range 0.255).</returns>
-		private static byte C2I(float x)
+		public static byte GammaCorrectedFromLinear(float x)
 		{
 			double r;
 			if (x <= 0.0031308)
@@ -133,7 +143,7 @@ namespace Altaxo.Drawing
 		/// </summary>
 		/// <param name="x"></param>
 		/// <returns>Linear SRGB value (normal range 0..1).</returns>
-		private static float I2C(byte x)
+		public static float LinearFromGammaCorrected(byte x)
 		{
 			const double fac = 1 / 255.0;
 			var n = (x * fac);
@@ -331,19 +341,18 @@ namespace Altaxo.Drawing
 
 		#region Conversion to/from other color models
 
+		#region HSL model
+
 		/// <summary>
-		/// Creates a Color from alpha, hue, saturation and lightness (AHSL model).
+		/// Converts Hsl (Hue, Saturation, Lightness) values (all values in the range [0, 1] into
+		/// the linear Rgb space.
 		/// </summary>
-		/// <param name="alpha">The alpha channel value.</param>
 		/// <param name="hue">The hue value (0..1).</param>
 		/// <param name="saturation">The saturation value (0..1).</param>
 		/// <param name="lightness">The lightness value (0..1).</param>
-		/// <returns>A Color with the given values.</returns>
-		public static AxoColor FromAHSL(byte alpha, float hue, float saturation, float lightness)
+		/// <returns>The red, green, blue components in linear color space.</returns>
+		public static (float red, float green, float blue) LinearRgbFromHsl(float hue, float saturation, float lightness)
 		{
-			if (!(alpha >= 0 && alpha <= 255))
-				throw new ArgumentOutOfRangeException(nameof(alpha), alpha, "Value must be within a range of 0 - 255.");
-
 			if (!(hue >= 0 && hue <= 1))
 				throw new ArgumentOutOfRangeException(nameof(hue), hue, "Value must be within a range of 0 - 1.");
 
@@ -355,11 +364,10 @@ namespace Altaxo.Drawing
 
 			if (0 == saturation)
 			{
-				return AxoColor.FromArgb(alpha, NormFloatToByte(lightness), NormFloatToByte(lightness), NormFloatToByte(lightness));
+				return (lightness, lightness, lightness);
 			}
 
 			float fMax, fMid, fMin;
-			byte iSextant, iMax, iMid, iMin;
 
 			if (0.5 < lightness)
 			{
@@ -373,7 +381,7 @@ namespace Altaxo.Drawing
 			}
 
 			hue *= 6;
-			iSextant = (byte)Math.Floor(hue);
+			var iSextant = (int)Math.Floor(hue);
 			if (hue >= 5)
 			{
 				hue -= 6;
@@ -388,46 +396,93 @@ namespace Altaxo.Drawing
 				fMid = fMin - (hue * (fMax - fMin));
 			}
 
-			iMax = NormFloatToByte(fMax);
-			iMid = NormFloatToByte(fMid);
-			iMin = NormFloatToByte(fMin);
-
 			switch (iSextant)
 			{
 				case 1:
-					return AxoColor.FromArgb(alpha, iMid, iMax, iMin);
+					return (fMid, fMax, fMin);
 
 				case 2:
-					return AxoColor.FromArgb(alpha, iMin, iMax, iMid);
+					return (fMin, fMax, fMid);
 
 				case 3:
-					return AxoColor.FromArgb(alpha, iMin, iMid, iMax);
+					return (fMin, fMid, fMax);
 
 				case 4:
-					return AxoColor.FromArgb(alpha, iMid, iMin, iMax);
+					return (fMid, fMin, fMax);
 
 				case 5:
-					return AxoColor.FromArgb(alpha, iMax, iMin, iMid);
+					return (fMax, fMin, fMid);
 
 				default:
-					return AxoColor.FromArgb(alpha, iMax, iMid, iMin);
+					return (fMax, fMid, fMin);
 			}
+		}
+
+		/// <summary>
+		/// Creates a Color from alpha, hue, saturation and lightness (AHSL model).
+		/// </summary>
+		/// <param name="alpha">The alpha channel value.</param>
+		/// <param name="hue">The hue value (0..1).</param>
+		/// <param name="saturation">The saturation value (0..1).</param>
+		/// <param name="lightness">The lightness value (0..1).</param>
+		/// <returns>A Color with the given values.</returns>
+		public static AxoColor FromAhsl(float alpha, float hue, float saturation, float lightness)
+		{
+			var (red, green, blue) = LinearRgbFromHsl(hue, saturation, lightness);
+			return AxoColor.FromScRgb(alpha, red, green, blue);
+		}
+
+		#endregion HSL model
+
+		#region Hsb model
+
+		/// <summary>
+		/// Creates a color from alpha, hue, saturation and brightness (AHSB model).
+		/// </summary>
+		/// <param name="alpha">The alpha value (0..1).</param>
+		/// <param name="hue">The hue value (0..1).</param>
+		/// <param name="saturation">The saturation value (0..1).</param>
+		/// <param name="brightness">The brightness value (0..1).</param>
+		/// <returns>The created color.</returns>
+		public static AxoColor FromAhsb(float alpha, float hue, float saturation, float brightness)
+		{
+			var (red, green, blue) = LinearRgbFromHsb(hue, saturation, brightness);
+			return AxoColor.FromScRgb(alpha, red, green, blue);
+		}
+
+		/// <summary>
+		/// Converts the color to the linear AHSB model, with alpha [0, 1], Hue [0, 1], Saturation [0, 1] and Brightness [0, 1].
+		/// </summary>
+		/// <returns></returns>
+		/// <exception cref="System.InvalidProgramException"></exception>
+		public (float alpha, float hue, float saturation, float brightness) ToAhsb()
+		{
+			var (h, s, b) = HsbFromLinearRgb(this.ScR, this.ScG, this.ScB);
+			return (this.ScA, h, s, b);
 		}
 
 		/// <summary>
 		/// Creates a Color from alpha, hue, saturation and brightness (AHSB model).
 		/// </summary>
-		/// <param name="alpha">The alpha channel value.</param>
 		/// <param name="hue">The hue value (0..1).</param>
 		/// <param name="saturation">The saturation value (0..1).</param>
 		/// <param name="brightness">The brightness value (0..1).</param>
-		/// <returns>A Color with the given values.</returns>
-		public static AxoColor FromAHSB(byte alpha, float hue, float saturation, float brightness)
+		/// <returns>The red, green, blue components in linear Rgb color space.</returns>
+		public static (float red, float green, float blue) LinearRgbFromHsb(float hue, float saturation, float brightness)
 		{
-			byte r = 0, g = 0, b = 0;
+			if (!(hue >= 0 && hue <= 1))
+				throw new ArgumentOutOfRangeException(nameof(hue), hue, "Value must be within a range of 0 - 1.");
+
+			if (!(saturation >= 0 && saturation <= 1))
+				throw new ArgumentOutOfRangeException(nameof(saturation), saturation, "Value must be within a range of 0 - 1.");
+
+			if (!(brightness >= 0 && brightness <= 1))
+				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "Value must be within a range of 0 - 1.");
+
+			float red = 0, green = 0, blue = 0;
 			if (saturation == 0)
 			{
-				r = g = b = NormFloatToByte(brightness);
+				red = green = blue = brightness;
 			}
 			else
 			{
@@ -439,98 +494,53 @@ namespace Altaxo.Drawing
 				switch ((int)h)
 				{
 					case 0:
-						r = NormFloatToByte(brightness);
-						g = NormFloatToByte(t);
-						b = NormFloatToByte(p);
+						red = brightness;
+						green = t;
+						blue = p;
 						break;
 
 					case 1:
-						r = NormFloatToByte(q);
-						g = NormFloatToByte(brightness);
-						b = NormFloatToByte(p);
+						red = q;
+						green = brightness;
+						blue = p;
 						break;
 
 					case 2:
-						r = NormFloatToByte(p);
-						g = NormFloatToByte(brightness);
-						b = NormFloatToByte(t);
+						red = p;
+						green = brightness;
+						blue = t;
 						break;
 
 					case 3:
-						r = NormFloatToByte(p);
-						g = NormFloatToByte(q);
-						b = NormFloatToByte(brightness);
+						red = p;
+						green = q;
+						blue = brightness;
 						break;
 
 					case 4:
-						r = NormFloatToByte(t);
-						g = NormFloatToByte(p);
-						b = NormFloatToByte(brightness);
+						red = t;
+						green = p;
+						blue = brightness;
 						break;
 
 					case 5:
-						r = NormFloatToByte(brightness);
-						g = NormFloatToByte(p);
-						b = NormFloatToByte(q);
+						red = brightness;
+						green = p;
+						blue = q;
 						break;
 				}
 			}
-			return AxoColor.FromArgb(alpha, r, g, b);
+			return (red, green, blue);
 		}
 
 		/// <summary>
-		/// Gets the hue value of the color.
+		/// Converts the linear Rgb components to the AHSB model, with Hue [0, 1], Saturation [0, 1] and Brightness [0, 1].
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>The hue, saturation and brightness components (all in the range [0, 1].</returns>
 		/// <exception cref="System.InvalidProgramException"></exception>
-		public float GetHue()
-		{
-			float hue = 0;
-			var r = ByteToNormFloat(this.R);
-			var g = ByteToNormFloat(this.G);
-			var b = ByteToNormFloat(this.B);
-
-			var max = Math.Max(Math.Max(r, g), b);
-			var min = Math.Min(Math.Min(r, g), b);
-
-			if (max == min)
-			{
-				hue = 0;
-			}
-			else if (max == r)
-			{
-				hue = (g - b) / (max - min);
-			}
-			else if (max == g)
-			{
-				hue = 2 + (b - r) / (max - min);
-			}
-			else if (max == b)
-			{
-				hue = 4 + (r - g) / (max - min);
-			}
-			else
-			{
-				throw new InvalidProgramException();
-			}
-
-			if (hue < 0)
-				hue += 6;
-
-			return hue / 6;
-		}
-
-		/// <summary>
-		/// Converts the color to the AHSB model, with alpha (0..255), Hue (0..1), Saturation (0..1) and Brightness (0..1).
-		/// </summary>
-		/// <returns></returns>
-		/// <exception cref="System.InvalidProgramException"></exception>
-		public (byte alpha, float hue, float saturation, float brightness) ToAHSB()
+		public static (float hue, float saturation, float brightness) HsbFromLinearRgb(float r, float g, float b)
 		{
 			float hue = 0, saturation = 0, brightness = 0;
-			var r = ByteToNormFloat(this.R);
-			var g = ByteToNormFloat(this.G);
-			var b = ByteToNormFloat(this.B);
 
 			var max = Math.Max(Math.Max(r, g), b);
 			var min = Math.Min(Math.Min(r, g), b);
@@ -564,8 +574,117 @@ namespace Altaxo.Drawing
 
 			brightness = max;
 
-			return (this.A, hue, saturation, brightness);
+			return (hue, saturation, brightness);
 		}
+
+		#endregion Hsb model
+
+		#region Hue alone
+
+		/// <summary>
+		/// Gets the hue value of the color.
+		/// </summary>
+		/// <returns></returns>
+		/// <exception cref="System.InvalidProgramException"></exception>
+		public float GetHue()
+		{
+			float hue = 0;
+			var r = this.ScR;
+			var g = this.ScG;
+			var b = this.ScB;
+
+			var max = Math.Max(Math.Max(r, g), b);
+			var min = Math.Min(Math.Min(r, g), b);
+
+			if (max == min)
+			{
+				hue = 0;
+			}
+			else if (max == r)
+			{
+				hue = (g - b) / (max - min);
+			}
+			else if (max == g)
+			{
+				hue = 2 + (b - r) / (max - min);
+			}
+			else if (max == b)
+			{
+				hue = 4 + (r - g) / (max - min);
+			}
+			else
+			{
+				throw new InvalidProgramException();
+			}
+
+			if (hue < 0)
+				hue += 6;
+
+			return hue / 6;
+		}
+
+		/// <summary>
+		/// Creates a fully saturated bright color from hue, returning gamma corrected components R, G, and B.
+		/// </summary>
+		/// <param name="hue">The hue value (0..1).</param>
+		/// <param name="r">Calculated red component.</param>
+		/// <param name="g">Calculated green component.</param>
+		/// <param name="b">Calculated blue component.</param>
+		public static void FromHue(float hue, out byte r, out byte g, out byte b)
+		{
+			float h = (hue - (float)Math.Floor(hue)) * 6;
+			float f = h - (float)Math.Floor(h);
+
+			float p = 0;
+			float q = (1 - f);
+			float t = f;
+
+			switch ((int)h)
+			{
+				case 0:
+					r = GammaCorrectedFromLinear(1);
+					g = GammaCorrectedFromLinear(t);
+					b = GammaCorrectedFromLinear(p);
+					break;
+
+				case 1:
+					r = GammaCorrectedFromLinear(q);
+					g = GammaCorrectedFromLinear(1);
+					b = GammaCorrectedFromLinear(p);
+					break;
+
+				case 2:
+					r = GammaCorrectedFromLinear(p);
+					g = GammaCorrectedFromLinear(1);
+					b = GammaCorrectedFromLinear(t);
+					break;
+
+				case 3:
+					r = GammaCorrectedFromLinear(p);
+					g = GammaCorrectedFromLinear(q);
+					b = GammaCorrectedFromLinear(1);
+					break;
+
+				case 4:
+					r = GammaCorrectedFromLinear(t);
+					g = GammaCorrectedFromLinear(p);
+					b = GammaCorrectedFromLinear(1);
+					break;
+
+				case 5:
+					r = GammaCorrectedFromLinear(1);
+					g = GammaCorrectedFromLinear(p);
+					b = GammaCorrectedFromLinear(q);
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		#endregion Hue alone
+
+		#region CMYK
 
 		/// <summary>
 		/// Provides a quick and dirty conversion from the CMYK color model to an <see cref="AxoColor"/>. No color conversion profile is used here!
@@ -576,33 +695,35 @@ namespace Altaxo.Drawing
 		/// <param name="m">The malpha value in the range [0, 1].</param>
 		/// <param name="k">The kalpha value in the range [0, 1].</param>
 		/// <returns></returns>
-		public static AxoColor FromACMYK(float alpha, float c, float y, float m, float k)
+		public static AxoColor FromAcmyk(float alpha, float c, float y, float m, float k)
 		{
 			var r = 1 - Math.Min(1, c * (1 - k) + k);
 			var g = 1 - Math.Min(1, m * (1 - k) + k);
 			var b = 1 - Math.Min(1, y * (1 - k) + k);
 
-			return AxoColor.FromArgb(NormFloatToByte(alpha), NormFloatToByte(r), NormFloatToByte(g), NormFloatToByte(b));
+			return AxoColor.FromScRgb(alpha, r, g, b);
 		}
 
 		/// <summary>
 		/// Provides a quick and dirty conversion from an <see cref="AxoColor"/> to the CMYK model. No color conversion profile is used here!
 		/// </summary>
 		/// <returns>The components for alpha, C, M, Y and K. All components are in the range [0, 1].</returns>
-		public (float alpha, float c, float m, float y, float k) ToACMYK()
+		public (float alpha, float c, float m, float y, float k) ToAcmyk()
 		{
-			var c = 255 - this.R;
-			var m = 255 - this.G;
-			var y = 255 - this.B;
+			var c = 1 - this.ScR;
+			var m = 1 - this.ScG;
+			var y = 1 - this.ScB;
 			var min = Math.Min(c, Math.Min(m, y));
 
-			var cc = ((c - min) / (255.0f - min));
-			var mm = ((m - min) / (255.0f - min));
-			var yy = ((y - min) / (255.0f - min));
+			var cc = ((c - min) / (1f - min));
+			var mm = ((m - min) / (1f - min));
+			var yy = ((y - min) / (1f - min));
 			var kk = min;
 
-			return (ByteToNormFloat(this.A), cc, mm, yy, kk);
+			return (this.ScA, cc, mm, yy, kk);
 		}
+
+		#endregion CMYK
 
 		public static byte NormFloatToByte(float f)
 		{

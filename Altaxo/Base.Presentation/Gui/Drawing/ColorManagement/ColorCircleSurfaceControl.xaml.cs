@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -302,7 +303,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 					if (phi < 0)
 						phi += 1;
 					// calculate color
-					FromHue((float)phi, out var red, out var green, out var blue);
+					AxoColor.FromHue((float)phi, out var red, out var green, out var blue);
 
 					pixels[idx + 0] = blue;  // B
 					pixels[idx + 1] = green; // G
@@ -317,70 +318,6 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			wbitmap.WritePixels(rect, pixels, stride, 0);
 
 			return wbitmap;
-		}
-
-		/// <summary>
-		/// Creates a fully saturated bright color from hue, returning components R, G, and B.
-		/// </summary>
-		/// <param name="hue">The hue value (0..1).</param>
-		/// <param name="r">Calculated red component.</param>
-		/// <param name="g">Calculated green component.</param>
-		/// <param name="b">Calculated blue component.</param>
-		public static void FromHue(float hue, out byte r, out byte g, out byte b)
-		{
-			float h = (hue - (float)Math.Floor(hue)) * 6;
-			float f = h - (float)Math.Floor(h);
-
-			float p = 0;
-			float q = (1 - f);
-			float t = f;
-
-			switch ((int)h)
-			{
-				case 0:
-					r = NormFloatToByte(1);
-					g = NormFloatToByte(t);
-					b = NormFloatToByte(p);
-					break;
-
-				case 1:
-					r = NormFloatToByte(q);
-					g = NormFloatToByte(1);
-					b = NormFloatToByte(p);
-					break;
-
-				case 2:
-					r = NormFloatToByte(p);
-					g = NormFloatToByte(1);
-					b = NormFloatToByte(t);
-					break;
-
-				case 3:
-					r = NormFloatToByte(p);
-					g = NormFloatToByte(q);
-					b = NormFloatToByte(1);
-					break;
-
-				case 4:
-					r = NormFloatToByte(t);
-					g = NormFloatToByte(p);
-					b = NormFloatToByte(1);
-					break;
-
-				case 5:
-					r = NormFloatToByte(1);
-					g = NormFloatToByte(p);
-					b = NormFloatToByte(q);
-					break;
-
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		public static byte NormFloatToByte(float f)
-		{
-			return (byte)(f * 255 + 0.5f);
 		}
 
 		private void EhRectangle_MouseDown(object sender, MouseButtonEventArgs e)

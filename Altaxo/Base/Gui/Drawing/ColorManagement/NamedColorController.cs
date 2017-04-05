@@ -163,8 +163,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		private void EhController_Dirty(IMVCANDController ctrl)
 		{
 			var color = (AxoColor)ctrl.ModelObject;
+			color.IsFromArgb = true;
 			_doc = new NamedColor(color);
-
 			_view?.SetNewColor(color);
 			_view.ColorName = _doc.Name;
 		}

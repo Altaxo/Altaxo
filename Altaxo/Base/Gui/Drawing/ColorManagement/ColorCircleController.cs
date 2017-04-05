@@ -226,7 +226,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
 			for (int i = 0; i < _hueValues.Count; ++i)
 			{
-				var baseColor = AxoColor.FromAHSB(255, (float)_hueValues[i], 1, 1);
+				var baseColor = AxoColor.FromAhsb(1, (float)_hueValues[i], 1, 1);
 				_currentColorVariationModel.GetColorVariations(baseColor, _colorShades[i]);
 			}
 

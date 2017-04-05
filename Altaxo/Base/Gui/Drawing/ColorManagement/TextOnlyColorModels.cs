@@ -61,15 +61,12 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 	{
 		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
 		{
-			var c = 255 - color.R;
-			var m = 255 - color.G;
-			var y = 255 - color.B;
-			var min = Math.Min(c, Math.Min(m, y));
+			var (a, c, m, y, k) = color.ToAcmyk();
 
-			var cc = AxoColor.NormFloatToByte((c - min) / (255.0f - min));
-			var mm = AxoColor.NormFloatToByte((m - min) / (255.0f - min));
-			var yy = AxoColor.NormFloatToByte((y - min) / (255.0f - min));
-			var kk = min;
+			var cc = AxoColor.NormFloatToByte(c);
+			var mm = AxoColor.NormFloatToByte(m);
+			var yy = AxoColor.NormFloatToByte(y);
+			var kk = AxoColor.NormFloatToByte(k);
 
 			return new string[] { cc.ToString(formatProvider), mm.ToString(formatProvider), yy.ToString(formatProvider), kk.ToString(formatProvider) };
 		}
@@ -84,7 +81,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 	{
 		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
 		{
-			var (a, h, s, b) = color.ToAHSB();
+			var (a, h, s, b) = color.ToAhsb();
 			return new string[] { AxoColor.NormFloatToByte(h).ToString(formatProvider), AxoColor.NormFloatToByte(s).ToString(formatProvider), AxoColor.NormFloatToByte(b).ToString(formatProvider) };
 		}
 
