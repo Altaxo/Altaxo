@@ -565,9 +565,9 @@ namespace GongSolutions.Wpf.DragDrop
 			// Add border
 			var borderFactory = new FrameworkElementFactory(typeof(Border));
 			var stopCollection = new GradientStopCollection {
-                                                        new GradientStop(Colors.White, 0.0),
-                                                        new GradientStop(Colors.AliceBlue, 1.0)
-                                                      };
+																												new GradientStop(Colors.White, 0.0),
+																												new GradientStop(Colors.AliceBlue, 1.0)
+																											};
 			var gradientBrush = new LinearGradientBrush(stopCollection)
 			{
 				StartPoint = new Point(0, 0),
@@ -790,7 +790,23 @@ namespace GongSolutions.Wpf.DragDrop
 							try
 							{
 								m_DragInProgress = true;
-								var result = System.Windows.DragDrop.DoDragDrop(m_DragInfo.VisualSource, data, m_DragInfo.Effects);
+								var result = DragDropEffects.None;
+								try
+								{
+									result = System.Windows.DragDrop.DoDragDrop(m_DragInfo.VisualSource, data, m_DragInfo.Effects);
+								}
+								catch (System.OutOfMemoryException)
+								{
+									// ModifiedForAltaxo, see http://stackoverflow.com/questions/12410114/drag-and-drop-large-virtual-files-from-c-sharp-to-windows-explorer
+
+									Altaxo.Current.Gui.ErrorMessageBox(
+										"Out of memory exception during drag/drop operation.\r\n" +
+										"This is a known issue with the windows implementation of drag/drop with large amount of data.\r\n" +
+										"\r\n" +
+										"Please try to use Ctrl-C (copy) and Ctrl-V (paste) instead!",
+										"Out of memory!"
+										);
+								}
 								if (result == DragDropEffects.None)
 									dragHandler.DragCancelled();
 								else /* ModifiedByLellid  because dropped should be used to clean up, it is of no interest to have a IDropInfo here. We can provide null, but at least we have a response.*/
@@ -952,7 +968,7 @@ namespace GongSolutions.Wpf.DragDrop
 
 			dropHandler.Drop(dropInfo);
 			m_DropInfo = dropInfo; //ModifiedByLellid to delay the call to dragHandler.Dropped, but store the DropInfo
-			// dragHandler.Dropped(dropInfo); // ModifiedByLellid
+														 // dragHandler.Dropped(dropInfo); // ModifiedByLellid
 
 			Mouse.OverrideCursor = null;
 			e.Handled = !dropInfo.NotHandled;
