@@ -594,7 +594,7 @@ namespace Altaxo.Main
 				if (item is INameOwner)
 				{
 					string oldName = ((INameOwner)item).Name;
-					string newName = (newFolderName == null ? "" : newFolderName) + oldName.Substring(oldFolderNameLength);
+					string newName = (newFolderName ?? string.Empty) + oldName.Substring(oldFolderNameLength);
 					if (item is Data.DataTable)
 					{
 						if (AltaxoDocument.DataTableCollection.Contains(newName) && !itemHashSet.Contains(AltaxoDocument.DataTableCollection[newName]))
@@ -608,6 +608,11 @@ namespace Altaxo.Main
 					else if (item is Graph.Graph3D.GraphDocument)
 					{
 						if (AltaxoDocument.Graph3DDocumentCollection.Contains(newName) && !itemHashSet.Contains(AltaxoDocument.Graph3DDocumentCollection[newName]))
+							return false;
+					}
+					else if (item is Properties.ProjectFolderPropertyDocument)
+					{
+						if (AltaxoDocument.ProjectFolderProperties.Contains(newName) && !itemHashSet.Contains(AltaxoDocument.ProjectFolderProperties[newName]))
 							return false;
 					}
 					else
