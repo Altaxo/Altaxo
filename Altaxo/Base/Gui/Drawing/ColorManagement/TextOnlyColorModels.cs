@@ -44,6 +44,23 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		}
 	}
 
+	public class TextOnlyColorModelLinearRgb : ITextOnlyColorModel
+	{
+		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
+		{
+			return new string[]
+			{
+				color.ScR.ToString("F3", formatProvider),
+				color.ScG.ToString("F3", formatProvider),
+				color.ScB.ToString("F3", formatProvider) };
+		}
+
+		public string[] GetNamesOfComponents()
+		{
+			return new[] { "Lin R", "Lin G", "Lin B" };
+		}
+	}
+
 	public class TextOnlyColorModelCMY : ITextOnlyColorModel
 	{
 		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
@@ -57,18 +74,36 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		}
 	}
 
+	public class TextOnlyColorModelLinearCMY : ITextOnlyColorModel
+	{
+		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
+		{
+			return new string[]
+			{
+				(1 - color.ScR).ToString("F3", formatProvider),
+				(1 - color.ScG).ToString("F3", formatProvider),
+				(1 - color.ScB).ToString("F3", formatProvider) };
+		}
+
+		public string[] GetNamesOfComponents()
+		{
+			return new[] { "Lin C", "Lin M", "Lin Y" };
+		}
+	}
+
 	public class TextOnlyColorModelCMYK : ITextOnlyColorModel
 	{
 		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
 		{
 			var (a, c, m, y, k) = color.ToAcmyk();
 
-			var cc = AxoColor.NormFloatToByte(c);
-			var mm = AxoColor.NormFloatToByte(m);
-			var yy = AxoColor.NormFloatToByte(y);
-			var kk = AxoColor.NormFloatToByte(k);
-
-			return new string[] { cc.ToString(formatProvider), mm.ToString(formatProvider), yy.ToString(formatProvider), kk.ToString(formatProvider) };
+			return new string[]
+			{
+				c.ToString("F3", formatProvider),
+				m.ToString("F3", formatProvider),
+				y.ToString("F3", formatProvider),
+				k.ToString("F3", formatProvider)
+			};
 		}
 
 		public string[] GetNamesOfComponents()
@@ -82,7 +117,11 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
 		{
 			var (a, h, s, b) = color.ToAhsb();
-			return new string[] { AxoColor.NormFloatToByte(h).ToString(formatProvider), AxoColor.NormFloatToByte(s).ToString(formatProvider), AxoColor.NormFloatToByte(b).ToString(formatProvider) };
+			return new string[]
+			{
+				h.ToString("F3", formatProvider),
+				s.ToString("F3", formatProvider),
+				b.ToString("F3", formatProvider) };
 		}
 
 		public string[] GetNamesOfComponents()

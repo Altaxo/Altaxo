@@ -116,6 +116,22 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 			}
 		}
 
+		private void EhCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			// if mouse was pressed on the canvas rather than the rectangle,
+			// then move the rectangle under the mouse
+			if (e.LeftButton == MouseButtonState.Pressed)
+			{
+				_initialMousePosition = e.GetPosition(_guiCanvas);
+				_initialRectanglePosition = new Point(_initialMousePosition.Value.X, _guiCanvas.ActualHeight - _initialMousePosition.Value.Y);
+
+				SetRectanglePosition(_initialMousePosition.Value);
+
+				_guiCanvas.CaptureMouse();
+				e.Handled = true;
+			}
+		}
+
 		private void EhRectangle_MouseMove(object sender, MouseEventArgs e)
 		{
 			if (e.LeftButton == MouseButtonState.Pressed && _initialMousePosition.HasValue)

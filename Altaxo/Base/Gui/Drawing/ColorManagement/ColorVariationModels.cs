@@ -63,6 +63,26 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 		}
 	}
 
+	public class ColorVariationModelDesaturateAndDarker : IColorVariationModel
+	{
+		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
+		{
+			var (alpha, hue, saturation, brightness) = baseColor.ToAhsb();
+
+			// desaturate, but still the last item should have a rest of saturation left
+
+			int numberOfItems = variations.Length;
+
+			variations[0] = baseColor;
+			for (int i = 1; i < numberOfItems; ++i)
+			{
+				var newSaturation = saturation * (1 - i / (float)numberOfItems);
+				var newBrightness = brightness * (1 - i / (float)numberOfItems);
+				variations[i] = AxoColor.FromAhsb(alpha, hue, newSaturation, newBrightness);
+			}
+		}
+	}
+
 	public class ColorVariationModelDarker : IColorVariationModel
 	{
 		public void GetColorVariations(AxoColor baseColor, AxoColor[] variations)
