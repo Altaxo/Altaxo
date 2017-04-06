@@ -22,50 +22,67 @@
 
 #endregion Copyright
 
-using Altaxo.Collections;
 using Altaxo.Drawing;
-using Altaxo.Drawing.D3D;
-using Altaxo.Drawing.DashPatternManagement;
-using Altaxo.Graph.Graph3D.Plot.Groups;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Gui.Drawing.DashPatternManagement
+namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	public interface IDashPatternListView : IStyleListView
+	public interface IColorPickerView
 	{
-		event Action<IDashPattern> UserRequest_AddCustomColorToList;
+		AxoColor SelectedColor { get; set; }
+
+		event Action<AxoColor> CurrentColorChanged;
 	}
 
-	[ExpectedTypeOfView(typeof(IDashPatternListView))]
-	[UserControllerForObject(typeof(DashPatternList))]
-	public class DashPatternListController : StyleListController<DashPatternListManager, DashPatternList, IDashPattern>
+	/// <summary>
+	/// Controller to pick up a custom color
+	/// </summary>
+	[ExpectedTypeOfView(typeof(IColorPickerView))]
+	public class ColorPickerController : MVCANDControllerEditImmutableDocBase<AxoColor, IColorPickerView>
 	{
-		public DashPatternListController()
-			: base(DashPatternListManager.Instance)
+		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 		{
+			yield break;
+		}
+
+		protected override void Initialize(bool initData)
+		{
+			base.Initialize(initData);
+
+			if (null != _view)
+			{
+				_view.SelectedColor = _doc;
+			}
+		}
+
+		public override bool Apply(bool disposeController)
+		{
+			_doc = _view.SelectedColor;
+
+			return ApplyEnd(true, disposeController);
 		}
 
 		protected override void AttachView()
 		{
 			base.AttachView();
 
-			((IDashPatternListView)_view).UserRequest_AddCustomColorToList += EhUserRequest_AddCustomDashPatternToList;
+			_view.CurrentColorChanged += EhCurrentColorChanged;
 		}
 
 		protected override void DetachView()
 		{
-			((IDashPatternListView)_view).UserRequest_AddCustomColorToList -= EhUserRequest_AddCustomDashPatternToList;
+			_view.CurrentColorChanged -= EhCurrentColorChanged;
 
 			base.DetachView();
 		}
 
-		private void EhUserRequest_AddCustomDashPatternToList(IDashPattern dashPattern)
+		private void EhCurrentColorChanged(AxoColor color)
 		{
-			_currentItems.Add(new SelectableListNode(ToDisplayName(dashPattern), dashPattern, false));
-			SetListDirty();
+			_doc = color;
+			OnMadeDirty();
 		}
 	}
 }
