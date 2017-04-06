@@ -40,330 +40,332 @@ using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	/// <summary>
-	/// Interaction logic for ColorCircleControl.xaml
-	/// </summary>
-	public partial class ColorCircleSurfaceControl : UserControl
-	{
-		private IColorCircleModel _colorCircleModel;
+  /// <summary>
+  /// Interaction logic for ColorCircleControl.xaml
+  /// </summary>
+  public partial class ColorCircleSurfaceControl : UserControl
+  {
+    private IColorCircleModel _colorCircleModel;
 
-		private double[] _hueOfButtons;
-		private Point[] _posOfButtons;
-		private Ellipse _pivotEllipse;
-		public Rectangle[] _rectanglesA;
-		public Rectangle[] _rectanglesB;
-		private const double _rectangleWidthHeight = 12;
+    private double[] _hueOfButtons;
+    private Point[] _posOfButtons;
+    private Ellipse _pivotEllipse;
+    public Rectangle[] _rectanglesA;
+    public Rectangle[] _rectanglesB;
+    private const double _rectangleWidthHeight = 12;
 
-		private Line[] _lines;
+    private Line[] _lines;
 
-		private const double radiusOfButtons = 0.75;
+    private const double radiusOfButtons = 0.75;
 
-		private int? _indexOfDraggedButton;
+    private int? _indexOfDraggedButton;
 
-		/// <summary>
-		/// Occurs when at least one of the hue values of the color circle has changed. Argument is the list of hue values of the circle, with the first item
-		/// always representing the main hue value.
-		/// </summary>
-		public event Action<IReadOnlyList<double>> HueValuesChanged;
+    /// <summary>
+    /// Occurs when at least one of the hue values of the color circle has changed. Argument is the list of hue values of the circle, with the first item
+    /// always representing the main hue value.
+    /// </summary>
+    public event Action<IReadOnlyList<double>> HueValuesChanged;
 
-		public ColorCircleSurfaceControl()
-		{
-			InitializeComponent();
-			_guiImage.Source = GetBitmap();
+    public ColorCircleSurfaceControl()
+    {
+      InitializeComponent();
+      _guiImage.Source = GetBitmap();
 
-			_colorCircleModel = new ColorCircleModelRectangle();
+      _colorCircleModel = new ColorCircleModelRectangle();
 
-			InitializeHueButtons();
-		}
+      InitializeHueButtons();
+    }
 
-		public IColorCircleModel ColorCircleModel
-		{
-			get
-			{
-				return _colorCircleModel;
-			}
-			set
-			{
-				if (null == value)
-					throw new ArgumentNullException(nameof(value));
-				if (_colorCircleModel.GetType() != value.GetType())
-				{
-					_colorCircleModel = value;
-					InitializeHueButtons();
-					SetButtonPositions();
-				}
-			}
-		}
+    public IColorCircleModel ColorCircleModel
+    {
+      get
+      {
+        return _colorCircleModel;
+      }
+      set
+      {
+        if (null == value)
+          throw new ArgumentNullException(nameof(value));
+        if (_colorCircleModel.GetType() != value.GetType())
+        {
+          _colorCircleModel = value;
+          InitializeHueButtons();
+          SetButtonPositions();
+        }
+      }
+    }
 
-		/// <summary>
-		/// Gets the current hue values. The element at index 0 is always the main hue value.
-		/// </summary>
-		/// <value>
-		/// The hue values.
-		/// </value>
-		public IReadOnlyList<double> HueValues
-		{
-			get
-			{
-				return _hueOfButtons;
-			}
-		}
+    /// <summary>
+    /// Gets the current hue values. The element at index 0 is always the main hue value.
+    /// </summary>
+    /// <value>
+    /// The hue values.
+    /// </value>
+    public IReadOnlyList<double> HueValues
+    {
+      get
+      {
+        return _hueOfButtons;
+      }
+    }
 
-		public void SetHueBaseValue(double hueBaseValue, bool silentSet)
-		{
-			var diff = hueBaseValue - _hueOfButtons[0];
-			for (int i = 0; i < _hueOfButtons.Length; ++i)
-				_hueOfButtons[i] = BringInbetween0To1(_hueOfButtons[i] + diff);
+    public void SetHueBaseValue(double hueBaseValue, bool silentSet)
+    {
+      var diff = hueBaseValue - _hueOfButtons[0];
+      for (int i = 0; i < _hueOfButtons.Length; ++i)
+        _hueOfButtons[i] = BringInbetween0To1(_hueOfButtons[i] + diff);
 
-			if (!silentSet)
-				HueValuesChanged?.Invoke(_hueOfButtons);
-		}
+      SetButtonPositions();
 
-		protected static double BringInbetween0To1(double x)
-		{
-			if (x < 0)
-			{
-				while (x < 0)
-					x += 1;
-			}
-			else if (x > 1)
-			{
-				while (x > 1)
-					x -= 1;
-			}
-			return x;
-		}
+      if (!silentSet)
+        HueValuesChanged?.Invoke(_hueOfButtons);
+    }
 
-		private void InitializeHueButtons()
-		{
-			var numberOfButtons = _colorCircleModel.NumberOfHueValues;
+    protected static double BringInbetween0To1(double x)
+    {
+      if (x < 0)
+      {
+        while (x < 0)
+          x += 1;
+      }
+      else if (x > 1)
+      {
+        while (x > 1)
+          x -= 1;
+      }
+      return x;
+    }
 
-			var hueOfButton0 = null == _hueOfButtons ? 0 : _hueOfButtons[0];
+    private void InitializeHueButtons()
+    {
+      var numberOfButtons = _colorCircleModel.NumberOfHueValues;
 
-			_hueOfButtons = new double[numberOfButtons];
-			_posOfButtons = new Point[numberOfButtons];
-			_rectanglesA = new Rectangle[numberOfButtons];
-			_rectanglesB = new Rectangle[numberOfButtons];
-			_lines = new Line[numberOfButtons];
+      var hueOfButton0 = null == _hueOfButtons ? 0 : _hueOfButtons[0];
 
-			// set initial phi
-			_colorCircleModel.SetInitialHueValues(_hueOfButtons);
-			SetHueBaseValue(hueOfButton0, false);
+      _hueOfButtons = new double[numberOfButtons];
+      _posOfButtons = new Point[numberOfButtons];
+      _rectanglesA = new Rectangle[numberOfButtons];
+      _rectanglesB = new Rectangle[numberOfButtons];
+      _lines = new Line[numberOfButtons];
 
-			_guiCanvas.Children.Clear();
+      // set initial phi
+      _colorCircleModel.SetInitialHueValues(_hueOfButtons);
 
-			CreateLines(); // lines to create first, because they must lie _under_ the buttons
-			CreateButtons();
-		}
+      _guiCanvas.Children.Clear();
 
-		private void CreateButtons()
-		{
-			var strokeDash = new DoubleCollection(new double[] { 4, 4 });
+      CreateLines(); // lines to create first, because they must lie _under_ the buttons
+      CreateButtons();
+      SetHueBaseValue(hueOfButton0, false);
+    }
 
-			_pivotEllipse = new Ellipse
-			{
-				Stroke = Brushes.Black,
-				StrokeThickness = 1,
-				Width = _rectangleWidthHeight * 1.5,
-				Height = _rectangleWidthHeight * 1.5,
-				Fill = Brushes.Transparent
-			};
-			_pivotEllipse.PreviewMouseDown += this.EhRectangle_MouseDown;
-			_guiCanvas.Children.Add(_pivotEllipse);
+    private void CreateButtons()
+    {
+      var strokeDash = new DoubleCollection(new double[] { 4, 4 });
 
-			int numberOfButtons = _colorCircleModel.NumberOfHueValues;
+      _pivotEllipse = new Ellipse
+      {
+        Stroke = Brushes.Black,
+        StrokeThickness = 1,
+        Width = _rectangleWidthHeight * 1.5,
+        Height = _rectangleWidthHeight * 1.5,
+        Fill = Brushes.Transparent
+      };
+      _pivotEllipse.PreviewMouseDown += this.EhRectangle_MouseDown;
+      _guiCanvas.Children.Add(_pivotEllipse);
 
-			for (int i = 0; i < numberOfButtons; ++i)
-			{
-				var ra = new Rectangle()
-				{
-					Stroke = Brushes.Black,
-					StrokeDashArray = strokeDash,
-					StrokeDashOffset = 0,
-					StrokeThickness = 1,
-					Width = _rectangleWidthHeight,
-					Height = _rectangleWidthHeight,
-					Fill = Brushes.Transparent
-				};
+      int numberOfButtons = _colorCircleModel.NumberOfHueValues;
 
-				var rb = new Rectangle()
-				{
-					Stroke = Brushes.White,
-					StrokeDashArray = strokeDash,
-					StrokeDashOffset = 4,
-					StrokeThickness = 1,
-					Width = _rectangleWidthHeight,
-					Height = _rectangleWidthHeight,
-					Fill = Brushes.Transparent
-				};
+      for (int i = 0; i < numberOfButtons; ++i)
+      {
+        var ra = new Rectangle()
+        {
+          Stroke = Brushes.Black,
+          StrokeDashArray = strokeDash,
+          StrokeDashOffset = 0,
+          StrokeThickness = 1,
+          Width = _rectangleWidthHeight,
+          Height = _rectangleWidthHeight,
+          Fill = Brushes.Transparent
+        };
 
-				ra.PreviewMouseDown += this.EhRectangle_MouseDown;
-				rb.PreviewMouseDown += this.EhRectangle_MouseDown;
+        var rb = new Rectangle()
+        {
+          Stroke = Brushes.White,
+          StrokeDashArray = strokeDash,
+          StrokeDashOffset = 4,
+          StrokeThickness = 1,
+          Width = _rectangleWidthHeight,
+          Height = _rectangleWidthHeight,
+          Fill = Brushes.Transparent
+        };
 
-				_rectanglesA[i] = ra;
-				_rectanglesB[i] = rb;
-				_guiCanvas.Children.Add(ra);
-				_guiCanvas.Children.Add(rb);
-			}
-		}
+        ra.PreviewMouseDown += this.EhRectangle_MouseDown;
+        rb.PreviewMouseDown += this.EhRectangle_MouseDown;
 
-		private void CreateLines()
-		{
-			int numberOfButtons = _colorCircleModel.NumberOfHueValues;
+        _rectanglesA[i] = ra;
+        _rectanglesB[i] = rb;
+        _guiCanvas.Children.Add(ra);
+        _guiCanvas.Children.Add(rb);
+      }
+    }
 
-			for (int i = 0; i < numberOfButtons; ++i)
-			{
-				var line = new Line()
-				{
-					Stroke = Brushes.Black,
-					StrokeThickness = 2
-				};
-				_lines[i] = line;
-				_guiCanvas.Children.Add(line);
-			}
-		}
+    private void CreateLines()
+    {
+      int numberOfButtons = _colorCircleModel.NumberOfHueValues;
 
-		private void EhCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
-		{
-			if (e.NewSize.Width > 0 && e.NewSize.Height > 0)
-			{
-				SetButtonPositions();
-			}
-		}
+      for (int i = 0; i < numberOfButtons; ++i)
+      {
+        var line = new Line()
+        {
+          Stroke = Brushes.Black,
+          StrokeThickness = 2
+        };
+        _lines[i] = line;
+        _guiCanvas.Children.Add(line);
+      }
+    }
 
-		private void SetButtonPositions()
-		{
-			var LX = _guiCanvas.ActualWidth;
-			var LY = _guiCanvas.ActualHeight;
+    private void EhCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+      if (e.NewSize.Width > 0 && e.NewSize.Height > 0)
+      {
+        SetButtonPositions();
+      }
+    }
 
-			var SX2 = 0.5 * _rectanglesA[0].ActualWidth;
-			var SY2 = 0.5 * _rectanglesA[0].ActualHeight;
+    private void SetButtonPositions()
+    {
+      var LX = _guiCanvas.ActualWidth;
+      var LY = _guiCanvas.ActualHeight;
 
-			int numberOfButtons = _colorCircleModel.NumberOfHueValues;
+      var SX2 = 0.5 * _rectanglesA[0].ActualWidth;
+      var SY2 = 0.5 * _rectanglesA[0].ActualHeight;
 
-			for (int i = 0; i < numberOfButtons; ++i)
-			{
-				var x = 0.5 * LX * (1 + radiusOfButtons * Math.Cos(_hueOfButtons[i] * 2 * Math.PI));
-				var y = 0.5 * LY * (1 + radiusOfButtons * Math.Sin(_hueOfButtons[i] * 2 * Math.PI));
+      int numberOfButtons = _colorCircleModel.NumberOfHueValues;
 
-				_posOfButtons[i] = new Point(x, y);
+      for (int i = 0; i < numberOfButtons; ++i)
+      {
+        var x = 0.5 * LX * (1 + radiusOfButtons * Math.Cos(_hueOfButtons[i] * 2 * Math.PI));
+        var y = 0.5 * LY * (1 + radiusOfButtons * Math.Sin(_hueOfButtons[i] * 2 * Math.PI));
 
-				Canvas.SetLeft(_rectanglesA[i], x - 0.5 * _rectanglesA[i].Width);
-				Canvas.SetTop(_rectanglesA[i], y - 0.5 * _rectanglesA[i].Height);
-				Canvas.SetLeft(_rectanglesB[i], x - 0.5 * _rectanglesB[i].Width);
-				Canvas.SetTop(_rectanglesB[i], y - 0.5 * _rectanglesB[i].Height);
+        _posOfButtons[i] = new Point(x, y);
 
-				if (i == 0)
-				{
-					Canvas.SetLeft(_pivotEllipse, x - 0.5 * _pivotEllipse.Width);
-					Canvas.SetTop(_pivotEllipse, y - 0.5 * _pivotEllipse.Height);
-				}
-			}
+        Canvas.SetLeft(_rectanglesA[i], x - 0.5 * _rectanglesA[i].Width);
+        Canvas.SetTop(_rectanglesA[i], y - 0.5 * _rectanglesA[i].Height);
+        Canvas.SetLeft(_rectanglesB[i], x - 0.5 * _rectanglesB[i].Width);
+        Canvas.SetTop(_rectanglesB[i], y - 0.5 * _rectanglesB[i].Height);
 
-			// draw lines
-			for (int i = 0; i < numberOfButtons; ++i)
-			{
-				int iprev = i == 0 ? numberOfButtons - 1 : i - 1;
+        if (i == 0)
+        {
+          Canvas.SetLeft(_pivotEllipse, x - 0.5 * _pivotEllipse.Width);
+          Canvas.SetTop(_pivotEllipse, y - 0.5 * _pivotEllipse.Height);
+        }
+      }
 
-				var l = _lines[i];
-				l.X1 = _posOfButtons[iprev].X;
-				l.Y1 = _posOfButtons[iprev].Y;
-				l.X2 = _posOfButtons[i].X;
-				l.Y2 = _posOfButtons[i].Y;
-			}
-		}
+      // draw lines
+      for (int i = 0; i < numberOfButtons; ++i)
+      {
+        int iprev = i == 0 ? numberOfButtons - 1 : i - 1;
 
-		public static BitmapSource GetBitmap()
-		{
-			const int widthheight = 256;
-			const float innerRadiusRatio2 = 0.25f;
+        var l = _lines[i];
+        l.X1 = _posOfButtons[iprev].X;
+        l.Y1 = _posOfButtons[iprev].Y;
+        l.X2 = _posOfButtons[i].X;
+        l.Y2 = _posOfButtons[i].Y;
+      }
+    }
 
-			float mid = (widthheight - 1) / 2f;
-			float r2max = mid * mid;
-			float r2min = r2max * innerRadiusRatio2;
+    public static BitmapSource GetBitmap()
+    {
+      const int widthheight = 256;
+      const float innerRadiusRatio2 = 0.25f;
 
-			WriteableBitmap wbitmap = new WriteableBitmap(widthheight, widthheight, 96, 96, PixelFormats.Bgra32, null);
-			byte[] pixels = new byte[widthheight * widthheight * 4];
+      float mid = (widthheight - 1) / 2f;
+      float r2max = mid * mid;
+      float r2min = r2max * innerRadiusRatio2;
 
-			// The bitmap is already by default transparent
-			for (int row = 0; row < widthheight; ++row)
-			{
-				for (int col = 0; col < widthheight; ++col)
-				{
-					var dx = col - mid;
-					var dy = row - mid;
-					var r2 = dx * dx + dy * dy;
-					if (r2 < r2min || r2 > r2max)
-						continue;
+      WriteableBitmap wbitmap = new WriteableBitmap(widthheight, widthheight, 96, 96, PixelFormats.Bgra32, null);
+      byte[] pixels = new byte[widthheight * widthheight * 4];
 
-					int idx = (row * widthheight + col) * 4;
+      // The bitmap is already by default transparent
+      for (int row = 0; row < widthheight; ++row)
+      {
+        for (int col = 0; col < widthheight; ++col)
+        {
+          var dx = col - mid;
+          var dy = row - mid;
+          var r2 = dx * dx + dy * dy;
+          if (r2 < r2min || r2 > r2max)
+            continue;
 
-					// calculate angle
-					var phi = (Math.Atan2(dy, dx) / (2 * Math.PI));
-					if (phi < 0)
-						phi += 1;
-					// calculate color
-					AxoColor.FromHue((float)phi, out var red, out var green, out var blue);
+          int idx = (row * widthheight + col) * 4;
 
-					pixels[idx + 0] = blue;  // B
-					pixels[idx + 1] = green; // G
-					pixels[idx + 2] = red; // R
-					pixels[idx + 3] = 255;  // A
-				}
-			}
+          // calculate angle
+          var phi = (Math.Atan2(dy, dx) / (2 * Math.PI));
+          if (phi < 0)
+            phi += 1;
+          // calculate color
+          AxoColor.FromHue((float)phi, out var red, out var green, out var blue);
 
-			// Update writeable bitmap with the colorArray to the image.
-			Int32Rect rect = new Int32Rect(0, 0, widthheight, widthheight);
-			int stride = 4 * widthheight;
-			wbitmap.WritePixels(rect, pixels, stride, 0);
+          pixels[idx + 0] = blue;  // B
+          pixels[idx + 1] = green; // G
+          pixels[idx + 2] = red; // R
+          pixels[idx + 3] = 255;  // A
+        }
+      }
 
-			return wbitmap;
-		}
+      // Update writeable bitmap with the colorArray to the image.
+      Int32Rect rect = new Int32Rect(0, 0, widthheight, widthheight);
+      int stride = 4 * widthheight;
+      wbitmap.WritePixels(rect, pixels, stride, 0);
 
-		private void EhRectangle_MouseDown(object sender, MouseButtonEventArgs e)
-		{
-			if (e.LeftButton == MouseButtonState.Pressed)
-			{
-				_indexOfDraggedButton = Array.IndexOf(_rectanglesA, sender);
-				if (-1 == _indexOfDraggedButton.Value)
-					_indexOfDraggedButton = Array.IndexOf(_rectanglesB, sender);
-				if (-1 == _indexOfDraggedButton.Value)
-					_indexOfDraggedButton = null;
+      return wbitmap;
+    }
 
-				if (_indexOfDraggedButton.HasValue)
-					_guiCanvas.CaptureMouse();
+    private void EhRectangle_MouseDown(object sender, MouseButtonEventArgs e)
+    {
+      if (e.LeftButton == MouseButtonState.Pressed)
+      {
+        _indexOfDraggedButton = Array.IndexOf(_rectanglesA, sender);
+        if (-1 == _indexOfDraggedButton.Value)
+          _indexOfDraggedButton = Array.IndexOf(_rectanglesB, sender);
+        if (-1 == _indexOfDraggedButton.Value)
+          _indexOfDraggedButton = null;
 
-				e.Handled = true;
-			}
-		}
+        if (_indexOfDraggedButton.HasValue)
+          _guiCanvas.CaptureMouse();
 
-		private void EhRectangle_MouseUp(object sender, MouseButtonEventArgs e)
-		{
-			if (e.LeftButton == MouseButtonState.Released)
-			{
-				_indexOfDraggedButton = null;
-				_guiCanvas.ReleaseMouseCapture();
-			}
-		}
+        e.Handled = true;
+      }
+    }
 
-		private void EhRectangle_MouseMove(object sender, MouseEventArgs e)
-		{
-			if (_indexOfDraggedButton.HasValue)
-			{
-				// calculate a new phi
-				var position = e.GetPosition(_guiCanvas);
+    private void EhRectangle_MouseUp(object sender, MouseButtonEventArgs e)
+    {
+      if (e.LeftButton == MouseButtonState.Released)
+      {
+        _indexOfDraggedButton = null;
+        _guiCanvas.ReleaseMouseCapture();
+      }
+    }
 
-				position.X -= 0.5 * _guiCanvas.ActualWidth;
-				position.Y -= 0.5 * _guiCanvas.ActualHeight;
+    private void EhRectangle_MouseMove(object sender, MouseEventArgs e)
+    {
+      if (_indexOfDraggedButton.HasValue)
+      {
+        // calculate a new phi
+        var position = e.GetPosition(_guiCanvas);
 
-				var phi = Math.Atan2(position.Y, position.X) / (2 * Math.PI);
+        position.X -= 0.5 * _guiCanvas.ActualWidth;
+        position.Y -= 0.5 * _guiCanvas.ActualHeight;
 
-				_colorCircleModel.TrySetHueOfButton(_indexOfDraggedButton.Value, phi, _hueOfButtons);
+        var phi = Math.Atan2(position.Y, position.X) / (2 * Math.PI);
 
-				SetButtonPositions();
+        _colorCircleModel.TrySetHueOfButton(_indexOfDraggedButton.Value, phi, _hueOfButtons);
 
-				HueValuesChanged?.Invoke(_hueOfButtons);
-			}
-		}
-	}
+        SetButtonPositions();
+
+        HueValuesChanged?.Invoke(_hueOfButtons);
+      }
+    }
+  }
 }

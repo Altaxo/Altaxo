@@ -670,6 +670,7 @@
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelController.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelCMY.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelHSB.cs" />
+    <Compile Include="Gui\Drawing\ColorManagement\ColorModelLinearRGB.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorModelRGB.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorPickerController.cs" />
     <Compile Include="Gui\Drawing\ColorManagement\ColorVariationModels.cs" />

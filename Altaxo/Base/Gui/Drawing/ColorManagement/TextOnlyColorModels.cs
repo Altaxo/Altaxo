@@ -31,128 +31,128 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-	public class TextOnlyColorModelRGB : ITextOnlyColorModel
-	{
-		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
-		{
-			return new string[] { color.R.ToString(formatProvider), color.G.ToString(formatProvider), color.B.ToString(formatProvider) };
-		}
+  public class TextOnlyColorModelRGB : ITextOnlyColorModel
+  {
+    public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
+    {
+      return new string[] { color.R.ToString(formatProvider), color.G.ToString(formatProvider), color.B.ToString(formatProvider) };
+    }
 
-		public string[] GetNamesOfComponents()
-		{
-			return new[] { "R", "G", "B" };
-		}
-	}
+    public string[] GetNamesOfComponents()
+    {
+      return new[] { "R", "G", "B" };
+    }
+  }
 
-	public class TextOnlyColorModelLinearRgb : ITextOnlyColorModel
-	{
-		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
-		{
-			return new string[]
-			{
-				color.ScR.ToString("F3", formatProvider),
-				color.ScG.ToString("F3", formatProvider),
-				color.ScB.ToString("F3", formatProvider) };
-		}
+  public class TextOnlyColorModelLinearRGB : ITextOnlyColorModel
+  {
+    public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
+    {
+      return new string[]
+      {
+        color.ScR.ToString("F3", formatProvider),
+        color.ScG.ToString("F3", formatProvider),
+        color.ScB.ToString("F3", formatProvider) };
+    }
 
-		public string[] GetNamesOfComponents()
-		{
-			return new[] { "Lin R", "Lin G", "Lin B" };
-		}
-	}
+    public string[] GetNamesOfComponents()
+    {
+      return new[] { "Lin R", "Lin G", "Lin B" };
+    }
+  }
 
-	public class TextOnlyColorModelCMY : ITextOnlyColorModel
-	{
-		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
-		{
-			return new string[] { (255 - color.R).ToString(formatProvider), (255 - color.G).ToString(formatProvider), (255 - color.B).ToString(formatProvider) };
-		}
+  public class TextOnlyColorModelCMY : ITextOnlyColorModel
+  {
+    public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
+    {
+      return new string[] { (255 - color.R).ToString(formatProvider), (255 - color.G).ToString(formatProvider), (255 - color.B).ToString(formatProvider) };
+    }
 
-		public string[] GetNamesOfComponents()
-		{
-			return new[] { "C", "M", "Y" };
-		}
-	}
+    public string[] GetNamesOfComponents()
+    {
+      return new[] { "C", "M", "Y" };
+    }
+  }
 
-	public class TextOnlyColorModelLinearCMY : ITextOnlyColorModel
-	{
-		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
-		{
-			return new string[]
-			{
-				(1 - color.ScR).ToString("F3", formatProvider),
-				(1 - color.ScG).ToString("F3", formatProvider),
-				(1 - color.ScB).ToString("F3", formatProvider) };
-		}
+  public class TextOnlyColorModelLinearCMY : ITextOnlyColorModel
+  {
+    public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
+    {
+      return new string[]
+      {
+        (1 - color.ScR).ToString("F3", formatProvider),
+        (1 - color.ScG).ToString("F3", formatProvider),
+        (1 - color.ScB).ToString("F3", formatProvider) };
+    }
 
-		public string[] GetNamesOfComponents()
-		{
-			return new[] { "Lin C", "Lin M", "Lin Y" };
-		}
-	}
+    public string[] GetNamesOfComponents()
+    {
+      return new[] { "Lin C", "Lin M", "Lin Y" };
+    }
+  }
 
-	public class TextOnlyColorModelCMYK : ITextOnlyColorModel
-	{
-		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
-		{
-			var (a, c, m, y, k) = color.ToAcmyk();
+  public class TextOnlyColorModelCMYK : ITextOnlyColorModel
+  {
+    public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
+    {
+      var (a, c, m, y, k) = color.ToAcmyk();
 
-			return new string[]
-			{
-				c.ToString("F3", formatProvider),
-				m.ToString("F3", formatProvider),
-				y.ToString("F3", formatProvider),
-				k.ToString("F3", formatProvider)
-			};
-		}
+      return new string[]
+      {
+        c.ToString("F3", formatProvider),
+        m.ToString("F3", formatProvider),
+        y.ToString("F3", formatProvider),
+        k.ToString("F3", formatProvider)
+      };
+    }
 
-		public string[] GetNamesOfComponents()
-		{
-			return new[] { "C", "M", "Y", "K" };
-		}
-	}
+    public string[] GetNamesOfComponents()
+    {
+      return new[] { "C", "M", "Y", "K" };
+    }
+  }
 
-	public class TextOnlyColorModelHSB : ITextOnlyColorModel
-	{
-		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
-		{
-			var (a, h, s, b) = color.ToAhsb();
-			return new string[]
-			{
-				h.ToString("F3", formatProvider),
-				s.ToString("F3", formatProvider),
-				b.ToString("F3", formatProvider) };
-		}
+  public class TextOnlyColorModelHSB : ITextOnlyColorModel
+  {
+    public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
+    {
+      var (a, h, s, b) = color.ToAhsb();
+      return new string[]
+      {
+        h.ToString("F3", formatProvider),
+        s.ToString("F3", formatProvider),
+        b.ToString("F3", formatProvider) };
+    }
 
-		public string[] GetNamesOfComponents()
-		{
-			return new[] { "H", "S", "B" };
-		}
-	}
+    public string[] GetNamesOfComponents()
+    {
+      return new[] { "H", "S", "B" };
+    }
+  }
 
-	public class TextOnlyColorModelRGBHex : ITextOnlyColorModel
-	{
-		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
-		{
-			return new string[] { string.Format(formatProvider, "#{0:X02}{1:X02}{2:X02}", color.R, color.G, color.B) };
-		}
+  public class TextOnlyColorModelRGBHex : ITextOnlyColorModel
+  {
+    public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
+    {
+      return new string[] { string.Format(formatProvider, "#{0:X02}{1:X02}{2:X02}", color.R, color.G, color.B) };
+    }
 
-		public string[] GetNamesOfComponents()
-		{
-			return new[] { "RGB_Hex" };
-		}
-	}
+    public string[] GetNamesOfComponents()
+    {
+      return new[] { "RGB_Hex" };
+    }
+  }
 
-	public class TextOnlyColorModelARGBHex : ITextOnlyColorModel
-	{
-		public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
-		{
-			return new string[] { string.Format(formatProvider, "#{0:X02}{1:X02}{2:X02}{2:X02}", color.A, color.R, color.G, color.B) };
-		}
+  public class TextOnlyColorModelARGBHex : ITextOnlyColorModel
+  {
+    public string[] GetComponentsForColor(AxoColor color, IFormatProvider formatProvider)
+    {
+      return new string[] { string.Format(formatProvider, "#{0:X02}{1:X02}{2:X02}{2:X02}", color.A, color.R, color.G, color.B) };
+    }
 
-		public string[] GetNamesOfComponents()
-		{
-			return new[] { "ARGB_Hex" };
-		}
-	}
+    public string[] GetNamesOfComponents()
+    {
+      return new[] { "ARGB_Hex" };
+    }
+  }
 }

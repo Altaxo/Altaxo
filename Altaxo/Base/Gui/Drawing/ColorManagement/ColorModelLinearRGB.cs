@@ -32,11 +32,11 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-  public class ColorModelCMY : IColorModel
+  public class ColorModelLinearRGB : IColorModel
   {
     public AxoColor GetColorFor1DColorSurfaceFromRelativePosition(double relativePosition)
     {
-      return AxoColor.FromAhsb(1, (float)(relativePosition), 1, 1);
+      return AxoColor.FromAhsb(1, (float)relativePosition, 1, 1);
     }
 
     public AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor c)
@@ -50,21 +50,21 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       return (hue, new PointD2D(saturation, brightness));
     }
 
-    public bool IsUsingByteComponents { get { return true; } }
+    public bool IsUsingByteComponents { get { return false; } }
 
     public double[] GetComponentsForColor(AxoColor color)
     {
-      return new double[] { 255 - color.R, 255 - color.G, 255 - color.B };
+      return new double[] { color.ScR, color.ScG, color.ScB };
     }
 
     public AxoColor GetColorFromComponents(double[] components)
     {
-      return AxoColor.FromArgb(255, (byte)(255 - components[0]), (byte)(255 - components[1]), (byte)(255 - components[2]));
+      return AxoColor.FromScRgb(1, (float)components[0], (float)components[1], (float)components[2]);
     }
 
     public string[] GetNamesOfComponents()
     {
-      return new string[] { "C", "M", "Y" };
+      return new string[] { "Lin R", "Lin G", "Lin B" };
     }
   }
 }
