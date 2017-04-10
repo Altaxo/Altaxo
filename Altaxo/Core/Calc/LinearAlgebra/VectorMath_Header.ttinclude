@@ -1,0 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Altaxo.Calc.LinearAlgebra
+{
+  // Unary functions not returning a vector, valid for all vector types
+
+  public static partial class VectorMath
+  {
