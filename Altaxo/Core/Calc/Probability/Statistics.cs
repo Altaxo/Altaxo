@@ -372,7 +372,7 @@ namespace Altaxo.Calc.Probability
 			var result = new DoubleVector(2 * n);
 			Fourier.FastHartleyTransform.CyclicRealConvolution(y.GetInternalData(), kords.GetInternalData(), result.GetInternalData(), 2 * n, null);
 			y.Multiply(1.0 / (2 * n));
-			VectorMath.Max(y, 0, y);
+			VectorMath.MaxOf(y, 0, y);
 			var xords = VectorMath.CreateEquidistantSequenceByStartEndLength(lo, up, n);
 			var xu = VectorMath.CreateEquidistantSequenceByStartEndLength(from, to, n_user);
 

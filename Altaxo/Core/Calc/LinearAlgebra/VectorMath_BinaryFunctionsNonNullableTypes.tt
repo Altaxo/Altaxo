@@ -53,6 +53,56 @@
         c[i] = a[i] + b[i];
     }
 
+
+		/// <summary>
+		/// Returns true if and only if both vectors contain the same elements. Both vectors must have the same length.
+		/// </summary>
+		/// <param name="vector1">First vector.</param>
+		/// <param name="vector2">Second vector.</param>
+		/// <returns>True if both vectors contain the same elements.</returns>
+		public static bool AreValuesEqual(<#= arrT #> vector1, <#= arrT #> vector2)
+		{
+			if (vector1.<#= length #> != vector2.<#= length #>)
+				throw new ArgumentException("Length of x and y are unequal");
+
+			for (int i = vector1.<#= length #> - 1; i >= 0; --i)
+			{
+				if (!(vector1[i] == vector2[i]))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+			/// <summary>
+		/// Copies the source vector to the destination vector. Both vectors must have the same length.
+		/// </summary>
+		/// <param name="sourceVector">The source vector.</param>
+		/// <param name="destinationVector">The destination vector.</param>
+		public static void Copy(<#= arrT #> sourceVector, <#= rwArrT #> destinationVector)
+		{
+			if (sourceVector.<#= length #> != destinationVector.<#= length #>)
+				throw new ArgumentException("source and destination vector have unequal length!");
+
+			Copy(sourceVector, 0, destinationVector, 0, sourceVector.<#= length #>);
+		}
+
+		/// <summary>
+		/// Copies elements of a source vector to a destination vector.
+		/// </summary>
+		/// <param name="sourceVector">The source vector.</param>
+		/// <param name="sourceStartIndex">First element of the source vector to copy.</param>
+		/// <param name="destinationVector">The destination vector.</param>
+		/// <param name="destinationStartIndex">First element of the destination vector to copy to.</param>
+		/// <param name="count">Number of elements to copy.</param>
+		public static void Copy(<#= arrT #> sourceVector, int sourceStartIndex, <#= rwArrT #> destinationVector, int destinationStartIndex, int count)
+		{
+			for (int i = 0; i < count; ++i)
+				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
+		}
+
+
      /// <summary>
     /// Multiplies (elementwise) two vectors a and b and stores the result in c. All vectors must have the same length.
     /// </summary>
@@ -78,7 +128,8 @@
     /// <param name="a">First vector.</param>
     /// <param name="b">Second vector.</param>
     /// <param name="result">The resulting vector.</param>
-    public static void ElementwiseMax(<#= arrT #> a, <#= arrT #> b, <#= rwArrT #> result)
+		/// <returns>The same instance as provided by result. Each element result[i] is the maximum of a[i] and b[i].</returns>
+    public static <#= rwArrT #> MaxOf(<#= arrT #> a, <#= arrT #> b, <#= rwArrT #> result)
     {
       if (a.<#= length #> != b.<#= length #>)
         throw new ArgumentException("Length of vectors a and b unequal");
@@ -89,7 +140,51 @@
       {
         result[i] = Math.Max(a[i], b[i]);
       }
+
+			return result;
     }
+
+
+		/// <summary>
+		/// Creates a new vector, whose elements are the maximum of the elements of a given input vector and a given number.
+		/// </summary>
+		/// <param name="vector1">Input vector.</param>
+		/// <param name="scalar">Number.</param>
+		/// <param name="result">Provide a vector whose elements are filled with the result. If null is provided, then a new vector will be allocated and returned.</param>
+		/// <returns>The same instance as provided by result. Each element r[i] is the maximum of v[i] and b.</returns>
+		public static <#= rwArrT #> MaxOf(this <#= arrT #> vector1, <#= scalT #> scalar, <#= rwArrT #> result)
+		{
+			if (vector1.<#= length #> != result.<#= length #>)
+				throw new ArgumentException("vector1 and result must have the same length");
+
+			for (int i = vector1.<#= length #>; i>=0; --i)
+				result[i] = Math.Max(vector1[i], scalar);
+
+			return result;
+		}
+
+
+		/// <summary>
+		/// Returns the sum of squared differences of the elements of xarray and yarray.
+		/// </summary>
+		/// <param name="vector1">The first array.</param>
+		/// <param name="vector2">The other array.</param>
+		/// <returns>The sum of squared differences all elements of xarray and yarray.</returns>
+		public static double SumOfSquaredDifferences(<#= arrT #> vector1, <#= arrT #> vector2)
+		{
+			if (vector1.<#= length #> != vector2.<#= length #>)
+				throw new ArgumentException("Length of vector1 is different from length of vector2");
+
+			double sum = 0;
+			double tmp;
+			for (int i = 0; i < vector1.<#= length #>; i++)
+			{
+				tmp = (double)vector1[i] - vector2[i];
+				sum += tmp * tmp;
+			}
+
+			return sum;
+		}
 
 
 <# 

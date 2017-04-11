@@ -214,6 +214,60 @@
       return index;
     }
 
+		/// <summary>
+    /// Returns true if the sequence given by the vector argument is strictly increasing or decreasing.
+    /// </summary>
+    /// <param name="vector">Vector (sequence) to test.</param>
+    /// <param name="isDecreasing">On return, this argument is set to true if the sequence is strictly decreasing. If increasing, this argument is set to false.</param>
+    /// <returns>True if the sequence is strictly increasing or decreasing.</returns>
+    public static bool IsStrictlyIncreasingOrDecreasing(this <#= arrT #> vector, out bool isDecreasing)
+    {
+      isDecreasing = false;
+      if (vector.<#= length #> == 0)
+        return false;
+      int sign = Math.Sign(vector[vector.<#= length #> - 1] - vector[0]);
+      if (sign == 0)
+        return false;
+
+      isDecreasing = (sign < 0);
+
+      for (int i = vector.<#= length #> - 1; i >= 1; --i)
+        if (Math.Sign(vector[i] - vector[i - 1]) != sign)
+          return false;
+
+      return true;
+    }
+
+		/// <summary>
+    /// Returns true if the sequence given by the vector argument is strictly increasing or decreasing.
+    /// </summary>
+    /// <param name="vector">Vector (sequence) to test.</param>
+    /// <returns>True if the sequence is strictly increasing or decreasing.</returns>
+    public static bool IsStrictlyIncreasingOrDecreasing(this <#= arrT #> vector)
+    {
+      return IsStrictlyIncreasingOrDecreasing(vector, out var isDecreasing);
+    }
+
+		/// <summary>
+    /// Returns true if the sequence given by the vector argument is strictly decreasing.
+    /// </summary>
+    /// <param name="vector">Vector (sequence) to test.</param>
+    /// <returns>True if the sequence is strictly decreasing.</returns>
+    public static bool IsStrictlyDecreasing(this <#= arrT #> vector)
+    {
+      return IsStrictlyIncreasingOrDecreasing(vector, out var isDecreasing) && isDecreasing;
+    }
+
+		/// <summary>
+    /// Returns true if the sequence given by the vector argument is strictly increasing.
+    /// </summary>
+    /// <param name="vector">Vector (sequence) to test.</param>
+    /// <returns>True if the sequence is strictly increasing.</returns>
+    public static bool IsStrictlyIncreasing(this <#= arrT #> vector)
+    {
+      return IsStrictlyIncreasingOrDecreasing(vector, out var isDecreasing) && !isDecreasing;
+    }
+
 
 		/// <summary>
     /// Calculates the L1 norm of the vector (as the sum of the absolute values of the elements).
