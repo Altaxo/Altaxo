@@ -24,6 +24,7 @@
 
 using Altaxo.Calc.LinearAlgebra;
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.Regression
 {
@@ -124,9 +125,9 @@ namespace Altaxo.Calc.Regression
 		/// <param name="evaluateFunctionBase">The function base used to fit.</param>
 		/// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
 		public LinearFitBySvd(
-			IROVector xarr,
-			IROVector yarr,
-			IROVector stddev,
+			IReadOnlyList<double> xarr,
+			IReadOnlyList<double> yarr,
+			IReadOnlyList<double> stddev,
 			int numberOfData,
 			int numberOfParameter,
 			FunctionBaseEvaluator evaluateFunctionBase,
@@ -185,8 +186,8 @@ namespace Altaxo.Calc.Regression
 		/// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
 		public LinearFitBySvd Calculate(
 			IROMatrix xbase, // NumberOfData, NumberOfParameters
-			IROVector yarr,
-			IROVector stddev,
+			IReadOnlyList<double> yarr,
+			IReadOnlyList<double> stddev,
 			int numberOfData,
 			int numberOfParameter,
 			double threshold)
@@ -277,7 +278,7 @@ namespace Altaxo.Calc.Regression
 		/// <param name="start">First element.</param>
 		/// <param name="length">Number of elements used for calculation.</param>
 		/// <returns></returns>
-		public static double Mean(IROVector x, int start, int length)
+		public static double Mean(IReadOnlyList<double> x, int start, int length)
 		{
 			double sum = 0;
 			int end = start + length;
@@ -296,7 +297,7 @@ namespace Altaxo.Calc.Regression
 		/// <param name="start">Starting index.</param>
 		/// <param name="length">Number of elements used for calculation.</param>
 		/// <returns></returns>
-		public static double CorrectedSumOfSquares(IROVector x, double mean, int start, int length)
+		public static double CorrectedSumOfSquares(IReadOnlyList<double> x, double mean, int start, int length)
 		{
 			int end = start + length;
 			double sum = 0;

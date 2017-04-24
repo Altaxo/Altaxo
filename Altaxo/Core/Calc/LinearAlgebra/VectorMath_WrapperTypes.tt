@@ -14,31 +14,38 @@
     var types = new string[][]
     {      // scalar,   array                   rwArray            Length    negInfinity                 posInfinity                upCast    typeAbs
 		       // ---------------------------------------------------------------------------------------------------------------------------
-      new[]{ "double", "Double", "IReadOnlyList<double>", "IVector<double>", "Count",  "double.NegativeInfinity",	"double.PositiveInfinity",	"",				"double" },
-      new[]{ "float",	 "Float",  "IReadOnlyList<float>",  "IVector<float>",  "Count", "float.NegativeInfinity",    "float.PositiveInfinity",		"",				"float" },
-      new[]{ "int",	   "Int",  "IReadOnlyList<int>",  "IVector<int>",  "Count", "int.MinValue",    "int.MaxValue",		"",				"int" },
+      new[]{ "Double", "Double", "IROVector", "IVector" },
+      new[]{ "Single", "Float",  "IROVector<Single>",  "IVector<Single>"},
+      new[]{ "Int32",	  "Int",    "IROVector<Int32>",  "IVector<Int32>" },
+      new[]{ "Int16",	  "Short",  "IROVector<Int16>",  "IVector<Int16>"},
+      new[]{ "SByte",	  "SByte",  "IROVector<SByte>",  "IVector<SByte>"},
     };
 
     foreach (var entry in types)
     {
       var scalT =  entry[0]; // scalar type
-			var bigScalT = entry[1]; // scalar type, capital
-      var arrT =   entry[2]; // array type
+			var bigScalT = entry[1]; // scalar type, capital, for naming of the wrapping type
+			var roVecT = entry[2]; // read-only vector type
+			var rwVecT = entry[3]; // read-write vector type
+
+			/*
+			var arrT =   entry[2]; // array type
       var rwArrT = entry[3]; // array type
 			var length = entry[4]; // Length property
       var negInf = entry[5]; // negative Infinity
       var posInf = entry[6]; // positive Infinity
 			var upCast = entry[7]; // up-cast to next bigger number
 			var typeAbs = entry[8]; // type for absolute values
+			*/
 
 // ----------- Begin of code after next line --------------------------------------------------------------------
 #>
-// ******************************************** Definitions for <#= arrT #> *******************************************
+// ******************************************** Definitions for <#= scalT #> *******************************************
 
     /// <summary>
 		/// Provides a read-only vector with equal and constant items.
 		/// </summary>
-		private class RO<#= bigScalT #>ConstantVector : IROVector<<#= scalT #>>
+		private class RO<#= bigScalT #>ConstantVector : <#= roVecT #>
 		{
 			private int _length;
 			private <#= scalT #> _value;
@@ -77,44 +84,73 @@
       }
     }
 
+			/// <summary>
+		/// Gets a vector with all elements equal to a provided value.
+		/// </summary>
+		/// <param name="value">Value of all elements.</param>
+		/// <param name="length">Length of the vector.</param>
+		/// <returns>Read-only vector with all elements equal to the provided <paramref name="value"/>.</returns>
+		public static <#= roVecT #> GetConstantVector(<#= scalT #> value, int length)
+		{
+			return new RO<#= bigScalT #>ConstantVector(value, length);
+		}
 
-		  /// <summary>
+
+		/// <summary>
     /// Provides a read-only vector with equally spaced elements y[i] = start + i * increment.
     /// </summary>
-    private class RO<#= bigScalT #>EquallySpacedVector : IROVector<<#= scalT #>>
+    private class RO<#= bigScalT #>EquidistantElementVector : <#= roVecT #>
     {
       private int _length;
       private <#= scalT #> _startValue;
       private <#= scalT #> _incrementValue;
 
-      public RO<#= bigScalT #>EquallySpacedVector(<#= scalT #> start, <#= scalT #> increment, int length)
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="start">Value of the first element of the vector.</param>
+			/// <param name="increment">Difference between an element of the vector and the previous element.</param>
+			/// <param name="length">Length of the vector.</param>
+      public RO<#= bigScalT #>EquidistantElementVector(<#= scalT #> start, <#= scalT #> increment, int length)
       {
         _length = length;
         _startValue = start;
         _incrementValue = increment;
       }
 
+			/// <summary>The number of elements of this vector.</summary>
       public int Length
       {
         get { return _length; }
       }
 
-      public int Count
+      	/// <summary>The number of elements of this vector.</summary>
+			public int Count
       {
         get { return _length; }
       }
 
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
       public <#= scalT #> this[int i]
       {
-        get { return _startValue + i * _incrementValue; }
+        get { return (<#= scalT #>)(_startValue + i * _incrementValue); }
       }
 
+			/// <summary>
+			/// Enumerates all elements of the vector.
+			/// </summary>
+			/// <returns>Enumerator that enumerates all elements of the vector.</returns>
       public IEnumerator<<#= scalT #>> GetEnumerator()
       {
         for (int i = 0; i < _length; ++i)
           yield return this[i];
       }
 
+			/// <summary>
+			/// Enumerates all elements of the vector.
+			/// </summary>
+			/// <returns>Enumerator that enumerates all elements of the vector.</returns>
       IEnumerator IEnumerable.GetEnumerator()
       {
         for (int i = 0; i < _length; ++i)
@@ -123,10 +159,193 @@
     }
 
 
+			/// <summary>
+		/// Creates a read-only vector with equidistant elements with values from start to start+(length-1)*step. The created vector
+		/// consumes memory only for the three variables, independent of its length.
+		/// </summary>
+		/// <param name="start">First element of the vector.</param>
+		/// <param name="step">Difference between two successive elements.</param>
+		/// <param name="length">Length of the vector.</param>
+		/// <returns>Read-only vector with equidistant elements with values from start to start+(length-1)*step.</returns>
+		public static <#= roVecT #> CreateEquidistantSequenceByStartStepLength(<#= scalT #> start, <#= scalT #> step, int length)
+		{
+			return new RO<#= bigScalT #>EquidistantElementVector(start, step, length);
+		}
+
+			
+			/// <summary>
+		/// Provides a read-only vector with equally spaced elements y[i] = start + (i-startOffset) * increment.
+		/// </summary>
+		private class RO<#= bigScalT #>EquidistantElementVectorStartAtOffsetStepLength : <#= roVecT #>
+		{
+			private <#= scalT #> _start;
+			private int _startOffset;
+
+			private <#= scalT #> _increment;
+			private int _length;
+
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="start">Value of the element at index <paramref name="startOffset"/> of the vector.</param>
+			/// <param name="startOffset">The index of the element for which a value is provided in <paramref name="start"/>.</param>
+			/// <param name="increment">Difference between an element of the vector and the previous element.</param>
+			/// <param name="length">Length of the vector.</param>
+			public RO<#= bigScalT #>EquidistantElementVectorStartAtOffsetStepLength(<#= scalT #> start, int startOffset, <#= scalT #> increment, int length)
+			{
+				_start = start;
+				_startOffset = startOffset;
+				_increment = increment;
+				_length = length;
+			}
+
+			/// <summary>The number of elements of this vector.</summary>
+			public int Length
+			{
+				get { return _length; }
+			}
+
+			/// <summary>The number of elements of this vector.</summary>
+			public int Count
+			{
+				get { return _length; }
+			}
+
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
+			public <#= scalT #> this[int i]
+			{
+				get
+				{
+					if (i < 0 || i >= _length)
+						throw new ArgumentOutOfRangeException("i");
+					return (<#= scalT #>)(_start + (i - _startOffset) * _increment);
+				}
+			}
+
+			/// <summary>
+			/// Enumerates all elements of the vector.
+			/// </summary>
+			/// <returns>Enumerator that enumerates all elements of the vector.</returns>
+			public IEnumerator<<#= scalT #>> GetEnumerator()
+      {
+        for (int i = 0; i<_length; ++i)
+          yield return this[i];
+      }
+
+		/// <summary>
+		/// Enumerates all elements of the vector.
+		/// </summary>
+		/// <returns>Enumerator that enumerates all elements of the vector.</returns>
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			for (int i = 0; i < _length; ++i)
+				yield return this[i];
+		}
+	}
+
+		/// <summary>
+		/// Creates a read-only vector with equidistant elements from start - startOffset*step to start + (length - 1 -startOffset)*step. The created vector
+		/// consumes memory only for the three variables, independent of its length.
+		/// </summary>
+		/// <param name="start">Value of the element of the vector at index <paramref name="startOffset"/>).</param>
+		/// <param name="startOffset">Index of the element of the vector which gets the value of <paramref name="start"/>.</param>
+		/// <param name="step">Difference between two successive elements.</param>
+		/// <param name="length">Length of the vector.</param>
+		/// <returns>Read-only vector with equidistant elements from start - startOffset*step to start + (length - 1 -startOffset)*step.</returns>
+		public static <#= roVecT #> CreateEquidistantSequencyByStartAtOffsetStepLength(<#= scalT #> start, int startOffset, <#= scalT #> step, int length)
+		{
+			return new RO<#= bigScalT #>EquidistantElementVectorStartAtOffsetStepLength(start, startOffset, step, length);
+		}
+
+
+	  	/// <summary>
+		/// Provides a read-only vector with equally spaced elements so that y[0] = start and y[length-1] = end.
+		/// </summary>
+		private class RO<#= bigScalT #>EquidistantElementVectorStartEndLength : <#= roVecT #>
+		{
+			private <#= scalT #> _start;
+			private <#= scalT #> _end;
+			private int _length;
+
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="start">Value of the first element of the vector.</param>
+			/// <param name="end">Value of the last element of the vector.</param>
+			/// <param name="length">Length of the vector.</param>
+			public RO<#= bigScalT #>EquidistantElementVectorStartEndLength(<#= scalT #> start, <#= scalT #> end, int length)
+			{
+				_start = start;
+				_end = end;
+				_length = length;
+			}
+
+			/// <summary>The number of elements of this vector.</summary>
+			public int Length
+			{
+				get { return _length; }
+			}
+
+			/// <summary>The number of elements of this vector.</summary>
+			public int Count
+			{
+				get { return _length; }
+			}
+
+			/// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+			/// <value>The element at index i.</value>
+			public <#= scalT #> this[int i]
+			{
+				get
+				{
+					if (i < 0 || i >= _length)
+						throw new ArgumentOutOfRangeException("i");
+
+					double r = i / (double)(_length - 1);
+					return (<#= scalT #>)(_start * (1 - r) + _end * (r));
+				}
+			}
+
+			/// <summary>
+			/// Enumerates all elements of the vector.
+			/// </summary>
+			/// <returns>Enumerator that enumerates all elements of the vector.</returns>
+			public IEnumerator<<#= scalT #>> GetEnumerator()
+      {
+        for (int i = 0; i<_length; ++i)
+          yield return this[i];
+      }
+
+			/// <summary>
+			/// Enumerates all elements of the vector.
+			/// </summary>
+			/// <returns>Enumerator that enumerates all elements of the vector.</returns>
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _length; ++i)
+					yield return this[i];
+			}
+		}
+
+		/// <summary>
+		/// Creates a read-only vector with equidistant element values from start to end. The created vector
+		/// consumes memory only for the three variables, independent of its length.
+		/// </summary>
+		/// <param name="start">First element of the vector.</param>
+		/// <param name="end">Last element of the vector.</param>
+		/// <param name="length">Length of the vector.</param>
+		/// <returns>Read-only vector with equidistant element values from start to end.</returns>
+		public static <#= roVecT #> CreateEquidistantSequenceByStartEndLength(<#= scalT #> start, <#= scalT #> end, int length)
+		{
+			return new RO<#= bigScalT #>EquidistantElementVectorStartEndLength(start, end, length);
+		}
+
+
 		/// <summary>
     /// Serves as wrapper for an array to plug-in where a IROVector is neccessary.
     /// </summary>
-    private class RO<#= bigScalT #>ArrayWrapper : IROVector<<#= scalT #>>
+    private class RO<#= bigScalT #>ArrayWrapper : <#= roVecT #>
     {
       private int _length;
       protected <#= scalT #>[] _x;
@@ -196,11 +415,32 @@
       }
     }
 
+		/// <summary>
+		/// Wraps a <#= scalT #>[] array to get a IROVector.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
+		public static <#= roVecT #> ToROVector(this <#= scalT #>[] array)
+		{
+			return null == array ? null : new RO<#= bigScalT #>ArrayWrapper(array);
+		}
+
+		/// <summary>
+		/// Wraps a <#= scalT #>[] array till a given length to get a IROVector.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{<#= scalT #>}" /> interface that wraps the provided array.</returns>
+		public static <#= roVecT #> ToROVector(this <#= scalT #>[] array, int usedlength)
+		{
+			return new RO<#= bigScalT #>ArrayWrapper(array, usedlength);
+		}
+
 
 		  /// <summary>
     /// Serves as wrapper for a section of an array to plug-in where an IROVector is neccessary.
     /// </summary>
-    private class RO<#= bigScalT #>ArraySectionWrapper : IROVector<<#= scalT #>>
+    private class RO<#= bigScalT #>ArraySectionWrapper : <#= roVecT #>
     {
       protected <#= scalT #>[] _x;
       protected int _start;
@@ -267,11 +507,26 @@
       }
     }
 
+		/// <summary>
+		/// Wraps an array to an IROVector. Start and length of the used section of the array are specified in the parameters.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <param name="start">Index of the element in <paramref name="array"/> used as the first element of the vector.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+		/// <returns>A wrapper object with the <see cref="IROVector{<#= scalT #>}" /> interface that wraps the provided array.</returns>
+		public static <#= roVecT #> ToROVector(this <#= scalT #>[] array, int start, int usedlength)
+		{
+			if (0 == start)
+				return new RO<#= bigScalT #>ArrayWrapper(array, usedlength);
+			else
+				return new RO<#= bigScalT #>ArraySectionWrapper(array, start, usedlength);
+		}
+
 
 		/// <summary>
     /// Serves as wrapper for an array to plug-in where a IVector is neccessary.
     /// </summary>
-		private class RW<#= bigScalT #>ArrayWrapper : RO<#= bigScalT #>ArrayWrapper, IVector<<#= scalT #>>
+		private class RW<#= bigScalT #>ArrayWrapper : RO<#= bigScalT #>ArrayWrapper, <#= rwVecT #>
     {
       public RW<#= bigScalT #>ArrayWrapper(<#= scalT #>[] x)
         : base(x)
@@ -290,7 +545,30 @@
       }
     }
 
-		private class RW<#= bigScalT #>ArraySectionWrapper : RO<#= bigScalT #>ArraySectionWrapper, IVector<<#= scalT #>>
+
+			/// <summary>
+		/// Wraps an array to get an <see cref="IVector{<#= scalT #>}" />
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <returns>A wrapper objects with the <see cref="IVector{<#= scalT #>}" /> interface that wraps the provided array.</returns>
+		public static <#= rwVecT #> ToVector(this <#= scalT #>[] array)
+		{
+			return new RW<#= bigScalT #>ArrayWrapper(array);
+		}
+
+		/// <summary>
+		/// Wraps an array to get an <see cref="IVector{<#= scalT #>}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <param name="usedlength">Used length of the array to get the wrapped vector (i.e. the vector wraps around <paramref name="array"/>[0..usedLength-1]).</param>
+		/// <returns>A wrapper objects with the <see cref="IVector{<#= scalT #>}" /> interface that wraps the provided array.</returns>
+		public static <#= rwVecT #> ToVector(<#= scalT #>[] array, int usedlength)
+		{
+			return new RW<#= bigScalT #>ArrayWrapper(array, usedlength);
+		}
+
+		
+		private class RW<#= bigScalT #>ArraySectionWrapper : RO<#= bigScalT #>ArraySectionWrapper, <#= rwVecT #>
     {
       public RW<#= bigScalT #>ArraySectionWrapper(<#= scalT #>[] x)
         : base(x)
@@ -309,11 +587,27 @@
       }
     }
 
+		/// <summary>
+		/// Wraps a section of an array to get a <see cref="IVector{<#= scalT #>}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <param name="start">Index of first element of <paramref name="array"/> to use.</param>
+		/// <param name="count">Number of elements of <paramref name="array"/> to use.</param>
+		/// <returns>A wrapper objects with the <see cref="IVector{<#= scalT #>}" /> interface that wraps a section of the provided array.</returns>
+		public static <#= rwVecT #> ToVector(this <#= scalT #>[] array, int start, int count)
+		{
+			if (0 == start)
+				return new RW<#= bigScalT #>ArrayWrapper(array, count);
+			else
+				return new RW<#= bigScalT #>ArraySectionWrapper(array, start, count);
+		}
+
+
 
 		 /// <summary>
     /// Serves as wrapper for an IROVector to get only a section of the original wrapper.
     /// </summary>
-    private class RO<#= bigScalT #>VectorSectionWrapper : IROVector<<#= scalT #>>
+    private class RO<#= bigScalT #>VectorSectionWrapper : <#= roVecT #>
     {
       protected IReadOnlyList<<#= scalT #>> _x;
       private int _start;
@@ -362,10 +656,22 @@
     }
 
 
+		/// <summary>
+		/// Wraps a section of an original vector into a new vector.
+		/// </summary>
+		/// <param name="vector">Original vector.</param>
+		/// <param name="start">Index of the start of the section to wrap.</param>
+		/// <param name="usedLength">Length (=number of elements) of the section to wrap.</param>
+		/// <returns>A IROVector that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
+		public static <#= roVecT #> ToROVector(this IReadOnlyList<<#= scalT #>> vector, int start, int usedLength)
+		{
+			return new RO<#= bigScalT #>VectorSectionWrapper(vector, start, usedLength);
+		}
+
 		  /// <summary>
     /// Serves as wrapper for an IVector to get only a section of the original wrapper.
     /// </summary>
-    private class RW<#= bigScalT #>VectorSectionWrapper : IVector<<#= scalT #>>
+    private class RW<#= bigScalT #>VectorSectionWrapper : <#= rwVecT #>
     {
       protected IVector<<#= scalT #>> _x;
       private int _start;
@@ -415,6 +721,18 @@
           yield return this[i];
       }
     }
+
+		/// <summary>
+		/// Wraps a section of an original vector into a new vector.
+		/// </summary>
+		/// <param name="vector">Original vector.</param>
+		/// <param name="start">Index of the start of the section to wrap.</param>
+		/// <param name="len">Length (=number of elements) of the section to wrap.</param>
+		/// <returns>A IVector that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
+		public static IVector<<#= scalT #>> ToVector(this IVector<<#= scalT #>> vector, int start, int len)
+		{
+			return new RW<#= bigScalT #>VectorSectionWrapper(vector, start, len);
+		}
 
 <# 
 // ----------- End of code before previous line --------------------------------------------------------------------

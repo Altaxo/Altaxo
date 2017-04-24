@@ -26,6 +26,7 @@ using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 
 namespace Altaxo.Calc.Fourier
 {
@@ -127,6 +128,11 @@ namespace Altaxo.Calc.Fourier
 				get { return _wlen; }
 			}
 
+			public int Count
+			{
+				get { return _wlen; }
+			}
+
 			#endregion IROVector Members
 
 			#region INumericSequence Members
@@ -142,6 +148,18 @@ namespace Altaxo.Calc.Fourier
 					else
 						return RMath.Hypot(_arr[i], _arr[_arr.Length - i]);
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
 			}
 
 			#endregion INumericSequence Members
@@ -184,6 +202,11 @@ namespace Altaxo.Calc.Fourier
 				get { return _wlen; }
 			}
 
+			public int Count
+			{
+				get { return _wlen; }
+			}
+
 			#endregion IROVector Members
 
 			#region INumericSequence Members
@@ -199,6 +222,18 @@ namespace Altaxo.Calc.Fourier
 					else
 						return _arr[i];
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
 			}
 
 			#endregion INumericSequence Members
@@ -241,6 +276,11 @@ namespace Altaxo.Calc.Fourier
 				get { return _wlen; }
 			}
 
+			public int Count
+			{
+				get { return _wlen; }
+			}
+
 			#endregion IROVector Members
 
 			#region INumericSequence Members
@@ -256,6 +296,18 @@ namespace Altaxo.Calc.Fourier
 					else
 						return _arr[_arr.Length - i];
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
 			}
 
 			#endregion INumericSequence Members
@@ -355,6 +407,11 @@ namespace Altaxo.Calc.Fourier
 				get { return _wlen; }
 			}
 
+			public int Count
+			{
+				get { return _wlen; }
+			}
+
 			#endregion IROVector Members
 
 			#region INumericSequence Members
@@ -370,6 +427,18 @@ namespace Altaxo.Calc.Fourier
 					else
 						return Math.Atan2(_arr[_arr.Length - i], _arr[i]);
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
 			}
 
 			#endregion INumericSequence Members
@@ -419,6 +488,11 @@ namespace Altaxo.Calc.Fourier
 				get { return _wlen; }
 			}
 
+			public int Count
+			{
+				get { return _wlen; }
+			}
+
 			#endregion IROVector Members
 
 			#region INumericSequence Members
@@ -429,6 +503,18 @@ namespace Altaxo.Calc.Fourier
 				{
 					return i * _frequencyIncrement;
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
 			}
 
 			#endregion INumericSequence Members
@@ -478,6 +564,11 @@ namespace Altaxo.Calc.Fourier
 				get { return _wlen; }
 			}
 
+			public int Count
+			{
+				get { return _wlen; }
+			}
+
 			#endregion IROVector Members
 
 			#region INumericSequence Members
@@ -488,6 +579,18 @@ namespace Altaxo.Calc.Fourier
 				{
 					return i * _omegaIncrement;
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
 			}
 
 			#endregion INumericSequence Members
