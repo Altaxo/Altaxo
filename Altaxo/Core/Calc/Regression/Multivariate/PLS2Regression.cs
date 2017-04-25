@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public IROVector<double> PRESS { get { return this._PRESS; } }
 
-    public override IROVector<double> GetPRESSFromPreprocessed(IROMatrix matrixX)
+    public override IROVector<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
     {
       return this._PRESS;
     }
@@ -72,7 +72,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
     /// <param name="maxFactors">Maximum number of factors for analysis.</param>
     /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
-    public static PLS2Regression CreateFromPreprocessed(IROMatrix matrixX, IROMatrix matrixY, int maxFactors)
+    public static PLS2Regression CreateFromPreprocessed(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
     {
       PLS2Regression result = new PLS2Regression();
       result.AnalyzeFromPreprocessed(matrixX, matrixY, maxFactors);
@@ -86,7 +86,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
     /// <param name="maxFactors">Maximum number of factors for analysis.</param>
     /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
-    protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix matrixX, IROMatrix matrixY, int maxFactors)
+    protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
     {
       int numberOfFactors = _calib.NumberOfFactors = Math.Min(matrixX.Columns, maxFactors);
 
@@ -112,7 +112,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="predictedY">On return, holds the predicted y values. (They are centered).</param>
     /// <param name="spectralResiduals">On return, holds the spectral residual values.</param>
     public override void PredictedYAndSpectralResidualsFromPreprocessed(
-      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
       int numFactors, // number of factors to use for prediction
       IMatrix predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
       IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
@@ -143,7 +143,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       GetPredictionScoreMatrix(_calib.XLoads, _calib.YLoads, _calib.XWeights, _calib.CrossProduct, numFactors, predictionScores);
     }
 
-    protected override void InternalGetXLeverageFromPreprocessed(IROMatrix matrixX, int numFactors, IMatrix xLeverage)
+    protected override void InternalGetXLeverageFromPreprocessed(IROMatrix<double> matrixX, int numFactors, IMatrix xLeverage)
     {
       PLS2Regression.CalculateXLeverageFromPreprocessed(matrixX, _calib.XWeights, numFactors, xLeverage, 0);
     }
@@ -160,8 +160,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="V">Returns the vector of cross products. Should be initially empty.</param>
     /// <param name="PRESS">If not null, the PRESS value of each factor is stored (vertically) here. </param>
     public static void ExecuteAnalysis(
-      IROMatrix _X, // matrix of spectra (a spectra is a row of this matrix)
-      IROMatrix _Y, // matrix of concentrations (a mixture is a row of this matrix)
+      IROMatrix<double> _X, // matrix of spectra (a spectra is a row of this matrix)
+      IROMatrix<double> _Y, // matrix of concentrations (a mixture is a row of this matrix)
       ref int numFactors,
       IBottomExtensibleMatrix xLoads, // out: the loads of the X matrix
       IBottomExtensibleMatrix yLoads, // out: the loads of the Y matrix
@@ -288,11 +288,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     public static void Predict(
-      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
-      IROMatrix xLoads, // x-loads matrix
-      IROMatrix yLoads, // y-loads matrix
-      IROMatrix W, // weighting matrix
-      IROMatrix V,  // Cross product vector
+      IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
+      IROMatrix<double> xLoads, // x-loads matrix
+      IROMatrix<double> yLoads, // y-loads matrix
+      IROMatrix<double> W, // weighting matrix
+      IROMatrix<double> V,  // Cross product vector
       int numFactors, // number of factors to use for prediction
       IMatrix predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
       IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
@@ -359,10 +359,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="numFactors">Number of factors to use to calculate the score matrix.</param>
     /// <param name="predictionScores">Output: the resulting score matrix[ spectral bins, numberOfConcentrations]</param>
     public static void GetPredictionScoreMatrix(
-      IROMatrix xLoads, // x-loads matrix
-      IROMatrix yLoads, // y-loads matrix
-      IROMatrix W, // weighting matrix
-      IROMatrix V,  // Cross product vector
+      IROMatrix<double> xLoads, // x-loads matrix
+      IROMatrix<double> yLoads, // y-loads matrix
+      IROMatrix<double> W, // weighting matrix
+      IROMatrix<double> V,  // Cross product vector
       int numFactors, // number of factors to use for prediction
       IMatrix predictionScores
       )
@@ -393,8 +393,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     } // end partial-least-squares-predict
 
     public static void CalculateXLeverageFromPreprocessed(
-      IROMatrix matrixX,
-      IROMatrix W, // weighting matrix
+      IROMatrix<double> matrixX,
+      IROMatrix<double> W, // weighting matrix
       int numFactors, // number of factors to use for prediction
       IMatrix leverage, // Matrix of predicted y-values, must be same number of rows as spectra
       int leverageColumn
