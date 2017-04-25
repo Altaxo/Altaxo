@@ -624,7 +624,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			// fill lower triangle
 			for (i = 0; i < m_Order; i++)
 			{
-				Array.Copy(m_LeftColumn.data, 0, tm.data[i], i, m_Order - i);
+				Array.Copy(m_LeftColumn.GetInternalData(), 0, tm.data[i], i, m_Order - i);
 			}
 
 			tm = tm.GetTranspose();
@@ -632,7 +632,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			// fill upper triangle
 			for (i = 0; i < m_Order - 1; i++)
 			{
-				Array.Copy(m_TopRow.data, 1, tm.data[i], i + 1, m_Order - i - 1);
+				Array.Copy(m_TopRow.GetInternalData(), 1, tm.data[i], i + 1, m_Order - i - 1);
 			}
 #else
       int j, k;

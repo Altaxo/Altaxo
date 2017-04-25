@@ -329,9 +329,10 @@ namespace Altaxo.Calc.LinearAlgebra
 		private FloatVector Pivot(IROFloatVector B)
 		{
 			FloatVector ret = new FloatVector(B.Length);
+			var retArray = ret.GetInternalData();
 			for (int i = 0; i < pivots.Length; i++)
 			{
-				ret.data[i] = B[pivots[i]];
+				retArray[i] = B[pivots[i]];
 			}
 			return ret;
 		}

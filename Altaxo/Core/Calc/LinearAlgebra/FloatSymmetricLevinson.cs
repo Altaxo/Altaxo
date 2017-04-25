@@ -701,7 +701,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
 			// fill top row
 			float[] top = tm.data[0];
-			Array.Copy(m_LeftColumn.data, 0, top, 0, m_Order);
+			Array.Copy(m_LeftColumn.GetInternalData(), 0, top, 0, m_Order);
 
 			if (m_Order > 1)
 			{

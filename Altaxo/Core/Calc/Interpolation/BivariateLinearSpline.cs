@@ -33,8 +33,8 @@ namespace Altaxo.Calc.Interpolation
 	{
 		#region Member variables
 
-		private IROVector _x;
-		private IROVector _y;
+		private IReadOnlyList<double> _x;
+		private IReadOnlyList<double> _y;
 		private IROMatrix _vmatrix;
 
 		private bool _isXDecreasing;
@@ -51,20 +51,20 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="x">Vector of x values corresponding to the rows of the data matrix. Must be strongly increasing or decreasing.</param>
 		/// <param name="y">Vector of y values corresponding to the columns of the data matrix. Must be strongly increasing or decreasing.</param>
 		/// <param name="datamatrix"></param>
-		public BivariateLinearSpline(IROVector x, IROVector y, IROMatrix datamatrix)
+		public BivariateLinearSpline(IReadOnlyList<double> x, IReadOnlyList<double> y, IROMatrix datamatrix)
 		{
 			_x = x;
 			_y = y;
 			_vmatrix = datamatrix;
 
 			// check the arguments
-			if (_x.Length < 2)
+			if (_x.Count < 2)
 				throw new ArgumentException("x.Length is less or equal 1 (you can use univariate interpolation instead)");
-			if (_y.Length < 2)
+			if (_y.Count < 2)
 				throw new ArgumentException("y.Length is less or equal 1 (you can use univariate interpolation instead)");
-			if (_x.Length != _vmatrix.Rows)
+			if (_x.Count != _vmatrix.Rows)
 				throw new ArgumentException("Length of vector x is not equal to datamatrix.Rows");
-			if (_y.Length != _vmatrix.Columns)
+			if (_y.Count != _vmatrix.Columns)
 				throw new ArgumentException("Length of vector y is not equal to datamatrix.Columns");
 
 			if (!VectorMath.IsStrictlyIncreasingOrDecreasing(_x, out _isXDecreasing))
@@ -77,7 +77,7 @@ namespace Altaxo.Calc.Interpolation
 			_lastIY = 0;
 		}
 
-		private static int FindIndex(IROVector v, bool isDecreasing, int lastIdx, double x)
+		private static int FindIndex(IReadOnlyList<double> v, bool isDecreasing, int lastIdx, double x)
 		{
 			if (isDecreasing) // strictly decreasing
 			{
@@ -91,7 +91,7 @@ namespace Altaxo.Calc.Interpolation
 				}
 				else if (x < v[lastIdx + 1])
 				{
-					if (lastIdx + 2 <= v.Length)
+					if (lastIdx + 2 <= v.Count)
 						return -1;
 					if (x >= v[lastIdx + 2])
 						return lastIdx + 1;
@@ -114,7 +114,7 @@ namespace Altaxo.Calc.Interpolation
 				}
 				else if (x > v[lastIdx + 1])
 				{
-					if (lastIdx + 2 >= v.Length)
+					if (lastIdx + 2 >= v.Count)
 						return -1;
 					if (x <= v[lastIdx + 2])
 						return lastIdx + 1;
@@ -134,9 +134,9 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="isDecreasing"></param>
 		/// <param name="x"></param>
 		/// <returns></returns>
-		private static int BinarySearchForIndex(IROVector v, bool isDecreasing, double x)
+		private static int BinarySearchForIndex(IReadOnlyList<double> v, bool isDecreasing, double x)
 		{
-			int lenM1 = v.Length - 1;
+			int lenM1 = v.Count - 1;
 			if (isDecreasing)
 			{
 				if (x > v[0] || x < v[lenM1])
@@ -146,7 +146,7 @@ namespace Altaxo.Calc.Interpolation
 
 				int low = 0, high = lenM1;
 				int idx = lenM1 / 2;
-				for (; ; )
+				for (;;)
 				{
 					if (x > v[idx])
 					{
@@ -173,7 +173,7 @@ namespace Altaxo.Calc.Interpolation
 
 				int low = 0, high = lenM1;
 				int idx = lenM1 / 2;
-				for (; ; )
+				for (;;)
 				{
 					if (x < v[idx])
 					{

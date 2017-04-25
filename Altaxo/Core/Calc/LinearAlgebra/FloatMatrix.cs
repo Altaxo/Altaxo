@@ -636,10 +636,11 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException("row");
 			}
 			FloatVector ret = new FloatVector(columns);
+			var retArray = ret.GetInternalData();
 			for (int i = 0; i < columns; i++)
 			{
 #if MANAGED
-				ret.data[i] = data[row][i];
+				retArray[i] = data[row][i];
 #else
         ret.data[i] = data[i*rows+row];
 #endif
@@ -657,10 +658,11 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException("column");
 			}
 			FloatVector ret = new FloatVector(rows);
+			var retArray = ret.GetInternalData();
 			for (int i = 0; i < rows; i++)
 			{
 #if MANAGED
-				ret.data[i] = data[i][column];
+				retArray[i] = data[i][column];
 #else
         ret.data[i] = data[column*rows+i];
 #endif
@@ -674,10 +676,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			int min = System.Math.Min(rows, columns);
 			FloatVector ret = new FloatVector(min);
+			var retArray = ret.GetInternalData();
 			for (int i = 0; i < min; i++)
 			{
 #if MANAGED
-				ret.data[i] = data[i][i];
+				retArray[i] = data[i][i];
 #else
         ret.data[i] = data[i*rows+i];
 #endif
@@ -693,7 +696,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = 0; i < min; i++)
 			{
 #if MANAGED
-				data[i][i] = source.data[i];
+				data[i][i] = source[i];
 #else
         data[i*rows+i] = source.data[i];
 #endif
@@ -713,12 +716,12 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new ArgumentOutOfRangeException("row", "row must be greater than or equal to zero and less than RowLength.");
 			}
-			if (data.data.Length != columns)
+			if (data.Length != columns)
 			{
 				throw new ArgumentException("data length does not equal the matrix column length.");
 			}
 #if MANAGED
-			Array.Copy(data.data, 0, this.data[row], 0, data.data.Length);
+			Array.Copy(data.GetInternalData(), 0, this.data[row], 0, data.Length);
 #else
             for( int i = 0; i < columns; i++ ) {
                 this.data[i*rows+row] = data.data[i];
@@ -765,14 +768,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new ArgumentOutOfRangeException("column");
 			}
-			if (data.data.Length != rows)
+			if (data.Length != rows)
 			{
 				throw new ArgumentException("data length does not equal the matrix row length.");
 			}
 #if MANAGED
 			for (int i = 0; i < rows; i++)
 			{
-				this.data[i][column] = data.data[i];
+				this.data[i][column] = data[i];
 			}
 #else
             for( int i = 0; i < rows; i++ ) {
@@ -1518,12 +1521,13 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			FloatVector ret = new FloatVector(x.rows);
+			var retArray = ret.GetInternalData();
 #if MANAGED
 			for (int i = 0; i < x.rows; i++)
 			{
 				for (int j = 0; j < x.columns; j++)
 				{
-					ret.data[i] += x.data[i][j] * y.data[j];
+					retArray[i] += x.data[i][j] * y[j];
 				}
 			}
 #else
@@ -1575,7 +1579,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				for (int j = 0; j < columns; j++)
 				{
-					temp[i][0] += data[i][j] * x.data[j];
+					temp[i][0] += data[i][j] * x[j];
 				}
 			}
 #else

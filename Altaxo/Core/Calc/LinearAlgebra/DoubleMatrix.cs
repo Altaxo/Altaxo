@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
@@ -294,10 +295,10 @@ namespace Altaxo.Calc.LinearAlgebra
 			return result;
 		}
 
-		public static DoubleMatrix Diag(IROVector v)
+		public static DoubleMatrix Diag(IReadOnlyList<double> v)
 		{
-			var result = new DoubleMatrix(v.Length, v.Length);
-			for (int i = 0; i < v.Length; ++i)
+			var result = new DoubleMatrix(v.Count, v.Count);
+			for (int i = 0; i < v.Count; ++i)
 				result[i, i] = v[i];
 
 			return result;
@@ -696,10 +697,11 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException("row", "row must be greater than or equal to zero and less than RowLength.");
 			}
 			DoubleVector ret = new DoubleVector(columns);
+			var retArray = ret.GetInternalData();
 			for (int i = 0; i < columns; i++)
 			{
 #if MANAGED
-				ret.data[i] = data[row][i];
+				retArray[i] = data[row][i];
 #else
         ret.data[i] = data[i*rows+row];
 #endif
@@ -717,10 +719,11 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException("column", "column must be greater than or equal to zero and less than ColumnLength.");
 			}
 			DoubleVector ret = new DoubleVector(rows);
+			var retArray = ret.GetInternalData();
 			for (int i = 0; i < rows; i++)
 			{
 #if MANAGED
-				ret.data[i] = data[i][column];
+				retArray[i] = data[i][column];
 #else
         ret.data[i] = data[column*rows+i];
 #endif
@@ -734,10 +737,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			int min = System.Math.Min(rows, columns);
 			DoubleVector ret = new DoubleVector(min);
+			var retArray = ret.GetInternalData();
 			for (int i = 0; i < min; i++)
 			{
 #if MANAGED
-				ret.data[i] = data[i][i];
+				retArray[i] = data[i][i];
 #else
         ret.data[i] = data[i*rows+i];
 #endif
@@ -758,12 +762,12 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new ArgumentOutOfRangeException("row", "row must be greater than or equal to zero and less than RowLength.");
 			}
-			if (data.data.Length != columns)
+			if (data.Length != columns)
 			{
 				throw new ArgumentException("data length does not equal the matrix column length.");
 			}
 #if MANAGED
-			Array.Copy(data.data, 0, this.data[row], 0, data.data.Length);
+			Array.Copy(data.GetInternalData(), 0, this.data[row], 0, data.Length);
 #else
             for( int i = 0; i < columns; i++ ) {
                 this.data[i*rows+row] = data.data[i];
@@ -810,14 +814,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new ArgumentOutOfRangeException("column", "column must be greater than or equal to zero and less than ColumnLength.");
 			}
-			if (data.data.Length != rows)
+			if (data.Length != rows)
 			{
 				throw new ArgumentException("data length does not equal the matrix row length.");
 			}
 #if MANAGED
 			for (int i = 0; i < rows; i++)
 			{
-				this.data[i][column] = data.data[i];
+				this.data[i][column] = data[i];
 			}
 #else
             for( int i = 0; i < rows; i++ ) {
@@ -863,7 +867,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = 0; i < min; i++)
 			{
 #if MANAGED
-				data[i][i] = source.data[i];
+				data[i][i] = source[i];
 #else
         data[i*rows+i] = source.data[i];
 #endif
@@ -872,9 +876,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		///<summary>Set the diagonal of the <c>DoubleMatrix</c> to the values in a <c>DoubleVector</c> variable.</summary>
 		///<param name="source"><c>DoubleVector</c> with values to insert into diagonal of <c>DoubleMatrix</c>.</param>
-		public void SetDiagonal(IROVector source)
+		public void SetDiagonal(IReadOnlyList<double> source)
 		{
-			int min = System.Math.Min(System.Math.Min(rows, columns), source.Length);
+			int min = System.Math.Min(System.Math.Min(rows, columns), source.Count);
 #if MANAGED
 			for (int i = 0; i < min; i++)
 			{
@@ -1603,12 +1607,13 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			DoubleVector ret = new DoubleVector(a.rows);
+			var retArray = ret.GetInternalData();
 #if MANAGED
 			for (int i = 0; i < a.rows; i++)
 			{
 				for (int j = 0; j < a.columns; j++)
 				{
-					ret.data[i] += a.data[i][j] * b.data[j];
+					retArray[i] += a.data[i][j] * b[j];
 				}
 			}
 #else
@@ -1660,7 +1665,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				for (int j = 0; j < columns; j++)
 				{
-					temp[i][0] += data[i][j] * a.data[j];
+					temp[i][0] += data[i][j] * a[j];
 				}
 			}
 #else
@@ -2091,9 +2096,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="source">The vector to convert to an array.</param>
 		/// <param name="result">The resulting vector must be given.</param>
-		private static void ToLinearArray(IROVector source, double[] result)
+		private static void ToLinearArray(IReadOnlyList<double> source, double[] result)
 		{
-			int length = source.Length;
+			int length = source.Count;
 			for (int i = 0; i < length; ++i)
 				result[i] = source[i];
 		}
@@ -2127,9 +2132,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="source">The vector to convert to an array.</param>
 		/// <returns>Linear array of complex.</returns>
-		public static double[] ToLinearArray(IROVector source)
+		public static double[] ToLinearArray(IReadOnlyList<double> source)
 		{
-			double[] result = new double[source.Length];
+			double[] result = new double[source.Count];
 			ToLinearArray(source, result);
 			return result;
 		}

@@ -552,7 +552,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		private void BuildImage(Graphics gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix matrix, IROVector logicalRowHeaderValues, IROVector logicalColumnHeaderValues)
+		private void BuildImage(Graphics gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix matrix, IReadOnlyList<double> logicalRowHeaderValues, IReadOnlyList<double> logicalColumnHeaderValues)
 		{
 			// ---------------- prepare the color scaling -------------------------------------
 
@@ -604,9 +604,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return true;
 		}
 
-		private static bool IsEquidistant(IROVector x, double relthreshold)
+		private static bool IsEquidistant(IReadOnlyList<double> x, double relthreshold)
 		{
-			int NM1 = x.Length - 1;
+			int NM1 = x.Count - 1;
 			if (NM1 <= 0)
 				return true;
 			double first = x[0];
@@ -630,8 +630,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		// CoordinateSystem is not affine, or scales are non-linear
 		private void BuildImageV3(Graphics gfrx, IPlotArea gl,
-			IROVector lx,
-			IROVector ly,
+			IReadOnlyList<double> lx,
+			IReadOnlyList<double> ly,
 			IROMatrix vcolumns)
 		{
 			// allocate a bitmap of same dimensions than the underlying layer
@@ -661,9 +661,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			Logical3D rel = new Logical3D();
 
 			double minRX = lx[0];
-			double maxRX = lx[lx.Length - 1];
+			double maxRX = lx[lx.Count - 1];
 			double minRY = ly[0];
-			double maxRY = ly[ly.Length - 1];
+			double maxRY = ly[ly.Count - 1];
 
 			if (minRX > maxRX)
 			{

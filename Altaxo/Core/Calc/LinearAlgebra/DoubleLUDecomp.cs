@@ -31,6 +31,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -326,12 +327,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			return ret;
 		}
 
-		private DoubleVector Pivot(IROVector B)
+		private DoubleVector Pivot(IReadOnlyList<double> B)
 		{
-			DoubleVector ret = new DoubleVector(B.Length);
+			DoubleVector ret = new DoubleVector(B.Count);
+			var retArray = ret.GetInternalData();
+
 			for (int i = 0; i < pivots.Length; i++)
 			{
-				ret.data[i] = B[pivots[i]];
+				retArray[i] = B[pivots[i]];
 			}
 			return ret;
 		}
@@ -409,7 +412,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<exception cref="ArgumentNullException">B is null.</exception>
 		///<exception cref="SingularMatrixException">A is singular.</exception>
 		///<exception cref="ArgumentException">The number of rows of A and the length of B must be the same.</exception>
-		public DoubleVector Solve(IROVector B)
+		public DoubleVector Solve(IReadOnlyList<double> B)
 		{
 			if (B == null)
 			{
@@ -422,7 +425,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-				if (B.Length != order)
+				if (B.Count != order)
 				{
 					throw new System.ArgumentException("The length of B must be the same as the order of the matrix.");
 				}

@@ -25,6 +25,8 @@
 using Altaxo.Collections;
 using Altaxo.Data;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -59,7 +61,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
-			public int Length { get { ; return _rows; } }
+			public int Length { get {; return _rows; } }
+
+			public int Count { get {; return _rows; } }
 
 			/// <summary>
 			/// Element accessor.
@@ -70,6 +74,18 @@ namespace Altaxo.Calc.LinearAlgebra
 				{
 					return _column[row + _start];
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _rows; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _rows; ++i)
+					yield return this[i];
 			}
 
 			#endregion IROVector Members
@@ -97,7 +113,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
-			public int Length { get { ; return _rows == null ? 0 : _rows.Count; } }
+			public int Length { get {; return _rows == null ? 0 : _rows.Count; } }
+
+			public int Count { get {; return _rows == null ? 0 : _rows.Count; } }
 
 			/// <summary>
 			/// Element accessor.
@@ -108,6 +126,20 @@ namespace Altaxo.Calc.LinearAlgebra
 				{
 					return _column[_rows[row]];
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
 			}
 
 			#endregion IROVector Members
@@ -142,7 +174,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
-			public int Length { get { ; return _rows; } }
+			public int Length { get {; return _rows; } }
+
+			public int Count { get {; return _rows; } }
 
 			/// <summary>
 			/// Element accessor.
@@ -157,6 +191,20 @@ namespace Altaxo.Calc.LinearAlgebra
 				{
 					_column[row + _start] = value;
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
 			}
 
 			#endregion IROVector Members
@@ -184,7 +232,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
-			public int Length { get { ; return _rows == null ? 0 : _rows.Count; } }
+			public int Length { get {; return _rows == null ? 0 : _rows.Count; } }
+
+			public int Count { get {; return _rows == null ? 0 : _rows.Count; } }
 
 			/// <summary>
 			/// Element accessor.
@@ -199,6 +249,20 @@ namespace Altaxo.Calc.LinearAlgebra
 				{
 					_column[_rows[row]] = value;
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
 			}
 
 			#endregion IROVector Members
@@ -232,7 +296,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
-			public int Length { get { ; return _rows; } }
+			public int Length { get {; return _rows; } }
 
 			/// <summary>
 			/// Element accessor.

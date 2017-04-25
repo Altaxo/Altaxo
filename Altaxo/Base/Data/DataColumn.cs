@@ -550,7 +550,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Provides a setter property to which a vector can be assigned to. Copies all elements of the vector to this column.
 		/// </summary>
-		public virtual Altaxo.Calc.LinearAlgebra.IROVector AssignVector
+		public virtual IReadOnlyList<double> AssignVector
 		{
 			set
 			{

@@ -250,7 +250,7 @@ namespace Altaxo.Data
 			return new AltaxoVariant(this[i]);
 		}
 
-		double Altaxo.Calc.LinearAlgebra.INumericSequence.this[int i]
+		double Altaxo.Calc.LinearAlgebra.INumericSequence<double>.this[int i]
 		{
 			get
 			{

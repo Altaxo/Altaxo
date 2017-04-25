@@ -24,6 +24,7 @@
 
 using Altaxo.Calc.LinearAlgebra;
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -185,7 +186,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			_writer.WriteEndElement(); // name
 		}
 
-		private void WriteVector(string name, IROVector col, int numberOfData)
+		private void WriteVector(string name, IReadOnlyList<double> col, int numberOfData)
 		{
 			_writer.WriteStartElement(name);
 

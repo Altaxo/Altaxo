@@ -37,8 +37,8 @@ namespace Altaxo.Data
 		private IROMatrix _sourceMatrix;
 		private string _columnNameBase;
 
-		private List<Tuple<IROVector, string>> _rowHeaderColumns = new List<Tuple<IROVector, string>>();
-		private List<Tuple<IROVector, string>> _columnHeaderColumns = new List<Tuple<IROVector, string>>();
+		private List<Tuple<IReadOnlyList<double>, string>> _rowHeaderColumns = new List<Tuple<IReadOnlyList<double>, string>>();
+		private List<Tuple<IReadOnlyList<double>, string>> _columnHeaderColumns = new List<Tuple<IReadOnlyList<double>, string>>();
 
 		public MatrixToDataTableConverter(IROMatrix sourceMatrix, DataTable destinationTable)
 		{
@@ -66,7 +66,7 @@ namespace Altaxo.Data
 			c.Execute();
 		}
 
-		public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix matrix, string columnBaseName, IROVector rowHeaderColumn, string rowHeaderColumnName, IROVector colHeaderColumn, string colHeaderColumnName)
+		public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix matrix, string columnBaseName, IReadOnlyList<double> rowHeaderColumn, string rowHeaderColumnName, IReadOnlyList<double> colHeaderColumn, string colHeaderColumnName)
 		{
 			var c = new MatrixToDataTableConverter(matrix, destinationTable);
 			c.ColumnBaseName = columnBaseName;
@@ -89,28 +89,28 @@ namespace Altaxo.Data
 
 		public event Func<int, string> ColumnNameGenerator;
 
-		public void AddMatrixRowHeaderData(IROVector vector, string name)
+		public void AddMatrixRowHeaderData(IReadOnlyList<double> vector, string name)
 		{
 			if (null == vector)
 				throw new ArgumentNullException("vector");
 			if (string.IsNullOrEmpty(name))
 				throw new ArgumentNullException("name");
-			if (vector.Length != _sourceMatrix.Rows)
+			if (vector.Count != _sourceMatrix.Rows)
 				throw new InvalidDimensionMatrixException("The number of elements of the provided vector must match the number of rows of the matrix.");
 
-			_rowHeaderColumns.Add(new Tuple<IROVector, string>(vector, name));
+			_rowHeaderColumns.Add(new Tuple<IReadOnlyList<double>, string>(vector, name));
 		}
 
-		public void AddMatrixColumnHeaderData(IROVector vector, string name)
+		public void AddMatrixColumnHeaderData(IReadOnlyList<double> vector, string name)
 		{
 			if (null == vector)
 				throw new ArgumentNullException("vector");
 			if (string.IsNullOrEmpty(name))
 				throw new ArgumentNullException("name");
-			if (vector.Length != _sourceMatrix.Columns)
+			if (vector.Count != _sourceMatrix.Columns)
 				throw new InvalidDimensionMatrixException("The number of elements of the provided vector must match the number of columns of the matrix.");
 
-			_columnHeaderColumns.Add(new Tuple<IROVector, string>(vector, name));
+			_columnHeaderColumns.Add(new Tuple<IReadOnlyList<double>, string>(vector, name));
 		}
 
 		#endregion Input properties

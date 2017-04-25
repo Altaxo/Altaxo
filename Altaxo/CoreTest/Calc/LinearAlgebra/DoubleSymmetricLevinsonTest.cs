@@ -599,8 +599,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		{
 			Assert.Throws(typeof(System.RankException), () =>
 			{
-				DoubleVector dv = new DoubleVector(1, 0.0);
-				dv.RemoveAt(0);
+				DoubleVector dv = new DoubleVector();
+
 				DoubleSymmetricLevinson dsl = new DoubleSymmetricLevinson(dv);
 			});
 		}

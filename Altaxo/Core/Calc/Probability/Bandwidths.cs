@@ -32,9 +32,9 @@ namespace Altaxo.Calc.Probability
 {
 	public static class Bandwidths
 	{
-		public static double Nrd0(IROVector x)
+		public static double Nrd0(IReadOnlyList<double> x)
 		{
-			if (x.Length < 2) throw new ArgumentException("need at least 2 data points");
+			if (x.Count < 2) throw new ArgumentException("need at least 2 data points");
 
 			double hi = Statistics.StandardDeviation(x);
 			double lo = Math.Min(hi, Statistics.InterQuartileRange(x) / 1.34);  // qnorm(.75) - qnorm(.25) = 1.34898
@@ -49,7 +49,7 @@ namespace Altaxo.Calc.Probability
 				}
 			}
 
-			return 0.9 * lo * Math.Pow(x.Length, (-0.2));
+			return 0.9 * lo * Math.Pow(x.Count, (-0.2));
 		}
 	}
 }

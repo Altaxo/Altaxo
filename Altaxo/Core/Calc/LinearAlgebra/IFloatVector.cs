@@ -23,48 +23,11 @@
 #endregion Copyright
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-	public interface IFloatSequence
-	{
-		/// <summary>Gets the element of the sequence at index i.</summary>
-		/// <value>The element at index i.</value>
-		float this[int i] { get; }
-	}
-
-	/// <summary>
-	/// Interface for a read-only vector of double values.
-	/// </summary>
-	public interface IROFloatVector : IFloatSequence
-	{
-		/// <summary>The number of elements of this vector.</summary>
-		int Length { get; }  // change this later to length property
-	}
-
-	/// <summary>
-	/// Interface for a readable and writeable vector of double values.
-	/// </summary>
-	public interface IFloatVector : IROFloatVector
-	{
-		/// <summary>Read/write Accessor for the element at index i.</summary>
-		/// <value>The element at index i.</value>
-		new float this[int i] { get; set; }
-	}
-
-	/// <summary>
-	/// IRightExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
-	/// can be appended to the right of the matrix.
-	/// </summary>
-	public interface IFloatExtensibleVector : IFloatVector
-	{
-		/// <summary>
-		/// Append vector a to the end of this vector.
-		/// </summary>
-		/// <param name="a">The vector to append.</param>
-		void Append(IROFloatVector a);
-	}
-
 	public abstract class AbstractROFloatVector : IROFloatVector
 	{
 		static public implicit operator AbstractROFloatVector(float[] src)
@@ -79,6 +42,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			get;
 		}
 
+		public int Count { get { return Length; } }
+
 		#endregion IROVector Members
 
 		#region INumericSequence Members
@@ -86,6 +51,20 @@ namespace Altaxo.Calc.LinearAlgebra
 		public abstract float this[int i]
 		{
 			get;
+		}
+
+		public IEnumerator<float> GetEnumerator()
+		{
+			var len = Length;
+			for (int i = 0; i < len; ++i)
+				yield return this[i];
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			var len = Length;
+			for (int i = 0; i < len; ++i)
+				yield return this[i];
 		}
 
 		#endregion INumericSequence Members

@@ -256,25 +256,26 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
 				// Copy right hand side.
 				FloatVector X = new FloatVector(B);
+				var xarray = X.GetInternalData();
 				// Solve L*Y = B;
 				for (int i = 0; i < order; i++)
 				{
 					float sum = B[i];
 					for (int k = i - 1; k >= 0; k--)
 					{
-						sum -= l.data[i][k] * X.data[k];
+						sum -= l.data[i][k] * xarray[k];
 					}
-					X.data[i] = sum / l.data[i][i];
+					xarray[i] = sum / l.data[i][i];
 				}
 				// Solve L'*X = Y;
 				for (int i = order - 1; i >= 0; i--)
 				{
-					float sum = X.data[i];
+					float sum = xarray[i];
 					for (int k = i + 1; k < order; k++)
 					{
-						sum -= l.data[k][i] * X.data[k];
+						sum -= l.data[k][i] * xarray[k];
 					}
-					X.data[i] = sum / l.data[i][i];
+					xarray[i] = sum / l.data[i][i];
 				}
 
 				return X;

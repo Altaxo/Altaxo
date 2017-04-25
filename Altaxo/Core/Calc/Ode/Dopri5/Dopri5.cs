@@ -393,7 +393,7 @@ namespace Altaxo.Calc.Ode.Dopri5
 				NMAX = IWORK[1 + o_iwork];
 				if (NMAX <= 0)
 				{
-					if (IPRINT > 0) ;//ERROR-ERRORWRITE(IPRINT,*)' WRONG INPUT IWORK(1)=',IWORK(1)
+					if (IPRINT > 0) ; //ERROR-ERRORWRITE(IPRINT,*)' WRONG INPUT IWORK(1)=',IWORK(1)
 					ARRET = true;
 				}
 			}
@@ -734,8 +734,8 @@ namespace Altaxo.Calc.Ode.Dopri5
 			{
 				IRTRN = 0;
 			}
-		// C --- BASIC INTEGRATION STEP
-		LABEL1:;
+			// C --- BASIC INTEGRATION STEP
+			LABEL1:;
 			if (NSTEP > NMAX) goto LABEL78;
 			if (0.1E0 * Math.Abs(H) <= Math.Abs(X) * UROUND) goto LABEL77;
 			if ((X + 1.01E0 * H - XEND) * POSNEG > 0.0E0)
@@ -900,21 +900,21 @@ namespace Altaxo.Calc.Ode.Dopri5
 			}
 			H = HNEW;
 			goto LABEL1;
-		// C --- FAIL EXIT
-		LABEL76:;
+			// C --- FAIL EXIT
+			LABEL76:;
 			IDID = -4;
 			return;
-		LABEL77:;
+			LABEL77:;
 			if (IPRINT > 0) ;//ERROR-ERRORWRITE(IPRINT,979)X
 			if (IPRINT > 0) ;//ERROR-ERRORWRITE(IPRINT,*)' STEP SIZE T0O SMALL, H=',H
 			IDID = -3;
 			return;
-		LABEL78:;
+			LABEL78:;
 			if (IPRINT > 0) ;//ERROR-ERRORWRITE(IPRINT,979)X
 			if (IPRINT > 0) ;//ERROR-ERRORWRITE(IPRINT,*)' MORE THAN NMAX =',NMAX,'STEPS ARE NEEDED'
 			IDID = -2;
 			return;
-		LABEL79:;
+			LABEL79:;
 			if (IPRINT > 0) ;//ERROR-ERRORWRITE(IPRINT,979)X
 			IDID = 2;
 			return;

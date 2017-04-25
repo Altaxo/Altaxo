@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections;
 
 namespace Altaxo.Data
 {
@@ -92,6 +93,11 @@ namespace Altaxo.Data
 				get { return _participatingDataRows.Count; }
 			}
 
+			public int Count
+			{
+				get { return _participatingDataRows.Count; }
+			}
+
 			int? IReadableColumn.Count
 			{
 				get { return Length; }
@@ -134,6 +140,20 @@ namespace Altaxo.Data
 			public object Clone()
 			{
 				throw new NotImplementedException();
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
 			}
 		}
 
@@ -1044,7 +1064,7 @@ namespace Altaxo.Data
 		public IROVector GetRowHeaderWrapper()
 		{
 			if (_rowHeaderColumn.IsEmpty || _rowHeaderColumn.Document == null)
-				return VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1, _participatingDataRows.Count);
+				return VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataRows.Count);
 			else
 				return new HeaderColumnWrapper(_rowHeaderColumn.Document, _participatingDataRows);
 		}
@@ -1056,7 +1076,7 @@ namespace Altaxo.Data
 		public IROVector GetColumnHeaderWrapper()
 		{
 			if (_columnHeaderColumn.IsEmpty || _columnHeaderColumn.Document == null)
-				return VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1, _participatingDataColumns.Count);
+				return VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataColumns.Count);
 			else
 				return new HeaderColumnWrapper(_columnHeaderColumn.Document, _participatingDataColumns);
 		}

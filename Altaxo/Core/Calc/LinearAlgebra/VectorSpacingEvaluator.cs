@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -42,9 +43,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// the vector elements.
 		/// </summary>
 		/// <param name="vec">The vector.</param>
-		public VectorSpacingEvaluator(IROVector vec)
+		public VectorSpacingEvaluator(IReadOnlyList<double> vec)
 		{
-			_numtotalsteps = vec.Length - 1;
+			_numtotalsteps = vec.Count - 1;
 			for (int i = 0; i < _numtotalsteps; i++)
 			{
 				double step = vec[i + 1] - vec[i];

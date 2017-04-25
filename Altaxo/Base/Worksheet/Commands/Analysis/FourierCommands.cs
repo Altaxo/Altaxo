@@ -214,8 +214,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 			if (options.OutputPeriodHeaderColumns)
 			{
-				matTableConverter.AddMatrixRowHeaderData(VectorMath.Divide(1, rowFrequencies), string.IsNullOrEmpty(options.PeriodRowHeaderColumnName) ? "RowPeriods" : options.PeriodRowHeaderColumnName);
-				matTableConverter.AddMatrixColumnHeaderData(VectorMath.Divide(1, columnFrequencies), string.IsNullOrEmpty(options.PeriodColumnHeaderColumnName) ? "ColumnPeriods" : options.PeriodColumnHeaderColumnName);
+				matTableConverter.AddMatrixRowHeaderData(VectorMath.ToInverseROVector(rowFrequencies), string.IsNullOrEmpty(options.PeriodRowHeaderColumnName) ? "RowPeriods" : options.PeriodRowHeaderColumnName);
+				matTableConverter.AddMatrixColumnHeaderData(VectorMath.ToInverseROVector(columnFrequencies), string.IsNullOrEmpty(options.PeriodColumnHeaderColumnName) ? "ColumnPeriods" : options.PeriodColumnHeaderColumnName);
 			}
 
 			matTableConverter.Execute();

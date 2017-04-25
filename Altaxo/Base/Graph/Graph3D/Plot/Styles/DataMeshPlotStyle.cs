@@ -329,9 +329,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			return true;
 		}
 
-		private static bool IsEquidistant(IROVector x, double relthreshold)
+		private static bool IsEquidistant(IReadOnlyList<double> x, double relthreshold)
 		{
-			int NM1 = x.Length - 1;
+			int NM1 = x.Count - 1;
 			if (NM1 <= 0)
 				return true;
 			double first = x[0];
@@ -347,7 +347,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			return true;
 		}
 
-		private void BuildImage(IGraphicsContext3D gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix matrix, IROVector logicalRowHeaderValues, IROVector logicalColumnHeaderValues)
+		private void BuildImage(IGraphicsContext3D gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix matrix, IReadOnlyList<double> logicalRowHeaderValues, IReadOnlyList<double> logicalColumnHeaderValues)
 		{
 			BuildImageWithUColor(gfrx, gl, logicalRowHeaderValues, logicalColumnHeaderValues, matrix); // affine, linear scales, and equidistant points
 		}
@@ -355,8 +355,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		private void BuildImageWithUColor(
 				IGraphicsContext3D g,
 				IPlotArea gl,
-				IROVector lx,
-				IROVector ly,
+				IReadOnlyList<double> lx,
+				IReadOnlyList<double> ly,
 				IROMatrix matrix)
 		{
 			IPositionNormalUIndexedTriangleBuffer buffers;
@@ -381,19 +381,19 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			var buf = buffers;
 			var offs = buf.VertexCount;
 
-			int lxl = lx.Length;
-			int lyl = ly.Length;
-			int lxlm1 = lx.Length - 1;
-			int lylm1 = ly.Length - 1;
+			int lxl = lx.Count;
+			int lyl = ly.Count;
+			int lxlm1 = lx.Count - 1;
+			int lylm1 = ly.Count - 1;
 
 			var vertexPoints = new PointD3D[lxl, lyl];
 			var vertexColors = new Color[lxl, lyl];
 
 			PointD3D pt;
 			var zScale = gl.ZAxis;
-			for (int i = 0; i < lx.Length; ++i)
+			for (int i = 0; i < lx.Count; ++i)
 			{
-				for (int j = 0; j < ly.Length; ++j)
+				for (int j = 0; j < ly.Count; ++j)
 				{
 					double lz = zScale.PhysicalVariantToNormal(matrix[i, j]);
 					gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(lx[i], ly[j], lz), out pt);
@@ -404,9 +404,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			}
 
 			// calculate the normals
-			for (int i = 0; i < lx.Length; ++i)
+			for (int i = 0; i < lx.Count; ++i)
 			{
-				for (int j = 0; j < ly.Length; ++j)
+				for (int j = 0; j < ly.Count; ++j)
 				{
 					var pm = vertexPoints[i, j];
 					var vec1 = vertexPoints[Math.Min(i + 1, lxlm1), j] - vertexPoints[Math.Max(i - 1, 0), j];

@@ -24,6 +24,7 @@
 
 using Altaxo.Calc.LinearAlgebra;
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -37,7 +38,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			get;
 		}
 
-		IROVector XOfX
+		IReadOnlyList<double> XOfX
 		{
 			get;
 		}
@@ -73,7 +74,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		private SpectralPreprocessingOptions _preprocessOptions;
 
 		private int[] _spectralRegions;
-		private IROVector _xOfX;
+		private IReadOnlyList<double> _xOfX;
 		private IROVector _xMean;
 		private IROVector _xScale;
 		private IROVector _yMean;
@@ -91,7 +92,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			set { _spectralRegions = value; }
 		}
 
-		public IROVector XOfX
+		public IReadOnlyList<double> XOfX
 		{
 			get { return _xOfX; }
 			set { _xOfX = value; }

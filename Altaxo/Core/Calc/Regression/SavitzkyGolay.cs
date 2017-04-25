@@ -24,6 +24,7 @@
 
 using Altaxo.Calc.LinearAlgebra;
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.Regression
 {
@@ -223,7 +224,7 @@ namespace Altaxo.Calc.Regression
 		/// </summary>
 		/// <param name="array">The array of numbers to filter.</param>
 		/// <param name="result">The resulting array. Must not be identical to the input array!</param>
-		public void Apply(IROVector array, IVector result)
+		public void Apply(IReadOnlyList<double> array, IVector result)
 		{
 			int filterPoints = _middle.Length;
 			int sidePoints = (filterPoints - 1) / 2;
@@ -231,7 +232,7 @@ namespace Altaxo.Calc.Regression
 			if (object.ReferenceEquals(array, result))
 				throw new ArgumentException("Argument array and result must not be identical!");
 
-			if (array.Length < filterPoints)
+			if (array.Count < filterPoints)
 				throw new ArgumentException("Input array must have same or greater length than the filter!");
 
 			// left side
@@ -245,7 +246,7 @@ namespace Altaxo.Calc.Regression
 			}
 
 			// middle
-			int middleend = array.Length - filterPoints;
+			int middleend = array.Count - filterPoints;
 			for (int n = 0; n <= middleend; n++)
 			{
 				double sum = 0;
@@ -255,8 +256,8 @@ namespace Altaxo.Calc.Regression
 			}
 
 			// right side
-			int arrayOffset = array.Length - filterPoints;
-			int resultOffset = array.Length - 1;
+			int arrayOffset = array.Count - filterPoints;
+			int resultOffset = array.Count - 1;
 			for (int n = 0; n < sidePoints; n++)
 			{
 				double[] filter = _right[n];

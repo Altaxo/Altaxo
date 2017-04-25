@@ -516,7 +516,7 @@ namespace Altaxo.Data
 		/// <param name="spacingValue">If the function is successful, contains the uniform spacing value.</param>
 		/// <param name="errorMessage">If the function is not successful, contains a diagnostic error message.</param>
 		/// <returns><c>True</c> if the function was successful, otherwise <c>False</c>.</returns>
-		public static bool TryGetRowOrColumnSpacing(IROVector headerVector, string rowOrColumn, out double spacingValue, out string errorMessage)
+		public static bool TryGetRowOrColumnSpacing(IReadOnlyList<double> headerVector, string rowOrColumn, out double spacingValue, out string errorMessage)
 		{
 			var spacing = new Calc.LinearAlgebra.VectorSpacingEvaluator(headerVector);
 

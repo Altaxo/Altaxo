@@ -674,23 +674,23 @@ namespace Altaxo.Calc.Fourier
 		/// <param name="src">Real representation of the spectrum.</param>
 		/// <param name="destRe">On return, contains the real part of the spectrum.</param>
 		/// <param name="destIm">On return, contains the imaginary part of the spectrum.</param>
-		public static void FromRepresentationRealToCompactComplex(IROVector src, IVector destRe, IVector destIm)
+		public static void FromRepresentationRealToCompactComplex(IReadOnlyList<double> src, IVector destRe, IVector destIm)
 		{
-			bool isEven = 0 == (src.Length % 2);
+			bool isEven = 0 == (src.Count % 2);
 			int destLen2;
 			if (isEven)
 			{
-				destLen2 = src.Length / 2;
+				destLen2 = src.Count / 2;
 				destRe[0] = src[0];
 				destIm[0] = src[destLen2];
 			}
 			else // odd
 			{
-				destLen2 = (src.Length - 1) / 2;
+				destLen2 = (src.Count - 1) / 2;
 				destRe[0] = src[0];
 				destIm[0] = 0;
 			}
-			for (int i = 1, j = src.Length - 1; i < j; i++, j--)
+			for (int i = 1, j = src.Count - 1; i < j; i++, j--)
 			{
 				destRe[i] = src[i];
 				destIm[i] = src[j];
@@ -702,21 +702,21 @@ namespace Altaxo.Calc.Fourier
 		/// </summary>
 		/// <param name="src">Real representation of the spectrum.</param>
 		/// <param name="dest">On return, contains the complex spectrum.</param>
-		public static void FromRepresentationRealToCompactComplex(IROVector src, IComplexDoubleVector dest)
+		public static void FromRepresentationRealToCompactComplex(IReadOnlyList<double> src, IComplexDoubleVector dest)
 		{
-			bool isEven = 0 == (src.Length % 2);
+			bool isEven = 0 == (src.Count % 2);
 			int destLen2;
 			if (isEven)
 			{
-				destLen2 = src.Length / 2;
+				destLen2 = src.Count / 2;
 				dest[0] = Complex.FromRealImaginary(src[0], src[destLen2]);
 			}
 			else // odd
 			{
-				destLen2 = (src.Length - 1) / 2;
+				destLen2 = (src.Count - 1) / 2;
 				dest[0] = Complex.FromRealImaginary(src[0], 0);
 			}
-			for (int i = 1, j = src.Length - 1; i < j; i++, j--)
+			for (int i = 1, j = src.Count - 1; i < j; i++, j--)
 			{
 				dest[i] = Complex.FromRealImaginary(src[i], src[j]);
 			}
@@ -728,7 +728,7 @@ namespace Altaxo.Calc.Fourier
 		/// <param name="re">Stores the real part of the spectrum.</param>
 		/// <param name="im">Stores the imaginary part of the spectrum.</param>
 		/// <param name="destination">After return, stores the spectrum in normalized real representation. The length of the vector has to be equal to the length of the FFT. </param>
-		public static void FromRepresentationCompactComplexToReal(IROVector re, IROVector im, IVector destination)
+		public static void FromRepresentationCompactComplexToReal(IReadOnlyList<double> re, IReadOnlyList<double> im, IVector destination)
 		{
 			bool isEven = 0 == (destination.Length % 2);
 			int destLen2;

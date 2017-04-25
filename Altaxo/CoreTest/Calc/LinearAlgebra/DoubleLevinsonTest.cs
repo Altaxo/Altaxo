@@ -765,8 +765,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		{
 			Assert.Throws(typeof(System.RankException), () =>
 			{
-				DoubleVector dv = new DoubleVector(1, 0.0);
-				dv.RemoveAt(0);
+				DoubleVector dv = new DoubleVector();
 				DoubleLevinson dl = new DoubleLevinson(dv, dv);
 			});
 		}
@@ -2018,8 +2017,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		{
 			Assert.Throws(typeof(System.RankException), () =>
 			{
-				DoubleVector LC = new DoubleVector(1, 0.0);
-				LC.RemoveAt(0);
+				DoubleVector LC = new DoubleVector();
+
 				DoubleVector X = DoubleLevinson.Solve(LC, TR10, Y10);
 			});
 		}
@@ -2277,8 +2276,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		{
 			Assert.Throws(typeof(System.RankException), () =>
 			{
-				DoubleVector LC = new DoubleVector(1, 0.0);
-				LC.RemoveAt(0);
+				DoubleVector LC = new DoubleVector();
+
 				DoubleMatrix X = DoubleLevinson.Solve(LC, TR10, DoubleMatrix.CreateIdentity(10));
 			});
 		}
@@ -2540,8 +2539,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		{
 			Assert.Throws(typeof(System.RankException), () =>
 			{
-				DoubleVector LC = new DoubleVector(1, 0.0);
-				LC.RemoveAt(0);
+				DoubleVector LC = new DoubleVector();
+
 				DoubleMatrix X = DoubleLevinson.Inverse(LC, LC);
 			});
 		}

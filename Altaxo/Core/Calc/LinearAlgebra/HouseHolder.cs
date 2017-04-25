@@ -26,6 +26,7 @@
 
 //Port of JAMPACK's householder implementation.
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -693,14 +694,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			return u;
 		}
 
-		public static IMatrix UA(IROVector u, IMatrix A, int r1, int r2, int c1, int c2, IVector v)
+		public static IMatrix UA(IReadOnlyList<double> u, IMatrix A, int r1, int r2, int c1, int c2, IVector v)
 		{
 			if (r2 < r1 || c2 < c1)
 			{
 				return A;
 			}
 
-			if (r2 - r1 + 1 > u.Length)
+			if (r2 - r1 + 1 > u.Count)
 			{
 				throw new ArgumentException("Householder vector too short.", "u");
 			}

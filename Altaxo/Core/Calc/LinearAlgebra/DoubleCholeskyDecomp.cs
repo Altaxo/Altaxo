@@ -31,6 +31,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -236,7 +237,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<exception cref="ArgumentNullException">B is null.</exception>
 		///<exception cref="NotPositiveDefiniteException">A is not positive definite.</exception>
 		///<exception cref="ArgumentException">The number of rows of A and the length of B must be the same.</exception>
-		public DoubleVector Solve(IROVector B)
+		public DoubleVector Solve(IReadOnlyList<double> B)
 		{
 			if (B == null)
 			{
@@ -249,32 +250,34 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			else
 			{
-				if (B.Length != order)
+				if (B.Count != order)
 				{
 					throw new System.ArgumentException("The length of B must be the same as the order of the matrix.");
 				}
 #if MANAGED
 				// Copy right hand side.
 				DoubleVector X = new DoubleVector(B);
+				var xarray = X.GetInternalData();
+
 				// Solve L*Y = B;
 				for (int i = 0; i < order; i++)
 				{
 					double sum = B[i];
 					for (int k = i - 1; k >= 0; k--)
 					{
-						sum -= l.data[i][k] * X.data[k];
+						sum -= l.data[i][k] * xarray[k];
 					}
-					X.data[i] = sum / l.data[i][i];
+					xarray[i] = sum / l.data[i][i];
 				}
 				// Solve L'*X = Y;
 				for (int i = order - 1; i >= 0; i--)
 				{
-					double sum = X.data[i];
+					double sum = xarray[i];
 					for (int k = i + 1; k < order; k++)
 					{
-						sum -= l.data[k][i] * X.data[k];
+						sum -= l.data[k][i] * xarray[k];
 					}
-					X.data[i] = sum / l.data[i][i];
+					xarray[i] = sum / l.data[i][i];
 				}
 
 				return X;
