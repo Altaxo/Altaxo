@@ -33,13 +33,6 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   public static partial class VectorMath
   {
-    private static Func<int, IVector> _funcCreateNewVector = DefaultCreateNewVector;
-
-    public static IVector DefaultCreateNewVector(int length)
-    {
-      return new DoubleVector(length);
-    }
-
     #region Extensible Vector
 
     private class ExtensibleVector<T> : IExtensibleVector<T>
