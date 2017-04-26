@@ -21,8 +21,8 @@ namespace Altaxo.Calc.LinearAlgebra
     var types = new string[][]
     {      // scalar,   Name           additionalImplements roMatrixType       rwMatrixType            inverseElementType
 		       // ---------------------------------------------------------------------------------------------------------------------------
-      new[]{ "Double", "DoubleVector", ", IVector",      "IROMatrix",       "DoubleMatrix" },
-      new[]{ "Single", "FloatVector",  ", IFloatVector", "IROFloatMatrix", "FloatMatrix" },
+      new[]{ "Double", "DoubleVector", ", IVector",      "IROMatrix<double>",    "DoubleMatrix" },
+      new[]{ "Single", "FloatVector",  ", IFloatVector", "IROMatrix<float>",     "FloatMatrix" },
     };
 
     foreach (var entry in types)
@@ -106,6 +106,16 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new <#= vecName #>() { _array = values ?? throw new ArgumentNullException(nameof(values)) };
 		}
 
+		/// <summary>
+		/// Creates a vector with the given length, all elements initialized to zero.
+		/// </summary>
+		/// <param name="lengthOfVector">Length of the vector.</param>
+		/// <returns>vector with the given length, all elements initialized to zero.</returns>
+		public static <#= vecName #> Zeros(int lengthOfVector)
+		{
+			return new <#= vecName #>(lengthOfVector);
+		}
+
 		///<summary>Returns a subvector of this vector.</summary>
 		///<param name="startElement">Return data starting from this element.</param>
 		///<param name="endElement">Return data ending in this element.</param>
@@ -139,6 +149,75 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		#endregion Constructors
+
+		#region Norm
+
+		/// <summary>
+    /// Calculates the L1 norm of the vector (as the sum of the absolute values of the elements).
+    /// </summary>
+    /// <param name="vector">The vector.</param>
+    /// <returns>L1 norm of the vector (sum of the absolute values of the elements).</returns>
+    public <#= scalT #> L1Norm
+		{
+			get
+			{
+				return VectorMath.L1Norm(this._array);
+			}
+		}
+
+		/// <summary>Given an n-vector x, this function calculates the euclidean norm of x.</summary>
+		/// <returns>The euclidian norm of the vector , i.e. the square root of the sum of squares of the elements.</returns>
+		/// <remarks>
+		///     the euclidean norm is computed by accumulating the sum of
+		///     squares in three different sums. the sums of squares for the
+		///     small and large components are scaled so that no overflows
+		///     occur. non-destructive underflows are permitted. underflows
+		///     and overflows do not occur in the computation of the unscaled
+		///     sum of squares for the intermediate components.
+		///     the definitions of small, intermediate and large components
+		///     depend on two constants, rdwarf and rgiant. the main
+		///     restrictions on these constants are that rdwarf**2 not
+		///     underflow and rgiant**2 not overflow. the constants
+		///     given here are suitable for every known computer.
+		///     <para>burton s. garbow, kenneth e. hillstrom, jorge j. more</para>
+		/// </remarks> 
+		public double L2Norm
+		{
+			get
+			{
+				return VectorMath.L2Norm(this._array);
+			}
+		}
+
+			///<summary>Gets vector's Euclidean norm</summary>
+		public double EuclideanNorm
+		{
+			get
+			{
+				return VectorMath.L2Norm(this._array);
+			}
+		}
+
+		/// <summary>Gets L-infinity norm of the vector (which is the maximum
+		/// of the absolute values of the elements.</summary>
+		public <#= scalT #> LInfinityNorm
+		{
+			get
+			{
+				return VectorMath.LInfinityNorm(this._array);
+			}
+		}
+
+		///<summary>Compute the p Norm of this vector.</summary>
+    ///<param name="p">Order of the norm.</param>
+		///<returns>The p norm of this vector.</returns>
+		///<remarks>p &gt; 0, if p &lt; 0, Abs(p) is used. If p = 0, the infinity norm is returned.</remarks>
+		public double LpNorm(double p)
+		{
+			return VectorMath.LpNorm(this._array, p);
+		}
+
+		#endregion
 
 
 		///<summary>Return the index of the absolute maximum element in the vector.</summary>
@@ -188,49 +267,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return Blas.Dot.Compute(this.Length, this._array, 1, Y._array, 1);
 		}
 
-		///<summary>Compute the Euclidean Norm ||x||_2 of this <c>DoubleVector</c></summary>
-		///<returns><c>double</c> results from norm.</returns>
-		public <#= scalT #> GetNorm()
-		{
-			return Blas.Nrm2.Compute(this.Length, this._array, 1);
-		}
-
-		///<summary>Compute the P Norm of this <c>DoubleVector</c></summary>
-		///<returns><c>double</c> results from norm.</returns>
-		///<remarks>p &gt; 0, if p &lt; 0, ABS(p) is used. If p = 0, the infinity norm is returned.</remarks>
-		public <#= scalT #> GetNorm(double p)
-		{
-			if (p == 0)
-			{
-				return GetInfinityNorm();
-			}
-			if (p < 0)
-			{
-				p = -p;
-			}
-			double ret = 0;
-			for (int i = 0; i < _array.Length; i++)
-			{
-				ret += System.Math.Pow(System.Math.Abs(_array[i]), p);
-			}
-			return (<#= scalT #>)System.Math.Pow(ret, 1 / p);
-		}
-
-		///<summary>Compute the Infinity Norm of this <c>DoubleVector</c></summary>
-		///<returns><c>double</c> results from norm.</returns>
-		public <#= scalT #> GetInfinityNorm()
-		{
-			<#= scalT #> ret = 0;
-			for (int i = 0; i < _array.Length; i++)
-			{
-				var tmp = System.Math.Abs(_array[i]);
-				if (tmp > ret)
-				{
-					ret = tmp;
-				}
-			}
-			return ret;
-		}
+	
 
 		///<summary>Sum the components in this <c>DoubleVector</c></summary>
 		///<returns><c>double</c> results from the summary of <c>DoubleVector</c> components.</returns>

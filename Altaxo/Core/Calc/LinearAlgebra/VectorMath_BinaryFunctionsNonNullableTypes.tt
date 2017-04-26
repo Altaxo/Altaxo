@@ -102,6 +102,32 @@
 				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
 		}
 
+		/// <summary>Performs linear interpolation between two vectors at specified points.</summary>
+		/// <param name="t">Scalar parameter of interpolation</param>
+		/// <param name="t0">Scalar parameter corresponding to first vector v0.</param>
+		/// <param name="v0">Vector at first parameter point.</param>
+		/// <param name="t1">Scalar parameter corresponding to the second vector v1.</param>
+		/// <param name="v1">Vector at second parameter point.</param>
+		/// <param name="destinationVector">Intepolated vector value at point <paramref name="t"/></param>
+		public static void Lerp(double t, double t0, <#= arrT #> v0, double t1, <#= arrT #> v1, <#= rwArrT #> destinationVector)
+		{
+			if(null == v0)
+				throw new ArgumentNullException(nameof(v0));
+			if(null == v1)
+				throw new ArgumentNullException(nameof(v1));
+			if(null == destinationVector)
+				throw new ArgumentNullException(nameof(destinationVector));
+			if (v0.<#= length #> != v1.<#= length #>)
+        throw new ArgumentException("Length of vectors v0 and v1 unequal");
+      if (destinationVector.<#= length #> != v0.<#= length #>)
+        throw new ArgumentException("Length of vectors destinationVector and v0 unequal");
+
+			for(int i=v0.<#= length #> -1; i>=0; --i)
+				{
+				destinationVector[i] = (<#= scalT #>)((v0[i] * (t1 - t) + v1[i] * (t - t0)) / (t1 - t0));
+				}
+		}
+
 
      /// <summary>
     /// Multiplies (elementwise) two vectors a and b and stores the result in c. All vectors must have the same length.

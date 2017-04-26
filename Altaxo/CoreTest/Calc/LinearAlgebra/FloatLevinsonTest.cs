@@ -741,7 +741,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.ArgumentNullException), () =>
       {
-        FloatLevinson fl = new FloatLevinson(null as ROFloatVector, TR5.ToArray());
+        FloatLevinson fl = new FloatLevinson(null as IROVector<float>, TR5.ToArray());
       });
     }
 
@@ -751,7 +751,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(System.ArgumentNullException), () =>
       {
-        FloatLevinson fl = new FloatLevinson(LC5.ToArray(), null as ROFloatVector);
+        FloatLevinson fl = new FloatLevinson(LC5.ToArray(), null as IROVector<float>);
       });
     }
 

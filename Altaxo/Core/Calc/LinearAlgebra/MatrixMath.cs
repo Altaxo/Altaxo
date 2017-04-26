@@ -1369,7 +1369,7 @@ namespace Altaxo.Calc.LinearAlgebra
       return s.ToString();
     }
 
-    public static string MatrixToString(string name, IROFloatMatrix a)
+    public static string MatrixToString(string name, IROMatrix<float> a)
     {
       if (null == name)
         name = "";

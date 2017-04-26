@@ -426,25 +426,69 @@
 		{
 			<#= typeAbs #> max = 0;
 			int i;
-			for (i = 0; i < vector.<#= length #>; ++i)
+			for (i = vector.<#= length #> -1; i>=0; --i)
 			{
 				var temp = Math.Abs(<#= upCast #>vector[i]);
-				if (!(max<temp)) // if we have a double.NaN here, this expression is true and max <- double.NaN
+				if (!(max>temp)) // if we have a double.NaN here, this expression is true and max <- double.NaN
 				{
 					max = temp;
-					break;
+
+<#
+					if(scalT=="double")
+					{
+#>
+					if(double.IsNaN(max))
+						break;
+<#
+					}
+					else if(scalT=="float")
+					{
+#>
+					if(float.IsNaN(max))
+						break;
+<#
+					}
+#>
+
 				}
 			}
-			for (++i; i < vector.<#= length #>; ++i)
-			{
-				var temp = Math.Abs(<#= upCast #>vector[i]);
-				if (max>temp) // if max was double.NaN, it will keep staying double.NaN
-				{
-					max = temp;
-				}
-			}
+			
 			return max;
 		}
+
+		///<summary>Compute the p Norm of this vector.</summary>
+		/// <param name="vector">The vector.</param>
+    ///<param name="p">Order of the norm.</param>
+		///<returns>The p norm of the vector.</returns>
+		///<remarks>p &gt; 0, if p &lt; 0, ABS(p) is used. If p = 0 or positive infinity, the infinity norm is returned.</remarks>
+		public static double LpNorm(this <#= arrT #> vector, double p)
+		{
+		if (p == 0 )
+			{
+        return LInfinityNorm(vector);
+      }
+			else if(p==1)
+			{
+				return L1Norm(vector);
+			}
+			else if(p == 2)
+			{
+				return L2Norm(vector);
+			}
+
+			if (p < 0)
+			{
+				p = -p;
+			}
+			double ret = 0;
+			for (int i = vector.<#= length #>-1; i >=0; --i)
+			{
+				ret += System.Math.Pow(Math.Abs(<#= upCast #>vector[i]), p);
+			}
+			return (<#= typeAbs #>)System.Math.Pow(ret, 1 / p);
+		}
+
+		
 
 
 		/// <summary>

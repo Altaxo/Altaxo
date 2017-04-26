@@ -1801,7 +1801,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       Assert.Throws(typeof(ArgumentNullException), () =>
       {
-        FloatVector X = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f }, null as ROFloatVector);
+        FloatVector X = FloatSymmetricLevinson.Solve(new float[] { 1.0f, 1.0f }, null as IROVector<float>);
       });
     }
 

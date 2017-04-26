@@ -369,7 +369,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Constructor for matrix that makes a deep copy of a given <c>IROFloatMatrix</c>.</summary>
     ///<param name="source"><c>FloatMatrix</c> to deep copy into new matrix.</param>
     ///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
-    public ComplexDoubleMatrix(IROFloatMatrix source)
+    public ComplexDoubleMatrix(IROMatrix<float> source)
     {
       if (source == null)
       {
@@ -631,7 +631,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Implicit conversion from <c>FloatMatrix</c> matrix.</summary>
     ///<param name="source"><c>FloatMatrix</c> to make a deep copy conversion from.</param>
-    static public ComplexDoubleMatrix ToComplexDoubleMatrix(IROFloatMatrix source)
+    static public ComplexDoubleMatrix ToComplexDoubleMatrix(IROMatrix<float> source)
     {
       if (source == null)
       {
@@ -2549,7 +2549,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="matrix">The matrix to convert to an array.</param>
     /// <param name="result">The result is stored here as a linear array of complex numbers.</param>
-    private static void ToLinearComplexArray(IROFloatMatrix matrix, Complex[] result)
+    private static void ToLinearComplexArray(IROMatrix<float> matrix, Complex[] result)
     {
       int rows = matrix.Rows;
       int columns = matrix.Columns;
@@ -2613,7 +2613,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="matrix">The matrix to convert to an array.</param>
     /// <returns>Linear array of complex.</returns>
-    public static Complex[] ToLinearComplexArray(IROFloatMatrix matrix)
+    public static Complex[] ToLinearComplexArray(IROMatrix<float> matrix)
     {
       Complex[] result = new Complex[matrix.Rows * matrix.Columns];
       ToLinearComplexArray(matrix, result);

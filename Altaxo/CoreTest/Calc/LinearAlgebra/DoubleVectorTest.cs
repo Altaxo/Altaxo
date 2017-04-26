@@ -368,14 +368,28 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
       DoubleVector a = new DoubleVector(new double[4] { 0, 1, 2, 3 });
       DoubleVector b = new DoubleVector(new double[4] { 4, 5, 6, 7 });
+      DoubleVector c = new DoubleVector(new double[4] { double.NaN, 5, 6, 7 });
+      DoubleVector d = new DoubleVector(new double[4] { 4, 5, 6, double.NaN });
 
-      Assert.AreEqual(a.GetNorm(), System.Math.Sqrt(14));
-      Assert.AreEqual(a.GetNorm(), a.GetNorm(2));
-      Assert.AreEqual(a.GetNorm(0), 3);
+      Assert.AreEqual(System.Math.Sqrt(14), a.L2Norm);
+      Assert.AreEqual(a.L2Norm, a.LpNorm(2));
+      Assert.AreEqual(3, a.LpNorm(0));
 
-      Assert.AreEqual(b.GetNorm(), 3 * System.Math.Sqrt(14));
-      Assert.AreEqual(b.GetNorm(), b.GetNorm(2));
-      Assert.AreEqual(b.GetNorm(0), 7);
+      Assert.AreEqual(3 * System.Math.Sqrt(14), b.L2Norm);
+      Assert.AreEqual(b.L2Norm, b.LpNorm(2));
+      Assert.AreEqual(7, b.LpNorm(0));
+
+      Assert.IsNaN(c.L1Norm);
+      Assert.IsNaN(c.L2Norm);
+      Assert.IsNaN(c.LInfinityNorm);
+      Assert.IsNaN(c.LpNorm(0));
+      Assert.IsNaN(c.LpNorm(3));
+
+      Assert.IsNaN(d.L1Norm);
+      Assert.IsNaN(d.L2Norm);
+      Assert.IsNaN(d.LInfinityNorm);
+      Assert.IsNaN(d.LpNorm(0));
+      Assert.IsNaN(d.LpNorm(3));
     }
 
     //Test GetSum

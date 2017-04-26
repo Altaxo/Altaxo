@@ -2080,7 +2080,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="matrix">The matrix to convert to an array.</param>
     /// <param name="result">The resulting array must be given.</param>
-    private static void ToLinearArray(IROFloatMatrix matrix, double[] result)
+    private static void ToLinearArray(IROMatrix<float> matrix, double[] result)
     {
       int rows = matrix.Rows;
       int columns = matrix.Columns;
@@ -2120,7 +2120,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="matrix">The matrix to convert to an array.</param>
     /// <returns>Linear array of complex.</returns>
-    public static double[] ToLinearArray(IROFloatMatrix matrix)
+    public static double[] ToLinearArray(IROMatrix<float> matrix)
     {
       double[] result = new double[matrix.Rows * matrix.Columns];
       ToLinearArray(matrix, result);

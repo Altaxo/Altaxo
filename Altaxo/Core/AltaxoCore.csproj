@@ -326,8 +326,6 @@
     <Compile Include="Calc\LinearAlgebra\IComplexFloatMatrix.cs" />
     <Compile Include="Calc\LinearAlgebra\IComplexDoubleVector.cs" />
     <Compile Include="Calc\LinearAlgebra\IComplexFloatVector.cs" />
-    <Compile Include="Calc\LinearAlgebra\IFloatMatrix.cs" />
-    <Compile Include="Calc\LinearAlgebra\IFloatVector.cs" />
     <Compile Include="Calc\LinearAlgebra\IMatrix.cs">
       <SubType>Code</SubType>
     </Compile>

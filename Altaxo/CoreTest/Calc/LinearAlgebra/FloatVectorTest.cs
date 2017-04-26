@@ -380,13 +380,13 @@ namespace AltaxoTest.Calc.LinearAlgebra
       FloatVector a = new FloatVector(new float[4] { 0, 1, 2, 3 });
       FloatVector b = new FloatVector(new float[4] { 4, 5, 6, 7 });
 
-      Assert.AreEqual(a.GetNorm(), System.Math.Sqrt(14), TOLERENCE);
-      Assert.AreEqual(a.GetNorm(), a.GetNorm(2));
-      Assert.AreEqual(a.GetNorm(0), 3);
+      Assert.AreEqual(a.L2Norm, System.Math.Sqrt(14), TOLERENCE);
+      Assert.AreEqual(a.L2Norm, a.LpNorm(2));
+      Assert.AreEqual(a.LpNorm(0), 3);
 
-      Assert.AreEqual(b.GetNorm(), 3 * System.Math.Sqrt(14), TOLERENCE);
-      Assert.AreEqual(b.GetNorm(), b.GetNorm(2));
-      Assert.AreEqual(b.GetNorm(0), 7);
+      Assert.AreEqual(b.L2Norm, 3 * System.Math.Sqrt(14), TOLERENCE);
+      Assert.AreEqual(b.L2Norm, b.LpNorm(2));
+      Assert.AreEqual(b.LpNorm(0), 7);
     }
 
     //Test GetSum

@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
@@ -44,7 +45,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   [System.Serializable]
-  sealed public class FloatMatrix : IFloatMatrix, ICloneable, IFormattable, IEnumerable, ICollection, IList
+  sealed public class FloatMatrix : IMatrix<float>, ICloneable, IFormattable, IEnumerable, ICollection, IList
   {
 #if MANAGED
     internal float[][] data;
@@ -1928,7 +1929,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Constructor for matrix that makes a deep copy of a given <c>IROFloatMatrix</c>.</summary>
     ///<param name="source"><c>IROFloatMatrix</c> to deep copy into new matrix.</param>
     ///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
-    public FloatMatrix(IROFloatMatrix source)
+    public FloatMatrix(IROMatrix<float> source)
     {
       if (source == null)
       {
@@ -1991,7 +1992,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="matrix">The matrix to convert to an array.</param>
     /// <returns>Linear array of complex.</returns>
-    public static float[] ToLinearArray(IROFloatMatrix matrix)
+    public static float[] ToLinearArray(IROMatrix<float> matrix)
     {
       int rows = matrix.Rows;
       int columns = matrix.Columns;
@@ -2011,9 +2012,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="source">The vector to convert to an array.</param>
     /// <returns>Linear array of complex.</returns>
-    public static float[] ToLinearArray(IROFloatVector source)
+    public static float[] ToLinearArray(IReadOnlyList<float> source)
     {
-      int length = source.Length;
+      int length = source.Count;
       float[] result = new float[length];
       for (int i = 0; i < length; ++i)
         result[i] = source[i];
