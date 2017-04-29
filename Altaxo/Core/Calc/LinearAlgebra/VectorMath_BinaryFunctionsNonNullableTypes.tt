@@ -36,6 +36,113 @@
 #>
 // ******************************************** Definitions for <#= arrT #> *******************************************
 
+		/// <summary>
+		/// Elementwise application of a function to each element of a vector. The result is stored in another vector or in the same vector.
+		/// </summary>
+		/// <param name="src1">The source vector.</param>
+		/// <param name="function">The function to apply to every element.</param>
+		/// <param name="result">The vector to store the results. This may or may not be the same instance as the source vector.</param>
+		public static void Map(<#= arrT #> src1, Func<<#= scalT #>, <#= scalT #>> function, <#= rwArrT #> result)
+		{
+			if (src1.<#= length #> != result.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and result");
+
+			for (int i = src1.<#= length #> - 1; i >= 0; --i)
+				result[i] = function(src1[i]);
+		}
+
+		/// <summary>
+		/// Elementwise application of a function to each element of a vector.
+		/// </summary>
+		/// <param name="src1">The source vector.</param>
+		/// <param name="function">The function to apply to every element. 1st argument is the element, 2nd argument is the element's index.</param>
+		/// <param name="result">The vector to store the results. This may be the same instance as the source vector.</param>
+		public static void Map(<#= arrT #> src1, Func<<#= scalT #>, int, <#= scalT #>> function, <#= rwArrT #> result)
+		{
+			if (src1.<#= length #> != result.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and result");
+
+			for (int i = src1.<#= length #> - 1; i >= 0; --i)
+				result[i] = function(src1[i], i);
+		}
+
+		/// <summary>
+		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
+		/// </summary>
+		/// <param name="src1">First source vector.</param>
+		/// <param name="src2">Second source vector.</param>
+		/// <param name="function">The function to apply to every element. 1st argument is the element from src1, 2nd argument is the element from src2.</param>
+		/// <param name="result">The vector to store the results. This may or may not be the same instance as the source vector.</param>
+		public static void Map(<#= arrT #> src1, <#= arrT #> src2, Func<<#= scalT #>, <#= scalT #>, <#= scalT #>> function, <#= rwArrT #> result)
+		{
+			if (src1.<#= length #> != src2.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and src2");
+			if (src1.<#= length #> != result.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and result");
+
+			for (int i = src1.<#= length #> - 1; i >= 0; --i)
+				result[i] = function(src1[i], src2[i]);
+		}
+
+		/// <summary>
+		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
+		/// </summary>
+		/// <param name="src1">First source vector.</param>
+		/// <param name="src2">Second source vector.</param>
+		/// <param name="function">The function to apply to every element. 1st argument is the element from src1, 2nd argument is the element from src2, 3rd argument is the element's index.</param>
+		/// <param name="result">The vector to store the results. This may or may not be the same instance as the source vector.</param>
+		public static void Map(<#= arrT #> src1, <#= arrT #> src2, Func<<#= scalT #>, <#= scalT #>, int, <#= scalT #>> function, <#= rwArrT #> result)
+		{
+			if (src1.<#= length #> != src2.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and src2");
+			if (src1.<#= length #> != result.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and result");
+
+			for (int i = src1.<#= length #> - 1; i >= 0; --i)
+				result[i] = function(src1[i], src2[i], i);
+		}
+
+			/// <summary>
+		/// Elementwise application of a function to corresponding elements of three vectors. The result is stored in another vector or in the same vector.
+		/// </summary>
+		/// <param name="src1">First source vector.</param>
+		/// <param name="src2">Second source vector.</param>
+		/// <param name="src3">Third source vector.</param>
+		/// <param name="function">The function to apply to every element. 1st argument is the element from src1, 2nd argument is the element from src2, 3rd argument is the element from src3.</param>
+		/// <param name="result">The vector to store the results. This may or may not be the same instance as the source vector.</param>
+		public static void Map(<#= arrT #> src1, <#= arrT #> src2,  <#= arrT #> src3, Func<<#= scalT #>, <#= scalT #>, <#= scalT #>, <#= scalT #>> function, <#= rwArrT #> result)
+		{
+			if (src1.<#= length #> != src2.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and src2");
+			if (src1.<#= length #> != src3.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and src3");
+			if (src1.<#= length #> != result.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and result");
+
+			for (int i = src1.<#= length #> - 1; i >= 0; --i)
+				result[i] = function(src1[i], src2[i], src3[i]);
+		}
+
+		/// <summary>
+		/// Elementwise application of a function to corresponding elements of three vectors. The result is stored in another vector or in the same vector.
+		/// </summary>
+		/// <param name="src1">First source vector.</param>
+		/// <param name="src2">Second source vector.</param>
+		/// <param name="src3">Third source vector.</param>
+		/// <param name="function">The function to apply to every element. 1st argument is the element from src1, 2nd argument is the element from src2, 3rd argument is the element from src3, 4th argument is the element's index.</param>
+		/// <param name="result">The vector to store the results. This may or may not be the same instance as the source vector.</param>
+		public static void Map(<#= arrT #> src1, <#= arrT #> src2, <#= arrT #> src3, Func<<#= scalT #>, <#= scalT #>, <#= scalT #>, int, <#= scalT #>> function, <#= rwArrT #> result)
+		{
+			if (src1.<#= length #> != src2.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and src2");
+			if (src1.<#= length #> != result.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and result");
+
+			for (int i = src1.<#= length #> - 1; i >= 0; --i)
+				result[i] = function(src1[i], src2[i], src3[i], i);
+		}
+
+
     /// <summary>
     /// Adds (elementwise) two vectors a and b and stores the result in c. All vectors must have the same length.
     /// </summary>
@@ -75,32 +182,6 @@
 			return true;
 		}
 
-			/// <summary>
-		/// Copies the source vector to the destination vector. Both vectors must have the same length.
-		/// </summary>
-		/// <param name="sourceVector">The source vector.</param>
-		/// <param name="destinationVector">The destination vector.</param>
-		public static void Copy(<#= arrT #> sourceVector, <#= rwArrT #> destinationVector)
-		{
-			if (sourceVector.<#= length #> != destinationVector.<#= length #>)
-				throw new ArgumentException("source and destination vector have unequal length!");
-
-			Copy(sourceVector, 0, destinationVector, 0, sourceVector.<#= length #>);
-		}
-
-		/// <summary>
-		/// Copies elements of a source vector to a destination vector.
-		/// </summary>
-		/// <param name="sourceVector">The source vector.</param>
-		/// <param name="sourceStartIndex">First element of the source vector to copy.</param>
-		/// <param name="destinationVector">The destination vector.</param>
-		/// <param name="destinationStartIndex">First element of the destination vector to copy to.</param>
-		/// <param name="count">Number of elements to copy.</param>
-		public static void Copy(<#= arrT #> sourceVector, int sourceStartIndex, <#= rwArrT #> destinationVector, int destinationStartIndex, int count)
-		{
-			for (int i = 0; i < count; ++i)
-				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
-		}
 
 		/// <summary>Performs linear interpolation between two vectors at specified points.</summary>
 		/// <param name="t">Scalar parameter of interpolation</param>

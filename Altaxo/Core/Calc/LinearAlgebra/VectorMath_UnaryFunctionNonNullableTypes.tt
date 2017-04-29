@@ -456,6 +456,50 @@
 			return max;
 		}
 
+			/// <summary>
+		/// Returns the L-infinity norm of the difference of the provided <paramref name="vector"/>s (as is the maximum of the absolute value of the elements). If one
+		/// of the elements of the vector is invalid, the return value is also invalid (for the floating point types).
+		/// </summary>
+		/// <param name="vector1">The first vector.</param>
+		/// <param name="vector2">The second vector. Must have same length as the first vector.</param>
+		/// <returns>The L-infinity norm of the provided <paramref name="vector"/> (as is the maximum of the absolute value of the elements).</returns>
+		public static <#= typeAbs #> LInfinityNorm(<#= arrT #> vector1, <#= arrT #> vector2)
+		{
+			if( vector1.<#= length #> != vector2.<#= length #>)
+				throw new RankException("Length of vector 1 must match length of vector 2");
+
+			<#= typeAbs #> max = 0;
+			int i;
+			for (i = vector1.<#= length #> - 1; i >= 0; --i)
+			{
+				var temp = Math.Abs(<#= upCast #>vector1[i] - <#= upCast #>vector2[i]);
+				if (!(max>temp)) // if we have a double.NaN here, this expression is true and max <- double.NaN
+				{
+					max = temp;
+
+<#
+					if(scalT=="double")
+					{
+#>
+					if(double.IsNaN(max))
+						break;
+<#
+					}
+					else if(scalT=="float")
+					{
+#>
+					if(float.IsNaN(max))
+						break;
+<#
+					}
+#>
+
+				}
+			}
+			
+			return max;
+		}
+
 		///<summary>Compute the p Norm of this vector.</summary>
 		/// <param name="vector">The vector.</param>
     ///<param name="p">Order of the norm.</param>

@@ -34,7 +34,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// Class MatrixMath provides common static methods for matrix manipulation
   /// and arithmetic in tow dimensions.
   /// </summary>
-  public static class MatrixMath
+  public static partial class MatrixMath
   {
     #region Helper matrix implementations
 
@@ -2631,7 +2631,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="src">The source matrix to copy.</param>
     /// <param name="dest">The destination matrix to copy to.</param>
-    public static void Copy(IROMatrix<double> src, IMatrix dest)
+    public static void Copy(IROMatrix<double> src, IMatrix<double> dest)
     {
       if (dest.Rows != src.Rows || dest.Columns != src.Columns)
         throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the dimension of the source matrix ({2},{3})", dest.Rows, dest.Columns, src.Rows, src.Columns));

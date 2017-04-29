@@ -37,14 +37,14 @@
 // ******************************************** Definitions for <#= arrT #> *******************************************
 
 		/// <summary>
-		/// Applies a function to every element of a vector.
+		/// Elementwise application of a function to each element of a vector.
 		/// </summary>
 		/// <param name="vector">The vector.</param>
-		/// <param name="func">The function to apply to every element.</param>
-		public static void Apply(this <#= rwArrT #> vector, Func<<#= scalT #>, <#= scalT #>> func)
+		/// <param name="function">The function to apply to every element.</param>
+		public static void Map(this <#= rwArrT #> vector, Func<<#= scalT #>, <#= scalT #>> function)
 		{
 			for (int i = vector.<#= length #> - 1; i >= 0; --i)
-				vector[i] = func(vector[i]);
+				vector[i] = function(vector[i]);
 		}
 
 

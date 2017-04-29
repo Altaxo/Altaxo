@@ -125,9 +125,10 @@ namespace Altaxo.Calc.Ode
 				Vector[] fnew = new Vector[N];
 				for (int i = 0; i < N; i++)
 				{
-					x[i] = x[i] + variation[i];
+					var x_i = x[i];
+					x[i] += variation[i];
 					fnew[i] = f(t, x);
-					x[i] = x[i] - variation[i];
+					x[i] = x_i;
 				}
 				for (int i = 0; i < N; i++)
 				{
