@@ -102,13 +102,23 @@ namespace Altaxo.Calc.Ode.Temp
     /// </summary>
     internal class NordsieckState
     {
-      public double tn, dt, Dq, delta;
+      /// <summary>Current time of this state.</summary>
+      public double tn;
+
+      /// <summary>Current variable of this state.</summary>
+      public double[] xn;
+
+      /// <summary>Time difference to next state.</summary>
+      public double dt;
+
+      public double Dq;
+      public double delta;
 
       /// <summary>Current method order, from 1 to qmax</summary>
       public int qn;
 
       /// <summary>Maximum method order, from 1 to 5</summary>
-      public int qmax;
+      public readonly int qmax;
 
       /// <summary>Successfull steps count</summary>
       public int nsuccess;
@@ -116,22 +126,80 @@ namespace Altaxo.Calc.Ode.Temp
       /// <summary>Step size scale factor/// </summary>
       public double rFactor;
 
-      public double[] xn;
       public double[] en;
-      public DoubleMatrix zn;
+      private double[] ecurr; // we need this temporary variable, must not be shared among states!
+
       public double epsilon = 1e-12;
 
       // temporary variables
       private GaussianEliminationSolver gaussSolver = new GaussianEliminationSolver();
 
-      private double[] ecurr = new double[0]; // we need this temporary variable, must not be shared among states!
-      private DoubleMatrix zcurr = new DoubleMatrix(1, 1);
-      private DoubleMatrix z0 = new DoubleMatrix(1, 1);
-      private DoubleMatrix P = new DoubleMatrix(1, 1);
+      private DoubleMatrix zcurr = new DoubleMatrix(1, 1); // n x (qmax+1)
+      private DoubleMatrix z0 = new DoubleMatrix(1, 1); // n x (qmax+1)
+      public DoubleMatrix zn; // n x (qmax+1)
 
-      private double[] ftdt = new double[0]; // to store the result of f(t + dt, x)
-      private double[] colExtract = new double[0]; // to store the result GetColumn
-      private double[] tmpVec1 = new double[0]; // other temporary variable
+      private DoubleMatrix P; // n x n
+
+      private double[] ftdt; // to store the result of f(t + dt, x)
+      private double[] colExtract; // to store the result GetColumn
+      private double[] tmpVec1; // other temporary variable
+
+      private double[] xprev; // length: n
+      private double[] gm; // length n
+      private double[] deltaE; // length n
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="NordsieckState"/> class.
+      /// </summary>
+      /// <param name="n">The number of variables of the ODE.</param>
+      /// <param name="qmax">Maximum order of polynomial.</param>
+      /// <param name="qcurr">Current order.</param>
+      /// <param name="dt">Initial time step.</param>
+      /// <param name="t0">Initial time.</param>
+      /// <param name="x0">Initial state variables.</param>
+      /// <param name="dxdt0">Initial derivatives of state variables.</param>
+      public NordsieckState(int n, int qmax, int qcurr, double dt, double t0, double[] x0, double[] dxdt0)
+      {
+        if (n < 1)
+          throw new ArgumentOutOfRangeException(nameof(n));
+
+        this.qmax = qmax;
+        this.qn = qcurr;
+        this.delta = 0;
+        this.Dq = 0;
+        this.dt = dt;
+        this.tn = t0;
+        this.nsuccess = 0;
+        this.rFactor = 1;
+
+        // Copy x0
+        this.xn = new double[n];
+        VectorMath.Copy(x0, xn);
+
+        //Compute Nordstieck's history matrix at t=t0;
+        zn = new DoubleMatrix(n, qmax + 1);
+        for (int i = 0; i < n; i++)
+        {
+          zn[i, 0] = x0[i]; // x0
+          zn[i, 1] = dt * dxdt0[i]; // 1st derivative * dt
+        }
+
+        zcurr = new DoubleMatrix(n, qmax + 1);
+        z0 = new DoubleMatrix(n, qmax + 1);
+
+        P = new DoubleMatrix(n, n);
+
+        en = new double[n];
+        ecurr = new double[n];
+
+        ftdt = new double[n]; // to store the result of f(t + dt, x)
+        colExtract = new double[n]; // to store the result GetColumn
+        tmpVec1 = new double[n]; // other temporary variable
+
+        xprev = new double[n]; // length: n
+        gm = new double[n]; // length n
+        deltaE = new double[n]; // length n
+      }
 
       public void ChangeStep()
       {
@@ -171,7 +239,7 @@ namespace Altaxo.Calc.Ode.Temp
       /// the Livermore Solver of Ordinary Differential Equations"
       /// </summary>
       /// <param name="arg">previous value of Nordsieck's matrix, so-called Z(n-1)</param>
-      /// <returns>So-called Zn0,initial vaue of Z in new step</returns>
+      /// <returns>So-called Zn0, initial vaue of Z in new step</returns>
       public void ZNew()
       {
         int q = zn.Columns;
@@ -194,7 +262,7 @@ namespace Altaxo.Calc.Ode.Temp
       /// </summary>
       /// <param name="currstate"></param>
       /// <param name="flag"></param>
-      /// <param name="f">Evaluation of the rates.</param>
+      /// <param name="f">Evaluation of the deriatives. First argument is time, second arg are the state variables, and 3rd arg is the array to accomodate the derivatives.</param>
       /// <param name="jacobianEvaluator">Evaluation of the jacobian.</param>
       /// <param name="opts">current options</param>
       /// <returns>en - current error vector</returns>
@@ -210,21 +278,10 @@ namespace Altaxo.Calc.Ode.Temp
         int n = currstate.xn.Length;
 
         // allocate local variables
-        if (ecurr.Length != currstate.en.Length)
-          ecurr = new double[currstate.en.Length]; // we need this temporary variable
         if (zcurr.Rows != currstate.zn.Rows || zcurr.Columns != currstate.zn.Columns)
           zcurr = new DoubleMatrix(currstate.zn.Rows, currstate.zn.Columns);
         if (z0.Rows != currstate.zn.Rows || z0.Columns != currstate.zn.Columns)
           z0 = new DoubleMatrix(currstate.zn.Rows, currstate.zn.Columns);
-        if (P.Rows != n || P.Columns != n)
-          P = new DoubleMatrix(n, n);
-
-        if (ftdt.Length != n)
-          ftdt = new double[n]; // to store the result of f(t + dt, x)
-        if (colExtract.Length != n)
-          colExtract = new double[n]; // to store the result GetColumn
-        if (tmpVec1.Length != n)
-          tmpVec1 = new double[n]; // other temporary variable
 
         VectorMath.Copy(currstate.en, ecurr);
         VectorMath.Copy(currstate.en, newstate.en);
@@ -250,10 +307,6 @@ namespace Altaxo.Calc.Ode.Temp
         //Scaling factors for the step size changing
         //with new method order q' = q, q + 1, q - 1, respectively
         double rSame, rUp, rDown;
-
-        var xprev = new double[n];
-        var gm = new double[n];
-        var deltaE = new double[n];
 
         if (opts.SparseJacobian == null)
         {
@@ -288,8 +341,8 @@ namespace Altaxo.Calc.Ode.Temp
         }
         else
         {
-          SparseMatrix J = opts.SparseJacobian;
-          SparseMatrix P = SparseMatrix.Identity(n, n) - J * dt * b[qcurr - 1];
+          SparseDoubleMatrix J = opts.SparseJacobian;
+          SparseDoubleMatrix P = SparseDoubleMatrix.Identity(n, n) - J * dt * b[qcurr - 1];
 
           do
           {
@@ -297,7 +350,8 @@ namespace Altaxo.Calc.Ode.Temp
             f(t + dt, xcurr, ftdt);
             MatrixMath.CopyColumn(z0, 1, colExtract);
             VectorMath.Map(ftdt, colExtract, ecurr, (ff, c, e) => dt * ff - c - e, gm); // gm = dt * f(t + dt, xcurr) - z0.GetColumn(1) - ecurr;
-            ecurr = ecurr + P.SolveGE(gm);
+            gaussSolver.SolveDestructive(P, gm, tmpVec1);
+            VectorMath.Add(ecurr, tmpVec1, ecurr); //	ecurr = ecurr + P.SolveGE(gm);
             VectorMath.Map(x0, ecurr, (x, e) => x + e * b[qcurr - 1], xcurr); // xcurr = x0 + b[qcurr - 1] * ecurr;
 
             //Row dimension is smaller than zcurr has
@@ -431,7 +485,6 @@ namespace Altaxo.Calc.Ode.Temp
           }
         }
 
-        newstate.qmax = qmax;
         newstate.dt = dt;
         newstate.tn = t;
       }
@@ -459,6 +512,7 @@ namespace Altaxo.Calc.Ode.Temp
     private Options opts;
     private double tout = double.NaN;
     private JacobianEvaluator jacobian;
+    private DoubleMatrix _zn_saved; // used to save zn during iteration
 
     /// <summary>
     /// Evaluates the derivatives. First argument is the time, second arg are the current y values. The derivatives
@@ -532,49 +586,11 @@ namespace Altaxo.Calc.Ode.Temp
       int qmax = 5;
       int qcurr = 2;
 
-      //Compute Nordstieck's history matrix at t=t0;
-      var zn = new DoubleMatrix(n, qmax + 1);
-      for (int i = 0; i < n; i++)
-      {
-        zn[i, 0] = x[i];
-        zn[i, 1] = dt * dx[i];
-        for (int j = qcurr; j < qmax + 1; j++)
-        {
-          zn[i, j] = 0.0d;
-        }
-      }
+      _zn_saved = new DoubleMatrix(n, qmax + 1);
 
-      var eold = new double[n];
+      currstate = new NordsieckState(n, qmax, qcurr, dt, t, x0, dx);
 
-      currstate = new NordsieckState()
-      {
-        delta = 0.0d,
-        Dq = 0.0d,
-        dt = dt,
-        en = eold,
-        tn = t,
-        xn = x0,
-        qn = qcurr,
-        qmax = qmax,
-        nsuccess = 0,
-        zn = zn,
-        rFactor = 1.0d
-      };
-
-      nextstate = new NordsieckState()
-      {
-        delta = 0.0d,
-        Dq = 0.0d,
-        dt = dt,
-        en = (double[])eold.Clone(),
-        tn = t,
-        xn = (double[])x0.Clone(),
-        qn = qcurr,
-        qmax = qmax,
-        nsuccess = 0,
-        zn = zn.Clone(),
-        rFactor = 1.0d
-      };
+      nextstate = new NordsieckState(n, qmax, qcurr, dt, t, x0, dx);
 
       isIterationFailed = false;
 
@@ -641,9 +657,9 @@ namespace Altaxo.Calc.Ode.Temp
         isIterationFailed = false;
 
         // Predictor step
-        var z0 = currstate.zn.Clone();
+        _zn_saved.CopyFrom(currstate.zn);
         currstate.ZNew();
-        currstate.en = new double[n]; // alternatively: zero out the vector
+        VectorMath.FillWith(currstate.en, 0); // TODO find out if this statement is neccessary
         currstate.zn.CopyColumn(0, currstate.xn);
 
         // Corrector step
@@ -655,11 +671,11 @@ namespace Altaxo.Calc.Ode.Temp
 
         if (isIterationFailed) // If iterations are not finished - bad convergence
         {
-          currstate.zn = z0;
+          currstate.zn.CopyFrom(_zn_saved); // copy saved state back
           currstate.nsuccess = 0;
           currstate.ChangeStep();
         }
-        else // Iterations finished
+        else // Iterations finished, i.e. did not fail
         {
           r = Math.Min(1.1d, Math.Max(0.2d, currstate.rFactor));
 

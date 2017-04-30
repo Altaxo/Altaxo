@@ -50,7 +50,7 @@ namespace Altaxo.Calc.Ode.Temp
     public DoubleMatrix Jacobian { get; set; }
 
     /// <summary>Gets or sets a sparse Jacobian matrix</summary>
-    public SparseMatrix SparseJacobian { get; set; }
+    public SparseDoubleMatrix SparseJacobian { get; set; }
 
     /// <summary>Default construction of an Options instance.</summary>
     public Options()
