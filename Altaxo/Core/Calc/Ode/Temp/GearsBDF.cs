@@ -102,7 +102,9 @@ namespace Altaxo.Calc.Ode.Temp
     /// </summary>
     internal class NordsieckState
     {
-      /// <summary>Current time of this state.</summary>
+      /// <summary>At the end of a predictor step, this is
+			/// still the time of the previous state (!),
+			/// the current time is tn + dt.</summary>
       public double tn;
 
       /// <summary>Current variable of this state.</summary>
@@ -201,10 +203,11 @@ namespace Altaxo.Calc.Ode.Temp
         deltaE = new double[n]; // length n
       }
 
-      public void ChangeStep()
+      public void DivideStepBy2()
       {
         dt = dt / 2.0;
-        if (dt < epsilon) throw new ArgumentException("Cannot generate numerical solution");
+        if (dt < epsilon)
+					throw new ArgumentException("Cannot generate numerical solution");
         Rescale(0.5);
       }
 
@@ -288,12 +291,12 @@ namespace Altaxo.Calc.Ode.Temp
 
         var xcurr = currstate.xn;
         var x0 = currstate.xn;
-        MatrixMath.Copy(currstate.zn, zcurr);
-        var qcurr = currstate.qn;
-        var qmax = currstate.qmax;
+        MatrixMath.Copy(currstate.zn, zcurr); // zcurr now is old nordsieck matrix
+        var qcurr = currstate.qn; // current degree
+        var qmax = currstate.qmax; // max degree
         var dt = currstate.dt;
         var t = currstate.tn;
-        MatrixMath.Copy(currstate.zn, z0);
+        MatrixMath.Copy(currstate.zn, z0); // save Nordsieck matrix
 
         //Tolerance computation factors
         double Cq = Math.Pow(qcurr + 1, -1.0);
@@ -317,7 +320,7 @@ namespace Altaxo.Calc.Ode.Temp
           {
             VectorMath.Copy(xcurr, xprev);
             f(t + dt, xcurr, ftdt);
-            MatrixMath.CopyColumn(z0, 1, colExtract);
+            MatrixMath.CopyColumn(z0, 1, colExtract); // 1st derivative/dt
             VectorMath.Map(ftdt, colExtract, ecurr, (ff, c, e) => dt * ff - c - e, gm); // gm = dt * f(t + dt, xcurr) - z0.GetColumn(1) - ecurr;
             gaussSolver.SolveDestructive(P, gm, tmpVec1);
             VectorMath.Add(ecurr, tmpVec1, ecurr); //	ecurr = ecurr + P.SolveGE(gm);
@@ -521,8 +524,19 @@ namespace Altaxo.Calc.Ode.Temp
     private Action<double, double[], double[]> f;
 
     private double[] xout;
+		private double last_tout = double.NaN;
     private double r;
 
+
+		// some diagnostic methods
+
+		public int CurrentDegree { get { return currstate.qn; } }
+
+		public double CurrentTime { get { return currstate.tn + currstate.dt; } }
+
+		public double CurrentTimeStep { get { return currstate.dt; } }
+
+		public DoubleMatrix CurrentNordsieckMatrix { get { return currstate.zn; } }
     /// <summary>
     /// Initialize Gear's BDF method with dynamically changed step size and order. Order changes between 1 and 3.
     /// </summary>
@@ -602,33 +616,55 @@ namespace Altaxo.Calc.Ode.Temp
       // ---------------------------------------------------------------------------------------------------
 
       // Firstly, return initial point
-      Evaluate(t0, true, xout);
+      Evaluate(t0, true, out t0, xout);
     }
 
-    public double[] Evaluate(double t_sol, double[] result)
+    public void Evaluate(double? t_sol, out double t_result, double[] result)
     {
-      if (!(t_sol >= tout))
+      if (t_sol.HasValue && !(t_sol.Value >= tout))
         throw new ArgumentOutOfRangeException(nameof(t_sol), "t must be greater than or equal than the last evaluated t");
 
-      return Evaluate(t_sol, false, result);
+      Evaluate(t_sol, false, out t_result, result);
     }
 
-    private double[] Evaluate(double t_sol, bool isFirstEvaluation, double[] result)
+    private void Evaluate(double? tout, bool isFirstEvaluation, out double t_result, double[] result)
     {
-      tout = t_sol;
+     
+			
 
       if (!isFirstEvaluation)
       {
-        // we have to clone some of the code from below to here
-        // this is no good style, but a goto statement with a jump inside another code block will not work here.
-        // Output data
-        if (currstate.tn <= tout && tout <= currstate.tn + currstate.dt)
-        {
-          VectorMath.Lerp(tout, currstate.tn, xout, currstate.tn + currstate.dt, currstate.xn, result);
-          return result;
-        }
+				// we have to clone some of the code from below to here
+				// this is no good style, but a goto statement with a jump inside another code block will not work here.
 
-        VectorMath.Copy(currstate.xn, xout);
+				if (tout.HasValue)
+				{
+					// Output data, but only if (i) we have requested a certain time point,
+					// and ii) as long as we can interpolate this point from the previous point and the current point
+					if (tout.HasValue && currstate.tn <= tout.Value && tout.Value <= currstate.tn + currstate.dt)
+					{
+						VectorMath.Lerp(tout.Value, currstate.tn, xout, currstate.tn + currstate.dt, currstate.xn, result);
+						last_tout = t_result = tout.Value;
+						return;
+					}
+				}
+				else
+				{
+					if(double.IsNaN(last_tout)) // if true then return initial point
+					{
+						last_tout = t_result = currstate.tn;
+						VectorMath.Copy(xout, result);
+						return;
+					}
+					else if(currstate.tn==last_tout)
+					{
+						last_tout = t_result = currstate.tn + currstate.dt;
+						VectorMath.Copy(currstate.xn, result);
+						return;
+					}
+				}
+
+        VectorMath.Copy(currstate.xn, xout); // save x of this step
 
         currstate.tn = currstate.tn + currstate.dt;
 
@@ -673,38 +709,53 @@ namespace Altaxo.Calc.Ode.Temp
         {
           currstate.zn.CopyFrom(_zn_saved); // copy saved state back
           currstate.nsuccess = 0;
-          currstate.ChangeStep();
+          currstate.DivideStepBy2();
         }
         else // Iterations finished, i.e. did not fail
         {
           r = Math.Min(1.1d, Math.Max(0.2d, currstate.rFactor));
 
-          if (currstate.delta >= 1.0d)
-          {
-            if (opts.MaxStep < Double.MaxValue)
-            {
-              r = Math.Min(r, opts.MaxStep / currstate.dt);
-            }
+					if (currstate.delta >= 1.0d)
+					{
+						if (opts.MaxStep < Double.MaxValue)
+						{
+							r = Math.Min(r, opts.MaxStep / currstate.dt);
+						}
 
-            if (opts.MinStep > 0)
-            {
-              r = Math.Max(r, opts.MinStep / currstate.dt);
-            }
+						if (opts.MinStep > 0)
+						{
+							r = Math.Max(r, opts.MinStep / currstate.dt);
+						}
 
-            r = Math.Min(r, opts.MaxScale);
-            r = Math.Max(r, opts.MinScale);
+						r = Math.Min(r, opts.MaxScale);
+						r = Math.Max(r, opts.MinScale);
 
-            currstate.dt = currstate.dt * r; // Decrease step
-            currstate.Rescale(r);
-          }
-          else
-          {
-            // Output data
-            if (currstate.tn <= tout && tout <= currstate.tn + currstate.dt)
-            {
-              VectorMath.Lerp(tout, currstate.tn, xout, currstate.tn + currstate.dt, currstate.xn, result);
-              return result;
-            }
+						currstate.dt = currstate.dt * r; // Decrease step
+						currstate.Rescale(r);
+					}
+					else // Iteration finished successfully
+					{
+						// Output data
+						if (tout.HasValue)
+						{
+							if (currstate.tn <= tout.Value && tout.Value <= currstate.tn + currstate.dt)
+							{
+								VectorMath.Lerp(tout.Value, currstate.tn, xout, currstate.tn + currstate.dt, currstate.xn, result);
+								t_result = tout.Value;
+								
+								return;
+							}
+						}
+						else
+						{
+							VectorMath.Copy(currstate.xn, result);
+							t_result = currstate.tn + currstate.dt;
+							if(!isFirstEvaluation)
+								last_tout = t_result;
+							
+							return;
+						}
+
 
             VectorMath.Copy(currstate.xn, xout);
 
