@@ -227,5 +227,37 @@ namespace Altaxo.Calc.Ode.Temp
                 }
             }
         }
+
+        /// <summary>
+        /// Tests the equations y' = exponent * y/ t, which should give the solution y = t^exponent,
+        /// with time points provided externally, with logarithmic spacing from 1 to 1e6.
+        /// </summary>
+        [Test]
+        public void GearTest6c()
+        {
+            for (int exponent = 2; exponent <= 5; exponent++)
+            {
+                // evaluating y' = 3 y/ t  solution y = t^exponent
+                var ode = new GearsBDF();
+
+                ode.Initialize(
+                1,
+                new double[] { 1 },
+                (t, y, dydt) => { dydt[0] = exponent * y[0] / t; },
+                new Options { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
+
+                var sp = new double[1];
+                double tres;
+                for (double ii = 0; ii <= 6000; ii += 1)
+                {
+                    double time = Math.Pow(10, ii / 1000.0);
+                    ode.Evaluate(time, out tres, sp);
+                    Assert.AreEqual(time, tres, 1e-8);
+
+                    var y0_expected = RMath.Pow(tres, exponent);
+                    Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
+                }
+            }
+        }
     }
 }
