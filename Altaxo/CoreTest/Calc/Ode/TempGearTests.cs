@@ -61,7 +61,7 @@ namespace Altaxo.Calc.Ode.Temp
             0,
             new double[] { C1 + C2, C1 - C2 },
             (t, y, dydt) => { dydt[0] = lambda1PlusLambda2By2 * y[0] + lambda1MinusLambda2By2 * y[1]; dydt[1] = lambda1MinusLambda2By2 * y[0] + lambda1PlusLambda2By2 * y[1]; },
-            new Options { RelativeTolerance = 1e-4, AbsoluteTolerance = 1E-8 });
+            new GearsBDFOptions { RelativeTolerance = 1e-4, AbsoluteTolerance = 1E-8 });
 
             var sp = new double[2];
             foreach (var spulse in pulse.SolveTo(100000))
@@ -97,7 +97,7 @@ namespace Altaxo.Calc.Ode.Temp
             1,
             new double[] { 1 },
             (t, y, dydt) => { dydt[0] = y[0] / t; },
-            new Options { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
+            new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
 
             var sp = new double[1];
             foreach (var spulse in pulse.SolveTo(100000))
@@ -123,7 +123,7 @@ namespace Altaxo.Calc.Ode.Temp
             1,
             new double[] { 1 },
             (t, y, dydt) => { dydt[0] = 2 * y[0] / t; },
-            new Options { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
+            new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
 
             var sp = new double[1];
             double tres;
@@ -146,7 +146,7 @@ namespace Altaxo.Calc.Ode.Temp
             1,
             new double[] { 1 },
             (t, y, dydt) => { dydt[0] = 3 * y[0] / t; },
-            new Options { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
+            new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
 
             var sp = new double[1];
             double tres;
@@ -175,7 +175,7 @@ namespace Altaxo.Calc.Ode.Temp
                 1,
                 new double[] { 1 },
                 (t, y, dydt) => { dydt[0] = exponent * y[0] / t; },
-                new Options { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
+                new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
 
                 var sp = new double[1];
                 double tres;
@@ -205,7 +205,7 @@ namespace Altaxo.Calc.Ode.Temp
                 1,
                 new double[] { 1 },
                 (t, y, dydt) => { dydt[0] = exponent * y[0] / t; },
-                new Options { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
+                new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
 
                 var sp = new double[1];
                 double tres;
@@ -244,7 +244,7 @@ namespace Altaxo.Calc.Ode.Temp
                 1,
                 new double[] { 1 },
                 (t, y, dydt) => { dydt[0] = exponent * y[0] / t; },
-                new Options { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
+                new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
 
                 var sp = new double[1];
                 double tres;
@@ -258,6 +258,60 @@ namespace Altaxo.Calc.Ode.Temp
                     Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
                 }
             }
+        }
+
+        /// <summary>
+        /// Tests the equations y' = 1/y, y[t=0]==1/64, which should give the solution y=Sqrt(1+8192*t)/64
+        /// with step size evaluated by the ODE solver.
+        /// </summary>
+        [Test]
+        public void GearTest7a()
+        {
+            // evaluating y' = 1/y, y[0]=1/64
+            var ode = new GearsBDF();
+
+            ode.Initialize(
+            0, // t0=0
+            new double[] { 1.0 / 64 }, // y0=1/64
+            (t, y, dydt) => { dydt[0] = 1 / y[0]; },
+            new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
+
+            var sp = new double[1];
+            double tres;
+            do
+            {
+                ode.Evaluate(null, out tres, sp);
+                var y0_expected = Math.Sqrt(1 + 8192 * tres) / 64;
+
+                Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
+            } while (tres < 1e6);
+        }
+
+        /// <summary>
+        /// Tests the equations y' = y², y[t=0]==1/64, which should give the solution y=1/(64-t)
+        /// with step size evaluated by the ODE solver.
+        /// </summary>
+        [Test]
+        public void GearTest7b()
+        {
+            // evaluating y' = y², y[0]=1/64
+            var ode = new GearsBDF();
+
+            ode.Initialize(
+            0, // t0=0
+            new double[] { 1.0 / 64 }, // y0=1/64
+            (t, y, dydt) => { dydt[0] = y[0] * y[0]; },
+            new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
+
+            var sp = new double[1];
+            double tres;
+            do
+            {
+                ode.Evaluate(null, out tres, sp);
+                var y0_expected = 1 / (64 - tres);
+
+                Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
+            } while (tres < 1e6);
         }
     }
 }

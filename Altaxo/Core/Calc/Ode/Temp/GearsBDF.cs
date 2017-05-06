@@ -20,6 +20,8 @@ namespace Altaxo.Calc.Ode.Temp
 {
     public class GearsBDF
     {
+        #region Members
+
         private static double ToleranceNorm(IReadOnlyList<double> v, double RTol, double ATol, IReadOnlyList<double> a)
         {
             return v.LInfinityNorm() / (ATol + RTol * a.LInfinityNorm());
@@ -28,7 +30,7 @@ namespace Altaxo.Calc.Ode.Temp
         /// <summary>
         /// Calculates the jacobian, and stores all the temporary arrays and matrices neccessary for calculation.
         /// </summary>
-        private struct JacobianEvaluator
+        private class DenseJacobianEvaluator
         {
             /// <summary>
             /// Temporary array to hold the x variated in one index to get the rates of the new point.
@@ -53,7 +55,7 @@ namespace Altaxo.Calc.Ode.Temp
 
             private Action<double, double[], double[]> f;
 
-            public JacobianEvaluator(int N, Action<double, double[], double[]> f)
+            public DenseJacobianEvaluator(int N, Action<double, double[], double[]> f)
             {
                 variatedX = new double[N];
                 f_old = new double[N];
@@ -66,22 +68,21 @@ namespace Altaxo.Calc.Ode.Temp
 
             /// <summary>Compute the Jacobian</summary>
             /// <param name="f">The derivative function. 1st arg is time, 2nd arg are current y, and the rates are returned in the 3rd arg.</param>
-            /// <param name="x"></param>
             /// <param name="t">Current time.</param>
-            /// <param name="J">The resulting Jacobian matrix.</param>
-            /// <returns></returns>
-            public IROMatrix<double> Jacobian(double t, double[] x)
+            /// <param name="y">Current value of the variables of the ODE.</param>
+            /// <returns>The (approximated) Jacobian matrix.</returns>
+            public IROMatrix<double> Jacobian(double t, double[] y)
             {
                 int N = variatedX.Length;
-                Array.Copy(x, variatedX, N);
+                Array.Copy(y, variatedX, N);
 
-                f(t, x, f_old); // evaluate rates at old point x
+                f(t, y, f_old); // evaluate rates at old point x
 
                 for (int i = 0; i < N; ++i)
                 {
-                    variatedX[i] += (variation[i] = Math.Sqrt(1e-6 * Math.Max(1e-5, Math.Abs(x[i]))));
+                    variatedX[i] += (variation[i] = Math.Sqrt(1e-6 * Math.Max(1e-5, Math.Abs(y[i]))));
                     f(t, variatedX, f_new[i]); // calculate rates at x variated at index i
-                    variatedX[i] = x[i]; // restore old state
+                    variatedX[i] = y[i]; // restore old state
                 }
 
                 var jarray = J.data;
@@ -100,7 +101,7 @@ namespace Altaxo.Calc.Ode.Temp
         /// <summary>
         /// Representation of current state in Nordsieck's method
         /// </summary>
-        internal class NordsieckState
+        private class NordsieckState
         {
             /// <summary>At the end of a predictor step, this is
             /// still the time of the previous state (!),
@@ -289,14 +290,16 @@ namespace Altaxo.Calc.Ode.Temp
             /// <param name="currstate"></param>
             /// <param name="flag"></param>
             /// <param name="f">Evaluation of the deriatives. First argument is time, second arg are the state variables, and 3rd arg is the array to accomodate the derivatives.</param>
-            /// <param name="jacobianEvaluator">Evaluation of the jacobian.</param>
+            /// <param name="denseJacobianEvaluation">Evaluation of the jacobian.</param>
+            /// <param name="sparseJacobianEvaluation">Evaluation of the jacobian as a sparse matrix. Either this or the previous arg must be valid.</param>
             /// <param name="opts">current options</param>
             /// <returns>en - current error vector</returns>
             internal void PredictorCorrectorScheme(
               ref bool flag,
               Action<double, double[], double[]> f,
-              Func<double, double[], IROMatrix<double>> jacobianEvaluator,
-              Options opts,
+              Func<double, double[], IROMatrix<double>> denseJacobianEvaluation,
+              Func<double, double[], SparseDoubleMatrix> sparseJacobianEvaluation,
+              GearsBDFOptions opts,
               NordsieckState newstate
               )
             {
@@ -334,9 +337,9 @@ namespace Altaxo.Calc.Ode.Temp
                 //with new method order q' = q, q + 1, q - 1, respectively
                 double rSame, rUp, rDown;
 
-                if (opts.SparseJacobian == null)
+                if (null != denseJacobianEvaluation)
                 {
-                    var J = opts.Jacobian == null ? jacobianEvaluator(t + dt, xcurr) : opts.Jacobian;
+                    var J = denseJacobianEvaluation(t + dt, xcurr);
                     MatrixMath.Map(J, (x, i, j) => (i == j ? 1 : 0) - x * dt * b[qcurr - 1], P); // B = Identity - J*dt*b[qcurr-1]
 
                     do
@@ -365,9 +368,9 @@ namespace Altaxo.Calc.Ode.Temp
                         count++;
                     } while (delta > 1.0d && count < opts.NumberOfIterations);
                 }
-                else
+                else if (null != sparseJacobianEvaluation)
                 {
-                    SparseDoubleMatrix J = opts.SparseJacobian;
+                    SparseDoubleMatrix J = sparseJacobianEvaluation(t + dt, xcurr);
                     SparseDoubleMatrix P = SparseDoubleMatrix.Identity(n, n) - J * dt * b[qcurr - 1];
 
                     do
@@ -401,6 +404,10 @@ namespace Altaxo.Calc.Ode.Temp
                         delta = Dq / (tau / (2 * (qcurr + 2)));
                         count++;
                     } while (delta > 1.0d && count < opts.NumberOfIterations);
+                }
+                else // neither denseJacobianEvaluation nor sparseJacobianEvaluation valid
+                {
+                    throw new ArgumentNullException(nameof(denseJacobianEvaluation), "Either denseJacobianEvaluation or sparseJacobianEvaluation must be set!");
                 }
 
                 //======================================
@@ -535,9 +542,21 @@ namespace Altaxo.Calc.Ode.Temp
 
         private bool isIterationFailed;
         private int n;
-        private Options opts;
+        private GearsBDFOptions opts;
         private double tout = double.NaN;
-        private JacobianEvaluator jacobian;
+
+        /// <summary>
+        /// Calculates the jacobian as a dense matrix. 1st arg is time, 2nd arg is the state variable vector. Result is the dense jacobian matrix.
+        /// </summary>
+        /// <remarks>Either this field or <see cref="_sparseJacobianEvaluation"/> must be set!</remarks>
+        private Func<double, double[], IROMatrix<double>> _denseJacobianEvaluation;
+
+        /// <summary>
+        /// Calculates the jacobian as a sparse matrix. 1st arg is time, 2nd arg is the state variable vector. Result is the sparse jacobian matrix.
+        /// </summary>
+        /// <remarks>Either this field or <see cref="_denseJacobianEvaluation"/> must be set!</remarks>
+        private Func<double, double[], SparseDoubleMatrix> _sparseJacobianEvaluation;
+
         private DoubleMatrix _zn_saved; // used to save zn during iteration
 
         /// <summary>
@@ -550,26 +569,115 @@ namespace Altaxo.Calc.Ode.Temp
         private double last_tout = double.NaN;
         private double r;
 
-        // some diagnostic methods
+        #endregion Members
 
+        /// <summary>
+        /// Gets the current degree of the interpolating polynomial.
+        /// </summary>
+        /// <value>
+        /// The current degree of the interpolating polynomial.
+        /// </value>
         public int CurrentDegree { get { return currstate.qn; } }
 
+        /// <summary>
+        /// Gets the time until which the ODE is already evaluated.
+        /// </summary>
+        /// <value>
+        /// The current time.
+        /// </value>
         public double CurrentTime { get { return currstate.tn + currstate.dt; } }
 
+        /// <summary>
+        /// Gets the current time step. This is the step which was carried out from the previous time to the current time.
+        /// </summary>
+        /// <value>
+        /// The current time step.
+        /// </value>
         public double CurrentTimeStep { get { return currstate.dt; } }
 
+        /// <summary>
+        /// Gets the current nordsieck matrix. Rows corresponds to the state variables y0..yn, colums are the
+        /// variable y, then y'dt, y''dt²/2, y'''dt³/6, and so on. Can be used to get the coefficients of the interpolating
+        /// polynomial(s) between <see cref="CurrentTime"/>-<see cref="CurrentTimeStep"/> to <see cref="CurrentTime"/>.
+        /// </summary>
+        /// <value>
+        /// The current nordsieck matrix.
+        /// </value>
         public DoubleMatrix CurrentNordsieckMatrix { get { return currstate.zn; } }
 
         /// <summary>
-        /// Initialize Gear's BDF method with dynamically changed step size and order. Order changes between 1 and 3.
+        /// Initialize Gear's BDF method with dynamically changed step size and order.
         /// </summary>
         /// <param name="t0">Initial time point</param>
         /// <param name="y0">Initial values (at time <paramref name="t0"/>).</param>
         /// <param name="dydt">Evaluation function for the derivatives. First argument is the time, second argument are the current y values. The third argument is an array where the derivatives are expected to be placed into.</param>
-        /// <returns>Sequence of infinite number of solution points.</returns>
         public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt)
         {
-            Initialize(t0, y0, dydt, Options.Default);
+            if (null == y0)
+                throw new ArgumentNullException(nameof(y0));
+            if (null == dydt)
+                throw new ArgumentNullException(nameof(dydt));
+
+            _denseJacobianEvaluation = new DenseJacobianEvaluator(y0.Length, dydt).Jacobian;
+            InternalInitialize(t0, y0, dydt, GearsBDFOptions.Default);
+        }
+
+        /// <summary>
+        /// Initialize Gear's BDF method with dynamically changed step size and order.
+        /// </summary>
+        /// <param name="t0">Initial time point</param>
+        /// <param name="y0">Initial values (at time <paramref name="t0"/>).</param>
+        /// <param name="dydt">Evaluation function for the derivatives. First argument is the time, second argument are the current y values. The third argument is an array where the derivatives are expected to be placed into.</param>
+        /// <param name="opts">Options for the ODE method (can be null).</param>
+        public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt, GearsBDFOptions opts)
+        {
+            if (null == y0)
+                throw new ArgumentNullException(nameof(y0));
+            if (null == dydt)
+                throw new ArgumentNullException(nameof(dydt));
+
+            _denseJacobianEvaluation = new DenseJacobianEvaluator(y0.Length, dydt).Jacobian;
+            InternalInitialize(t0, y0, dydt, opts ?? GearsBDFOptions.Default);
+        }
+
+        /// <summary>
+        /// Initialize Gear's BDF method with dynamically changed step size and order.
+        /// </summary>
+        /// <param name="t0">Initial time point</param>
+        /// <param name="y0">Initial values (at time <paramref name="t0"/>).</param>
+        /// <param name="dydt">Evaluation function for the derivatives. First argument is the time, second argument are the current y values. The third argument is an array where the derivatives are expected to be placed into.</param>
+        /// <param name="denseJacobianEvaluator">Evaluation for the dense jacobian matrix. First argument is the time, second argument are the current y values. If null is passed for this argument, a default evaluator is used.</param>
+        /// <param name="opts">Options for the ODE method (can be null).</param>
+        public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt, Func<double, double[], IROMatrix<double>> denseJacobianEvaluator, GearsBDFOptions opts)
+        {
+            if (null == y0)
+                throw new ArgumentNullException(nameof(y0));
+            if (null == dydt)
+                throw new ArgumentNullException(nameof(dydt));
+
+            _denseJacobianEvaluation = denseJacobianEvaluator ?? new DenseJacobianEvaluator(y0.Length, dydt).Jacobian;
+            InternalInitialize(t0, y0, dydt, opts ?? GearsBDFOptions.Default);
+        }
+
+        /// <summary>
+        /// Initialize Gear's BDF method with dynamically changed step size and order.
+        /// </summary>
+        /// <param name="t0">Initial time point</param>
+        /// <param name="y0">Initial values (at time <paramref name="t0"/>).</param>
+        /// <param name="dydt">Evaluation function for the derivatives. First argument is the time, second argument are the current y values. The third argument is an array where the derivatives are expected to be placed into.</param>
+        /// <param name="sparseJacobianEvaluation">Evaluation for the dense jacobian matrix. First argument is the time, second argument are the current y values. If null is passed for this argument, a default evaluator is used.</param>
+        /// <param name="opts">Options for the ODE method (can be null).</param>
+        public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt, Func<double, double[], SparseDoubleMatrix> sparseJacobianEvaluation, GearsBDFOptions opts)
+        {
+            if (null == y0)
+                throw new ArgumentNullException(nameof(y0));
+            if (null == dydt)
+                throw new ArgumentNullException(nameof(dydt));
+            if (null == sparseJacobianEvaluation)
+                throw new ArgumentNullException(nameof(sparseJacobianEvaluation));
+
+            _sparseJacobianEvaluation = sparseJacobianEvaluation;
+            InternalInitialize(t0, y0, dydt, opts ?? GearsBDFOptions.Default);
         }
 
         /// <summary>
@@ -580,9 +688,10 @@ namespace Altaxo.Calc.Ode.Temp
         /// <param name="f">Right parts of the system</param>
         /// <param name="opts">Options for accuracy control and initial step size</param>
         /// <returns>Sequence of infinite number of solution points.</returns>
-        public void Initialize(double t0, double[] x0, Action<double, double[], double[]> f, Options opts)
+        private void InternalInitialize(double t0, double[] x0, Action<double, double[], double[]> f, GearsBDFOptions opts)
         {
-            jacobian = new JacobianEvaluator(x0.Length, f);
+            if (null == _denseJacobianEvaluation && null == _sparseJacobianEvaluation)
+                throw new InvalidProgramException("Ooops, how could this happen?");
 
             double t = t0;
             var x = (double[])x0.Clone();
@@ -639,7 +748,7 @@ namespace Altaxo.Calc.Ode.Temp
             // ---------------------------------------------------------------------------------------------------
 
             // Firstly, return initial point
-            Evaluate(t0, true, out t0, xout);
+            EvaluateInternally(t0, true, out t0, xout);
         }
 
         public void Evaluate(double? t_sol, out double t_result, double[] result)
@@ -647,10 +756,25 @@ namespace Altaxo.Calc.Ode.Temp
             if (t_sol.HasValue && !(t_sol.Value >= tout))
                 throw new ArgumentOutOfRangeException(nameof(t_sol), "t must be greater than or equal than the last evaluated t");
 
-            Evaluate(t_sol, false, out t_result, result);
+            EvaluateInternally(t_sol, false, out t_result, result);
         }
 
-        private void Evaluate(double? tout, bool isFirstEvaluation, out double t_result, double[] result)
+        public IEnumerable<(double time, IROVector<double> y)> SolutionPointsUntil(double maxTime)
+        {
+            var resultArray = new double[n];
+            var roWrapper = VectorMath.ToROVector(resultArray);
+
+            for (;;)
+            {
+                EvaluateInternally(null, false, out var time, resultArray);
+
+                if (!(time <= maxTime))
+                    break;
+                yield return (time, roWrapper);
+            }
+        }
+
+        private void EvaluateInternally(double? tout, bool isFirstEvaluation, out double t_result, double[] result)
         {
             if (!isFirstEvaluation)
             {
@@ -720,7 +844,7 @@ namespace Altaxo.Calc.Ode.Temp
                 currstate.zn.CopyColumn(0, currstate.xn);
 
                 // Corrector step
-                currstate.PredictorCorrectorScheme(ref isIterationFailed, f, jacobian.Jacobian, opts, nextstate);
+                currstate.PredictorCorrectorScheme(ref isIterationFailed, f, _denseJacobianEvaluation, _sparseJacobianEvaluation, opts, nextstate);
 
                 var temp_state = currstate;
                 currstate = nextstate;
