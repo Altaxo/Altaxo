@@ -12,11 +12,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace Altaxo.Calc.Ode.Temp
+namespace Altaxo.Calc.Ode
 {
     // Options name should match if possible: http://www.mathworks.com/help/techdoc/ref/odeset.html
 
-    /// <summary>ODE solver options</summary>
+    /// <summary>Options for <see cref="GearsBDF"/> ODE solver.</summary>
     public class GearsBDFOptions
     {
         /// <summary>Gets or sets initial step for solution. Default value 0 means that initial step is computed automatically</summary>
@@ -62,35 +62,6 @@ namespace Altaxo.Calc.Ode.Temp
         public static GearsBDFOptions Default
         {
             get { return defaultOpts; }
-        }
-    }
-
-    /// <summary>Structure to represent solution point. Current point has form (t,x1,x2,...,xn), where
-    /// n is problem's dimension</summary>
-    public struct SolutionPoint
-    {
-        private Vector x; //Problem's phase variables
-        private double t; //Current time
-
-        /// <summary>Gets phase variables values in current time point</summary>
-        public Vector X
-        {
-            get { return x; }
-        }
-
-        /// <summary>Gets current time</summary>
-        public double T
-        {
-            get { return t; }
-        }
-
-        /// <summary>Create solution point from time value and phase vector</summary>
-        /// <param name="t">Current time value</param>
-        /// <param name="x">Current phase vector</param>
-        internal SolutionPoint(double t, Vector x)
-        {
-            this.x = x;
-            this.t = t;
         }
     }
 }

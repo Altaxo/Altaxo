@@ -28,10 +28,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Altaxo.Calc.Ode.Temp
+namespace Altaxo.Calc.Ode
 {
     [TestFixture]
-    public class TempGearsTest
+    public class GearsBDFTest
     {
         [Test]
         public void GearTest2a()
@@ -294,6 +294,17 @@ namespace Altaxo.Calc.Ode.Temp
         [Test]
         public void GearTest7b()
         {
+            Vector fuu(double t, Vector y)
+            {
+                return new Vector(y[0] * y[0]);
+            }
+
+            var pulse = Altaxo.Calc.Ode.Ode.GearBDF(
+            0,
+            new Vector(1 / 64.0),
+            fuu,
+            new Altaxo.Calc.Ode.Options { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
+
             // evaluating y' = y², y[0]=1/64
             var ode = new GearsBDF();
 
@@ -305,13 +316,18 @@ namespace Altaxo.Calc.Ode.Temp
 
             var sp = new double[1];
             double tres;
-            do
+
+            foreach (var spulse in pulse.SolveTo(32))
             {
                 ode.Evaluate(null, out tres, sp);
+                Assert.AreEqual(spulse.T, tres);
+                Assert.AreEqual(spulse.X[0], sp[0]);
+
                 var y0_expected = 1 / (64 - tres);
 
+                Assert.AreEqual(y0_expected, spulse.X[0], 1E-6 * y0_expected + 1E-7);
                 Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
-            } while (tres < 1e6);
+            };
         }
     }
 }

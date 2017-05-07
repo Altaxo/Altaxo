@@ -264,7 +264,7 @@
     <Compile Include="Calc\LinearAlgebra\TestSingularValueDecomposition.cs" />
     <Compile Include="Calc\LinearAlgebra\TikhonovRegularizedNonnegativeMatrixFactorizationTest.cs" />
     <Compile Include="Calc\Ode\GaussianEliminationTest.cs" />
-    <Compile Include="Calc\Ode\TempGearTests.cs" />
+    <Compile Include="Calc\Ode\GearsBDFTests.cs" />
     <Compile Include="Calc\Ode\GearTests.cs" />
     <Compile Include="Calc\Ode\MatrixTests.cs" />
     <Compile Include="Calc\Ode\OdeGearsBDFTest.cs" />
