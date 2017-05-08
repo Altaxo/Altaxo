@@ -166,8 +166,8 @@ namespace Altaxo.Calc.Ode
             /// <param name="dt">Initial time step.</param>
             /// <param name="t0">Initial time.</param>
             /// <param name="x0">Initial state variables.</param>
-            /// <param name="dxdt0">Initial derivatives of state variables.</param>
-            public NordsieckState(int n, int qmax, int qcurr, double dt, double t0, double[] x0, double[] dxdt0)
+            /// <param name="dydt0">Initial derivatives of state variables.</param>
+            public NordsieckState(int n, int qmax, int qcurr, double dt, double t0, double[] x0, double[] dydt0)
             {
                 if (n < 1)
                     throw new ArgumentOutOfRangeException(nameof(n));
@@ -190,7 +190,7 @@ namespace Altaxo.Calc.Ode
                 for (int i = 0; i < n; i++)
                 {
                     _zn[i, 0] = x0[i]; // x0
-                    _zn[i, 1] = dt * dxdt0[i]; // 1st derivative * dt
+                    _zn[i, 1] = dt * dydt0[i]; // 1st derivative * dt
                 }
 
                 zcurr = new DoubleMatrix(n, qmax + 1);
@@ -562,6 +562,9 @@ namespace Altaxo.Calc.Ode
         /// </summary>
         private Action<double, double[], double[]> f;
 
+        private enum InitializationState { NotInitialized, InitialValueReturned, Initialized };
+
+        private InitializationState _initializationState; // true when the Nordsiek matrix is valid
         private double[] xout;
         private double last_tout = double.NaN;
         private double r;
@@ -693,7 +696,7 @@ namespace Altaxo.Calc.Ode
             double t = t0;
             var x = (double[])x0.Clone();
 
-            var dx = (double[])x0.Clone(); // just to get the array.
+            var dydt = (double[])x0.Clone(); // just to get the array.
 
             this.n = x0.Length;
 
@@ -701,7 +704,7 @@ namespace Altaxo.Calc.Ode
             this.opts = opts;
 
             //Initial step size.
-            f(t0, x0, dx); // rates now in dx
+            f(t0, x0, dydt); // rates now in dx
             double dt;
             if (opts.InitialStep != 0)
             {
@@ -717,7 +720,7 @@ namespace Altaxo.Calc.Ode
                 {
                     ewt[i] = opts.RelativeTolerance * Math.Abs(x[i]) + opts.AbsoluteTolerance;
                     ywt[i] = ewt[i] / tol;
-                    sum = sum + (double)dx[i] * dx[i] / (ywt[i] * ywt[i]);
+                    sum = sum + (double)dydt[i] * dydt[i] / (ywt[i] * ywt[i]);
                 }
 
                 dt = Math.Sqrt(tol / ((double)1.0d / (ywt[0] * ywt[0]) + sum / n));
@@ -731,7 +734,7 @@ namespace Altaxo.Calc.Ode
 
             _zn_saved = new DoubleMatrix(n, qmax + 1);
 
-            currstate = new NordsieckState(n, qmax, qcurr, dt, t, x0, dx);
+            currstate = new NordsieckState(n, qmax, qcurr, dt, t, x0, dydt);
 
             isIterationFailed = false;
 
@@ -743,15 +746,21 @@ namespace Altaxo.Calc.Ode
             // ---------------------------------------------------------------------------------------------------
 
             // Firstly, return initial point
-            EvaluateInternally(t0, true, out t0, xout);
+            // EvaluateInternally(t0, true, out t0, xout);
+            _initializationState = InitializationState.NotInitialized;
         }
 
-        public void Evaluate(double? t_sol, out double t_result, double[] result)
+        public void Evaluate(out double t_result, double[] result)
         {
-            if (t_sol.HasValue && !(t_sol.Value >= tout))
+            EvaluateInternally(null, out t_result, result);
+        }
+
+        public void Evaluate(double t_sol, double[] result)
+        {
+            if (!(t_sol >= tout))
                 throw new ArgumentOutOfRangeException(nameof(t_sol), "t must be greater than or equal than the last evaluated t");
 
-            EvaluateInternally(t_sol, false, out t_result, result);
+            EvaluateInternally(t_sol, out var _, result);
         }
 
         public IEnumerable<(double time, IROVector<double> y)> SolutionPointsUntil(double maxTime)
@@ -761,7 +770,7 @@ namespace Altaxo.Calc.Ode
 
             for (;;)
             {
-                EvaluateInternally(null, false, out var time, resultArray);
+                EvaluateInternally(null, out var time, resultArray);
 
                 if (!(time <= maxTime))
                     break;
@@ -769,9 +778,20 @@ namespace Altaxo.Calc.Ode
             }
         }
 
-        private void EvaluateInternally(double? tout, bool isFirstEvaluation, out double t_result, double[] result)
+        private void EvaluateInternally(double? tout, out double t_result, double[] result)
         {
-            if (!isFirstEvaluation)
+            if (_initializationState == InitializationState.NotInitialized) // not initialized so far
+            {
+                _initializationState = InitializationState.InitialValueReturned;
+
+                if (null == tout)
+                {
+                    last_tout = t_result = currstate._tn;
+                    currstate._zn.CopyColumn(0, result);
+                    return;
+                }
+            }
+            else if (_initializationState == InitializationState.Initialized)
             {
                 // we have to clone some of the code from below to here
                 // this is no good style, but a goto statement with a jump inside another code block will not work here.
@@ -780,7 +800,7 @@ namespace Altaxo.Calc.Ode
                 {
                     // Output data, but only if (i) we have requested a certain time point,
                     // and ii) as long as we can interpolate this point from the previous point and the current point
-                    if (tout.HasValue && currstate._tn <= tout.Value && tout.Value <= currstate._tn + currstate._dt)
+                    if (currstate._tn <= tout.Value && tout.Value <= currstate._tn + currstate._dt)
                     {
                         // VectorMath.Lerp(tout.Value, currstate.tn, xout, currstate.tn + currstate.dt, currstate.xn, result);
                         currstate.EvaluateYAtTime(tout.Value, result);
@@ -790,13 +810,7 @@ namespace Altaxo.Calc.Ode
                 }
                 else
                 {
-                    if (double.IsNaN(last_tout)) // if true then return initial point
-                    {
-                        last_tout = t_result = currstate._tn;
-                        VectorMath.Copy(xout, result);
-                        return;
-                    }
-                    else if (currstate._tn == last_tout)
+                    if (currstate._tn == last_tout)
                     {
                         last_tout = t_result = currstate._tn + currstate._dt;
                         VectorMath.Copy(currstate._xn, result);
@@ -826,6 +840,7 @@ namespace Altaxo.Calc.Ode
                 currstate.Rescale(r);
             }
 
+            _initializationState = InitializationState.Initialized;
             //Can produce any number of solution points
             while (true)
             {
@@ -886,10 +901,7 @@ namespace Altaxo.Calc.Ode
                         else
                         {
                             VectorMath.Copy(currstate._xn, result);
-                            t_result = currstate._tn + currstate._dt;
-                            if (!isFirstEvaluation)
-                                last_tout = t_result;
-
+                            t_result = last_tout = currstate._tn + currstate._dt;
                             return;
                         }
 

@@ -72,7 +72,7 @@ namespace Altaxo.Calc.Ode
                 if (!pulseit.MoveNext())
                     break;
                 var spulse = pulseit.Current;
-                ode.Evaluate(null, out var tres, sp);
+                ode.Evaluate(out var tres, sp);
 
                 Assert.AreEqual(spulse.T, tres);
                 Assert.AreEqual(spulse.X[0], sp[0]);
@@ -120,7 +120,7 @@ namespace Altaxo.Calc.Ode
             foreach (var spulse in pulse.SolveTo(100000))
             {
                 double t = spulse.T;
-                ode.Evaluate(null, out var tsp, sp);
+                ode.Evaluate(out var tsp, sp);
 
                 Assert.AreEqual(t, tsp, 1e-4);
 
@@ -146,7 +146,7 @@ namespace Altaxo.Calc.Ode
             double tres;
             do
             {
-                ode.Evaluate(null, out tres, sp);
+                ode.Evaluate(out tres, sp);
                 var y0_expected = tres * tres;
 
                 Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
@@ -169,7 +169,7 @@ namespace Altaxo.Calc.Ode
             double tres;
             do
             {
-                ode.Evaluate(null, out tres, sp);
+                ode.Evaluate(out tres, sp);
                 var y0_expected = tres * tres * tres;
 
                 Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
@@ -198,7 +198,7 @@ namespace Altaxo.Calc.Ode
                 double tres;
                 do
                 {
-                    ode.Evaluate(null, out tres, sp);
+                    ode.Evaluate(out tres, sp);
                     var y0_expected = RMath.Pow(tres, exponent);
 
                     Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
@@ -228,18 +228,17 @@ namespace Altaxo.Calc.Ode
                 double tres;
                 for (double time = 1; time < 1000; time += 1)
                 {
-                    ode.Evaluate(time, out tres, sp);
-                    Assert.AreEqual(time, tres, 1e-8);
+                    ode.Evaluate(time, sp);
 
-                    var y0_expected = RMath.Pow(tres, exponent);
+                    var y0_expected = RMath.Pow(time, exponent);
                     Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
                 }
                 for (double time = 1000; time <= 1000000; time += 1000)
                 {
-                    ode.Evaluate(time, out tres, sp);
-                    Assert.AreEqual(time, tres, 1e-8);
+                    ode.Evaluate(time, sp);
+                    Assert.AreEqual(time, time, 1e-8);
 
-                    var y0_expected = RMath.Pow(tres, exponent);
+                    var y0_expected = RMath.Pow(time, exponent);
                     Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
                 }
             }
@@ -268,10 +267,9 @@ namespace Altaxo.Calc.Ode
                 for (double ii = 0; ii <= 6000; ii += 1)
                 {
                     double time = Math.Pow(10, ii / 1000.0);
-                    ode.Evaluate(time, out tres, sp);
-                    Assert.AreEqual(time, tres, 1e-8);
+                    ode.Evaluate(time, sp);
 
-                    var y0_expected = RMath.Pow(tres, exponent);
+                    var y0_expected = RMath.Pow(time, exponent);
                     Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
                 }
             }
@@ -297,7 +295,7 @@ namespace Altaxo.Calc.Ode
             double tres;
             do
             {
-                ode.Evaluate(null, out tres, sp);
+                ode.Evaluate(out tres, sp);
                 var y0_expected = Math.Sqrt(1 + 8192 * tres) / 64;
 
                 Assert.AreEqual(y0_expected, sp[0], 1E-6 * y0_expected + 1E-7);
@@ -336,7 +334,7 @@ namespace Altaxo.Calc.Ode
 
             foreach (var spulse in pulse.SolveTo(32))
             {
-                ode.Evaluate(null, out tres, sp);
+                ode.Evaluate(out tres, sp);
                 Assert.AreEqual(spulse.T, tres);
                 Assert.AreEqual(spulse.X[0], sp[0]);
 
