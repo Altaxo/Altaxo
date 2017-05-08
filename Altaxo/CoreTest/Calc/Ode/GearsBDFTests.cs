@@ -53,7 +53,7 @@ namespace Altaxo.Calc.Ode
             0,
             new Vector(C1 + C2, C1 - C2),
             fuu,
-            new Altaxo.Calc.Ode.Options { RelativeTolerance = 1e-4, AbsoluteTolerance = 1E-8 });
+            new Altaxo.Calc.Ode.Options { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
 
             var ode = new GearsBDF();
 
@@ -61,19 +61,36 @@ namespace Altaxo.Calc.Ode
             0,
             new double[] { C1 + C2, C1 - C2 },
             (t, y, dydt) => { dydt[0] = lambda1PlusLambda2By2 * y[0] + lambda1MinusLambda2By2 * y[1]; dydt[1] = lambda1MinusLambda2By2 * y[0] + lambda1PlusLambda2By2 * y[1]; },
-            new GearsBDFOptions { RelativeTolerance = 1e-4, AbsoluteTolerance = 1E-8 });
+            new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
 
+            int nCounter = 0;
             var sp = new double[2];
-            foreach (var spulse in pulse.SolveTo(100000))
-            {
-                double t = spulse.T;
-                ode.Evaluate(t, out var _, sp);
 
+            var pulseit = pulse.SolveTo(20).GetEnumerator();
+            for (;;)
+            {
+                if (!pulseit.MoveNext())
+                    break;
+                var spulse = pulseit.Current;
+                ode.Evaluate(null, out var tres, sp);
+
+                Assert.AreEqual(spulse.T, tres);
+                Assert.AreEqual(spulse.X[0], sp[0]);
+                Assert.AreEqual(spulse.X[1], sp[1]);
+
+                double t = spulse.T;
                 var y0_expected = C1 * Math.Exp(lambda1 * t) + C2 * Math.Exp(lambda2 * t);
                 var y1_expected = C1 * Math.Exp(lambda1 * t) - C2 * Math.Exp(lambda2 * t);
+                Assert.AreEqual(y0_expected, spulse.X[0], 1E-7 * y0_expected + 1E-8);
+                Assert.AreEqual(y1_expected, spulse.X[1], 6E-7 * y1_expected + 1E-8);
 
-                Assert.AreEqual(y0_expected, sp[0], 1E-3 * y0_expected + 1E-4);
-                Assert.AreEqual(y1_expected, sp[1], 1E-3 * y1_expected + 1E-4);
+                t = tres;
+                y0_expected = C1 * Math.Exp(lambda1 * t) + C2 * Math.Exp(lambda2 * t);
+                y1_expected = C1 * Math.Exp(lambda1 * t) - C2 * Math.Exp(lambda2 * t);
+                Assert.AreEqual(y0_expected, sp[0], 1E-7 * y0_expected + 1E-8);
+                Assert.AreEqual(y1_expected, sp[1], 6E-7 * y1_expected + 1E-8);
+
+                ++nCounter;
             }
         }
 
