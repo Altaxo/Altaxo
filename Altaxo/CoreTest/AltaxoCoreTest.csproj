@@ -261,6 +261,7 @@
     <Compile Include="Calc\LinearAlgebra\FloatVectorTest.cs" />
     <Compile Include="Calc\LinearAlgebra\GaussianEliminationSolverTest.cs" />
     <Compile Include="Calc\LinearAlgebra\MatrixMathTest.cs" />
+    <Compile Include="Calc\LinearAlgebra\SparseDoubleMatrixTests.cs" />
     <Compile Include="Calc\LinearAlgebra\TestSingularValueDecomposition.cs" />
     <Compile Include="Calc\LinearAlgebra\TikhonovRegularizedNonnegativeMatrixFactorizationTest.cs" />
     <Compile Include="Calc\Ode\GaussianEliminationTest.cs" />
