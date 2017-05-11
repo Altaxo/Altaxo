@@ -78,6 +78,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			return A;
 		}
 
+		/// <summary>
+		/// Sets all elements of the sparse matrix to zero.
+		/// </summary>
+		public void Clear()
+		{
+			Array.Clear(count, 0, count.Length);
+		}
+
 		/// <summary>Dense version of a sparse matrix</summary>
 		/// <returns>A matrix equivalent</returns>
 		public DoubleMatrix DenseMatrix()

@@ -48,9 +48,7 @@ namespace Altaxo.Calc.Ode
 			/// <summary>
 			/// The rates at the variated point x + variation at index i.
 			/// </summary>
-			private double[][] f_new;
-
-			private double[] variation;
+			private double[] f_new;
 
 			private DoubleMatrix J;
 
@@ -62,8 +60,7 @@ namespace Altaxo.Calc.Ode
 			{
 				variatedX = new double[N];
 				f_old = new double[N];
-				f_new = new DoubleMatrix(N, N).data;
-				variation = new double[N];
+				f_new = new double[N];
 				J = new DoubleMatrix(N, N);
 				J_ROWrapper = J.ToROMatrix();
 				this.f = f;
@@ -81,23 +78,90 @@ namespace Altaxo.Calc.Ode
 
 				f(t, y, f_old); // evaluate rates at old point x
 
-				for (int i = 0; i < N; ++i)
-				{
-					variatedX[i] += (variation[i] = Math.Sqrt(1e-6 * Math.Max(1e-5, Math.Abs(y[i]))));
-					f(t, variatedX, f_new[i]); // calculate rates at x variated at index i
-					variatedX[i] = y[i]; // restore old state
-				}
-
+				double variation;
 				var jarray = J.data;
 				for (int i = 0; i < N; ++i)
 				{
-					for (int j = 0; j < N; ++j)
+					variatedX[i] += (variation = Math.Sqrt(1e-6 * Math.Max(1e-5, Math.Abs(y[i]))));
+					f(t, variatedX, f_new); // calculate rates at x variated at index i
+					variatedX[i] = y[i]; // restore old state
+
+					for (int c = 0; c < N; ++c)
 					{
-						jarray[i][j] = (f_new[j][i] - f_old[i]) / (variation[j]);
+						jarray[c][i] = (f_new[c] - f_old[c]) / (variation);
 					}
 				}
 
 				return J_ROWrapper;
+			}
+		}
+
+		/// <summary>
+		/// Calculates the jacobian, and stores all the temporary arrays and matrices neccessary for calculation.
+		/// </summary>
+		private class SparseJacobianEvaluator
+		{
+			/// <summary>
+			/// Temporary array to hold the x variated in one index to get the rates of the new point.
+			/// </summary>
+			private double[] variatedX;
+
+			/// <summary>
+			/// The rates at the old point x.
+			/// </summary>
+			private double[] f_old;
+
+			/// <summary>
+			/// The rates at the variated point x + variation at index i.
+			/// </summary>
+			private double[] f_new;
+
+			private SparseDoubleMatrix J;
+
+			private Action<double, double[], double[]> f;
+
+			public SparseJacobianEvaluator(int N, Action<double, double[], double[]> f)
+			{
+				variatedX = new double[N];
+				f_old = new double[N];
+				f_new = new double[N];
+				J = new SparseDoubleMatrix(N, N);
+				this.f = f;
+			}
+
+			/// <summary>Compute the Jacobian</summary>
+			/// <param name="f">The derivative function. 1st arg is time, 2nd arg are current y, and the rates are returned in the 3rd arg.</param>
+			/// <param name="t">Current time.</param>
+			/// <param name="y">Current value of the variables of the ODE.</param>
+			/// <returns>The (approximated) Jacobian matrix.</returns>
+			public SparseDoubleMatrix Jacobian(double t, double[] y) // TODO replace, if available, with a read-only version of sparse matrix
+			{
+				int N = variatedX.Length;
+				Array.Copy(y, variatedX, N);
+
+				f(t, y, f_old); // evaluate rates at old point x
+
+				double variation;
+				double val;
+
+				J.Clear(); // set all elements to zero
+
+				for (int i = 0; i < N; ++i)
+				{
+					variatedX[i] += (variation = Math.Sqrt(1e-6 * Math.Max(1e-5, Math.Abs(y[i]))));
+					f(t, variatedX, f_new); // calculate rates at x variated at index i
+					variatedX[i] = y[i]; // restore old state
+
+					for (int c = 0; c < N; ++c)
+					{
+						val = (f_new[c] - f_old[c]) / (variation);
+
+						if (!(0 == val))
+							J[c, i] = val;
+					}
+				}
+
+				return J;
 			}
 		}
 
@@ -662,16 +726,14 @@ namespace Altaxo.Calc.Ode
 		/// <param name="dydt">Evaluation function for the derivatives. First argument is the time, second argument are the current y values. The third argument is an array where the derivatives are expected to be placed into.</param>
 		/// <param name="sparseJacobianEvaluation">Evaluation for the dense jacobian matrix. First argument is the time, second argument are the current y values. If null is passed for this argument, a default evaluator is used.</param>
 		/// <param name="opts">Options for the ODE method (can be null).</param>
-		public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt, Func<double, double[], SparseDoubleMatrix> sparseJacobianEvaluation, GearsBDFOptions opts)
+		public void InitializeSparse(double t0, double[] y0, Action<double, double[], double[]> dydt, Func<double, double[], SparseDoubleMatrix> sparseJacobianEvaluation, GearsBDFOptions opts)
 		{
 			if (null == y0)
 				throw new ArgumentNullException(nameof(y0));
 			if (null == dydt)
 				throw new ArgumentNullException(nameof(dydt));
-			if (null == sparseJacobianEvaluation)
-				throw new ArgumentNullException(nameof(sparseJacobianEvaluation));
 
-			_sparseJacobianEvaluation = sparseJacobianEvaluation;
+			_sparseJacobianEvaluation = sparseJacobianEvaluation ?? new SparseJacobianEvaluator(y0.Length, dydt).Jacobian;
 			InternalInitialize(t0, y0, dydt, opts ?? GearsBDFOptions.Default);
 		}
 
