@@ -76,7 +76,7 @@ namespace Altaxo.Worksheet.Commands
 		public static void Transpose(IWorksheetController ctrl)
 		{
 			var srcTable = ctrl.DataTable;
-			var options = new Altaxo.Data.DataTableTransposeOptions(srcTable.DataColumnCount, srcTable.PropertyColumnCount);
+			var options = new Altaxo.Data.DataTableTransposeOptions();
 			if (!Current.Gui.ShowDialog(ref options, "Transpose worksheet", false))
 				return;
 

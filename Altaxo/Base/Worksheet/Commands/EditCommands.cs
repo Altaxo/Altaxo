@@ -564,8 +564,13 @@ namespace Altaxo.Worksheet.Commands
 				{
 					PasteFromTableColumnsToSelectedPropertyColumns(ctrl, sourcetable);
 				}
+				// now look if the data are transposed
+				else if (ctrl.SelectedPropertyColumns.Count > 0 && ctrl.SelectedPropertyColumns.Count == sourcetable.DataColumns.RowCount)
+				{
+					PasteFromTableColumnsTransposedToSelectedPropertyColumns(ctrl, sourcetable);
+				}
 
-					// now the not exact matches
+				// now the not exact matches
 				else if (ctrl.SelectedDataColumns.Count > 0)
 				{
 					PasteFromTableColumnsToSelectedColumns(ctrl, sourcetable);
@@ -723,6 +728,56 @@ namespace Altaxo.Worksheet.Commands
 					{
 						nDestRow = nSrcRow < dg.SelectedPropertyRows.Count ? dg.SelectedPropertyRows[nSrcRow] : nDestRow + 1;
 						destcolumn[nDestRow] = sourcecolumn[nSrcRow];
+					}
+				}
+				catch (Exception)
+				{
+				}
+			} // for all data columns
+		}
+
+		/// <summary>
+		/// Pastes data from a table (usually deserialized table from the clipboard) into a worksheet, which has
+		/// currently selected property columns. The sourceTable is transposed before pasting, i.e. the number of selected property columns has to match the number of data (!) rows of the source table.
+		/// </summary>
+		/// <param name="dg">The worksheet to paste into.</param>
+		/// <param name="sourceTable">The table which contains the data to paste into the worksheet.</param>
+		/// <remarks>The operation is defined as follows: if the is no ro selection, the data are inserted beginning at row[0] of the destination table.
+		/// If there is a row selection, the data are inserted in the selected rows, and then in the rows after the last selected rows.
+		/// No exception is thrown if a column type does not match the corresponding source column type.
+		/// The columns to paste into do not change their name, kind or group number. But property columns in the source table
+		/// are pasted into the destination table.</remarks>
+		protected static void PasteFromTableColumnsTransposedToSelectedPropertyColumns(IWorksheetController dg, Altaxo.Data.DataTable sourceTable)
+		{
+			Altaxo.Data.DataTable destinationTable = dg.DataTable;
+
+			// use the selected columns, then use the following columns, then add columns
+			int destinationColumnIndex = -1;
+			for (int sourceRowIndex = 0; sourceRowIndex < sourceTable.DataColumns.RowCount; sourceRowIndex++)
+			{
+				destinationColumnIndex = sourceRowIndex < dg.SelectedPropertyColumns.Count ? dg.SelectedPropertyColumns[sourceRowIndex] : destinationColumnIndex + 1;
+				Altaxo.Data.DataColumn destinationPropertyColumn;
+				if (destinationColumnIndex < destinationTable.PropertyColumns.ColumnCount)
+				{
+					destinationPropertyColumn = destinationTable.PropertyColumns[destinationColumnIndex];
+				}
+				else
+				{
+					string name = sourceTable.DataColumns.GetColumnName(0);
+					int group = sourceTable.DataColumns.GetColumnGroup(0);
+					Altaxo.Data.ColumnKind kind = sourceTable.DataColumns.GetColumnKind(0);
+					destinationPropertyColumn = (Altaxo.Data.DataColumn)Activator.CreateInstance(sourceTable.DataColumns[0].GetType());
+					destinationTable.PropertyColumns.Add(destinationPropertyColumn, name, kind, group);
+				}
+
+				// now fill the data into that column
+				try
+				{
+					int destinationRowIndex = -1;
+					for (int sourceColumnIndex = 0; sourceColumnIndex < sourceTable.DataColumns.ColumnCount; sourceColumnIndex++)
+					{
+						destinationRowIndex = sourceColumnIndex < dg.SelectedPropertyRows.Count ? dg.SelectedPropertyRows[sourceColumnIndex] : destinationRowIndex + 1;
+						destinationPropertyColumn[destinationRowIndex] = sourceTable.DataColumns[sourceColumnIndex][sourceRowIndex];
 					}
 				}
 				catch (Exception)
