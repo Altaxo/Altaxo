@@ -328,7 +328,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
 			return showDialog;
 		}
 
-		private static void CreateHistogramTable(ref DataTable destinationTable, string proposedTableName, IList<double> sortedListOfData, IBinning binning)
+		private static void CreateHistogramTable(ref DataTable destinationTable, string proposedTableName, IReadOnlyList<double> sortedListOfData, IBinning binning)
 		{
 			if (null == destinationTable)
 			{
