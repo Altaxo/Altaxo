@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -484,6 +485,64 @@ namespace Altaxo.Calc.Ode
 					}
 					dydt[i] = yip1 - 2 * y[i] + y[i - 1];
 				}
+				);
+
+			ode.InitializeSparse(
+			0,
+			initY,
+			f,
+			null,
+			new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
+
+			int nCounter = 0;
+			var sp = new double[numberOfCells];
+
+			double tres = 0;
+			for (; tres <= 10000;)
+			{
+				ode.Evaluate(out tres, sp);
+
+				double t = tres;
+				for (int i = 0; i < numberOfCells; ++i)
+				{
+					Assert.AreEqual(sp[i], sp[numberOfCells - 1 - i], 1E-7 * sp[i] + 1E-8); // test for symmetry of the solution
+				}
+
+				++nCounter;
+			}
+		}
+
+		/// <summary>
+		/// Solve a simple diffusion problem with 100 cells
+		/// </summary>
+		[Test]
+		public void GearTestSparse03b()
+		{
+			var ode = new GearsBDF();
+
+			var numberOfCells = 100;
+
+			var initY = new double[numberOfCells];
+
+			for (int i = 0; i < numberOfCells; ++i)
+			{
+				initY[i] = 0; // initally zero concentration
+			}
+
+			// Symmetrical problem, diffusion from both sides of a plate
+			var f = new Action<double, double[], double[]>((t, y, dydt) =>
+			{
+				double yim1 = 1; // outer concentration at lower index
+				double yip1 = 1; // outer concentration at upper index
+				int lend = y.Length - 1;
+
+				var yy = VectorMath.ToROVectorStructAmendedUnshifted(y, yim1, yip1);
+
+				for (int i = 0; i < y.Length; ++i)
+				{
+					dydt[i] = yy[i + 1] - 2 * yy[i] + yy[i - 1];
+				}
+			}
 				);
 
 			ode.InitializeSparse(

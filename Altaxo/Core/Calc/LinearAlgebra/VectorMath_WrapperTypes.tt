@@ -620,6 +620,270 @@
 
 
 		/// <summary>
+    /// Serves as wrapper for an array to plug-in where a IROVector is neccessary.
+    /// </summary>
+    private class RO<#= bigScalT #>ArrayWrapperAmendedShifted : <#= roVecT #>
+    {
+      private int _length;
+      protected <#= scalT #>[] _x;
+			protected <#= scalT #> _amendedValueAtStart;
+			protected int _amendedValuesAtStartCount;
+			protected <#= scalT #> _amendedValueAtEnd;
+			protected int _amendedValuesAtEndCount;
+			
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x">The array to wrap. The array is used directly (without copying).</param>
+			/// <param name="amendedValueAtStart">Value of the vector at the first <paramref name="amendedValuesAtStartCount"/> indices</param>.
+			/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
+			/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
+			/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
+
+      public RO<#= bigScalT #>ArrayWrapperAmendedShifted(<#= scalT #>[] x, <#= scalT #> amendedValueAtStart, int amendedValuesAtStartCount, <#= scalT #> amendedValueAtEnd, int amendedValuesAtEndCount)
+      {
+        _length = x.Length;
+        _x = x;
+			 _amendedValueAtStart = amendedValueAtStart;
+			 _amendedValuesAtStartCount = amendedValuesAtStartCount;
+			 _amendedValueAtEnd = amendedValueAtEnd;
+			 _amendedValuesAtEndCount = amendedValuesAtEndCount;
+      }
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="usedlength">The length used for the vector.</param>
+			/// <param name="amendedValueAtStart">Value of the vector at the first <paramref name="amendedValuesAtStartCount"/> indices</param>.
+			/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
+			/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
+			/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
+
+      public RO<#= bigScalT #>ArrayWrapperAmendedShifted(<#= scalT #>[] x, int usedlength, <#= scalT #> amendedValueAtStart, int amendedValuesAtStartCount, <#= scalT #> amendedValueAtEnd, int amendedValuesAtEndCount)
+      {
+        if (usedlength > x.Length)
+          throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+        _length = Math.Max(0,usedlength);
+        _x = x;
+			 _amendedValueAtStart = amendedValueAtStart;
+			 _amendedValuesAtStartCount = amendedValuesAtStartCount;
+			 _amendedValueAtEnd = amendedValueAtEnd;
+			 _amendedValuesAtEndCount = amendedValuesAtEndCount;
+      }
+
+      /// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+      /// <value>The element at index i.</value>
+      public <#= scalT #> this[int i]
+      {
+        get
+        {
+					if(i<_amendedValuesAtStartCount)
+						return _amendedValueAtStart;
+          else if(i<_length +_amendedValuesAtStartCount)
+						return _x[i - _amendedValuesAtStartCount];
+					else 
+						return _amendedValueAtEnd;
+        }
+      }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length
+      {
+        get
+        {
+          return _length + _amendedValuesAtStartCount + _amendedValuesAtEndCount;
+        }
+      } 
+
+     /// <summary>The number of elements of this vector.</summary>
+     public int Count
+      {
+        get
+        {
+           return _length + _amendedValuesAtStartCount + _amendedValuesAtEndCount;
+        }
+      }
+
+      public IEnumerator<<#= scalT #>> GetEnumerator()
+      {
+				for (int i = 0; i < _amendedValuesAtStartCount; ++i)
+					yield return _amendedValueAtStart;
+				for (int i = 0; i < _length; ++i)
+					yield return _x[i];
+				for (int i = 0; i < _amendedValuesAtEndCount; ++i)
+					yield return _amendedValueAtEnd;
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+				for (int i = 0; i < _amendedValuesAtStartCount; ++i)
+					yield return _amendedValueAtStart;
+				for (int i = 0; i < _length; ++i)
+					yield return _x[i];
+				for (int i = 0; i < _amendedValuesAtEndCount; ++i)
+					yield return _amendedValueAtEnd;
+      }
+    }
+
+			/// <summary>
+		/// Wraps a <#= scalT #>[] array to get an IROVector.
+		/// </summary>
+		/// <param name="array">The array to wrap. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
+		/// <param name="amendedValueAtStart">Value of the vector at the first <paramref name="amendedValuesAtStartCount"/> indices</param>.
+		/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
+		/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
+		/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
+		public static <#= roVecT #> ToROVectorAmendedShifted(this <#= scalT #>[] array,<#= scalT #> amendedValueAtStart, int amendedValuesAtStartCount, <#= scalT #> amendedValueAtEnd, int amendedValuesAtEndCount)
+		{
+			return null == array ? null : new RO<#= bigScalT #>ArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
+		}
+
+		/// <summary>
+		/// Wraps a <#= scalT #>[] array till a given length to get an IROVector.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
+		/// <param name="amendedValueAtStart">Value of the vector at the first <paramref name="amendedValuesAtStartCount"/> indices</param>.
+		/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
+		/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
+		/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{<#= scalT #>}" /> interface that wraps the provided array.</returns>
+		public static <#= roVecT #> ToROVectorAmendedShifted(this <#= scalT #>[] array, int usedlength,<#= scalT #> amendedValueAtStart, int amendedValuesAtStartCount, <#= scalT #> amendedValueAtEnd, int amendedValuesAtEndCount)
+		{
+			return new RO<#= bigScalT #>ArrayWrapperAmendedShifted(array, usedlength, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
+		}
+
+
+		/// <summary>
+    /// Serves as thin wrapper struct for an array when additional data at the start and the end of the array are neccessary.
+    /// </summary>
+    public struct RO<#= bigScalT #>ArrayWrapperStructAmendedUnshifted : <#= roVecT #>
+    {
+      private int _length;
+      private  <#= scalT #>[] _x;
+			private  <#= scalT #> _amendedValueAtStart;
+			private  <#= scalT #> _amendedValueAtEnd;
+			
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x">The array to wrap. The array is used directly (without copying).</param>
+			/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
+			/// <param name="amendedValueAtEnd">Value of the vector at indices greater then or equal to Length.</param>.
+      public RO<#= bigScalT #>ArrayWrapperStructAmendedUnshifted(<#= scalT #>[] x, <#= scalT #> amendedValueAtStart, <#= scalT #> amendedValueAtEnd)
+      {
+        _length = x.Length;
+        _x = x;
+			 _amendedValueAtStart = amendedValueAtStart;
+			 _amendedValueAtEnd = amendedValueAtEnd;
+      }
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="usedlength">The length used for the vector.</param>
+			/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
+			/// <param name="amendedValueAtEnd">Value of the vector at indices greater then or equal to Length.</param>.
+	      public RO<#= bigScalT #>ArrayWrapperStructAmendedUnshifted(<#= scalT #>[] x, int usedlength, <#= scalT #> amendedValueAtStart, <#= scalT #> amendedValueAtEnd)
+      {
+        if (usedlength > x.Length)
+          throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+        _length = Math.Max(0,usedlength);
+        _x = x;
+			 _amendedValueAtStart = amendedValueAtStart;
+			 _amendedValueAtEnd = amendedValueAtEnd;
+      }
+
+      /// <summary>Gets the value at index i. For indices &lt;0, the value amendedValueAtStart is returned.
+			/// For indices &gt;=Length, the value amendedValueAtEnd is returned.</summary>
+      /// <value>The element at index i.</value>
+      public <#= scalT #> this[int i]
+      {
+        get
+        {
+					if(i<0)
+						return _amendedValueAtStart;
+          else if(i<_length)
+						return _x[i];
+					else 
+						return _amendedValueAtEnd;
+        }
+      }
+
+      /// <summary>Attention! Returns the length of the wrapped part of the array.</summary>
+      public int Length
+      {
+        get
+        {
+          return _length;
+        }
+      } 
+
+     /// <summary>Attention! Returns the length of the wrapped part of the array.</summary>
+     public int Count
+      {
+        get
+        {
+          return _length;
+        }
+      }
+
+      public IEnumerator<<#= scalT #>> GetEnumerator()
+      {
+				yield return _amendedValueAtStart;
+
+				for (int i = 0; i < _length; ++i)
+					yield return _x[i];
+
+				yield return _amendedValueAtEnd;
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+				yield return _amendedValueAtStart;
+
+				for (int i = 0; i < _length; ++i)
+					yield return _x[i];
+
+				yield return _amendedValueAtEnd;
+      }
+    }
+
+		
+		/// <summary>
+		/// Wraps a <#= scalT #>[] array to get a struct with a IROVector implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// above Length, which is normally forbidden. The values for that are given as parameters.
+		/// </summary>
+		/// <param name="array">The array to wrap. The first element of the array has index 0 in the returned vector.</param>
+		/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
+		/// <param name="amendedValueAtEnd">Value of the vector at indices greater than or equal to <paramref name="array"/>.Length.</param>.
+		/// <returns>A wrapper struct with the <see cref="IROVector{<#= scalT #>}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
+		public static RO<#= bigScalT #>ArrayWrapperStructAmendedUnshifted ToROVectorStructAmendedUnshifted(this <#= scalT #>[] array,<#= scalT #> amendedValueAtStart, <#= scalT #> amendedValueAtEnd)
+		{
+			return new RO<#= bigScalT #>ArrayWrapperStructAmendedUnshifted(array, amendedValueAtStart, amendedValueAtEnd);
+		}
+
+		/// <summary>
+		/// Wraps a <#= scalT #>[] array till a given length to get a struct with a IROVector implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// above <paramref name="usedlength"/>, which is normally forbidden. The values for that are given as parameters.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array. The first element of the array has index 0 in the returned vector.</param>
+		/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
+		/// <param name="amendedValueAtEnd">Value of the vector at indices greater then or equal to <paramref name="usedlength"/>.</param>.
+		/// <returns>A wrapper struct with the <see cref="IROVector{<#= scalT #>}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
+		public static RO<#= bigScalT #>ArrayWrapperStructAmendedUnshifted ToROVectorStructAmendedUnshifted(this <#= scalT #>[] array, int usedlength,<#= scalT #> amendedValueAtStart, <#= scalT #> amendedValueAtEnd)
+		{
+			return new RO<#= bigScalT #>ArrayWrapperStructAmendedUnshifted(array, usedlength, amendedValueAtStart, amendedValueAtEnd );
+		}
+
+
+		/// <summary>
     /// Serves as wrapper for an array to plug-in where a IVector is neccessary.
     /// </summary>
 		private class RW<#= bigScalT #>ArrayWrapper : RO<#= bigScalT #>ArrayWrapper, <#= rwVecT #>
