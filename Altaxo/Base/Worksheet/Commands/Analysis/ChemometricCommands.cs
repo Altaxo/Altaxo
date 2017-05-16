@@ -113,7 +113,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 			// now create the matrices to multiply from the
 
-			MatrixMath.REMatrix firstMat = new MatrixMath.REMatrix(rowsfirsthalf, halfselect);
+			var firstMat = new MatrixMath.TopSpineJaggedArrayMatrix<double>(rowsfirsthalf, halfselect);
 			for (int i = 0; i < halfselect; i++)
 			{
 				Altaxo.Data.INumericColumn col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i]];
@@ -121,7 +121,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 					firstMat[j, i] = col[j];
 			}
 
-			MatrixMath.BEMatrix secondMat = new MatrixMath.BEMatrix(halfselect, rowssecondhalf);
+			var secondMat = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(halfselect, rowssecondhalf);
 			for (int i = 0; i < halfselect; i++)
 			{
 				Altaxo.Data.INumericColumn col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i + halfselect]];
@@ -130,7 +130,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			}
 
 			// now multiply the two matrices
-			MatrixMath.BEMatrix resultMat = new MatrixMath.BEMatrix(rowsfirsthalf, rowssecondhalf);
+			var resultMat = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(rowsfirsthalf, rowssecondhalf);
 			MatrixMath.Multiply(firstMat, secondMat, resultMat);
 
 			// and store the result in a new worksheet
@@ -243,10 +243,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 			// Create a matrix of appropriate dimensions and fill it
 
-			MatrixMath.BEMatrix matrixX;
+			MatrixMath.LeftSpineJaggedArrayMatrix<double> matrixX;
 			if (bHorizontalOrientedSpectrum)
 			{
-				matrixX = new MatrixMath.BEMatrix(numrows, numcols);
+				matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numrows, numcols);
 				int ccol = 0; // current column in the matrix
 				for (int i = 0; i < prenumcols; i++)
 				{
@@ -265,7 +265,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			} // end if it was a horizontal oriented spectrum
 			else // if it is a vertical oriented spectrum
 			{
-				matrixX = new MatrixMath.BEMatrix(numcols, numrows);
+				matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numcols, numrows);
 				int ccol = 0; // current column in the matrix
 				for (int i = 0; i < prenumcols; i++)
 				{
@@ -284,9 +284,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			} // if it was a vertical oriented spectrum
 
 			// now do PCA with the matrix
-			var factors = new MatrixMath.REMatrix(0, 0);
-			var loads = new MatrixMath.BEMatrix(0, 0);
-			var residualVariances = new MatrixMath.BEMatrix(0, 0);
+			var factors = new MatrixMath.TopSpineJaggedArrayMatrix<double>(0, 0);
+			var loads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
+			var residualVariances = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
 			var meanX = new MatrixMath.MatrixWithOneRow<double>(matrixX.Columns);
 			// first, center the matrix
 			MatrixMath.ColumnsToZeroMean(matrixX, meanX);

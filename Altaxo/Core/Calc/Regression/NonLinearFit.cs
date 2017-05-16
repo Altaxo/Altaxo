@@ -1896,8 +1896,8 @@ namespace Altaxo.Calc.Regression
 			int rnk;
 			double fact;
 
-			var matresult = MatrixMath.PseudoInverse(MatrixMath.ToROMatrix(JtJ, m), out rnk);
-			MatrixMath.Copy(matresult, MatrixMath.ToMatrix(C, m));
+			var matresult = MatrixMath.PseudoInverse(MatrixMath.ToROMatrixFromColumnMajorLinearArray(JtJ, m), out rnk);
+			MatrixMath.Copy(matresult, MatrixMath.ToMatrixFromColumnMajorLinearArray(C, m));
 
 			fact = sumsq / (double)(n - rnk);
 			for (i = 0; i < m * m; ++i)

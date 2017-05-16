@@ -90,10 +90,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 		{
 			int numberOfFactors = _calib.NumberOfFactors = Math.Min(matrixX.Columns, maxFactors);
 
-			MatrixMath.BEMatrix _xLoads = new MatrixMath.BEMatrix(0, 0);
-			MatrixMath.BEMatrix _yLoads = new MatrixMath.BEMatrix(0, 0);
-			MatrixMath.BEMatrix _W = new MatrixMath.BEMatrix(0, 0);
-			MatrixMath.REMatrix _V = new MatrixMath.REMatrix(0, 0);
+			var _xLoads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
+			var _yLoads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
+			var _W = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
+			var _V = new MatrixMath.TopSpineJaggedArrayMatrix<double>(0, 0);
 			_PRESS = VectorMath.CreateExtensibleVector<double>(0);
 
 			ExecuteAnalysis(matrixX, matrixY, ref numberOfFactors, _xLoads, _yLoads, _W, _V, _PRESS);
@@ -186,9 +186,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 			//  MatrixMath.ColumnsToZeroMean(X,mean);
 			//W.AppendBottom(mean);
 
-			var X = new MatrixMath.BEMatrix(_X.Rows, _X.Columns);
+			var X = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_X.Rows, _X.Columns);
 			MatrixMath.Copy(_X, X);
-			var Y = new MatrixMath.BEMatrix(_Y.Rows, _Y.Columns);
+			var Y = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_Y.Rows, _Y.Columns);
 			MatrixMath.Copy(_Y, Y);
 
 			IMatrix<double> u_prev = null;
@@ -401,9 +401,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 			)
 		{
 			// get the score matrix
-			MatrixMath.BEMatrix weights = new MatrixMath.BEMatrix(numFactors, W.Columns);
+			var weights = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numFactors, W.Columns);
 			MatrixMath.Submatrix(W, weights, 0, 0);
-			MatrixMath.BEMatrix scoresMatrix = new MatrixMath.BEMatrix(matrixX.Rows, weights.Rows);
+			var scoresMatrix = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.Rows, weights.Rows);
 			MatrixMath.MultiplySecondTransposed(matrixX, weights, scoresMatrix);
 
 			MatrixMath.SingularValueDecomposition decomposition = MatrixMath.GetSingularValueDecomposition(scoresMatrix);

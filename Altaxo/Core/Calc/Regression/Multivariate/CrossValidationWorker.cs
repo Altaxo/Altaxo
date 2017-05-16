@@ -77,7 +77,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		{
 			IVector<double> meanX, scaleX, meanY, scaleY;
 			if (_predictedY == null || _predictedY.Rows != YU.Rows || _predictedY.Columns != YU.Columns)
-				_predictedY = new MatrixMath.BEMatrix(YU.Rows, YU.Columns);
+				_predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(YU.Rows, YU.Columns);
 
 			MultivariateRegression.PreprocessForAnalysis(_preprocessOptions, _spectralRegions, XX, YY, out meanX, out scaleX, out meanY, out scaleY);
 			_analysis.AnalyzeFromPreprocessed(XX, YY, _numFactors);
@@ -122,7 +122,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		{
 			IVector<double> meanX, scaleX, meanY, scaleY;
 			if (_predictedY == null || _predictedY.Rows != YU.Rows || _predictedY.Columns != YU.Columns)
-				_predictedY = new MatrixMath.BEMatrix(YU.Rows, YU.Columns);
+				_predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(YU.Rows, YU.Columns);
 
 			MultivariateRegression.PreprocessForAnalysis(_preprocessOptions, _spectralRegions, XX, YY,
 				out meanX, out scaleX, out meanY, out scaleY);
@@ -174,7 +174,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			IROMatrix<double> xResidual = _analysis.SpectralResidualsFromPreprocessed(XU, _numFactors);
 
 			if (this._XCrossResiduals == null)
-				this._XCrossResiduals = new MatrixMath.BEMatrix(_numberOfPoints, xResidual.Columns);
+				this._XCrossResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_numberOfPoints, xResidual.Columns);
 
 			for (int i = 0; i < group.Length; i++)
 				MatrixMath.SetRow(xResidual, i, this._XCrossResiduals, group[i]);
@@ -214,9 +214,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 			MultivariateRegression.PreprocessSpectraForPrediction(_preprocessOptions, XU, meanX, scaleX);
 
 			if (_predictedY == null || _predictedY.Rows != YU.Rows || _predictedY.Columns != YU.Columns)
-				_predictedY = new MatrixMath.BEMatrix(YU.Rows, YU.Columns);
+				_predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(YU.Rows, YU.Columns);
 			if (_spectralResidual == null || _spectralResidual.Rows != XU.Rows || _spectralResidual.Columns != _analysis.NumberOfSpectralResiduals)
-				_spectralResidual = new MatrixMath.BEMatrix(XU.Rows, _analysis.NumberOfSpectralResiduals);
+				_spectralResidual = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.Rows, _analysis.NumberOfSpectralResiduals);
 
 			for (int nFactor = 0; nFactor <= _numFactors; nFactor++)
 			{

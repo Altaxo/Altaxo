@@ -70,7 +70,7 @@ namespace Altaxo.Calc.Interpolation
 				_myY = VectorMath.ToVector(new double[y.Count]);
 				VectorMath.Copy(y, (IVector<double>)_myY);
 
-				_myZ = new MatrixMath.BEMatrix(_myZ.Rows, _myZ.Columns);
+				_myZ = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_myZ.Rows, _myZ.Columns);
 				MatrixMath.Copy(z, (IMatrix<double>)_myZ);
 			}
 			else
@@ -122,7 +122,7 @@ namespace Altaxo.Calc.Interpolation
 		public static void Interpolate(double[] x, double[] y, double[] z, double[] u, double[] v, double[] w)
 		{
 			BivariateAkimaSpline spline = new BivariateAkimaSpline();
-			spline.itplbv_(x.Length, y.Length, VectorMath.ToROVector(x), VectorMath.ToROVector(y), MatrixMath.ToROMatrix(z, x.Length),
+			spline.itplbv_(x.Length, y.Length, VectorMath.ToROVector(x), VectorMath.ToROVector(y), MatrixMath.ToROMatrixFromColumnMajorLinearArray(z, x.Length),
 				w.Length, VectorMath.ToROVector(u), VectorMath.ToROVector(v), VectorMath.ToVector(w));
 		}
 

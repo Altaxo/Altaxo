@@ -230,7 +230,7 @@ namespace Altaxo.Calc.Fourier
 			var numColumns = NumberOfColumns;
 			var numRows = NumberOfRows;
 			var d = new double[numRows * numColumns];
-			var m = MatrixMath.ToMatrix(d, numRows);
+			var m = MatrixMath.ToMatrixFromColumnMajorLinearArray(d, numRows);
 			return m;
 		}
 
@@ -302,7 +302,7 @@ namespace Altaxo.Calc.Fourier
 			int resultColumns = Math.Min(NumberOfColumns, Math.Max(1, (int)(columnFraction * NumberOfColumns)));
 
 			var d = new double[resultRows * resultColumns];
-			matrix = MatrixMath.ToMatrix(d, resultRows);
+			matrix = MatrixMath.ToMatrixFromColumnMajorLinearArray(d, resultRows);
 
 			GetResult(matrix, resultantEval);
 			rowFrequencies = GetRowFrequencies(resultRows);
@@ -343,7 +343,7 @@ namespace Altaxo.Calc.Fourier
 			int resultColumns = Math.Min(NumberOfColumns, Math.Max(1, (int)(columnFraction * NumberOfColumns)));
 
 			var d = new double[resultRows * resultColumns];
-			matrix = MatrixMath.ToMatrix(d, resultRows);
+			matrix = MatrixMath.ToMatrixFromColumnMajorLinearArray(d, resultRows);
 
 			GetResultCentered(matrix, resultantEval);
 

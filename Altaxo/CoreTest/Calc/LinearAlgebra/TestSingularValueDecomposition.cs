@@ -59,7 +59,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 					new double[]{0.9287837386562145112758128, 0.3243895616023268212207566, 0.1792545093748964368092940}
 				};
 
-			IMatrix<double> X = MatrixMath.ToMatrix(x);
+			IMatrix<double> X = MatrixMath.ToMatrixFromLeftSpineJaggedArray(x);
 
 			MatrixMath.SingularValueDecomposition decomp =
 				MatrixMath.GetSingularValueDecomposition(X);
@@ -107,7 +107,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 					new double[]{0.9586383096921561352973747, 0.2550136346341303246410893, 0.1264145456079166187153824}
 				};
 
-			IMatrix<double> X = MatrixMath.ToMatrix(x);
+			IMatrix<double> X = MatrixMath.ToMatrixFromLeftSpineJaggedArray(x);
 
 			MatrixMath.SingularValueDecomposition decomp =
 				MatrixMath.GetSingularValueDecomposition(X);
@@ -153,7 +153,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 				 new double[]{0.9368897840411354775696647, 0.2889451561910784800441657, 0.1832855425226170318735145}
 			 };
 
-			IMatrix<double> X = MatrixMath.ToMatrix(x);
+			IMatrix<double> X = MatrixMath.ToMatrixFromLeftSpineJaggedArray(x);
 
 			MatrixMath.SingularValueDecomposition decomp =
 				MatrixMath.GetSingularValueDecomposition(X);

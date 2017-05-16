@@ -977,5 +977,455 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		#endregion DiagonalMatrix
+
+		#region Wrapper from linear array (column major order, i.e. LAPACK convention) to IROMatrix
+
+		/// <summary>
+		/// Wraps a linear array to a read-only matrix. The array is column oriented, i.e. consecutive elements
+		/// belong mostly to one column. This is the convention used for LAPACK routines.
+		/// </summary>
+		public class ROMatrixFromColumnMajorLinearArray<T> : IROMatrix<T>
+		{
+			protected T[] _array;
+			protected int _rows;
+			protected int _columns;
+
+			#region IROMatrix Members
+
+			/// <summary>
+			/// Initializes a new instance of the <see cref="ROMatrixFromColumnMajorLinearArray{T}"/> class.
+			/// </summary>
+			/// <param name="array">The linear array in column major order.</param>
+			/// <param name="nRows">The number of rows of the matrix. The number of colums are calculated from the length of the array and the number of rows.</param>
+			/// <exception cref="System.ArgumentException"></exception>
+			public ROMatrixFromColumnMajorLinearArray(T[] array, int nRows)
+			{
+				if (array.Length % nRows != 0)
+					throw new ArgumentException(string.Format("Length of array {0} is not a multiple of nRows={1}", array.Length, nRows));
+
+				_array = array;
+				_rows = nRows;
+				_columns = array.Length / nRows;
+			}
+
+			/// <summary>
+			/// Initializes a new instance of the <see cref="ROMatrixFromColumnMajorLinearArray{T}"/> class.
+			/// </summary>
+			/// <param name="wrapper">Wrapper that wraps a linear array in column major order and provides the number of rows and columns.</param>
+			public ROMatrixFromColumnMajorLinearArray(MatrixWrapperStructForColumnMajorOrderLinearArray<T> wrapper)
+			{
+				_array = wrapper.Array;
+				_rows = wrapper.Rows;
+				_columns = wrapper.Columns;
+			}
+
+			/// <inheritdoc/>
+			public T this[int row, int col]
+			{
+				get
+				{
+					return _array[col * _rows + row];
+				}
+			}
+
+			/// <inheritdoc/>
+			public int Rows
+			{
+				get { return _rows; }
+			}
+
+			/// <inheritdoc/>
+			public int Columns
+			{
+				get { return _columns; }
+			}
+
+			#endregion IROMatrix Members
+		}
+
+		#endregion Wrapper from linear array (column major order, i.e. LAPACK convention) to IROMatrix
+
+		#region Wrapper from linear array (column major order, i.e. LAPACK convention) to read/write matrix
+
+		/// <summary>
+		/// Wraps a linear array to a read-write matrix. The array is column oriented, i.e. consecutive elements
+		/// belong mostly to one column. This is the convention used for LAPACK routines.
+		/// </summary>
+		public class MatrixFromColumnMajorLinearArray<T> : ROMatrixFromColumnMajorLinearArray<T>, IMatrix<T>
+		{
+			/// <summary>
+			/// Initializes a new instance of the <see cref="MatrixFromColumnMajorLinearArray{T}"/> class.
+			/// </summary>
+			/// <param name="array">The linear array in column major order.</param>
+			/// <param name="nRows">The number of rows of the matrix. The number of colums are calculated from the length of the array and the number of rows.</param>
+			/// <exception cref="System.ArgumentException"></exception>
+			public MatrixFromColumnMajorLinearArray(T[] array, int nRows)
+				: base(array, nRows)
+			{
+			}
+
+			/// <summary>
+			/// Initializes a new instance of the <see cref="MatrixFromColumnMajorLinearArray{T}"/> class.
+			/// </summary>
+			/// <param name="wrapper">Wrapper that wraps a linear array in column major order and provides the number of rows and columns.</param>
+			public MatrixFromColumnMajorLinearArray(MatrixWrapperStructForColumnMajorOrderLinearArray<T> wrapper)
+				: base(wrapper)
+			{
+			}
+
+			/// <inheritdoc/>
+			public new T this[int row, int col]
+			{
+				get
+				{
+					return _array[col * _rows + row];
+				}
+
+				set
+				{
+					_array[col * _rows + row] = value;
+				}
+			}
+		}
+
+		#endregion Wrapper from linear array (column major order, i.e. LAPACK convention) to read/write matrix
+
+		#region LeftSpineJaggedArrayMatrix
+
+		/// <summary>
+		/// BEMatrix is a matrix implementation that is relatively easy to extend to the botton, i.e. to append rows.
+		/// It is horizontal oriented, i.e. the storage is as a number of horizontal vectors.
+		/// </summary>
+		public class LeftSpineJaggedArrayMatrix<T> : IMatrix<T>, IBottomExtensibleMatrix<T>
+		{
+			/// <summary>The rows of the matrix = number of double[] arrays in it.</summary>
+			private int _rows;
+
+			/// <summary>The cols of the matrix = length of each double[] array.</summary>
+			private int _columns;
+
+			/// <summary>The array which holds the matrix.</summary>
+			private T[][] _array;
+
+			/// <summary>
+			/// Sets up an empty matrix with dimension(row,cols).
+			/// </summary>
+			/// <param name="rows">Number of rows of the matrix.</param>
+			/// <param name="cols">Number of cols of the matrix.</param>
+			public LeftSpineJaggedArrayMatrix(int rows, int cols)
+			{
+				SetDimension(rows, cols);
+			}
+
+			/// <summary>
+			/// Uses an already existing array for the matrix data.
+			/// </summary>
+			/// <param name="x">Jagged double array containing the matrix data. The data are used directly (no copy)!</param>
+			public LeftSpineJaggedArrayMatrix(T[][] x)
+			{
+				this._array = x;
+				this._rows = _array.Length;
+				this._columns = this._rows == 0 ? 0 : this._array[0].Length;
+			}
+
+			/// <summary>
+			/// Uses an already existing array for the matrix data.
+			/// </summary>
+			/// <param name="wrapper">Wrapper around a left spine jagged array containing the matrix data. The data are used directly (no copy)!</param>
+			public LeftSpineJaggedArrayMatrix(MatrixWrapperStructForLeftSpineJaggedArray<T> wrapper)
+			{
+				this._array = wrapper.Array;
+				this._rows = wrapper.Rows;
+				this._columns = wrapper.Columns;
+			}
+
+			public void Clear()
+			{
+				SetDimension(0, 0);
+			}
+
+			public override string ToString()
+			{
+				return MatrixMath.MatrixToString(null, this);
+			}
+
+			#region IMatrix Members
+
+			/// <summary>
+			/// Set up the dimensions of the matrix. Discards the old content and reset the matrix with the new dimensions. All elements
+			/// become zero.
+			/// </summary>
+			/// <param name="rows">Number of rows of the matrix.</param>
+			/// <param name="cols">Number of columns of the matrix.</param>
+			public void SetDimension(int rows, int cols)
+			{
+				_rows = rows;
+				_columns = cols;
+				_array = new T[2 * (rows + 32)][];
+				for (int i = 0; i < _rows; i++)
+					_array[i] = new T[cols];
+			}
+
+			/// <summary>
+			/// Element accessor. Accesses the element [row, col] of the matrix.
+			/// </summary>
+			public T this[int row, int col]
+			{
+				get
+				{
+					return _array[row][col];
+				}
+				set
+				{
+					_array[row][col] = value;
+				}
+			}
+
+			/// <summary>
+			/// Number of Rows of the matrix.
+			/// </summary>
+			public int Rows
+			{
+				get
+				{
+					return _rows;
+				}
+			}
+
+			/// <summary>
+			/// Number of columns of the matrix.
+			/// </summary>
+			public int Columns
+			{
+				get
+				{
+					return _columns;
+				}
+			}
+
+			#endregion IMatrix Members
+
+			#region IBottomExtensibleMatrix Members
+
+			/// <summary>
+			/// Appends the matrix a at the bottom of this matrix. Either this matrix must be empty (dimensions (0,0)) or
+			/// the matrix to append must have the same number of columns than this matrix.
+			/// </summary>
+			/// <param name="a">Matrix to append to the bottom of this matrix.</param>
+			public void AppendBottom(IROMatrix<T> a)
+			{
+				if (a.Rows == 0)
+					return; // nothing to append
+
+				if (this.Columns > 0)
+				{
+					if (a.Columns != this.Columns) // throw an error if this column is not empty and the columns does not match
+						throw new ArithmeticException(string.Format("The number of columns of this matrix ({0}) and of the matrix to append ({1}) does not match!", this.Columns, a.Columns));
+				}
+				else // if the matrix was empty before
+				{
+					_columns = a.Columns;
+				}
+
+				int newRows = a.Rows + this.Rows;
+
+				// we must reallocate the array if neccessary
+				if (newRows >= _array.Length)
+				{
+					var newArray = new T[2 * (newRows + 32)][];
+
+					for (int i = 0; i < _rows; i++)
+						newArray[i] = _array[i]; // copy the existing horizontal vectors directly
+
+					_array = newArray;
+				}
+
+				// copy the new rows now
+				for (int i = _rows; i < newRows; i++)
+				{
+					_array[i] = new T[_columns]; // create new horizontal vectors for the elements to append
+					for (int j = 0; j < _columns; j++)
+						_array[i][j] = a[i - _rows, j]; // copy the elements
+				}
+
+				_rows = newRows;
+			}
+
+			#endregion IBottomExtensibleMatrix Members
+		}
+
+		#endregion LeftSpineJaggedArrayMatrix
+
+		#region TopSpineJaggedArrayMatrix
+
+		/// <summary>
+		/// REMatrix is a matrix implementation that is relatively easy to extend to the right, i.e. to append columns.
+		/// It is vertical oriented, i.e. the storage is as a number of vertical vectors.
+		/// </summary>
+		public class TopSpineJaggedArrayMatrix<T> : IMatrix<T>, IRightExtensibleMatrix<T>
+		{
+			/// <summary>The rows of the matrix = length of each double[] array.</summary>
+			private int _rows;
+
+			/// <summary>The cols of the matrix = number of double[] arrays in it.</summary>
+			private int _columns;
+
+			/// <summary>The array which holds the matrix.</summary>
+			private T[][] _array;
+
+			/// <summary>
+			/// Sets up an empty matrix with dimension(row,cols).
+			/// </summary>
+			/// <param name="rows">Number of rows of the matrix.</param>
+			/// <param name="cols">Number of cols of the matrix.</param>
+			public TopSpineJaggedArrayMatrix(int rows, int cols)
+			{
+				SetDimension(rows, cols);
+			}
+
+			/// <summary>
+			/// Constructs an RE matrix from an array of double vectors. Attention! The double vectors (the second) dimensions are here
+			/// the columns (!) of the matrix. The data is not copied.
+			/// </summary>
+			/// <param name="from"></param>
+			public TopSpineJaggedArrayMatrix(T[][] from)
+			{
+				_columns = from.Length;
+				_rows = from[0].Length;
+				for (int i = 1; i < _columns; i++)
+					if (from[i].Length != _rows)
+						throw new ArgumentException("The columns of the provided array (second dimension here) are not of equal length");
+
+				_array = from;
+			}
+
+			/// <summary>
+			/// Constructs an top spine jagged array matrix from a wrapper.
+			/// The data is not copied, but used directly.
+			/// </summary>
+			/// <param name="wrapper">Wrapper around a top spine jagged array.</param>
+			public TopSpineJaggedArrayMatrix(MatrixWrapperStructForTopSpineJaggedArray<T> wrapper)
+			{
+				_array = wrapper.Array;
+				_rows = wrapper.Rows;
+				_columns = wrapper.Columns;
+			}
+
+			public void Clear()
+			{
+				SetDimension(0, 0);
+			}
+
+			public override string ToString()
+			{
+				return MatrixMath.MatrixToString(null, this);
+			}
+
+			#region IMatrix Members
+
+			/// <summary>
+			/// Set up the dimensions of the matrix. Discards the old content and reset the matrix with the new dimensions. All elements
+			/// become zero.
+			/// </summary>
+			/// <param name="rows">Number of rows of the matrix.</param>
+			/// <param name="cols">Number of columns of the matrix.</param>
+			public void SetDimension(int rows, int cols)
+			{
+				_rows = rows;
+				_columns = cols;
+				_array = new T[2 * (cols + 32)][];
+				for (int i = 0; i < _columns; i++)
+					_array[i] = new T[rows];
+			}
+
+			/// <summary>
+			/// Element accessor. Accesses the element [row, col] of the matrix.
+			/// </summary>
+			public T this[int row, int col]
+			{
+				get
+				{
+					return _array[col][row];
+				}
+				set
+				{
+					_array[col][row] = value;
+				}
+			}
+
+			/// <summary>
+			/// Number of Rows of the matrix.
+			/// </summary>
+			public int Rows
+			{
+				get
+				{
+					return _rows;
+				}
+			}
+
+			/// <summary>
+			/// Number of columns of the matrix.
+			/// </summary>
+			public int Columns
+			{
+				get
+				{
+					return _columns;
+				}
+			}
+
+			#endregion IMatrix Members
+
+			#region IRightExtensibleMatrix Members
+
+			/// <summary>
+			/// Appends the matrix a at the right of this matrix. Either this matrix must be empty (dimensions (0,0)) or
+			/// the matrix to append must have the same number of rows than this matrix.
+			/// </summary>
+			/// <param name="a">Matrix to append to the right of this matrix.</param>
+			public void AppendRight(IROMatrix<T> a)
+			{
+				if (a.Columns == 0)
+					return; // nothing to append
+
+				if (this.Rows > 0)
+				{
+					if (a.Rows != this.Rows) // throw an error if this column is not empty and the columns does not match
+						throw new ArithmeticException(string.Format("The number of rows of this matrix ({0}) and of the matrix to append ({1}) does not match!", this.Rows, a.Rows));
+				}
+				else // if the matrix was empty before set the number of rows
+				{
+					_rows = a.Rows;
+				}
+
+				int newCols = a.Columns + this.Columns;
+
+				// we must newly allocate the bone array, if neccessary
+				if (newCols >= _array.Length)
+				{
+					var newArray = new T[2 * (newCols + 32)][];
+
+					for (int i = 0; i < _columns; i++)
+						newArray[i] = _array[i]; // copy the existing horizontal vectors.
+
+					_array = newArray;
+				}
+
+				// copy the new rows
+				for (int i = _columns; i < newCols; i++)
+				{
+					_array[i] = new T[_rows]; // create new horizontal vectors for the elements to append
+					for (int j = 0; j < _rows; j++)
+						_array[i][j] = a[j, i - _columns]; // copy the elements
+				}
+
+				_columns = newCols;
+			}
+
+			#endregion IRightExtensibleMatrix Members
+		}
+
+		#endregion TopSpineJaggedArrayMatrix
 	}
 }

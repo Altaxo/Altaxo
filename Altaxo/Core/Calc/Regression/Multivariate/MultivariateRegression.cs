@@ -169,7 +169,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int numFactors // number of factors to use for prediction
 			)
 		{
-			var predictedY = new MatrixMath.BEMatrix(XU.Rows, InternalCalibrationModel.NumberOfY);
+			var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.Rows, InternalCalibrationModel.NumberOfY);
 			this.PredictedYAndSpectralResidualsFromPreprocessed(XU, numFactors, predictedY, null);
 			return predictedY;
 		}
@@ -200,7 +200,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int numFactors // number of factors to use for prediction
 			)
 		{
-			var result = new MatrixMath.BEMatrix(XU.Rows, this.NumberOfSpectralResiduals);
+			var result = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.Rows, this.NumberOfSpectralResiduals);
 			SpectralResidualsFromPreprocessed(XU, numFactors, result);
 			return result;
 		}
@@ -223,13 +223,13 @@ namespace Altaxo.Calc.Regression.Multivariate
 			if (predictedY != null)
 			{
 				if (predictedY.Rows != XU.Rows || predictedY.Columns != this.InternalCalibrationModel.NumberOfY)
-					predictedY = new MatrixMath.BEMatrix(XU.Rows, InternalCalibrationModel.NumberOfY);
+					predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.Rows, InternalCalibrationModel.NumberOfY);
 			}
 
 			if (spectralResiduals != null)
 			{
 				if (spectralResiduals.Rows != XU.Rows || spectralResiduals.Columns != this.NumberOfSpectralResiduals)
-					spectralResiduals = new MatrixMath.BEMatrix(XU.Rows, this.NumberOfSpectralResiduals);
+					spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.Rows, this.NumberOfSpectralResiduals);
 			}
 
 			PredictedYAndSpectralResidualsFromPreprocessed(XU, numFactors, predictedY, spectralResiduals);
@@ -255,12 +255,12 @@ namespace Altaxo.Calc.Regression.Multivariate
 		{
 			// check the dimensions of the matrices
 			if (calculatePredictedY)
-				predictedY = new MatrixMath.BEMatrix(XU.Rows, InternalCalibrationModel.NumberOfY);
+				predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.Rows, InternalCalibrationModel.NumberOfY);
 			else
 				predictedY = null;
 
 			if (calculateSpectralResiduals)
-				spectralResiduals = new MatrixMath.BEMatrix(XU.Rows, this.NumberOfSpectralResiduals);
+				spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.Rows, this.NumberOfSpectralResiduals);
 			else
 				spectralResiduals = null;
 
@@ -670,10 +670,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 				if (prevNumExcludedSpectra != numberOfExcludedSpectraOfGroup)
 				{
-					XX = new MatrixMath.BEMatrix(X.Rows - numberOfExcludedSpectraOfGroup, X.Columns);
-					YY = new MatrixMath.BEMatrix(Y.Rows - numberOfExcludedSpectraOfGroup, Y.Columns);
-					XU = new MatrixMath.BEMatrix(numberOfExcludedSpectraOfGroup, X.Columns);
-					YU = new MatrixMath.BEMatrix(numberOfExcludedSpectraOfGroup, Y.Columns);
+					XX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(X.Rows - numberOfExcludedSpectraOfGroup, X.Columns);
+					YY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(Y.Rows - numberOfExcludedSpectraOfGroup, Y.Columns);
+					XU = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfExcludedSpectraOfGroup, X.Columns);
+					YU = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfExcludedSpectraOfGroup, Y.Columns);
 					prevNumExcludedSpectra = numberOfExcludedSpectraOfGroup;
 				}
 
@@ -912,7 +912,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <returns>The prediction score matrix. This matrix has the dimensions (NumberOfX, NumberOfY).</returns>
 		public virtual IROMatrix<double> GetPredictionScores(int numberOfFactors)
 		{
-			var result = new MatrixMath.BEMatrix(InternalCalibrationModel.NumberOfX, InternalCalibrationModel.NumberOfY);
+			var result = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(InternalCalibrationModel.NumberOfX, InternalCalibrationModel.NumberOfY);
 			this.InternalGetPredictionScores(numberOfFactors, result);
 			return result;
 		}
@@ -925,7 +925,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <returns>Matrix of spectral leverages. Normally, this is a (NumberOfPoints,1) matrix, with exception of PLS1, where it is a (NumberOfPoints,NumberOfY) matrix.</returns>
 		public virtual IROMatrix<double> GetXLeverageFromPreprocessed(IROMatrix<double> matrixX, int numFactors)
 		{
-			var result = new MatrixMath.BEMatrix(matrixX.Rows, 1);
+			var result = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.Rows, 1);
 			this.InternalGetXLeverageFromPreprocessed(matrixX, numFactors, result);
 			return result;
 		}

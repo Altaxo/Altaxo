@@ -640,7 +640,7 @@ namespace Altaxo.Calc
 		{
 			var x = VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1.0 / 32, 34); // beta ranging from 0 to 1+1/32
 			var y = VectorMath.CreateEquidistantSequenceByStartStepLength(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
-			var z = MatrixMath.ToROMatrix(_imdata);
+			var z = MatrixMath.ToROMatrixFromLeftSpineJaggedArray(_imdata);
 			return new Interpolation.BivariateAkimaSpline(x, y, z, false);
 		}
 
@@ -648,7 +648,7 @@ namespace Altaxo.Calc
 		{
 			var x = VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1.0 / 32, 34); // beta ranging from 0 to 1+1/32
 			var y = VectorMath.CreateEquidistantSequenceByStartStepLength(-5, 1.0 / 64, 353); // y ranging from -5 to 0.5
-			var z = MatrixMath.ToROMatrix(_redata);
+			var z = MatrixMath.ToROMatrixFromLeftSpineJaggedArray(_redata);
 			return new Interpolation.BivariateAkimaSpline(x, y, z, false);
 		}
 

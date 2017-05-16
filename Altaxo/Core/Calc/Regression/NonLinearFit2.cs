@@ -1364,7 +1364,7 @@ if(!(k%100)){
 
     private static int LEVMAR_PSEUDOINVERSE(double[] A, double[] B, int m)
     {
-      var Amat = MatrixMath.ToROMatrix(A, m);
+      var Amat = MatrixMath.ToROMatrixFromColumnMajorLinearArray(A, m);
       DoubleSVDDecomp decomp = new DoubleSVDDecomp(Amat);
 
       DoubleVector s = decomp.S;

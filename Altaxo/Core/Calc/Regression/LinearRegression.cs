@@ -92,7 +92,7 @@ namespace Altaxo.Calc.Regression
 			FunctionBaseEvaluator evaluateFunctionBase,
 			double threshold)
 		{
-			var u = new MatrixMath.BEMatrix(numberOfData, numberOfParameter);
+			var u = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfData, numberOfParameter);
 
 			double[] functionBase = new double[numberOfParameter];
 
@@ -133,7 +133,7 @@ namespace Altaxo.Calc.Regression
 			FunctionBaseEvaluator evaluateFunctionBase,
 			double threshold)
 		{
-			var u = new MatrixMath.BEMatrix(numberOfData, numberOfParameter);
+			var u = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfData, numberOfParameter);
 
 			double[] functionBase = new double[numberOfParameter];
 
@@ -206,7 +206,7 @@ namespace Altaxo.Calc.Regression
 			_yMean = Mean(yarr, 0, _numberOfData);
 			_yCorrectedSumOfSquares = CorrectedSumOfSquares(yarr, _yMean, 0, _numberOfData);
 
-			MatrixMath.BEMatrix u = new MatrixMath.BEMatrix(numberOfData, numberOfParameter);
+			var u = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfData, numberOfParameter);
 			// Fill the function base matrix (rows: numberOfData, columns: numberOfParameter)
 			// and scale also y
 			if (null == stddev)

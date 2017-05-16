@@ -93,7 +93,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int numFactors = Math.Min(matrixX.Columns, maxFactors);
 			ExecuteAnalysis(matrixX, matrixY, ref numFactors, out var xLoads, out var xScores, out var V);
 
-			var yLoads = new MatrixMath.BEMatrix(matrixY.Rows, matrixY.Columns);
+			var yLoads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixY.Rows, matrixY.Columns);
 			MatrixMath.Copy(matrixY, yLoads);
 
 			_calib.NumberOfFactors = numFactors;
@@ -156,7 +156,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			out IROVector<double> V  // vector of cross products
 			)
 		{
-			var matrixX = new MatrixMath.BEMatrix(X.Rows, X.Columns);
+			var matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(X.Rows, X.Columns);
 			MatrixMath.Copy(X, matrixX);
 			MatrixMath.SingularValueDecomposition decompose = new MatrixMath.SingularValueDecomposition(matrixX);
 
@@ -178,12 +178,12 @@ namespace Altaxo.Calc.Regression.Multivariate
 			)
 		{
 			var U = xScores;
-			MatrixMath.BEMatrix UtY = new MatrixMath.BEMatrix(Y.Rows, Y.Columns);
+			var UtY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(Y.Rows, Y.Columns);
 			MatrixMath.MultiplyFirstTransposed(U, Y, UtY);
 
-			MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(Y.Rows, Y.Columns);
-			MatrixMath.BEMatrix subU = new MatrixMath.BEMatrix(Y.Rows, 1);
-			MatrixMath.BEMatrix subY = new MatrixMath.BEMatrix(Y.Rows, Y.Columns);
+			var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(Y.Rows, Y.Columns);
+			var subU = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(Y.Rows, 1);
+			var subY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(Y.Rows, Y.Columns);
 
 			PRESS[0] = MatrixMath.SumOfSquares(Y);
 
@@ -219,7 +219,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int numY = yLoads.Columns;
 			int numM = yLoads.Rows;
 
-			MatrixMath.BEMatrix predictionScores = new MatrixMath.BEMatrix(numX, numY);
+			var predictionScores = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numX, numY);
 			GetPredictionScoreMatrix(xLoads, yLoads, xScores, crossProduct, numberOfFactors, predictionScores);
 			MatrixMath.Multiply(matrixX, predictionScores, predictedY);
 
@@ -239,7 +239,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int numY = yLoads.Columns;
 			int numM = yLoads.Rows;
 
-			MatrixMath.BEMatrix UtY = new MatrixMath.BEMatrix(xScores.Columns, yLoads.Columns);
+			var UtY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(xScores.Columns, yLoads.Columns);
 			MatrixMath.MultiplyFirstTransposed(xScores, yLoads, UtY);
 
 			MatrixMath.ZeroMatrix(predictionScores);
@@ -264,8 +264,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int numMeasurements = yLoads.Rows;
 
 			IExtensibleVector<double> PRESS = VectorMath.CreateExtensibleVector<double>(numberOfFactors + 1);
-			MatrixMath.BEMatrix UtY = new MatrixMath.BEMatrix(yLoads.Rows, yLoads.Columns);
-			MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(yLoads.Rows, yLoads.Columns);
+			var UtY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(yLoads.Rows, yLoads.Columns);
+			var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(yLoads.Rows, yLoads.Columns);
 			press = PRESS;
 
 			MatrixMath.MultiplyFirstTransposed(xScores, yLoads, UtY);
@@ -321,7 +321,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int numY = yLoads.Columns;
 			int numM = yLoads.Rows;
 
-			MatrixMath.BEMatrix reconstructedSpectra = new MatrixMath.BEMatrix(matrixX.Rows, matrixX.Columns);
+			var reconstructedSpectra = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.Rows, matrixX.Columns);
 			MatrixMath.ZeroMatrix(reconstructedSpectra);
 
 			for (int nf = 0; nf < numberOfFactors; nf++)
@@ -344,7 +344,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int numberOfFactors,
 			IMatrix<double> leverage)
 		{
-			IMatrix<double> subscores = new MatrixMath.BEMatrix(xScores.Rows, numberOfFactors);
+			var subscores = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(xScores.Rows, numberOfFactors);
 			MatrixMath.Submatrix(xScores, subscores);
 
 			MatrixMath.SingularValueDecomposition decompose = new MatrixMath.SingularValueDecomposition(subscores);

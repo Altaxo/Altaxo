@@ -75,8 +75,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 			for (int i = 0; i <= numberOfFactors; i++)
 			{
-				_predictedY[i] = new MatrixMath.BEMatrix(numberOfPoints, numberOfY);
-				_spectralResidual[i] = new MatrixMath.BEMatrix(numberOfPoints, multipleSpectralResiduals ? numberOfY : 1);
+				_predictedY[i] = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfPoints, numberOfY);
+				_spectralResidual[i] = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfPoints, multipleSpectralResiduals ? numberOfY : 1);
 			}
 		}
 

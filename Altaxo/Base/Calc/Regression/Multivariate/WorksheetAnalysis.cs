@@ -537,7 +537,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			SpectralPreprocessingOptions preprocessOptions,
 			IMatrix<double> matrixX,
 			int numberOfFactors,
-			MatrixMath.BEMatrix predictedY,
+			MatrixMath.LeftSpineJaggedArrayMatrix<double> predictedY,
 			IMatrix<double> spectralResiduals)
 		{
 			MultivariateRegression.PreprocessSpectraForPrediction(mcalib, preprocessOptions, matrixX);
@@ -604,8 +604,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			Altaxo.Collections.IAscendingIntegerCollection spectralIndices = plsMemo.SpectralIndices;
 			Altaxo.Collections.IAscendingIntegerCollection measurementIndices = plsMemo.MeasurementIndices;
 
-			MatrixMath.BEMatrix matrixX =
-				new MatrixMath.BEMatrix(measurementIndices.Count, spectralIndices.Count);
+			var matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, spectralIndices.Count);
 
 			return GetRawSpectra(srctable, plsMemo.SpectrumIsRow, spectralIndices, measurementIndices);
 		}
@@ -623,8 +622,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			if (srctable == null)
 				throw new ArgumentException("Argument srctable may not be null");
 
-			MatrixMath.BEMatrix matrixX =
-				new MatrixMath.BEMatrix(measurementIndices.Count, spectralIndices.Count);
+			var matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, spectralIndices.Count);
 
 			if (spectrumIsRow)
 			{
@@ -716,7 +714,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			Altaxo.Collections.IAscendingIntegerCollection measurementIndices = plsMemo.MeasurementIndices;
 
 			// fill in the y-values
-			MatrixMath.BEMatrix matrixY = new MatrixMath.BEMatrix(measurementIndices.Count, concentrationIndices.Count);
+			var matrixY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, concentrationIndices.Count);
 			for (int i = 0; i < concentrationIndices.Count; i++)
 			{
 				Altaxo.Data.INumericColumn col = concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn;
@@ -937,7 +935,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			// now fill the matrix
 
 			// fill in the y-values
-			matrixY = new MatrixMath.BEMatrix(measurementIndices.Count, concentrationIndices.Count);
+			matrixY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, concentrationIndices.Count);
 			for (int i = 0; i < concentrationIndices.Count; i++)
 			{
 				Altaxo.Data.INumericColumn col = concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn;
@@ -947,7 +945,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 				}
 			} // end fill in yvalues
 
-			matrixX = new MatrixMath.BEMatrix(measurementIndices.Count, spectralIndices.Count);
+			matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, spectralIndices.Count);
 			if (bHorizontalOrientedSpectrum)
 			{
 				for (int i = 0; i < spectralIndices.Count; i++)
@@ -1300,8 +1298,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 			IMatrix<double> matrixX = GetRawSpectra(plsMemo);
 			IMatrix<double> matrixY = GetOriginalY(plsMemo);
 
-			MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(matrixX.Rows, calib.NumberOfY);
-			MatrixMath.BEMatrix spectralResiduals = new MatrixMath.BEMatrix(matrixX.Rows, 1);
+			var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.Rows, calib.NumberOfY);
+			var spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.Rows, 1);
 			CalculateCrossPredictedY(calib,
 				GetGroupingStrategy(plsMemo.CrossValidationType),
 				plsMemo.SpectralPreprocessing,
@@ -1372,8 +1370,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 			IMatrix<double> matrixX = GetRawSpectra(plsMemo);
 
-			MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(matrixX.Rows, calib.NumberOfY);
-			MatrixMath.BEMatrix spectralResiduals = new MatrixMath.BEMatrix(matrixX.Rows, 1);
+			var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.Rows, calib.NumberOfY);
+			var spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.Rows, 1);
 			CalculatePredictedY(calib, plsMemo.SpectralPreprocessing, matrixX, numberOfFactors, predictedY, spectralResiduals);
 
 			if (saveYPredicted)
@@ -1492,7 +1490,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 			IMatrix<double> matrixX = GetRawSpectra(srctable, spectrumIsRow, spectralIndices, measurementIndices);
 
-			MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(measurementIndices.Count, calibModel.NumberOfY);
+			var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(measurementIndices.Count, calibModel.NumberOfY);
 			CalculatePredictedY(calibModel, memento.SpectralPreprocessing, matrixX, numberOfFactors, predictedY, null);
 
 			// now save the predicted y in the destination table
