@@ -28,329 +28,329 @@ using System.Collections.Generic;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-  /// <summary>
-  /// PCRRegression contains static methods for doing principal component regression analysis and prediction of the data.
-  /// </summary>
-  public class PCRRegression : MultivariateRegression
-  {
-    private PCRCalibrationModel _calib;
+	/// <summary>
+	/// PCRRegression contains static methods for doing principal component regression analysis and prediction of the data.
+	/// </summary>
+	public class PCRRegression : MultivariateRegression
+	{
+		private PCRCalibrationModel _calib;
 
-    protected IExtensibleVector<double> _PRESS;
+		protected IExtensibleVector<double> _PRESS;
 
-    public override IROVector<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
-    {
-      CalculatePRESS(
-        matrixX,
-        _calib.XLoads,
-        _calib.YLoads,
-        _calib.XScores,
-        _calib.CrossProduct,
-        _calib.NumberOfFactors,
-        out var result);
+		public override IROVector<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
+		{
+			CalculatePRESS(
+				matrixX,
+				_calib.XLoads,
+				_calib.YLoads,
+				_calib.XScores,
+				_calib.CrossProduct,
+				_calib.NumberOfFactors,
+				out var result);
 
-      return result;
-    }
+			return result;
+		}
 
-    protected override MultivariateCalibrationModel InternalCalibrationModel { get { return _calib; } }
+		protected override MultivariateCalibrationModel InternalCalibrationModel { get { return _calib; } }
 
-    public override void SetCalibrationModel(IMultivariateCalibrationModel calib)
-    {
-      if (calib is PCRCalibrationModel)
-        _calib = (PCRCalibrationModel)calib;
-      else
-        throw new ArgumentException("Expecting argument of type PCRCalibrationModel, but actual type is " + calib.GetType().ToString());
-    }
+		public override void SetCalibrationModel(IMultivariateCalibrationModel calib)
+		{
+			if (calib is PCRCalibrationModel)
+				_calib = (PCRCalibrationModel)calib;
+			else
+				throw new ArgumentException("Expecting argument of type PCRCalibrationModel, but actual type is " + calib.GetType().ToString());
+		}
 
-    public override void Reset()
-    {
-      _calib = new PCRCalibrationModel();
-      base.Reset();
-    }
+		public override void Reset()
+		{
+			_calib = new PCRCalibrationModel();
+			base.Reset();
+		}
 
-    /// <summary>
-    /// Creates an analyis from preprocessed spectra and preprocessed concentrations.
-    /// </summary>
-    /// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
-    /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
-    /// <param name="maxFactors">Maximum number of factors for analysis.</param>
-    /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
-    public static PCRRegression CreateFromPreprocessed(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
-    {
-      PCRRegression result = new PCRRegression();
-      result.AnalyzeFromPreprocessed(matrixX, matrixY, maxFactors);
-      return result;
-    }
+		/// <summary>
+		/// Creates an analyis from preprocessed spectra and preprocessed concentrations.
+		/// </summary>
+		/// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
+		/// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
+		/// <param name="maxFactors">Maximum number of factors for analysis.</param>
+		/// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
+		public static PCRRegression CreateFromPreprocessed(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
+		{
+			PCRRegression result = new PCRRegression();
+			result.AnalyzeFromPreprocessed(matrixX, matrixY, maxFactors);
+			return result;
+		}
 
-    /// <summary>
-    /// Creates an analyis from preprocessed spectra and preprocessed concentrations.
-    /// </summary>
-    /// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
-    /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
-    /// <param name="maxFactors">Maximum number of factors for analysis.</param>
-    /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
-    protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
-    {
-      int numFactors = Math.Min(matrixX.Columns, maxFactors);
-      ExecuteAnalysis(matrixX, matrixY, ref numFactors, out var xLoads, out var xScores, out var V);
+		/// <summary>
+		/// Creates an analyis from preprocessed spectra and preprocessed concentrations.
+		/// </summary>
+		/// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
+		/// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
+		/// <param name="maxFactors">Maximum number of factors for analysis.</param>
+		/// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
+		protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
+		{
+			int numFactors = Math.Min(matrixX.Columns, maxFactors);
+			ExecuteAnalysis(matrixX, matrixY, ref numFactors, out var xLoads, out var xScores, out var V);
 
-      IMatrix yLoads = new MatrixMath.BEMatrix(matrixY.Rows, matrixY.Columns);
-      MatrixMath.Copy(matrixY, yLoads);
+			var yLoads = new MatrixMath.BEMatrix(matrixY.Rows, matrixY.Columns);
+			MatrixMath.Copy(matrixY, yLoads);
 
-      _calib.NumberOfFactors = numFactors;
-      _calib.XLoads = xLoads;
-      _calib.YLoads = yLoads;
-      _calib.XScores = xScores;
-      _calib.CrossProduct = V;
-    }
+			_calib.NumberOfFactors = numFactors;
+			_calib.XLoads = xLoads;
+			_calib.YLoads = yLoads;
+			_calib.XScores = xScores;
+			_calib.CrossProduct = V;
+		}
 
-    /// <summary>
-    /// This predicts concentrations of unknown spectra.
-    /// </summary>
-    /// <param name="XU">Matrix of unknown spectra (preprocessed the same way as the calibration spectra).</param>
-    /// <param name="numFactors">Number of factors used for prediction.</param>
-    /// <param name="predictedY">On return, holds the predicted y values. (They are centered).</param>
-    /// <param name="spectralResiduals">On return, holds the spectral residual values.</param>
-    public override void PredictedYAndSpectralResidualsFromPreprocessed(
-      IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
-      int numFactors, // number of factors to use for prediction
-      IMatrix predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
-      IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
-      )
-    {
-      if (numFactors > _calib.NumberOfFactors)
-        throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})", numFactors, this.NumberOfFactors));
+		/// <summary>
+		/// This predicts concentrations of unknown spectra.
+		/// </summary>
+		/// <param name="XU">Matrix of unknown spectra (preprocessed the same way as the calibration spectra).</param>
+		/// <param name="numFactors">Number of factors used for prediction.</param>
+		/// <param name="predictedY">On return, holds the predicted y values. (They are centered).</param>
+		/// <param name="spectralResiduals">On return, holds the spectral residual values.</param>
+		public override void PredictedYAndSpectralResidualsFromPreprocessed(
+			IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
+			int numFactors, // number of factors to use for prediction
+			IMatrix<double> predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
+			IMatrix<double> spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
+			)
+		{
+			if (numFactors > _calib.NumberOfFactors)
+				throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})", numFactors, this.NumberOfFactors));
 
-      Predict(
-        XU, // unknown spectrum or spectra,  horizontal oriented
-        _calib.XLoads, // x-loads matrix
-        _calib.YLoads, // y-loads matrix
-        _calib.XScores, // weighting matrix
-        _calib.CrossProduct,  // Cross product vector
-        numFactors, // number of factors to use for prediction
-        predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
-        spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
-        );
-    }
+			Predict(
+				XU, // unknown spectrum or spectra,  horizontal oriented
+				_calib.XLoads, // x-loads matrix
+				_calib.YLoads, // y-loads matrix
+				_calib.XScores, // weighting matrix
+				_calib.CrossProduct,  // Cross product vector
+				numFactors, // number of factors to use for prediction
+				predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
+				spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
+				);
+		}
 
-    /// <summary>
-    /// Calculates the prediction scores (for use withthe preprocessed spectra).
-    /// </summary>
-    /// <param name="numFactors">Number of factors used to calculate the prediction scores.</param>
-    /// <param name="predictionScores">Supplied matrix for holding the prediction scores.</param>
-    protected override void InternalGetPredictionScores(int numFactors, IMatrix predictionScores)
-    {
-      GetPredictionScoreMatrix(_calib.XLoads, _calib.YLoads, _calib.XScores, _calib.CrossProduct, numFactors, predictionScores);
-    }
+		/// <summary>
+		/// Calculates the prediction scores (for use withthe preprocessed spectra).
+		/// </summary>
+		/// <param name="numFactors">Number of factors used to calculate the prediction scores.</param>
+		/// <param name="predictionScores">Supplied matrix for holding the prediction scores.</param>
+		protected override void InternalGetPredictionScores(int numFactors, IMatrix<double> predictionScores)
+		{
+			GetPredictionScoreMatrix(_calib.XLoads, _calib.YLoads, _calib.XScores, _calib.CrossProduct, numFactors, predictionScores);
+		}
 
-    protected override void InternalGetXLeverageFromPreprocessed(IROMatrix<double> matrixX, int numFactors, IMatrix xLeverage)
-    {
-      CalculateXLeverageFromPreprocessed(_calib.XScores, numFactors, xLeverage);
-    }
+		protected override void InternalGetXLeverageFromPreprocessed(IROMatrix<double> matrixX, int numFactors, IMatrix<double> xLeverage)
+		{
+			CalculateXLeverageFromPreprocessed(_calib.XScores, numFactors, xLeverage);
+		}
 
-    public static void ExecuteAnalysis(
-      IROMatrix<double> X, // matrix of spectra (a spectra is a row of this matrix)
-      IROMatrix<double> Y, // matrix of concentrations (a mixture is a row of this matrix)
-      ref int numFactors,
-      out IROMatrix xLoads, // out: the loads of the X matrix
-      out IROMatrix xScores, // matrix of weighting values
-      out IROVector V  // vector of cross products
-      )
-    {
-      IMatrix matrixX = new MatrixMath.BEMatrix(X.Rows, X.Columns);
-      MatrixMath.Copy(X, matrixX);
-      MatrixMath.SingularValueDecomposition decompose = new MatrixMath.SingularValueDecomposition(matrixX);
+		public static void ExecuteAnalysis(
+			IROMatrix<double> X, // matrix of spectra (a spectra is a row of this matrix)
+			IROMatrix<double> Y, // matrix of concentrations (a mixture is a row of this matrix)
+			ref int numFactors,
+			out IROMatrix<double> xLoads, // out: the loads of the X matrix
+			out IROMatrix<double> xScores, // matrix of weighting values
+			out IROVector<double> V  // vector of cross products
+			)
+		{
+			var matrixX = new MatrixMath.BEMatrix(X.Rows, X.Columns);
+			MatrixMath.Copy(X, matrixX);
+			MatrixMath.SingularValueDecomposition decompose = new MatrixMath.SingularValueDecomposition(matrixX);
 
-      numFactors = Math.Min(numFactors, matrixX.Columns);
-      numFactors = Math.Min(numFactors, matrixX.Rows);
+			numFactors = Math.Min(numFactors, matrixX.Columns);
+			numFactors = Math.Min(numFactors, matrixX.Rows);
 
-      xLoads = JaggedArrayMath.ToTransposedROMatrix(decompose.V, Y.Rows, X.Columns);
-      xScores = JaggedArrayMath.ToMatrix(decompose.U, Y.Rows, Y.Rows);
-      V = VectorMath.ToROVector(decompose.Diagonal, numFactors);
-    }
+			xLoads = JaggedArrayMath.ToTransposedROMatrix(decompose.V, Y.Rows, X.Columns);
+			xScores = JaggedArrayMath.ToMatrix(decompose.U, Y.Rows, Y.Rows);
+			V = VectorMath.ToROVector(decompose.Diagonal, numFactors);
+		}
 
-    private static void CalculatePRESS(
-      IROMatrix<double> Y, // matrix of concentrations (a mixture is a row of this matrix)
-      IROMatrix<double> xLoads, // out: the loads of the X matrix
-      IROMatrix<double> xScores, // matrix of weighting values
-      IReadOnlyList<double> V,  // vector of cross products
-      int maxNumberOfFactors,
-      IVector PRESS //vector of Y PRESS values
-      )
-    {
-      var U = xScores;
-      MatrixMath.BEMatrix UtY = new MatrixMath.BEMatrix(Y.Rows, Y.Columns);
-      MatrixMath.MultiplyFirstTransposed(U, Y, UtY);
+		private static void CalculatePRESS(
+			IROMatrix<double> Y, // matrix of concentrations (a mixture is a row of this matrix)
+			IROMatrix<double> xLoads, // out: the loads of the X matrix
+			IROMatrix<double> xScores, // matrix of weighting values
+			IReadOnlyList<double> V,  // vector of cross products
+			int maxNumberOfFactors,
+			IVector<double> PRESS //vector of Y PRESS values
+			)
+		{
+			var U = xScores;
+			MatrixMath.BEMatrix UtY = new MatrixMath.BEMatrix(Y.Rows, Y.Columns);
+			MatrixMath.MultiplyFirstTransposed(U, Y, UtY);
 
-      MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(Y.Rows, Y.Columns);
-      MatrixMath.BEMatrix subU = new MatrixMath.BEMatrix(Y.Rows, 1);
-      MatrixMath.BEMatrix subY = new MatrixMath.BEMatrix(Y.Rows, Y.Columns);
+			MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(Y.Rows, Y.Columns);
+			MatrixMath.BEMatrix subU = new MatrixMath.BEMatrix(Y.Rows, 1);
+			MatrixMath.BEMatrix subY = new MatrixMath.BEMatrix(Y.Rows, Y.Columns);
 
-      PRESS[0] = MatrixMath.SumOfSquares(Y);
+			PRESS[0] = MatrixMath.SumOfSquares(Y);
 
-      int numFactors = Math.Min(maxNumberOfFactors, V.Count);
+			int numFactors = Math.Min(maxNumberOfFactors, V.Count);
 
-      // now calculate PRESS by predicting the y
-      // using yp = U (w*(1/w)) U' y
-      // of course w*1/w is the identity matrix, but we use only the first factors, so using a cutted identity matrix
-      // we precalculate the last term U'y = UtY
-      // and multiplying with one row of U in every factor step, summing up the predictedY
-      for (int nf = 0; nf < numFactors; nf++)
-      {
-        for (int cn = 0; cn < Y.Columns; cn++)
-        {
-          for (int k = 0; k < Y.Rows; k++)
-            predictedY[k, cn] += U[k, nf] * UtY[nf, cn];
-        }
-        PRESS[nf + 1] = MatrixMath.SumOfSquaredDifferences(Y, predictedY);
-      }
-    }
+			// now calculate PRESS by predicting the y
+			// using yp = U (w*(1/w)) U' y
+			// of course w*1/w is the identity matrix, but we use only the first factors, so using a cutted identity matrix
+			// we precalculate the last term U'y = UtY
+			// and multiplying with one row of U in every factor step, summing up the predictedY
+			for (int nf = 0; nf < numFactors; nf++)
+			{
+				for (int cn = 0; cn < Y.Columns; cn++)
+				{
+					for (int k = 0; k < Y.Rows; k++)
+						predictedY[k, cn] += U[k, nf] * UtY[nf, cn];
+				}
+				PRESS[nf + 1] = MatrixMath.SumOfSquaredDifferences(Y, predictedY);
+			}
+		}
 
-    public static void Predict(
-      IROMatrix<double> matrixX,
-      IROMatrix<double> xLoads,
-      IROMatrix<double> yLoads,
-      IROMatrix<double> xScores,
-      IReadOnlyList<double> crossProduct,
-      int numberOfFactors,
-      IMatrix predictedY,
-      IMatrix spectralResiduals)
-    {
-      int numX = xLoads.Columns;
-      int numY = yLoads.Columns;
-      int numM = yLoads.Rows;
+		public static void Predict(
+			IROMatrix<double> matrixX,
+			IROMatrix<double> xLoads,
+			IROMatrix<double> yLoads,
+			IROMatrix<double> xScores,
+			IReadOnlyList<double> crossProduct,
+			int numberOfFactors,
+			IMatrix<double> predictedY,
+			IMatrix<double> spectralResiduals)
+		{
+			int numX = xLoads.Columns;
+			int numY = yLoads.Columns;
+			int numM = yLoads.Rows;
 
-      MatrixMath.BEMatrix predictionScores = new MatrixMath.BEMatrix(numX, numY);
-      GetPredictionScoreMatrix(xLoads, yLoads, xScores, crossProduct, numberOfFactors, predictionScores);
-      MatrixMath.Multiply(matrixX, predictionScores, predictedY);
+			MatrixMath.BEMatrix predictionScores = new MatrixMath.BEMatrix(numX, numY);
+			GetPredictionScoreMatrix(xLoads, yLoads, xScores, crossProduct, numberOfFactors, predictionScores);
+			MatrixMath.Multiply(matrixX, predictionScores, predictedY);
 
-      if (null != spectralResiduals)
-        GetSpectralResiduals(matrixX, xLoads, yLoads, xScores, crossProduct, numberOfFactors, spectralResiduals);
-    }
+			if (null != spectralResiduals)
+				GetSpectralResiduals(matrixX, xLoads, yLoads, xScores, crossProduct, numberOfFactors, spectralResiduals);
+		}
 
-    public static void GetPredictionScoreMatrix(
-      IROMatrix<double> xLoads,
-      IROMatrix<double> yLoads,
-      IROMatrix<double> xScores,
-      IReadOnlyList<double> crossProduct,
-      int numberOfFactors,
-      IMatrix predictionScores)
-    {
-      int numX = xLoads.Columns;
-      int numY = yLoads.Columns;
-      int numM = yLoads.Rows;
+		public static void GetPredictionScoreMatrix(
+			IROMatrix<double> xLoads,
+			IROMatrix<double> yLoads,
+			IROMatrix<double> xScores,
+			IReadOnlyList<double> crossProduct,
+			int numberOfFactors,
+			IMatrix<double> predictionScores)
+		{
+			int numX = xLoads.Columns;
+			int numY = yLoads.Columns;
+			int numM = yLoads.Rows;
 
-      MatrixMath.BEMatrix UtY = new MatrixMath.BEMatrix(xScores.Columns, yLoads.Columns);
-      MatrixMath.MultiplyFirstTransposed(xScores, yLoads, UtY);
+			MatrixMath.BEMatrix UtY = new MatrixMath.BEMatrix(xScores.Columns, yLoads.Columns);
+			MatrixMath.MultiplyFirstTransposed(xScores, yLoads, UtY);
 
-      MatrixMath.ZeroMatrix(predictionScores);
+			MatrixMath.ZeroMatrix(predictionScores);
 
-      for (int nf = 0; nf < numberOfFactors; nf++)
-      {
-        double scale = 1 / crossProduct[nf];
-        for (int cn = 0; cn < numY; cn++)
-        {
-          for (int k = 0; k < numX; k++)
-            predictionScores[k, cn] += scale * xLoads[nf, k] * UtY[nf, cn];
-        }
-      }
-    }
+			for (int nf = 0; nf < numberOfFactors; nf++)
+			{
+				double scale = 1 / crossProduct[nf];
+				for (int cn = 0; cn < numY; cn++)
+				{
+					for (int k = 0; k < numX; k++)
+						predictionScores[k, cn] += scale * xLoads[nf, k] * UtY[nf, cn];
+				}
+			}
+		}
 
-    public static void CalculatePRESS(
-      IROMatrix<double> yLoads,
-      IROMatrix<double> xScores,
-      int numberOfFactors,
-      out IROVector<double> press)
-    {
-      int numMeasurements = yLoads.Rows;
+		public static void CalculatePRESS(
+			IROMatrix<double> yLoads,
+			IROMatrix<double> xScores,
+			int numberOfFactors,
+			out IROVector<double> press)
+		{
+			int numMeasurements = yLoads.Rows;
 
-      IExtensibleVector<double> PRESS = VectorMath.CreateExtensibleVector<double>(numberOfFactors + 1);
-      MatrixMath.BEMatrix UtY = new MatrixMath.BEMatrix(yLoads.Rows, yLoads.Columns);
-      MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(yLoads.Rows, yLoads.Columns);
-      press = PRESS;
+			IExtensibleVector<double> PRESS = VectorMath.CreateExtensibleVector<double>(numberOfFactors + 1);
+			MatrixMath.BEMatrix UtY = new MatrixMath.BEMatrix(yLoads.Rows, yLoads.Columns);
+			MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(yLoads.Rows, yLoads.Columns);
+			press = PRESS;
 
-      MatrixMath.MultiplyFirstTransposed(xScores, yLoads, UtY);
+			MatrixMath.MultiplyFirstTransposed(xScores, yLoads, UtY);
 
-      // now calculate PRESS by predicting the y
-      // using yp = U (w*(1/w)) U' y
-      // of course w*1/w is the identity matrix, but we use only the first factors, so using a cutted identity matrix
-      // we precalculate the last term U'y = UtY
-      // and multiplying with one row of U in every factor step, summing up the predictedY
-      PRESS[0] = MatrixMath.SumOfSquares(yLoads);
-      for (int nf = 0; nf < numberOfFactors; nf++)
-      {
-        for (int cn = 0; cn < yLoads.Columns; cn++)
-        {
-          for (int k = 0; k < yLoads.Rows; k++)
-            predictedY[k, cn] += xScores[k, nf] * UtY[nf, cn];
-        }
-        PRESS[nf + 1] = MatrixMath.SumOfSquaredDifferences(yLoads, predictedY);
-      }
-    }
+			// now calculate PRESS by predicting the y
+			// using yp = U (w*(1/w)) U' y
+			// of course w*1/w is the identity matrix, but we use only the first factors, so using a cutted identity matrix
+			// we precalculate the last term U'y = UtY
+			// and multiplying with one row of U in every factor step, summing up the predictedY
+			PRESS[0] = MatrixMath.SumOfSquares(yLoads);
+			for (int nf = 0; nf < numberOfFactors; nf++)
+			{
+				for (int cn = 0; cn < yLoads.Columns; cn++)
+				{
+					for (int k = 0; k < yLoads.Rows; k++)
+						predictedY[k, cn] += xScores[k, nf] * UtY[nf, cn];
+				}
+				PRESS[nf + 1] = MatrixMath.SumOfSquaredDifferences(yLoads, predictedY);
+			}
+		}
 
-    public static void CalculatePRESS(
-      IROMatrix<double> matrixX,
-      IROMatrix<double> xLoads,
-      IROMatrix<double> yLoads,
-      IROMatrix<double> xScores,
-      IReadOnlyList<double> crossProduct,
-      int numberOfFactors,
-      out IROVector<double> PRESS)
-    {
-      IMatrix predictedY = new JaggedArrayMatrix(yLoads.Rows, yLoads.Columns);
-      var press = VectorMath.CreateExtensibleVector<double>(numberOfFactors + 1);
-      PRESS = press;
+		public static void CalculatePRESS(
+			IROMatrix<double> matrixX,
+			IROMatrix<double> xLoads,
+			IROMatrix<double> yLoads,
+			IROMatrix<double> xScores,
+			IReadOnlyList<double> crossProduct,
+			int numberOfFactors,
+			out IROVector<double> PRESS)
+		{
+			IMatrix<double> predictedY = new JaggedArrayMatrix(yLoads.Rows, yLoads.Columns);
+			var press = VectorMath.CreateExtensibleVector<double>(numberOfFactors + 1);
+			PRESS = press;
 
-      press[0] = MatrixMath.SumOfSquares(yLoads);
-      for (int nf = 0; nf < numberOfFactors; nf++)
-      {
-        Predict(matrixX, xLoads, yLoads, xScores, crossProduct, nf, predictedY, null);
-        press[nf + 1] = MatrixMath.SumOfSquaredDifferences(yLoads, predictedY);
-      }
-    }
+			press[0] = MatrixMath.SumOfSquares(yLoads);
+			for (int nf = 0; nf < numberOfFactors; nf++)
+			{
+				Predict(matrixX, xLoads, yLoads, xScores, crossProduct, nf, predictedY, null);
+				press[nf + 1] = MatrixMath.SumOfSquaredDifferences(yLoads, predictedY);
+			}
+		}
 
-    public static void GetSpectralResiduals(
-      IROMatrix<double> matrixX,
-      IROMatrix<double> xLoads,
-      IROMatrix<double> yLoads,
-      IROMatrix<double> xScores,
-      IReadOnlyList<double> crossProduct,
-      int numberOfFactors,
-      IMatrix spectralResiduals)
-    {
-      int numX = xLoads.Columns;
-      int numY = yLoads.Columns;
-      int numM = yLoads.Rows;
+		public static void GetSpectralResiduals(
+			IROMatrix<double> matrixX,
+			IROMatrix<double> xLoads,
+			IROMatrix<double> yLoads,
+			IROMatrix<double> xScores,
+			IReadOnlyList<double> crossProduct,
+			int numberOfFactors,
+			IMatrix<double> spectralResiduals)
+		{
+			int numX = xLoads.Columns;
+			int numY = yLoads.Columns;
+			int numM = yLoads.Rows;
 
-      MatrixMath.BEMatrix reconstructedSpectra = new MatrixMath.BEMatrix(matrixX.Rows, matrixX.Columns);
-      MatrixMath.ZeroMatrix(reconstructedSpectra);
+			MatrixMath.BEMatrix reconstructedSpectra = new MatrixMath.BEMatrix(matrixX.Rows, matrixX.Columns);
+			MatrixMath.ZeroMatrix(reconstructedSpectra);
 
-      for (int nf = 0; nf < numberOfFactors; nf++)
-      {
-        double scale = crossProduct[nf];
-        for (int m = 0; m < numM; m++)
-        {
-          for (int k = 0; k < numX; k++)
-            reconstructedSpectra[m, k] += scale * xScores[m, nf] * xLoads[nf, k];
-        }
-      }
-      for (int m = 0; m < numM; m++)
-        spectralResiduals[m, 0] = MatrixMath.SumOfSquaredDifferences(
-          MatrixMath.ToROSubMatrix(matrixX, m, 0, 1, matrixX.Columns),
-          MatrixMath.ToROSubMatrix(reconstructedSpectra, m, 0, 1, matrixX.Columns));
-    }
+			for (int nf = 0; nf < numberOfFactors; nf++)
+			{
+				double scale = crossProduct[nf];
+				for (int m = 0; m < numM; m++)
+				{
+					for (int k = 0; k < numX; k++)
+						reconstructedSpectra[m, k] += scale * xScores[m, nf] * xLoads[nf, k];
+				}
+			}
+			for (int m = 0; m < numM; m++)
+				spectralResiduals[m, 0] = MatrixMath.SumOfSquaredDifferences(
+					MatrixMath.ToROSubMatrix(matrixX, m, 0, 1, matrixX.Columns),
+					MatrixMath.ToROSubMatrix(reconstructedSpectra, m, 0, 1, matrixX.Columns));
+		}
 
-    public static void CalculateXLeverageFromPreprocessed(
-      IROMatrix<double> xScores,
-      int numberOfFactors,
-      IMatrix leverage)
-    {
-      IMatrix subscores = new MatrixMath.BEMatrix(xScores.Rows, numberOfFactors);
-      MatrixMath.Submatrix(xScores, subscores);
+		public static void CalculateXLeverageFromPreprocessed(
+			IROMatrix<double> xScores,
+			int numberOfFactors,
+			IMatrix<double> leverage)
+		{
+			IMatrix<double> subscores = new MatrixMath.BEMatrix(xScores.Rows, numberOfFactors);
+			MatrixMath.Submatrix(xScores, subscores);
 
-      MatrixMath.SingularValueDecomposition decompose = new MatrixMath.SingularValueDecomposition(subscores);
+			MatrixMath.SingularValueDecomposition decompose = new MatrixMath.SingularValueDecomposition(subscores);
 
-      for (int i = 0; i < xScores.Rows; i++)
-        leverage[i, 0] = decompose.HatDiagonal[i];
-    }
-  }
+			for (int i = 0; i < xScores.Rows; i++)
+				leverage[i, 0] = decompose.HatDiagonal[i];
+		}
+	}
 }

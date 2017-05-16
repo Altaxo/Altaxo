@@ -155,7 +155,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			IAscendingIntegerCollection validRows = DataTableWrapper.GetCollectionOfValidNumericRows(parameters.Table, selectedCols);
 			parameters.SelectedDataRows = validRows;
 
-			IROMatrix xbase;
+			IROMatrix<double> xbase;
 
 			if (parameters.IncludeIntercept)
 			{

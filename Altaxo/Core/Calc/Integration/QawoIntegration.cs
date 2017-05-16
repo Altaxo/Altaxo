@@ -374,7 +374,7 @@ namespace Altaxo.Calc.Integration
 			}
 
 			private static GSL_ERR
-dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
+dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector<double> b)
 			{
 				/* solves a tridiagonal matrix A x = b
 
@@ -753,7 +753,7 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 					continue;
 				}
 
-			label70:
+				label70:
 				if (!error_type2 && error_over_large_intervals > ertest)
 				{
 					if (workspace.increase_nrmax())
@@ -861,12 +861,12 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 
 			goto return_error;
 
-		compute_result:
+			compute_result:
 
 			result = workspace.sum_results();
 			abserr = errsum;
 
-		return_error:
+			return_error:
 
 			if (error_type > 2)
 				error_type--;
@@ -955,11 +955,11 @@ dgtsl(int n, double[] c, double[] d, double[] e, LinearAlgebra.IVector b)
 
 				if (wf.sine == gsl_integration_qawo_enum.GSL_INTEG_SINE)
 				{
-					weighted_function = delegate(double t) { return fn_sin(t, fn_params); };
+					weighted_function = delegate (double t) { return fn_sin(t, fn_params); };
 				}
 				else
 				{
-					weighted_function = delegate(double t) { return fn_cos(t, fn_params); };
+					weighted_function = delegate (double t) { return fn_cos(t, fn_params); };
 				}
 
 				QK15.Integration(weighted_function, a, b, out result, out abserr,

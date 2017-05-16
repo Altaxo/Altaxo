@@ -27,6 +27,7 @@
 using Altaxo.Calc.LinearAlgebra;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 
 #endregion Using Directive
 
@@ -1802,7 +1803,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		{
 			Assert.Throws(typeof(ArgumentNullException), () =>
 			{
-				DoubleVector X = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0 }, null as RODoubleVector);
+				DoubleVector X = DoubleSymmetricLevinson.Solve(new double[] { 1.0, 1.0 }, null as IReadOnlyList<double>);
 			});
 		}
 

@@ -222,7 +222,7 @@ namespace Altaxo.Data
 			/// <summary>
 			/// Wraps an IList of double values to an IROVector
 			/// </summary>
-			private class WrapperIListToIRoVector : Altaxo.Calc.LinearAlgebra.IROVector
+			private class WrapperIListToIRoVector : Altaxo.Calc.LinearAlgebra.IROVector<double>
 			{
 				private IList<double> _list;
 

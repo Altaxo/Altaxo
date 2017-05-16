@@ -299,8 +299,8 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <exception cref="ArgumentException">An exception will be thrown if the provided image is smaller than the required dimensions.</exception>
 		public void GetPixelwiseImage(ref Bitmap image)
 		{
-			Altaxo.Calc.LinearAlgebra.IROMatrix matrix;
-			Altaxo.Calc.LinearAlgebra.IROVector rowVec, colVec;
+			Altaxo.Calc.LinearAlgebra.IROMatrix<double> matrix;
+			Altaxo.Calc.LinearAlgebra.IROVector<double> rowVec, colVec;
 			_plotData.DataTableMatrix.GetWrappers(
 				x => (double)x, // transformation function for row header values
 				Altaxo.Calc.RMath.IsFinite,       // selection functiton for row header values

@@ -741,7 +741,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		{
 			Assert.Throws(typeof(System.ArgumentNullException), () =>
 			{
-				DoubleLevinson dl = new DoubleLevinson(null as RODoubleVector, TR5.ToArray());
+				DoubleLevinson dl = new DoubleLevinson(null as IROVector<double>, TR5.ToArray());
 			});
 		}
 
@@ -751,7 +751,7 @@ namespace AltaxoTest.Calc.LinearAlgebra
 		{
 			Assert.Throws(typeof(System.ArgumentNullException), () =>
 			{
-				DoubleLevinson dl = new DoubleLevinson(LC5.ToArray(), null as RODoubleVector);
+				DoubleLevinson dl = new DoubleLevinson(LC5.ToArray(), null as IROVector<double>);
 			});
 		}
 

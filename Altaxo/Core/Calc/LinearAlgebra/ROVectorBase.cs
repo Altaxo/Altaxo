@@ -7,8 +7,6 @@ namespace Altaxo.Calc.LinearAlgebra
 {
 	public abstract class ROVectorBase<T> : IROVector<T>
 	{
-		#region IList<T>
-
 		public abstract T this[int index] { get; set; }
 
 		public abstract int Count { get; }
@@ -37,11 +35,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		public void CopyTo(T[] array, int arrayIndex)
 		{
+			if (array == null)
+				throw new ArgumentNullException(nameof(array));
 			if (arrayIndex < 0)
-				throw new ArgumentOutOfRangeException("arrayIndex is < 0");
-
+				throw new ArgumentOutOfRangeException(nameof(arrayIndex), "arrayIndex is < 0");
 			var cnt = Count;
-
 			if (!(arrayIndex + cnt <= array.Length))
 				throw new ArgumentOutOfRangeException("Array too small for the provided data.");
 
@@ -62,7 +60,5 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = 0; i < cnt; ++i)
 				yield return this[i];
 		}
-
-		#endregion IList<T>
 	}
 }

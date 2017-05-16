@@ -454,7 +454,7 @@ namespace Altaxo.Calc.Fourier
 		/// <param name="direction">Direction of Fourier transform.</param>
 		/// <remarks>This function first performs a FFT on all columns of the matrix, and then transforms all rows of the resulting matrix.</remarks>
 		public static void
-			FourierTransformation2D(IMatrix matrixRe, IMatrix matrixIm, FourierDirection direction)
+			FourierTransformation2D(IMatrix<double> matrixRe, IMatrix<double> matrixIm, FourierDirection direction)
 		{
 			int numberOfRows = matrixRe.Rows;
 			int numberOfColumns = matrixRe.Columns;

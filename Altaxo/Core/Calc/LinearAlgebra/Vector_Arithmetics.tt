@@ -21,8 +21,8 @@ namespace Altaxo.Calc.LinearAlgebra
     var types = new string[][]
     {      // scalar,   Name           additionalImplements roMatrixType       rwMatrixType            inverseElementType
 		       // ---------------------------------------------------------------------------------------------------------------------------
-      new[]{ "Double", "DoubleVector", ", IVector",      "IROMatrix<double>",    "DoubleMatrix" },
-      new[]{ "Single", "FloatVector",  ", IFloatVector", "IROMatrix<float>",     "FloatMatrix" },
+      new[]{ "Double", "DoubleVector", "",                 "IROMatrix<Double>",    "DoubleMatrix" },
+      new[]{ "Single", "FloatVector",  "",                 "IROMatrix<Single>",    "FloatMatrix" },
     };
 
     foreach (var entry in types)
@@ -155,7 +155,6 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <summary>
     /// Calculates the L1 norm of the vector (as the sum of the absolute values of the elements).
     /// </summary>
-    /// <param name="vector">The vector.</param>
     /// <returns>L1 norm of the vector (sum of the absolute values of the elements).</returns>
     public <#= scalT #> L1Norm
 		{
@@ -508,7 +507,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		#region Matrix related operations
 
 		/// <summary>
-		/// Returns the column of a <see cref="IROMatrix" /> as a new <c>DoubleVector.</c>
+		/// Returns the column of a <see cref="IROMatrix{<#= scalT #>}" /> as a new <c>DoubleVector.</c>
 		/// </summary>
 		/// <param name="mat">The matrix to copy the column from.</param>
 		/// <param name="col">Number of column to copy from the matrix.</param>
@@ -523,7 +522,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Returns the column of a <see cref="IROMatrix" /> as a new <c>double[]</c> array.
+		/// Returns the column of a <see cref="IROMatrix{<#= scalT #>}" /> as a new <c>double[]</c> array.
 		/// </summary>
 		/// <param name="mat">The matrix to copy the column from.</param>
 		/// <param name="col">Index of the column to copy from the matrix.</param>
@@ -538,7 +537,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
-		/// Returns the row of a <see cref="IROMatrix" /> as a new <c>DoubleVector.</c>
+		/// Returns the row of a <see cref="IROMatrix{<#= scalT #>}" /> as a new <c>DoubleVector.</c>
 		/// </summary>
 		/// <param name="mat">The matrix to copy the column from.</param>
 		/// <param name="row">Index of the row to copy from the matrix.</param>

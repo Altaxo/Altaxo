@@ -31,7 +31,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			var b = new double[] { 8, -11, -3 };
 			var x = new double[3];
-			solver.SolveDestructive(new BEJaggedArrayMatrixWrapper<double>(a, 3, 3), b, x);
+			solver.SolveDestructive(new MatrixWrapperStructForLeftSpineJaggedArray<double>(a, 3, 3), b, x);
 			var answer = new DoubleVector(3) { [0] = 2, [1] = 3, [2] = -1 };
 			Assert.IsTrue(VectorMath.LInfinityNorm(x, answer) < 1e-10);
 		}
@@ -45,7 +45,7 @@ namespace Altaxo.Calc.LinearAlgebra
 						};
 			var b = new double[] { 1, -2 };
 			var x = new double[2];
-			solver.SolveDestructive(new BEJaggedArrayMatrixWrapper<double>(a, 2, 2), b, x);
+			solver.SolveDestructive(new MatrixWrapperStructForLeftSpineJaggedArray<double>(a, 2, 2), b, x);
 			var answer = new double[] { 1, -1 };
 			Assert.IsTrue(VectorMath.LInfinityNorm(x, answer) < 1e-10);
 		}

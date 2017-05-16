@@ -29,30 +29,30 @@ namespace Altaxo.Calc.Regression.Multivariate
 {
 	public class PCRCalibrationModel : MultivariateCalibrationModel
 	{
-		private IROMatrix _xScores;
-		private IROMatrix _xLoads;
-		private IROMatrix _yLoads;
-		private IROVector _crossProduct;
+		private IROMatrix<double> _xScores;
+		private IROMatrix<double> _xLoads;
+		private IROMatrix<double> _yLoads;
+		private IROVector<double> _crossProduct;
 
-		public IROMatrix XScores
+		public IROMatrix<double> XScores
 		{
 			get { return _xScores; }
 			set { _xScores = value; }
 		}
 
-		public IROMatrix XLoads
+		public IROMatrix<double> XLoads
 		{
 			get { return _xLoads; }
 			set { _xLoads = value; }
 		}
 
-		public IROMatrix YLoads
+		public IROMatrix<double> YLoads
 		{
 			get { return _yLoads; }
 			set { _yLoads = value; }
 		}
 
-		public IROVector CrossProduct
+		public IROVector<double> CrossProduct
 		{
 			get { return _crossProduct; }
 			set { _crossProduct = value; }

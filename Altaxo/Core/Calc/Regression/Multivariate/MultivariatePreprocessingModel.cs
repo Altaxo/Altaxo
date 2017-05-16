@@ -43,22 +43,22 @@ namespace Altaxo.Calc.Regression.Multivariate
 			get;
 		}
 
-		IROVector XMean
+		IROVector<double> XMean
 		{
 			get;
 		}
 
-		IROVector XScale
+		IROVector<double> XScale
 		{
 			get;
 		}
 
-		IROVector YMean
+		IROVector<double> YMean
 		{
 			get;
 		}
 
-		IROVector YScale
+		IROVector<double> YScale
 		{
 			get;
 		}
@@ -75,10 +75,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 		private int[] _spectralRegions;
 		private IReadOnlyList<double> _xOfX;
-		private IROVector _xMean;
-		private IROVector _xScale;
-		private IROVector _yMean;
-		private IROVector _yScale;
+		private IROVector<double> _xMean;
+		private IROVector<double> _xScale;
+		private IROVector<double> _yMean;
+		private IROVector<double> _yScale;
 
 		public SpectralPreprocessingOptions PreprocessOptions
 		{
@@ -98,25 +98,25 @@ namespace Altaxo.Calc.Regression.Multivariate
 			set { _xOfX = value; }
 		}
 
-		public IROVector XMean
+		public IROVector<double> XMean
 		{
 			get { return _xMean; }
 			set { _xMean = value; }
 		}
 
-		public IROVector XScale
+		public IROVector<double> XScale
 		{
 			get { return _xScale; }
 			set { _xScale = value; }
 		}
 
-		public IROVector YMean
+		public IROVector<double> YMean
 		{
 			get { return _yMean; }
 			set { _yMean = value; }
 		}
 
-		public IROVector YScale
+		public IROVector<double> YScale
 		{
 			get { return _yScale; }
 			set { _yScale = value; }

@@ -29,22 +29,22 @@ namespace Altaxo.Calc.Regression.Multivariate
 {
 	public interface IPLS2CalibrationModel : IMultivariateCalibrationModel
 	{
-		IROMatrix XWeights
+		IROMatrix<double> XWeights
 		{
 			get;
 		}
 
-		IROMatrix XLoads
+		IROMatrix<double> XLoads
 		{
 			get;
 		}
 
-		IROMatrix YLoads
+		IROMatrix<double> YLoads
 		{
 			get;
 		}
 
-		IROMatrix CrossProduct
+		IROMatrix<double> CrossProduct
 		{
 			get;
 		}
@@ -52,30 +52,30 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 	public class PLS2CalibrationModel : MultivariateCalibrationModel, IPLS2CalibrationModel
 	{
-		private IROMatrix _xWeights;
-		private IROMatrix _xLoads;
-		private IROMatrix _yLoads;
-		private IROMatrix _crossProduct;
+		private IROMatrix<double> _xWeights;
+		private IROMatrix<double> _xLoads;
+		private IROMatrix<double> _yLoads;
+		private IROMatrix<double> _crossProduct;
 
-		public IROMatrix XWeights
+		public IROMatrix<double> XWeights
 		{
 			get { return _xWeights; }
 			set { _xWeights = value; }
 		}
 
-		public IROMatrix XLoads
+		public IROMatrix<double> XLoads
 		{
 			get { return _xLoads; }
 			set { _xLoads = value; }
 		}
 
-		public IROMatrix YLoads
+		public IROMatrix<double> YLoads
 		{
 			get { return _yLoads; }
 			set { _yLoads = value; }
 		}
 
-		public IROMatrix CrossProduct
+		public IROMatrix<double> CrossProduct
 		{
 			get { return _crossProduct; }
 			set { _crossProduct = value; }

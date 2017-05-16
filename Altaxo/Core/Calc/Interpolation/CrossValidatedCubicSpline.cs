@@ -164,7 +164,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <summary>
 		/// Returns the spline coefficient of order 0. This are the splined y values at the positions given by x.
 		/// </summary>
-		public IROVector Coefficient0
+		public IROVector<double> Coefficient0
 		{
 			get
 			{
@@ -175,7 +175,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <summary>
 		/// Returns the spline coefficient of order 1 (linear term).
 		/// </summary>
-		public IROVector Coefficient1
+		public IROVector<double> Coefficient1
 		{
 			get
 			{
@@ -186,7 +186,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <summary>
 		/// Returns the spline coefficient of order 2 (quadratic term).
 		/// </summary>
-		public IROVector Coefficient2
+		public IROVector<double> Coefficient2
 		{
 			get
 			{
@@ -197,7 +197,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <summary>
 		/// Returns the spline coefficient of order 2 (cubic term).
 		/// </summary>
-		public IROVector Coefficient3
+		public IROVector<double> Coefficient3
 		{
 			get
 			{
@@ -208,7 +208,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <summary>
 		/// Returns the error estimates of the y points.
 		/// </summary>
-		public IROVector ErrorEstimate
+		public IROVector<double> ErrorEstimate
 		{
 			get
 			{

@@ -36,7 +36,7 @@ namespace Altaxo.Data
 		:
 		Altaxo.Data.DataColumn,
 		INumericColumn,
-		Altaxo.Calc.LinearAlgebra.IROVector
+		Altaxo.Calc.LinearAlgebra.IROVector<double>
 	{
 		private double[] _data;
 		private int _capacity; // shortcut to m_Array.Length;
@@ -404,12 +404,12 @@ namespace Altaxo.Data
 		/// Provides a setter property to which a readonly vector can be assigned to. Copies all elements of the readonly vector to this column.
 		/// The getter property creates a wrapper for this data column that implements IROVector. For short time use only, since it reflects changes in the data, but not in the length of the DoubleColumn.
 		/// </summary>
-		public override Altaxo.Calc.LinearAlgebra.IROVector ToROVector(int start, int count)
+		public override Altaxo.Calc.LinearAlgebra.IROVector<double> ToROVector(int start, int count)
 		{
 			return new ROVector(this, start, count);
 		}
 
-		public override Altaxo.Calc.LinearAlgebra.IVector ToVector(int start, int count)
+		public override Altaxo.Calc.LinearAlgebra.IVector<double> ToVector(int start, int count)
 		{
 			return new RWVector(this, start, count);
 		}
@@ -556,7 +556,7 @@ namespace Altaxo.Data
 
 		#region Vector decorators
 
-		private class ROVector : Altaxo.Calc.LinearAlgebra.IROVector
+		private class ROVector : Altaxo.Calc.LinearAlgebra.IROVector<double>
 		{
 			private DoubleColumn _col;
 			private int _start;
@@ -605,7 +605,7 @@ namespace Altaxo.Data
 			#endregion INumericSequence Members
 		}
 
-		private class RWVector : Altaxo.Calc.LinearAlgebra.IVector
+		private class RWVector : Altaxo.Calc.LinearAlgebra.IVector<double>
 		{
 			private DoubleColumn _col;
 			private int _start;

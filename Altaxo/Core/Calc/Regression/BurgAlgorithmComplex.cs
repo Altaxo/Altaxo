@@ -122,7 +122,7 @@ namespace Altaxo.Calc.Regression
 		/// <param name="x">Signal for building the model.</param>
 		/// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
 		/// <param name="errors">Vector to be filled with the sum of forward and backward prediction error for every stage of the model.</param>
-		public void Execute(IROComplexDoubleVector x, IComplexDoubleVector coefficients, IVector errors)
+		public void Execute(IROComplexDoubleVector x, IComplexDoubleVector coefficients, IVector<double> errors)
 		{
 			_meanSquareError = Execution(x, coefficients, errors, null, this);
 		}
@@ -134,7 +134,7 @@ namespace Altaxo.Calc.Regression
 		/// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
 		/// <param name="errors">Vector to be filled with the sum of forward and backward prediction error for every stage of the model.</param>
 		/// <param name="reflectionCoefficients">Vector to be filled with the reflection coefficients.</param>
-		public void Execute(IROComplexDoubleVector x, IComplexDoubleVector coefficients, IVector errors, IComplexDoubleVector reflectionCoefficients)
+		public void Execute(IROComplexDoubleVector x, IComplexDoubleVector coefficients, IVector<double> errors, IComplexDoubleVector reflectionCoefficients)
 		{
 			_meanSquareError = Execution(x, coefficients, errors, reflectionCoefficients, this);
 		}
@@ -327,7 +327,7 @@ namespace Altaxo.Calc.Regression
 		/// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
 		/// <param name="errors">Vector to be filled with the sum of forward and backward prediction error for every stage of the model.</param>
 		/// <returns>The mean square error of backward and forward prediction.</returns>
-		public static double Execution(IROComplexDoubleVector x, IComplexDoubleVector coefficients, IVector errors)
+		public static double Execution(IROComplexDoubleVector x, IComplexDoubleVector coefficients, IVector<double> errors)
 		{
 			return Execution(x, coefficients, errors, null, null);
 		}
@@ -340,7 +340,7 @@ namespace Altaxo.Calc.Regression
 		/// <param name="errors">Vector to be filled with the sum of forward and backward prediction error for every stage of the model.</param>
 		/// <param name="reflectionCoefficients">Vector to be filled with the reflection coefficients.</param>
 		/// <returns>The mean square error of backward and forward prediction.</returns>
-		public static double Execution(IROComplexDoubleVector x, IComplexDoubleVector coefficients, IVector errors, IComplexDoubleVector reflectionCoefficients)
+		public static double Execution(IROComplexDoubleVector x, IComplexDoubleVector coefficients, IVector<double> errors, IComplexDoubleVector reflectionCoefficients)
 		{
 			return Execution(x, coefficients, errors, reflectionCoefficients, null);
 		}
@@ -354,7 +354,7 @@ namespace Altaxo.Calc.Regression
 		/// <param name="reflectionCoefficients">Vector to be filled with the reflection coefficients.</param>
 		/// <param name="tempStorage">Instance of this class used to hold the temporary arrays.</param>
 		/// <returns>The mean square error of backward and forward prediction.</returns>
-		private static double Execution(IROComplexDoubleVector x, IComplexDoubleVector coefficients, IVector errors, IComplexDoubleVector reflectionCoefficients, BurgAlgorithmComplex tempStorage)
+		private static double Execution(IROComplexDoubleVector x, IComplexDoubleVector coefficients, IVector<double> errors, IComplexDoubleVector reflectionCoefficients, BurgAlgorithmComplex tempStorage)
 		{
 			int N = x.Length - 1;
 			int m = coefficients.Length;

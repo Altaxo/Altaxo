@@ -37,7 +37,7 @@ namespace Altaxo.Calc.Regression
 		/// <param name="a">Matrix a.</param>
 		/// <param name="b">Vector b.</param>
 		/// <param name="result">Vector result, so that Norm(a*result-b) is minimized.</param>
-		void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector result);
+		void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector<double> result);
 	}
 
 	/// <summary>
@@ -334,7 +334,7 @@ namespace Altaxo.Calc.Regression
 		/// </summary>
 		/// <param name="predictedOutput">The resultant predicted output. If null, a temporary vector is allocated for calculation.</param>
 		/// <returns>The mean prediction error.i.e. Sqrt(Sum((y-yprediced)²)/N).</returns>
-		public virtual double CalculatePredictionError(IVector predictedOutput)
+		public virtual double CalculatePredictionError(IVector<double> predictedOutput)
 		{
 			if (null == predictedOutput)
 				predictedOutput = new DoubleVector(_inputMatrix.Rows);
@@ -354,12 +354,12 @@ namespace Altaxo.Calc.Regression
 			return CalculateSelfPredictionError(null);
 		}
 
-		public virtual double CalculateSelfPredictionError(IVector predictedOutput)
+		public virtual double CalculateSelfPredictionError(IVector<double> predictedOutput)
 		{
 			return CalculateSelfPredictionError(_inputMatrix, VectorMath.ToROVector(_scaledY), predictedOutput);
 		}
 
-		protected virtual double CalculateSelfPredictionError(IMatrix inputMatrix, IReadOnlyList<double> yCompare, IVector predictedOutput)
+		protected virtual double CalculateSelfPredictionError(IMatrix<double> inputMatrix, IReadOnlyList<double> yCompare, IVector<double> predictedOutput)
 		{
 			double[] inputVector = new double[_numY];
 			for (int i = 0; i < inputVector.Length; i++)
@@ -411,7 +411,7 @@ namespace Altaxo.Calc.Regression
 		/// <param name="y">Vector of y data.</param>
 		/// <param name="predictedOutput">Vector to store the predicted y values. Can be null.</param>
 		/// <returns>The mean error between y prediction values and actual y values.</returns>
-		public virtual double CalculateCrossPredictionError(IReadOnlyList<double> x, IReadOnlyList<double> y, IVector predictedOutput)
+		public virtual double CalculateCrossPredictionError(IReadOnlyList<double> x, IReadOnlyList<double> y, IVector<double> predictedOutput)
 		{
 			JaggedArrayMatrix m = FillInputMatrix(x, y, null);
 			return CalculateSelfPredictionError(m, VectorMath.ToROVector(y, _startingPoint, y.Count - _startingPoint), predictedOutput);
@@ -457,7 +457,7 @@ namespace Altaxo.Calc.Regression
 		/// </summary>
 		/// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t&lt;0 is neccessary.</param>
 		/// <param name="output">Used to store the output result. Can be of arbitrary size.</param>
-		public virtual void GetTransferFunction(double yValueBeforePulse, IVector output)
+		public virtual void GetTransferFunction(double yValueBeforePulse, IVector<double> output)
 		{
 			double[] y = new double[_numY];
 
@@ -549,7 +549,7 @@ namespace Altaxo.Calc.Regression
 		/// </param>
 		/// <param name="len">Number of valid input data points for extrapolation (not for the training data!).</param>
 		/// <param name="yOrder">Number of history samples used for prediction. Must be greater or equal to 1.</param>
-		public static DynamicParameterEstimation Extrapolate(IReadOnlyList<double> yTraining, IVector yPredValues, int len, int yOrder)
+		public static DynamicParameterEstimation Extrapolate(IReadOnlyList<double> yTraining, IVector<double> yPredValues, int len, int yOrder)
 		{
 			if (yOrder < 1)
 				throw new ArgumentException("yOrder must be at least 1");
@@ -582,9 +582,9 @@ namespace Altaxo.Calc.Regression
 
 			#region IDynamicParameterEstimationSolver Members
 
-			public void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector result)
+			public void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector<double> result)
 			{
-				IMatrix work = new JaggedArrayMatrix(a.Rows, a.Columns);
+				IMatrix<double> work = new JaggedArrayMatrix(a.Rows, a.Columns);
 				_decomposition = MatrixMath.GetSingularValueDecomposition(a, work);
 				_decomposition.Backsubstitution(b, result);
 			}
@@ -596,7 +596,7 @@ namespace Altaxo.Calc.Regression
 		{
 			#region IDynamicParameterEstimationSolver Members
 
-			public void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector result)
+			public void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector<double> result)
 			{
 				JaggedArrayMatrix outputMatrix = new JaggedArrayMatrix(a.Columns, a.Columns);
 				JaggedArrayMath.MultiplyFirstTransposedWithItself(a.Array, a.Rows, a.Columns, outputMatrix.Array, outputMatrix.Rows, outputMatrix.Columns);
@@ -617,7 +617,7 @@ namespace Altaxo.Calc.Regression
 
 		private class DpeQRSolver : QRDecomposition, IDynamicParameterEstimationSolver
 		{
-			public void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector result)
+			public void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector<double> result)
 			{
 				base.Solve(a, b, result);
 			}
@@ -774,7 +774,7 @@ namespace Altaxo.Calc.Regression
 		/// </summary>
 		/// <param name="output">Used to store the output result. Can be of arbitrary size.</param>
 		/// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t&lt;0 is neccessary.</param>
-		public override void GetTransferFunction(double yValueBeforePulse, IVector output)
+		public override void GetTransferFunction(double yValueBeforePulse, IVector<double> output)
 		{
 			int maxXidx = 0;
 			for (int i = 0; i < _xcount.Length; ++i)
@@ -1150,7 +1150,7 @@ namespace Altaxo.Calc.Regression
 		/// </summary>
 		/// <param name="output">Used to store the output result. Can be of arbitrary size.</param>
 		/// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t&lt;0 is neccessary.</param>
-		public override void GetTransferFunction(double yValueBeforePulse, IVector output)
+		public override void GetTransferFunction(double yValueBeforePulse, IVector<double> output)
 		{
 			double[] y = new double[_numY * _ySpacing];
 
@@ -1300,7 +1300,7 @@ namespace Altaxo.Calc.Regression
 		/// </summary>
 		/// <param name="output">Used to store the output result. Can be of arbitrary size.</param>
 		/// <param name="yValueBeforePulse">This is the y-value (not x!) before the pulse. If the <c>NumberOfY</c> is set to zero, this parameter is ignored, since no information about y for t&lt;0 is neccessary.</param>
-		public override void GetTransferFunction(double yValueBeforePulse, IVector output)
+		public override void GetTransferFunction(double yValueBeforePulse, IVector<double> output)
 		{
 			throw new NotImplementedException("Getting the transfer function doesn't make much sense here, since the bins can be non-continuous. The purpose of this class is mainly to get the frequency response.");
 		}

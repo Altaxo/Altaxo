@@ -64,7 +64,7 @@ namespace Altaxo.Calc.Regression
 		/// <param name="derivativeorder">Order of derivative for which the coefficients are calculated.</param>
 		/// <param name="polynomialorder">Order of the regression polynomial.</param>
 		/// <param name="coefficients">Output: On return, contains the calculated coefficients.</param>
-		public static void GetCoefficients(int leftpoints, int rightpoints, int derivativeorder, int polynomialorder, IVector coefficients)
+		public static void GetCoefficients(int leftpoints, int rightpoints, int derivativeorder, int polynomialorder, IVector<double> coefficients)
 		{
 			int totalpoints = leftpoints + rightpoints + 1;
 			// Presumtions leftpoints and rightpoints must be >=0
@@ -224,7 +224,7 @@ namespace Altaxo.Calc.Regression
 		/// </summary>
 		/// <param name="array">The array of numbers to filter.</param>
 		/// <param name="result">The resulting array. Must not be identical to the input array!</param>
-		public void Apply(IReadOnlyList<double> array, IVector result)
+		public void Apply(IReadOnlyList<double> array, IVector<double> result)
 		{
 			int filterPoints = _middle.Length;
 			int sidePoints = (filterPoints - 1) / 2;

@@ -14,7 +14,7 @@
     var types = new string[][]
     {      // scalar,   Name      roType              rwType            inverseElementType
 		       // ---------------------------------------------------------------------------------------------------------------------------
-      new[]{ "Double", "Double", "IROVector",         "IVector" ,        "Double" },
+      new[]{ "Double", "Double", "IROVector<Double>", "IVector<Double>", "Double" },
       new[]{ "Single", "Float",  "IROVector<Single>", "IVector<Single>", "Single" },
       new[]{ "Int32",	 "Int",    "IROVector<Int32>",  "IVector<Int32>",  "Double"  },
       new[]{ "Int16",	 "Short",  "IROVector<Int16>",  "IVector<Int16>",  "Double" },
@@ -417,17 +417,17 @@
     }
 
 		/// <summary>
-		/// Wraps a <#= scalT #>[] array to get a IROVector with elements = 1 / elements of the original vector.
+		/// Wraps a <#= scalT #>[] array to get an  <see cref="IROVector{<#= scalT #>}" /> with elements = 1 / elements of the original vector.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector" /> returning elements that are inverse to those of the original vector.</returns>
+		/// <returns>A wrapper objects with the <see cref="IROVector{<#= scalT #>}" /> returning elements that are inverse to those of the original vector.</returns>
 		public static IROVector<<#= inverseEleT #>> ToInverseROVector(this IReadOnlyList<<#= scalT #>> array)
 		{
 			return null == array ? null : new RO<#= bigScalT #>InverseElementWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a <#= scalT #>[] array till a given length to get a IROVector with elements = 1 / elements of the original vector.
+		/// Wraps a <#= scalT #>[] array till a given length to get an <see cref="IROVector{<#= scalT #>}" /> with elements = 1 / elements of the original vector.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
@@ -439,7 +439,7 @@
 
 
 		/// <summary>
-    /// Serves as wrapper for an array to plug-in where a IROVector is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{<#= scalT #>}" /> is neccessary.
     /// </summary>
     private class RO<#= bigScalT #>ArrayWrapper : <#= roVecT #>
     {
@@ -512,17 +512,17 @@
     }
 
 		/// <summary>
-		/// Wraps a <#= scalT #>[] array to get a IROVector.
+		/// Wraps a <#= scalT #>[] array to get an <see cref="IROVector{<#= scalT #>}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IROVector{<#= scalT #>}" /> interface that wraps the provided array.</returns>
 		public static <#= roVecT #> ToROVector(this <#= scalT #>[] array)
 		{
 			return null == array ? null : new RO<#= bigScalT #>ArrayWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a <#= scalT #>[] array till a given length to get a IROVector.
+		/// Wraps a <#= scalT #>[] array till a given length to get an <see cref="IROVector{<#= scalT #>}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
@@ -534,7 +534,7 @@
 
 
 		  /// <summary>
-    /// Serves as wrapper for a section of an array to plug-in where an IROVector is neccessary.
+    /// Serves as wrapper for a section of an array to plug-in where an <see cref="IROVector{<#= scalT #>}" /> is neccessary.
     /// </summary>
     private class RO<#= bigScalT #>ArraySectionWrapper : <#= roVecT #>
     {
@@ -604,7 +604,7 @@
     }
 
 		/// <summary>
-		/// Wraps an array to an IROVector. Start and length of the used section of the array are specified in the parameters.
+		/// Wraps an array to an <see cref="IROVector{<#= scalT #>}" />. Start and length of the used section of the array are specified in the parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="start">Index of the element in <paramref name="array"/> used as the first element of the vector.</param>
@@ -620,7 +620,7 @@
 
 
 		/// <summary>
-    /// Serves as wrapper for an array to plug-in where a IROVector is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{<#= scalT #>}" /> is neccessary.
     /// </summary>
     private class RO<#= bigScalT #>ArrayWrapperAmendedShifted : <#= roVecT #>
     {
@@ -728,21 +728,21 @@
     }
 
 			/// <summary>
-		/// Wraps a <#= scalT #>[] array to get an IROVector.
+		/// Wraps a <#= scalT #>[] array to get an <see cref="IROVector{<#= scalT #>}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at the first <paramref name="amendedValuesAtStartCount"/> indices</param>.
 		/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
 		/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
 		/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IROVector{<#= scalT #>}" /> interface that wraps the provided array.</returns>
 		public static <#= roVecT #> ToROVectorAmendedShifted(this <#= scalT #>[] array,<#= scalT #> amendedValueAtStart, int amendedValuesAtStartCount, <#= scalT #> amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
 			return null == array ? null : new RO<#= bigScalT #>ArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
 		}
 
 		/// <summary>
-		/// Wraps a <#= scalT #>[] array till a given length to get an IROVector.
+		/// Wraps a <#= scalT #>[] array till a given length to get an <see cref="IROVector{<#= scalT #>}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
@@ -856,7 +856,7 @@
 
 		
 		/// <summary>
-		/// Wraps a <#= scalT #>[] array to get a struct with a IROVector implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// Wraps a <#= scalT #>[] array to get a struct with an <see cref="IROVector{<#= scalT #>}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above Length, which is normally forbidden. The values for that are given as parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap. The first element of the array has index 0 in the returned vector.</param>
@@ -869,7 +869,7 @@
 		}
 
 		/// <summary>
-		/// Wraps a <#= scalT #>[] array till a given length to get a struct with a IROVector implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// Wraps a <#= scalT #>[] array till a given length to get a struct with an <see cref="IROVector{<#= scalT #>}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above <paramref name="usedlength"/>, which is normally forbidden. The values for that are given as parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
@@ -965,7 +965,7 @@
 
 
 		 /// <summary>
-    /// Serves as wrapper for an IROVector to get only a section of the original wrapper.
+    /// Serves as wrapper for an <see cref="IROVector{<#= scalT #>}" /> to get only a section of the original wrapper.
     /// </summary>
     private class RO<#= bigScalT #>VectorSectionWrapper : <#= roVecT #>
     {
@@ -1022,7 +1022,7 @@
 		/// <param name="vector">Original vector.</param>
 		/// <param name="start">Index of the start of the section to wrap.</param>
 		/// <param name="usedLength">Length (=number of elements) of the section to wrap.</param>
-		/// <returns>A IROVector that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
+		/// <returns>An <see cref="IROVector{<#= scalT #>}" /> that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
 		public static <#= roVecT #> ToROVector(this IReadOnlyList<<#= scalT #>> vector, int start, int usedLength)
 		{
 			return new RO<#= bigScalT #>VectorSectionWrapper(vector, start, usedLength);

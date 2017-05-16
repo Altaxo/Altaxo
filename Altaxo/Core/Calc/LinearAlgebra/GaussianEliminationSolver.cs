@@ -19,7 +19,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>Provides implementation of Gaussian elimination with partial pivoting</summary>
     public class GaussianEliminationSolver : ILinearEquationSolver<double>
     {
-        private BEJaggedArrayMatrixWrapper<double> _temp_A;
+        private MatrixWrapperStructForLeftSpineJaggedArray<double> _temp_A;
         private double[] _temp_b;
         private double[] _temp_x;
 
@@ -28,7 +28,7 @@ namespace Altaxo.Calc.LinearAlgebra
         /// <param name="A">Elements of matrix 'A'. This array is modified!</param>
         /// <param name="b">Right part 'b'. This array is also modified!</param>
         /// <param name="x">Vector to store the result, i.e. the solution to the problem a x = b.</param>
-        public void SolveDestructive(BEJaggedArrayMatrixWrapper<double> A, double[] b, double[] x)
+        public void SolveDestructive(MatrixWrapperStructForLeftSpineJaggedArray<double> A, double[] b, double[] x)
         {
             var a = A.Array;
             if (a == null)
@@ -198,7 +198,7 @@ namespace Altaxo.Calc.LinearAlgebra
         public void Solve(IROMatrix<double> A, IReadOnlyList<double> b, IVector<double> x)
         {
             if (_temp_A.Rows != A.Rows || _temp_A.Columns != A.Columns)
-                _temp_A = new BEJaggedArrayMatrixWrapper<double>(A.Rows, A.Columns);
+                _temp_A = new MatrixWrapperStructForLeftSpineJaggedArray<double>(A.Rows, A.Columns);
             if (b.Count != _temp_b?.Length)
                 _temp_b = new double[b.Count];
             if (b.Count != _temp_x?.Length)

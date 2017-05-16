@@ -195,9 +195,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 			fft.Execute();
 
-			IMatrix resultMatrix;
-			IROVector rowFrequencies;
-			IROVector columnFrequencies;
+			IMatrix<double> resultMatrix;
+			IROVector<double> rowFrequencies;
+			IROVector<double> columnFrequencies;
 
 			if (options.CenterResult)
 				fft.GetResultCentered(options.ResultingFractionOfRowsUsed, options.ResultingFractionOfColumnsUsed, options.OutputKind, out resultMatrix, out rowFrequencies, out columnFrequencies);

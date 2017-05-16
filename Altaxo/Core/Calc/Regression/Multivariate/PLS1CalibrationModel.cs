@@ -29,10 +29,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 {
 	public class PLS1CalibrationModel : MultivariateCalibrationModel
 	{
-		private IROMatrix[] _xWeights;
-		private IROMatrix[] _xLoads;
-		private IROMatrix[] _yLoads;
-		private IROMatrix[] _crossProduct;
+		private IROMatrix<double>[] _xWeights;
+		private IROMatrix<double>[] _xLoads;
+		private IROMatrix<double>[] _yLoads;
+		private IROMatrix<double>[] _crossProduct;
 
 		public override int NumberOfY
 		{
@@ -46,28 +46,28 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 		protected void Allocate(int numberOfY)
 		{
-			_xWeights = new IROMatrix[numberOfY];
-			_xLoads = new IROMatrix[numberOfY];
-			_yLoads = new IROMatrix[numberOfY];
-			_crossProduct = new IROMatrix[numberOfY];
+			_xWeights = new IROMatrix<double>[numberOfY];
+			_xLoads = new IROMatrix<double>[numberOfY];
+			_yLoads = new IROMatrix<double>[numberOfY];
+			_crossProduct = new IROMatrix<double>[numberOfY];
 		}
 
-		public IROMatrix[] XWeights
+		public IROMatrix<double>[] XWeights
 		{
 			get { return _xWeights; }
 		}
 
-		public IROMatrix[] XLoads
+		public IROMatrix<double>[] XLoads
 		{
 			get { return _xLoads; }
 		}
 
-		public IROMatrix[] YLoads
+		public IROMatrix<double>[] YLoads
 		{
 			get { return _yLoads; }
 		}
 
-		public IROMatrix[] CrossProduct
+		public IROMatrix<double>[] CrossProduct
 		{
 			get { return _crossProduct; }
 		}

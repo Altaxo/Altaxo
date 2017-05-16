@@ -56,7 +56,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 	public class CrossPRESSEvaluator : CrossValidationWorker
 	{
-		protected IMatrix _predictedY;
+		protected IMatrix<double> _predictedY;
 
 		private double[] _crossPRESS;
 
@@ -73,9 +73,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 		{
 		}
 
-		public void EhCrossPRESS(int[] group, IMatrix XX, IMatrix YY, IMatrix XU, IMatrix YU)
+		public void EhCrossPRESS(int[] group, IMatrix<double> XX, IMatrix<double> YY, IMatrix<double> XU, IMatrix<double> YU)
 		{
-			IVector meanX, scaleX, meanY, scaleY;
+			IVector<double> meanX, scaleX, meanY, scaleY;
 			if (_predictedY == null || _predictedY.Rows != YU.Rows || _predictedY.Columns != YU.Columns)
 				_predictedY = new MatrixMath.BEMatrix(YU.Rows, YU.Columns);
 
@@ -102,8 +102,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 	public class CrossPredictedYEvaluator : CrossValidationWorker
 	{
-		protected IMatrix _predictedY;
-		public IMatrix _YCrossValidationPrediction;
+		protected IMatrix<double> _predictedY;
+		public IMatrix<double> _YCrossValidationPrediction;
 
 		public CrossPredictedYEvaluator(
 			int[] spectralRegions,
@@ -111,16 +111,16 @@ namespace Altaxo.Calc.Regression.Multivariate
 			ICrossValidationGroupingStrategy groupingStrategy,
 			SpectralPreprocessingOptions preprocessOptions,
 			MultivariateRegression analysis,
-			IMatrix YCrossValidationPrediction
+			IMatrix<double> YCrossValidationPrediction
 			)
 			: base(spectralRegions, numFactors, groupingStrategy, preprocessOptions, analysis)
 		{
 			_YCrossValidationPrediction = YCrossValidationPrediction;
 		}
 
-		public void EhYCrossPredicted(int[] group, IMatrix XX, IMatrix YY, IMatrix XU, IMatrix YU)
+		public void EhYCrossPredicted(int[] group, IMatrix<double> XX, IMatrix<double> YY, IMatrix<double> XU, IMatrix<double> YU)
 		{
-			IVector meanX, scaleX, meanY, scaleY;
+			IVector<double> meanX, scaleX, meanY, scaleY;
 			if (_predictedY == null || _predictedY.Rows != YU.Rows || _predictedY.Columns != YU.Columns)
 				_predictedY = new MatrixMath.BEMatrix(YU.Rows, YU.Columns);
 
@@ -143,9 +143,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 	{
 		private int _numberOfPoints;
 
-		public IMatrix _XCrossResiduals;
+		public IMatrix<double> _XCrossResiduals;
 
-		public IROMatrix XCrossResiduals { get { return _XCrossResiduals; } }
+		public IROMatrix<double> XCrossResiduals { get { return _XCrossResiduals; } }
 
 		public CrossPredictedXResidualsEvaluator(
 			int numberOfPoints,
@@ -160,9 +160,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 			_numberOfPoints = numberOfPoints;
 		}
 
-		public void EhCrossValidationWorker(int[] group, IMatrix XX, IMatrix YY, IMatrix XU, IMatrix YU)
+		public void EhCrossValidationWorker(int[] group, IMatrix<double> XX, IMatrix<double> YY, IMatrix<double> XU, IMatrix<double> YU)
 		{
-			IVector meanX, scaleX, meanY, scaleY;
+			IVector<double> meanX, scaleX, meanY, scaleY;
 
 			MultivariateRegression.PreprocessForAnalysis(_preprocessOptions, _spectralRegions, XX, YY,
 				out meanX, out scaleX, out meanY, out scaleY);
@@ -171,7 +171,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			_numFactors = Math.Min(_numFactors, _analysis.NumberOfFactors);
 
 			MultivariateRegression.PreprocessSpectraForPrediction(_preprocessOptions, XU, meanX, scaleX);
-			IROMatrix xResidual = _analysis.SpectralResidualsFromPreprocessed(XU, _numFactors);
+			IROMatrix<double> xResidual = _analysis.SpectralResidualsFromPreprocessed(XU, _numFactors);
 
 			if (this._XCrossResiduals == null)
 				this._XCrossResiduals = new MatrixMath.BEMatrix(_numberOfPoints, xResidual.Columns);
@@ -185,8 +185,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 	{
 		private CrossValidationResult _result;
 
-		protected IMatrix _predictedY;
-		protected IMatrix _spectralResidual;
+		protected IMatrix<double> _predictedY;
+		protected IMatrix<double> _spectralResidual;
 
 		public CrossValidationResultEvaluator(
 			int[] spectralRegions,
@@ -201,9 +201,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 			_result = result;
 		}
 
-		public void EhCrossValidationWorker(int[] group, IMatrix XX, IMatrix YY, IMatrix XU, IMatrix YU)
+		public void EhCrossValidationWorker(int[] group, IMatrix<double> XX, IMatrix<double> YY, IMatrix<double> XU, IMatrix<double> YU)
 		{
-			IVector meanX, scaleX, meanY, scaleY;
+			IVector<double> meanX, scaleX, meanY, scaleY;
 
 			MultivariateRegression.PreprocessForAnalysis(_preprocessOptions, _spectralRegions, XX, YY,
 				out meanX, out scaleX, out meanY, out scaleY);
