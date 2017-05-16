@@ -279,7 +279,14 @@ namespace Altaxo.Main.Services
 
 			if (null != _userSettings.AssemblyVersionLoadedFrom && thisVersion < _userSettings.AssemblyVersionLoadedFrom)
 			{
-				return; // User settings are not stored again if they originate from a newer version of Altaxo
+				var answer = Current.Gui.YesNoMessageBox(
+					string.Format(
+					"The existing UserSettings file was stored with a newer version of Altaxo (version {0}).\r\n" +
+					"Do you want to store and thus overwrite UserSettings now (with version {1})?", _userSettings.AssemblyVersionLoadedFrom, thisVersion),
+					"Attention!", false);
+
+				if (false == answer)
+					return; // User settings are not stored again if they originate from a newer version of Altaxo
 			}
 
 			using (LockPropertyFile())

@@ -34,25 +34,6 @@ namespace Altaxo.Data
 	/// </summary>
 	public class DataTableTransposeOptions : ICloneable
 	{
-		private int _availableNumberOfDataColumns;
-		private int _availableNumberOfPropertyColumns;
-
-		/// <summary>
-		/// Gets the available number of data columns.
-		/// </summary>
-		/// <value>
-		/// The available number of data columns.
-		/// </value>
-		public int AvailableNumberOfDataColumns { get { return _availableNumberOfDataColumns; } }
-
-		/// <summary>
-		/// Gets the available number of property columns.
-		/// </summary>
-		/// <value>
-		/// The available number of property columns.
-		/// </value>
-		public int AvailableNumberOfPropertyColumns { get { return _availableNumberOfPropertyColumns; } }
-
 		/// <summary>
 		/// Gets or sets the number of data columns to transpose.
 		/// </summary>
@@ -116,7 +97,7 @@ namespace Altaxo.Data
 
 			protected virtual DataTableTransposeOptions SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = (o == null ? new DataTableTransposeOptions(0, 0) : (DataTableTransposeOptions)o);
+				var s = (o == null ? new DataTableTransposeOptions() : (DataTableTransposeOptions)o);
 				s.DataColumnsMoveToPropertyColumns = info.GetInt32("NumberOfDataColumnsMovingToPropertyColumns");
 				s.PropertyColumnsMoveToDataColumns = info.GetInt32("NumberOfPropertyColumnsMovingToDataColumns");
 				s.StoreDataColumnNamesInFirstDataColumn = info.GetBoolean("StoreDataColumnNamesInFirstDataColumn");
@@ -135,17 +116,6 @@ namespace Altaxo.Data
 		#endregion Version 0
 
 		#endregion Serialization
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DataTableTransposeOptions"/> class.
-		/// </summary>
-		/// <param name="availableNumberOfDataColumns">The available number of data columns.</param>
-		/// <param name="availableNumberOfPropertyColumns">The available number of property columns.</param>
-		public DataTableTransposeOptions(int availableNumberOfDataColumns, int availableNumberOfPropertyColumns)
-		{
-			_availableNumberOfDataColumns = availableNumberOfDataColumns;
-			_availableNumberOfPropertyColumns = availableNumberOfPropertyColumns;
-		}
 
 		public object Clone()
 		{
@@ -534,7 +504,7 @@ namespace Altaxo.Data
 		/// </exception>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="InvalidOperationException">The data columns to transpose are not of the same type. The first column that has a deviating type is column number  + firstDifferentColumnIndex.ToString()</exception>
-		public static void Transpose(DataTable srcTable, DataTableTransposeOptions options, DataTable destTable)
+		public static void Transpose(this DataTable srcTable, DataTableTransposeOptions options, DataTable destTable)
 		{
 			if (null == srcTable)
 				throw new ArgumentNullException(nameof(srcTable));

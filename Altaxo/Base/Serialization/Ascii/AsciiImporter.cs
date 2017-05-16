@@ -191,6 +191,8 @@ namespace Altaxo.Serialization.Ascii
 				sLine = sr.ReadLine();
 				if (null == sLine)
 					break;
+				else if ("\0" == sLine) // if pasting from excel, the stream ends with "\0", so we ignore it.
+					continue;
 
 				int maxcolumns = newcols.ColumnCount;
 
