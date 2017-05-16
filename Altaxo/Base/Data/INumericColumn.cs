@@ -31,7 +31,7 @@ namespace Altaxo.Data
 	/// for columns which hold integer values or floating point values. Also true for DateTime columns, since they
 	/// can converted in seconds since a given reference date.
 	/// </summary>
-	public interface INumericColumn : IReadableColumn, ICloneable, Altaxo.Calc.LinearAlgebra.INumericSequence
+	public interface INumericColumn : IReadableColumn, ICloneable, Altaxo.Calc.LinearAlgebra.INumericSequence<double>
 	{
 		/// <summary>
 		/// Returns the value of a column element at index i as numeric value (double).

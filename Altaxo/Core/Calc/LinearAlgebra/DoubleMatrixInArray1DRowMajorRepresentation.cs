@@ -35,7 +35,7 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// The index of the linear array is calculated as <c>index = column + row*NumberOfColumns</c>.
 	/// This representation is used for instance by C, C++, Mathematica, Pascal and Python.
 	/// </summary>
-	public class RODoubleMatrixInArray1DRowMajorRepresentation : IROMatrix
+	public class RODoubleMatrixInArray1DRowMajorRepresentation : IROMatrix<double>
 	{
 		protected double[] _arrayRowMajor;
 		protected int _numberOfRows;
@@ -94,7 +94,7 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// The index of the linear array is calculated as <c>index = column + row * NumberOfColumns</c>.
 	/// This representation is used for instance by C, C++, Mathematica, Pascal and Python.
 	/// </summary>
-	public class DoubleMatrixInArray1DRowMajorRepresentation : RODoubleMatrixInArray1DRowMajorRepresentation, IMatrix, IMatrixInArray1DRowMajorRepresentation<double>
+	public class DoubleMatrixInArray1DRowMajorRepresentation : RODoubleMatrixInArray1DRowMajorRepresentation, IMatrix<double>, IMatrixInArray1DRowMajorRepresentation<double>
 	{
 		public DoubleMatrixInArray1DRowMajorRepresentation(int rows, int columns)
 			: base(rows, columns)

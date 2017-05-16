@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
@@ -44,7 +45,7 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
 	/// </remarks>
 	[System.Serializable]
-	sealed public class DoubleMatrix : IMatrix, ICloneable, IFormattable, IEnumerable, ICollection, IList
+	sealed public class DoubleMatrix : IMatrix<double>, ICloneable, IFormattable, IEnumerable, ICollection, IList
 	{
 #if MANAGED
 		internal double[][] data;
@@ -294,10 +295,10 @@ namespace Altaxo.Calc.LinearAlgebra
 			return result;
 		}
 
-		public static DoubleMatrix Diag(IROVector v)
+		public static DoubleMatrix Diag(IReadOnlyList<double> v)
 		{
-			var result = new DoubleMatrix(v.Length, v.Length);
-			for (int i = 0; i < v.Length; ++i)
+			var result = new DoubleMatrix(v.Count, v.Count);
+			for (int i = 0; i < v.Count; ++i)
 				result[i, i] = v[i];
 
 			return result;
@@ -312,6 +313,42 @@ namespace Altaxo.Calc.LinearAlgebra
 				return null;
 			}
 			return new DoubleMatrix(source);
+		}
+
+		public static implicit operator MatrixWrapperStructForLeftSpineJaggedArray<double>(DoubleMatrix source)
+		{
+			return new MatrixWrapperStructForLeftSpineJaggedArray<double>(source.data, source.Rows, source.Columns);
+		}
+
+		private class RoWrapper : IROMatrix<double>
+		{
+			private double[][] _array;
+			private int _rows;
+			private int _columns;
+
+			public RoWrapper(double[][] a, int r, int c)
+			{
+				_array = a;
+				_rows = r;
+				_columns = c;
+			}
+
+			public double this[int row, int col]
+			{
+				get
+				{
+					return _array[row][col];
+				}
+			}
+
+			public int Rows => _rows;
+
+			public int Columns => _columns;
+		}
+
+		public IROMatrix<double> ToROMatrix()
+		{
+			return new RoWrapper(this.data, rows, columns);
 		}
 
 		///<summary>Implicit conversion from <c>FloatMatrix</c> matrix.</summary>
@@ -385,6 +422,42 @@ namespace Altaxo.Calc.LinearAlgebra
 			return ret;
 		}
 
+		/// <summary>
+		/// Creates a matrix where the diagonal m[i,i] is set to 1. The matrix must not neccessarily be a square matrix.
+		/// </summary>
+		/// <param name="rows">The number of rows.</param>
+		/// <param name="columns">The number of columns.</param>
+		/// <returns></returns>
+		public static DoubleMatrix CreateIdentity(int rows, int columns)
+		{
+			var result = new DoubleMatrix(rows, columns);
+			var n = Math.Min(rows, columns);
+			for (int i = 0; i < n; ++i)
+				result[i, i] = 1;
+			return result;
+		}
+
+		public static DoubleMatrix FromProductOf(IReadOnlyList<double> x, IReadOnlyList<double> y)
+		{
+			if (null == x) throw new ArgumentNullException(nameof(x));
+			if (null == y) throw new ArgumentNullException(nameof(y));
+
+			var xl = x.Count;
+			var yl = y.Count;
+
+			var result = new DoubleMatrix(xl, yl);
+			var r = result.data;
+
+			for (int i = 0; i < xl; ++i)
+			{
+				for (int j = 0; j < yl; ++j)
+				{
+					r[i][j] = x[i] * y[j];
+				}
+			}
+			return result;
+		}
+
 		///<summary>Return the number of rows in the <c>DoubleMatrix</c> variable.</summary>
 		///<returns>The number of rows.</returns>
 		public int Rows
@@ -448,6 +521,19 @@ namespace Altaxo.Calc.LinearAlgebra
         data[column*rows+row] = value;
 #endif
 			}
+		}
+
+		public void CopyFrom(DoubleMatrix x)
+		{
+			if (this.Rows != x.Rows || this.Columns != x.Columns)
+				throw new RankException("Number of rows or columns of matrix to copy from does not match.");
+
+			var cols = this.Columns;
+			var rows = this.Rows;
+			var fromData = x.data;
+			var toData = this.data;
+			for (int i = 0; i < rows; ++i)
+				Array.Copy(fromData[i], toData[i], cols);
 		}
 
 		///<summary>Check if <c>DoubleMatrix</c> variable is the same as another object.</summary>
@@ -696,10 +782,11 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException("row", "row must be greater than or equal to zero and less than RowLength.");
 			}
 			DoubleVector ret = new DoubleVector(columns);
+			var retArray = ret.GetInternalData();
 			for (int i = 0; i < columns; i++)
 			{
 #if MANAGED
-				ret.data[i] = data[row][i];
+				retArray[i] = data[row][i];
 #else
         ret.data[i] = data[i*rows+row];
 #endif
@@ -717,15 +804,38 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException("column", "column must be greater than or equal to zero and less than ColumnLength.");
 			}
 			DoubleVector ret = new DoubleVector(rows);
+			var retArray = ret.GetInternalData();
 			for (int i = 0; i < rows; i++)
 			{
 #if MANAGED
-				ret.data[i] = data[i][column];
+				retArray[i] = data[i][column];
 #else
         ret.data[i] = data[column*rows+i];
 #endif
 			}
 			return ret;
+		}
+
+		/// <summary>
+		/// Gets the column of a matrix copied into a vector.
+		/// </summary>
+		/// <param name="columnNumber">Number of column of the matrix to be copied.</param>
+		/// <param name="destinationVector">Vector to copy the column data to.</param>
+		public void GetColumn(int columnNumber, IVector<double> destinationVector)
+		{
+			if (columnNumber < 0 || columnNumber >= columns)
+			{
+				throw new ArgumentOutOfRangeException(nameof(columnNumber), "column must be greater than or equal to zero and less than ColumnLength.");
+			}
+			if (null == destinationVector)
+				throw new ArgumentNullException(nameof(destinationVector));
+			if (destinationVector.Count != this.Rows)
+				throw new RankException("destinationVector.Length is not equal to matrix.Rows");
+
+			for (int i = 0; i < rows; i++)
+			{
+				destinationVector[i] = data[i][columnNumber];
+			}
 		}
 
 		///<summary>Return the diagonal of the <c>DoubleMatrix</c> as a <c>DoubleVector</c>.</summary>
@@ -734,10 +844,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			int min = System.Math.Min(rows, columns);
 			DoubleVector ret = new DoubleVector(min);
+			var retArray = ret.GetInternalData();
 			for (int i = 0; i < min; i++)
 			{
 #if MANAGED
-				ret.data[i] = data[i][i];
+				retArray[i] = data[i][i];
 #else
         ret.data[i] = data[i*rows+i];
 #endif
@@ -758,12 +869,12 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new ArgumentOutOfRangeException("row", "row must be greater than or equal to zero and less than RowLength.");
 			}
-			if (data.data.Length != columns)
+			if (data.Length != columns)
 			{
 				throw new ArgumentException("data length does not equal the matrix column length.");
 			}
 #if MANAGED
-			Array.Copy(data.data, 0, this.data[row], 0, data.data.Length);
+			Array.Copy(data.GetInternalData(), 0, this.data[row], 0, data.Length);
 #else
             for( int i = 0; i < columns; i++ ) {
                 this.data[i*rows+row] = data.data[i];
@@ -810,14 +921,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new ArgumentOutOfRangeException("column", "column must be greater than or equal to zero and less than ColumnLength.");
 			}
-			if (data.data.Length != rows)
+			if (data.Length != rows)
 			{
 				throw new ArgumentException("data length does not equal the matrix row length.");
 			}
 #if MANAGED
 			for (int i = 0; i < rows; i++)
 			{
-				this.data[i][column] = data.data[i];
+				this.data[i][column] = data[i];
 			}
 #else
             for( int i = 0; i < rows; i++ ) {
@@ -863,7 +974,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = 0; i < min; i++)
 			{
 #if MANAGED
-				data[i][i] = source.data[i];
+				data[i][i] = source[i];
 #else
         data[i*rows+i] = source.data[i];
 #endif
@@ -872,9 +983,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		///<summary>Set the diagonal of the <c>DoubleMatrix</c> to the values in a <c>DoubleVector</c> variable.</summary>
 		///<param name="source"><c>DoubleVector</c> with values to insert into diagonal of <c>DoubleMatrix</c>.</param>
-		public void SetDiagonal(IROVector source)
+		public void SetDiagonal(IReadOnlyList<double> source)
 		{
-			int min = System.Math.Min(System.Math.Min(rows, columns), source.Length);
+			int min = System.Math.Min(System.Math.Min(rows, columns), source.Count);
 #if MANAGED
 			for (int i = 0; i < min; i++)
 			{
@@ -1603,12 +1714,13 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			DoubleVector ret = new DoubleVector(a.rows);
+			var retArray = ret.GetInternalData();
 #if MANAGED
 			for (int i = 0; i < a.rows; i++)
 			{
 				for (int j = 0; j < a.columns; j++)
 				{
-					ret.data[i] += a.data[i][j] * b.data[j];
+					retArray[i] += a.data[i][j] * b[j];
 				}
 			}
 #else
@@ -1660,7 +1772,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				for (int j = 0; j < columns; j++)
 				{
-					temp[i][0] += data[i][j] * a.data[j];
+					temp[i][0] += data[i][j] * a[j];
 				}
 			}
 #else
@@ -2017,7 +2129,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		///<summary>Constructor for matrix that makes a deep copy of a given <c>IROMatrix</c>.</summary>
 		///<param name="source"><c>IROMatrix</c> to deep copy into new matrix.</param>
 		///<exception cref="ArgumentNullException"><c>source</c> is null.</exception>
-		public DoubleMatrix(IROMatrix source)
+		public DoubleMatrix(IROMatrix<double> source)
 		{
 			if (source == null)
 			{
@@ -2059,7 +2171,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="matrix">The matrix to convert to an array.</param>
 		/// <param name="result">The resulting array must be given.</param>
-		private static void ToLinearArray(IROMatrix matrix, double[] result)
+		private static void ToLinearArray(IROMatrix<double> matrix, double[] result)
 		{
 			int rows = matrix.Rows;
 			int columns = matrix.Columns;
@@ -2075,7 +2187,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="matrix">The matrix to convert to an array.</param>
 		/// <param name="result">The resulting array must be given.</param>
-		private static void ToLinearArray(IROFloatMatrix matrix, double[] result)
+		private static void ToLinearArray(IROMatrix<float> matrix, double[] result)
 		{
 			int rows = matrix.Rows;
 			int columns = matrix.Columns;
@@ -2091,9 +2203,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="source">The vector to convert to an array.</param>
 		/// <param name="result">The resulting vector must be given.</param>
-		private static void ToLinearArray(IROVector source, double[] result)
+		private static void ToLinearArray(IReadOnlyList<double> source, double[] result)
 		{
-			int length = source.Length;
+			int length = source.Count;
 			for (int i = 0; i < length; ++i)
 				result[i] = source[i];
 		}
@@ -2103,7 +2215,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="matrix">The matrix to convert to an array.</param>
 		/// <returns>Linear array of complex.</returns>
-		public static double[] ToLinearArray(IROMatrix matrix)
+		public static double[] ToLinearArray(IROMatrix<double> matrix)
 		{
 			double[] result = new double[matrix.Rows * matrix.Columns];
 			ToLinearArray(matrix, result);
@@ -2115,7 +2227,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="matrix">The matrix to convert to an array.</param>
 		/// <returns>Linear array of complex.</returns>
-		public static double[] ToLinearArray(IROFloatMatrix matrix)
+		public static double[] ToLinearArray(IROMatrix<float> matrix)
 		{
 			double[] result = new double[matrix.Rows * matrix.Columns];
 			ToLinearArray(matrix, result);
@@ -2127,9 +2239,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="source">The vector to convert to an array.</param>
 		/// <returns>Linear array of complex.</returns>
-		public static double[] ToLinearArray(IROVector source)
+		public static double[] ToLinearArray(IReadOnlyList<double> source)
 		{
-			double[] result = new double[source.Length];
+			double[] result = new double[source.Count];
 			ToLinearArray(source, result);
 			return result;
 		}

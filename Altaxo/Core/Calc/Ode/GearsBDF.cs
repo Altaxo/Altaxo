@@ -4,10 +4,11 @@
 // Microsoft Research License, see license file "MSR-LA - Open Solving Library for ODEs.rtf"
 // This file originates from project OSLO - Open solving libraries for ODEs - 1.1
 
-// Modified by D. Lellinger 2017
+// Heavily modified by Dr. Dirk Lellinger 2017
 
 #endregion Copyright
 
+using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,36 +18,292 @@ using System.Runtime.CompilerServices;
 
 namespace Altaxo.Calc.Ode
 {
+	/// <summary>
+	/// Gears BDF ODE solver.
+	/// </summary>
 	public class GearsBDF
 	{
+		#region Members
+
+		private static double ToleranceNorm(IReadOnlyList<double> v, double RTol, double ATol, IReadOnlyList<double> a)
+		{
+			return v.LInfinityNorm() / (ATol + RTol * a.LInfinityNorm());
+		}
+
+		/// <summary>
+		/// Calculates the jacobian, and stores all the temporary arrays and matrices neccessary for calculation.
+		/// </summary>
+		private class DenseJacobianEvaluator
+		{
+			/// <summary>
+			/// Temporary array to hold the x variated in one index to get the rates of the new point.
+			/// </summary>
+			private double[] variatedX;
+
+			/// <summary>
+			/// The rates at the old point x.
+			/// </summary>
+			private double[] f_old;
+
+			/// <summary>
+			/// The rates at the variated point x + variation at index i.
+			/// </summary>
+			private double[] f_new;
+
+			private DoubleMatrix J;
+
+			private IROMatrix<double> J_ROWrapper;
+
+			private Action<double, double[], double[]> f;
+
+			public DenseJacobianEvaluator(int N, Action<double, double[], double[]> f)
+			{
+				variatedX = new double[N];
+				f_old = new double[N];
+				f_new = new double[N];
+				J = new DoubleMatrix(N, N);
+				J_ROWrapper = J.ToROMatrix();
+				this.f = f;
+			}
+
+			/// <summary>Compute the Jacobian</summary>
+			/// <param name="f">The derivative function. 1st arg is time, 2nd arg are current y, and the rates are returned in the 3rd arg.</param>
+			/// <param name="t">Current time.</param>
+			/// <param name="y">Current value of the variables of the ODE.</param>
+			/// <returns>The (approximated) Jacobian matrix.</returns>
+			public IROMatrix<double> Jacobian(double t, double[] y)
+			{
+				int N = variatedX.Length;
+				Array.Copy(y, variatedX, N);
+
+				f(t, y, f_old); // evaluate rates at old point x
+
+				double variation;
+				var jarray = J.data;
+				for (int i = 0; i < N; ++i)
+				{
+					variatedX[i] += (variation = Math.Sqrt(1e-6 * Math.Max(1e-5, Math.Abs(y[i]))));
+					f(t, variatedX, f_new); // calculate rates at x variated at index i
+					variatedX[i] = y[i]; // restore old state
+
+					for (int c = 0; c < N; ++c)
+					{
+						jarray[c][i] = (f_new[c] - f_old[c]) / (variation);
+					}
+				}
+
+				return J_ROWrapper;
+			}
+		}
+
+		/// <summary>
+		/// Calculates the jacobian, and stores all the temporary arrays and matrices neccessary for calculation.
+		/// </summary>
+		private class SparseJacobianEvaluator
+		{
+			/// <summary>
+			/// Temporary array to hold the x variated in one index to get the rates of the new point.
+			/// </summary>
+			private double[] variatedX;
+
+			/// <summary>
+			/// The rates at the old point x.
+			/// </summary>
+			private double[] f_old;
+
+			/// <summary>
+			/// The rates at the variated point x + variation at index i.
+			/// </summary>
+			private double[] f_new;
+
+			private SparseDoubleMatrix J;
+
+			private Action<double, double[], double[]> f;
+
+			public SparseJacobianEvaluator(int N, Action<double, double[], double[]> f)
+			{
+				variatedX = new double[N];
+				f_old = new double[N];
+				f_new = new double[N];
+				J = new SparseDoubleMatrix(N, N);
+				this.f = f;
+			}
+
+			/// <summary>Compute the Jacobian</summary>
+			/// <param name="f">The derivative function. 1st arg is time, 2nd arg are current y, and the rates are returned in the 3rd arg.</param>
+			/// <param name="t">Current time.</param>
+			/// <param name="y">Current value of the variables of the ODE.</param>
+			/// <returns>The (approximated) Jacobian matrix.</returns>
+			public SparseDoubleMatrix Jacobian(double t, double[] y) // TODO replace, if available, with a read-only version of sparse matrix
+			{
+				int N = variatedX.Length;
+				Array.Copy(y, variatedX, N);
+
+				f(t, y, f_old); // evaluate rates at old point x
+
+				double variation;
+				double val;
+
+				J.Clear(); // set all elements to zero
+
+				for (int i = 0; i < N; ++i)
+				{
+					variatedX[i] += (variation = Math.Sqrt(1e-6 * Math.Max(1e-5, Math.Abs(y[i]))));
+					f(t, variatedX, f_new); // calculate rates at x variated at index i
+					variatedX[i] = y[i]; // restore old state
+
+					for (int c = 0; c < N; ++c)
+					{
+						val = (f_new[c] - f_old[c]) / (variation);
+
+						if (!(0 == val))
+							J[c, i] = val;
+					}
+				}
+
+				return J;
+			}
+		}
+
 		/// <summary>
 		/// Representation of current state in Nordsieck's method
 		/// </summary>
-		internal class NordsieckState
+		private class NordsieckState
 		{
-			public double tn, dt, Dq, delta;
+			/// <summary>At the end of a predictor step, this is
+			/// still the time of the previous state (!),
+			/// the current time is tn + dt.</summary>
+			public double _tn;
+
+			/// <summary>Current variable of this state.</summary>
+			public double[] _xn;
+
+			/// <summary>Time difference to next state.</summary>
+			public double _dt;
+
+			public double _Dq;
+			public double _delta;
 
 			/// <summary>Current method order, from 1 to qmax</summary>
-			public int qn;
+			public int _qn;
 
 			/// <summary>Maximum method order, from 1 to 5</summary>
-			public int qmax;
+			public readonly int _qmax;
 
 			/// <summary>Successfull steps count</summary>
-			public int nsuccess;
+			public int _nsuccess;
 
 			/// <summary>Step size scale factor/// </summary>
-			public double rFactor;
+			public double _rFactor;
 
-			public Vector xn, en;
-			public Matrix zn;
+			public double[] _en;
+
 			public double epsilon = 1e-12;
 
-			public void ChangeStep()
+			// temporary variables
+			private GaussianEliminationSolver gaussSolver = new GaussianEliminationSolver();
+
+			public DoubleMatrix _zn; // n x (qmax+1)
+
+			// following could be local variables, but because they require allocation, they are
+			// allocated once in the constructor
+			private DoubleMatrix P; // n x n
+
+			private double[] ecurr; // we need this temporary variable, must not be shared among states!
+			private DoubleMatrix zcurr = new DoubleMatrix(1, 1); // n x (qmax+1)
+			private DoubleMatrix z0 = new DoubleMatrix(1, 1); // n x (qmax+1)
+			private double[] ftdt; // to store the result of f(t + dt, x)
+			private double[] colExtract; // to store the result GetColumn
+			private double[] tmpVec1; // other temporary variable
+
+			private double[] xprev; // length: n
+			private double[] xcurr; // length: n
+			private double[] gm; // length n
+			private double[] deltaE; // length n
+
+			/// <summary>
+			/// Initializes a new instance of the <see cref="NordsieckState"/> class.
+			/// </summary>
+			/// <param name="n">The number of variables of the ODE.</param>
+			/// <param name="qmax">Maximum order of polynomial.</param>
+			/// <param name="qcurr">Current order.</param>
+			/// <param name="dt">Initial time step.</param>
+			/// <param name="t0">Initial time.</param>
+			/// <param name="x0">Initial state variables.</param>
+			/// <param name="dydt0">Initial derivatives of state variables.</param>
+			public NordsieckState(int n, int qmax, int qcurr, double dt, double t0, double[] x0, double[] dydt0)
 			{
-				dt = dt / 2.0;
-				if (dt < epsilon) throw new ArgumentException("Cannot generate numerical solution");
-				zn = NordsieckState.Rescale(zn, 0.5d);
+				if (n < 1)
+					throw new ArgumentOutOfRangeException(nameof(n));
+
+				this._qmax = qmax;
+				this._qn = qcurr;
+				this._delta = 0;
+				this._Dq = 0;
+				this._dt = dt;
+				this._tn = t0;
+				this._nsuccess = 0;
+				this._rFactor = 1;
+
+				// Copy x0
+				this._xn = new double[n];
+				VectorMath.Copy(x0, _xn);
+
+				//Compute Nordstieck's history matrix at t=t0;
+				_zn = new DoubleMatrix(n, qmax + 1);
+				for (int i = 0; i < n; i++)
+				{
+					_zn[i, 0] = x0[i]; // x0
+					_zn[i, 1] = dt * dydt0[i]; // 1st derivative * dt
+				}
+
+				zcurr = new DoubleMatrix(n, qmax + 1);
+				z0 = new DoubleMatrix(n, qmax + 1);
+
+				P = new DoubleMatrix(n, n);
+
+				_en = new double[n];
+				ecurr = new double[n];
+
+				ftdt = new double[n]; // to store the result of f(t + dt, x)
+				colExtract = new double[n]; // to store the result GetColumn
+				tmpVec1 = new double[n]; // other temporary variable
+
+				xprev = new double[n]; // length: n
+				xcurr = new double[n]; // length: n
+				gm = new double[n]; // length n
+				deltaE = new double[n]; // length n
+			}
+
+			/// <summary>
+			/// Evaluates the y values at a provided time, which should be smaller than tn+dt.
+			/// The y-values are calculated from the approximating polynomial, whose coefficients
+			/// are stored in zn.
+			/// </summary>
+			/// <param name="time">The time.</param>
+			/// <param name="y_result">The y result.</param>
+			public void EvaluateYAtTime(double time, double[] y_result)
+			{
+				var relativeTime = (time - _tn - _dt) / _dt; // relativeTime should be in the range [-1..0], because time should be <= (tn+dt)
+				var zndata = _zn.data; // direct access to zn
+				for (int i = 0; i < y_result.Length; ++i)
+				{
+					double sum = zndata[i][_qn];
+					for (int j = _qn - 1; j >= 0; --j)
+					{
+						sum *= relativeTime;
+						sum += zndata[i][j];
+					}
+					y_result[i] = sum;
+				}
+			}
+
+			public void DivideStepBy2()
+			{
+				_dt = _dt / 2.0;
+				if (_dt < epsilon)
+					throw new ArgumentException("Cannot generate numerical solution");
+				Rescale(0.5);
 			}
 
 			/// <summary>
@@ -55,24 +312,21 @@ namespace Altaxo.Calc.Ode
 			/// Krishnan Radhakrishnan and Alan C.Hindmarsh "Description and Use of LSODE,
 			/// the Livermore Solver of Ordinary Differential Equations"
 			/// </summary>
-			/// <param name="arg">Previous value of history matrix</param>
-			/// <param name="r">(New time step)/(Old time step)</param>
+			/// <param name="r">Scale factor (new time step)/(old time step)</param>
 			/// <returns>Rescaled history matrix</returns>
-			public static Matrix Rescale(Matrix arg, double r)
+			public void Rescale(double r)
 			{
-				Matrix res = (Matrix)arg.Clone(); ;
 				double R = 1;
-				int q = res.ColumnDimension;
+				int q = _zn.Columns;
 
-				for (int j = 1; j < q; j++)
+				for (int j = 1; j < q; ++j)
 				{
-					R = R * r;
-					for (int i = 0; i < res.RowDimension; i++)
+					R *= r;
+					for (int i = 0; i < _zn.Rows; ++i)
 					{
-						res[i, j] = res[i, j] * R;
+						_zn[i, j] *= R;
 					}
 				}
-				return res;
 			}
 
 			/// <summary>
@@ -83,12 +337,11 @@ namespace Altaxo.Calc.Ode
 			/// the Livermore Solver of Ordinary Differential Equations"
 			/// </summary>
 			/// <param name="arg">previous value of Nordsieck's matrix, so-called Z(n-1)</param>
-			/// <returns>So-called Zn0,initial vaue of Z in new step</returns>
-			public static Matrix ZNew(Matrix arg)
+			/// <returns>So-called Zn0, initial vaue of Z in new step</returns>
+			public void ZNew()
 			{
-				Matrix res = (Matrix)arg.Clone();
-				int q = arg.ColumnDimension;
-				int n = arg.RowDimension;
+				int q = _zn.Columns;
+				int n = _zn.Rows;
 
 				for (int k = 0; k < q - 1; k++)
 				{
@@ -96,121 +349,392 @@ namespace Altaxo.Calc.Ode
 					{
 						for (int i = 0; i < n; i++)
 						{
-							res[i, j - 1] = res[i, j] + res[i, j - 1];
+							_zn[i, j - 1] = _zn[i, j] + _zn[i, j - 1];
+						}
+					}
+				}
+			}
+
+			/// <summary>
+			/// Execute predictor-corrector scheme for Nordsieck's method
+			/// </summary>
+			/// <param name="flag"></param>
+			/// <param name="f">Evaluation of the deriatives. First argument is time, second arg are the state variables, and 3rd arg is the array to accomodate the derivatives.</param>
+			/// <param name="denseJacobianEvaluation">Evaluation of the jacobian.</param>
+			/// <param name="sparseJacobianEvaluation">Evaluation of the jacobian as a sparse matrix. Either this or the previous arg must be valid.</param>
+			/// <param name="opts">current options</param>
+			/// <returns>en - current error vector</returns>
+			internal void PredictorCorrectorScheme(
+					ref bool flag,
+					Action<double, double[], double[]> f,
+					Func<double, double[], IROMatrix<double>> denseJacobianEvaluation,
+					Func<double, double[], SparseDoubleMatrix> sparseJacobianEvaluation,
+					GearsBDFOptions opts
+					)
+			{
+				NordsieckState currstate = this;
+				NordsieckState newstate = this;
+				int n = currstate._xn.Length;
+
+				VectorMath.Copy(currstate._en, ecurr);
+				VectorMath.Copy(currstate._xn, xcurr);
+				var x0 = currstate._xn;
+				MatrixMath.Copy(currstate._zn, zcurr); // zcurr now is old nordsieck matrix
+				var qcurr = currstate._qn; // current degree
+				var qmax = currstate._qmax; // max degree
+				var dt = currstate._dt;
+				var t = currstate._tn;
+				MatrixMath.Copy(currstate._zn, z0); // save Nordsieck matrix
+
+				//Tolerance computation factors
+				double Cq = Math.Pow(qcurr + 1, -1.0);
+				double tau = 1.0 / (Cq * Factorial(qcurr) * l[qcurr - 1][qcurr]);
+
+				int count = 0;
+
+				double Dq = 0.0, DqUp = 0.0, DqDown = 0.0;
+				double delta = 0.0;
+
+				//Scaling factors for the step size changing
+				//with new method order q' = q, q + 1, q - 1, respectively
+				double rSame, rUp, rDown;
+
+				if (null != denseJacobianEvaluation)
+				{
+					var J = denseJacobianEvaluation(t + dt, xcurr);
+
+					do
+					{
+						MatrixMath.Map(J, (x, i, j) => (i == j ? 1 : 0) - x * dt * b[qcurr - 1], P); // B = Identity - J*dt*b[qcurr-1]
+						VectorMath.Copy(xcurr, xprev);
+						f(t + dt, xcurr, ftdt);
+						MatrixMath.CopyColumn(z0, 1, colExtract); // 1st derivative/dt
+						VectorMath.Map(ftdt, colExtract, ecurr, (ff, c, e) => dt * ff - c - e, gm); // gm = dt * f(t + dt, xcurr) - z0.GetColumn(1) - ecurr;
+						gaussSolver.SolveDestructive(P, gm, tmpVec1);
+						VectorMath.Add(ecurr, tmpVec1, ecurr); //	ecurr = ecurr + P.SolveGE(gm);
+						VectorMath.Map(x0, ecurr, (x, e) => x + e * b[qcurr - 1], xcurr); //	xcurr = x0 + b[qcurr - 1] * ecurr;
+
+						//Row dimension is smaller than zcurr has
+						int M_Rows = ecurr.Length;
+						int M_Columns = l[qcurr - 1].Length;
+						//So, "expand" the matrix
+						MatrixMath.Map(z0, (z, i, j) => z + (i < M_Rows && j < M_Columns ? ecurr[i] * l[qcurr - 1][j] : 0.0d), zcurr);
+
+						Dq = ToleranceNorm(ecurr, opts.RelativeTolerance, opts.AbsoluteTolerance, xprev);
+						var factor_deltaE = (1.0 / (qcurr + 2) * l[qcurr - 1][qcurr - 1]);
+						VectorMath.Map(ecurr, currstate._en, (e, c) => (e - c) * factor_deltaE, deltaE); // deltaE = (ecurr - currstate.en)*(1.0 / (qcurr + 2) * l[qcurr - 1][qcurr - 1])
+
+						DqUp = ToleranceNorm(deltaE, opts.RelativeTolerance, opts.AbsoluteTolerance, xcurr);
+						DqDown = ToleranceNorm(zcurr.GetColumn(qcurr - 1), opts.RelativeTolerance, opts.AbsoluteTolerance, xcurr);
+						delta = Dq / (tau / (2 * (qcurr + 2)));
+						count++;
+					} while (delta > 1.0d && count < opts.NumberOfIterations);
+				}
+				else if (null != sparseJacobianEvaluation)
+				{
+					SparseDoubleMatrix J = sparseJacobianEvaluation(t + dt, xcurr);
+					SparseDoubleMatrix P = new SparseDoubleMatrix(J.Rows, J.Columns);
+
+					do
+					{
+						J.MapSparseIncludingDiagonal((x, i, j) => (i == j ? 1 : 0) - x * dt * b[qcurr - 1], P);
+						VectorMath.Copy(xcurr, xprev);
+						f(t + dt, xcurr, ftdt);
+						MatrixMath.CopyColumn(z0, 1, colExtract);
+						VectorMath.Map(ftdt, colExtract, ecurr, (ff, c, e) => dt * ff - c - e, gm); // gm = dt * f(t + dt, xcurr) - z0.GetColumn(1) - ecurr;
+						gaussSolver.SolveDestructive(P, gm, tmpVec1);
+						VectorMath.Add(ecurr, tmpVec1, ecurr); //	ecurr = ecurr + P.SolveGE(gm);
+						VectorMath.Map(x0, ecurr, (x, e) => x + e * b[qcurr - 1], xcurr); // xcurr = x0 + b[qcurr - 1] * ecurr;
+
+						//Row dimension is smaller than zcurr has
+						int M_Rows = ecurr.Length;
+						int M_Columns = l[qcurr - 1].Length;
+						//So, "expand" the matrix
+						MatrixMath.Map(z0, (z, i, j) => z + (i < M_Rows && j < M_Columns ? ecurr[i] * l[qcurr - 1][j] : 0.0d), zcurr);
+
+						Dq = ToleranceNorm(ecurr, opts.RelativeTolerance, opts.AbsoluteTolerance, xprev);
+						var factor_deltaE = (1.0 / (qcurr + 2) * l[qcurr - 1][qcurr - 1]);
+						VectorMath.Map(ecurr, currstate._en, (e, c) => (e - c) * factor_deltaE, deltaE); // deltaE = (ecurr - currstate.en)*(1.0 / (qcurr + 2) * l[qcurr - 1][qcurr - 1])
+
+						DqUp = ToleranceNorm(deltaE, opts.RelativeTolerance, opts.AbsoluteTolerance, xcurr);
+						DqDown = ToleranceNorm(zcurr.GetColumn(qcurr - 1), opts.RelativeTolerance, opts.AbsoluteTolerance, xcurr);
+						delta = Dq / (tau / (2 * (qcurr + 2)));
+						count++;
+					} while (delta > 1.0d && count < opts.NumberOfIterations);
+				}
+				else // neither denseJacobianEvaluation nor sparseJacobianEvaluation valid
+				{
+					throw new ArgumentNullException(nameof(denseJacobianEvaluation), "Either denseJacobianEvaluation or sparseJacobianEvaluation must be set!");
+				}
+
+				//======================================
+
+				var nsuccess = count < opts.NumberOfIterations ? currstate._nsuccess + 1 : 0;
+
+				if (count < opts.NumberOfIterations)
+				{
+					flag = false;
+					MatrixMath.Copy(zcurr, newstate._zn);
+					zcurr.CopyColumn(0, newstate._xn);
+					VectorMath.Copy(ecurr, newstate._en);
+				}
+				else
+				{
+					flag = true;
+					// MatrixMath.Copy(currstate.zn, newstate.zn); // null operation since currstate and newstate are identical
+					currstate._zn.CopyColumn(0, newstate._xn);
+					VectorMath.Copy(currstate._en, newstate._en); // null operation since currstate and newstate are identical
+				}
+
+				//Compute step size scaling factors
+				rUp = 0.0;
+
+				if (currstate._qn < currstate._qmax)
+				{
+					rUp = rUp = 1.0 / 1.4 / (Math.Pow(DqUp, 1.0 / (qcurr + 2)) + 1e-6);
+				}
+
+				rSame = 1.0 / 1.2 / (Math.Pow(Dq, 1.0 / (qcurr + 1)) + 1e-6);
+
+				rDown = 0.0;
+
+				if (currstate._qn > 1)
+				{
+					rDown = 1.0 / 1.3 / (Math.Pow(DqDown, 1.0 / (qcurr)) + 1e-6);
+				}
+
+				//======================================
+				_nsuccess = nsuccess >= _qn ? 0 : nsuccess;
+				//Step size scale operations
+
+				if (rSame >= rUp)
+				{
+					if (rSame <= rDown && nsuccess >= _qn && _qn > 1)
+					{
+						_qn = _qn - 1;
+						_Dq = DqDown;
+
+						for (int i = 0; i < n; i++)
+						{
+							for (int j = newstate._qn + 1; j < qmax + 1; j++)
+							{
+								_zn[i, j] = 0.0;
+							}
+						}
+						nsuccess = 0;
+						_rFactor = rDown;
+					}
+					else
+					{
+						// _qn = _qn;
+						_Dq = Dq;
+						_rFactor = rSame;
+					}
+				}
+				else
+				{
+					if (rUp >= rDown)
+					{
+						if (rUp >= rSame && nsuccess >= _qn && _qn < _qmax)
+						{
+							_qn = _qn + 1;
+							_Dq = DqUp;
+							_rFactor = rUp;
+							nsuccess = 0;
+						}
+						else
+						{
+							// _qn = _qn;
+							_Dq = Dq;
+							_rFactor = rSame;
+						}
+					}
+					else
+					{
+						if (nsuccess >= _qn && _qn > 1)
+						{
+							_qn = _qn - 1;
+							_Dq = DqDown;
+
+							for (int i = 0; i < n; i++)
+							{
+								for (int j = newstate._qn + 1; j < qmax + 1; j++)
+								{
+									_zn[i, j] = 0.0;
+								}
+							}
+							nsuccess = 0;
+							_rFactor = rDown;
+						}
+						else
+						{
+							// _qn = _qn;
+							_Dq = Dq;
+							_rFactor = rSame;
 						}
 					}
 				}
 
-				return res;
-			}
-
-			/// <summary>Compute Jacobian</summary>
-			/// <param name="f"></param>
-			/// <param name="x"></param>
-			/// <param name="t"></param>
-			/// <returns></returns>
-			public static Matrix Jacobian(Func<double, Vector, Vector> f, Vector x, double t)
-			{
-				int N = x.Length;
-				Matrix J = new Matrix(N, N);
-
-				Vector variation = Vector.Zeros(N);
-				for (int i = 0; i < N; i++)
-				{
-					variation[i] = Math.Sqrt(1e-6 * Math.Max(1e-5, Math.Abs(x[i])));
-				}
-
-				Vector fold = f(t, x);
-
-				Vector[] fnew = new Vector[N];
-				for (int i = 0; i < N; i++)
-				{
-					x[i] = x[i] + variation[i];
-					fnew[i] = f(t, x);
-					x[i] = x[i] - variation[i];
-				}
-				for (int i = 0; i < N; i++)
-				{
-					for (int j = 0; j < N; j++)
-					{
-						J[i, j] = (fnew[j][i] - fold[i]) / (variation[j]);
-					}
-				}
-				return J;
+				_dt = dt;
+				_tn = t;
 			}
 		}
 
 		// Vector l for Nordsieck algorithm (orders 1 to 5)
 		private static double[][] l = new double[6][] {
-						new double[] { 1, 1 },
-						new double[] { 2 / 3d, 1, 1 / 3d },
-						new double[] { 6 / 11d, 1, 6 / 11d, 1 / 11d },
-						new double[] { 24 / 50d, 1, 35 / 50d, 10 / 50d, 1 / 50d },
-						new double[] { 120 / 274d, 1, 225 / 274d, 85 / 274d, 15 / 274d, 1 / 274d },
-						new double[] { 720 / 1764d, 1, 1624 / 1764d, 735 / 1764d, 175 / 1764d, 21 / 1764d, 1 / 1764d }
-				};
+												new double[] { 1, 1 },
+												new double[] { 2 / 3d, 1, 1 / 3d },
+												new double[] { 6 / 11d, 1, 6 / 11d, 1 / 11d },
+												new double[] { 24 / 50d, 1, 35 / 50d, 10 / 50d, 1 / 50d },
+												new double[] { 120 / 274d, 1, 225 / 274d, 85 / 274d, 15 / 274d, 1 / 274d },
+												new double[] { 720 / 1764d, 1, 1624 / 1764d, 735 / 1764d, 175 / 1764d, 21 / 1764d, 1 / 1764d }
+								};
 
 		// Vector Beta for Nordsieck algorithm (orders 1 to 5)
 		//private static double[] b = new double[] { 720 / 1764d, 1, 1624 / 1764d, 735 / 1764d, 175 / 1764d, 21 / 1764d, 1/1764d };
 		private static double[] b = new double[] { 1.0d, 2.0d / 3.0d, 6.0d / 11.0d, 24.0d / 50.0d, 120.0d / 274.0d, 720.0 / 1764.0d };
 
 		private NordsieckState currstate;
+
 		private bool isIterationFailed;
 		private int n;
-		private Options opts;
+		private GearsBDFOptions opts;
 		private double tout = double.NaN;
-		private Func<double, Vector, Vector> f;
-		private Vector xout;
+
+		/// <summary>
+		/// Calculates the jacobian as a dense matrix. 1st arg is time, 2nd arg is the state variable vector. Result is the dense jacobian matrix.
+		/// </summary>
+		/// <remarks>Either this field or <see cref="_sparseJacobianEvaluation"/> must be set!</remarks>
+		private Func<double, double[], IROMatrix<double>> _denseJacobianEvaluation;
+
+		/// <summary>
+		/// Calculates the jacobian as a sparse matrix. 1st arg is time, 2nd arg is the state variable vector. Result is the sparse jacobian matrix.
+		/// </summary>
+		/// <remarks>Either this field or <see cref="_denseJacobianEvaluation"/> must be set!</remarks>
+		private Func<double, double[], SparseDoubleMatrix> _sparseJacobianEvaluation;
+
+		private DoubleMatrix _zn_saved; // used to save zn during iteration
+
+		/// <summary>
+		/// Evaluates the derivatives. First argument is the time, second arg are the current y values. The derivatives
+		/// must be provided in the third argument.
+		/// </summary>
+		private Action<double, double[], double[]> f;
+
+		private enum InitializationState { NotInitialized, InitialValueReturned, Initialized };
+
+		private InitializationState _initializationState; // true when the Nordsiek matrix is valid
+		private double[] xout;
+		private double last_tout = double.NaN;
 		private double r;
 
+		#endregion Members
+
 		/// <summary>
-		/// Initialize Gear's BDF method with dynamically changed step size and order. Order changes between 1 and 3.
+		/// Gets the current degree of the interpolating polynomial.
+		/// </summary>
+		/// <value>
+		/// The current degree of the interpolating polynomial.
+		/// </value>
+		public int CurrentDegree { get { return currstate._qn; } }
+
+		/// <summary>
+		/// Gets the time until which the ODE is already evaluated.
+		/// </summary>
+		/// <value>
+		/// The current time.
+		/// </value>
+		public double CurrentTime { get { return currstate._tn + currstate._dt; } }
+
+		/// <summary>
+		/// Gets the current time step. This is the step which was carried out from the previous time to the current time.
+		/// </summary>
+		/// <value>
+		/// The current time step.
+		/// </value>
+		public double CurrentTimeStep { get { return currstate._dt; } }
+
+		/// <summary>
+		/// Gets the current nordsieck matrix. Rows corresponds to the state variables y0..yn, colums are the
+		/// variable y, then y'dt, y''dt²/2, y'''dt³/6, and so on. Can be used to get the coefficients of the interpolating
+		/// polynomial(s) between <see cref="CurrentTime"/>-<see cref="CurrentTimeStep"/> to <see cref="CurrentTime"/>.
+		/// </summary>
+		/// <value>
+		/// The current nordsieck matrix.
+		/// </value>
+		public DoubleMatrix CurrentNordsieckMatrix { get { return currstate._zn; } }
+
+		/// <summary>
+		/// Initialize Gear's BDF method with dynamically changed step size and order.
 		/// </summary>
 		/// <param name="t0">Initial time point</param>
 		/// <param name="y0">Initial values (at time <paramref name="t0"/>).</param>
 		/// <param name="dydt">Evaluation function for the derivatives. First argument is the time, second argument are the current y values. The third argument is an array where the derivatives are expected to be placed into.</param>
-		/// <returns>Sequence of infinite number of solution points.</returns>
 		public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt)
 		{
-			Initialize(t0, y0, dydt, Options.Default);
+			if (null == y0)
+				throw new ArgumentNullException(nameof(y0));
+			if (null == dydt)
+				throw new ArgumentNullException(nameof(dydt));
+
+			_denseJacobianEvaluation = new DenseJacobianEvaluator(y0.Length, dydt).Jacobian;
+			InternalInitialize(t0, y0, dydt, GearsBDFOptions.Default);
 		}
 
 		/// <summary>
-		/// Initialize Gear's BDF method with dynamically changed step size and order. Order changes between 1 and 3.
+		/// Initialize Gear's BDF method with dynamically changed step size and order.
 		/// </summary>
 		/// <param name="t0">Initial time point</param>
 		/// <param name="y0">Initial values (at time <paramref name="t0"/>).</param>
 		/// <param name="dydt">Evaluation function for the derivatives. First argument is the time, second argument are the current y values. The third argument is an array where the derivatives are expected to be placed into.</param>
-		/// <param name="opts">Options for accuracy control and initial step size</param>
-		public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt, Options opts)
+		/// <param name="opts">Options for the ODE method (can be null).</param>
+		public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt, GearsBDFOptions opts)
 		{
-			var adapter = new Adapter1(dydt, y0.Length);
-			Initialize(t0, y0, adapter.EvaluateDyDt, opts);
+			if (null == y0)
+				throw new ArgumentNullException(nameof(y0));
+			if (null == dydt)
+				throw new ArgumentNullException(nameof(dydt));
+
+			_denseJacobianEvaluation = new DenseJacobianEvaluator(y0.Length, dydt).Jacobian;
+			InternalInitialize(t0, y0, dydt, opts ?? GearsBDFOptions.Default);
 		}
 
-		[Obsolete]
-		public void Initialize(double t0, Vector x0, Func<double, Vector, Vector> f)
+		/// <summary>
+		/// Initialize Gear's BDF method with dynamically changed step size and order.
+		/// </summary>
+		/// <param name="t0">Initial time point</param>
+		/// <param name="y0">Initial values (at time <paramref name="t0"/>).</param>
+		/// <param name="dydt">Evaluation function for the derivatives. First argument is the time, second argument are the current y values. The third argument is an array where the derivatives are expected to be placed into.</param>
+		/// <param name="denseJacobianEvaluator">Evaluation for the dense jacobian matrix. First argument is the time, second argument are the current y values. If null is passed for this argument, a default evaluator is used.</param>
+		/// <param name="opts">Options for the ODE method (can be null).</param>
+		public void Initialize(double t0, double[] y0, Action<double, double[], double[]> dydt, Func<double, double[], IROMatrix<double>> denseJacobianEvaluator, GearsBDFOptions opts)
 		{
-			Initialize(t0, x0, f, Options.Default);
+			if (null == y0)
+				throw new ArgumentNullException(nameof(y0));
+			if (null == dydt)
+				throw new ArgumentNullException(nameof(dydt));
+
+			_denseJacobianEvaluation = denseJacobianEvaluator ?? new DenseJacobianEvaluator(y0.Length, dydt).Jacobian;
+			InternalInitialize(t0, y0, dydt, opts ?? GearsBDFOptions.Default);
 		}
 
-		private class Adapter1
+		/// <summary>
+		/// Initialize Gear's BDF method with dynamically changed step size and order.
+		/// </summary>
+		/// <param name="t0">Initial time point</param>
+		/// <param name="y0">Initial values (at time <paramref name="t0"/>).</param>
+		/// <param name="dydt">Evaluation function for the derivatives. First argument is the time, second argument are the current y values. The third argument is an array where the derivatives are expected to be placed into.</param>
+		/// <param name="sparseJacobianEvaluation">Evaluation for the dense jacobian matrix. First argument is the time, second argument are the current y values. If null is passed for this argument, a default evaluator is used.</param>
+		/// <param name="opts">Options for the ODE method (can be null).</param>
+		public void InitializeSparse(double t0, double[] y0, Action<double, double[], double[]> dydt, Func<double, double[], SparseDoubleMatrix> sparseJacobianEvaluation, GearsBDFOptions opts)
 		{
-			private Action<double, double[], double[]> _func;
-			//private Vector dydt;
+			if (null == y0)
+				throw new ArgumentNullException(nameof(y0));
+			if (null == dydt)
+				throw new ArgumentNullException(nameof(dydt));
 
-			public Adapter1(Action<double, double[], double[]> ff, int dim)
-			{
-				_func = ff;
-				//dydt = new Vector(new double[dim]);
-			}
-
-			public Vector EvaluateDyDt(double t, Vector y)
-			{
-				var dydt = new Vector(new double[y.Length]);
-				_func(t, y.v, dydt.v);
-				return dydt;
-			}
+			_sparseJacobianEvaluation = sparseJacobianEvaluation ?? new SparseJacobianEvaluator(y0.Length, dydt).Jacobian;
+			InternalInitialize(t0, y0, dydt, opts ?? GearsBDFOptions.Default);
 		}
 
 		/// <summary>
@@ -221,18 +745,23 @@ namespace Altaxo.Calc.Ode
 		/// <param name="f">Right parts of the system</param>
 		/// <param name="opts">Options for accuracy control and initial step size</param>
 		/// <returns>Sequence of infinite number of solution points.</returns>
-		[Obsolete]
-		public void Initialize(double t0, Vector x0, Func<double, Vector, Vector> f, Options opts)
+		private void InternalInitialize(double t0, double[] x0, Action<double, double[], double[]> f, GearsBDFOptions opts)
 		{
+			if (null == _denseJacobianEvaluation && null == _sparseJacobianEvaluation)
+				throw new InvalidProgramException("Ooops, how could this happen?");
+
 			double t = t0;
-			Vector x = x0.Clone();
+			var x = (double[])x0.Clone();
+
+			var dydt = (double[])x0.Clone(); // just to get the array.
+
 			this.n = x0.Length;
 
 			this.f = f;
 			this.opts = opts;
 
 			//Initial step size.
-			Vector dx = f(t0, x0).Clone();
+			f(t0, x0, dydt); // rates now in dx
 			double dt;
 			if (opts.InitialStep != 0)
 			{
@@ -241,14 +770,14 @@ namespace Altaxo.Calc.Ode
 			else
 			{
 				var tol = opts.RelativeTolerance;
-				var ewt = Vector.Zeros(n);
-				var ywt = Vector.Zeros(n);
+				var ewt = new double[n];
+				var ywt = new double[n];
 				var sum = 0.0;
 				for (int i = 0; i < n; i++)
 				{
 					ewt[i] = opts.RelativeTolerance * Math.Abs(x[i]) + opts.AbsoluteTolerance;
 					ywt[i] = ewt[i] / tol;
-					sum = sum + (double)dx[i] * dx[i] / (ywt[i] * ywt[i]);
+					sum = sum + (double)dydt[i] * dydt[i] / (ywt[i] * ywt[i]);
 				}
 
 				dt = Math.Sqrt(tol / ((double)1.0d / (ywt[0] * ywt[0]) + sum / n));
@@ -260,90 +789,115 @@ namespace Altaxo.Calc.Ode
 			int qmax = 5;
 			int qcurr = 2;
 
-			//Compute Nordstieck's history matrix at t=t0;
-			Matrix zn = new Matrix(n, qmax + 1);
-			for (int i = 0; i < n; i++)
-			{
-				zn[i, 0] = x[i];
-				zn[i, 1] = dt * dx[i];
-				for (int j = qcurr; j < qmax + 1; j++)
-				{
-					zn[i, j] = 0.0d;
-				}
-			}
+			_zn_saved = new DoubleMatrix(n, qmax + 1);
 
-			var eold = Vector.Zeros(n);
+			currstate = new NordsieckState(n, qmax, qcurr, dt, t, x0, dydt);
 
-			currstate = new NordsieckState()
-			{
-				delta = 0.0d,
-				Dq = 0.0d,
-				dt = dt,
-				en = eold,
-				tn = t,
-				xn = x0,
-				qn = qcurr,
-				qmax = qmax,
-				nsuccess = 0,
-				zn = zn,
-				rFactor = 1.0d
-			};
 			isIterationFailed = false;
 
 			this.tout = t0;
-			this.xout = x0.Clone();
+			this.xout = (double[])x0.Clone();
 
 			// ---------------------------------------------------------------------------------------------------
 			// End of initialize
 			// ---------------------------------------------------------------------------------------------------
 
 			// Firstly, return initial point
-			Evaluate(t0, true);
+			// EvaluateInternally(t0, true, out t0, xout);
+			_initializationState = InitializationState.NotInitialized;
 		}
 
-		public double[] Evaluate(double t_sol)
+		public void Evaluate(out double t_result, double[] result)
+		{
+			EvaluateInternally(null, out t_result, result);
+		}
+
+		public void Evaluate(double t_sol, double[] result)
 		{
 			if (!(t_sol >= tout))
 				throw new ArgumentOutOfRangeException(nameof(t_sol), "t must be greater than or equal than the last evaluated t");
 
-			return Evaluate(t_sol, false);
+			EvaluateInternally(t_sol, out var _, result);
 		}
 
-		private double[] Evaluate(double t_sol, bool isFirstEvaluation)
+		public IEnumerable<(double time, IROVector<double> y)> SolutionPointsUntil(double maxTime)
 		{
-			tout = t_sol;
+			var resultArray = new double[n];
+			var roWrapper = VectorMath.ToROVector(resultArray);
 
-			if (!isFirstEvaluation)
+			for (;;)
+			{
+				EvaluateInternally(null, out var time, resultArray);
+
+				if (!(time <= maxTime))
+					break;
+				yield return (time, roWrapper);
+			}
+		}
+
+		private void EvaluateInternally(double? tout, out double t_result, double[] result)
+		{
+			if (_initializationState == InitializationState.NotInitialized) // not initialized so far
+			{
+				_initializationState = InitializationState.InitialValueReturned;
+
+				if (null == tout)
+				{
+					last_tout = t_result = currstate._tn;
+					currstate._zn.CopyColumn(0, result);
+					return;
+				}
+			}
+			else if (_initializationState == InitializationState.Initialized)
 			{
 				// we have to clone some of the code from below to here
 				// this is no good style, but a goto statement with a jump inside another code block will not work here.
-				// Output data
-				if (currstate.tn <= tout && tout <= currstate.tn + currstate.dt)
-				{
-					return Vector.Lerp(tout, currstate.tn, xout, currstate.tn + currstate.dt, currstate.xn).v;
-				}
-				Vector.Copy(currstate.xn, xout);
 
-				currstate.tn = currstate.tn + currstate.dt;
+				if (tout.HasValue)
+				{
+					// Output data, but only if (i) we have requested a certain time point,
+					// and ii) as long as we can interpolate this point from the previous point and the current point
+					if (currstate._tn <= tout.Value && tout.Value <= currstate._tn + currstate._dt)
+					{
+						// VectorMath.Lerp(tout.Value, currstate.tn, xout, currstate.tn + currstate.dt, currstate.xn, result);
+						currstate.EvaluateYAtTime(tout.Value, result);
+						last_tout = t_result = tout.Value;
+						return;
+					}
+				}
+				else
+				{
+					if (currstate._tn == last_tout)
+					{
+						last_tout = t_result = currstate._tn + currstate._dt;
+						VectorMath.Copy(currstate._xn, result);
+						return;
+					}
+				}
+
+				VectorMath.Copy(currstate._xn, xout); // save x of this step
+
+				currstate._tn = currstate._tn + currstate._dt;
 
 				if (opts.MaxStep < Double.MaxValue)
 				{
-					r = Math.Min(r, opts.MaxStep / currstate.dt);
+					r = Math.Min(r, opts.MaxStep / currstate._dt);
 				}
 
 				if (opts.MinStep > 0)
 				{
-					r = Math.Max(r, opts.MinStep / currstate.dt);
+					r = Math.Max(r, opts.MinStep / currstate._dt);
 				}
 
 				r = Math.Min(r, opts.MaxScale);
 				r = Math.Max(r, opts.MinScale);
 
-				currstate.dt = currstate.dt * r;
+				currstate._dt = currstate._dt * r;
 
-				currstate.zn = NordsieckState.Rescale(currstate.zn, r);
+				currstate.Rescale(r);
 			}
 
+			_initializationState = InitializationState.Initialized;
 			//Can produce any number of solution points
 			while (true)
 			{
@@ -351,69 +905,82 @@ namespace Altaxo.Calc.Ode
 				isIterationFailed = false;
 
 				// Predictor step
-				var z0 = currstate.zn.Clone();
-				currstate.zn = NordsieckState.ZNew(currstate.zn);
-				currstate.en = Vector.Zeros(n);
-				currstate.xn = currstate.zn.CloneColumn(0);
+				_zn_saved.CopyFrom(currstate._zn);
+				currstate.ZNew();
+				VectorMath.FillWith(currstate._en, 0); // TODO find out if this statement is neccessary
+				currstate._zn.CopyColumn(0, currstate._xn);
 
 				// Corrector step
-				currstate = PredictorCorrectorScheme(currstate, ref isIterationFailed, f, opts);
+				currstate.PredictorCorrectorScheme(ref isIterationFailed, f, _denseJacobianEvaluation, _sparseJacobianEvaluation, opts);
 
 				if (isIterationFailed) // If iterations are not finished - bad convergence
 				{
-					currstate.zn = z0;
-					currstate.nsuccess = 0;
-					currstate.ChangeStep();
+					currstate._zn.CopyFrom(_zn_saved); // copy saved state back
+					currstate._nsuccess = 0;
+					currstate.DivideStepBy2();
 				}
-				else // Iterations finished
+				else // Iterations finished, i.e. did not fail
 				{
-					r = Math.Min(1.1d, Math.Max(0.2d, currstate.rFactor));
+					r = Math.Min(1.1d, Math.Max(0.2d, currstate._rFactor));
 
-					if (currstate.delta >= 1.0d)
+					if (currstate._delta >= 1.0d)
 					{
 						if (opts.MaxStep < Double.MaxValue)
 						{
-							r = Math.Min(r, opts.MaxStep / currstate.dt);
+							r = Math.Min(r, opts.MaxStep / currstate._dt);
 						}
 
 						if (opts.MinStep > 0)
 						{
-							r = Math.Max(r, opts.MinStep / currstate.dt);
+							r = Math.Max(r, opts.MinStep / currstate._dt);
 						}
 
 						r = Math.Min(r, opts.MaxScale);
 						r = Math.Max(r, opts.MinScale);
 
-						currstate.dt = currstate.dt * r; // Decrease step
-						currstate.zn = NordsieckState.Rescale(currstate.zn, r);
+						currstate._dt = currstate._dt * r; // Decrease step
+						currstate.Rescale(r);
 					}
-					else
+					else // Iteration finished successfully
 					{
 						// Output data
-						if (currstate.tn <= tout && tout <= currstate.tn + currstate.dt)
+						if (tout.HasValue)
 						{
-							return Vector.Lerp(tout, currstate.tn, xout, currstate.tn + currstate.dt, currstate.xn).v;
-						}
-						Vector.Copy(currstate.xn, xout);
+							if (currstate._tn <= tout.Value && tout.Value <= currstate._tn + currstate._dt)
+							{
+								// VectorMath.Lerp(tout.Value, currstate.tn, xout, currstate.tn + currstate.dt, currstate.xn, result);
+								currstate.EvaluateYAtTime(tout.Value, result);
+								t_result = tout.Value;
 
-						currstate.tn = currstate.tn + currstate.dt;
+								return;
+							}
+						}
+						else
+						{
+							VectorMath.Copy(currstate._xn, result);
+							t_result = last_tout = currstate._tn + currstate._dt;
+							return;
+						}
+
+						VectorMath.Copy(currstate._xn, xout);
+
+						currstate._tn = currstate._tn + currstate._dt;
 
 						if (opts.MaxStep < Double.MaxValue)
 						{
-							r = Math.Min(r, opts.MaxStep / currstate.dt);
+							r = Math.Min(r, opts.MaxStep / currstate._dt);
 						}
 
 						if (opts.MinStep > 0)
 						{
-							r = Math.Max(r, opts.MinStep / currstate.dt);
+							r = Math.Max(r, opts.MinStep / currstate._dt);
 						}
 
 						r = Math.Min(r, opts.MaxScale);
 						r = Math.Max(r, opts.MinScale);
 
-						currstate.dt = currstate.dt * r;
-
-						currstate.zn = NordsieckState.Rescale(currstate.zn, r);
+						currstate._dt = currstate._dt * r;
+						currstate.Rescale(r);
 					}
 				}
 			}
@@ -426,231 +993,32 @@ namespace Altaxo.Calc.Ode
 		/// <returns></returns>
 		internal static int Factorial(int arg)
 		{
-			if (arg < 0) return -1;
-			if (arg == 0) return 1;
-			return arg * Factorial(arg - 1);
-		}
-
-		/// <summary>
-		/// Execute predictor-corrector scheme for Nordsieck's method
-		/// </summary>
-		/// <param name="currstate"></param>
-		/// <param name="flag"></param>
-		/// <param name="f">right parts vector</param>
-		/// <param name="opts">current options</param>
-		/// <returns>en - current error vector</returns>
-		private static NordsieckState PredictorCorrectorScheme(NordsieckState currstate, ref bool flag, Func<double, Vector, Vector> f, Options opts)
-		{
-			int n = currstate.xn.Length;
-
-			NordsieckState newstate = new NordsieckState();
-			var ecurr = currstate.en;
-			newstate.en = ecurr.Clone();
-			var xcurr = currstate.xn;
-			var x0 = currstate.xn;
-			var zcurr = (Matrix)currstate.zn.Clone();
-			var qcurr = currstate.qn;
-			var qmax = currstate.qmax;
-			var dt = currstate.dt;
-			var t = currstate.tn;
-			var z0 = (Matrix)currstate.zn.Clone();
-
-			//Tolerance computation factors
-			double Cq = Math.Pow(qcurr + 1, -1.0);
-			double tau = 1.0 / (Cq * Factorial(qcurr) * l[qcurr - 1][qcurr]);
-
-			int count = 0;
-
-			double Dq = 0.0, DqUp = 0.0, DqDown = 0.0;
-			double delta = 0.0;
-
-			//Scaling factors for the step size changing
-			//with new method order q' = q, q + 1, q - 1, respectively
-			double rSame, rUp, rDown;
-
-			var xprev = Vector.Zeros(n);
-			var gm = Vector.Zeros(n);
-			var deltaE = Vector.Zeros(n);
-			var M = Matrix.Identity(n, qmax - 1);
-
-			if (opts.SparseJacobian == null)
+			switch (arg)
 			{
-				Matrix J = opts.Jacobian == null ? NordsieckState.Jacobian(f, xcurr, t + dt) : opts.Jacobian;
-				Matrix P = Matrix.Identity(n, n) - J * dt * b[qcurr - 1];
+				case 0:
+					return 1;
 
-				do
-				{
-					xprev = xcurr.Clone();
-					gm = dt * f(t + dt, xcurr) - z0.CloneColumn(1) - ecurr;
-					ecurr = ecurr + P.SolveGE(gm);
-					xcurr = x0 + b[qcurr - 1] * ecurr;
+				case 1:
+					return 1;
 
-					//Row dimension is smaller than zcurr has
-					M = ecurr & l[qcurr - 1];
-					//So, "expand" the matrix
-					var MBig = Matrix.Identity(zcurr.RowDimension, zcurr.ColumnDimension);
-					for (int i = 0; i < zcurr.RowDimension; i++)
-					{
-						for (int j = 0; j < zcurr.ColumnDimension; j++)
-						{
-							MBig[i, j] = i < M.RowDimension && j < M.ColumnDimension ? M[i, j] : 0.0d;
-						}
-					}
-					zcurr = z0 + MBig;
-					Dq = ecurr.ToleranceNorm(opts.RelativeTolerance, opts.AbsoluteTolerance, xprev);
-					deltaE = ecurr - currstate.en;
-					deltaE *= (1.0 / (qcurr + 2) * l[qcurr - 1][qcurr - 1]);
-					DqUp = deltaE.ToleranceNorm(opts.RelativeTolerance, opts.AbsoluteTolerance, xcurr);
-					DqDown = zcurr.CloneColumn(qcurr - 1).ToleranceNorm(opts.RelativeTolerance, opts.AbsoluteTolerance, xcurr);
-					delta = Dq / (tau / (2 * (qcurr + 2)));
-					count++;
-				} while (delta > 1.0d && count < opts.NumberOfIterations);
+				case 2:
+					return 2;
+
+				case 3:
+					return 6;
+
+				case 4:
+					return 24;
+
+				case 5:
+					return 120;
+
+				case 6:
+					return 720;
+
+				default:
+					throw new NotImplementedException();
 			}
-			else
-			{
-				SparseMatrix J = opts.SparseJacobian;
-				SparseMatrix P = SparseMatrix.Identity(n, n) - J * dt * b[qcurr - 1];
-
-				do
-				{
-					xprev = xcurr.Clone();
-					gm = dt * f(t + dt, xcurr) - z0.CloneColumn(1) - ecurr;
-					ecurr = ecurr + P.SolveGE(gm);
-					xcurr = x0 + b[qcurr - 1] * ecurr;
-					//Row dimension is smaller than zcurr has
-					M = ecurr & l[qcurr - 1];
-					//So, "expand" the matrix
-					var MBig = Matrix.Identity(zcurr.RowDimension, zcurr.ColumnDimension);
-					for (int i = 0; i < zcurr.RowDimension; i++)
-					{
-						for (int j = 0; j < zcurr.ColumnDimension; j++)
-						{
-							MBig[i, j] = i < M.RowDimension && j < M.ColumnDimension ? M[i, j] : 0.0d;
-						}
-					}
-					zcurr = z0 + MBig;
-					Dq = ecurr.ToleranceNorm(opts.RelativeTolerance, opts.AbsoluteTolerance, xprev);
-					deltaE = ecurr - currstate.en;
-					deltaE *= (1.0 / (qcurr + 2) * l[qcurr - 1][qcurr - 1]);
-					DqUp = deltaE.ToleranceNorm(opts.RelativeTolerance, opts.AbsoluteTolerance, xcurr);
-					DqDown = zcurr.CloneColumn(qcurr - 1).ToleranceNorm(opts.RelativeTolerance, opts.AbsoluteTolerance, xcurr);
-					delta = Dq / (tau / (2 * (qcurr + 2)));
-					count++;
-				} while (delta > 1.0d && count < opts.NumberOfIterations);
-			}
-
-			//======================================
-
-			var nsuccess = count < opts.NumberOfIterations ? currstate.nsuccess + 1 : 0;
-
-			if (count < opts.NumberOfIterations)
-			{
-				flag = false;
-				newstate.zn = (Matrix)zcurr.Clone();
-				newstate.xn = zcurr.CloneColumn(0);
-				newstate.en = ecurr.Clone();
-			}
-			else
-			{
-				flag = true;
-				newstate.zn = (Matrix)currstate.zn.Clone();
-				newstate.xn = currstate.zn.CloneColumn(0);
-				newstate.en = currstate.en.Clone();
-			}
-
-			//Compute step size scaling factors
-			rUp = 0.0;
-
-			if (currstate.qn < currstate.qmax)
-			{
-				rUp = rUp = 1.0 / 1.4 / (Math.Pow(DqUp, 1.0 / (qcurr + 2)) + 1e-6);
-			}
-
-			rSame = 1.0 / 1.2 / (Math.Pow(Dq, 1.0 / (qcurr + 1)) + 1e-6);
-
-			rDown = 0.0;
-
-			if (currstate.qn > 1)
-			{
-				rDown = 1.0 / 1.3 / (Math.Pow(DqDown, 1.0 / (qcurr)) + 1e-6);
-			}
-
-			//======================================
-			newstate.nsuccess = nsuccess >= currstate.qn ? 0 : nsuccess;
-			//Step size scale operations
-
-			if (rSame >= rUp)
-			{
-				if (rSame <= rDown && nsuccess >= currstate.qn && currstate.qn > 1)
-				{
-					newstate.qn = currstate.qn - 1;
-					newstate.Dq = DqDown;
-
-					for (int i = 0; i < n; i++)
-					{
-						for (int j = newstate.qn + 1; j < qmax + 1; j++)
-						{
-							newstate.zn[i, j] = 0.0;
-						}
-					}
-					nsuccess = 0;
-					newstate.rFactor = rDown;
-				}
-				else
-				{
-					newstate.qn = currstate.qn;
-					newstate.Dq = Dq;
-					newstate.rFactor = rSame;
-				}
-			}
-			else
-			{
-				if (rUp >= rDown)
-				{
-					if (rUp >= rSame && nsuccess >= currstate.qn && currstate.qn < currstate.qmax)
-					{
-						newstate.qn = currstate.qn + 1;
-						newstate.Dq = DqUp;
-						newstate.rFactor = rUp;
-						nsuccess = 0;
-					}
-					else
-					{
-						newstate.qn = currstate.qn;
-						newstate.Dq = Dq;
-						newstate.rFactor = rSame;
-					}
-				}
-				else
-				{
-					if (nsuccess >= currstate.qn && currstate.qn > 1)
-					{
-						newstate.qn = currstate.qn - 1;
-						newstate.Dq = DqDown;
-
-						for (int i = 0; i < n; i++)
-						{
-							for (int j = newstate.qn + 1; j < qmax + 1; j++)
-							{
-								newstate.zn[i, j] = 0.0;
-							}
-						}
-						nsuccess = 0;
-						newstate.rFactor = rDown;
-					}
-					else
-					{
-						newstate.qn = currstate.qn;
-						newstate.Dq = Dq;
-						newstate.rFactor = rSame;
-					}
-				}
-			}
-
-			newstate.qmax = qmax;
-			newstate.dt = dt;
-			newstate.tn = t;
-			return newstate;
 		}
 	}
 }

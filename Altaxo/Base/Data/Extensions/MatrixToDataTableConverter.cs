@@ -34,13 +34,13 @@ namespace Altaxo.Data
 	{
 		private const string DefaultColumnBaseName = "C";
 		private DataTable _destinationTable;
-		private IROMatrix _sourceMatrix;
+		private IROMatrix<double> _sourceMatrix;
 		private string _columnNameBase;
 
-		private List<Tuple<IROVector, string>> _rowHeaderColumns = new List<Tuple<IROVector, string>>();
-		private List<Tuple<IROVector, string>> _columnHeaderColumns = new List<Tuple<IROVector, string>>();
+		private List<Tuple<IReadOnlyList<double>, string>> _rowHeaderColumns = new List<Tuple<IReadOnlyList<double>, string>>();
+		private List<Tuple<IReadOnlyList<double>, string>> _columnHeaderColumns = new List<Tuple<IReadOnlyList<double>, string>>();
 
-		public MatrixToDataTableConverter(IROMatrix sourceMatrix, DataTable destinationTable)
+		public MatrixToDataTableConverter(IROMatrix<double> sourceMatrix, DataTable destinationTable)
 		{
 			if (null == sourceMatrix)
 				throw new ArgumentNullException("sourceMatrix");
@@ -53,20 +53,20 @@ namespace Altaxo.Data
 
 		#region Static Executors
 
-		public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix matrix)
+		public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix<double> matrix)
 		{
 			var c = new MatrixToDataTableConverter(matrix, destinationTable);
 			c.Execute();
 		}
 
-		public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix matrix, string columnBaseName)
+		public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix<double> matrix, string columnBaseName)
 		{
 			var c = new MatrixToDataTableConverter(matrix, destinationTable);
 			c.ColumnBaseName = columnBaseName;
 			c.Execute();
 		}
 
-		public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix matrix, string columnBaseName, IROVector rowHeaderColumn, string rowHeaderColumnName, IROVector colHeaderColumn, string colHeaderColumnName)
+		public static void SetContentFromMatrix(DataTable destinationTable, IROMatrix<double> matrix, string columnBaseName, IReadOnlyList<double> rowHeaderColumn, string rowHeaderColumnName, IReadOnlyList<double> colHeaderColumn, string colHeaderColumnName)
 		{
 			var c = new MatrixToDataTableConverter(matrix, destinationTable);
 			c.ColumnBaseName = columnBaseName;
@@ -89,28 +89,28 @@ namespace Altaxo.Data
 
 		public event Func<int, string> ColumnNameGenerator;
 
-		public void AddMatrixRowHeaderData(IROVector vector, string name)
+		public void AddMatrixRowHeaderData(IReadOnlyList<double> vector, string name)
 		{
 			if (null == vector)
 				throw new ArgumentNullException("vector");
 			if (string.IsNullOrEmpty(name))
 				throw new ArgumentNullException("name");
-			if (vector.Length != _sourceMatrix.Rows)
+			if (vector.Count != _sourceMatrix.Rows)
 				throw new InvalidDimensionMatrixException("The number of elements of the provided vector must match the number of rows of the matrix.");
 
-			_rowHeaderColumns.Add(new Tuple<IROVector, string>(vector, name));
+			_rowHeaderColumns.Add(new Tuple<IReadOnlyList<double>, string>(vector, name));
 		}
 
-		public void AddMatrixColumnHeaderData(IROVector vector, string name)
+		public void AddMatrixColumnHeaderData(IReadOnlyList<double> vector, string name)
 		{
 			if (null == vector)
 				throw new ArgumentNullException("vector");
 			if (string.IsNullOrEmpty(name))
 				throw new ArgumentNullException("name");
-			if (vector.Length != _sourceMatrix.Columns)
+			if (vector.Count != _sourceMatrix.Columns)
 				throw new InvalidDimensionMatrixException("The number of elements of the provided vector must match the number of columns of the matrix.");
 
-			_columnHeaderColumns.Add(new Tuple<IROVector, string>(vector, name));
+			_columnHeaderColumns.Add(new Tuple<IReadOnlyList<double>, string>(vector, name));
 		}
 
 		#endregion Input properties
@@ -154,7 +154,7 @@ namespace Altaxo.Data
 						columnName = string.Format("{0}{1}", string.IsNullOrEmpty(_columnNameBase) ? DefaultColumnBaseName : _columnNameBase, i);
 
 					var col = dataCols.EnsureExistenceAtPositionStrictly<DoubleColumn>(columnNumber, columnName, ColumnKind.V, 0);
-					col.AssignVector = new MatrixMath.MatrixColumnROVector(_sourceMatrix, i);
+					col.AssignVector = MatrixMath.ColumnToROVector(_sourceMatrix, i);
 					col.CutToMaximumLength(numRows);
 					++columnNumber;
 				}

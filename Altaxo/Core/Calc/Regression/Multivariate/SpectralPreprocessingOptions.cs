@@ -24,6 +24,7 @@
 
 using Altaxo.Calc.LinearAlgebra;
 using System;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace Altaxo.Calc.Regression.Multivariate
@@ -184,7 +185,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// (But in this case almost all spectral correction methods also fails).
 		/// </summary>
 		/// <param name="xvalues">The vector of x values for the spectra (wavelength, frequencies...).</param>
-		public void SetRegionsByIdentification(IROVector xvalues)
+		public void SetRegionsByIdentification(IReadOnlyList<double> xvalues)
 		{
 			_regions = IdentifyRegions(xvalues);
 		}
@@ -211,11 +212,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// </summary>
 		/// <param name="xvalues">The vector of x values for the spectra (wavelength, frequencies...).</param>
 		/// <returns>The array of regions. Each element in the array is the starting index of a new region into the vector xvalues.</returns>
-		public static int[] IdentifyRegions(IROVector xvalues)
+		public static int[] IdentifyRegions(IReadOnlyList<double> xvalues)
 		{
-			System.Collections.ArrayList list = new System.Collections.ArrayList();
+			var list = new List<int>();
 
-			int len = xvalues.Length;
+			int len = xvalues.Count;
 
 			for (int i = 0; i < len - 2; i++)
 			{
@@ -228,7 +229,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 				}
 			}
 
-			return (int[])list.ToArray(typeof(int));
+			return list.ToArray();
 		}
 
 		/// <summary>
@@ -270,10 +271,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
 		/// <param name="xMean">Will be filled with the spectral mean.</param>
 		/// <param name="xScale">Will be filled with the inverse spectral variance.(Or with 1 if the user has not choosen this option).</param>
-		public void Process(IMatrix xMatrix, IVector xMean, IVector xScale)
+		public void Process(IMatrix<double> xMatrix, IVector<double> xMean, IVector<double> xScale)
 		{
 			// before processing, fill xScale with 1
-			VectorMath.Fill(xScale, 1);
+			VectorMath.FillWith(xScale, 1);
 
 			GetPreprocessingMethod().Process(xMatrix, xMean, xScale, _regions);
 
@@ -291,7 +292,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
 		/// <param name="xMean">Vector of spectral mean, must be supplied here.</param>
 		/// <param name="xScale">Vector of inverse spectral variance, must be supplied here.</param>
-		public void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale)
+		public void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale)
 		{
 			GetPreprocessingMethod().ProcessForPrediction(xMatrix, xMean, xScale, _regions);
 

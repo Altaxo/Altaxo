@@ -169,7 +169,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
 		/// <value>
 		/// The bins.
 		/// </value>
-		public IList<Bin> Bins { get { return _binListProxy; } } // TODO change to IReadOnlyList<Bin>
+		public IReadOnlyList<Bin> Bins { get { return _binListProxy; } }
 
 		/// <inheritdoc />
 		public object Clone()
@@ -178,7 +178,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
 		}
 
 		/// <inheritdoc />
-		public void CalculateBinPositionsFromSortedList(IList<double> list)
+		public void CalculateBinPositionsFromSortedList(IReadOnlyList<double> list)
 		{
 			if (null == list)
 				throw new ArgumentNullException();
@@ -246,7 +246,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
 		}
 
 		/// <inheritdoc />
-		public void CalculateBinsFromSortedList(IList<double> sortedListOfValues)
+		public void CalculateBinsFromSortedList(IReadOnlyList<double> sortedListOfValues)
 		{
 			_binCounts = new int[_numberOfBins];
 			int listIndex = 0;

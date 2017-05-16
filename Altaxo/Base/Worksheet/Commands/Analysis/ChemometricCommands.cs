@@ -284,10 +284,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			} // if it was a vertical oriented spectrum
 
 			// now do PCA with the matrix
-			MatrixMath.REMatrix factors = new MatrixMath.REMatrix(0, 0);
-			MatrixMath.BEMatrix loads = new MatrixMath.BEMatrix(0, 0);
-			MatrixMath.BEMatrix residualVariances = new MatrixMath.BEMatrix(0, 0);
-			MatrixMath.HorizontalVector meanX = new MatrixMath.HorizontalVector(matrixX.Columns);
+			var factors = new MatrixMath.REMatrix(0, 0);
+			var loads = new MatrixMath.BEMatrix(0, 0);
+			var residualVariances = new MatrixMath.BEMatrix(0, 0);
+			var meanX = new MatrixMath.MatrixWithOneRow<double>(matrixX.Columns);
 			// first, center the matrix
 			MatrixMath.ColumnsToZeroMean(matrixX, meanX);
 			MatrixMath.NIPALS_HO(matrixX, maxNumberOfFactors, 1E-9, factors, loads, residualVariances);

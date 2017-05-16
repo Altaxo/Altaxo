@@ -35,7 +35,7 @@ namespace Altaxo.Calc.LinearAlgebra
 	using System.Text;
 
 	/// <summary>Matrix provides the fundamental operations of numerical linear algebra.</summary>
-	public interface IMapackMatrix : IMatrix
+	public interface IMapackMatrix : IMatrix<double>
 	{
 		/// <summary>Returns a sub matrix extracted from the current matrix.</summary>
 		/// <param name="startRow">Start row index.</param>
@@ -2307,7 +2307,7 @@ namespace Altaxo.Calc.LinearAlgebra
 									H[k, k - 1] = -s * x;
 								else
 									if (l != m)
-										H[k, k - 1] = -H[k, k - 1];
+									H[k, k - 1] = -H[k, k - 1];
 
 								p = p + s;
 								x = p / s;

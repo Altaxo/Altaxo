@@ -100,7 +100,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
 		/// <value>
 		/// The filtered and sorted data ensemble.
 		/// </value>
-		public IList<double> FilteredAndSortedDataEnsemble { get; set; }
+		public IReadOnlyList<double> FilteredAndSortedDataEnsemble { get; set; }
 
 		/// <summary>
 		/// Gets or sets the level of user interaction.

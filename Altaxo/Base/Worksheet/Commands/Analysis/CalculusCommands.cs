@@ -165,12 +165,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
 		}
 
 		public static void Interpolation(Altaxo.Data.DataColumn xCol, Altaxo.Data.DataColumn yCol,
-			Calc.Interpolation.IInterpolationFunction interpolInstance, IROVector samplePoints,
+			Calc.Interpolation.IInterpolationFunction interpolInstance, IReadOnlyList<double> samplePoints,
 			Altaxo.Data.DataColumn xRes, Altaxo.Data.DataColumn yRes)
 		{
 			int rows = Math.Min(xCol.Count, yCol.Count);
-			IROVector yVec = DataColumnWrapper.ToROVector((INumericColumn)yCol, rows);
-			IROVector xVec = DataColumnWrapper.ToROVector((INumericColumn)xCol, rows);
+			var yVec = DataColumnWrapper.ToROVector((INumericColumn)yCol, rows);
+			var xVec = DataColumnWrapper.ToROVector((INumericColumn)xCol, rows);
 
 			interpolInstance.Interpolate(xVec, yVec);
 
@@ -178,7 +178,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			{
 				using (var suspendToken_yRes = yRes.SuspendGetToken())
 				{
-					for (int i = 0; i < samplePoints.Length; i++)
+					for (int i = 0; i < samplePoints.Count; i++)
 					{
 						//double r = i / (double)(parameters.NumberOfPoints - 1);
 						//double x = parameters.XOrg * (1 - r) + parameters.XEnd * (r);

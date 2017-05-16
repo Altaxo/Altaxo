@@ -36,7 +36,7 @@ namespace Altaxo.Data
 		:
 		Altaxo.Data.DataColumn,
 		INumericColumn,
-		Altaxo.Calc.LinearAlgebra.IROVector
+		Altaxo.Calc.LinearAlgebra.IROVector<double>
 	{
 		private double[] _data;
 		private int _capacity; // shortcut to m_Array.Length;
@@ -56,9 +56,16 @@ namespace Altaxo.Data
 			get { return _count; }
 		}
 
-		int Calc.LinearAlgebra.IROVector.Length
+		int Calc.LinearAlgebra.IROVector<double>.Length
 		{
 			get { return _count; }
+		}
+
+		IEnumerator<double> IEnumerable<double>.GetEnumerator()
+		{
+			var length = _count;
+			for (int i = 0; i < length; ++i)
+				yield return this[i];
 		}
 
 		// indexers
@@ -385,11 +392,11 @@ namespace Altaxo.Data
 		/// Provides a setter property to which a vector can be assigned to. Copies all elements of the vector to this column.
 		/// The getter property creates a wrapper for this data column that implements IVector. The length of the wrapped vector is set to the current Count of the DoubleColumn.
 		/// </summary>
-		public override Altaxo.Calc.LinearAlgebra.IROVector AssignVector
+		public override IReadOnlyList<double> AssignVector
 		{
 			set
 			{
-				CopyDataFrom(value, value.Length);
+				CopyDataFrom(value, value.Count);
 			}
 		}
 
@@ -397,12 +404,12 @@ namespace Altaxo.Data
 		/// Provides a setter property to which a readonly vector can be assigned to. Copies all elements of the readonly vector to this column.
 		/// The getter property creates a wrapper for this data column that implements IROVector. For short time use only, since it reflects changes in the data, but not in the length of the DoubleColumn.
 		/// </summary>
-		public override Altaxo.Calc.LinearAlgebra.IROVector ToROVector(int start, int count)
+		public override Altaxo.Calc.LinearAlgebra.IROVector<double> ToROVector(int start, int count)
 		{
 			return new ROVector(this, start, count);
 		}
 
-		public override Altaxo.Calc.LinearAlgebra.IVector ToVector(int start, int count)
+		public override Altaxo.Calc.LinearAlgebra.IVector<double> ToVector(int start, int count)
 		{
 			return new RWVector(this, start, count);
 		}
@@ -438,12 +445,12 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="srcarray">Vector containing the source data.</param>
 		/// <param name="count">Length of the array (or length of the used range of the array, starting from index 0).</param>
-		public void CopyDataFrom(Altaxo.Calc.LinearAlgebra.IROVector srcarray, int count)
+		public void CopyDataFrom(IReadOnlyList<double> srcarray, int count)
 		{
 			int oldCount = this._count;
 			int srcarraycount = 0;
 
-			if (null == srcarray || 0 == (srcarraycount = Altaxo.Calc.LinearAlgebra.VectorMath.GetUsedLength(srcarray, Math.Min(srcarray.Length, count))))
+			if (null == srcarray || 0 == (srcarraycount = Altaxo.Calc.LinearAlgebra.VectorMath.GetUsedLength(srcarray, Math.Min(srcarray.Count, count))))
 			{
 				_data = null;
 				_capacity = 0;
@@ -549,7 +556,7 @@ namespace Altaxo.Data
 
 		#region Vector decorators
 
-		private class ROVector : Altaxo.Calc.LinearAlgebra.IROVector
+		private class ROVector : Altaxo.Calc.LinearAlgebra.IROVector<double>
 		{
 			private DoubleColumn _col;
 			private int _start;
@@ -569,6 +576,11 @@ namespace Altaxo.Data
 				get { return _count; }
 			}
 
+			public int Count
+			{
+				get { return _count; }
+			}
+
 			#endregion IROVector Members
 
 			#region INumericSequence Members
@@ -578,10 +590,22 @@ namespace Altaxo.Data
 				get { return _col[_start + i]; }
 			}
 
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _count; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _count; ++i)
+					yield return this[i];
+			}
+
 			#endregion INumericSequence Members
 		}
 
-		private class RWVector : Altaxo.Calc.LinearAlgebra.IVector
+		private class RWVector : Altaxo.Calc.LinearAlgebra.IVector<double>
 		{
 			private DoubleColumn _col;
 			private int _start;
@@ -615,6 +639,23 @@ namespace Altaxo.Data
 			public int Length
 			{
 				get { return _count; }
+			}
+
+			public int Count
+			{
+				get { return _count; }
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _count; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _count; ++i)
+					yield return this[i];
 			}
 
 			#endregion IROVector Members

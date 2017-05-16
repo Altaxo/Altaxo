@@ -27,12 +27,12 @@ using System;
 namespace Altaxo.Calc.LinearAlgebra
 {
 	/// <summary>
-	/// IROMatrix represents a read-only matrix of double values.
+	/// IROMatrix represents a read-only matrix of values.
 	/// </summary>
-	public interface IROMatrix
+	public interface IROMatrix<T>
 	{
 		/// <summary>Gets an element of the matrix at (row, col).</summary>
-		double this[int row, int col] { get; }
+		T this[int row, int col] { get; }
 
 		/// <summary>The number of rows of the matrix.</summary>
 		int Rows { get; }
@@ -44,45 +44,45 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// <summary>
 	/// IMatrix represents the simplest form of a 2D matrix, which is readable and writeable.
 	/// </summary>
-	public interface IMatrix : IROMatrix
+	public interface IMatrix<T> : IROMatrix<T>
 	{
 		/// <summary>Get / sets an element of the matrix at (row, col).</summary>
-		new double this[int row, int col] { get; set; }
+		new T this[int row, int col] { get; set; }
 	}
 
 	/// <summary>
 	/// IRightExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
 	/// can be appended to the right of the matrix.
 	/// </summary>
-	public interface IRightExtensibleMatrix : IMatrix
+	public interface IRightExtensibleMatrix<T> : IMatrix<T>
 	{
 		/// <summary>
 		/// Append matrix a to the right edge of this matrix. Matrix a must have the same number of rows than this matrix, except this matrix
 		/// is still empty, in which case the right dimension of this matrix is set.
 		/// </summary>
 		/// <param name="a">The matrix to append.</param>
-		void AppendRight(IROMatrix a);
+		void AppendRight(IROMatrix<T> a);
 	}
 
 	/// <summary>
 	/// IBottomExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
 	/// can be appended to the bottom of the matrix.
 	/// </summary>
-	public interface IBottomExtensibleMatrix : IMatrix
+	public interface IBottomExtensibleMatrix<T> : IMatrix<T>
 	{
 		/// <summary>
 		/// Append matrix a to the bottom of this matrix. Matrix a must have the same number of columns than this matrix, except this matrix
 		/// is still empty, in which case the right dimension of this matrix is set.
 		/// </summary>
 		/// <param name="a">The matrix to append.</param>
-		void AppendBottom(IROMatrix a);
+		void AppendBottom(IROMatrix<T> a);
 	}
 
 	/// <summary>
 	/// IExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
 	/// can be appended either to the right or to the bottom of the matrix.
 	/// </summary>
-	public interface IExtensibleMatrix : IRightExtensibleMatrix, IBottomExtensibleMatrix
+	public interface IExtensibleMatrix<T> : IRightExtensibleMatrix<T>, IBottomExtensibleMatrix<T>
 	{
 	}
 }

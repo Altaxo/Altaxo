@@ -13,105 +13,67 @@ using System.Net;
 
 namespace Altaxo.Calc.Ode
 {
-	[TestFixture]
-	public class GearTests
-	{
-		/// <summary>Solves dx/dt = exp(-x) equation with x(0) = 1 initial condition</summary>
-		[Test]
-		public void ExponentSolveToGearTest()
-		{
-			foreach (var sp in Ode.GearBDF(0,
-					1,
-					(t, x) => -x,
-					new Options { RelativeTolerance = 1e-4 }).SolveTo(10))
-				Assert.IsTrue(Math.Abs(sp.X[0] - Math.Exp(-sp.T)) < 1e-3);
-		}
+    [TestFixture]
+    public class GearTests
+    {
+        /// <summary>Solves dx/dt = exp(-x) equation with x(0) = 1 initial condition</summary>
+        [Test]
+        public void ExponentSolveToGearTest()
+        {
+            foreach (var sp in Ode.GearBDF(0,
+                    1,
+                    (t, x) => -x,
+                    new Options { RelativeTolerance = 1e-4 }).SolveTo(10))
+                Assert.IsTrue(Math.Abs(sp.X[0] - Math.Exp(-sp.T)) < 1e-3);
+        }
 
-		/// <summary>Solves dx/dt = A*x equation with x(0) = {1,1} initial condition</summary>
-		[Test]
-		public void JacobianGearTest()
-		{
-			var A = new Matrix(new double[,] { { -1, 0.5 }, { 0, -1 } });
+        /// <summary>Solves dx/dt = A*x equation with x(0) = {1,1} initial condition</summary>
+        [Test]
+        public void JacobianGearTest()
+        {
+            var A = new Matrix(new double[,] { { -1, 0.5 }, { 0, -1 } });
 
-			var sol = new List<double>();
-			foreach (var sp in Ode.GearBDF(0,
-					new Vector(1, 1),
-					(t, x) => A * x).SolveFromToStep(0, 10, 0.1))
-				sol.Add(sp.X[0]);
+            var sol = new List<double>();
+            foreach (var sp in Ode.GearBDF(0,
+                    new Vector(1, 1),
+                    (t, x) => A * x).SolveFromToStep(0, 10, 0.1))
+                sol.Add(sp.X[0]);
 
-			var solJ = new List<double>();
-			foreach (var sp in Ode.GearBDF(0,
-					new Vector(1, 1),
-					(t, x) => A * x).SolveFromToStep(0, 10, 0.1))
-				solJ.Add(sp.X[0]);
+            var solJ = new List<double>();
+            foreach (var sp in Ode.GearBDF(0,
+                    new Vector(1, 1),
+                    (t, x) => A * x).SolveFromToStep(0, 10, 0.1))
+                solJ.Add(sp.X[0]);
 
-			for (int i = 0; i < sol.Count; i++)
-				Assert.IsTrue(Math.Abs(sol[i] - solJ[i]) < 1e-3);
-		}
+            for (int i = 0; i < sol.Count; i++)
+                Assert.IsTrue(Math.Abs(sol[i] - solJ[i]) < 1e-3);
+        }
 
-		[Test]
-		public void GearTest2()
-		{
-			const double lambda1 = -1;
-			const double lambda2 = -1000;
-			const double lambda1PlusLambda2By2 = (lambda1 + lambda2) / 2;
-			const double lambda1MinusLambda2By2 = (lambda1 - lambda2) / 2;
+        [Test]
+        public void GearTest2()
+        {
+            const double lambda1 = -1;
+            const double lambda2 = -1000;
+            const double lambda1PlusLambda2By2 = (lambda1 + lambda2) / 2;
+            const double lambda1MinusLambda2By2 = (lambda1 - lambda2) / 2;
 
-			const double C1 = 1;
-			const double C2 = 1;
+            const double C1 = 1;
+            const double C2 = 1;
 
-			var ode = Ode.GearBDF(
-			0,
-			new Vector(C1 + C2, C1 - C2),
-			(t, y) => new Vector(lambda1PlusLambda2By2 * y[0] + lambda1MinusLambda2By2 * y[1], lambda1MinusLambda2By2 * y[0] + lambda1PlusLambda2By2 * y[1]),
-			new Options { RelativeTolerance = 1e-4, AbsoluteTolerance = 1E-8 });
+            var ode = Ode.GearBDF(
+            0,
+            new Vector(C1 + C2, C1 - C2),
+            (t, y) => new Vector(lambda1PlusLambda2By2 * y[0] + lambda1MinusLambda2By2 * y[1], lambda1MinusLambda2By2 * y[0] + lambda1PlusLambda2By2 * y[1]),
+            new Options { RelativeTolerance = 1e-4, AbsoluteTolerance = 1E-8 });
 
-			foreach (var sp in ode.SolveTo(100000))
-			{
-				var y0_expected = C1 * Math.Exp(lambda1 * sp.T) + C2 * Math.Exp(lambda2 * sp.T);
-				var y1_expected = C1 * Math.Exp(lambda1 * sp.T) - C2 * Math.Exp(lambda2 * sp.T);
+            foreach (var sp in ode.SolveTo(100000))
+            {
+                var y0_expected = C1 * Math.Exp(lambda1 * sp.T) + C2 * Math.Exp(lambda2 * sp.T);
+                var y1_expected = C1 * Math.Exp(lambda1 * sp.T) - C2 * Math.Exp(lambda2 * sp.T);
 
-				Assert.AreEqual(y0_expected, sp.X[0], 1E-3 * y0_expected + 1E-4);
-				Assert.AreEqual(y1_expected, sp.X[1], 1E-3 * y1_expected + 1E-4);
-			}
-		}
-
-		[Test]
-		public void GearTest2a()
-		{
-			const double lambda1 = -1;
-			const double lambda2 = -1000;
-			const double lambda1PlusLambda2By2 = (lambda1 + lambda2) / 2;
-			const double lambda1MinusLambda2By2 = (lambda1 - lambda2) / 2;
-
-			const double C1 = 1;
-			const double C2 = 1;
-
-			var pulse = Ode.GearBDF(
-			0,
-			new Vector(C1 + C2, C1 - C2),
-			(t, y) => new Vector(lambda1PlusLambda2By2 * y[0] + lambda1MinusLambda2By2 * y[1], lambda1MinusLambda2By2 * y[0] + lambda1PlusLambda2By2 * y[1]),
-			new Options { RelativeTolerance = 1e-4, AbsoluteTolerance = 1E-8 });
-
-			var ode = new GearsBDF();
-
-			ode.Initialize(
-			0,
-			new Vector(C1 + C2, C1 - C2),
-			(t, y) => new Vector(lambda1PlusLambda2By2 * y[0] + lambda1MinusLambda2By2 * y[1], lambda1MinusLambda2By2 * y[0] + lambda1PlusLambda2By2 * y[1]),
-			new Options { RelativeTolerance = 1e-4, AbsoluteTolerance = 1E-8 });
-
-			foreach (var spulse in pulse.SolveTo(100000))
-			{
-				double t = spulse.T;
-				var sp = ode.Evaluate(t);
-
-				var y0_expected = C1 * Math.Exp(lambda1 * t) + C2 * Math.Exp(lambda2 * t);
-				var y1_expected = C1 * Math.Exp(lambda1 * t) - C2 * Math.Exp(lambda2 * t);
-
-				Assert.AreEqual(y0_expected, sp[0], 1E-3 * y0_expected + 1E-4);
-				Assert.AreEqual(y1_expected, sp[1], 1E-3 * y1_expected + 1E-4);
-			}
-		}
-	}
+                Assert.AreEqual(y0_expected, sp.X[0], 1E-3 * y0_expected + 1E-4);
+                Assert.AreEqual(y1_expected, sp.X[1], 1E-3 * y1_expected + 1E-4);
+            }
+        }
+    }
 }

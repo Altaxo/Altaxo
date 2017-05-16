@@ -177,9 +177,9 @@ namespace Altaxo.Calc.Interpolation
 		/// </summary>
 		/// <param name="x">X coordinates of the points.</param>
 		/// <param name="h">Values of the points that should be interpolated.</param>
-		public void Construct(IROVector x, IROVector h)
+		public void Construct(IReadOnlyList<double> x, IReadOnlyList<double> h)
 		{
-			Construct(new IROVector[] { x }, h);
+			Construct(new IReadOnlyList<double>[] { x }, h);
 		}
 
 		/// <summary>
@@ -188,9 +188,9 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="x">X coordinates of the points.</param>
 		/// <param name="y">Y coordinates of the points.</param>
 		/// <param name="h">Values of the points that should be interpolated.</param>
-		public void Construct(IROVector x, IROVector y, IROVector h)
+		public void Construct(IReadOnlyList<double> x, IReadOnlyList<double> y, IReadOnlyList<double> h)
 		{
-			Construct(new IROVector[] { x, y }, h);
+			Construct(new IReadOnlyList<double>[] { x, y }, h);
 		}
 
 		/// <summary>
@@ -200,9 +200,9 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="y">Y coordinates of the points.</param>
 		/// <param name="z">Z coordinates of the points.</param>
 		/// <param name="h">Values of the points that should be interpolated.</param>
-		public void Construct(IROVector x, IROVector y, IROVector z, IROVector h)
+		public void Construct(IReadOnlyList<double> x, IReadOnlyList<double> y, IReadOnlyList<double> z, IReadOnlyList<double> h)
 		{
-			Construct(new IROVector[] { x, y, z }, h);
+			Construct(new IReadOnlyList<double>[] { x, y, z }, h);
 		}
 
 		/// <summary>
@@ -210,15 +210,15 @@ namespace Altaxo.Calc.Interpolation
 		/// </summary>
 		/// <param name="x">X coordinates of the points.</param>
 		/// <param name="h">Values of the points that should be interpolated.</param>
-		public void Construct(IROVector[] x, IROVector h)
+		public void Construct(IReadOnlyList<double>[] x, IReadOnlyList<double> h)
 		{
 			_coordDim = x.Length;
 			if (0 == _coordDim)
 				throw new ArgumentException("The spline must have at least one dimension (No coordinates were provided).");
 
-			_numberOfControlPoints = h.Length;
+			_numberOfControlPoints = h.Count;
 			for (int d = 0; d < _coordDim; d++)
-				_numberOfControlPoints = Math.Min(_numberOfControlPoints, x[d].Length);
+				_numberOfControlPoints = Math.Min(_numberOfControlPoints, x[d].Count);
 			if (_numberOfControlPoints <= _coordDim)
 				throw new ArgumentException("The number of control points must exceed the number of dimension at least by one.");
 

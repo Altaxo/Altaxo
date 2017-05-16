@@ -39,7 +39,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the window function to the specified matrix <paramref name="m"/> by multiplying each matrix element with a factor.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		void Apply(IMatrix m);
+		void Apply(IMatrix<double> m);
 	}
 
 	/// <summary>
@@ -51,7 +51,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Hanning window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public void Apply(IMatrix m)
+		public void Apply(IMatrix<double> m)
 		{
 			Application(m);
 		}
@@ -60,7 +60,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Hanning window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public static void Application(IMatrix m)
+		public static void Application(IMatrix<double> m)
 		{
 			var rows = m.Rows;
 			var cols = m.Columns;
@@ -91,7 +91,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Bartlett window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public void Apply(IMatrix m)
+		public void Apply(IMatrix<double> m)
 		{
 			Application(m);
 		}
@@ -100,7 +100,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Bartlett window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public static void Application(IMatrix m)
+		public static void Application(IMatrix<double> m)
 		{
 			var rows = m.Rows;
 			var cols = m.Columns;
@@ -131,7 +131,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Parzen window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public void Apply(IMatrix m)
+		public void Apply(IMatrix<double> m)
 		{
 			Application(m);
 		}
@@ -140,7 +140,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Parzen window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public static void Application(IMatrix m)
+		public static void Application(IMatrix<double> m)
 		{
 			var rows = m.Rows;
 			var cols = m.Columns;
@@ -190,7 +190,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Gauss window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor. The <see cref="Sigma"/> value is used to calculate the window.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public void Apply(IMatrix m)
+		public void Apply(IMatrix<double> m)
 		{
 			Application(m, _sigma);
 		}
@@ -199,7 +199,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Gauss window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor. The default sigma value (<see cref="DefaultSigma"/>) is used.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public static void Application(IMatrix m)
+		public static void Application(IMatrix<double> m)
 		{
 			Application(m, DefaultSigma);
 		}
@@ -209,7 +209,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
 		/// <param name="sigma">The sigma value to calculate the window function.</param>
-		public static void Application(IMatrix m, double sigma)
+		public static void Application(IMatrix<double> m, double sigma)
 		{
 			var rows = m.Rows;
 			var cols = m.Columns;
@@ -252,7 +252,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Supergauss window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor. The <see cref="Kappa"/> value is used to calculate the window.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public void Apply(IMatrix m)
+		public void Apply(IMatrix<double> m)
 		{
 			Application(m, _kappa);
 		}
@@ -261,7 +261,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Supergauss window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor. The default sigma value (<see cref="DefaultKappa"/>) is used.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public static void Application(IMatrix m)
+		public static void Application(IMatrix<double> m)
 		{
 			Application(m, DefaultKappa);
 		}
@@ -271,7 +271,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
 		/// <param name="kappa">The sigma value to calculate the window function.</param>
-		public static void Application(IMatrix m, double kappa)
+		public static void Application(IMatrix<double> m, double kappa)
 		{
 			var rows = m.Rows;
 			var cols = m.Columns;
@@ -302,7 +302,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Elliptic window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public void Apply(IMatrix m)
+		public void Apply(IMatrix<double> m)
 		{
 			Application(m);
 		}
@@ -311,7 +311,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Elliptic window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public static void Application(IMatrix m)
+		public static void Application(IMatrix<double> m)
 		{
 			var rows = m.Rows;
 			var cols = m.Columns;
@@ -342,7 +342,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Cosine window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public void Apply(IMatrix m)
+		public void Apply(IMatrix<double> m)
 		{
 			Application(m);
 		}
@@ -351,7 +351,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// Applies the Cosine window function to the specified matrix <paramref name="m" /> by multiplying each matrix element with a factor.
 		/// </summary>
 		/// <param name="m">The matrix to modify.</param>
-		public static void Application(IMatrix m)
+		public static void Application(IMatrix<double> m)
 		{
 			var rows = m.Rows;
 			var cols = m.Columns;

@@ -34,7 +34,7 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// The linear array is in column-major order, i.e. the first elements of the linear array belong to the first column of the matrix (i.e. the row values change more quickly).
 	/// The index of the linear array is calculated as <c>index = row + column*NumberOfRows</c>. This representation is used for instance by LAPACK, Fortran, Julia, MATLAB, Octave, Scilab, GLSL and HLSL.
 	/// </summary>
-	public class RODoubleMatrixInArray1DColumnMajorRepresentation : IROMatrix
+	public class RODoubleMatrixInArray1DColumnMajorRepresentation : IROMatrix<double>
 	{
 		protected double[] _arrayColumnMajor;
 		protected int _numberOfRows;
@@ -92,7 +92,7 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// The linear array is in column-major order, i.e. the first elements of the linear array belong to the first column of the matrix (i.e. the row values change more quickly).
 	/// The index of the linear array is calculated as <c>index = row + column*NumberOfRows</c>. This representation is used for instance by LAPACK, Fortran, Julia, MATLAB, Octave, Scilab, GLSL and HLSL.
 	/// </summary>
-	public class DoubleMatrixInArray1DColumnMajorRepresentation : RODoubleMatrixInArray1DColumnMajorRepresentation, IMatrix, IMatrixInArray1DColumnMajorRepresentation<double>
+	public class DoubleMatrixInArray1DColumnMajorRepresentation : RODoubleMatrixInArray1DColumnMajorRepresentation, IMatrix<double>, IMatrixInArray1DColumnMajorRepresentation<double>
 	{
 		public DoubleMatrixInArray1DColumnMajorRepresentation(int rows, int columns)
 			: base(rows, columns)

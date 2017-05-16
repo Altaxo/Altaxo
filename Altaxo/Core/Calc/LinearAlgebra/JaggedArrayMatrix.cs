@@ -31,7 +31,7 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// It is horizontal oriented, i.e. the storage is as a number of horizontal vectors. Furthermore, as a compromise, it provides fully
 	/// access to its underlying jagged array.
 	/// </summary>
-	public class JaggedArrayMatrix : IMatrix, IBottomExtensibleMatrix
+	public class JaggedArrayMatrix : IMatrix<double>, IBottomExtensibleMatrix<double>
 	{
 		/// <summary>The rows of the matrix = number of double[] arrays in it.</summary>
 		private int m_Rows;
@@ -162,7 +162,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// the matrix to append must have the same number of columns than this matrix.
 		/// </summary>
 		/// <param name="a">Matrix to append to the bottom of this matrix.</param>
-		public void AppendBottom(IROMatrix a)
+		public void AppendBottom(IROMatrix<double> a)
 		{
 			if (a.Rows == 0)
 				return; // nothing to append

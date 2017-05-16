@@ -50,6 +50,7 @@
 
 using Altaxo.Calc.LinearAlgebra;
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.Interpolation
 {
@@ -65,7 +66,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="xvec">Vector of x (independent) data.</param>
 		/// <param name="yvec">Vector of y (dependent) data.</param>
 		/// <returns></returns>
-		int Interpolate(IROVector xvec, IROVector yvec);
+		int Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec);
 
 		/// <summary>
 		/// Returns a y value in dependence of a parameter u.
@@ -143,10 +144,10 @@ namespace Altaxo.Calc.Interpolation
 		protected const double DBL_EPSILON = 2.2204460492503131e-016;
 
 		/// <summary>Reference to the vector of the independent variable.</summary>
-		protected IROVector x;
+		protected IReadOnlyList<double> x;
 
 		/// <summary>Reference to the vector of the dependent variable.</summary>
-		protected IROVector y;
+		protected IReadOnlyList<double> y;
 
 		#region Helper functions
 
@@ -166,9 +167,9 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="a">First vector.</param>
 		/// <param name="b">Second vector.</param>
 		/// <returns>True if both vectors have the same LowerBounds and the same UpperBounds.</returns>
-		protected static bool MatchingIndexRange(IROVector a, IROVector b)
+		protected static bool MatchingIndexRange(IReadOnlyList<double> a, IReadOnlyList<double> b)
 		{
-			return a.Length == b.Length;
+			return a.Count == b.Count;
 		}
 
 		#endregion Helper functions
@@ -187,11 +188,11 @@ namespace Altaxo.Calc.Interpolation
 		/// A fast binary search is performed.
 		/// Note, that the vector must be strictly increasing.
 		/// </remarks>
-		public static int FindInterval(double u, IROVector x)
+		public static int FindInterval(double u, IReadOnlyList<double> x)
 		{
 			int i, j;
 
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 			if (u < x[0])
 			{
 				i = -1; // attention: return index below smallest index
@@ -250,20 +251,20 @@ namespace Altaxo.Calc.Interpolation
 		/// </code></remarks>
 
 		public double CubicSplineHorner(double u,
-			IROVector x,
-			IROVector y,
-			IROVector y1,
-			IROVector y2,
-			IROVector y3)
+			IReadOnlyList<double> x,
+			IReadOnlyList<double> y,
+			IReadOnlyList<double> y1,
+			IReadOnlyList<double> y2,
+			IReadOnlyList<double> y3)
 		{
 			// special case that there are no data. Return 0.0.
-			if (x.Length == 0)
+			if (x.Count == 0)
 				return 0;
 
 			int i = FindInterval(u, x);
 			if (i < 0)
 				i = 0;  // extrapolate to the left
-			if (i == x.Length - 1)
+			if (i == x.Count - 1)
 				i--;   // extrapolate to the right
 
 			double dx = u - x[i];
@@ -271,18 +272,18 @@ namespace Altaxo.Calc.Interpolation
 		}
 
 		public double CubicSplineHorner1stDerivative(double u,
-		IROVector x,
-		IROVector y,
-		IROVector y1,
-		IROVector y2,
-		IROVector y3)
+		IReadOnlyList<double> x,
+		IReadOnlyList<double> y,
+		IReadOnlyList<double> y1,
+		IReadOnlyList<double> y2,
+		IReadOnlyList<double> y3)
 		{
 			// special case that there are no data. Return 0.0.
-			if (x.Length == 0) return 0.0;
+			if (x.Count == 0) return 0.0;
 
 			int i = FindInterval(u, x);
 			if (i < 0) i = 0;  // extrapolate to the left
-			if (i == x.Length - 1) i--;   // extrapolate to the right
+			if (i == x.Count - 1) i--;   // extrapolate to the right
 			double dx = u - x[i];
 			return (y1[i] + dx * (2 * y2[i] + dx * 3 * y3[i]));
 		}
@@ -304,13 +305,14 @@ namespace Altaxo.Calc.Interpolation
 		///
 		/// where  x(i) &lt;= u &lt; x(i+1) and dx = u - x(i).
 		/// </code></remarks>
-		public void CubicSplineCoefficients(IROVector x,
-			IROVector y,
-			IROVector y1,
-			IVector y2,
-			IVector y3)
+		public void CubicSplineCoefficients(
+			IReadOnlyList<double> x,
+			IReadOnlyList<double> y,
+			IReadOnlyList<double> y1,
+			IVector<double> y2,
+			IVector<double> y3)
 		{
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 
 			for (int i = 0; i < hi; i++)
 			{
@@ -329,7 +331,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="x">The vector of abscissa values.</param>
 		/// <param name="y">The vector of ordinate values.</param>
 		/// <returns></returns>
-		public abstract int Interpolate(IROVector x, IROVector y);
+		public abstract int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y);
 
 		/// <summary>
 		/// Get the abscissa value in dependence on parameter u.
@@ -364,10 +366,10 @@ namespace Altaxo.Calc.Interpolation
 		///
 		/// Parametrization using Norm2 usually gives the best results.
 		/// </code></remarks>
-		public virtual void Parametrize(IROVector x, IROVector y, IVector t, Parametrization parametrization)
+		public virtual void Parametrize(IReadOnlyList<double> x, IReadOnlyList<double> y, IVector<double> t, Parametrization parametrization)
 		{
 			const int lo = 0;
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 			int i;
 
 			switch (parametrization)
@@ -442,7 +444,7 @@ namespace Altaxo.Calc.Interpolation
 		public void GetCurvePoints(double xlo, double xhi, ResolutionFunction getresolution, PointSink setpoint)
 		{
 			// nothing to draw if zero or one element
-			if (x.Length < 2)
+			if (x.Count < 2)
 				return;
 
 			// Find index of the element in the abscissa vector x, that is smaller
@@ -531,7 +533,7 @@ namespace Altaxo.Calc.Interpolation
 
 		#region IInterpolationCurve Members
 
-		public int Interpolate(IROVector xvec, IROVector yvec)
+		public int Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
 		{
 			if (null == x)
 				x = new DoubleVector();
@@ -558,7 +560,7 @@ namespace Altaxo.Calc.Interpolation
 
 		#region Static methods
 
-		public static int GetNextIndexOfValidPair(IROVector xcol, IROVector ycol, int sourceLength, int currentIndex)
+		public static int GetNextIndexOfValidPair(IReadOnlyList<double> xcol, IReadOnlyList<double> ycol, int sourceLength, int currentIndex)
 		{
 			for (int sourceIndex = currentIndex; sourceIndex < sourceLength; sourceIndex++)
 			{
@@ -576,8 +578,8 @@ namespace Altaxo.Calc.Interpolation
 		}
 
 		public static string Interpolate(
-			IROVector xcol,
-			IROVector ycol,
+			IReadOnlyList<double> xcol,
+			IReadOnlyList<double> ycol,
 			int sourceLength,
 			double xstart, double xincrement, int numberOfValues,
 			double yOutsideOfBounds,
@@ -613,7 +615,7 @@ namespace Altaxo.Calc.Interpolation
 			{
 				double x_result = xstart + resultIndex * xincrement;
 
-			tryinterpolation:
+				tryinterpolation:
 				if (x_result >= x_current && x_result <= x_next)
 				{
 					resultCol[resultIndex] = Interpolate(x_result, x_current, x_next, ycol[currentIndex], ycol[nextIndex]);
@@ -641,10 +643,10 @@ namespace Altaxo.Calc.Interpolation
 		}
 
 		public static string Interpolate(
-			IROVector xcol,
-			IROVector ycol,
+			IReadOnlyList<double> xcol,
+			IReadOnlyList<double> ycol,
 			int sourceLength,
-			IROVector xnewsampling, int numberOfValues,
+			IReadOnlyList<double> xnewsampling, int numberOfValues,
 			double yOutsideOfBounds,
 			out double[] resultCol)
 		{
@@ -678,7 +680,7 @@ namespace Altaxo.Calc.Interpolation
 			{
 				double x_result = xnewsampling[resultIndex];
 
-			tryinterpolation:
+				tryinterpolation:
 				if (x_result >= x_current && x_result <= x_next)
 				{
 					resultCol[resultIndex] = Interpolate(x_result, x_current, x_next, ycol[currentIndex], ycol[nextIndex]);
@@ -728,10 +730,10 @@ namespace Altaxo.Calc.Interpolation
 			RegressionOrder = regressionOrder;
 		}
 
-		public int Interpolate(IROVector xvec, IROVector yvec)
+		public int Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
 		{
-			IROVector err = VectorMath.GetConstantVector(1, yvec.Length);
-			_fit = new Regression.LinearFitBySvd(xvec, yvec, err, xvec.Length, RegressionOrder + 1, Regression.LinearFitBySvd.GetPolynomialFunctionBase(RegressionOrder), 1E-6);
+			var err = VectorMath.GetConstantVector(1.0, yvec.Count);
+			_fit = new Regression.LinearFitBySvd(xvec, yvec, err, xvec.Count, RegressionOrder + 1, Regression.LinearFitBySvd.GetPolynomialFunctionBase(RegressionOrder), 1E-6);
 			return 0;
 		}
 
@@ -820,7 +822,7 @@ namespace Altaxo.Calc.Interpolation
 		//
 		//----------------------------------------------------------------------------//
 
-		public override int Interpolate(IROVector x, IROVector y)
+		public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
 		{
 			// check input parameters
 
@@ -832,7 +834,7 @@ namespace Altaxo.Calc.Interpolation
 			base.y = y;
 
 			// Empty data vectors - free auxilliary storage
-			if (x.Length == 0)
+			if (x.Count == 0)
 			{
 				y1.Clear();
 				y2.Clear();
@@ -840,8 +842,8 @@ namespace Altaxo.Calc.Interpolation
 				return 0; // ok
 			}
 
-			int hi = x.Length - 1;
-			int len = x.Length;
+			int hi = x.Count - 1;
+			int len = x.Count;
 
 			// Resize the auxilliary vectors. Note, that there is no reallocation if the
 			// vector already has the appropriate dimension.
@@ -849,12 +851,12 @@ namespace Altaxo.Calc.Interpolation
 			y2.Resize(len);
 			y3.Resize(len);
 
-			if (x.Length == 1)
+			if (x.Count == 1)
 			{
 				// default derivative is 0.0
 				y1[0] = y2[0] = y3[0] = 0.0;
 			}
-			else if (x.Length == 2)
+			else if (x.Count == 2)
 			{
 				// set derivatives for a line
 				y1[0] = y1[hi] = (y[hi] - y[0]) / (x[hi] - x[0]);
@@ -869,7 +871,7 @@ namespace Altaxo.Calc.Interpolation
 				for (int i = 1; i < hi; i++)
 					y1[i] = deriv2(x, y, i);
 
-				if (x.Length > 3)
+				if (x.Count > 3)
 				{
 					// adjust derivatives at boundaries
 					if (y1[0] * y1[1] < 0) y1[0] = 0;
@@ -915,7 +917,7 @@ namespace Altaxo.Calc.Interpolation
 		//
 		//-----------------------------------------------------------------------------//
 
-		private static double deriv1(IROVector x, IROVector y, int i, int sgn)
+		private static double deriv1(IReadOnlyList<double> x, IReadOnlyList<double> y, int i, int sgn)
 		{
 			double di, dis, di2, his;
 			int i1, i2;
@@ -938,7 +940,7 @@ namespace Altaxo.Calc.Interpolation
 		//
 		//-----------------------------------------------------------------------------//
 
-		private static double deriv2(IROVector x, IROVector y, int i)
+		private static double deriv2(IReadOnlyList<double> x, IReadOnlyList<double> y, int i)
 		{
 			double di0, di1, di2, hi0;
 			int i1, i2;
@@ -959,22 +961,22 @@ namespace Altaxo.Calc.Interpolation
 		//
 		//-----------------------------------------------------------------------------//
 
-		private static void fritsch(IROVector x, IROVector y, IVector d)
+		private static void fritsch(IReadOnlyList<double> x, IReadOnlyList<double> y, IVector<double> d)
 		{
 			int i, i1;
 			bool stop;
 			double d1, r2, t;
 
 			const int max_loop = 20; // should never happen! Note, that currently it
-			// can happen when the curve is not strictly
-			// monotone. In future this case should be handled
-			// more gracefully without wasting CPU time.
+															 // can happen when the curve is not strictly
+															 // monotone. In future this case should be handled
+															 // more gracefully without wasting CPU time.
 			int loop = 0;
 
 			do
 			{
 				stop = true;
-				int hi = x.Length - 1;
+				int hi = x.Count - 1;
 				for (i = 0; i < hi; i++)
 				{
 					i1 = i + 1;
@@ -1031,7 +1033,7 @@ namespace Altaxo.Calc.Interpolation
 		// The abscissa vector must be strictly increasing.
 		//----------------------------------------------------------------------------//
 
-		public override int Interpolate(IROVector x, IROVector y)
+		public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
 		{
 			// check input parameters
 
@@ -1043,7 +1045,7 @@ namespace Altaxo.Calc.Interpolation
 			base.y = y;
 
 			// Empty data vectors - free auxilliary storage
-			if (x.Length == 0)
+			if (x.Count == 0)
 			{
 				y1.Clear();
 				y2.Clear();
@@ -1052,20 +1054,20 @@ namespace Altaxo.Calc.Interpolation
 			}
 
 			const int lo = 0, lo1 = lo + 1, lo2 = lo + 2;
-			int hi = x.Length - 1, hi1 = hi - 1, hi2 = hi - 2, hi3 = hi - 3;
+			int hi = x.Count - 1, hi1 = hi - 1, hi2 = hi - 2, hi3 = hi - 3;
 
 			// Resize the auxilliary vectors. Note, that there is no reallocation if the
 			// vectors already have the appropriate dimensions.
-			y1.Resize(x.Length);
-			y2.Resize(x.Length);
-			y3.Resize(x.Length);
+			y1.Resize(x.Count);
+			y2.Resize(x.Count);
+			y3.Resize(x.Count);
 
-			if (x.Length == 1)
+			if (x.Count == 1)
 			{
 				// default derivatives are 0.0
 				y1[lo] = y2[lo] = y3[lo] = 0.0;
 			}
-			else if (x.Length == 2)
+			else if (x.Count == 2)
 			{
 				// set derivatives for a line
 				y1[lo] = y1[hi] = (y[hi] - y[lo]) / (x[hi] - x[lo]);
@@ -1105,7 +1107,7 @@ namespace Altaxo.Calc.Interpolation
 				y1[lo] = (den != 0.0) ? num / den : 0.0;
 
 				// i = 1
-				if (x.Length > 3)
+				if (x.Count > 3)
 				{
 					num = Math.Abs(m(lo2) - m(lo1)) * m(lo) + Math.Abs(m(lo) - m_m1) * m(lo1);
 					den = Math.Abs(m(lo2) - m(lo1)) + Math.Abs(m(lo) - m_m1);
@@ -1192,7 +1194,7 @@ namespace Altaxo.Calc.Interpolation
 	/// </remarks>
 	public class BezierCubicSpline : CurveBase
 	{
-		public override int Interpolate(IROVector x, IROVector y)
+		public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
 		{
 			// verify index range
 			if (!MatchingIndexRange(x, y))
@@ -1207,7 +1209,7 @@ namespace Altaxo.Calc.Interpolation
 
 		public override double GetXOfU(double t)
 		{
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 			int i = FindInterval(t, x);
 
 			if (i < 0 || i >= hi || hi == 1)
@@ -1251,7 +1253,7 @@ namespace Altaxo.Calc.Interpolation
 
 		public override double GetYOfU(double t)
 		{
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 			int i = FindInterval(t, x);
 
 			if (i < 0 || hi == 1)
@@ -1418,7 +1420,7 @@ void DrawClosedCurve (Scene &scene)
 	/// </remarks>
 	public class CardinalCubicSpline : CurveBase
 	{
-		public override int Interpolate(IROVector x, IROVector y)
+		public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
 		{
 			// verify index range
 			if (!MatchingIndexRange(x, y))
@@ -1436,7 +1438,7 @@ void DrawClosedCurve (Scene &scene)
 		public override double GetXOfU(double t)
 		{
 			const int lo = 0;
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 			int i = FindInterval(t, x);
 
 			if (i < lo || i >= hi || hi - lo == 1)
@@ -1481,7 +1483,7 @@ void DrawClosedCurve (Scene &scene)
 		public override double GetYOfU(double t)
 		{
 			const int lo = 0;
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 			int i = FindInterval(t, x);
 
 			if (i < lo || hi - lo == 1)
@@ -1731,12 +1733,12 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		//
 		//-----------------------------------------------------------------------------//
 
-		private static double deriv1(IROVector x, IROVector y, int i, int sgn)
+		private static double deriv1(IReadOnlyList<double> x, IReadOnlyList<double> y, int i, int sgn)
 		{
-			if (x.Length <= 1)
+			if (x.Count <= 1)
 				return 0.0;
-			else if (x.Length == 2)
-				return (y[y.Length - 1] - y[0]) / (x[x.Length - 1] - x[0]);
+			else if (x.Count == 2)
+				return (y[y.Count - 1] - y[0]) / (x[x.Count - 1] - x[0]);
 			else
 			{
 				int i1 = i + 1,
@@ -1842,14 +1844,14 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		/// </summary>
 		/// <param name="x">Input vector.</param>
 		/// <param name="dx">Output vector.</param>
-		public static void Differences(IROVector x, IVector dx)
+		public static void Differences(IReadOnlyList<double> x, IVector<double> dx)
 		{
 			int sgn;
 			double t;
 
 			// get dimensions
 			const int lo = 0;
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 
 			if (hi > lo)
 			{
@@ -1875,14 +1877,14 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		/// </summary>
 		/// <param name="x">Input vector.</param>
 		/// <param name="dx">Output vector.</param>
-		public static void InverseDifferences(IROVector x, IVector dx)
+		public static void InverseDifferences(IReadOnlyList<double> x, IVector<double> dx)
 		{
 			int sgn;
 			double t;
 
 			// get dimensions
 			const int lo = 0;
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 
 			if (hi > lo)
 			{
@@ -1906,13 +1908,13 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		/// <param name="p">smoothing parameter</param>
 		/// <param name="dx">inverse abscissa difference vector</param>
 		/// <param name="z">output parameter: coefficient vector SplineB1 and SplineB2</param>
-		protected void SplineA(double p, IROVector dx, IVector z)
+		protected void SplineA(double p, IReadOnlyList<double> dx, IVector<double> z)
 		{
 			double h1, h2, p2;
 
 			// get dimensions
 			const int lo = 0;
-			int hi = dx.Length - 1;
+			int hi = dx.Count - 1;
 
 			// calculate vector z
 			z[lo] = 0.0;
@@ -1938,16 +1940,16 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		/// <param name="z">the coefficients computed by SplineA</param>
 		protected void SplineB1(
 			double p,
-			IROVector dx,
-			IROVector y,
-			IVector y1, IVector f, IROVector z)
+			IReadOnlyList<double> dx,
+			IReadOnlyList<double> y,
+			IVector<double> y1, IVector<double> f, IReadOnlyList<double> z)
 		{
 			int j = 0, k;
 			double h, h1 = 0.0, h2, r1 = 0.0, r2;
 
 			// get dimensions
 			const int lo = 0, lo1 = lo + 1;
-			int hi = dx.Length - 1,
+			int hi = dx.Count - 1,
 			hi1 = hi - 1;
 
 			// calculate the derivative vector y1
@@ -1992,13 +1994,13 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		//----------------------------------------------------------------------------//
 
 		protected void SplineC1(double p,
-			IROVector x, IROVector dx,
-			IROVector y, IROVector y1,
-			IVector a, IVector b, IVector c, IVector d)
+			IReadOnlyList<double> x, IReadOnlyList<double> dx,
+			IReadOnlyList<double> y, IReadOnlyList<double> y1,
+			IVector<double> a, IVector<double> b, IVector<double> c, IVector<double> d)
 		{
 			// get dimensions
 			const int lo = 0;
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 
 			// auxilliaries
 			double p2 = 2.0 + p,
@@ -2037,15 +2039,15 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		//----------------------------------------------------------------------------//
 
 		protected void SplineB2(double p,
-			IROVector dx, IROVector y,
-			IVector y2, IVector f, IROVector z)
+			IReadOnlyList<double> dx, IReadOnlyList<double> y,
+			IVector<double> y2, IVector<double> f, IReadOnlyList<double> z)
 		{
 			int j = 0, k;
 			double h, h1 = 0.0, h2, r1 = 0.0, r2;
 
 			// get dimensions
 			const int lo = 0, lo1 = lo + 1;
-			int hi = dx.Length - 1,
+			int hi = dx.Count - 1,
 				hi1 = hi - 1;
 
 			// calculate the derivative vector y2
@@ -2090,13 +2092,13 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		//----------------------------------------------------------------------------//
 
 		private void SplineC2(double p,
-			IROVector x, IROVector dx,
-			IROVector y, IROVector y2,
-			IVector a, IVector b, IVector c, IVector d)
+			IReadOnlyList<double> x, IReadOnlyList<double> dx,
+			IReadOnlyList<double> y, IReadOnlyList<double> y2,
+			IVector<double> a, IVector<double> b, IVector<double> c, IVector<double> d)
 		{
 			// get dimensions
 			const int lo = 0;
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 
 			// auxilliaries
 			double pp = 0.5 / (p * (3.0 + p) + 3.0);
@@ -2214,7 +2216,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		//
 		//----------------------------------------------------------------------------//
 
-		public override int Interpolate(IROVector x, IROVector y)
+		public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
 		{
 			// check input parameters
 
@@ -2226,7 +2228,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			base.y = y;
 
 			// Empty data vectors - free auxilliary storage
-			if (x.Length == 0)
+			if (x.Count == 0)
 			{
 				dx.Clear();
 				dy.Clear();
@@ -2238,14 +2240,14 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			}
 
 			const int lo = 0;
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 
-			dx.Resize(x.Length);  // abscissa difference vector
-			dy.Resize(x.Length);  // vector of derivatives
-			a.Resize(x.Length);   // spline coefficients
-			b.Resize(x.Length);   // spline coefficients
-			c.Resize(x.Length);   // spline coefficients
-			d.Resize(x.Length);   // spline coefficients
+			dx.Resize(x.Count);  // abscissa difference vector
+			dy.Resize(x.Count);  // vector of derivatives
+			a.Resize(x.Count);   // spline coefficients
+			b.Resize(x.Count);   // spline coefficients
+			c.Resize(x.Count);   // spline coefficients
+			d.Resize(x.Count);   // spline coefficients
 
 			if (boundary == BoundaryConditions.FiniteDifferences || boundary == BoundaryConditions.Supply1stDerivative)
 			{
@@ -2257,7 +2259,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 				}
 				else
 				{  // the 1st derivatives are supplied by the user
-					// user supplied data
+					 // user supplied data
 					dy[lo] = r1;
 					dy[hi] = r2;
 				}
@@ -2277,7 +2279,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 				}
 				else
 				{  // the 2nd derivatives are supplied by the user
-					// user supplied data
+					 // user supplied data
 					dy[lo] = r1;
 					dy[hi] = r2;
 				}
@@ -2309,7 +2311,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		public override double GetYOfU(double u)
 		{
 			// special case that there are no data. Return 0.0.
-			if (x.Length == 0) return 0.0;
+			if (x.Count == 0) return 0.0;
 
 			int i = FindInterval(u, x);
 
@@ -2323,7 +2325,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 					y2 = 2 * (p * p + 3 * p + 3) * c[i] / (h * h);
 				return y0 + dx * (y1 + dx * y2);
 			}
-			else if (i == x.Length - 1)
+			else if (i == x.Count - 1)
 			{ // extrapolation
 				i--;
 				double dx = u - x[i + 1],
@@ -2377,7 +2379,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			sigma = 1.0;
 		}
 
-		public override int Interpolate(IROVector x, IROVector y)
+		public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
 		{
 			// check input parameters
 
@@ -2389,7 +2391,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			base.y = y;
 
 			// Empty data vectors - free auxilliary storage
-			if (x.Length == 0)
+			if (x.Count == 0)
 			{
 				y1.Clear();
 				tmp.Clear();
@@ -2397,8 +2399,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			}
 
 			const int lo = 0;
-			int hi = x.Length - 1,
-				n = x.Length;
+			int hi = x.Count - 1,
+				n = x.Count;
 
 			y1.Resize(n);    // spline coefficients
 
@@ -2512,8 +2514,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		public override double GetYOfU(double u)
 		{
 			const int lo = 0;
-			int hi = x.Length - 1,
-				n = x.Length,
+			int hi = x.Count - 1,
+				n = x.Count,
 				i = lo + 1;
 
 			// special cases
@@ -2596,7 +2598,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		//
 		//----------------------------------------------------------------------------//
 
-		public override int Interpolate(IROVector x, IROVector y)
+		public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
 		{
 			// check input parameters
 
@@ -2608,7 +2610,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			base.y = y;
 
 			// Empty data vectors - free auxilliary storage
-			if (x.Length == 0)
+			if (x.Count == 0)
 			{
 				C.Clear();
 				D.Clear();
@@ -2642,17 +2644,17 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		public override double GetYOfU(double u)
 		{
 			// special case that there are no data. Return 0.0.
-			if (x.Length == 0) return 0.0;
+			if (x.Count == 0) return 0.0;
 
 			const int lo = 0;
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 
 			// allocate (resize) auxilliary vectors - the resize method has the property
 			// that no (de-)allocation is done, if the size of the vector is not changed.
 			// Thus there is no overhead if GetYOfU() is called many times with the
 			// same vectors, for instance, if a whole curve is drawn.
-			C.Resize(x.Length);
-			D.Resize(x.Length);
+			C.Resize(x.Count);
+			D.Resize(x.Count);
 
 			C.CopyFrom(y);        // initialize // TODO original was C = D = *y; check Vector if this is a copy operation
 			D.CopyFrom(y);
@@ -2766,7 +2768,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		//
 		//----------------------------------------------------------------------------//
 
-		public override int Interpolate(IROVector x, IROVector y)
+		public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
 		{
 			// check input parameters
 
@@ -2778,7 +2780,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			base.y = y;
 
 			// Empty data vectors - free auxilliary storage
-			if (x.Length == 0)
+			if (x.Count == 0)
 			{
 				xr.Clear();
 				yr.Clear();
@@ -2787,16 +2789,16 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			}
 
 			const int lo = 0;
-			int hi = x.Length - 1;
+			int hi = x.Count - 1;
 
-			xr.Resize(x.Length);
-			yr.Resize(x.Length);
-			m.Resize(x.Length);
+			xr.Resize(x.Count);
+			yr.Resize(x.Count);
+			m.Resize(x.Count);
 
 			int i, j, j1, denom, nend;
 			double xj, yj, x2, y2;
 
-			int n = x.Length - 1;
+			int n = x.Count - 1;
 
 			if (n < 1)
 				throw new ArgumentException(string.Format("less than two points where given ({0})", n + 1));
@@ -2966,7 +2968,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		//
 		//----------------------------------------------------------------------------//
 
-		private static void ymin(int nend, out double xj, out double yj, IVector x, IVector y)
+		private static void ymin(int nend, out double xj, out double yj, IVector<double> x, IVector<double> y)
 		{
 			int j;
 			yj = y[nend];

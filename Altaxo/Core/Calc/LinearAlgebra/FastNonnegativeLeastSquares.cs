@@ -35,7 +35,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// Algorithm modified by Dirk Lellinger 2015 to allow a mixture of restricted and unrestricted parameters.
 		/// </para>
 		/// </remarks>
-		public static void Execution(IROMatrix XtX, IROMatrix Xty, Func<int, bool> isRestrictedToPositiveValues, double? tolerance, out IMatrix x, out IMatrix w)
+		public static void Execution(IROMatrix<double> XtX, IROMatrix<double> Xty, Func<int, bool> isRestrictedToPositiveValues, double? tolerance, out IMatrix<double> x, out IMatrix<double> w)
 		{
 			if (null == XtX)
 				throw new ArgumentNullException(nameof(XtX));
@@ -193,7 +193,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// Algorithm modified by Dirk Lellinger 2015 to allow a mixture of restricted and unrestricted parameters.
 		/// </para>
 		/// </remarks>
-		public static void Execution(IROMatrix XtX, IROMatrix Xty, double? tolerance, out IMatrix x, out IMatrix w)
+		public static void Execution(IROMatrix<double> XtX, IROMatrix<double> Xty, double? tolerance, out IMatrix<double> x, out IMatrix<double> w)
 		{
 			Execution(XtX, Xty, (i) => true, tolerance, out x, out w);
 		}

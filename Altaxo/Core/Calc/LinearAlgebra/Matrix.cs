@@ -26,7 +26,7 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-	internal class TransposableMatrix : IExtensibleMatrix
+	internal class TransposableMatrix : IExtensibleMatrix<double>
 	{
 		private double[][] m_Array;
 		private int m_NumVectors;
@@ -105,7 +105,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		#endregion IMatrix Members
 
-		public void AppendBottom(IROMatrix a)
+		public void AppendBottom(IROMatrix<double> a)
 		{
 			if (m_NumVectors == 0 && m_VectorLen == 0)
 			{
@@ -133,7 +133,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new System.NotImplementedException("This worst case is not implemented yet.");
 		}
 
-		public void AppendRight(IROMatrix a)
+		public void AppendRight(IROMatrix<double> a)
 		{
 			if (m_NumVectors == 0 && m_VectorLen == 0)
 			{
@@ -361,7 +361,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 					// 3. Calculate the new loads
 					l = t * X; // gives a horizontal vector of load (= eigenvalue spectrum)
-					// normalize the (one) row
+										 // normalize the (one) row
 					l.NormalizeRows(); // normalize the eigenvector spectrum
 
 					// 4. Goto step 2 or break after a number of iterations

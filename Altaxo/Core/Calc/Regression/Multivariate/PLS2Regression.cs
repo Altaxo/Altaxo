@@ -34,11 +34,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 	{
 		private PLS2CalibrationModel _calib;
 
-		protected IExtensibleVector _PRESS;
+		protected IExtensibleVector<double> _PRESS;
 
-		public IROVector PRESS { get { return this._PRESS; } }
+		public IROVector<double> PRESS { get { return this._PRESS; } }
 
-		public override IROVector GetPRESSFromPreprocessed(IROMatrix matrixX)
+		public override IROVector<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
 		{
 			return this._PRESS;
 		}
@@ -72,7 +72,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
 		/// <param name="maxFactors">Maximum number of factors for analysis.</param>
 		/// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
-		public static PLS2Regression CreateFromPreprocessed(IROMatrix matrixX, IROMatrix matrixY, int maxFactors)
+		public static PLS2Regression CreateFromPreprocessed(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
 		{
 			PLS2Regression result = new PLS2Regression();
 			result.AnalyzeFromPreprocessed(matrixX, matrixY, maxFactors);
@@ -86,7 +86,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
 		/// <param name="maxFactors">Maximum number of factors for analysis.</param>
 		/// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
-		protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix matrixX, IROMatrix matrixY, int maxFactors)
+		protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
 		{
 			int numberOfFactors = _calib.NumberOfFactors = Math.Min(matrixX.Columns, maxFactors);
 
@@ -94,7 +94,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			MatrixMath.BEMatrix _yLoads = new MatrixMath.BEMatrix(0, 0);
 			MatrixMath.BEMatrix _W = new MatrixMath.BEMatrix(0, 0);
 			MatrixMath.REMatrix _V = new MatrixMath.REMatrix(0, 0);
-			_PRESS = VectorMath.CreateExtensibleVector(0);
+			_PRESS = VectorMath.CreateExtensibleVector<double>(0);
 
 			ExecuteAnalysis(matrixX, matrixY, ref numberOfFactors, _xLoads, _yLoads, _W, _V, _PRESS);
 			_calib.NumberOfFactors = Math.Min(_calib.NumberOfFactors, numberOfFactors);
@@ -112,10 +112,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="predictedY">On return, holds the predicted y values. (They are centered).</param>
 		/// <param name="spectralResiduals">On return, holds the spectral residual values.</param>
 		public override void PredictedYAndSpectralResidualsFromPreprocessed(
-			IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+			IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
 			int numFactors, // number of factors to use for prediction
-			IMatrix predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
-			IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
+			IMatrix<double> predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
+			IMatrix<double> spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
 			)
 		{
 			if (numFactors > NumberOfFactors)
@@ -138,12 +138,12 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// </summary>
 		/// <param name="numFactors">Number of factors used to calculate the prediction scores.</param>
 		/// <param name="predictionScores">Supplied matrix for holding the prediction scores.</param>
-		protected override void InternalGetPredictionScores(int numFactors, IMatrix predictionScores)
+		protected override void InternalGetPredictionScores(int numFactors, IMatrix<double> predictionScores)
 		{
 			GetPredictionScoreMatrix(_calib.XLoads, _calib.YLoads, _calib.XWeights, _calib.CrossProduct, numFactors, predictionScores);
 		}
 
-		protected override void InternalGetXLeverageFromPreprocessed(IROMatrix matrixX, int numFactors, IMatrix xLeverage)
+		protected override void InternalGetXLeverageFromPreprocessed(IROMatrix<double> matrixX, int numFactors, IMatrix<double> xLeverage)
 		{
 			PLS2Regression.CalculateXLeverageFromPreprocessed(matrixX, _calib.XWeights, numFactors, xLeverage, 0);
 		}
@@ -160,14 +160,14 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="V">Returns the vector of cross products. Should be initially empty.</param>
 		/// <param name="PRESS">If not null, the PRESS value of each factor is stored (vertically) here. </param>
 		public static void ExecuteAnalysis(
-			IROMatrix _X, // matrix of spectra (a spectra is a row of this matrix)
-			IROMatrix _Y, // matrix of concentrations (a mixture is a row of this matrix)
+			IROMatrix<double> _X, // matrix of spectra (a spectra is a row of this matrix)
+			IROMatrix<double> _Y, // matrix of concentrations (a mixture is a row of this matrix)
 			ref int numFactors,
-			IBottomExtensibleMatrix xLoads, // out: the loads of the X matrix
-			IBottomExtensibleMatrix yLoads, // out: the loads of the Y matrix
-			IBottomExtensibleMatrix W, // matrix of weighting values
-			IRightExtensibleMatrix V,  // matrix of cross products
-			IExtensibleVector PRESS //vector of Y PRESS values
+			IBottomExtensibleMatrix<double> xLoads, // out: the loads of the X matrix
+			IBottomExtensibleMatrix<double> yLoads, // out: the loads of the Y matrix
+			IBottomExtensibleMatrix<double> W, // matrix of weighting values
+			IRightExtensibleMatrix<double> V,  // matrix of cross products
+			IExtensibleVector<double> PRESS //vector of Y PRESS values
 			)
 		{
 			// used variables:
@@ -182,28 +182,28 @@ namespace Altaxo.Calc.Regression.Multivariate
 			const double accuracy = 1E-12; // accuracy that should be reached between subsequent calculations of the u-vector
 
 			// use the mean spectrum as first row of the W matrix
-			MatrixMath.HorizontalVector mean = new MatrixMath.HorizontalVector(_X.Columns);
+			var mean = new MatrixMath.MatrixWithOneRow<double>(_X.Columns);
 			//  MatrixMath.ColumnsToZeroMean(X,mean);
 			//W.AppendBottom(mean);
 
-			IMatrix X = new MatrixMath.BEMatrix(_X.Rows, _X.Columns);
+			var X = new MatrixMath.BEMatrix(_X.Rows, _X.Columns);
 			MatrixMath.Copy(_X, X);
-			IMatrix Y = new MatrixMath.BEMatrix(_Y.Rows, _Y.Columns);
+			var Y = new MatrixMath.BEMatrix(_Y.Rows, _Y.Columns);
 			MatrixMath.Copy(_Y, Y);
 
-			IMatrix u_prev = null;
-			IMatrix w = new MatrixMath.HorizontalVector(X.Columns); // horizontal vector of X (spectral) weighting
-			IMatrix t = new MatrixMath.VerticalVector(X.Rows); // vertical vector of X  scores
-			IMatrix u = new MatrixMath.VerticalVector(X.Rows); // vertical vector of Y scores
-			IMatrix p = new MatrixMath.HorizontalVector(X.Columns); // horizontal vector of X loads
-			IMatrix q = new MatrixMath.HorizontalVector(Y.Columns); // horizontal vector of Y loads
+			IMatrix<double> u_prev = null;
+			var w = new MatrixMath.MatrixWithOneRow<double>(X.Columns); // horizontal vector of X (spectral) weighting
+			var t = new MatrixMath.MatrixWithOneColumn<double>(X.Rows); // vertical vector of X  scores
+			var u = new MatrixMath.MatrixWithOneColumn<double>(X.Rows); // vertical vector of Y scores
+			var p = new MatrixMath.MatrixWithOneRow<double>(X.Columns); // horizontal vector of X loads
+			var q = new MatrixMath.MatrixWithOneRow<double>(Y.Columns); // horizontal vector of Y loads
 
 			int maxFactors = Math.Min(X.Columns, X.Rows);
 			numFactors = numFactors <= 0 ? maxFactors : Math.Min(numFactors, maxFactors);
 
 			if (PRESS != null)
 			{
-				PRESS.Append(new MatrixMath.Scalar(MatrixMath.SumOfSquares(Y))); // Press value for not decomposed Y
+				PRESS.Append(new MatrixMath.ScalarAsMatrix<double>(MatrixMath.SumOfSquares(Y))); // Press value for not decomposed Y
 			}
 
 			for (int nFactor = 0; nFactor < numFactors; nFactor++)
@@ -241,7 +241,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 					if (u_prev != null && MatrixMath.IsEqual(u_prev, u, accuracy))
 						break;
 					if (u_prev == null)
-						u_prev = new MatrixMath.VerticalVector(X.Rows);
+						u_prev = new MatrixMath.MatrixWithOneColumn<double>(X.Rows);
 					MatrixMath.Copy(u, u_prev); // stores the content of u in u_prev
 				} // for all iterations
 
@@ -250,14 +250,14 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 				// 7. Calculate the inner scalar (cross product)
 				double length_of_t = MatrixMath.LengthOf(t);
-				MatrixMath.Scalar v = new MatrixMath.Scalar(0);
-				MatrixMath.MultiplyFirstTransposed(u, t, v);
+				var v = new MatrixMath.ScalarAsMatrix<double>(0);
+				MatrixMath.MultiplyFirstTransposed(u, t, (IVector<double>)v);
 				if (length_of_t != 0)
 					v = v / MatrixMath.Square(length_of_t);
 
 				// 8. Calculate the new loads for the X (spectral) matrix
 				MatrixMath.MultiplyFirstTransposed(t, X, p); // p is a horizontal vector of loads
-				// Normalize p by the spectral scores
+																										 // Normalize p by the spectral scores
 
 				if (length_of_t != 0)
 					MatrixMath.MultiplyScalar(p, 1 / MatrixMath.Square(length_of_t), p);
@@ -279,7 +279,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 				if (PRESS != null)
 				{
 					double pressValue = MatrixMath.SumOfSquares(Y);
-					PRESS.Append(new MatrixMath.Scalar(pressValue));
+					PRESS.Append(new MatrixMath.ScalarAsMatrix<double>(pressValue));
 				}
 				// Calculate SEPcv. If SEPcv is greater than for the actual number of factors,
 				// break since the optimal number of factors was found. If not, repeat the calculations
@@ -288,28 +288,28 @@ namespace Altaxo.Calc.Regression.Multivariate
 		}
 
 		public static void Predict(
-			IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
-			IROMatrix xLoads, // x-loads matrix
-			IROMatrix yLoads, // y-loads matrix
-			IROMatrix W, // weighting matrix
-			IROMatrix V,  // Cross product vector
+			IROMatrix<double> XU, // unknown spectrum or spectra,  horizontal oriented
+			IROMatrix<double> xLoads, // x-loads matrix
+			IROMatrix<double> yLoads, // y-loads matrix
+			IROMatrix<double> W, // weighting matrix
+			IROMatrix<double> V,  // Cross product vector
 			int numFactors, // number of factors to use for prediction
-			IMatrix predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
-			IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
+			IMatrix<double> predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
+			IMatrix<double> spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
 			)
 		{
 			// now predicting a "unkown" spectra
-			MatrixMath.Scalar si = new MatrixMath.Scalar(0);
-			MatrixMath.HorizontalVector Cu = new MatrixMath.HorizontalVector(yLoads.Columns);
+			var si = new MatrixMath.ScalarAsMatrix<double>(0);
+			var Cu = new MatrixMath.MatrixWithOneRow<double>(yLoads.Columns);
 
-			MatrixMath.HorizontalVector wi = new MatrixMath.HorizontalVector(XU.Columns);
-			MatrixMath.HorizontalVector cuadd = new MatrixMath.HorizontalVector(yLoads.Columns);
+			var wi = new MatrixMath.MatrixWithOneRow<double>(XU.Columns);
+			var cuadd = new MatrixMath.MatrixWithOneRow<double>(yLoads.Columns);
 
 			// xu holds a single spectrum extracted out of XU
-			MatrixMath.HorizontalVector xu = new MatrixMath.HorizontalVector(XU.Columns);
+			var xu = new MatrixMath.MatrixWithOneRow<double>(XU.Columns);
 
 			// xl holds temporarily a row of the xLoads matrix+
-			MatrixMath.HorizontalVector xl = new MatrixMath.HorizontalVector(xLoads.Columns);
+			var xl = new MatrixMath.MatrixWithOneRow<double>(xLoads.Columns);
 
 			int maxFactors = Math.Min(yLoads.Rows, numFactors);
 
@@ -359,19 +359,19 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="numFactors">Number of factors to use to calculate the score matrix.</param>
 		/// <param name="predictionScores">Output: the resulting score matrix[ spectral bins, numberOfConcentrations]</param>
 		public static void GetPredictionScoreMatrix(
-			IROMatrix xLoads, // x-loads matrix
-			IROMatrix yLoads, // y-loads matrix
-			IROMatrix W, // weighting matrix
-			IROMatrix V,  // Cross product vector
+			IROMatrix<double> xLoads, // x-loads matrix
+			IROMatrix<double> yLoads, // y-loads matrix
+			IROMatrix<double> W, // weighting matrix
+			IROMatrix<double> V,  // Cross product vector
 			int numFactors, // number of factors to use for prediction
-			IMatrix predictionScores
+			IMatrix<double> predictionScores
 			)
 		{
 			Matrix bidiag = new Matrix(numFactors, numFactors);
-			IROMatrix subweights = MatrixMath.ToROSubMatrix(W, 0, 0, numFactors, W.Columns);
-			IROMatrix subxloads = MatrixMath.ToROSubMatrix(xLoads, 0, 0, numFactors, xLoads.Columns);
+			var subweights = MatrixMath.ToROSubMatrix(W, 0, 0, numFactors, W.Columns);
+			var subxloads = MatrixMath.ToROSubMatrix(xLoads, 0, 0, numFactors, xLoads.Columns);
 			MatrixMath.MultiplySecondTransposed(subxloads, subweights, bidiag);
-			IMatrix invbidiag = bidiag.Inverse;
+			IMatrix<double> invbidiag = bidiag.Inverse;
 
 			Matrix subyloads = new Matrix(numFactors, yLoads.Columns);
 			MatrixMath.Submatrix(yLoads, subyloads, 0, 0);
@@ -393,10 +393,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 		} // end partial-least-squares-predict
 
 		public static void CalculateXLeverageFromPreprocessed(
-			IROMatrix matrixX,
-			IROMatrix W, // weighting matrix
+			IROMatrix<double> matrixX,
+			IROMatrix<double> W, // weighting matrix
 			int numFactors, // number of factors to use for prediction
-			IMatrix leverage, // Matrix of predicted y-values, must be same number of rows as spectra
+			IMatrix<double> leverage, // Matrix of predicted y-values, must be same number of rows as spectra
 			int leverageColumn
 			)
 		{

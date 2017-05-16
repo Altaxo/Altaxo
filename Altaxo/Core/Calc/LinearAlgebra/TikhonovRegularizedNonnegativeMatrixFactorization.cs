@@ -25,14 +25,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="maxiter">The maxiter.</param>
 		/// <param name="tol">The tol.</param>
 		public static void TikhonovNMF3(
-					IMatrix A,
+					IMatrix<double> A,
 					int r,
-					IMatrix B0,
-					IMatrix C0,
-					IVector oldalpha,
-		IVector oldbeta,
-		IMatrix gammaB,
-		IMatrix gammaC,
+					IMatrix<double> B0,
+					IMatrix<double> C0,
+					IVector<double> oldalpha,
+		IVector<double> oldbeta,
+		IMatrix<double> gammaB,
+		IMatrix<double> gammaC,
 		int maxiter,
 		double tol)
 		{

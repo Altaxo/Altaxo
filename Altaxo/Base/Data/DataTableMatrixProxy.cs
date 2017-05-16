@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections;
 
 namespace Altaxo.Data
 {
@@ -39,7 +40,7 @@ namespace Altaxo.Data
 	{
 		#region Inner classes
 
-		private class DoubleMatrixAsNullDevice : Altaxo.Calc.LinearAlgebra.IMatrix
+		private class DoubleMatrixAsNullDevice : Altaxo.Calc.LinearAlgebra.IMatrix<double>
 		{
 			private int _rows, _columns;
 
@@ -76,7 +77,7 @@ namespace Altaxo.Data
 			}
 		}
 
-		private class HeaderColumnWrapper : IROVector, IReadableColumn
+		private class HeaderColumnWrapper : IROVector<double>, IReadableColumn
 		{
 			private IReadableColumn _col;
 			private IAscendingIntegerCollection _participatingDataRows;
@@ -88,6 +89,11 @@ namespace Altaxo.Data
 			}
 
 			public int Length
+			{
+				get { return _participatingDataRows.Count; }
+			}
+
+			public int Count
 			{
 				get { return _participatingDataRows.Count; }
 			}
@@ -135,6 +141,20 @@ namespace Altaxo.Data
 			{
 				throw new NotImplementedException();
 			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
+			}
 		}
 
 		protected class ColumnPositionComparer : IComparer<IReadableColumnProxy>
@@ -165,7 +185,7 @@ namespace Altaxo.Data
 			}
 		}
 
-		private class MyMatrixWrapper : IROMatrix
+		private class MyMatrixWrapper : IROMatrix<double>
 		{
 			private DataColumnCollection _data;
 			private IAscendingIntegerCollection _participatingCols;
@@ -994,7 +1014,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="matrixGenerator">The matrix generator. The two parameters are the number of rows and the number of columns of the matrix. The function has to return a writeable matrix.</param>
 		/// <returns>A matrix with the data this proxy refers to.</returns>
-		public IMatrix GetMatrix(Func<int, int, IMatrix> matrixGenerator)
+		public IMatrix<double> GetMatrix(Func<int, int, IMatrix<double>> matrixGenerator)
 		{
 			if (_isDirty)
 			{
@@ -1022,7 +1042,7 @@ namespace Altaxo.Data
 		/// in this instance is changed. Intended for short time usage only.
 		/// </summary>
 		/// <returns>A readonly matrix with the data this proxy refers to.</returns>
-		public IROMatrix GetMatrixWrapper()
+		public IROMatrix<double> GetMatrixWrapper()
 		{
 			if (_isDirty)
 			{
@@ -1041,10 +1061,10 @@ namespace Altaxo.Data
 		/// Gets a wrapper vector around the row header data.
 		/// </summary>
 		/// <returns>Wrapper vector around the row header data. Each element of this vector corresponds to the row with the same index of the matrix.</returns>
-		public IROVector GetRowHeaderWrapper()
+		public IROVector<double> GetRowHeaderWrapper()
 		{
 			if (_rowHeaderColumn.IsEmpty || _rowHeaderColumn.Document == null)
-				return VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1, _participatingDataRows.Count);
+				return VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataRows.Count);
 			else
 				return new HeaderColumnWrapper(_rowHeaderColumn.Document, _participatingDataRows);
 		}
@@ -1053,10 +1073,10 @@ namespace Altaxo.Data
 		/// Gets a wrapper vector around the column header data.
 		/// </summary>
 		/// <returns>Wrapper vector around the column header data. Each element of this vector corresponds to the column with the same index of the matrix.</returns>
-		public IROVector GetColumnHeaderWrapper()
+		public IROVector<double> GetColumnHeaderWrapper()
 		{
 			if (_columnHeaderColumn.IsEmpty || _columnHeaderColumn.Document == null)
-				return VectorMath.CreateEquidistantSequenceByStartStepLength(0, 1, _participatingDataColumns.Count);
+				return VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataColumns.Count);
 			else
 				return new HeaderColumnWrapper(_columnHeaderColumn.Document, _participatingDataColumns);
 		}
@@ -1071,7 +1091,7 @@ namespace Altaxo.Data
 		/// <param name="resultantMatrix">The resultant matrix.</param>
 		/// <param name="resultantTransformedRowHeaderValues">The resultant transformed row header values.</param>
 		/// <param name="resultantTransformedColumnHeaderValues">The resultant transformed column header values.</param>
-		public void GetWrappers(Func<AltaxoVariant, double> TransformRowHeaderValues, Func<double, bool> SelectTransformedRowHeaderValues, Func<AltaxoVariant, double> TransformColumnHeaderValues, Func<double, bool> SelectTransformedColumnHeaderValues, out IROMatrix resultantMatrix, out IROVector resultantTransformedRowHeaderValues, out IROVector resultantTransformedColumnHeaderValues)
+		public void GetWrappers(Func<AltaxoVariant, double> TransformRowHeaderValues, Func<double, bool> SelectTransformedRowHeaderValues, Func<AltaxoVariant, double> TransformColumnHeaderValues, Func<double, bool> SelectTransformedColumnHeaderValues, out IROMatrix<double> resultantMatrix, out IROVector<double> resultantTransformedRowHeaderValues, out IROVector<double> resultantTransformedColumnHeaderValues)
 		{
 			if (_isDirty)
 			{

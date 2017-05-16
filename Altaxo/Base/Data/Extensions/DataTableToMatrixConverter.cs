@@ -53,7 +53,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Function that is used to generate a writeable matrix. First argument is number of rows, the 2nd argument is the number of columns of the matrix. The result shold be a writeable matrix with the corresponding number of rows and columns.
 		/// </summary>
-		protected Func<int, int, IMatrix> _matrixGenerator;
+		protected Func<int, int, IMatrix<double>> _matrixGenerator;
 
 		/// <summary>If this value is not null, it is used to replace all values in the matrix that are <see cref="M:System.Double.NaN"/>.</summary>
 		protected double? _replacementValueForNaNMatrixElements;
@@ -86,13 +86,13 @@ namespace Altaxo.Data
 		private INumericColumn _columnHeaderColumn;
 
 		/// <summary>Resulting matrix.</summary>
-		private IMatrix _resultingMatrix;
+		private IMatrix<double> _resultingMatrix;
 
 		/// <summary>Resulting row header vector. The members of this vector correspond to the row of the matrix with the same index.</summary>
-		private IVector _rowHeaderVector;
+		private IVector<double> _rowHeaderVector;
 
 		/// <summary>Resulting column header vector. The members of this vector correspond to the column of the matrix with the same index.</summary>
-		private IVector _columnHeaderVector;
+		private IVector<double> _columnHeaderVector;
 
 		#endregion Working / resulting members
 
@@ -116,7 +116,7 @@ namespace Altaxo.Data
 		/// <param name="rows">Number of rows.</param>
 		/// <param name="columns">Number of columns.</param>
 		/// <returns></returns>
-		protected virtual IMatrix DefaultMatrixGenerator(int rows, int columns)
+		protected virtual IMatrix<double> DefaultMatrixGenerator(int rows, int columns)
 		{
 			return new JaggedArrayMatrix(rows, columns);
 		}
@@ -172,7 +172,7 @@ namespace Altaxo.Data
 		/// The matrix generator. First argument is the number of rows, 2nd argument the number of columns of the matrix to generate.
 		/// </value>
 		/// <exception cref="System.ArgumentNullException">MatrixGenerator is null.</exception>
-		public Func<int, int, IMatrix> MatrixGenerator
+		public Func<int, int, IMatrix<double>> MatrixGenerator
 		{
 			set
 			{
@@ -331,7 +331,7 @@ namespace Altaxo.Data
 		/// The resulting matrix.
 		/// </value>
 		/// <exception cref="System.InvalidOperationException">Resulting matrix is not known yet. Please call Execute first.</exception>
-		public IMatrix ResultingMatrix
+		public IMatrix<double> ResultingMatrix
 		{
 			get
 			{
@@ -370,7 +370,7 @@ namespace Altaxo.Data
 		/// The row header vector.
 		/// </value>
 		/// <exception cref="System.InvalidOperationException">RowHeaderVector is not known yet. Please call Execute first.</exception>
-		public IVector RowHeaderVector
+		public IVector<double> RowHeaderVector
 		{
 			get
 			{
@@ -409,7 +409,7 @@ namespace Altaxo.Data
 		/// The column header vector.
 		/// </value>
 		/// <exception cref="System.InvalidOperationException">ColumnHeaderVector is not known yet. Please call Execute first.</exception>
-		public IVector ColumnHeaderVector
+		public IVector<double> ColumnHeaderVector
 		{
 			get
 			{
@@ -516,7 +516,7 @@ namespace Altaxo.Data
 		/// <param name="spacingValue">If the function is successful, contains the uniform spacing value.</param>
 		/// <param name="errorMessage">If the function is not successful, contains a diagnostic error message.</param>
 		/// <returns><c>True</c> if the function was successful, otherwise <c>False</c>.</returns>
-		public static bool TryGetRowOrColumnSpacing(IROVector headerVector, string rowOrColumn, out double spacingValue, out string errorMessage)
+		public static bool TryGetRowOrColumnSpacing(IReadOnlyList<double> headerVector, string rowOrColumn, out double spacingValue, out string errorMessage)
 		{
 			var spacing = new Calc.LinearAlgebra.VectorSpacingEvaluator(headerVector);
 

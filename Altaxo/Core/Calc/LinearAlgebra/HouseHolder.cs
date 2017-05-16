@@ -26,6 +26,7 @@
 
 //Port of JAMPACK's householder implementation.
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -435,7 +436,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return AU(A, u, r1, r2, c1, c2, new ComplexFloatVector(r2 - r1 + 1));
 		}
 
-		public static FloatVector GenerateColumn(IFloatMatrix A, int r1, int r2, int c)
+		public static FloatVector GenerateColumn(IMatrix<float> A, int r1, int r2, int c)
 		{
 			int ru = r2 - r1 + 1;
 			FloatVector u = new FloatVector(r2 - r1 + 1);
@@ -446,7 +447,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				A[i, c] = 0.0f;
 			}
 
-			float norm = u.GetNorm();
+			var norm = u.L2Norm;
 
 			if (r1 == r2 || norm == 0)
 			{
@@ -455,7 +456,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				return u;
 			}
 
-			float scale = 1.0f / norm;
+			float scale = (float)(1.0 / norm);
 
 			if (u[0] < 0.0f)
 				scale *= -1.0f;
@@ -477,7 +478,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return u;
 		}
 
-		public static FloatVector GenerateRow(IFloatMatrix A, int r, int c1, int c2)
+		public static FloatVector GenerateRow(IMatrix<float> A, int r, int c1, int c2)
 		{
 			int cu = c2 - c1 + 1;
 			FloatVector u = new FloatVector(cu);
@@ -488,7 +489,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				A[r, j] = 0.0f;
 			}
 
-			float norm = u.GetNorm();
+			var norm = u.L2Norm;
 
 			if (c1 == c2 || norm == 0)
 			{
@@ -497,7 +498,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				return u;
 			}
 
-			float scale = 1.0f / norm;
+			var scale = (float)(1.0 / norm);
 			if (u[0] < 0.0f)
 				scale *= -1.0f;
 
@@ -518,14 +519,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			return u;
 		}
 
-		public static IFloatMatrix UA(IROFloatVector u, IFloatMatrix A, int r1, int r2, int c1, int c2, IFloatVector v)
+		public static IMatrix<float> UA(IReadOnlyList<float> u, IMatrix<float> A, int r1, int r2, int c1, int c2, IVector<float> v)
 		{
 			if (r2 < r1 || c2 < c1)
 			{
 				return A;
 			}
 
-			if (r2 - r1 + 1 > u.Length)
+			if (r2 - r1 + 1 > u.Count)
 			{
 				throw new ArgumentException("Householder vector too short.", "u");
 			}
@@ -558,7 +559,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return A;
 		}
 
-		public static IROFloatMatrix UA(IROFloatVector u, IFloatMatrix A, int r1, int r2, int c1, int c2)
+		public static IROMatrix<float> UA(IReadOnlyList<float> u, IMatrix<float> A, int r1, int r2, int c1, int c2)
 		{
 			if (c1 > c2)
 			{
@@ -567,14 +568,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			return UA(u, A, r1, r2, c1, c2, new FloatVector(c2 - c1 + 1));
 		}
 
-		public static IFloatMatrix AU(IFloatMatrix A, IROFloatVector u, int r1, int r2, int c1, int c2, IFloatVector v)
+		public static IMatrix<float> AU(IMatrix<float> A, IReadOnlyList<float> u, int r1, int r2, int c1, int c2, IVector<float> v)
 		{
 			if (r2 < r1 || c2 < c1)
 			{
 				return A;
 			}
 
-			if (c2 - c1 + 1 > u.Length)
+			if (c2 - c1 + 1 > u.Count)
 			{
 				throw new ArgumentException("Householder vector too short.", "u");
 			}
@@ -602,7 +603,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return A;
 		}
 
-		public static IFloatMatrix AU(IFloatMatrix A, IROFloatVector u, int r1, int r2, int c1, int c2)
+		public static IMatrix<float> AU(IMatrix<float> A, IReadOnlyList<float> u, int r1, int r2, int c1, int c2)
 		{
 			if (r2 < r1)
 			{
@@ -611,7 +612,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return AU(A, u, r1, r2, c1, c2, new FloatVector(r2 - r1 + 1));
 		}
 
-		public static DoubleVector GenerateColumn(IMatrix A, int r1, int r2, int c)
+		public static DoubleVector GenerateColumn(IMatrix<double> A, int r1, int r2, int c)
 		{
 			int ru = r2 - r1 + 1;
 			DoubleVector u = new DoubleVector(r2 - r1 + 1);
@@ -622,7 +623,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				A[i, c] = 0.0;
 			}
 
-			double norm = u.GetNorm();
+			double norm = u.L2Norm;
 
 			if (r1 == r2 || norm == 0)
 			{
@@ -652,7 +653,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return u;
 		}
 
-		public static DoubleVector GenerateRow(IMatrix A, int r, int c1, int c2)
+		public static DoubleVector GenerateRow(IMatrix<double> A, int r, int c1, int c2)
 		{
 			int cu = c2 - c1 + 1;
 			DoubleVector u = new DoubleVector(cu);
@@ -663,7 +664,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				A[r, j] = 0.0;
 			}
 
-			double norm = u.GetNorm();
+			var norm = u.L2Norm;
 
 			if (c1 == c2 || norm == 0)
 			{
@@ -693,14 +694,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			return u;
 		}
 
-		public static IMatrix UA(IROVector u, IMatrix A, int r1, int r2, int c1, int c2, IVector v)
+		public static IMatrix<double> UA(IReadOnlyList<double> u, IMatrix<double> A, int r1, int r2, int c1, int c2, IVector<double> v)
 		{
 			if (r2 < r1 || c2 < c1)
 			{
 				return A;
 			}
 
-			if (r2 - r1 + 1 > u.Length)
+			if (r2 - r1 + 1 > u.Count)
 			{
 				throw new ArgumentException("Householder vector too short.", "u");
 			}
@@ -733,7 +734,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return A;
 		}
 
-		public static IMatrix UA(DoubleVector u, IMatrix A, int r1, int r2, int c1, int c2)
+		public static IMatrix<double> UA(DoubleVector u, IMatrix<double> A, int r1, int r2, int c1, int c2)
 		{
 			if (c1 > c2)
 			{
@@ -742,7 +743,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return UA(u, A, r1, r2, c1, c2, new DoubleVector(c2 - c1 + 1));
 		}
 
-		public static IMatrix AU(IMatrix A, DoubleVector u, int r1, int r2, int c1, int c2, IVector v)
+		public static IMatrix<double> AU(IMatrix<double> A, DoubleVector u, int r1, int r2, int c1, int c2, IVector<double> v)
 		{
 			if (r2 < r1 || c2 < c1)
 			{
@@ -777,7 +778,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return A;
 		}
 
-		public static IMatrix AU(IMatrix A, DoubleVector u, int r1, int r2, int c1, int c2)
+		public static IMatrix<double> AU(IMatrix<double> A, DoubleVector u, int r1, int r2, int c1, int c2)
 		{
 			if (r2 < r1)
 			{

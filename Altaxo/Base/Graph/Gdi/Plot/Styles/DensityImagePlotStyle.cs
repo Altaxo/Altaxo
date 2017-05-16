@@ -362,8 +362,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			XYZMeshedColumnPlotData myPlotAssociation = (XYZMeshedColumnPlotData)plotObject;
 
-			IROMatrix matrix;
-			IROVector logicalRowHeaderValues, logicalColumnHeaderValues;
+			IROMatrix<double> matrix;
+			IROVector<double> logicalRowHeaderValues, logicalColumnHeaderValues;
 
 			myPlotAssociation.DataTableMatrix.GetWrappers(
 				gl.XAxis.PhysicalVariantToNormal, // transformation function for row header values
@@ -552,7 +552,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			}
 		}
 
-		private void BuildImage(Graphics gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix matrix, IROVector logicalRowHeaderValues, IROVector logicalColumnHeaderValues)
+		private void BuildImage(Graphics gfrx, IPlotArea gl, XYZMeshedColumnPlotData myPlotAssociation, IROMatrix<double> matrix, IReadOnlyList<double> logicalRowHeaderValues, IReadOnlyList<double> logicalColumnHeaderValues)
 		{
 			// ---------------- prepare the color scaling -------------------------------------
 
@@ -604,9 +604,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return true;
 		}
 
-		private static bool IsEquidistant(IROVector x, double relthreshold)
+		private static bool IsEquidistant(IReadOnlyList<double> x, double relthreshold)
 		{
-			int NM1 = x.Length - 1;
+			int NM1 = x.Count - 1;
 			if (NM1 <= 0)
 				return true;
 			double first = x[0];
@@ -630,9 +630,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		// CoordinateSystem is not affine, or scales are non-linear
 		private void BuildImageV3(Graphics gfrx, IPlotArea gl,
-			IROVector lx,
-			IROVector ly,
-			IROMatrix vcolumns)
+			IReadOnlyList<double> lx,
+			IReadOnlyList<double> ly,
+			IROMatrix<double> vcolumns)
 		{
 			// allocate a bitmap of same dimensions than the underlying layer
 			_imageType = CachedImageType.Other;
@@ -661,9 +661,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			Logical3D rel = new Logical3D();
 
 			double minRX = lx[0];
-			double maxRX = lx[lx.Length - 1];
+			double maxRX = lx[lx.Count - 1];
 			double minRY = ly[0];
-			double maxRY = ly[ly.Length - 1];
+			double maxRY = ly[ly.Count - 1];
 
 			if (minRX > maxRX)
 			{
@@ -748,7 +748,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			_cachedImage.UnlockBits(bmpData);
 		}
 
-		private void BuildImageV1(IROMatrix matrix)
+		private void BuildImageV1(IROMatrix<double> matrix)
 		{
 			_imageType = CachedImageType.LinearEquidistant;
 			// look if the image has the right dimensions
@@ -767,7 +767,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <param name="matrix">The matrix data.</param>
 		/// <param name="image">Bitmap to fill with the pixelwise image. If null, a new image is created.</param>
 		/// <exception cref="ArgumentException">An exception will be thrown if the provided image is smaller than the required dimensions.</exception>
-		public void GetPixelwiseImage(IROMatrix matrix, ref System.Drawing.Bitmap image)
+		public void GetPixelwiseImage(IROMatrix<double> matrix, ref System.Drawing.Bitmap image)
 		{
 			// look if the image has the right dimensions
 

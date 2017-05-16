@@ -26,6 +26,7 @@ using Altaxo.Calc.LinearAlgebra;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 
 namespace Altaxo.Calc.Fourier
 {
@@ -99,7 +100,7 @@ namespace Altaxo.Calc.Fourier
 		/// <summary>
 		/// Returns the vector of amplitudes, i.e. the modulus of the complex result.
 		/// </summary>
-		public IROVector Amplitude
+		public IROVector<double> Amplitude
 		{
 			get
 			{
@@ -109,7 +110,7 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-		private class AmplitudeWrapper : IROVector
+		private class AmplitudeWrapper : IROVector<double>
 		{
 			private double[] _arr;
 			private int _wlen;
@@ -123,6 +124,11 @@ namespace Altaxo.Calc.Fourier
 			#region IROVector Members
 
 			public int Length
+			{
+				get { return _wlen; }
+			}
+
+			public int Count
 			{
 				get { return _wlen; }
 			}
@@ -144,6 +150,18 @@ namespace Altaxo.Calc.Fourier
 				}
 			}
 
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
 			#endregion INumericSequence Members
 		}
 
@@ -156,7 +174,7 @@ namespace Altaxo.Calc.Fourier
 		/// <summary>
 		/// Returns the vector of the resulting real parts of the FFT.
 		/// </summary>
-		public IROVector RealPart
+		public IROVector<double> RealPart
 		{
 			get
 			{
@@ -166,7 +184,7 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-		private class RealPartWrapper : IROVector
+		private class RealPartWrapper : IROVector<double>
 		{
 			private double[] _arr;
 			private int _wlen;
@@ -180,6 +198,11 @@ namespace Altaxo.Calc.Fourier
 			#region IROVector Members
 
 			public int Length
+			{
+				get { return _wlen; }
+			}
+
+			public int Count
 			{
 				get { return _wlen; }
 			}
@@ -201,6 +224,18 @@ namespace Altaxo.Calc.Fourier
 				}
 			}
 
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
 			#endregion INumericSequence Members
 		}
 
@@ -213,7 +248,7 @@ namespace Altaxo.Calc.Fourier
 		/// <summary>
 		/// Returns the vector of the resulting imaginary parts of the FFT.
 		/// </summary>
-		public IROVector ImaginaryPart
+		public IROVector<double> ImaginaryPart
 		{
 			get
 			{
@@ -223,7 +258,7 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-		private class ImaginaryPartWrapper : IROVector
+		private class ImaginaryPartWrapper : IROVector<double>
 		{
 			private double[] _arr;
 			private int _wlen;
@@ -237,6 +272,11 @@ namespace Altaxo.Calc.Fourier
 			#region IROVector Members
 
 			public int Length
+			{
+				get { return _wlen; }
+			}
+
+			public int Count
 			{
 				get { return _wlen; }
 			}
@@ -256,6 +296,18 @@ namespace Altaxo.Calc.Fourier
 					else
 						return _arr[_arr.Length - i];
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
 			}
 
 			#endregion INumericSequence Members
@@ -327,7 +379,7 @@ namespace Altaxo.Calc.Fourier
 		/// <summary>
 		/// Returns the vector of the resulting phases of the FFT.
 		/// </summary>
-		public IROVector Phase
+		public IROVector<double> Phase
 		{
 			get
 			{
@@ -337,7 +389,7 @@ namespace Altaxo.Calc.Fourier
 			}
 		}
 
-		private class PhaseWrapper : IROVector
+		private class PhaseWrapper : IROVector<double>
 		{
 			private double[] _arr;
 			private int _wlen;
@@ -351,6 +403,11 @@ namespace Altaxo.Calc.Fourier
 			#region IROVector Members
 
 			public int Length
+			{
+				get { return _wlen; }
+			}
+
+			public int Count
 			{
 				get { return _wlen; }
 			}
@@ -372,6 +429,18 @@ namespace Altaxo.Calc.Fourier
 				}
 			}
 
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
 			#endregion INumericSequence Members
 		}
 
@@ -385,7 +454,7 @@ namespace Altaxo.Calc.Fourier
 		/// </summary>
 		/// <param name="xincrement">X interval between two points before the Fourier transformation (sample period).</param>
 		/// <returns>The vector of frequencies that correspond to the vectors Amplitude, RealPart, ImaginaryPart and Phase.</returns>
-		public IROVector FrequenciesFromXIncrement(double xincrement)
+		public IROVector<double> FrequenciesFromXIncrement(double xincrement)
 		{
 			return new FrequencyWrapper(_fftresult, 1 / xincrement);
 		}
@@ -396,12 +465,12 @@ namespace Altaxo.Calc.Fourier
 		/// </summary>
 		/// <param name="xrate">Inverse of the x interval between two points before the Fourier transformation (sample rate).</param>
 		/// <returns>The vector of frequencies that correspond to the vectors Amplitude, RealPart, ImaginaryPart and Phase.</returns>
-		public IROVector FrequenciesFromXRate(double xrate)
+		public IROVector<double> FrequenciesFromXRate(double xrate)
 		{
 			return new FrequencyWrapper(_fftresult, xrate);
 		}
 
-		private class FrequencyWrapper : IROVector
+		private class FrequencyWrapper : IROVector<double>
 		{
 			private int _wlen;
 			private double _frequencyIncrement;
@@ -419,6 +488,11 @@ namespace Altaxo.Calc.Fourier
 				get { return _wlen; }
 			}
 
+			public int Count
+			{
+				get { return _wlen; }
+			}
+
 			#endregion IROVector Members
 
 			#region INumericSequence Members
@@ -429,6 +503,18 @@ namespace Altaxo.Calc.Fourier
 				{
 					return i * _frequencyIncrement;
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
 			}
 
 			#endregion INumericSequence Members
@@ -444,7 +530,7 @@ namespace Altaxo.Calc.Fourier
 		/// </summary>
 		/// <param name="xincrement">X interval between two points before the Fourier transformation (sample period).</param>
 		/// <returns>The vector of circular frequencies that correspond to the vectors Amplitude, RealPart, ImaginaryPart and Phase.</returns>
-		public IROVector CircularFrequenciesFromXIncrement(double xincrement)
+		public IROVector<double> CircularFrequenciesFromXIncrement(double xincrement)
 		{
 			return new CircularFrequencyWrapper(_fftresult, 1 / xincrement);
 		}
@@ -455,12 +541,12 @@ namespace Altaxo.Calc.Fourier
 		/// </summary>
 		/// <param name="xrate">Inverse of the x interval between two points before the Fourier transformation (sample rate).</param>
 		/// <returns>The vector of circular frequencies that correspond to the vectors Amplitude, RealPart, ImaginaryPart and Phase.</returns>
-		public IROVector CircularFrequenciesFromXRate(double xrate)
+		public IROVector<double> CircularFrequenciesFromXRate(double xrate)
 		{
 			return new CircularFrequencyWrapper(_fftresult, xrate);
 		}
 
-		private class CircularFrequencyWrapper : IROVector
+		private class CircularFrequencyWrapper : IROVector<double>
 		{
 			private int _wlen;
 			private double _omegaIncrement;
@@ -478,6 +564,11 @@ namespace Altaxo.Calc.Fourier
 				get { return _wlen; }
 			}
 
+			public int Count
+			{
+				get { return _wlen; }
+			}
+
 			#endregion IROVector Members
 
 			#region INumericSequence Members
@@ -488,6 +579,18 @@ namespace Altaxo.Calc.Fourier
 				{
 					return i * _omegaIncrement;
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _wlen; ++i)
+					yield return this[i];
 			}
 
 			#endregion INumericSequence Members
@@ -571,23 +674,23 @@ namespace Altaxo.Calc.Fourier
 		/// <param name="src">Real representation of the spectrum.</param>
 		/// <param name="destRe">On return, contains the real part of the spectrum.</param>
 		/// <param name="destIm">On return, contains the imaginary part of the spectrum.</param>
-		public static void FromRepresentationRealToCompactComplex(IROVector src, IVector destRe, IVector destIm)
+		public static void FromRepresentationRealToCompactComplex(IReadOnlyList<double> src, IVector<double> destRe, IVector<double> destIm)
 		{
-			bool isEven = 0 == (src.Length % 2);
+			bool isEven = 0 == (src.Count % 2);
 			int destLen2;
 			if (isEven)
 			{
-				destLen2 = src.Length / 2;
+				destLen2 = src.Count / 2;
 				destRe[0] = src[0];
 				destIm[0] = src[destLen2];
 			}
 			else // odd
 			{
-				destLen2 = (src.Length - 1) / 2;
+				destLen2 = (src.Count - 1) / 2;
 				destRe[0] = src[0];
 				destIm[0] = 0;
 			}
-			for (int i = 1, j = src.Length - 1; i < j; i++, j--)
+			for (int i = 1, j = src.Count - 1; i < j; i++, j--)
 			{
 				destRe[i] = src[i];
 				destIm[i] = src[j];
@@ -599,21 +702,21 @@ namespace Altaxo.Calc.Fourier
 		/// </summary>
 		/// <param name="src">Real representation of the spectrum.</param>
 		/// <param name="dest">On return, contains the complex spectrum.</param>
-		public static void FromRepresentationRealToCompactComplex(IROVector src, IComplexDoubleVector dest)
+		public static void FromRepresentationRealToCompactComplex(IReadOnlyList<double> src, IComplexDoubleVector dest)
 		{
-			bool isEven = 0 == (src.Length % 2);
+			bool isEven = 0 == (src.Count % 2);
 			int destLen2;
 			if (isEven)
 			{
-				destLen2 = src.Length / 2;
+				destLen2 = src.Count / 2;
 				dest[0] = Complex.FromRealImaginary(src[0], src[destLen2]);
 			}
 			else // odd
 			{
-				destLen2 = (src.Length - 1) / 2;
+				destLen2 = (src.Count - 1) / 2;
 				dest[0] = Complex.FromRealImaginary(src[0], 0);
 			}
-			for (int i = 1, j = src.Length - 1; i < j; i++, j--)
+			for (int i = 1, j = src.Count - 1; i < j; i++, j--)
 			{
 				dest[i] = Complex.FromRealImaginary(src[i], src[j]);
 			}
@@ -625,7 +728,7 @@ namespace Altaxo.Calc.Fourier
 		/// <param name="re">Stores the real part of the spectrum.</param>
 		/// <param name="im">Stores the imaginary part of the spectrum.</param>
 		/// <param name="destination">After return, stores the spectrum in normalized real representation. The length of the vector has to be equal to the length of the FFT. </param>
-		public static void FromRepresentationCompactComplexToReal(IROVector re, IROVector im, IVector destination)
+		public static void FromRepresentationCompactComplexToReal(IReadOnlyList<double> re, IReadOnlyList<double> im, IVector<double> destination)
 		{
 			bool isEven = 0 == (destination.Length % 2);
 			int destLen2;
@@ -652,7 +755,7 @@ namespace Altaxo.Calc.Fourier
 		/// </summary>
 		/// <param name="src">Stores the  complex spectrum.</param>
 		/// <param name="destination">After return, stores the spectrum in normalized real representation. The length of the vector has to be equal to the length of the FFT. </param>
-		public static void FromRepresentationCompactComplexToReal(IROComplexDoubleVector src, IVector destination)
+		public static void FromRepresentationCompactComplexToReal(IROComplexDoubleVector src, IVector<double> destination)
 		{
 			bool isEven = 0 == (destination.Length % 2);
 			int destLen2;

@@ -24,6 +24,7 @@
 
 using Altaxo.Calc.LinearAlgebra;
 using System;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace Altaxo.Calc.Regression.Multivariate
@@ -40,7 +41,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Output: On return, contains the ensemble mean of the spectra.</param>
 		/// <param name="xScale">Output: On return, contains the scale of the spectral slots.</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		void Process(IMatrix xMatrix, IVector xMean, IVector xScale, int[] regions);
+		void Process(IMatrix<double> xMatrix, IVector<double> xMean, IVector<double> xScale, int[] regions);
 
 		/// <summary>
 		/// Processes the spectra in matrix xMatrix for prediction. Thats why it is absolutely neccessary to
@@ -50,7 +51,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Contains the ensemble mean of the spectra.</param>
 		/// <param name="xScale">Contains the scale of the spectral slots.</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale, int[] regions);
+		void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale, int[] regions);
 
 		/// <summary>
 		/// Exports the processing to an xml node.
@@ -73,7 +74,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Output: On return, contains the ensemble mean of the spectra.</param>
 		/// <param name="xScale">Not used.</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		public virtual void Process(IMatrix xMatrix, IVector xMean, IVector xScale, int[] regions)
+		public virtual void Process(IMatrix<double> xMatrix, IVector<double> xMean, IVector<double> xScale, int[] regions)
 		{
 		}
 
@@ -84,7 +85,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Output: On return, contains the ensemble mean of the spectra.</param>
 		/// <param name="xScale">Not used.</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		public virtual void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale, int[] regions)
+		public virtual void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale, int[] regions)
 		{
 		}
 
@@ -137,7 +138,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Output: On return, contains the ensemble mean of the spectra.</param>
 		/// <param name="xScale">Not used.</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		public override void Process(IMatrix xMatrix, IVector xMean, IVector xScale, int[] regions)
+		public override void Process(IMatrix<double> xMatrix, IVector<double> xMean, IVector<double> xScale, int[] regions)
 		{
 			// note: we have a light deviation here to the literature:
 			// we repeat the multiple scattering correction until the xMean vector is self consistent,
@@ -147,7 +148,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			// The reason for this deviation is that we don't want to store two separate xMean vectors: one used
 			// for MSC (the x in linear regression) and another to center the MSC corrected spectra
 
-			IVector xMeanBefore = null;
+			IVector<double> xMeanBefore = null;
 			double threshold = 1E-14 * MatrixMath.SumOfSquares(xMatrix) / xMatrix.Rows;
 			for (int cycle = 0; cycle < 50; cycle++)
 			{
@@ -170,7 +171,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 				// 3. Compare the xMean with the xMean_before
 				if (xMeanBefore == null)
 				{
-					xMeanBefore = VectorMath.CreateExtensibleVector(xMean.Length);
+					xMeanBefore = VectorMath.CreateExtensibleVector<double>(xMean.Length);
 					VectorMath.Copy(xMean, xMeanBefore);
 				}
 				else
@@ -191,7 +192,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Output: On return, contains the ensemble mean of the spectra.</param>
 		/// <param name="xScale">Not used.</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		public override void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale, int[] regions)
+		public override void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale, int[] regions)
 		{
 			for (int i = 0; i <= regions.Length; i++)
 			{
@@ -207,7 +208,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xScale">Not used.</param>
 		/// <param name="regionstart">Starting index of the region to process.</param>
 		/// <param name="regionend">End index of the region to process.</param>
-		private void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale, int regionstart, int regionend)
+		private void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale, int regionstart, int regionend)
 		{
 			int regionlength = regionend - regionstart;
 
@@ -253,7 +254,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Not used, since this processing sets xMean by itself (to zero).</param>
 		/// <param name="xScale">Not used, since the processing sets xScale by itself.</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		public override void Process(IMatrix xMatrix, IVector xMean, IVector xScale, int[] regions)
+		public override void Process(IMatrix<double> xMatrix, IVector<double> xMean, IVector<double> xScale, int[] regions)
 		{
 			ProcessForPrediction(xMatrix, xMean, xScale, regions);
 		}
@@ -265,7 +266,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Not used.</param>
 		/// <param name="xScale">Not used.</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		public override void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale, int[] regions)
+		public override void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale, int[] regions)
 		{
 			for (int i = 0; i <= regions.Length; i++)
 			{
@@ -281,7 +282,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xScale">Not used.</param>
 		/// <param name="regionstart">Starting index of the region to process.</param>
 		/// <param name="regionend">End index of the region to process.</param>
-		public void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale, int regionstart, int regionend)
+		public void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale, int regionstart, int regionend)
 		{
 			int regionlength = regionend - regionstart;
 
@@ -347,7 +348,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Not used, since this processing sets xMean by itself (to zero).</param>
 		/// <param name="xScale">Not used, since the processing sets xScale by itself.</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		public override void Process(IMatrix xMatrix, IVector xMean, IVector xScale, int[] regions)
+		public override void Process(IMatrix<double> xMatrix, IVector<double> xMean, IVector<double> xScale, int[] regions)
 		{
 			ProcessForPrediction(xMatrix, xMean, xScale, regions);
 		}
@@ -359,7 +360,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Not used.</param>
 		/// <param name="xScale">Not used.</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		public override void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale, int[] regions)
+		public override void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale, int[] regions)
 		{
 			for (int i = 0; i <= regions.Length; i++)
 			{
@@ -375,14 +376,14 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xScale">Not used.</param>
 		/// <param name="regionstart">Starting index of the region to process.</param>
 		/// <param name="regionend">End index of the region to process.</param>
-		public void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale, int regionstart, int regionend)
+		public void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale, int regionstart, int regionend)
 		{
 			int regionlength = regionend - regionstart;
 
-			IVector helpervector = VectorMath.ToVector(new double[regionlength]);
+			var helpervector = VectorMath.ToVector(new double[regionlength]);
 			for (int n = 0; n < xMatrix.Rows; n++)
 			{
-				IVector vector = MatrixMath.RowToVector(xMatrix, n, regionstart, regionlength);
+				var vector = MatrixMath.RowToVector(xMatrix, n, regionstart, regionlength);
 				_filter.Apply(vector, helpervector);
 				VectorMath.Copy(helpervector, vector);
 			}
@@ -427,7 +428,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Not used, since this processing sets xMean by itself (to zero).</param>
 		/// <param name="xScale">Not used, since the processing sets xScale by itself.</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		public override void Process(IMatrix xMatrix, IVector xMean, IVector xScale, int[] regions)
+		public override void Process(IMatrix<double> xMatrix, IVector<double> xMean, IVector<double> xScale, int[] regions)
 		{
 			ProcessForPrediction(xMatrix, xMean, xScale, regions);
 		}
@@ -439,7 +440,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Not used.</param>
 		/// <param name="xScale">Not used.</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		public override void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale, int[] regions)
+		public override void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale, int[] regions)
 		{
 			for (int i = 0; i <= regions.Length; i++)
 				Process(xMatrix, xMean, xScale, RegionStart(i, regions), RegionEnd(i, regions, xMatrix.Columns));
@@ -453,7 +454,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xScale">Not used.</param>
 		/// <param name="regionstart">Starting index of the region.</param>
 		/// <param name="regionend">End index of the region (one behind the last region element).</param>
-		public void Process(IMatrix xMatrix, IROVector xMean, IROVector xScale, int regionstart, int regionend)
+		public void Process(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale, int regionstart, int regionend)
 		{
 			int regionlength = regionend - regionstart;
 			int currentorder = Math.Min(_order, regionlength);
@@ -544,7 +545,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Not used, since this processing sets xMean by itself (to zero).</param>
 		/// <param name="xScale">Not used, since the processing sets xScale by itself.</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		public override void Process(IMatrix xMatrix, IVector xMean, IVector xScale, int[] regions)
+		public override void Process(IMatrix<double> xMatrix, IVector<double> xMean, IVector<double> xScale, int[] regions)
 		{
 			if (_ensembleMean)
 			{
@@ -563,7 +564,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="xMean">Must be supplied, and will be subtracted from all spectra (if option set).</param>
 		/// <param name="xScale">Must be supplied, and will be multiplied to all spectra (if option set).</param>
 		/// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
-		public override void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale, int[] regions)
+		public override void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale, int[] regions)
 		{
 			if (_ensembleMean)
 			{

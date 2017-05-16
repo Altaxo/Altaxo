@@ -529,7 +529,7 @@ namespace Altaxo.Calc.Regression
 			for (j = 0; j < n; j++) // LELLID!!
 				if (diag[j] <= 0.0) goto L300;
 
-		L20:
+			L20:
 
 			// evaluate the function at the starting point and calculate its norm
 			iflag = 1;
@@ -565,7 +565,7 @@ namespace Altaxo.Calc.Regression
 
 			if (iflag < 0) goto L300;
 
-		L40:
+			L40:
 
 			// compute the qr factorization of the Jacobian.
 			qrfac(m, n, fjac, ldfjac, true, ipvt, n, wa1,
@@ -583,7 +583,7 @@ namespace Altaxo.Calc.Regression
 				if (wa2[j] == 0.0) diag[j] = 1.0;
 			}
 
-		L60:
+			L60:
 
 			// on the first iteration, calculate the norm of the scaled x
 			// and initialize the step bound delta
@@ -595,7 +595,7 @@ namespace Altaxo.Calc.Regression
 			delta = factor * xnorm;
 			if (delta == 0.0) delta = factor;
 
-		L80:
+			L80:
 
 			// form (q transpose)*f and store the first n components in qtf
 			for (i = 0; i < m; ++i) wa4[i] = f[i]; // LELLID!!
@@ -709,12 +709,12 @@ namespace Altaxo.Calc.Regression
 			par /= temp;
 			goto L260;
 
-		L240:
+			L240:
 			if (par != 0.0 && ratio < p75) goto L260;
 			delta = pnorm / p5;
 			par = p5 * par;
 
-		L260:
+			L260:
 
 			// test for successful iteration
 			if (ratio < p0001) goto L290;
@@ -734,7 +734,7 @@ namespace Altaxo.Calc.Regression
 			fnorm = fnorm1;
 			++iter;
 
-		L290:
+			L290:
 
 			// tests for convergence
 			if (Math.Abs(actred) <= ftol && prered <= ftol
@@ -766,7 +766,7 @@ namespace Altaxo.Calc.Regression
 			// end of the outer loop
 			goto L30;
 
-		L300:
+			L300:
 
 			// termination, either normal or user imposed
 			if (iflag < 0) info = iflag;
@@ -944,7 +944,7 @@ namespace Altaxo.Calc.Regression
 			temp = enorm(n, wa1);
 			parl = fp / delta / temp / temp;
 
-		L120:
+			L120:
 
 			// calculate an upper bound, paru, for the zero of the function
 
@@ -1027,7 +1027,7 @@ namespace Altaxo.Calc.Regression
 			// end of an iteration
 			goto L150;
 
-		L220:
+			L220:
 
 			// termination
 			if (iter == 0) par = 0.0;
@@ -1161,13 +1161,13 @@ namespace Altaxo.Calc.Regression
 					cos_ = sin_ * cotan;
 					goto L50;
 
-				L40:
+					L40:
 
 					tan_ = sdiag[k] / r[k + k * r_dim1];
 					cos_ = p5 / Math.Sqrt(p25 + p25 * sqr(tan_));
 					sin_ = cos_ * tan_;
 
-				L50:
+					L50:
 
 					// compute the modified diagonal element of r and
 					// the modified element of ((q transpose)*b,0)
@@ -1187,10 +1187,10 @@ namespace Altaxo.Calc.Regression
 						sdiag[i] = -sin_ * r[i + k * r_dim1] + cos_ * sdiag[i];
 						r[i + k * r_dim1] = temp;
 					}
-				L70: ;
+					L70:;
 				}
 
-			L90:
+				L90:
 
 				// store the diagonal element of s and restore
 				// the corresponding diagonal element of r
@@ -1348,7 +1348,7 @@ namespace Altaxo.Calc.Regression
 				ipvt[j] = ipvt[kmax];
 				ipvt[kmax] = k;
 
-			L40:
+				L40:
 
 				// compute the householder transformation to reduce the
 				// j-th column of a to a multiple of the j-th unit vector
@@ -1385,9 +1385,9 @@ namespace Altaxo.Calc.Regression
 					rdiag[k] = enorm(m - j - 1, a, j + k * a_dim1); // VALID??? original: rdiag[k] = enorm(m-j, a, jp1 + k * a_dim1);
 
 					wa[k] = rdiag[k];
-				L80: ;
+					L80:;
 				}
-			L100:
+				L100:
 				rdiag[j] = -ajnorm;
 			}
 		}
@@ -1440,26 +1440,26 @@ namespace Altaxo.Calc.Regression
 				x1max = xabs;
 				goto L80;
 
-			L10:
+				L10:
 				s1 += sqr(xabs / x1max);
 				goto L80;
 
-			L30:
+				L30:
 				// sum for small components
 				if (xabs <= x3max) goto L40;
 				s3 = 1.0 + s3 * sqr(x3max / xabs);
 				x3max = xabs;
 				goto L80;
 
-			L40:
+				L40:
 				if (xabs != 0.0) s3 += sqr(xabs / x3max);
 				goto L80;
 
-			L70:
+				L70:
 				// sum for intermediate components
 				s2 += sqr(xabs);
 
-			L80: ;
+				L80:;
 			}
 
 			// calculation of norm
@@ -1467,7 +1467,7 @@ namespace Altaxo.Calc.Regression
 			ret_val = x1max * Math.Sqrt(s1 + s2 / x1max / x1max);
 			goto L130;
 
-		L100:
+			L100:
 			if (s2 == 0.0) goto L110;
 			if (s2 >= x3max)
 				ret_val = Math.Sqrt(s2 * (1.0 + x3max / s2 * (x3max * s3)));
@@ -1475,10 +1475,10 @@ namespace Altaxo.Calc.Regression
 				ret_val = Math.Sqrt(x3max * (s2 / x3max + x3max * s3));
 			goto L130;
 
-		L110:
+			L110:
 			ret_val = x3max * Math.Sqrt(s3);
 
-		L130:
+			L130:
 			return ret_val;
 		}
 
@@ -1530,26 +1530,26 @@ namespace Altaxo.Calc.Regression
 				x1max = xabs;
 				goto L80;
 
-			L10:
+				L10:
 				s1 += sqr(xabs / x1max);
 				goto L80;
 
-			L30:
+				L30:
 				// sum for small components
 				if (xabs <= x3max) goto L40;
 				s3 = 1.0 + s3 * sqr(x3max / xabs);
 				x3max = xabs;
 				goto L80;
 
-			L40:
+				L40:
 				if (xabs != 0.0) s3 += sqr(xabs / x3max);
 				goto L80;
 
-			L70:
+				L70:
 				// sum for intermediate components
 				s2 += sqr(xabs);
 
-			L80: ;
+				L80:;
 			}
 
 			// calculation of norm
@@ -1557,7 +1557,7 @@ namespace Altaxo.Calc.Regression
 			ret_val = x1max * Math.Sqrt(s1 + s2 / x1max / x1max);
 			goto L130;
 
-		L100:
+			L100:
 			if (s2 == 0.0) goto L110;
 			if (s2 >= x3max)
 				ret_val = Math.Sqrt(s2 * (1.0 + x3max / s2 * (x3max * s3)));
@@ -1565,10 +1565,10 @@ namespace Altaxo.Calc.Regression
 				ret_val = Math.Sqrt(x3max * (s2 / x3max + x3max * s3));
 			goto L130;
 
-		L110:
+			L110:
 			ret_val = x3max * Math.Sqrt(s3);
 
-		L130:
+			L130:
 			return ret_val;
 		}
 
@@ -1896,7 +1896,7 @@ namespace Altaxo.Calc.Regression
 			int rnk;
 			double fact;
 
-			IMatrix matresult = MatrixMath.PseudoInverse(MatrixMath.ToROMatrix(JtJ, m), out rnk);
+			var matresult = MatrixMath.PseudoInverse(MatrixMath.ToROMatrix(JtJ, m), out rnk);
 			MatrixMath.Copy(matresult, MatrixMath.ToMatrix(C, m));
 
 			fact = sumsq / (double)(n - rnk);

@@ -56,13 +56,13 @@ namespace AltaxoTest.Calc.Fourier
 
 				// now compare the results
 				// first the realpart
-				IROVector realpart = wrapper.RealPart;
+				var realpart = wrapper.RealPart;
 				for (int i = 0; i < realpart.Length; i++)
 				{
 					Assert.AreEqual(re[i], realpart[i], tol, string.Format("Testing realpart (len={0}, i={1})", arr.Length, i));
 				}
 				// now the imaginary part
-				IROVector imagpart = wrapper.ImaginaryPart;
+				var imagpart = wrapper.ImaginaryPart;
 				for (int i = 0; i < imagpart.Length; i++)
 				{
 					Assert.AreEqual(im[i], imagpart[i], tol, string.Format("Testing imagpart (len={0}, i={1})", arr.Length, i));
@@ -77,7 +77,7 @@ namespace AltaxoTest.Calc.Fourier
 				}
 
 				// now the amplitude part
-				IROVector amppart = wrapper.Amplitude;
+				var amppart = wrapper.Amplitude;
 				for (int i = 0; i < imagpart.Length; i++)
 				{
 					double expected = Altaxo.Calc.RMath.Hypot(re[i], im[i]);
@@ -85,7 +85,7 @@ namespace AltaxoTest.Calc.Fourier
 				}
 
 				// now the phase part
-				IROVector phasepart = wrapper.Phase;
+				var phasepart = wrapper.Phase;
 				for (int i = 0; i < imagpart.Length; i++)
 				{
 					double ampl = Altaxo.Calc.RMath.Hypot(re[i], im[i]);

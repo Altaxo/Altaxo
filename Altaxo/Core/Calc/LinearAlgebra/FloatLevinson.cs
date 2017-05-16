@@ -36,6 +36,7 @@
 #region Using directives
 
 using System;
+using System.Collections.Generic;
 
 #endregion Using directives
 
@@ -48,7 +49,7 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// <remarks>
 	/// This class provides members for inverting the Toeplitz matrix (see <see cref="GetInverse"/> member),
 	/// calculating the determinant of the matrix (see <see cref="GetDeterminant"/> property) and solving
-	/// linear systems associated with the matrix (see <see cref="FloatLevinson.Solve(IROFloatVector)"/> members).
+	/// linear systems associated with the matrix (see <see cref="FloatLevinson.Solve(IROVector{Single})"/> members).
 	/// <para>
 	/// The class implements a <B>UDL</B> decomposition of the inverse of the
 	/// square Toeplitz matrix. The decomposition is based upon Levinson's algorithm. As
@@ -361,11 +362,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		#region Constructors
 
-		public FloatLevinson(AbstractROFloatVector col, AbstractROFloatVector row)
-			: this((IROFloatVector)col, (IROFloatVector)row)
-		{
-		}
-
 		/// <overloads>
 		/// There are two permuations of the constructor, one requires FloatVector parameters
 		/// and the other float arrays.
@@ -388,14 +384,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <exception cref="ArithmeticException">
 		/// The values of the first element of <B>col</B> and <B>row</B> are not equal.
 		/// </exception>
-		public FloatLevinson(IROFloatVector col, IROFloatVector row)
+		public FloatLevinson(IReadOnlyList<float> col, IReadOnlyList<float> row)
 		{
 			// check parameters
 			if (col == null)
 			{
 				throw new System.ArgumentNullException("col");
 			}
-			else if (col.Length == 0)
+			else if (col.Count == 0)
 			{
 				throw new RankException("The length of col is zero.");
 			}
@@ -403,7 +399,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("row");
 			}
-			else if (col.Length != row.Length)
+			else if (col.Count != row.Count)
 			{
 				throw new RankException("The lengths of col and row are not equal.");
 			}
@@ -624,7 +620,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			// fill lower triangle
 			for (i = 0; i < m_Order; i++)
 			{
-				Array.Copy(m_LeftColumn.data, 0, tm.data[i], i, m_Order - i);
+				Array.Copy(m_LeftColumn.GetInternalData(), 0, tm.data[i], i, m_Order - i);
 			}
 
 			tm = tm.GetTranspose();
@@ -632,7 +628,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			// fill upper triangle
 			for (i = 0; i < m_Order - 1; i++)
 			{
-				Array.Copy(m_TopRow.data, 1, tm.data[i], i + 1, m_Order - i - 1);
+				Array.Copy(m_TopRow.GetInternalData(), 1, tm.data[i], i + 1, m_Order - i - 1);
 			}
 #else
       int j, k;
@@ -809,7 +805,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// using the Levinson algorithm, before calculating the solution vector.
 		/// </para>
 		/// </remarks>
-		public FloatVector Solve(IROFloatVector Y)
+		public FloatVector Solve(IReadOnlyList<float> Y)
 		{
 			FloatVector X;
 			float Inner;
@@ -820,7 +816,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (m_Order != Y.Length)
+			else if (m_Order != Y.Count)
 			{
 				throw new RankException("The length of Y is not equal to the number of rows in the Toeplitz matrix.");
 			}
@@ -952,7 +948,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// using the Levinson algorithm, before calculating the solution vector.
 		/// </para>
 		/// </remarks>
-		public FloatMatrix Solve(IROFloatMatrix Y)
+		public FloatMatrix Solve(IROMatrix<float> Y)
 		{
 			FloatMatrix X;
 			float Inner;
@@ -1047,14 +1043,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// if we simply solved a linear Toeplitz system with a right-side identity matrix (<b>N</b> is the matrix order).
 		/// </para>
 		/// </remarks>
-		public static FloatMatrix Inverse(IROFloatVector col, IROFloatVector row)
+		public static FloatMatrix Inverse(IReadOnlyList<float> col, IReadOnlyList<float> row)
 		{
 			// check parameters
 			if (col == null)
 			{
 				throw new System.ArgumentNullException("col");
 			}
-			else if (col.Length == 0)
+			else if (col.Count == 0)
 			{
 				throw new RankException("The length of col is zero.");
 			}
@@ -1062,7 +1058,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("row");
 			}
-			else if (col.Length != row.Length)
+			else if (col.Count != row.Count)
 			{
 				throw new RankException("The lengths of col and row are not equal.");
 			}
@@ -1078,7 +1074,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			// decompose matrix
-			int order = col.Length;
+			int order = col.Count;
 			float[] A = new float[order];
 			float[] B = new float[order];
 			float[] Z = new float[order];
@@ -1247,14 +1243,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// in a single algorithm.
 		/// </para>
 		/// </remarks>
-		public static FloatVector Solve(IROFloatVector col, IROFloatVector row, IROFloatVector Y)
+		public static FloatVector Solve(IReadOnlyList<float> col, IReadOnlyList<float> row, IReadOnlyList<float> Y)
 		{
 			// check parameters
 			if (col == null)
 			{
 				throw new System.ArgumentNullException("col");
 			}
-			else if (col.Length == 0)
+			else if (col.Count == 0)
 			{
 				throw new RankException("The length of col is zero.");
 			}
@@ -1262,7 +1258,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("row");
 			}
-			else if (col.Length != row.Length)
+			else if (col.Count != row.Count)
 			{
 				throw new RankException("The lengths of col and row are not equal.");
 			}
@@ -1274,7 +1270,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (col.Length != Y.Length)
+			else if (col.Count != Y.Count)
 			{
 				throw new RankException("The length of Y does not match those of col and row.");
 			}
@@ -1286,7 +1282,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			// decompose matrix
-			int order = col.Length;
+			int order = col.Count;
 			float[] A = new float[order];
 			float[] B = new float[order];
 			float[] Z = new float[order];
@@ -1413,14 +1409,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// in a single algorithm.
 		/// </para>
 		/// </remarks>
-		public static FloatMatrix Solve(IROFloatVector col, IROFloatVector row, IROFloatMatrix Y)
+		public static FloatMatrix Solve(IReadOnlyList<float> col, IReadOnlyList<float> row, IROMatrix<float> Y)
 		{
 			// check parameters
 			if (col == null)
 			{
 				throw new System.ArgumentNullException("col");
 			}
-			else if (col.Length == 0)
+			else if (col.Count == 0)
 			{
 				throw new RankException("The length of col is zero.");
 			}
@@ -1428,7 +1424,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("row");
 			}
-			else if (col.Length != row.Length)
+			else if (col.Count != row.Count)
 			{
 				throw new RankException("The lengths of col and row are not equal.");
 			}
@@ -1440,7 +1436,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (col.Length != Y.Columns)
+			else if (col.Count != Y.Columns)
 			{
 				throw new RankException("The numer of rows in Y does not match the length of col and row.");
 			}
@@ -1452,7 +1448,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			// decompose matrix
-			int order = col.Length;
+			int order = col.Count;
 			float[] A = new float[order];
 			float[] B = new float[order];
 			float[] Z = new float[order];

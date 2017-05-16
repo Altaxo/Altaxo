@@ -43,7 +43,7 @@ namespace Altaxo.Calc.Fourier.Windows
 			_periodic = periodic;
 		}
 
-		protected abstract void InternalCompute(IVector array, bool periodic);
+		protected abstract void InternalCompute(IVector<double> array, bool periodic);
 
 		public double[] AsDoubleArray()
 		{
@@ -56,12 +56,12 @@ namespace Altaxo.Calc.Fourier.Windows
 			return result;
 		}
 
-		public IROVector AsROVector()
+		public IROVector<double> AsROVector()
 		{
 			return VectorMath.ToROVector(AsDoubleArray());
 		}
 
-		public IVector AsVector()
+		public IVector<double> AsVector()
 		{
 			return VectorMath.ToVector(AsDoubleArray());
 		}
@@ -91,7 +91,7 @@ namespace Altaxo.Calc.Fourier.Windows
 			InternalCompute(VectorMath.ToVector(array, startidx, count), periodic);
 		}
 
-		public void Compute(IVector array, bool periodic)
+		public void Compute(IVector<double> array, bool periodic)
 		{
 			if (array == null)
 				throw new ArgumentNullException("array is null");
@@ -100,7 +100,7 @@ namespace Altaxo.Calc.Fourier.Windows
 			InternalCompute(array, periodic);
 		}
 
-		public void Compute(IVector array, int startidx, int count, bool periodic)
+		public void Compute(IVector<double> array, int startidx, int count, bool periodic)
 		{
 			if (array == null)
 				throw new ArgumentNullException("array is null");

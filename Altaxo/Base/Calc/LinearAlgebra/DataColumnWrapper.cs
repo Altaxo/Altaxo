@@ -25,6 +25,8 @@
 using Altaxo.Collections;
 using Altaxo.Data;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -37,7 +39,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <summary>
 		/// Wraps a <see cref="DataColumn" />s into a read-only vector.
 		/// </summary>
-		private class NumericColumnToROVectorWrapper : IROVector
+		private class NumericColumnToROVectorWrapper : IROVector<double>
 		{
 			private Altaxo.Data.INumericColumn _column;
 			private int _start;
@@ -59,7 +61,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
-			public int Length { get { ; return _rows; } }
+			public int Length { get {; return _rows; } }
+
+			public int Count { get {; return _rows; } }
 
 			/// <summary>
 			/// Element accessor.
@@ -72,13 +76,25 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
+			public IEnumerator<double> GetEnumerator()
+			{
+				for (int i = 0; i < _rows; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				for (int i = 0; i < _rows; ++i)
+					yield return this[i];
+			}
+
 			#endregion IROVector Members
 		}
 
 		/// <summary>
 		/// Wraps a <see cref="DataColumn" />s into a read-only vector for selected rows.
 		/// </summary>
-		private class NumericColumnSelectedRowsToROVectorWrapper : IROVector
+		private class NumericColumnSelectedRowsToROVectorWrapper : IROVector<double>
 		{
 			protected Altaxo.Data.INumericColumn _column;
 			protected Altaxo.Collections.IAscendingIntegerCollection _rows;
@@ -97,7 +113,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
-			public int Length { get { ; return _rows == null ? 0 : _rows.Count; } }
+			public int Length { get {; return _rows == null ? 0 : _rows.Count; } }
+
+			public int Count { get {; return _rows == null ? 0 : _rows.Count; } }
 
 			/// <summary>
 			/// Element accessor.
@@ -110,6 +128,20 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
+			public IEnumerator<double> GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
+			}
+
 			#endregion IROVector Members
 		}
 
@@ -120,7 +152,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <summary>
 		/// Wraps a <see cref="DataColumn" />s into a writable vector.
 		/// </summary>
-		private class DoubleColumnToVectorWrapper : IVector
+		private class DoubleColumnToVectorWrapper : IVector<double>
 		{
 			private DoubleColumn _column;
 			private int _start;
@@ -142,7 +174,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
-			public int Length { get { ; return _rows; } }
+			public int Length { get {; return _rows; } }
+
+			public int Count { get {; return _rows; } }
 
 			/// <summary>
 			/// Element accessor.
@@ -159,13 +193,27 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
+			public IEnumerator<double> GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
+			}
+
 			#endregion IROVector Members
 		}
 
 		/// <summary>
 		/// Wraps a <see cref="DataColumn" />s into a writeable vector for selected rows.
 		/// </summary>
-		private class DoubleColumnSelectedRowsToVectorWrapper : IVector
+		private class DoubleColumnSelectedRowsToVectorWrapper : IVector<double>
 		{
 			protected Altaxo.Data.DoubleColumn _column;
 			protected Altaxo.Collections.IAscendingIntegerCollection _rows;
@@ -184,7 +232,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
-			public int Length { get { ; return _rows == null ? 0 : _rows.Count; } }
+			public int Length { get {; return _rows == null ? 0 : _rows.Count; } }
+
+			public int Count { get {; return _rows == null ? 0 : _rows.Count; } }
 
 			/// <summary>
 			/// Element accessor.
@@ -199,6 +249,20 @@ namespace Altaxo.Calc.LinearAlgebra
 				{
 					_column[_rows[row]] = value;
 				}
+			}
+
+			public IEnumerator<double> GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				var length = Length;
+				for (int i = 0; i < length; ++i)
+					yield return this[i];
 			}
 
 			#endregion IROVector Members
@@ -232,7 +296,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			#region IROVector Members
 
 			/// <summary>The number of elements of this vector.</summary>
-			public int Length { get { ; return _rows; } }
+			public int Length { get {; return _rows; } }
 
 			/// <summary>
 			/// Element accessor.
@@ -257,7 +321,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		#region Matrices
 
-		private class NumericColumnToROHorzMatrixWrapper : IROMatrix
+		private class NumericColumnToROHorzMatrixWrapper : IROMatrix<double>
 		{
 			private Altaxo.Data.INumericColumn _column;
 			private int _rows;
@@ -302,7 +366,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			#endregion IROMatrix Members
 		}
 
-		private class NumericColumnToROVertMatrixWrapper : IROMatrix
+		private class NumericColumnToROVertMatrixWrapper : IROMatrix<double>
 		{
 			private Altaxo.Data.INumericColumn _column;
 			private int _rows;
@@ -347,7 +411,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			#endregion IROMatrix Members
 		}
 
-		private class DoubleColumnToHorzMatrixWrapper : IMatrix
+		private class DoubleColumnToHorzMatrixWrapper : IMatrix<double>
 		{
 			private Altaxo.Data.DoubleColumn _column;
 			private int _rows;
@@ -393,7 +457,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			#region IMatrix Members
 
-			double Altaxo.Calc.LinearAlgebra.IMatrix.this[int row, int col]
+			double Altaxo.Calc.LinearAlgebra.IMatrix<double>.this[int row, int col]
 			{
 				get
 				{
@@ -408,7 +472,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			#endregion IMatrix Members
 		}
 
-		private class DoubleColumnToVertMatrixWrapper : IMatrix
+		private class DoubleColumnToVertMatrixWrapper : IMatrix<double>
 		{
 			private Altaxo.Data.DoubleColumn _column;
 			private int _rows;
@@ -454,7 +518,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			#region IMatrix Members
 
-			double Altaxo.Calc.LinearAlgebra.IMatrix.this[int row, int col]
+			double Altaxo.Calc.LinearAlgebra.IMatrix<double>.this[int row, int col]
 			{
 				get
 				{
@@ -481,7 +545,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="col">The column to wrap as a IVector.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
 		/// <returns>An IVector wrapping the <see cref="INumericColumn" />.</returns>
-		public static IROVector ToROVector(this INumericColumn col, int nRows)
+		public static IROVector<double> ToROVector(this INumericColumn col, int nRows)
 		{
 			return new NumericColumnToROVectorWrapper(col, 0, nRows);
 		}
@@ -493,7 +557,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="nStart">The starting index of the wrapped column.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
 		/// <returns>An IVector wrapping the <see cref="INumericColumn" />.</returns>
-		public static IROVector ToROVector(this INumericColumn col, int nStart, int nRows)
+		public static IROVector<double> ToROVector(this INumericColumn col, int nStart, int nRows)
 		{
 			return new NumericColumnToROVectorWrapper(col, nStart, nRows);
 		}
@@ -505,8 +569,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="col">The column to wrap as a IVector.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
-		/// <returns>An horizontal oriented <see cref="IROMatrix" /> wrapping the <see cref="DoubleColumn" />.</returns>
-		public static IROMatrix ToHorzROMatrix(this INumericColumn col, int nRows)
+		/// <returns>An horizontal oriented <see cref="IROMatrix{Double}" /> wrapping the <see cref="DoubleColumn" />.</returns>
+		public static IROMatrix<double> ToHorzROMatrix(this INumericColumn col, int nRows)
 		{
 			return new NumericColumnToROHorzMatrixWrapper((INumericColumn)col, nRows);
 		}
@@ -516,8 +580,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="col">The column to wrap as a IVector.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
-		/// <returns>An vertical oriented <see cref="IROMatrix" /> wrapping the <see cref="DoubleColumn" />.</returns>
-		public static IROMatrix ToVertROMatrix(this INumericColumn col, int nRows)
+		/// <returns>An vertical oriented <see cref="IROMatrix{Double}" /> wrapping the <see cref="DoubleColumn" />.</returns>
+		public static IROMatrix<double> ToVertROMatrix(this INumericColumn col, int nRows)
 		{
 			return new NumericColumnToROVertMatrixWrapper((INumericColumn)col, nRows);
 		}
@@ -537,7 +601,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="nStart">The starting index of the wrapped column.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
 		/// <returns>An IVector wrapping the <see cref="INumericColumn" />.</returns>
-		public static IROVector ToROVector(this DataColumn col, int nStart, int nRows)
+		public static IROVector<double> ToROVector(this DataColumn col, int nStart, int nRows)
 		{
 			if (!(col is INumericColumn))
 				throw new ArgumentException("Argument col can not be wrapped to a vector because it is not a numeric column");
@@ -551,7 +615,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="col">The column to wrap as a IVector.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
 		/// <returns>An IVector wrapping the <see cref="INumericColumn" />.</returns>
-		public static IROVector ToROVector(this DataColumn col, int nRows)
+		public static IROVector<double> ToROVector(this DataColumn col, int nRows)
 		{
 			if (!(col is INumericColumn))
 				throw new ArgumentException("Argument col can not be wrapped to a vector because it is not a numeric column");
@@ -564,7 +628,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="col">The column to wrap as a IVector.</param>
 		/// <returns>An IVector wrapping the <see cref="INumericColumn" />.</returns>
-		public static IROVector ToROVector(this DataColumn col)
+		public static IROVector<double> ToROVector(this DataColumn col)
 		{
 			if (!(col is INumericColumn))
 				throw new ArgumentException(string.Format("Argument col (name: {0}) can not be wrapped to a vector because it is not a numeric column", col.Name));
@@ -578,7 +642,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="col">The column to wrap as a IVector.</param>
 		/// <param name="selectedRows">The rows of the source column that are part of the vector.</param>
 		/// <returns>An IROVector wrapping the <see cref="INumericColumn" />.</returns>
-		public static IROVector ToROVector(this INumericColumn col, IAscendingIntegerCollection selectedRows)
+		public static IROVector<double> ToROVector(this INumericColumn col, IAscendingIntegerCollection selectedRows)
 		{
 			return new NumericColumnSelectedRowsToROVectorWrapper(col, (IAscendingIntegerCollection)selectedRows.Clone());
 		}
@@ -589,7 +653,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="col">The column to wrap.</param>
 		/// <returns>A read-only vector which contains data copied from the numeric column.</returns>
-		public static IROVector ToROVectorCopy(this DataColumn col)
+		public static IROVector<double> ToROVectorCopy(this DataColumn col)
 		{
 			if (!(col is INumericColumn))
 				throw new ArgumentException("Argument col can not be wrapped to a vector because it is not a numeric column");
@@ -614,7 +678,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="nStart">The starting index of the wrapped column.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
 		/// <returns>An IVector wrapping the <see cref="DoubleColumn" />.</returns>
-		public static IVector ToVector(this DataColumn col, int nStart, int nRows)
+		public static IVector<double> ToVector(this DataColumn col, int nStart, int nRows)
 		{
 			if (!(col is DoubleColumn))
 				throw new ArgumentException("Argument col can not be wrapped to a vector because it is not a DoubleColumn");
@@ -628,7 +692,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="col">The column to wrap as a IVector.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
 		/// <returns>An IVector wrapping the <see cref="DoubleColumn" />.</returns>
-		public static IVector ToVector(this DataColumn col, int nRows)
+		public static IVector<double> ToVector(this DataColumn col, int nRows)
 		{
 			if (!(col is DoubleColumn))
 				throw new ArgumentException("Argument col can not be wrapped to a vector because it is not a DoubleColumn");
@@ -641,7 +705,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="col">The column to wrap as a IVector.</param>
 		/// <returns>An IVector wrapping the <see cref="DoubleColumn" />.</returns>
-		public static IVector ToVector(this DataColumn col)
+		public static IVector<double> ToVector(this DataColumn col)
 		{
 			if (!(col is DoubleColumn))
 				throw new ArgumentException("Argument col can not be wrapped to a vector because it is not a DoubleColumn");
@@ -658,8 +722,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="col">The column to wrap as a IVector.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
-		/// <returns>An horizontal oriented <see cref="IMatrix" /> wrapping the <see cref="DoubleColumn" />.</returns>
-		public static IMatrix ToHorzMatrix(this DataColumn col, int nRows)
+		/// <returns>An horizontal oriented <see cref="IMatrix{Double}" /> wrapping the <see cref="DoubleColumn" />.</returns>
+		public static IMatrix<double> ToHorzMatrix(this DataColumn col, int nRows)
 		{
 			if (!(col is DoubleColumn))
 				throw new ArgumentException("Argument col can not be wrapped to a IMatrix because it is not a DoubleColumn");
@@ -672,8 +736,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="col">The column to wrap as a IVector.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
-		/// <returns>An vertical oriented <see cref="IMatrix" /> wrapping the <see cref="DoubleColumn" />.</returns>
-		public static IMatrix ToVertMatrix(this DataColumn col, int nRows)
+		/// <returns>An vertical oriented <see cref="IMatrix{Double}" /> wrapping the <see cref="DoubleColumn" />.</returns>
+		public static IMatrix<double> ToVertMatrix(this DataColumn col, int nRows)
 		{
 			if (!(col is DoubleColumn))
 				throw new ArgumentException("Argument col can not be wrapped to a IMatrix because it is not a DoubleColumn");
@@ -694,7 +758,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// </summary>
 		/// <param name="col">The column to wrap as a IVector.</param>
 		/// <returns>An IVector wrapping the <see cref="DoubleColumn" />.</returns>
-		public static IVector ToVector(this DoubleColumn col)
+		public static IVector<double> ToVector(this DoubleColumn col)
 		{
 			return new DoubleColumnToVectorWrapper(col, 0, col.Count);
 		}
@@ -705,7 +769,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="col">The column to wrap as a IVector.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
 		/// <returns>An IVector wrapping the <see cref="DoubleColumn" />.</returns>
-		public static IVector ToVector(this DoubleColumn col, int nRows)
+		public static IVector<double> ToVector(this DoubleColumn col, int nRows)
 		{
 			return new DoubleColumnToVectorWrapper(col, 0, nRows);
 		}
@@ -717,7 +781,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="nStart">The starting index of the wrapped column.</param>
 		/// <param name="nRows">The number of rows to use for the vector.</param>
 		/// <returns>An IVector wrapping the <see cref="DoubleColumn" />.</returns>
-		public static IVector ToVector(this DoubleColumn col, int nStart, int nRows)
+		public static IVector<double> ToVector(this DoubleColumn col, int nStart, int nRows)
 		{
 			return new DoubleColumnToVectorWrapper(col, nStart, nRows);
 		}
@@ -728,7 +792,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="col">The column to wrap as a IVector.</param>
 		/// <param name="selectedRows">The indices of the rows to use for the vector.</param>
 		/// <returns>An IVector wrapping the <see cref="DoubleColumn" />.</returns>
-		public static IVector ToVector(this DoubleColumn col, IAscendingIntegerCollection selectedRows)
+		public static IVector<double> ToVector(this DoubleColumn col, IAscendingIntegerCollection selectedRows)
 		{
 			return new DoubleColumnSelectedRowsToVectorWrapper(col, (IAscendingIntegerCollection)selectedRows.Clone());
 		}

@@ -93,10 +93,10 @@ namespace Altaxo.Calc.Ode
 				for (int i = 0; i < v.Length; i++)
 				{
 					if (Math.Abs(v[i]) > max)
-						max = v[i];
+						max = Math.Abs(v[i]);
 				}
 
-				return System.Math.Abs(max);
+				return max;
 			}
 		}
 

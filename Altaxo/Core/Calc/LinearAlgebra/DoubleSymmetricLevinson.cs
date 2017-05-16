@@ -36,6 +36,7 @@
 #region Using directives
 
 using System;
+using System.Collections.Generic;
 
 #endregion Using directives
 
@@ -49,7 +50,7 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// This class provides members for inverting a symmetric square Toeplitz matrix
 	/// (see <see cref="GetInverse"/> member), calculating the determinant of the matrix
 	/// (see <see cref="GetDeterminant"/> member) and solving linear systems associated
-	/// with the matrix (see <see cref="Solve(IROVector)"/> members).
+	/// with the matrix (see <see cref="Solve(IROVector{Double})"/> members).
 	/// <para>
 	/// The class implements an <B>UDL</B> decomposition of the inverse of the Toeplitz matrix.
 	/// The decomposition is based upon Levinson's algorithm. As a consequence, all operations
@@ -507,14 +508,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <exception cref="RankException">
 		/// The length of <B>T</B> is zero.
 		/// </exception>
-		public DoubleSymmetricLevinson(IROVector T)
+		public DoubleSymmetricLevinson(IReadOnlyList<double> T)
 		{
 			// check parameter
 			if (T == null)
 			{
 				throw new System.ArgumentNullException("T");
 			}
-			else if (T.Length == 0)
+			else if (T.Count == 0)
 			{
 				throw new RankException("The length of T is zero.");
 			}
@@ -701,7 +702,7 @@ namespace Altaxo.Calc.LinearAlgebra
 #if MANAGED
 			// fill top row
 			double[] top = tm.data[0];
-			Array.Copy(m_LeftColumn.data, 0, top, 0, m_Order);
+			Array.Copy(m_LeftColumn.GetInternalData(), 0, top, 0, m_Order);
 
 			if (m_Order > 1)
 			{
@@ -816,7 +817,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// using the Levinson algorithm, and then calculates the solution vector.
 		/// </para>
 		/// </remarks>
-		public DoubleVector Solve(IROVector Y)
+		public DoubleVector Solve(IReadOnlyList<double> Y)
 		{
 			DoubleVector X;
 
@@ -825,7 +826,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (m_Order != Y.Length)
+			else if (m_Order != Y.Count)
 			{
 				throw new RankException("The length of Y is not equal to the number of rows in the Toeplitz matrix.");
 			}
@@ -975,7 +976,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// using the Levinson algorithm, and then calculates the solution matrix.
 		/// </para>
 		/// </remarks>
-		public DoubleMatrix Solve(IROMatrix Y)
+		public DoubleMatrix Solve(IROMatrix<double> Y)
 		{
 			DoubleMatrix X;
 
@@ -1175,16 +1176,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		#region Public Static Methods
 
-		public static DoubleVector Solve(AbstractRODoubleVector T, AbstractRODoubleVector Y)
-		{
-			return Solve((IROVector)T, (IROVector)Y);
-		}
-
-		public static DoubleMatrix Solve(AbstractRODoubleVector T, IROMatrix Y)
-		{
-			return Solve((IROVector)T, Y);
-		}
-
 		/// <overloads>
 		/// Solve a symmetric square Toeplitz system.
 		/// </overloads>
@@ -1213,7 +1204,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// and suffers from no speed penalty.
 		/// </para>
 		/// </remarks>
-		public static DoubleVector Solve(IROVector T, IROVector Y)
+		public static DoubleVector Solve(IReadOnlyList<double> T, IReadOnlyList<double> Y)
 		{
 			DoubleVector X;
 
@@ -1226,14 +1217,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (T.Length != Y.Length)
+			else if (T.Count != Y.Count)
 			{
 				throw new RankException("The length of T and Y are not equal.");
 			}
 			else
 			{
 				// allocate memory
-				int N = T.Length;
+				int N = T.Count;
 				X = new DoubleVector(N);                    // solution vector
 				double e;                                   // prediction error
 
@@ -1331,7 +1322,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// and suffers from no speed penalty.
 		/// </para>
 		/// </remarks>
-		public static DoubleMatrix Solve(IROVector T, IROMatrix Y)
+		public static DoubleMatrix Solve(IReadOnlyList<double> T, IROMatrix<double> Y)
 		{
 			DoubleMatrix X;
 
@@ -1344,14 +1335,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (T.Length != Y.Columns)
+			else if (T.Count != Y.Columns)
 			{
 				throw new RankException("The length of T and Y are not equal.");
 			}
 			else
 			{
 				// allocate memory
-				int N = T.Length;
+				int N = T.Count;
 				int M = Y.Rows;
 				X = new DoubleMatrix(N, M);                 // solution matrix
 				DoubleVector Z = new DoubleVector(N);       // temporary storage vector
@@ -1444,11 +1435,6 @@ namespace Altaxo.Calc.LinearAlgebra
 			return X;
 		}
 
-		public static DoubleVector YuleWalker(AbstractRODoubleVector R)
-		{
-			return YuleWalker((IROVector)R);
-		}
-
 		/// <summary>
 		/// Solve the Yule-Walker equations for a symmetric square Toeplitz system
 		/// </summary>
@@ -1475,7 +1461,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// solution (<b>N</b> is the matrix order).
 		/// </para>
 		/// </remarks>
-		public static DoubleVector YuleWalker(IROVector R)
+		public static DoubleVector YuleWalker(IReadOnlyList<double> R)
 		{
 			DoubleVector a;
 
@@ -1484,13 +1470,13 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("R");
 			}
-			else if (R.Length < 2)
+			else if (R.Count < 2)
 			{
 				throw new System.ArgumentOutOfRangeException("R", "The length of R must be greater than 1.");
 			}
 			else
 			{
-				int N = R.Length - 1;
+				int N = R.Count - 1;
 				a = new DoubleVector(N);                    // prediction coefficients
 				DoubleVector Z = new DoubleVector(N);   // temporary storage vector
 				double e;                           // predictor error
@@ -1566,7 +1552,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// if we simply solved a linear Toeplitz system with a right-side identity matrix (<b>N</b> is the matrix order).
 		/// </para>
 		/// </remarks>
-		public static DoubleMatrix Inverse(IROVector T)
+		public static DoubleMatrix Inverse(IReadOnlyList<double> T)
 		{
 			DoubleMatrix X;
 
@@ -1575,18 +1561,18 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("T");
 			}
-			else if (T.Length < 1)
+			else if (T.Count < 1)
 			{
 				throw new System.RankException("The length of T must be greater than zero.");
 			}
-			else if (T.Length == 1)
+			else if (T.Count == 1)
 			{
 				X = new DoubleMatrix(1);
 				X[0, 0] = 1.0 / T[0];
 			}
 			else
 			{
-				int N = T.Length;
+				int N = T.Count;
 				double f, g;
 				int i, j, l, k, m, n;
 				X = new DoubleMatrix(N);

@@ -32,22 +32,22 @@ namespace Altaxo.Calc.Probability
 {
 	public static class Statistics
 	{
-		public static double Mean(this IROVector x)
+		public static double Mean(this IReadOnlyList<double> x)
 		{
 			double result = 0;
-			for (int i = x.Length - 1; i >= 0; i--)
+			for (int i = x.Count - 1; i >= 0; i--)
 				result += x[i];
 
-			return result / x.Length;
+			return result / x.Count;
 		}
 
-		public static double Mean(this IROVector x, bool ignoreNaN)
+		public static double Mean(this IReadOnlyList<double> x, bool ignoreNaN)
 		{
 			double result = 0;
 			int n = 0;
 			if (ignoreNaN)
 			{
-				for (int i = x.Length - 1; i >= 0; i--)
+				for (int i = x.Count - 1; i >= 0; i--)
 				{
 					double xx = x[i];
 					if (double.IsNaN(xx))
@@ -59,7 +59,7 @@ namespace Altaxo.Calc.Probability
 			}
 			else
 			{
-				for (int i = x.Length - 1; i >= 0; i--)
+				for (int i = x.Count - 1; i >= 0; i--)
 				{
 					double xx = x[i];
 					if (double.IsNaN(xx))
@@ -72,17 +72,17 @@ namespace Altaxo.Calc.Probability
 			return result / n;
 		}
 
-		public static double StandardDeviation(this IROVector x)
+		public static double StandardDeviation(this IReadOnlyList<double> x)
 		{
 			double mean = Mean(x);
 			double sum = 0;
-			for (int i = 0; i < x.Length; i++)
+			for (int i = 0; i < x.Count; i++)
 				sum += RMath.Pow2(x[i] - mean);
 
-			return Math.Sqrt(sum / (x.Length - 1));
+			return Math.Sqrt(sum / (x.Count - 1));
 		}
 
-		public static double InterQuartileRange(this IROVector x)
+		public static double InterQuartileRange(this IReadOnlyList<double> x)
 		{
 			return Math.Abs(Quantile(x, 0.75) - Quantile(x, 0.25));
 		}
@@ -93,9 +93,9 @@ namespace Altaxo.Calc.Probability
 		/// <param name="x">Sorted array (in ascending order) of data. No check is made whether the array is sorted or contains missing data (NaNs).</param>
 		/// <param name="f">The quantile [0,1].</param>
 		/// <returns>The quantile value of the array of data.</returns>
-		public static double Quantile(this IROVector x, double f)
+		public static double Quantile(this IReadOnlyList<double> x, double f)
 		{
-			return Quantile(x, f, x.Length, 1, false);
+			return Quantile(x, f, x.Count, 1, false);
 		}
 
 		/// <summary>
@@ -107,12 +107,12 @@ namespace Altaxo.Calc.Probability
 		/// <param name="stride">Stride. Normally set to 1.</param>
 		/// <param name="checkArray">If true, checks the array for missing values and whether the array is sorted. An exception is thrown if the array contains missing values or is not sorted.</param>
 		/// <returns>The quantile value of the array of data.</returns>
-		public static double Quantile(this IROVector x, double f, int n, int stride, bool checkArray)
+		public static double Quantile(this IReadOnlyList<double> x, double f, int n, int stride, bool checkArray)
 		{
 			if (checkArray)
 			{
 				double prev = double.NegativeInfinity;
-				for (int i = 0; i < x.Length; i++)
+				for (int i = 0; i < x.Count; i++)
 				{
 					double curr = x[i];
 					if (!(curr >= prev))
@@ -159,9 +159,9 @@ namespace Altaxo.Calc.Probability
 
 		public struct ProbabilityDensityResult
 		{
-			public IROVector X { get; set; }
+			public IROVector<double> X { get; set; }
 
-			public IROVector Y { get; set; }
+			public IROVector<double> Y { get; set; }
 
 			public double Bandwidth { get; set; }
 		}
@@ -183,12 +183,12 @@ namespace Altaxo.Calc.Probability
 		/// <param name="cut"></param>
 		/// <remarks>Adapted from the R-project (www.r-project.org), Version 2.72, file density.R</remarks>
 		public static ProbabilityDensityResult ProbabilityDensity(
-			this IROVector x,
+			this IReadOnlyList<double> x,
 			double bw,
 			string bwSel,
 			double adjust,
 			ConvolutionKernel kernel,
-			IROVector weights,
+			IReadOnlyList<double> weights,
 			double width,
 			string widthSel,
 			int n,
@@ -200,7 +200,7 @@ namespace Altaxo.Calc.Probability
 			double wsum;
 			if (null == weights)
 			{
-				weights = VectorMath.GetConstantVector(1.0 / x.Length, x.Length);
+				weights = VectorMath.GetConstantVector(1.0 / x.Count, x.Count);
 				wsum = 1;
 			}
 			else
@@ -266,7 +266,7 @@ namespace Altaxo.Calc.Probability
 
 			if (null != bwSel)
 			{
-				if (x.Length < 2)
+				if (x.Count < 2)
 					throw new ArgumentException("need at least 2 points to select a bandwidth automatically");
 				switch (bwSel.ToLowerInvariant())
 				{
@@ -308,9 +308,9 @@ namespace Altaxo.Calc.Probability
 				throw new ArithmeticException("Bandwith is not positive");
 
 			if (from.IsNaN())
-				from = x.GetMinimum() - cut * bw;
+				from = x.Min() - cut * bw;
 			if (to.IsNaN())
-				to = x.GetMaximum() + cut * bw;
+				to = x.Max() + cut * bw;
 
 			if (!RMath.IsFinite(from))
 				throw new ArithmeticException("non-finite 'from'");
@@ -324,7 +324,7 @@ namespace Altaxo.Calc.Probability
 			y.Multiply(totMass);
 
 			var kords = new DoubleVector(2 * n);
-			kords.FillWithLinearSequenceGivenByStartEnd(0, 2 * (up - lo));
+			kords.FillWithLinearSequenceGivenByStartAndEnd(0, 2 * (up - lo));
 
 			for (int i = n + 1, j = n - 1; j >= 0; i++, j--)
 				kords[i] = -kords[j];
@@ -332,37 +332,37 @@ namespace Altaxo.Calc.Probability
 			switch (kernel)
 			{
 				case ConvolutionKernel.Gaussian:
-					kords.Apply(new Probability.NormalDistribution(0, bw).PDF);
+					kords.Map(new Probability.NormalDistribution(0, bw).PDF);
 					break;
 
 				case ConvolutionKernel.Rectangular:
 					double a = bw * Math.Sqrt(3);
-					kords.Apply(delegate(double xx) { return Math.Abs(xx) < a ? 0.5 / a : 0; });
+					kords.Map(delegate (double xx) { return Math.Abs(xx) < a ? 0.5 / a : 0; });
 					break;
 
 				case ConvolutionKernel.Triangular:
 					a = bw * Math.Sqrt(6);
-					kords.Apply(delegate(double xx) { return Math.Abs(xx) < a ? (1 - Math.Abs(xx) / a) / a : 0; });
+					kords.Map(delegate (double xx) { return Math.Abs(xx) < a ? (1 - Math.Abs(xx) / a) / a : 0; });
 					break;
 
 				case ConvolutionKernel.Epanechnikov:
 					a = bw * Math.Sqrt(5);
-					kords.Apply(delegate(double xx) { return Math.Abs(xx) < a ? 0.75 * (1 - RMath.Pow2(Math.Abs(xx) / a)) / a : 0; });
+					kords.Map(delegate (double xx) { return Math.Abs(xx) < a ? 0.75 * (1 - RMath.Pow2(Math.Abs(xx) / a)) / a : 0; });
 					break;
 
 				case ConvolutionKernel.Biweight:
 					a = bw * Math.Sqrt(7);
-					kords.Apply(delegate(double xx) { return Math.Abs(xx) < a ? 15.0 / 16.0 * RMath.Pow2(1 - RMath.Pow2(Math.Abs(xx) / a)) / a : 0; });
+					kords.Map(delegate (double xx) { return Math.Abs(xx) < a ? 15.0 / 16.0 * RMath.Pow2(1 - RMath.Pow2(Math.Abs(xx) / a)) / a : 0; });
 					break;
 
 				case ConvolutionKernel.Cosine:
 					a = bw / Math.Sqrt(1.0 / 3 - 2 / RMath.Pow2(Math.PI));
-					kords.Apply(delegate(double xx) { return Math.Abs(xx) < a ? (1 + Math.Cos(Math.PI * xx / a)) / (2 * a) : 0; });
+					kords.Map(delegate (double xx) { return Math.Abs(xx) < a ? (1 + Math.Cos(Math.PI * xx / a)) / (2 * a) : 0; });
 					break;
 
 				case ConvolutionKernel.Optcosine:
 					a = bw / Math.Sqrt(1 - 8 / RMath.Pow2(Math.PI));
-					kords.Apply(delegate(double xx) { return Math.Abs(xx) < a ? Math.PI / 4 * Math.Cos(Math.PI * xx / (2 * a)) / a : 0; });
+					kords.Map(delegate (double xx) { return Math.Abs(xx) < a ? Math.PI / 4 * Math.Cos(Math.PI * xx / (2 * a)) / a : 0; });
 					break;
 
 				default:
@@ -372,7 +372,7 @@ namespace Altaxo.Calc.Probability
 			var result = new DoubleVector(2 * n);
 			Fourier.FastHartleyTransform.CyclicRealConvolution(y.GetInternalData(), kords.GetInternalData(), result.GetInternalData(), 2 * n, null);
 			y.Multiply(1.0 / (2 * n));
-			VectorMath.Max(y, 0, y);
+			VectorMath.MaxOf(y, 0, y);
 			var xords = VectorMath.CreateEquidistantSequenceByStartEndLength(lo, up, n);
 			var xu = VectorMath.CreateEquidistantSequenceByStartEndLength(from, to, n_user);
 
@@ -393,16 +393,16 @@ namespace Altaxo.Calc.Probability
 		/// <param name="ny"></param>
 		/// <remarks>Adapted from the R-project (www.r-project.org), Version 2.72, file massdist.c</remarks>
 		public static void MassDistribution(
-				this IROVector x,
-				IROVector xmass,
+				this IReadOnlyList<double> x,
+				IReadOnlyList<double> xmass,
 				double xlow, double xhigh,
-				IVector y,
+				IVector<double> y,
 				int ny
 			)
 		{
 			double fx, xdelta, xmi, xpos;   /* AB */
 			int i, ix, ixmax, ixmin;
-			int nx = x.Length;
+			int nx = x.Count;
 
 			ixmin = 0;
 			ixmax = ny - 2;

@@ -164,7 +164,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <summary>
 		/// Returns the spline coefficient of order 0. This are the splined y values at the positions given by x.
 		/// </summary>
-		public IROVector Coefficient0
+		public IROVector<double> Coefficient0
 		{
 			get
 			{
@@ -175,7 +175,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <summary>
 		/// Returns the spline coefficient of order 1 (linear term).
 		/// </summary>
-		public IROVector Coefficient1
+		public IROVector<double> Coefficient1
 		{
 			get
 			{
@@ -186,7 +186,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <summary>
 		/// Returns the spline coefficient of order 2 (quadratic term).
 		/// </summary>
-		public IROVector Coefficient2
+		public IROVector<double> Coefficient2
 		{
 			get
 			{
@@ -197,7 +197,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <summary>
 		/// Returns the spline coefficient of order 2 (cubic term).
 		/// </summary>
-		public IROVector Coefficient3
+		public IROVector<double> Coefficient3
 		{
 			get
 			{
@@ -208,7 +208,7 @@ namespace Altaxo.Calc.Interpolation
 		/// <summary>
 		/// Returns the error estimates of the y points.
 		/// </summary>
-		public IROVector ErrorEstimate
+		public IROVector<double> ErrorEstimate
 		{
 			get
 			{
@@ -353,7 +353,7 @@ namespace Altaxo.Calc.Interpolation
 				wwv //[wk_dim1 * 7]
 				);
 
-			for (; ; )
+			for (;;)
 			{
 				spfit(n, xx, avh, df, r1, out p, out q, out gf1, avar, stat, yy, c1, c2, c3,
 					wwr, //[wk_offset]
@@ -371,7 +371,7 @@ namespace Altaxo.Calc.Interpolation
 
 			r3 = ratio * r2;
 
-			for (; ; )
+			for (;;)
 			{
 				spfit(n, xx, avh, df, r3, out p, out q, out gf3, avar, stat, yy, c1, c2, c3,
 					wwr, // [wk_offset]
@@ -445,7 +445,7 @@ namespace Altaxo.Calc.Interpolation
 
 			r1 = (r1 + r2) * 0.5;
 
-		natural_spline:
+			natural_spline:
 
 			spfit(n, xx, avh, df, r1, out p, out q, out gf1, avar, stat, yy, c1, c2, c3,
 				wwr, // [wk_offset]
@@ -454,7 +454,7 @@ namespace Altaxo.Calc.Interpolation
 				wwv //[wk_dim1 * 7]
 				);
 
-		spline_coefficients:
+			spline_coefficients:
 
 			spcof(n, xx, avh, f, df, p, q, yy, c1, c2, c3,
 				wwu, //[wk_dim1 * 6]
@@ -932,7 +932,7 @@ namespace Altaxo.Calc.Interpolation
 		//                  = 3  if standard deviation df[i] not positive for some i.
 		//
 
-		public override int Interpolate(IROVector x, IROVector y)
+		public override int Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
 		{
 			// check input parameters
 
@@ -942,7 +942,7 @@ namespace Altaxo.Calc.Interpolation
 			// here we must use a copy of the original vectors
 
 			// Empty data vectors - free auxilliary storage
-			if (x.Length == 0)
+			if (x.Count == 0)
 			{
 				xstore.Clear();
 				ystore.Clear();
@@ -965,7 +965,7 @@ namespace Altaxo.Calc.Interpolation
 			base.x = xstore;
 			base.y = ystore;
 
-			var n = x.Length;
+			var n = x.Count;
 
 			// Resize the auxilliary vectors. Note, that there is no reallocation if the
 			// vector already has the appropriate dimension.
@@ -982,7 +982,7 @@ namespace Altaxo.Calc.Interpolation
 				se.Resize(n);
 
 			// set derivatives for a single point
-			if (x.Length == 1)
+			if (x.Count == 1)
 			{
 				y0[0] = y[0];
 				y1[0] = y2[0] = y3[0] = 0.0;
@@ -990,7 +990,7 @@ namespace Altaxo.Calc.Interpolation
 			}
 
 			// set derivatives for a line
-			if (x.Length == 2)
+			if (x.Count == 2)
 			{
 				y0[0] = y[0];
 				y0[n - 1] = y[n - 1];
@@ -1002,7 +1002,7 @@ namespace Altaxo.Calc.Interpolation
 
 			// set standard deviation of the points to 1 if dy is not set or has
 			// the wrong length
-			if (dy.Store() == null || dy.Length != xstore.Length)
+			if (dy.GetInternalData() == null || dy.Length != xstore.Length)
 			{
 				dy.Resize(n);
 				for (int k = 0; k < n; ++k)
@@ -1010,24 +1010,24 @@ namespace Altaxo.Calc.Interpolation
 			}
 
 			// adjust pointers to vectors so that indexing starts from 1
-			double[] xx = xstore.Store();
-			double[] f = ystore.Store();
+			double[] xx = xstore.GetInternalData();
+			double[] f = ystore.GetInternalData();
 
-			double[] yy = y0.Store(); // coefficients calculated
-			double[] c1 = y1.Store();
-			double[] c2 = y2.Store();
-			double[] c3 = y3.Store();
-			double[] df = dy.Store();
+			double[] yy = y0.GetInternalData(); // coefficients calculated
+			double[] c1 = y1.GetInternalData();
+			double[] c2 = y2.GetInternalData();
+			double[] c3 = y3.GetInternalData();
+			double[] df = dy.GetInternalData();
 
 			// index starts from 0
-			double[] wwr = wkr.Store();
-			double[] wwt = wkt.Store();
-			double[] wwu = wku.Store();
-			double[] wwv = wkv.Store();
+			double[] wwr = wkr.GetInternalData();
+			double[] wwt = wkt.GetInternalData();
+			double[] wwu = wku.GetInternalData();
+			double[] wwv = wkv.GetInternalData();
 
 			// set ss to (double*)0 if a NullVector is given
 			double[] ss = null;
-			if (se.Length > 0) ss = se.Store();
+			if (se.Length > 0) ss = se.GetInternalData();
 
 			return cubgcv(xx, f, df, n, yy, c1, c2, c3, ss, wwr, wwt, wwu, wwv);
 		}
@@ -1052,7 +1052,7 @@ namespace Altaxo.Calc.Interpolation
 			return CubicSplineHorner(u, x, y0, y1, y2, y3);
 		}
 
-		public void SetErrorVariance(IROVector dyy, double errvar)
+		public void SetErrorVariance(IReadOnlyList<double> dyy, double errvar)
 		{
 			dy.CopyFrom(dyy);
 			var = errvar;

@@ -32,6 +32,7 @@ using System.Text;
 
 namespace Altaxo.Data
 {
+	using System.Collections;
 	using Altaxo.Calc.RootFinding;
 
 	public static class MasterCurveCreation
@@ -197,7 +198,7 @@ namespace Altaxo.Data
 
 					if (xv.IsFinite() && yv.IsFinite())
 					{
-						for (; InterpolationValues.Keys.Contains(xv); )
+						for (; InterpolationValues.Keys.Contains(xv);)
 						{
 							if (xv == 0)
 								xv = DoubleConstants.SmallestPositiveValue / DoubleConstants.DBL_EPSILON;
@@ -221,7 +222,7 @@ namespace Altaxo.Data
 			/// <summary>
 			/// Wraps an IList of double values to an IROVector
 			/// </summary>
-			private class WrapperIListToIRoVector : Altaxo.Calc.LinearAlgebra.IROVector
+			private class WrapperIListToIRoVector : Altaxo.Calc.LinearAlgebra.IROVector<double>
 			{
 				private IList<double> _list;
 
@@ -237,6 +238,11 @@ namespace Altaxo.Data
 					get { return _list.Count; }
 				}
 
+				public int Count
+				{
+					get { return _list.Count; }
+				}
+
 				#endregion IROVector Members
 
 				#region INumericSequence Members
@@ -244,6 +250,20 @@ namespace Altaxo.Data
 				public double this[int i]
 				{
 					get { return _list[i]; }
+				}
+
+				public IEnumerator<double> GetEnumerator()
+				{
+					var len = Length;
+					for (int i = 0; i < len; ++i)
+						yield return this[i];
+				}
+
+				IEnumerator IEnumerable.GetEnumerator()
+				{
+					var len = Length;
+					for (int i = 0; i < len; ++i)
+						yield return this[i];
 				}
 
 				#endregion INumericSequence Members
@@ -361,7 +381,7 @@ namespace Altaxo.Data
 
 						case OptimizationMethod.OptimizeSquaredDifference:
 							{
-								Func<double, double> optFunc = delegate(double shift)
+								Func<double, double> optFunc = delegate (double shift)
 								{
 									double res = GetMeanSquaredPenalty(interpolations, currentColumns, shift, options);
 									//Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
@@ -382,7 +402,7 @@ namespace Altaxo.Data
 
 						case OptimizationMethod.OptimizeSquaredDifferenceByBruteForce:
 							{
-								Func<double, double> optFunc = delegate(double shift)
+								Func<double, double> optFunc = delegate (double shift)
 								{
 									double res = GetMeanSquaredPenalty(interpolations, currentColumns, shift, options);
 									//Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);

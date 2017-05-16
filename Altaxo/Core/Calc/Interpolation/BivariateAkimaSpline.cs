@@ -24,6 +24,7 @@
 
 using Altaxo.Calc.LinearAlgebra;
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.Interpolation
 {
@@ -47,9 +48,9 @@ namespace Altaxo.Calc.Interpolation
 		{
 		}
 
-		private IROVector _myX;
-		private IROVector _myY;
-		private IROMatrix _myZ;
+		private IReadOnlyList<double> _myX;
+		private IReadOnlyList<double> _myY;
+		private IROMatrix<double> _myZ;
 
 		/// <summary>
 		/// Constructs an Akima bivariate spline.
@@ -59,18 +60,18 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="z">DOUBLY-DIMENSIONED ARRAY OF DIMENSION (LX,LY) STORING THE VALUES OF THE FUNCTION (Z VALUES) AT INPUT GRID POINTS</param>
 		/// <param name="copyDataLocally">If true, the data where cloned before stored here in this instance. If false, the data
 		/// are stored directly. Make sure then, that the data are not changed outside.</param>
-		public BivariateAkimaSpline(IROVector x, IROVector y, IROMatrix z, bool copyDataLocally)
+		public BivariateAkimaSpline(IReadOnlyList<double> x, IReadOnlyList<double> y, IROMatrix<double> z, bool copyDataLocally)
 		{
 			if (copyDataLocally)
 			{
-				_myX = VectorMath.ToVector(new double[x.Length]);
-				VectorMath.Copy(x, (IVector)_myX);
+				_myX = VectorMath.ToVector(new double[x.Count]);
+				VectorMath.Copy(x, (IVector<double>)_myX);
 
-				_myY = VectorMath.ToVector(new double[y.Length]);
-				VectorMath.Copy(y, (IVector)_myY);
+				_myY = VectorMath.ToVector(new double[y.Count]);
+				VectorMath.Copy(y, (IVector<double>)_myY);
 
 				_myZ = new MatrixMath.BEMatrix(_myZ.Rows, _myZ.Columns);
-				MatrixMath.Copy(z, (IMatrix)_myZ);
+				MatrixMath.Copy(z, (IMatrix<double>)_myZ);
 			}
 			else
 			{
@@ -82,8 +83,8 @@ namespace Altaxo.Calc.Interpolation
 
 		public double Interpolate(double x, double y)
 		{
-			MatrixMath.Scalar z = new MatrixMath.Scalar();
-			this.itplbv_(_myX.Length, _myY.Length, _myX, _myY, _myZ, 1, new MatrixMath.Scalar(x), new MatrixMath.Scalar(y), z);
+			var z = new MatrixMath.ScalarAsMatrix<double>();
+			this.itplbv_(_myX.Count, _myY.Count, _myX, _myY, _myZ, 1, new MatrixMath.ScalarAsMatrix<double>(x), new MatrixMath.ScalarAsMatrix<double>(y), z);
 			return z;
 		}
 
@@ -103,10 +104,10 @@ namespace Altaxo.Calc.Interpolation
 		/// <param name="u">VECTOR OF DIMENSION N STORING THE X COORDINATES OF DESIRED POINTS</param>
 		/// <param name="v">VECTOR OF DIMENSION N STORING THE Y COORDINATES OF DESIRED POINTS</param>
 		/// <param name="w">VECTOR OF DIMENSION N WHERE THE INTERPOLATED Z VALUES AT DESIRED POINTS ARE TO BE DISPLAYED</param>
-		public static void Interpolate(IROVector x, IROVector y, IROMatrix z, IROVector u, IROVector v, IVector w)
+		public static void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y, IROMatrix<double> z, IReadOnlyList<double> u, IReadOnlyList<double> v, IVector<double> w)
 		{
 			BivariateAkimaSpline spline = new BivariateAkimaSpline();
-			spline.itplbv_(x.Length, y.Length, x, y, z, w.Length, u, v, w);
+			spline.itplbv_(x.Count, y.Count, x, y, z, w.Length, u, v, w);
 		}
 
 		/// <summary>
@@ -446,8 +447,8 @@ namespace Altaxo.Calc.Interpolation
 		/// SETTING OF SOME INPUT PARAMETERS TO LOCAL VARIABLES
 		/// Parameter adjustments
 		///</remarks>
-		private int itplbv_(int lx, int ly, IROVector x,
-			IROVector y, IROMatrix z__, int n, IROVector u, IROVector v, IVector w)
+		private int itplbv_(int lx, int ly, IReadOnlyList<double> x,
+			IReadOnlyList<double> y, IROMatrix<double> z__, int n, IReadOnlyList<double> u, IReadOnlyList<double> v, IVector<double> w)
 		{
 			/* System generated locals */
 			int z_dim1, i__1;
@@ -495,7 +496,7 @@ namespace Altaxo.Calc.Interpolation
 				{
 					goto L750;
 				}
-			L10:
+				L10:
 				;
 			}
 			i__1 = ly0;
@@ -513,7 +514,7 @@ namespace Altaxo.Calc.Interpolation
 				{
 					goto L780;
 				}
-			L20:
+				L20:
 				;
 			}
 			/* INITIAL SETTING OF PREVIOUS VALUES OF IX AND IY */
@@ -542,7 +543,7 @@ namespace Altaxo.Calc.Interpolation
 				}
 				imn = 2;
 				imx = lx0;
-			L30:
+				L30:
 				ix = (imn + imx) / 2;
 				if (uk >= x[ix - 1]) // LelliD
 				{
@@ -550,26 +551,26 @@ namespace Altaxo.Calc.Interpolation
 				}
 				imx = ix;
 				goto L50;
-			L40:
+				L40:
 				imn = ix + 1;
-			L50:
+				L50:
 				if (imx > imn)
 				{
 					goto L30;
 				}
 				ix = imx;
 				goto L90;
-			L60:
+				L60:
 				ix = 1;
 				goto L90;
-			L70:
+				L70:
 				ix = lxp1;
 				goto L90;
-			L80:
+				L80:
 				ix = 2;
-			/* TO FIND OUT THE IY VALUE FOR WHICH */
-			/* (V(K).GE.Y(IY-1)).AND.(V(K).LT.Y(IY)) */
-			L90:
+				/* TO FIND OUT THE IY VALUE FOR WHICH */
+				/* (V(K).GE.Y(IY-1)).AND.(V(K).LT.Y(IY)) */
+				L90:
 				if (lym2 == 0)
 				{
 					goto L150;
@@ -584,7 +585,7 @@ namespace Altaxo.Calc.Interpolation
 				}
 				imn = 2;
 				imx = ly0;
-			L100:
+				L100:
 				iy = (imn + imx) / 2;
 				if (vk >= y[iy - 1]) // LelliD
 				{
@@ -592,27 +593,27 @@ namespace Altaxo.Calc.Interpolation
 				}
 				imx = iy;
 				goto L120;
-			L110:
+				L110:
 				imn = iy + 1;
-			L120:
+				L120:
 				if (imx > imn)
 				{
 					goto L100;
 				}
 				iy = imx;
 				goto L160;
-			L130:
+				L130:
 				iy = 1;
 				goto L160;
-			L140:
+				L140:
 				iy = lyp1;
 				goto L160;
-			L150:
+				L150:
 				iy = 2;
-			/* TO CHECK IF THE DESIRED POINT IS IN THE SAME RECTANGLE */
-			/* AS THE PREVIOUS POINT.  IF YES, SKIP TO THE COMPUTATION */
-			/* OF THE POLYNOMIAL */
-			L160:
+				/* TO CHECK IF THE DESIRED POINT IS IN THE SAME RECTANGLE */
+				/* AS THE PREVIOUS POINT.  IF YES, SKIP TO THE COMPUTATION */
+				/* OF THE POLYNOMIAL */
+				L160:
 				if (ix == ixpv && iy == iypv)
 				{
 					goto L690;
@@ -680,7 +681,7 @@ namespace Altaxo.Calc.Interpolation
 				{
 					goto L180;
 				}
-			L170:
+				L170:
 				x5 = x[jx]; // LelliD
 				a4 = 1.0 / (x5 - x4);
 				z53 = z__[jx + 0, (jy - 2)]; // LelliD
@@ -694,10 +695,10 @@ namespace Altaxo.Calc.Interpolation
 				z3a2 = z3a3 + z3a3 - z3a4;
 				z4a2 = z4a3 + z4a3 - z4a4;
 				goto L190;
-			L180:
+				L180:
 				z3a4 = z3a3 + z3a3 - z3a2;
 				z4a4 = z4a3 + z4a3 - z4a2;
-			L190:
+				L190:
 				za2b3 = (z4a2 - z3a2) * b3;
 				za4b3 = (z4a4 - z3a4) * b3;
 				if (jx <= 3)
@@ -708,10 +709,10 @@ namespace Altaxo.Calc.Interpolation
 				z3a1 = (z23 - z__[jx - 4, (jy - 2)]) * a1; // LelliD
 				z4a1 = (z24 - z__[jx - 4, (jy - 1)]) * a1; // LelliD
 				goto L210;
-			L200:
+				L200:
 				z3a1 = z3a2 + z3a2 - z3a3;
 				z4a1 = z4a2 + z4a2 - z4a3;
-			L210:
+				L210:
 				if (jx >= lxm1)
 				{
 					goto L220;
@@ -720,16 +721,16 @@ namespace Altaxo.Calc.Interpolation
 				z3a5 = (z__[jx + 1, (jy - 2)] - z53) * a5; // LelliD
 				z4a5 = (z__[jx + 1, (jy - 1)] - z54) * a5; // LelliD
 				goto L240;
-			L220:
+				L220:
 				z3a5 = z3a4 + z3a4 - z3a3;
 				z4a5 = z4a4 + z4a4 - z4a3;
 				goto L240;
-			L230:
+				L230:
 				z3a2 = z3a3;
 				z4a2 = z4a3;
 				goto L180;
-			/* IN THE Y DIRECTION */
-			L240:
+				/* IN THE Y DIRECTION */
+				L240:
 				if (lym2 == 0)
 				{
 					goto L310;
@@ -748,7 +749,7 @@ namespace Altaxo.Calc.Interpolation
 				{
 					goto L260;
 				}
-			L250:
+				L250:
 				y5 = y[jy + 0]; // LelliD
 				b4 = 1.0 / (y5 - y4);
 				z35 = z__[jx - 2, (jy + 0)]; // LelliD
@@ -762,10 +763,10 @@ namespace Altaxo.Calc.Interpolation
 				z3b2 = z3b3 + z3b3 - z3b4;
 				z4b2 = z4b3 + z4b3 - z4b4;
 				goto L270;
-			L260:
+				L260:
 				z3b4 = z3b3 + z3b3 - z3b2;
 				z4b4 = z4b3 + z4b3 - z4b2;
-			L270:
+				L270:
 				za3b2 = (z4b2 - z3b2) * a3;
 				za3b4 = (z4b4 - z3b4) * a3;
 				if (jy <= 3)
@@ -776,10 +777,10 @@ namespace Altaxo.Calc.Interpolation
 				z3b1 = (z32 - z__[jx - 2, (jy - 4)]) * b1; // LelliD
 				z4b1 = (z42 - z__[jx - 1, (jy - 4)]) * b1; // LelliD
 				goto L290;
-			L280:
+				L280:
 				z3b1 = z3b2 + z3b2 - z3b3;
 				z4b1 = z4b2 + z4b2 - z4b3;
-			L290:
+				L290:
 				if (jy >= lym1)
 				{
 					goto L300;
@@ -788,16 +789,16 @@ namespace Altaxo.Calc.Interpolation
 				z3b5 = (z__[jx - 2, (jy + 1)] - z35) * b5; // LelliD
 				z4b5 = (z__[jx - 1, (jy + 1)] - z45) * b5; // LelliD
 				goto L320;
-			L300:
+				L300:
 				z3b5 = z3b4 + z3b4 - z3b3;
 				z4b5 = z4b4 + z4b4 - z4b3;
 				goto L320;
-			L310:
+				L310:
 				z3b2 = z3b3;
 				z4b2 = z4b3;
 				goto L260;
-			/* IN THE DIAGONAL DIRECTIONS */
-			L320:
+				/* IN THE DIAGONAL DIRECTIONS */
+				L320:
 				if (lxm2 == 0)
 				{
 					goto L400;
@@ -819,7 +820,7 @@ namespace Altaxo.Calc.Interpolation
 				{
 					goto L340;
 				}
-			L330:
+				L330:
 				za4b4 = ((z__[jx + 0, (jy + 0)] - z54) * b4 - z4b4) * a4; // LelliD
 				if (jym2 != 0)
 				{
@@ -827,10 +828,10 @@ namespace Altaxo.Calc.Interpolation
 				}
 				za4b2 = za4b3 + za4b3 - za4b4;
 				goto L380;
-			L340:
+				L340:
 				za4b4 = za4b3 + za4b3 - za4b2;
 				goto L380;
-			L350:
+				L350:
 				if (jym2 == 0)
 				{
 					goto L360;
@@ -840,7 +841,7 @@ namespace Altaxo.Calc.Interpolation
 				{
 					goto L370;
 				}
-			L360:
+				L360:
 				za2b4 = (z3b4 - (z__[jx - 3, (jy + 0)] - z24) * b4) * a2; // LelliD
 				if (jym2 != 0)
 				{
@@ -848,10 +849,10 @@ namespace Altaxo.Calc.Interpolation
 				}
 				za2b2 = za2b3 + za2b3 - za2b4;
 				goto L390;
-			L370:
+				L370:
 				za2b4 = za2b3 + za2b3 - za2b2;
 				goto L390;
-			L380:
+				L380:
 				if (jxm2 != 0)
 				{
 					goto L350;
@@ -859,7 +860,7 @@ namespace Altaxo.Calc.Interpolation
 				za2b2 = za3b2 + za3b2 - za4b2;
 				za2b4 = za3b4 + za3b4 - za4b4;
 				goto L420;
-			L390:
+				L390:
 				if (jxml != 0)
 				{
 					goto L420;
@@ -867,21 +868,21 @@ namespace Altaxo.Calc.Interpolation
 				za4b2 = za3b2 + za3b2 - za2b2;
 				za4b4 = za3b4 + za3b4 - za2b4;
 				goto L420;
-			L400:
+				L400:
 				za2b2 = za3b2;
 				za4b2 = za3b2;
 				za2b4 = za3b4;
 				za4b4 = za3b4;
 				goto L420;
-			L410:
+				L410:
 				za2b2 = za2b3;
 				za2b4 = za2b3;
 				za4b2 = za4b3;
 				za4b4 = za4b3;
-			/* NUMERICAL DIFFERENTIATION   ---   TO DETERMINE PARTIAL */
-			/* DERIVATIVES ZX, ZY, AND ZXY AS WEIGHTED MEANS OF DIVIDED */
-			/* DIFFERENCES ZA, ZB, AND ZAB, RESPECTIVELY */
-			L420:
+				/* NUMERICAL DIFFERENTIATION   ---   TO DETERMINE PARTIAL */
+				/* DERIVATIVES ZX, ZY, AND ZXY AS WEIGHTED MEANS OF DIVIDED */
+				/* DIFFERENCES ZA, ZB, AND ZAB, RESPECTIVELY */
+				L420:
 				for (jy = 2; jy <= 3; ++jy)
 				{
 					for (jx = 2; jx <= 3; ++jx)
@@ -898,10 +899,10 @@ namespace Altaxo.Calc.Interpolation
 						wx2 = w2 / sw;
 						wx3 = w3 / sw;
 						goto L440;
-					L430:
+						L430:
 						wx2 = 0.5;
 						wx3 = 0.5;
-					L440:
+						L440:
 						zx[jx + (jy << 2) - 5] = wx2 * za[jx + (jy - 1) * 5 - 6] + wx3 * za[jx + 1 + (jy - 1) * 5 - 6];
 						r__1 = zb[jx - 1 + (jy + 2 << 1) - 3] - zb[jx - 1 + (jy + 1 << 1) - 3];
 						w2 = Math.Abs(r__1);
@@ -915,10 +916,10 @@ namespace Altaxo.Calc.Interpolation
 						wy2 = w2 / sw;
 						wy3 = w3 / sw;
 						goto L460;
-					L450:
+						L450:
 						wy2 = 0.5;
 						wy3 = 0.5;
-					L460:
+						L460:
 						zy[jx + (jy << 2) - 5] = wy2 * zb[jx - 1 + (jy << 1) - 3] + wy3 * zb[jx - 1 + (jy + 1 << 1) - 3];
 						zxy[jx + (jy << 2) - 5] = wy2 * (wx2 * zab[jx - 1 + (jy - 1) * 3 - 4] + wx3 * zab[jx + (jy - 1) * 3 - 4])
 							+ wy3 * (wx2 * zab[jx - 1 + jy * 3 - 4] + wx3 * zab[jx + jy * 3 - 4]);
@@ -967,7 +968,7 @@ namespace Altaxo.Calc.Interpolation
 				a3 = a4;
 				jx = 1;
 				goto L570;
-			L530:
+				L530:
 				w4 = a2 * (a3 * 3.0 + a2);
 				w5 = a3 * 2.0 * (a3 - a2) + w4;
 				for (jy = 2; jy <= 3; ++jy)
@@ -993,15 +994,15 @@ namespace Altaxo.Calc.Interpolation
 				}
 				a3 = a2;
 				jx = 3;
-			L570:
+				L570:
 				za[2] = za[jx];
 				for (jy = 1; jy <= 3; ++jy)
 				{
 					zab[jy * 3 - 2] = zab[jx + jy * 3 - 4];
 					/* L580: */
 				}
-			/* WHEN (V(K).LT.Y(1)).OR.(V(K).GT.Y(LY)) */
-			L590:
+				/* WHEN (V(K).LT.Y(1)).OR.(V(K).GT.Y(LY)) */
+				L590:
 				if (iy == lyp1)
 				{
 					goto L630;
@@ -1025,7 +1026,7 @@ namespace Altaxo.Calc.Interpolation
 					zy[jx - 1] = (w1 * zb[jx - 2] + w2 * zb[jx]) / (w1 + w2);
 					zx[jx - 1] = zx[jx + 3] + zx[jx + 3] - zx[jx + 7];
 					zxy[jx - 1] = zxy[jx + 3] + zxy[jx + 3] - zxy[jx + 7];
-				L600:
+					L600:
 					for (jy1 = 2; jy1 <= 3; ++jy1)
 					{
 						jy = 5 - jy1;
@@ -1043,7 +1044,7 @@ namespace Altaxo.Calc.Interpolation
 				za3b3 = za3b2;
 				b3 = b4;
 				goto L670;
-			L630:
+				L630:
 				w4 = b2 * (b3 * 3.0 + b2);
 				w5 = b3 * 2.0 * (b3 - b2) + w4;
 				for (jx = 2; jx <= 3; ++jx)
@@ -1059,7 +1060,7 @@ namespace Altaxo.Calc.Interpolation
 					zy[jx + 11] = (w4 * zb[jx + 4] + w5 * zb[jx + 6]) / (w4 + w5);
 					zx[jx + 11] = zx[jx + 7] + zx[jx + 7] - zx[jx + 3];
 					zxy[jx + 11] = zxy[jx + 7] + zxy[jx + 7] - zxy[jx + 3];
-				L640:
+					L640:
 					for (jy = 2; jy <= 3; ++jy)
 					{
 						zy[jx + (jy << 2) - 5] = zy[jx + (jy + 1 << 2) - 5];
@@ -1075,7 +1076,7 @@ namespace Altaxo.Calc.Interpolation
 				z3b3 = z3b4;
 				za3b3 = za3b4;
 				b3 = b2;
-			L670:
+				L670:
 				if (ix != 1 && ix != lxp1)
 				{
 					goto L680;
@@ -1090,8 +1091,8 @@ namespace Altaxo.Calc.Interpolation
 					<< 2) - 5] - zy[jx1 + (jy1 << 2) - 5];
 				zxy[jx + (jy << 2) - 5] = zxy[jx1 + (jy << 2) - 5] + zxy[jx + (
 					jy1 << 2) - 5] - zxy[jx1 + (jy1 << 2) - 5];
-			/* DETERMINATION OF THE COEFFICIENTS OF THE POLYNOMIAL */
-			L680:
+				/* DETERMINATION OF THE COEFFICIENTS OF THE POLYNOMIAL */
+				L680:
 				zx3b3 = (zx34 - zx33) * b3;
 				zx4b3 = (zx44 - zx43) * b3;
 				zy3a3 = (zy43 - zy33) * a3;
@@ -1115,8 +1116,8 @@ namespace Altaxo.Calc.Interpolation
 				p31 = (zy3a3 * -2.0 + zxy43 + zxy33) * a3sq;
 				p32 = (e * -3.0 - c__ - d__) * b3 * a3sq;
 				p33 = (d__ + e + e) * a3sq * b3sq;
-			/* COMPUTATION OF THE POLYNOMIAL */
-			L690:
+				/* COMPUTATION OF THE POLYNOMIAL */
+				L690:
 				dy = vk - y3;
 				q0 = p00 + dy * (p01 + dy * (p02 + dy * p03));
 				q1 = p10 + dy * (p11 + dy * (p12 + dy * p13));
@@ -1128,30 +1129,30 @@ namespace Altaxo.Calc.Interpolation
 			}
 			/* NORMAL EXIT */
 			return 0;
-		/* ERROR EXIT */
-		L710:
+			/* ERROR EXIT */
+			L710:
 			throw new ArgumentException("LX = 1 OR LESS");
-		//goto L800;
-		L720:
+			//goto L800;
+			L720:
 			throw new ArgumentException("LY = 1 OR LESS.");
-		//goto L800;
-		L730:
+			//goto L800;
+			L730:
 			throw new ArgumentException("N = 0 OR LESS.");
-		//goto L800;
-		L740:
+			//goto L800;
+			L740:
 			throw new ArgumentException("IDENTICAL X VALUES");
-		//goto L760;
-		L750:
+			//goto L760;
+			L750:
 			throw new ArgumentException("X VALUES OUT OF SEQUENCE");
-		/*
-	L760:
-		throw new ArgumentException(string.Format("ix ={0} x[ix]={1})", ix, x[ix]));
-		goto L800;
-	 */
-		L770:
+			/*
+		L760:
+			throw new ArgumentException(string.Format("ix ={0} x[ix]={1})", ix, x[ix]));
+			goto L800;
+		 */
+			L770:
 			throw new ArgumentException("IDENTICAL Y VALUES");
-		//goto L790;
-		L780:
+			//goto L790;
+			L780:
 			throw new ArgumentException("Y VALUES OUT OF SEQUENCE");
 			/*
 			L790:

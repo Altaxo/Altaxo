@@ -66,7 +66,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		@return     Structure to access R and the Householder vectors and compute Q.
 		*/
 
-		public QRDecomposition(IROMatrix A)
+		public QRDecomposition(IROMatrix<double> A)
 		{
 			Decompose(A);
 		}
@@ -75,7 +75,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 		}
 
-		public void Decompose(IROMatrix A)
+		public void Decompose(IROMatrix<double> A)
 		{
 			// Initialize.
 			if (m == A.Rows && n == A.Columns)
@@ -240,14 +240,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			return X;
 		}
 
-		public IMatrix GetSolution(IROMatrix B)
+		public IMatrix<double> GetSolution(IROMatrix<double> B)
 		{
 			JaggedArrayMatrix result = new JaggedArrayMatrix(m, B.Columns);
 			Solve(B, result);
 			return result;
 		}
 
-		public IMatrix GetSolution(IROMatrix A, IROMatrix B)
+		public IMatrix<double> GetSolution(IROMatrix<double> A, IROMatrix<double> B)
 		{
 			Decompose(A);
 			JaggedArrayMatrix result = new JaggedArrayMatrix(m, B.Columns);
@@ -255,14 +255,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			return result;
 		}
 
-		public DoubleVector GetSolution(IROVector B)
+		public DoubleVector GetSolution(IReadOnlyList<double> B)
 		{
 			DoubleVector result = new DoubleVector(m);
 			Solve(B, result);
 			return result;
 		}
 
-		public DoubleVector GetSolution(IROMatrix A, IROVector B)
+		public DoubleVector GetSolution(IROMatrix<double> A, IReadOnlyList<double> B)
 		{
 			Decompose(A);
 			DoubleVector result = new DoubleVector(m);
@@ -270,13 +270,13 @@ namespace Altaxo.Calc.LinearAlgebra
 			return result;
 		}
 
-		public void Solve(IROMatrix A, IROMatrix B, IMatrix Result)
+		public void Solve(IROMatrix<double> A, IROMatrix<double> B, IMatrix<double> Result)
 		{
 			Decompose(A);
 			Solve(B, Result);
 		}
 
-		public void Solve(IROMatrix A, IROVector B, IVector Result)
+		public void Solve(IROMatrix<double> A, IReadOnlyList<double> B, IVector<double> Result)
 		{
 			Decompose(A);
 			Solve(B, Result);
@@ -289,7 +289,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		@exception  RuntimeException  Matrix is rank deficient.
 		*/
 
-		public void Solve(IROMatrix B, IMatrix result)
+		public void Solve(IROMatrix<double> B, IMatrix<double> result)
 		{
 			if (B.Rows != m)
 			{
@@ -357,9 +357,9 @@ namespace Altaxo.Calc.LinearAlgebra
 	 @exception  RuntimeException  Matrix is rank deficient.
 	 */
 
-		public void Solve(IROVector B, IVector result)
+		public void Solve(IReadOnlyList<double> B, IVector<double> result)
 		{
-			if (B.Length != m)
+			if (B.Count != m)
 			{
 				throw new ArgumentException("Matrix row dimensions must agree.");
 			}
@@ -370,13 +370,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// Copy right hand side
 			double[] X;
-			if (_solveVectorWorkspace != null && _solveVectorWorkspace.Length == B.Length)
+			if (_solveVectorWorkspace != null && _solveVectorWorkspace.Length == B.Count)
 			{
 				X = _solveVectorWorkspace;
 			}
 			else
 			{
-				_solveVectorWorkspace = X = new double[B.Length];
+				_solveVectorWorkspace = X = new double[B.Count];
 			}
 			for (int i = 0; i < X.Length; i++)
 				X[i] = B[i]; // copy to workspace vector

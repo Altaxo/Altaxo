@@ -36,7 +36,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		{
 		}
 
-		protected override void InternalCompute(IVector array, bool periodic)
+		protected override void InternalCompute(IVector<double> array, bool periodic)
 		{
 			for (int i = 0; i < array.Length; ++i)
 				array[i] = 1;
@@ -59,7 +59,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// <param name="count">Length of the window.</param>
 		/// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
 		/// <returns>The window as read only vector.</returns>
-		public static IROVector AsROVector(int count, bool periodic)
+		public static IROVector<double> AsROVector(int count, bool periodic)
 		{
 			return new RectangleWindow(count, periodic).AsROVector();
 		}
@@ -70,7 +70,7 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// <param name="count">Length of the window.</param>
 		/// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
 		/// <returns>The window as writeable vector.</returns>
-		public static IVector AsVector(int count, bool periodic)
+		public static IVector<double> AsVector(int count, bool periodic)
 		{
 			return new RectangleWindow(count, periodic).AsVector();
 		}
