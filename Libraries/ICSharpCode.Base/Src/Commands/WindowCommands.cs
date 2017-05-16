@@ -56,4 +56,33 @@ namespace ICSharpCode.SharpDevelop.Commands
 			SD.Workbench.CloseAllViews();
 		}
 	}
+
+	public class CloseFileTab : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			var window = Owner as Workbench.IWorkbenchWindow;
+			if (window != null)
+			{
+				window.CloseWindow(false);
+			}
+		}
+	}
+
+	public class CloseAllButThisFileTab : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			var thisWindow = Owner as Workbench.IWorkbenchWindow;
+			for (int i = SD.Workbench.WorkbenchWindowCollection.Count - 1; i >= 0; --i)
+			{
+				var window = SD.Workbench.WorkbenchWindowCollection[i];
+				if (window != thisWindow)
+				{
+					if (!window.CloseWindow(false))
+						break;
+				}
+			}
+		}
+	}
 }
