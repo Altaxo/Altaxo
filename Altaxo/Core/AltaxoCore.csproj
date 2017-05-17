@@ -126,6 +126,9 @@
     <DocumentationFile>..\..\rtDir\bin\AltaxoCore.XML</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>  
+    <TransformOnBuild>true</TransformOnBuild>  
+  </PropertyGroup> 
   <ItemGroup>
     <Reference Include="System">
       <Name>System</Name>
@@ -808,7 +811,8 @@
     <Content Include="Calc\LinearAlgebra\MatrixMath_Footer.ttinclude" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\TextTemplating\Microsoft.TextTemplating.targets" /> <!-- Before you can use this, you have to copy the TextTemplating subdirectory from the visual studio path to the build path -->  
+    <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
     <PostBuildEvent>
