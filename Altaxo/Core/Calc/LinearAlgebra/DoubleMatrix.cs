@@ -320,6 +320,14 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new MatrixWrapperStructForLeftSpineJaggedArray<double>(source.data, source.Rows, source.Columns);
 		}
 
+		/// <summary>
+		/// Gets the internal data of this matrix, i.e. the left spine jagged array, along with the number of rows and columns of the matrix
+		/// </summary>
+		/// <value>
+		/// The internal data.
+		/// </value>
+		public MatrixWrapperStructForLeftSpineJaggedArray<double> InternalData { get { return new MatrixWrapperStructForLeftSpineJaggedArray<double>(this.data, this.Rows, this.Columns); } }
+
 		private class RoWrapper : IROMatrix<double>
 		{
 			private double[][] _array;

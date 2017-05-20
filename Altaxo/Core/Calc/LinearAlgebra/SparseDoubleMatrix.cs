@@ -25,6 +25,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		private int[][] indices;
 		private int[] count;
 
+		private static int[] _emptyIntArray = new int[0];
+
 		/// <summary>Constructor for SparseMatrix class</summary>
 		/// <param name="numberOfRows">Number of rows</param>
 		/// <param name="numberOfColumns">Number of columns</param>
@@ -64,6 +66,43 @@ namespace Altaxo.Calc.LinearAlgebra
 		public int Columns
 		{
 			get { return n; }
+		}
+
+		/// <summary>
+		/// Get the valid indices for a given row.
+		/// </summary>
+		/// <param name="row"></param>
+		/// <returns></returns>
+		public int[] GetIndicesOfRow(int row)
+		{
+			return indices[row] ?? _emptyIntArray;
+		}
+
+		/// <summary>
+		/// Determines whether this sparse matrix is a band matrix, and determines the lower and upper band width.
+		/// </summary>
+		/// <returns></returns>
+		public (bool isBandMatrix, int p, int q) IsBandMatrix()
+		{
+			int maxLowerBandwidth = 0;
+			int maxUpperBandwidth = 0;
+
+			for (int iRow = 0; iRow < Rows; ++iRow)
+			{
+				if (count[iRow] == 0)
+					continue;
+
+				var ind = indices[iRow];
+				var lower = iRow - ind[0];
+				var upper = ind[count[iRow] - 1] - iRow;
+
+				if (lower > maxLowerBandwidth)
+					maxLowerBandwidth = lower;
+				if (upper > maxUpperBandwidth)
+					maxUpperBandwidth = upper;
+			}
+
+			return (maxLowerBandwidth < Rows - 1 || maxUpperBandwidth < Columns - 1, maxLowerBandwidth, maxUpperBandwidth);
 		}
 
 		public SparseDoubleMatrix Clone()
