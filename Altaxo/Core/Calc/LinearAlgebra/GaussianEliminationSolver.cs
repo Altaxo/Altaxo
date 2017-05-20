@@ -328,5 +328,86 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		#endregion Sparse
+
+		#region Band matrix
+
+		/// <summary>Solves a system of linear equations Ax = b with a band matrix A, using Gaussian elimination with partial pivoting.
+		/// Attention! Both matrix A and vector b are destroyed (changed).</summary>
+		/// <param name="A">Elements of matrix 'A'. The matrix is modified!</param>
+		/// <param name="lowerBandwidth">Lower band width of the matrix. It is not checked whether the matrix contains non-zero elements outside of the band!</param>
+		/// <param name="upperBandwidth">Upper band width of the matrix. It is not checked whether the matrix contains non-zero elements outside of the band!</param>
+		/// <param name="b">Right part 'b'. This array is also modified!</param>
+		/// <param name="x">Vector to store the result, i.e. the solution to the problem a x = b.</param>
+		public void SolveDestructiveBanded(MatrixWrapperStructForLeftSpineJaggedArray<double> A, int lowerBandwidth, int upperBandwidth, double[] b, double[] x)
+		{
+			var a = A.Array;
+			if (a == null)
+				throw new ArgumentNullException(nameof(A));
+			if (b == null)
+				throw new ArgumentNullException(nameof(b));
+			if (x == null)
+				throw new ArgumentException(nameof(x));
+
+			int n = A.Rows;
+
+			// Start of algorithm 4.81, page 184, book of Engeln-Müllges, Numerik-Algorithmen, 10th ed.
+			// note ml in the book is lowerBandwidth here, mr in the book is upperBandwidth here
+			for (int j = 0; j < n - 1; ++j)
+			{
+				// Find row with largest absolute value of j-st element
+				int maxIdx = j;
+				double max_abs_aij = Math.Abs(a[j][j]);
+				int i_end = Math.Min(n, j + lowerBandwidth + 1);
+				for (int i = j + 1; i < i_end; ++i)
+				{
+					var abs_aij = Math.Abs(a[i][j]);
+					if (abs_aij > max_abs_aij)
+					{
+						maxIdx = i;
+						max_abs_aij = abs_aij;
+					}
+				}
+
+				if (maxIdx != j) // switch rows
+				{
+					var aj = a[j];
+					a[j] = a[maxIdx];
+					a[maxIdx] = aj;
+
+					var bj = b[j];
+					b[j] = b[maxIdx];
+					b[maxIdx] = bj;
+				}
+
+				var ajj = a[j][j];
+				if (0 == ajj)
+					throw new SingularMatrixException("Matrix is singular");
+
+				i_end = Math.Min(n, j + lowerBandwidth + 1);
+				for (int i = j + 1; i < i_end; ++i)
+				{
+					var aij = (a[i][j] /= ajj); // Element of L (left matrix)
+					int k_end = Math.Min(n, j + lowerBandwidth + upperBandwidth + 1);
+					for (int k = j + 1; k < k_end; ++k)
+						a[i][k] -= a[j][k] * aij;
+					b[i] -= b[j] * aij;
+				}
+			}
+
+			// now we have an L-R matrix
+
+			// back substitution from bottom to top, using the R matrix
+			// we use the fact that coefficients can not be more away from the diagonal than lowerBandwidth+upperBandwidth
+			for (int i = n - 1; i >= 0; --i)
+			{
+				var bi = b[i];
+				int k_end = Math.Min(n, i + lowerBandwidth + upperBandwidth + 1);
+				for (int k = i + 1; k < k_end; ++k)
+					bi -= a[i][k] * x[k];
+				x[i] = bi / a[i][i];
+			}
+		}
+
+		#endregion Band matrix
 	}
 }

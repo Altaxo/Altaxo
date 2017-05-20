@@ -99,5 +99,58 @@ namespace Altaxo.Calc.LinearAlgebra
 			// Verify result is the same
 			Assert.IsTrue(VectorMath.LInfinityNorm(b, b2) < 1e-6);
 		}
+
+		#region Banded matrix
+
+		[Test]
+		public void TextBanded01()
+		{
+			var rnd = new Random(642332);
+
+			for (int testRuns = 0; testRuns < 1000; ++testRuns)
+			{
+				for (int N = 11; N <= 13; ++N) // for even and odd matrix dimensions
+				{
+					for (int lowerBandwidth = 0; lowerBandwidth <= (N + 1) / 2; ++lowerBandwidth) // for all lower bandwidths
+					{
+						for (int upperBandwidth = 0; upperBandwidth <= (N + 1) / 2; ++upperBandwidth) // for all upper bandwidths
+						{
+							var A = new DoubleMatrix(N, N);
+
+							for (int i = 0; i < N; ++i)
+							{
+								int start = Math.Max(0, i - lowerBandwidth);
+								int end = Math.Min(N, i + upperBandwidth + 1);
+
+								for (int j = start; j < end; ++j)
+									A[i, j] = rnd.Next(1, 99);
+							}
+							var x = new DoubleVector(N);
+
+							for (int i = 0; i < N; ++i)
+								x[i] = rnd.Next(-99, 99);
+
+							var b = A * x;
+
+							// now do gaussian elimination
+
+							var solver = new GaussianEliminationSolver();
+
+							var xr = new double[N];
+
+							solver.SolveDestructiveBanded(A, lowerBandwidth, upperBandwidth, b.GetInternalData(), xr);
+
+							// compare result
+							for (int i = 0; i < N; ++i)
+							{
+								Assert.AreEqual(x[i], xr[i], 1E-6);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		#endregion Banded matrix
 	}
 }
