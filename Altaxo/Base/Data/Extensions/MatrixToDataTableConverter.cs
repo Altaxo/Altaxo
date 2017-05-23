@@ -95,7 +95,7 @@ namespace Altaxo.Data
 				throw new ArgumentNullException("vector");
 			if (string.IsNullOrEmpty(name))
 				throw new ArgumentNullException("name");
-			if (vector.Count != _sourceMatrix.Rows)
+			if (vector.Count != _sourceMatrix.RowCount)
 				throw new InvalidDimensionMatrixException("The number of elements of the provided vector must match the number of rows of the matrix.");
 
 			_rowHeaderColumns.Add(new Tuple<IReadOnlyList<double>, string>(vector, name));
@@ -107,7 +107,7 @@ namespace Altaxo.Data
 				throw new ArgumentNullException("vector");
 			if (string.IsNullOrEmpty(name))
 				throw new ArgumentNullException("name");
-			if (vector.Count != _sourceMatrix.Columns)
+			if (vector.Count != _sourceMatrix.ColumnCount)
 				throw new InvalidDimensionMatrixException("The number of elements of the provided vector must match the number of columns of the matrix.");
 
 			_columnHeaderColumns.Add(new Tuple<IReadOnlyList<double>, string>(vector, name));
@@ -130,8 +130,8 @@ namespace Altaxo.Data
 		{
 			using (var suspendToken = _destinationTable.SuspendGetToken())
 			{
-				var numRows = _sourceMatrix.Rows;
-				var numCols = _sourceMatrix.Columns;
+				var numRows = _sourceMatrix.RowCount;
+				var numCols = _sourceMatrix.ColumnCount;
 
 				int columnNumber = 0;
 
@@ -145,7 +145,7 @@ namespace Altaxo.Data
 					++columnNumber;
 				}
 
-				for (int i = 0; i < _sourceMatrix.Columns; ++i)
+				for (int i = 0; i < _sourceMatrix.ColumnCount; ++i)
 				{
 					string columnName;
 					if (null != ColumnNameGenerator)
@@ -166,8 +166,8 @@ namespace Altaxo.Data
 				foreach (var tuple in _columnHeaderColumns)
 				{
 					var col = propCols.EnsureExistenceAtPositionStrictly<DoubleColumn>(propColumnNumber, tuple.Item2, GetIndependendVariableColumnKind(propColumnNumber), 0);
-					VectorMath.Copy(tuple.Item1, col.ToVector(numXDataCols, _sourceMatrix.Columns));
-					col.CutToMaximumLength(numXDataCols + _sourceMatrix.Columns);
+					VectorMath.Copy(tuple.Item1, col.ToVector(numXDataCols, _sourceMatrix.ColumnCount));
+					col.CutToMaximumLength(numXDataCols + _sourceMatrix.ColumnCount);
 					++propColumnNumber;
 				}
 

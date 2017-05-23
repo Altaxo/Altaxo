@@ -103,33 +103,33 @@ namespace Altaxo.Calc.Regression.Multivariate
 			PLS2CalibrationModel calib = (PLS2CalibrationModel)calibrationSet;
 
 			// store the x-loads - careful - they are horizontal in the matrix
-			for (int i = 0; i < calib.XLoads.Rows; i++)
+			for (int i = 0; i < calib.XLoads.RowCount; i++)
 			{
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-				for (int j = 0; j < calib.XLoads.Columns; j++)
+				for (int j = 0; j < calib.XLoads.ColumnCount; j++)
 					col[j] = calib.XLoads[i, j];
 
 				table.DataColumns.Add(col, GetXLoad_ColumnName(i), Altaxo.Data.ColumnKind.V, 0);
 			}
 
 			// now store the y-loads - careful - they are horizontal in the matrix
-			for (int i = 0; i < calib.YLoads.Rows; i++)
+			for (int i = 0; i < calib.YLoads.RowCount; i++)
 			{
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-				for (int j = 0; j < calib.YLoads.Columns; j++)
+				for (int j = 0; j < calib.YLoads.ColumnCount; j++)
 					col[j] = calib.YLoads[i, j];
 
 				table.DataColumns.Add(col, GetYLoad_ColumnName(i), Altaxo.Data.ColumnKind.V, 1);
 			}
 
 			// now store the weights - careful - they are horizontal in the matrix
-			for (int i = 0; i < calib.XWeights.Rows; i++)
+			for (int i = 0; i < calib.XWeights.RowCount; i++)
 			{
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-				for (int j = 0; j < calib.XWeights.Columns; j++)
+				for (int j = 0; j < calib.XWeights.ColumnCount; j++)
 					col[j] = calib.XWeights[i, j];
 
 				table.DataColumns.Add(col, GetXWeight_ColumnName(i), Altaxo.Data.ColumnKind.V, 0);
@@ -139,7 +139,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			{
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-				for (int j = 0; j < calib.CrossProduct.Columns; j++)
+				for (int j = 0; j < calib.CrossProduct.ColumnCount; j++)
 					col[j] = calib.CrossProduct[0, j];
 				table.DataColumns.Add(col, GetCrossProduct_ColumnName(), Altaxo.Data.ColumnKind.V, 3);
 			}

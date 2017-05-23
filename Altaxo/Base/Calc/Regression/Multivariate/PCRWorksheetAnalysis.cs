@@ -56,14 +56,14 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 			int numFactors = calib.NumberOfFactors;
 			int numberOfY = calib.NumberOfY;
-			int numberOfPoints = calib.XLoads.Rows;
+			int numberOfPoints = calib.XLoads.RowCount;
 
 			// store the x-loads - careful - they are horizontal
 			for (int i = 0; i < numFactors; i++)
 			{
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-				for (int j = 0; j < calib.XLoads.Columns; j++)
+				for (int j = 0; j < calib.XLoads.ColumnCount; j++)
 					col[j] = calib.XLoads[i, j];
 
 				table.DataColumns.Add(col, GetXLoad_ColumnName(i), Altaxo.Data.ColumnKind.V, 0);
@@ -74,7 +74,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			{
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-				for (int j = 0; j < calib.XScores.Rows; j++)
+				for (int j = 0; j < calib.XScores.RowCount; j++)
 					col[j] = calib.XScores[j, i];
 
 				table.DataColumns.Add(col, GetXScore_ColumnName(i), Altaxo.Data.ColumnKind.V, 0);

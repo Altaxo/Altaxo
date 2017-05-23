@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -35,10 +36,10 @@ namespace Altaxo.Calc.LinearAlgebra
 		T this[int row, int col] { get; }
 
 		/// <summary>The number of rows of the matrix.</summary>
-		int Rows { get; }
+		int RowCount { get; }
 
 		/// <summary>The number of columns of the matrix.</summary>
-		int Columns { get; }
+		int ColumnCount { get; }
 	}
 
 	/// <summary>
@@ -84,5 +85,51 @@ namespace Altaxo.Calc.LinearAlgebra
 	/// </summary>
 	public interface IExtensibleMatrix<T> : IRightExtensibleMatrix<T>, IBottomExtensibleMatrix<T>
 	{
+	}
+
+	public interface IROBandMatrix<T> : IROMatrix<T>
+	{
+		int LowerBandwidth { get; }
+		int UpperBandwidth { get; }
+
+		IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip);
+	}
+
+	public interface IROSparseMatrix<T> : IROMatrix<T>
+	{
+	}
+
+	/// <summary>
+	/// Operations on matrices which do not change the matrix instance.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public interface IROMatrixLevel1<T> : IROMatrix<T>
+	{
+		IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip);
+
+		/// <summary>
+		/// Elementwise mapping of a function to the elements of a matrix, and storing the result in another matrix.
+		/// </summary>
+		/// <param name="function">The function to apply. First arg in the row index, 2nd arg the column index, and 3rd arg the matrix element.</param>
+		/// <param name="result">The matrix where to store the result.</param>
+		/// <param name="zeros">Designates if zero elements (i.e. banded or sparse matrices) are allowed to omit in the mapping.</param>
+		void MapIndexed(Func<int, int, T, T> function, IMatrix<T> result, Zeros zeros = Zeros.AllowSkip);
+
+		/// <summary>
+		/// Elementwise mapping of a function to the elements of a matrix, and storing the result in another matrix.
+		/// </summary>
+		/// <param name="sourceParameter1">Additional auxilary parameter to be passed to the function.</param>
+		/// <param name="function">The function to apply. First arg in the row index, 2nd arg the column index, 3rd arg the matrix element, and 4th arg the parameter given in <paramref name="sourceParameter1"/>.</param>
+		/// <param name="result">The matrix where to store the result.</param>
+		/// <param name="zeros">Designates if zero elements (i.e. banded or sparse matrices) are allowed to omit in the mapping.</param>
+		void MapIndexed<T1>(T1 sourceParameter1, Func<int, int, T, T1, T> function, IMatrix<T> result, Zeros zeros = Zeros.AllowSkip);
+	}
+
+	public interface IMatrixLevel1<T> : IROMatrixLevel1<T>
+	{
+		/// <summary>
+		/// Sets all elements of the matrix to the default value (i.e. zero for numerical values).
+		/// </summary>
+		void Clear();
 	}
 }

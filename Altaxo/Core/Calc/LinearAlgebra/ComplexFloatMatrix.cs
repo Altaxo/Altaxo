@@ -2170,8 +2170,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>Linear array of complex.</returns>
     public static ComplexFloat[] ToLinearComplexArray(IROMatrix<double> matrix)
     {
-      int rows = matrix.Rows;
-      int columns = matrix.Columns;
+      int rows = matrix.RowCount;
+      int columns = matrix.ColumnCount;
 
       ComplexFloat[] result = new ComplexFloat[rows * columns];
 

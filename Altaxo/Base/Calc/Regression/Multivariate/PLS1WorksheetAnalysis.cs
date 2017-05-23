@@ -57,33 +57,33 @@ namespace Altaxo.Calc.Regression.Multivariate
 			for (int yn = 0; yn < calib.NumberOfY; yn++)
 			{
 				// store the x-loads - careful - they are horizontal in the matrix
-				for (int i = 0; i < calib.XLoads[yn].Rows; i++)
+				for (int i = 0; i < calib.XLoads[yn].RowCount; i++)
 				{
 					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-					for (int j = 0; j < calib.XLoads[yn].Columns; j++)
+					for (int j = 0; j < calib.XLoads[yn].ColumnCount; j++)
 						col[j] = calib.XLoads[yn][i, j];
 
 					table.DataColumns.Add(col, GetXLoad_ColumnName(yn, i), Altaxo.Data.ColumnKind.V, 0);
 				}
 
 				// now store the y-loads - careful - they are horizontal in the matrix
-				for (int i = 0; i < calib.YLoads[yn].Rows; i++)
+				for (int i = 0; i < calib.YLoads[yn].RowCount; i++)
 				{
 					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-					for (int j = 0; j < calib.YLoads[yn].Columns; j++)
+					for (int j = 0; j < calib.YLoads[yn].ColumnCount; j++)
 						col[j] = calib.YLoads[yn][i, j];
 
 					table.DataColumns.Add(col, GetYLoad_ColumnName(yn, i), Altaxo.Data.ColumnKind.V, 1);
 				}
 
 				// now store the weights - careful - they are horizontal in the matrix
-				for (int i = 0; i < calib.XWeights[yn].Rows; i++)
+				for (int i = 0; i < calib.XWeights[yn].RowCount; i++)
 				{
 					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-					for (int j = 0; j < calib.XWeights[yn].Columns; j++)
+					for (int j = 0; j < calib.XWeights[yn].ColumnCount; j++)
 						col[j] = calib.XWeights[yn][i, j];
 
 					table.DataColumns.Add(col, GetXWeight_ColumnName(yn, i), Altaxo.Data.ColumnKind.V, 0);
@@ -93,7 +93,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 				{
 					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-					for (int j = 0; j < calib.CrossProduct[yn].Columns; j++)
+					for (int j = 0; j < calib.CrossProduct[yn].ColumnCount; j++)
 						col[j] = calib.CrossProduct[yn][0, j];
 					table.DataColumns.Add(col, GetCrossProduct_ColumnName(yn), Altaxo.Data.ColumnKind.V, 3);
 				}

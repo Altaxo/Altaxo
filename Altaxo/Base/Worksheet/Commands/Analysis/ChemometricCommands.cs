@@ -138,10 +138,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			using (var suspendToken = table.SuspendGetToken())
 			{
 				// first store the factors
-				for (int i = 0; i < resultMat.Columns; i++)
+				for (int i = 0; i < resultMat.ColumnCount; i++)
 				{
 					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-					for (int j = 0; j < resultMat.Rows; j++)
+					for (int j = 0; j < resultMat.RowCount; j++)
 						col[j] = resultMat[j, i];
 
 					table.DataColumns.Add(col, i.ToString());
@@ -287,7 +287,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 			var factors = new MatrixMath.TopSpineJaggedArrayMatrix<double>(0, 0);
 			var loads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
 			var residualVariances = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
-			var meanX = new MatrixMath.MatrixWithOneRow<double>(matrixX.Columns);
+			var meanX = new MatrixMath.MatrixWithOneRow<double>(matrixX.ColumnCount);
 			// first, center the matrix
 			MatrixMath.ColumnsToZeroMean(matrixX, meanX);
 			MatrixMath.NIPALS_HO(matrixX, maxNumberOfFactors, 1E-9, factors, loads, residualVariances);
@@ -306,16 +306,16 @@ namespace Altaxo.Worksheet.Commands.Analysis
 					MatrixMath.NormalizeRows(meanX);
 
 					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-					for (int i = 0; i < factors.Rows; i++)
+					for (int i = 0; i < factors.RowCount; i++)
 						col[i] = meanScore;
 					table.DataColumns.Add(col, "MeanFactor", Altaxo.Data.ColumnKind.V, 0);
 				}
 
 				// first store the factors
-				for (int i = 0; i < factors.Columns; i++)
+				for (int i = 0; i < factors.ColumnCount; i++)
 				{
 					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-					for (int j = 0; j < factors.Rows; j++)
+					for (int j = 0; j < factors.RowCount; j++)
 						col[j] = factors[j, i];
 
 					table.DataColumns.Add(col, "Factor" + i.ToString(), Altaxo.Data.ColumnKind.V, 1);
@@ -325,17 +325,17 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				{
 					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-					for (int j = 0; j < meanX.Columns; j++)
+					for (int j = 0; j < meanX.ColumnCount; j++)
 						col[j] = meanX[0, j];
 					table.DataColumns.Add(col, "MeanLoad", Altaxo.Data.ColumnKind.V, 2);
 				}
 
 				// now store the loads - careful - they are horizontal in the matrix
-				for (int i = 0; i < loads.Rows; i++)
+				for (int i = 0; i < loads.RowCount; i++)
 				{
 					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-					for (int j = 0; j < loads.Columns; j++)
+					for (int j = 0; j < loads.ColumnCount; j++)
 						col[j] = loads[i, j];
 
 					table.DataColumns.Add(col, "Load" + i.ToString(), Altaxo.Data.ColumnKind.V, 3);
@@ -345,7 +345,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 				{
 					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-					for (int i = 0; i < residualVariances.Rows; i++)
+					for (int i = 0; i < residualVariances.RowCount; i++)
 						col[i] = residualVariances[i, 0];
 					table.DataColumns.Add(col, "ResidualVariance", Altaxo.Data.ColumnKind.V, 4);
 				}

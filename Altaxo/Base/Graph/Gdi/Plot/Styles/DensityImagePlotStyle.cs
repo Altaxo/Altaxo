@@ -375,8 +375,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				out logicalColumnHeaderValues
 				);
 
-			int cols = matrix.Columns;
-			int rows = matrix.Rows;
+			int cols = matrix.ColumnCount;
+			int rows = matrix.RowCount;
 
 			if (cols <= 0 || rows <= 0)
 				return; // we cannot show a picture if one length is zero
@@ -752,7 +752,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			_imageType = CachedImageType.LinearEquidistant;
 			// look if the image has the right dimensions
-			if (null != _cachedImage && (_cachedImage.Width != matrix.Columns || _cachedImage.Height != matrix.Rows))
+			if (null != _cachedImage && (_cachedImage.Width != matrix.ColumnCount || _cachedImage.Height != matrix.RowCount))
 			{
 				_cachedImage.Dispose();
 				_cachedImage = null;
@@ -771,10 +771,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			// look if the image has the right dimensions
 
-			int numberOfRows = matrix.Rows;
-			int numberOfColumns = matrix.Columns;
+			int numberOfRows = matrix.RowCount;
+			int numberOfColumns = matrix.ColumnCount;
 
-			if (null != image && (image.Width < matrix.Columns || image.Height < matrix.Rows))
+			if (null != image && (image.Width < matrix.ColumnCount || image.Height < matrix.RowCount))
 				throw new ArgumentException("The provided image is smaller than required");
 
 			if (null == image)

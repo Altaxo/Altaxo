@@ -68,12 +68,12 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new System.ArgumentNullException("matrix cannot be null.");
       }
 
-      if (matrix.Rows != matrix.Columns)
+      if (matrix.RowCount != matrix.ColumnCount)
       {
         throw new NotSquareMatrixException("Matrix must be square.");
       }
 
-      order = matrix.Columns;
+      order = matrix.ColumnCount;
       this.matrix = new FloatMatrix(matrix);
     }
 
@@ -313,8 +313,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
     private FloatMatrix Pivot(IROMatrix<float> B)
     {
-      int m = B.Rows;
-      int n = B.Columns;
+      int m = B.RowCount;
+      int n = B.ColumnCount;
 
       FloatMatrix ret = new FloatMatrix(m, n);
       for (int i = 0; i < pivots.Length; i++)
@@ -359,13 +359,13 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       else
       {
-        if (B.Rows != order)
+        if (B.RowCount != order)
         {
           throw new System.ArgumentException("Matrix row dimensions must agree.");
         }
 #if MANAGED
         // Copy right hand side with pivoting
-        int nx = B.Columns;
+        int nx = B.ColumnCount;
         FloatMatrix X = Pivot(B);
 
         // Solve L*Y = B(piv,:)

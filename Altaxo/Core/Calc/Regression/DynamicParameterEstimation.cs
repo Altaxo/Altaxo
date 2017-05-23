@@ -263,7 +263,7 @@ namespace Altaxo.Calc.Regression
 		protected virtual JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double> x, IReadOnlyList<double> y, JaggedArrayMatrix M)
 		{
 			int numberOfData = CalculateNumberOfData(x, y);
-			if (M == null || M.Rows != numberOfData || M.Columns != _numberOfParameter)
+			if (M == null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
 				M = new JaggedArrayMatrix(numberOfData, _numberOfParameter);
 
 			// Fill the matrix
@@ -301,7 +301,7 @@ namespace Altaxo.Calc.Regression
 		protected virtual void FillBacksubstitutionY(IReadOnlyList<double> y)
 		{
 			// Fill the y - neccessary later for backsubstitution
-			int numberOfData = _inputMatrix.Rows;
+			int numberOfData = _inputMatrix.RowCount;
 			if (_scaledY == null || _scaledY.Length != numberOfData)
 				_scaledY = new double[numberOfData];
 			for (int i = 0; i < numberOfData; i++)
@@ -337,12 +337,12 @@ namespace Altaxo.Calc.Regression
 		public virtual double CalculatePredictionError(IVector<double> predictedOutput)
 		{
 			if (null == predictedOutput)
-				predictedOutput = new DoubleVector(_inputMatrix.Rows);
+				predictedOutput = new DoubleVector(_inputMatrix.RowCount);
 
 			MatrixMath.Multiply(_inputMatrix, VectorMath.ToROVector(_parameter), predictedOutput);
 
 			double sumsquareddifferences = VectorMath.SumOfSquaredDifferences(VectorMath.ToROVector(_scaledY), predictedOutput);
-			return Math.Sqrt(sumsquareddifferences / _inputMatrix.Rows);
+			return Math.Sqrt(sumsquareddifferences / _inputMatrix.RowCount);
 		}
 
 		/// <summary>
@@ -366,8 +366,8 @@ namespace Altaxo.Calc.Regression
 				inputVector[i] = inputMatrix[0, _numX + i];
 
 			double sumsquareddifferences = 0;
-			int nRows = inputMatrix.Rows;
-			int nCols = inputMatrix.Columns;
+			int nRows = inputMatrix.RowCount;
+			int nCols = inputMatrix.ColumnCount;
 			for (int yIdx = 0; yIdx < nRows; yIdx++)
 			{
 				double ypred = 0;
@@ -584,7 +584,7 @@ namespace Altaxo.Calc.Regression
 
 			public void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector<double> result)
 			{
-				IMatrix<double> work = new JaggedArrayMatrix(a.Rows, a.Columns);
+				IMatrix<double> work = new JaggedArrayMatrix(a.RowCount, a.ColumnCount);
 				_decomposition = MatrixMath.GetSingularValueDecomposition(a, work);
 				_decomposition.Backsubstitution(b, result);
 			}
@@ -598,13 +598,13 @@ namespace Altaxo.Calc.Regression
 
 			public void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector<double> result)
 			{
-				JaggedArrayMatrix outputMatrix = new JaggedArrayMatrix(a.Columns, a.Columns);
-				JaggedArrayMath.MultiplyFirstTransposedWithItself(a.Array, a.Rows, a.Columns, outputMatrix.Array, outputMatrix.Rows, outputMatrix.Columns);
+				JaggedArrayMatrix outputMatrix = new JaggedArrayMatrix(a.ColumnCount, a.ColumnCount);
+				JaggedArrayMath.MultiplyFirstTransposedWithItself(a.Array, a.RowCount, a.ColumnCount, outputMatrix.Array, outputMatrix.RowCount, outputMatrix.ColumnCount);
 
 				DoubleLUDecomp decomp = new DoubleLUDecomp(outputMatrix);
 				decomp.Compute();
 
-				double[] ycov = new double[a.Columns];
+				double[] ycov = new double[a.ColumnCount];
 				MatrixMath.MultiplyFirstTransposed(a, b, VectorMath.ToVector(ycov));
 
 				DoubleVector dresult = decomp.Solve(VectorMath.ToROVector(ycov));
@@ -716,7 +716,7 @@ namespace Altaxo.Calc.Regression
 		protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double> x, IReadOnlyList<double> y, JaggedArrayMatrix M)
 		{
 			int numberOfData = CalculateNumberOfData(x, y);
-			if (M == null || M.Rows != numberOfData || M.Columns != _numberOfParameter)
+			if (M == null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
 				M = new JaggedArrayMatrix(numberOfData, _numberOfParameter);
 
 			// Fill the matrix
@@ -1114,7 +1114,7 @@ namespace Altaxo.Calc.Regression
 		protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double> x, IReadOnlyList<double> y, JaggedArrayMatrix M)
 		{
 			int numberOfData = CalculateNumberOfData(x, y);
-			if (M == null || M.Rows != numberOfData || M.Columns != _numberOfParameter)
+			if (M == null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
 				M = new JaggedArrayMatrix(numberOfData, _numberOfParameter);
 
 			// Fill the matrix
@@ -1264,7 +1264,7 @@ namespace Altaxo.Calc.Regression
 		protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double> x, IReadOnlyList<double> y, JaggedArrayMatrix M)
 		{
 			int numberOfData = CalculateNumberOfData(x, y);
-			if (M == null || M.Rows != numberOfData || M.Columns != _numberOfParameter)
+			if (M == null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
 				M = new JaggedArrayMatrix(numberOfData, _numberOfParameter);
 
 			// Fill the matrix

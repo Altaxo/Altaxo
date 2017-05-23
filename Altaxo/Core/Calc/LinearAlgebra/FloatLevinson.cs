@@ -960,7 +960,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (m_Order != Y.Columns)
+			else if (m_Order != Y.ColumnCount)
 			{
 				throw new RankException("The numer of rows in Y is not equal to the number of rows in the Toeplitz matrix.");
 			}
@@ -973,10 +973,10 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			// allocate memory for solution
-			X = new FloatMatrix(m_Order, Y.Rows);
+			X = new FloatMatrix(m_Order, Y.RowCount);
 			x = new float[m_Order];
 
-			for (l = 0; l < Y.Rows; l++)
+			for (l = 0; l < Y.RowCount; l++)
 			{
 				// get right-side column
 				y = FloatVector.GetColumnAsArray(Y, l);
@@ -1436,7 +1436,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (col.Count != Y.Columns)
+			else if (col.Count != Y.ColumnCount)
 			{
 				throw new RankException("The numer of rows in Y does not match the length of col and row.");
 			}
@@ -1514,7 +1514,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				// update diagonal
 				e = e / (1.0f - Ke * Kr);
 
-				for (l = 0; l < Y.Rows; l++)
+				for (l = 0; l < Y.RowCount; l++)
 				{
 					FloatVector W = X.GetColumn(l);
 					FloatVector M = FloatVector.GetColumn(Y, l);

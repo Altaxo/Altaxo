@@ -65,7 +65,7 @@ namespace Altaxo.Calc.Fourier
 			if (null == sourceMatrix)
 				throw new ArgumentNullException("SourceMatrix must not be null");
 
-			if (sourceMatrix.Rows < 2 || sourceMatrix.Columns < 2)
+			if (sourceMatrix.RowCount < 2 || sourceMatrix.ColumnCount < 2)
 				throw new ArgumentException("SourceMatrix must at least have the dimensions 2x2");
 
 			if (allowOverwriting && (sourceMatrix is IMatrixInArray1DRowMajorRepresentation<double>))
@@ -74,7 +74,7 @@ namespace Altaxo.Calc.Fourier
 			}
 			else
 			{
-				_realMatrix = new DoubleMatrixInArray1DRowMajorRepresentation(sourceMatrix.Rows, sourceMatrix.Columns);
+				_realMatrix = new DoubleMatrixInArray1DRowMajorRepresentation(sourceMatrix.RowCount, sourceMatrix.ColumnCount);
 				MatrixMath.Copy(sourceMatrix, _realMatrix);
 			}
 		}
@@ -89,10 +89,10 @@ namespace Altaxo.Calc.Fourier
 			if (null == sourceMatrix)
 				throw new ArgumentNullException("SourceMatrix must not be null");
 
-			if (sourceMatrix.Rows < 2 || sourceMatrix.Columns < 2)
+			if (sourceMatrix.RowCount < 2 || sourceMatrix.ColumnCount < 2)
 				throw new ArgumentException("SourceMatrix must at least have the dimensions 2x2");
 
-			_realMatrix = new DoubleMatrixInArray1DRowMajorRepresentation(sourceMatrix.Rows, sourceMatrix.Columns);
+			_realMatrix = new DoubleMatrixInArray1DRowMajorRepresentation(sourceMatrix.RowCount, sourceMatrix.ColumnCount);
 			MatrixMath.Copy(sourceMatrix, _realMatrix);
 		}
 
@@ -150,7 +150,7 @@ namespace Altaxo.Calc.Fourier
 		{
 			get
 			{
-				return _realMatrix.Rows;
+				return _realMatrix.RowCount;
 			}
 		}
 
@@ -158,7 +158,7 @@ namespace Altaxo.Calc.Fourier
 		{
 			get
 			{
-				return _realMatrix.Columns;
+				return _realMatrix.ColumnCount;
 			}
 		}
 
@@ -366,13 +366,13 @@ namespace Altaxo.Calc.Fourier
 			var numColumns = NumberOfColumns;
 			var numRows = NumberOfRows;
 
-			int resultNumRows = matrix.Rows;
-			int resultNumColumns = matrix.Columns;
+			int resultNumRows = matrix.RowCount;
+			int resultNumColumns = matrix.ColumnCount;
 
 			if (resultNumRows > numRows)
-				throw new InvalidDimensionMatrixException(string.Format("The provided matrix has more rows ({0}), than the result can provide ({1}).", matrix.Rows, numRows));
+				throw new InvalidDimensionMatrixException(string.Format("The provided matrix has more rows ({0}), than the result can provide ({1}).", matrix.RowCount, numRows));
 			if (resultNumColumns > numColumns)
-				throw new InvalidDimensionMatrixException(string.Format("The provided matrix has more columns ({0}), than the result can provide ({1}).", matrix.Columns, numColumns));
+				throw new InvalidDimensionMatrixException(string.Format("The provided matrix has more columns ({0}), than the result can provide ({1}).", matrix.ColumnCount, numColumns));
 
 			var rePart = ((IMatrixInArray1DRowMajorRepresentation<double>)_realMatrix).GetArray1DRowMajor();
 			var imPart = ((IMatrixInArray1DRowMajorRepresentation<double>)_imagMatrix).GetArray1DRowMajor();
@@ -403,13 +403,13 @@ namespace Altaxo.Calc.Fourier
 			var numColumns = NumberOfColumns;
 			var numRows = NumberOfRows;
 
-			int resultNumRows = matrix.Rows;
-			int resultNumColumns = matrix.Columns;
+			int resultNumRows = matrix.RowCount;
+			int resultNumColumns = matrix.ColumnCount;
 
 			if (resultNumRows > numRows)
-				throw new InvalidDimensionMatrixException(string.Format("The provided matrix has more rows ({0}), than the result can provide ({1}).", matrix.Rows, numRows));
+				throw new InvalidDimensionMatrixException(string.Format("The provided matrix has more rows ({0}), than the result can provide ({1}).", matrix.RowCount, numRows));
 			if (resultNumColumns > numColumns)
-				throw new InvalidDimensionMatrixException(string.Format("The provided matrix has more columns ({0}), than the result can provide ({1}).", matrix.Columns, numColumns));
+				throw new InvalidDimensionMatrixException(string.Format("The provided matrix has more columns ({0}), than the result can provide ({1}).", matrix.ColumnCount, numColumns));
 
 			int colsNegative = (numColumns - 1) / 2; // number of negative frequency points
 			int colsPositive = numColumns - colsNegative; // number of positive (or null) frequency points
@@ -533,8 +533,8 @@ namespace Altaxo.Calc.Fourier
 		/// <param name="m">The matrix to change.</param>
 		public static void RemoveZeroOrderFromMatrixIgnoringInvalidElements(IMatrix<double> m)
 		{
-			int rows = m.Rows;
-			int cols = m.Columns;
+			int rows = m.RowCount;
+			int cols = m.ColumnCount;
 
 			double sum = 0;
 			int n = 0;
@@ -570,8 +570,8 @@ namespace Altaxo.Calc.Fourier
 		/// <param name="m">The matrix to change.</param>
 		public static void RemoveFirstOrderFromMatrixIgnoringInvalidElements(IMatrix<double> m)
 		{
-			int rows = m.Rows;
-			int cols = m.Columns;
+			int rows = m.RowCount;
+			int cols = m.ColumnCount;
 
 			int rowsBy2 = rows / 2;
 			int colsBy2 = cols / 2;
@@ -626,8 +626,8 @@ namespace Altaxo.Calc.Fourier
 		/// <param name="m">The matrix to change.</param>
 		public static void RemoveSecondOrderFromMatrixIgnoringInvalidElements(IMatrix<double> m)
 		{
-			int rows = m.Rows;
-			int cols = m.Columns;
+			int rows = m.RowCount;
+			int cols = m.ColumnCount;
 
 			int rowsBy2 = rows / 2;
 			int colsBy2 = cols / 2;
@@ -685,8 +685,8 @@ namespace Altaxo.Calc.Fourier
 		/// <param name="m">The matrix to change.</param>
 		public static void RemoveThirdOrderFromMatrixIgnoringInvalidElements(IMatrix<double> m)
 		{
-			int rows = m.Rows;
-			int cols = m.Columns;
+			int rows = m.RowCount;
+			int cols = m.ColumnCount;
 
 			int rowsBy2 = rows / 2;
 			int colsBy2 = cols / 2;
@@ -764,12 +764,12 @@ namespace Altaxo.Calc.Fourier
 				}
 			}
 
-			public int Rows
+			public int RowCount
 			{
 				get { return _numberOfRows; }
 			}
 
-			public int Columns
+			public int ColumnCount
 			{
 				get { return _numberOfColumns; }
 			}

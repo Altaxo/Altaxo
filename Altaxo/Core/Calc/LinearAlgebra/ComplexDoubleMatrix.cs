@@ -314,8 +314,8 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("source", "The input DoubleMatrix cannot be null.");
       }
-      this.rows = source.Rows;
-      this.columns = source.Columns;
+      this.rows = source.RowCount;
+      this.columns = source.ColumnCount;
 #if MANAGED
       data = new Complex[rows][];
       for (int i = 0; i < rows; i++)
@@ -375,8 +375,8 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         throw new ArgumentNullException("source", "The input FloatMatrix cannot be null.");
       }
-      this.rows = source.Rows;
-      this.columns = source.Columns;
+      this.rows = source.RowCount;
+      this.columns = source.ColumnCount;
 #if MANAGED
       data = new Complex[rows][];
       for (int i = 0; i < rows; i++)
@@ -591,7 +591,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         return null;
       }
-      int rows = source.Rows, columns = source.Columns;
+      int rows = source.RowCount, columns = source.ColumnCount;
       ComplexDoubleMatrix ret = new ComplexDoubleMatrix(rows, columns);
 #if MANAGED
 
@@ -637,7 +637,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         return null;
       }
-      int rows = source.Rows, columns = source.Columns;
+      int rows = source.RowCount, columns = source.ColumnCount;
       ComplexDoubleMatrix ret = new ComplexDoubleMatrix(rows, columns);
 #if MANAGED
 
@@ -2536,8 +2536,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>Linear array of complex.</returns>
     private static void ToLinearComplexArray(IROMatrix<double> matrix, Complex[] result)
     {
-      int rows = matrix.Rows;
-      int columns = matrix.Columns;
+      int rows = matrix.RowCount;
+      int columns = matrix.ColumnCount;
       int k = 0;
       for (int j = 0; j < columns; ++j)
         for (int i = 0; i < rows; ++i)
@@ -2551,8 +2551,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="result">The result is stored here as a linear array of complex numbers.</param>
     private static void ToLinearComplexArray(IROMatrix<float> matrix, Complex[] result)
     {
-      int rows = matrix.Rows;
-      int columns = matrix.Columns;
+      int rows = matrix.RowCount;
+      int columns = matrix.ColumnCount;
 
       int k = 0;
       for (int j = 0; j < columns; ++j)
@@ -2603,7 +2603,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>Linear array of complex.</returns>
     public static Complex[] ToLinearComplexArray(IROMatrix<double> matrix)
     {
-      Complex[] result = new Complex[matrix.Rows * matrix.Columns];
+      Complex[] result = new Complex[matrix.RowCount * matrix.ColumnCount];
       ToLinearComplexArray(matrix, result);
       return result;
     }
@@ -2615,7 +2615,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>Linear array of complex.</returns>
     public static Complex[] ToLinearComplexArray(IROMatrix<float> matrix)
     {
-      Complex[] result = new Complex[matrix.Rows * matrix.Columns];
+      Complex[] result = new Complex[matrix.RowCount * matrix.ColumnCount];
       ToLinearComplexArray(matrix, result);
       return result;
     }

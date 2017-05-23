@@ -721,7 +721,7 @@ namespace Altaxo.Data
 
 			_resultingMatrix = _matrixGenerator(numRows, numColumns);
 
-			if (null == _resultingMatrix || _resultingMatrix.Rows != numRows || _resultingMatrix.Columns != numColumns)
+			if (null == _resultingMatrix || _resultingMatrix.RowCount != numRows || _resultingMatrix.ColumnCount != numColumns)
 				throw new InvalidOperationException("The matrix generator worked not as expected. Either the generated matrix is null, or the dimensions of the returned matrix deviate from the provided dimensions.");
 
 			// fill the real part with the table contents

@@ -207,7 +207,7 @@ namespace Altaxo.Calc.Ode
 
 			// following could be local variables, but because they require allocation, they are
 			// allocated once in the constructor
-			private DoubleMatrix P; // n x n
+			private IMatrix<double> P; // n x n
 
 			private double[] ecurr; // we need this temporary variable, must not be shared among states!
 			private DoubleMatrix zcurr = new DoubleMatrix(1, 1); // n x (qmax+1)
@@ -259,8 +259,6 @@ namespace Altaxo.Calc.Ode
 
 				zcurr = new DoubleMatrix(n, qmax + 1);
 				z0 = new DoubleMatrix(n, qmax + 1);
-
-				P = new DoubleMatrix(n, n);
 
 				_en = new double[n];
 				ecurr = new double[n];
@@ -317,12 +315,12 @@ namespace Altaxo.Calc.Ode
 			public void Rescale(double r)
 			{
 				double R = 1;
-				int q = _zn.Columns;
+				int q = _zn.ColumnCount;
 
 				for (int j = 1; j < q; ++j)
 				{
 					R *= r;
-					for (int i = 0; i < _zn.Rows; ++i)
+					for (int i = 0; i < _zn.RowCount; ++i)
 					{
 						_zn[i, j] *= R;
 					}
@@ -340,8 +338,9 @@ namespace Altaxo.Calc.Ode
 			/// <returns>So-called Zn0, initial vaue of Z in new step</returns>
 			public void ZNew()
 			{
-				int q = _zn.Columns;
-				int n = _zn.Rows;
+				int q = _zn.ColumnCount;
+				int n = _zn.RowCount;
+				var zn = _zn.InternalData.Array;
 
 				for (int k = 0; k < q - 1; k++)
 				{
@@ -349,9 +348,30 @@ namespace Altaxo.Calc.Ode
 					{
 						for (int i = 0; i < n; i++)
 						{
-							_zn[i, j - 1] = _zn[i, j] + _zn[i, j - 1];
+							zn[i][j - 1] = zn[i][j] + zn[i][j - 1];
 						}
 					}
+				}
+			}
+
+			private void AllocatePMatrixForJacobian(IROMatrix<double> J)
+			{
+				switch (J)
+				{
+					case IROSparseMatrix<double> sm:
+						P = new SparseDoubleMatrix(J.RowCount, J.ColumnCount);
+						break;
+
+					case IROBandMatrix<double> bm:
+						P = new BandDoubleMatrix(J.RowCount, J.ColumnCount, bm.LowerBandwidth, bm.UpperBandwidth);
+						break;
+
+					case DoubleMatrix dm:
+						P = new DoubleMatrix(J.RowCount, J.ColumnCount);
+						break;
+
+					default:
+						throw new NotImplementedException(string.Format("Jacobian is a matrix of type {0}, which is not implemented here!", J.GetType()));
 				}
 			}
 
@@ -402,10 +422,12 @@ namespace Altaxo.Calc.Ode
 				if (null != denseJacobianEvaluation)
 				{
 					var J = denseJacobianEvaluation(t + dt, xcurr);
+					if (J.GetType() != P?.GetType())
+						AllocatePMatrixForJacobian(J);
 
 					do
 					{
-						MatrixMath.Map(J, (x, i, j) => (i == j ? 1 : 0) - x * dt * b[qcurr - 1], P); // B = Identity - J*dt*b[qcurr-1]
+						MatrixMath.MapIndexed(J, dt * b[qcurr - 1], (i, j, aij, factor) => (i == j ? 1 : 0) - aij * factor, P, Zeros.AllowSkip); // P = Identity - J*dt*b[qcurr-1]
 						VectorMath.Copy(xcurr, xprev);
 						f(t + dt, xcurr, ftdt);
 						MatrixMath.CopyColumn(z0, 1, colExtract); // 1st derivative/dt
@@ -433,7 +455,7 @@ namespace Altaxo.Calc.Ode
 				else if (null != sparseJacobianEvaluation)
 				{
 					SparseDoubleMatrix J = sparseJacobianEvaluation(t + dt, xcurr);
-					SparseDoubleMatrix P = new SparseDoubleMatrix(J.Rows, J.Columns);
+					SparseDoubleMatrix P = new SparseDoubleMatrix(J.RowCount, J.ColumnCount);
 
 					do
 					{

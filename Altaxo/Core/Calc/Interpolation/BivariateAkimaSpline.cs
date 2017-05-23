@@ -70,7 +70,7 @@ namespace Altaxo.Calc.Interpolation
 				_myY = VectorMath.ToVector(new double[y.Count]);
 				VectorMath.Copy(y, (IVector<double>)_myY);
 
-				_myZ = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_myZ.Rows, _myZ.Columns);
+				_myZ = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_myZ.RowCount, _myZ.ColumnCount);
 				MatrixMath.Copy(z, (IMatrix<double>)_myZ);
 			}
 			else

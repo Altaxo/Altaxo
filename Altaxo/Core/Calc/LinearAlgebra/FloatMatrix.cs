@@ -327,7 +327,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Return the number of rows in the <c>FloatMatrix</c> variable.</summary>
     ///<returns>The number of rows.</returns>
-    public int Rows
+    public int RowCount
     {
       get
       {
@@ -337,7 +337,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Return the number of columns in <c>FloatMatrix</c> variable.</summary>
     ///<returns>The number of columns.</returns>
-    public int Columns
+    public int ColumnCount
     {
       get
       {
@@ -1936,8 +1936,8 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new ArgumentNullException("source", "The input FloatMatrix cannot be null.");
       }
 
-      this.rows = source.Rows;
-      this.columns = source.Columns;
+      this.rows = source.RowCount;
+      this.columns = source.ColumnCount;
 #if MANAGED
       data = new float[rows][];
       if (source is FloatMatrix)
@@ -1973,8 +1973,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>Linear array of complex.</returns>
     public static float[] ToLinearArray(IROMatrix<double> matrix)
     {
-      int rows = matrix.Rows;
-      int columns = matrix.Columns;
+      int rows = matrix.RowCount;
+      int columns = matrix.ColumnCount;
 
       float[] result = new float[rows * columns];
 
@@ -1994,8 +1994,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>Linear array of complex.</returns>
     public static float[] ToLinearArray(IROMatrix<float> matrix)
     {
-      int rows = matrix.Rows;
-      int columns = matrix.Columns;
+      int rows = matrix.RowCount;
+      int columns = matrix.ColumnCount;
 
       float[] result = new float[rows * columns];
 

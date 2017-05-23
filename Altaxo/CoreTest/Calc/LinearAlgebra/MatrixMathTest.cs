@@ -65,8 +65,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 			IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
-			Assert.AreEqual(2, mb.Rows);
-			Assert.AreEqual(3, mb.Columns);
+			Assert.AreEqual(2, mb.RowCount);
+			Assert.AreEqual(3, mb.ColumnCount);
 
 			Assert.AreEqual(1.0 / 3.0, mb[0, 0], 3 * DoubleConstants.DBL_EPSILON);
 			Assert.AreEqual(1.0 / 3.0, mb[0, 1], 3 * DoubleConstants.DBL_EPSILON);
@@ -89,8 +89,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 			IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
-			Assert.AreEqual(3, mb.Rows);
-			Assert.AreEqual(2, mb.Columns);
+			Assert.AreEqual(3, mb.RowCount);
+			Assert.AreEqual(2, mb.ColumnCount);
 
 			Assert.AreEqual(1.0 / 42.0, mb[0, 0], 3 * DoubleConstants.DBL_EPSILON);
 			Assert.AreEqual(1.0 / 42.0, mb[0, 1], 3 * DoubleConstants.DBL_EPSILON);
@@ -116,8 +116,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 			IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
-			Assert.AreEqual(3, mb.Rows);
-			Assert.AreEqual(3, mb.Columns);
+			Assert.AreEqual(3, mb.RowCount);
+			Assert.AreEqual(3, mb.ColumnCount);
 
 			Assert.AreEqual(-1.0 / 7.0, mb[0, 0], 3 * DoubleConstants.DBL_EPSILON);
 			Assert.AreEqual(0, mb[0, 1], 3 * DoubleConstants.DBL_EPSILON);
@@ -146,8 +146,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 			IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
-			Assert.AreEqual(3, mb.Rows);
-			Assert.AreEqual(3, mb.Columns);
+			Assert.AreEqual(3, mb.RowCount);
+			Assert.AreEqual(3, mb.ColumnCount);
 
 			Assert.AreEqual(1099511627776, mb[0, 0], 3E-4 * 1099511627776);
 			Assert.AreEqual(0, mb[0, 1], 2E-4);
@@ -176,8 +176,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 			IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
-			Assert.AreEqual(3, mb.Rows);
-			Assert.AreEqual(3, mb.Columns);
+			Assert.AreEqual(3, mb.RowCount);
+			Assert.AreEqual(3, mb.ColumnCount);
 
 			Assert.AreEqual(1.0 / 76.0, mb[0, 0], 3 * DoubleConstants.DBL_EPSILON);
 			Assert.AreEqual(1.0 / 38.0, mb[0, 1], 3 * DoubleConstants.DBL_EPSILON);
@@ -206,8 +206,8 @@ namespace AltaxoTest.Calc.LinearAlgebra
 
 			IMatrix<double> mb = MatrixMath.PseudoInverse(ma);
 
-			Assert.AreEqual(3, mb.Rows);
-			Assert.AreEqual(3, mb.Columns);
+			Assert.AreEqual(3, mb.RowCount);
+			Assert.AreEqual(3, mb.ColumnCount);
 
 			Assert.AreEqual(1.0 / 63.0, mb[0, 0], 3 * DoubleConstants.DBL_EPSILON);
 			Assert.AreEqual(1.0 / 63.0, mb[0, 1], 3 * DoubleConstants.DBL_EPSILON);

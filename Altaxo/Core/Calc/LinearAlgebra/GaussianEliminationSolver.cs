@@ -28,6 +28,40 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="A">Elements of matrix 'A'. This array is modified!</param>
 		/// <param name="b">Right part 'b'. This array is also modified!</param>
 		/// <param name="x">Vector to store the result, i.e. the solution to the problem a x = b.</param>
+		public void SolveDestructive(IMatrix<double> A, double[] b, double[] x)
+		{
+			if (A == null)
+				throw new ArgumentNullException(nameof(A));
+			if (b == null)
+				throw new ArgumentNullException(nameof(b));
+			if (x == null)
+				throw new ArgumentException(nameof(x));
+
+			switch (A)
+			{
+				case SparseDoubleMatrix sm:
+					SolveDestructive(sm, b, x);
+					break;
+
+				case BandDoubleMatrix bm:
+					SolveDestructiveBanded(bm.InternalData, bm.LowerBandwidth, bm.UpperBandwidth, b, x);
+					break;
+
+				case DoubleMatrix dm:
+					SolveDestructive(dm.InternalData, b, x);
+					break;
+
+				default:
+					Solve(A, b, x.ToVector());
+					break;
+			}
+		}
+
+		/// <summary>Solves system of linear equations Ax = b using Gaussian elimination with partial pivoting.
+		/// Attention! Both matrix A and vector b are destroyed (changed).</summary>
+		/// <param name="A">Elements of matrix 'A'. This array is modified!</param>
+		/// <param name="b">Right part 'b'. This array is also modified!</param>
+		/// <param name="x">Vector to store the result, i.e. the solution to the problem a x = b.</param>
 		public void SolveDestructive(MatrixWrapperStructForLeftSpineJaggedArray<double> A, double[] b, double[] x)
 		{
 			var a = A.Array;
@@ -38,7 +72,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (x == null)
 				throw new ArgumentException(nameof(x));
 
-			int n = A.Rows;
+			int n = A.RowCount;
 
 			for (int j = 0; j < n; ++j)
 			{
@@ -104,7 +138,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		private void SwapRow(IMatrix<double> A, IVector<double> b, int i, int j)
 		{
-			var cols = A.Columns;
+			var cols = A.ColumnCount;
 			for (int k = 0; k < cols; ++k)
 			{
 				var A_i = A[i, k];
@@ -131,7 +165,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (x == null)
 				throw new ArgumentException(nameof(x));
 
-			int n = A.Rows;
+			int n = A.RowCount;
 
 			for (int j = 0; j < n; ++j)
 			{
@@ -197,8 +231,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="x">Vector to store the result, i.e. the solution to the problem a x = b.</param>
 		public void Solve(IROMatrix<double> A, IReadOnlyList<double> b, IVector<double> x)
 		{
-			if (_temp_A.Rows != A.Rows || _temp_A.Columns != A.Columns)
-				_temp_A = new MatrixWrapperStructForLeftSpineJaggedArray<double>(A.Rows, A.Columns);
+			if (_temp_A.RowCount != A.RowCount || _temp_A.ColumnCount != A.ColumnCount)
+				_temp_A = new MatrixWrapperStructForLeftSpineJaggedArray<double>(A.RowCount, A.ColumnCount);
 			if (b.Count != _temp_b?.Length)
 				_temp_b = new double[b.Count];
 			if (b.Count != _temp_x?.Length)
@@ -257,10 +291,10 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentNullException(nameof(b));
 			if (x == null)
 				throw new ArgumentNullException(nameof(x));
-			int n = A.Rows;
+			int n = A.RowCount;
 			if (!(n == b.Length))
 				throw new RankException("Mismatch between number of rows of the matrix A and length of vector b");
-			if (!(A.Columns == x.Length))
+			if (!(A.ColumnCount == x.Length))
 				throw new RankException("Mismatch between number of columns of the matrix A and length of vector x");
 
 			for (int j = 0; j < n; j++)
@@ -348,7 +382,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (x == null)
 				throw new ArgumentException(nameof(x));
 
-			int n = A.Rows;
+			int n = A.RowCount;
 
 			// Start of algorithm 4.81, page 184, book of Engeln-Müllges, Numerik-Algorithmen, 10th ed.
 			// note ml in the book is lowerBandwidth here, mr in the book is upperBandwidth here

@@ -339,7 +339,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			#region IROMatrix Members
 
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -355,7 +355,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{
@@ -384,7 +384,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			#region IROMatrix Members
 
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -400,7 +400,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{
@@ -429,7 +429,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			#region IROMatrix Members
 
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -445,7 +445,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{
@@ -490,7 +490,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			#region IROMatrix Members
 
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -506,7 +506,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{

@@ -75,12 +75,12 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-		public int Rows
+		public int RowCount
 		{
 			get { return _numberOfRows; }
 		}
 
-		public int Columns
+		public int ColumnCount
 		{
 			get { return _numberOfColumns; }
 		}

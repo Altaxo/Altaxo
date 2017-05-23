@@ -456,8 +456,8 @@ namespace Altaxo.Calc.Fourier
 		public static void
 			FourierTransformation2D(IMatrix<double> matrixRe, IMatrix<double> matrixIm, FourierDirection direction)
 		{
-			int numberOfRows = matrixRe.Rows;
-			int numberOfColumns = matrixRe.Columns;
+			int numberOfRows = matrixRe.RowCount;
+			int numberOfColumns = matrixRe.ColumnCount;
 
 			// Do the FFT in the first direction
 

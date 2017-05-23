@@ -89,7 +89,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of rows of the matrix.
 			/// </summary>
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -111,7 +111,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of columns of the matrix.
 			/// </summary>
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{
@@ -151,7 +151,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of rows of the matrix.
 			/// </summary>
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -175,7 +175,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of columns of the matrix.
 			/// </summary>
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{
@@ -251,7 +251,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of rows of the matrix.
 			/// </summary>
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -273,7 +273,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of columns of the matrix.
 			/// </summary>
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{

@@ -345,13 +345,13 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>Returns the number of columns.</summary>
-		public int Rows
+		public int RowCount
 		{
 			get { return rows; }
 		}
 
 		/// <summary>Returns the number of columns.</summary>
-		public int Columns
+		public int ColumnCount
 		{
 			get { return columns; }
 		}
@@ -543,7 +543,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <summary>Matrix addition.</summary>
 		public IMapackMatrix Addition(IMapackMatrix B)
 		{
-			if ((rows != B.Rows) || (columns != B.Columns))
+			if ((rows != B.RowCount) || (columns != B.ColumnCount))
 			{
 				throw new ArgumentException("Matrix dimension do not match.");
 			}
@@ -562,7 +562,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <summary>Matrix subtraction.</summary>
 		public IMapackMatrix Subtraction(IMapackMatrix B)
 		{
-			if ((rows != B.Rows) || (columns != B.Columns))
+			if ((rows != B.RowCount) || (columns != B.ColumnCount))
 			{
 				throw new ArgumentException("Matrix dimension do not match.");
 			}
@@ -597,12 +597,12 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <summary>Matrix-matrix multiplication.</summary>
 		public IMapackMatrix Multiply(IMapackMatrix B)
 		{
-			if (B.Rows != this.columns)
+			if (B.RowCount != this.columns)
 			{
 				throw new ArgumentException("Matrix dimensions are not valid.");
 			}
 
-			int columns = B.Columns;
+			int columns = B.ColumnCount;
 			Matrix X = new Matrix(rows, columns);
 			double[][] x = X.Array;
 
@@ -780,7 +780,7 @@ namespace Altaxo.Calc.LinearAlgebra
 					throw new ArgumentNullException("Matrix is not square.");
 				}
 
-				int dimension = A.Rows;
+				int dimension = A.RowCount;
 				L = new Matrix(dimension, dimension);
 
 				double[][] a = A.Array;
@@ -831,7 +831,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			public IMapackMatrix Solve(IMapackMatrix rhs)
 			{
-				if (rhs.Rows != L.Rows)
+				if (rhs.RowCount != L.RowCount)
 				{
 					throw new ArgumentException("Matrix dimensions do not match.");
 				}
@@ -844,14 +844,14 @@ namespace Altaxo.Calc.LinearAlgebra
 					throw new InvalidOperationException("Matrix is not positive definite.");
 				}
 
-				int dimension = L.Rows;
-				int count = rhs.Columns;
+				int dimension = L.RowCount;
+				int count = rhs.ColumnCount;
 
 				IMapackMatrix B = (IMapackMatrix)rhs.Clone();
 				double[][] l = L.Array;
 
 				// Solve L*Y = B;
-				for (int k = 0; k < L.Rows; k++)
+				for (int k = 0; k < L.RowCount; k++)
 				{
 					for (int i = k + 1; i < dimension; i++)
 					{
@@ -898,8 +898,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				LU = (Matrix)A.Clone();
 				double[][] lu = LU.Array;
-				int rows = A.Rows;
-				int columns = A.Columns;
+				int rows = A.RowCount;
+				int columns = A.ColumnCount;
 				pivotVector = new int[rows];
 				for (int i = 0; i < rows; i++)
 					pivotVector[i] = i;
@@ -965,7 +965,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-					for (int j = 0; j < LU.Columns; j++)
+					for (int j = 0; j < LU.ColumnCount; j++)
 						if (LU[j, j] == 0)
 							return false;
 					return true;
@@ -976,9 +976,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-					if (LU.Rows != LU.Columns) throw new ArgumentException("Matrix must be square.");
+					if (LU.RowCount != LU.ColumnCount) throw new ArgumentException("Matrix must be square.");
 					double determinant = (double)pivotSign;
-					for (int j = 0; j < LU.Columns; j++)
+					for (int j = 0; j < LU.ColumnCount; j++)
 						determinant *= LU[j, j];
 					return determinant;
 				}
@@ -988,8 +988,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-					int rows = LU.Rows;
-					int columns = LU.Columns;
+					int rows = LU.RowCount;
+					int columns = LU.ColumnCount;
 					Matrix X = new Matrix(rows, columns);
 					for (int i = 0; i < rows; i++)
 						for (int j = 0; j < columns; j++)
@@ -1007,8 +1007,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-					int rows = LU.Rows;
-					int columns = LU.Columns;
+					int rows = LU.RowCount;
+					int columns = LU.ColumnCount;
 					Matrix X = new Matrix(rows, columns);
 					for (int i = 0; i < rows; i++)
 						for (int j = 0; j < columns; j++)
@@ -1024,7 +1024,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-					int rows = LU.Rows;
+					int rows = LU.RowCount;
 					double[] p = new double[rows];
 					for (int i = 0; i < rows; i++)
 						p[i] = (double)pivotVector[i];
@@ -1034,15 +1034,15 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			public IMapackMatrix Solve(IMapackMatrix B)
 			{
-				if (B.Rows != LU.Rows) throw new ArgumentException("Invalid matrix dimensions.");
+				if (B.RowCount != LU.RowCount) throw new ArgumentException("Invalid matrix dimensions.");
 				if (!IsNonSingular) throw new InvalidOperationException("Matrix is singular");
 
 				// Copy right hand side with pivoting
-				int count = B.Columns;
+				int count = B.ColumnCount;
 				IMapackMatrix X = B.Submatrix(pivotVector, 0, count - 1);
 
-				int rows = LU.Rows;
-				int columns = LU.Columns;
+				int rows = LU.RowCount;
+				int columns = LU.ColumnCount;
 				double[][] lu = LU.Array;
 
 				// Solve L*Y = B(piv,:)
@@ -1087,8 +1087,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				QR = (Matrix)A.Clone();
 				double[][] qr = QR.Array;
-				int m = A.Rows;
-				int n = A.Columns;
+				int m = A.RowCount;
+				int n = A.ColumnCount;
 				Rdiag = new double[n];
 
 				for (int k = 0; k < n; k++)
@@ -1124,14 +1124,14 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			public IMapackMatrix Solve(IMapackMatrix rhs)
 			{
-				if (rhs.Rows != QR.Rows) throw new ArgumentException("Matrix row dimensions must agree.");
+				if (rhs.RowCount != QR.RowCount) throw new ArgumentException("Matrix row dimensions must agree.");
 				if (!IsFullRank) throw new InvalidOperationException("Matrix is rank deficient.");
 
 				// Copy right hand side
-				int count = rhs.Columns;
+				int count = rhs.ColumnCount;
 				IMapackMatrix X = rhs.Clone();
-				int m = QR.Rows;
-				int n = QR.Columns;
+				int m = QR.RowCount;
+				int n = QR.ColumnCount;
 				double[][] qr = QR.Array;
 
 				// Compute Y = transpose(Q)*B
@@ -1166,7 +1166,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-					int columns = QR.Columns;
+					int columns = QR.ColumnCount;
 					for (int j = 0; j < columns; j++)
 						if (Rdiag[j] == 0)
 							return false;
@@ -1178,7 +1178,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-					int n = QR.Columns;
+					int n = QR.ColumnCount;
 					Matrix X = new Matrix(n, n);
 					double[][] x = X.Array;
 					double[][] qr = QR.Array;
@@ -1199,24 +1199,24 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-					Matrix X = new Matrix(QR.Rows, QR.Columns);
+					Matrix X = new Matrix(QR.RowCount, QR.ColumnCount);
 					double[][] x = X.Array;
 					double[][] qr = QR.Array;
-					for (int k = QR.Columns - 1; k >= 0; k--)
+					for (int k = QR.ColumnCount - 1; k >= 0; k--)
 					{
-						for (int i = 0; i < QR.Rows; i++)
+						for (int i = 0; i < QR.RowCount; i++)
 							x[i][k] = 0.0;
 
 						x[k][k] = 1.0;
-						for (int j = k; j < QR.Columns; j++)
+						for (int j = k; j < QR.ColumnCount; j++)
 						{
 							if (qr[k][k] != 0)
 							{
 								double s = 0.0;
-								for (int i = k; i < QR.Rows; i++)
+								for (int i = k; i < QR.RowCount; i++)
 									s += qr[i][k] * x[i][j];
 								s = -s / qr[k][k];
-								for (int i = k; i < QR.Rows; i++)
+								for (int i = k; i < QR.RowCount; i++)
 									x[i][j] += s * qr[i][k];
 							}
 						}
@@ -1238,8 +1238,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				Matrix copy = (Matrix)A.Clone();
 				double[][] a = copy.Array;
-				m = A.Rows;
-				n = A.Columns;
+				m = A.RowCount;
+				n = A.ColumnCount;
 				int nu = Math.Min(m, n);
 				s = new double[Math.Min(m + 1, n)];
 				U = new Matrix(m, nu);
@@ -1702,9 +1702,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			public EigenvalueDecomposition(Matrix A)
 			{
-				if (A.Rows != A.Columns) throw new ArgumentException("Matrix is not a square matrix.");
+				if (A.RowCount != A.ColumnCount) throw new ArgumentException("Matrix is not a square matrix.");
 
-				n = A.Columns;
+				n = A.ColumnCount;
 				V = new Matrix(n, n);
 				d = new double[n];
 				e = new double[n];

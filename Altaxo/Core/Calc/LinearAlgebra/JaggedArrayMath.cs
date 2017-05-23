@@ -59,8 +59,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>New jagged array with the same element values than matrix a.</returns>
 		public static double[][] GetMatrixCopy(IROMatrix<double> a)
 		{
-			int rows = a.Rows;
-			int cols = a.Columns;
+			int rows = a.RowCount;
+			int cols = a.ColumnCount;
 			double[][] result = new double[rows][];
 			double[] row;
 			for (int i = 0; i < rows; i++)
@@ -107,7 +107,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -115,7 +115,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{

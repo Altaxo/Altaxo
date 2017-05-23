@@ -62,8 +62,8 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// <param name="m">The matrix to modify.</param>
 		public static void Application(IMatrix<double> m)
 		{
-			var rows = m.Rows;
-			var cols = m.Columns;
+			var rows = m.RowCount;
+			var cols = m.ColumnCount;
 
 			double facI = 2.0 / (rows - 1);
 			double facJ = 2.0 / (cols - 1);
@@ -102,8 +102,8 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// <param name="m">The matrix to modify.</param>
 		public static void Application(IMatrix<double> m)
 		{
-			var rows = m.Rows;
-			var cols = m.Columns;
+			var rows = m.RowCount;
+			var cols = m.ColumnCount;
 
 			double facI = 2.0 / (rows - 1);
 			double facJ = 2.0 / (cols - 1);
@@ -142,8 +142,8 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// <param name="m">The matrix to modify.</param>
 		public static void Application(IMatrix<double> m)
 		{
-			var rows = m.Rows;
-			var cols = m.Columns;
+			var rows = m.RowCount;
+			var cols = m.ColumnCount;
 
 			double facI = 2.0 / (rows - 1);
 			double facJ = 2.0 / (cols - 1);
@@ -211,8 +211,8 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// <param name="sigma">The sigma value to calculate the window function.</param>
 		public static void Application(IMatrix<double> m, double sigma)
 		{
-			var rows = m.Rows;
-			var cols = m.Columns;
+			var rows = m.RowCount;
+			var cols = m.ColumnCount;
 
 			double facI = 2.0 / (rows - 1);
 			double facJ = 2.0 / (cols - 1);
@@ -273,8 +273,8 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// <param name="kappa">The sigma value to calculate the window function.</param>
 		public static void Application(IMatrix<double> m, double kappa)
 		{
-			var rows = m.Rows;
-			var cols = m.Columns;
+			var rows = m.RowCount;
+			var cols = m.ColumnCount;
 
 			double facI = 2.0 / (rows - 1);
 			double facJ = 2.0 / (cols - 1);
@@ -313,8 +313,8 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// <param name="m">The matrix to modify.</param>
 		public static void Application(IMatrix<double> m)
 		{
-			var rows = m.Rows;
-			var cols = m.Columns;
+			var rows = m.RowCount;
+			var cols = m.ColumnCount;
 
 			double facI = 2.0 / (rows - 1);
 			double facJ = 2.0 / (cols - 1);
@@ -353,8 +353,8 @@ namespace Altaxo.Calc.Fourier.Windows
 		/// <param name="m">The matrix to modify.</param>
 		public static void Application(IMatrix<double> m)
 		{
-			var rows = m.Rows;
-			var cols = m.Columns;
+			var rows = m.RowCount;
+			var cols = m.ColumnCount;
 
 			double facI = 2.0 / (rows - 1);
 			double facJ = 2.0 / (cols - 1);

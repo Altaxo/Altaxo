@@ -84,12 +84,12 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
 		protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
 		{
-			int numberOfFactors = _calib.NumberOfFactors = Math.Min(matrixX.Columns, maxFactors);
-			IMatrix<double> helperY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixY.Rows, 1);
+			int numberOfFactors = _calib.NumberOfFactors = Math.Min(matrixX.ColumnCount, maxFactors);
+			IMatrix<double> helperY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixY.RowCount, 1);
 
 			_PRESS = null;
 
-			for (int i = 0; i < matrixY.Columns; i++)
+			for (int i = 0; i < matrixY.ColumnCount; i++)
 			{
 				MatrixMath.Submatrix(matrixY, helperY, 0, i);
 
@@ -125,8 +125,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 			if (numFactors > NumberOfFactors)
 				throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})", numFactors, NumberOfFactors));
 
-			IMatrix<double> helperY = predictedY == null ? null : new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.Rows, 1);
-			IMatrix<double> helperS = spectralResiduals == null ? null : new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.Rows, 1);
+			IMatrix<double> helperY = predictedY == null ? null : new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, 1);
+			IMatrix<double> helperS = spectralResiduals == null ? null : new MatrixMath.LeftSpineJaggedArrayMatrix<double>(XU.RowCount, 1);
 			for (int i = 0; i < _calib.NumberOfY; i++)
 			{
 				PLS2Regression.Predict(
@@ -154,7 +154,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <param name="predictionScores">Supplied matrix for holding the prediction scores.</param>
 		protected override void InternalGetPredictionScores(int numFactors, IMatrix<double> predictionScores)
 		{
-			IMatrix<double> pred = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(predictionScores.Rows, 1);
+			IMatrix<double> pred = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(predictionScores.RowCount, 1);
 			for (int i = 0; i < _calib.NumberOfY; i++)
 			{
 				PLS2Regression.GetPredictionScoreMatrix(_calib.XLoads[i], _calib.YLoads[i], _calib.XWeights[i], _calib.CrossProduct[i], numFactors, pred);

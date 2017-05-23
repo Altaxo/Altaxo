@@ -122,7 +122,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of rows of the matrix. Always 1 (one).
 			/// </summary>
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -133,7 +133,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of columns of the matrix. Always 1 (one).
 			/// </summary>
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{
@@ -243,7 +243,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of rows. Returns always 1 (one).
 			/// </summary>
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -254,7 +254,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of columns, i.e. number of elements of the horizontal vector.
 			/// </summary>
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{
@@ -367,7 +367,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of Rows = elements of the vector.
 			/// </summary>
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -378,7 +378,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of columns of the matrix, always 1 (one) since it is a vertical vector.
 			/// </summary>
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{
@@ -448,7 +448,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <param name="matrix">The matrix.</param>
 			/// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
 			public MatrixRowROVector(IROMatrix<T> matrix, int row)
-				: this(matrix, row, 0, matrix.Columns)
+				: this(matrix, row, 0, matrix.ColumnCount)
 			{
 			}
 
@@ -463,9 +463,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				if (matrix == null)
 					throw new ArgumentNullException("IROMatrix m is null");
-				if (row < 0 || row >= matrix.Rows)
+				if (row < 0 || row >= matrix.RowCount)
 					throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
-				if (columnOffset + length > matrix.Columns)
+				if (columnOffset + length > matrix.ColumnCount)
 					throw new ArgumentException("Columnoffset+length exceed the number of columns of the matrix");
 
 				_matrix = matrix;
@@ -536,7 +536,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <param name="matrix">The matrix.</param>
 			/// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
 			public MatrixRowVector(IMatrix<T> matrix, int row)
-				: this(matrix, row, 0, matrix.Columns)
+				: this(matrix, row, 0, matrix.ColumnCount)
 			{
 			}
 
@@ -551,9 +551,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				if (matrix == null)
 					throw new ArgumentNullException("IMatrix m is null");
-				if (row < 0 || row >= matrix.Rows)
+				if (row < 0 || row >= matrix.RowCount)
 					throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
-				if (columnOffset + length > matrix.Columns)
+				if (columnOffset + length > matrix.ColumnCount)
 					throw new ArgumentException("Columnoffset+length exceed the number of columns of the matrix");
 
 				_matrix = matrix;
@@ -638,7 +638,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				if (matrix == null)
 					throw new ArgumentNullException("IMatrix m is null");
-				if (column < 0 || column >= matrix.Columns)
+				if (column < 0 || column >= matrix.ColumnCount)
 					throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
 
 				_matrix = matrix;
@@ -662,7 +662,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-					return _matrix.Rows;
+					return _matrix.RowCount;
 				}
 			}
 
@@ -671,21 +671,21 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-					return _matrix.Rows;
+					return _matrix.RowCount;
 				}
 			}
 
 			/// <inheritdoc/>
 			public IEnumerator<T> GetEnumerator()
 			{
-				for (int i = 0; i < _matrix.Rows; ++i)
+				for (int i = 0; i < _matrix.RowCount; ++i)
 					yield return this[i];
 			}
 
 			/// <inheritdoc/>
 			IEnumerator IEnumerable.GetEnumerator()
 			{
-				for (int i = 0; i < _matrix.Rows; ++i)
+				for (int i = 0; i < _matrix.RowCount; ++i)
 					yield return this[i];
 			}
 
@@ -713,7 +713,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				if (matrix == null)
 					throw new ArgumentNullException("IMatrix m is null");
-				if (column < 0 || column >= matrix.Columns)
+				if (column < 0 || column >= matrix.ColumnCount)
 					throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
 
 				_matrix = matrix;
@@ -745,7 +745,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-					return _matrix.Rows;
+					return _matrix.RowCount;
 				}
 			}
 
@@ -754,21 +754,21 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				get
 				{
-					return _matrix.Rows;
+					return _matrix.RowCount;
 				}
 			}
 
 			/// <inheritdoc/>
 			public IEnumerator<T> GetEnumerator()
 			{
-				for (int i = 0; i < _matrix.Rows; ++i)
+				for (int i = 0; i < _matrix.RowCount; ++i)
 					yield return this[i];
 			}
 
 			/// <inheritdoc/>
 			IEnumerator IEnumerable.GetEnumerator()
 			{
-				for (int i = 0; i < _matrix.Rows; ++i)
+				for (int i = 0; i < _matrix.RowCount; ++i)
 					yield return this[i];
 			}
 
@@ -817,7 +817,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			/// <inheritdoc/>
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -826,7 +826,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			/// <inheritdoc/>
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{
@@ -879,7 +879,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			/// <inheritdoc/>
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -888,7 +888,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			/// <inheritdoc/>
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{
@@ -956,7 +956,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			/// <inheritdoc/>
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -965,7 +965,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			/// <inheritdoc/>
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{
@@ -1015,8 +1015,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			public ROMatrixFromColumnMajorLinearArray(MatrixWrapperStructForColumnMajorOrderLinearArray<T> wrapper)
 			{
 				_array = wrapper.Array;
-				_rows = wrapper.Rows;
-				_columns = wrapper.Columns;
+				_rows = wrapper.RowCount;
+				_columns = wrapper.ColumnCount;
 			}
 
 			/// <inheritdoc/>
@@ -1029,13 +1029,13 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			/// <inheritdoc/>
-			public int Rows
+			public int RowCount
 			{
 				get { return _rows; }
 			}
 
 			/// <inheritdoc/>
-			public int Columns
+			public int ColumnCount
 			{
 				get { return _columns; }
 			}
@@ -1135,8 +1135,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			public LeftSpineJaggedArrayMatrix(MatrixWrapperStructForLeftSpineJaggedArray<T> wrapper)
 			{
 				this._array = wrapper.Array;
-				this._rows = wrapper.Rows;
-				this._columns = wrapper.Columns;
+				this._rows = wrapper.RowCount;
+				this._columns = wrapper.ColumnCount;
 			}
 
 			public void Clear()
@@ -1184,7 +1184,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of Rows of the matrix.
 			/// </summary>
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -1195,7 +1195,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of columns of the matrix.
 			/// </summary>
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{
@@ -1214,20 +1214,20 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <param name="a">Matrix to append to the bottom of this matrix.</param>
 			public void AppendBottom(IROMatrix<T> a)
 			{
-				if (a.Rows == 0)
+				if (a.RowCount == 0)
 					return; // nothing to append
 
-				if (this.Columns > 0)
+				if (this.ColumnCount > 0)
 				{
-					if (a.Columns != this.Columns) // throw an error if this column is not empty and the columns does not match
-						throw new ArithmeticException(string.Format("The number of columns of this matrix ({0}) and of the matrix to append ({1}) does not match!", this.Columns, a.Columns));
+					if (a.ColumnCount != this.ColumnCount) // throw an error if this column is not empty and the columns does not match
+						throw new ArithmeticException(string.Format("The number of columns of this matrix ({0}) and of the matrix to append ({1}) does not match!", this.ColumnCount, a.ColumnCount));
 				}
 				else // if the matrix was empty before
 				{
-					_columns = a.Columns;
+					_columns = a.ColumnCount;
 				}
 
-				int newRows = a.Rows + this.Rows;
+				int newRows = a.RowCount + this.RowCount;
 
 				// we must reallocate the array if neccessary
 				if (newRows >= _array.Length)
@@ -1307,8 +1307,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			public TopSpineJaggedArrayMatrix(MatrixWrapperStructForTopSpineJaggedArray<T> wrapper)
 			{
 				_array = wrapper.Array;
-				_rows = wrapper.Rows;
-				_columns = wrapper.Columns;
+				_rows = wrapper.RowCount;
+				_columns = wrapper.ColumnCount;
 			}
 
 			public void Clear()
@@ -1356,7 +1356,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of Rows of the matrix.
 			/// </summary>
-			public int Rows
+			public int RowCount
 			{
 				get
 				{
@@ -1367,7 +1367,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <summary>
 			/// Number of columns of the matrix.
 			/// </summary>
-			public int Columns
+			public int ColumnCount
 			{
 				get
 				{
@@ -1386,20 +1386,20 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <param name="a">Matrix to append to the right of this matrix.</param>
 			public void AppendRight(IROMatrix<T> a)
 			{
-				if (a.Columns == 0)
+				if (a.ColumnCount == 0)
 					return; // nothing to append
 
-				if (this.Rows > 0)
+				if (this.RowCount > 0)
 				{
-					if (a.Rows != this.Rows) // throw an error if this column is not empty and the columns does not match
-						throw new ArithmeticException(string.Format("The number of rows of this matrix ({0}) and of the matrix to append ({1}) does not match!", this.Rows, a.Rows));
+					if (a.RowCount != this.RowCount) // throw an error if this column is not empty and the columns does not match
+						throw new ArithmeticException(string.Format("The number of rows of this matrix ({0}) and of the matrix to append ({1}) does not match!", this.RowCount, a.RowCount));
 				}
 				else // if the matrix was empty before set the number of rows
 				{
-					_rows = a.Rows;
+					_rows = a.RowCount;
 				}
 
-				int newCols = a.Columns + this.Columns;
+				int newCols = a.ColumnCount + this.ColumnCount;
 
 				// we must newly allocate the bone array, if neccessary
 				if (newCols >= _array.Length)

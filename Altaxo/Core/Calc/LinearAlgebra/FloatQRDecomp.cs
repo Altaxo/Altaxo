@@ -164,7 +164,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <exception cref="InvalidOperationException">Matrix is rank deficient or <c>m &lt; n</c>.</exception>
     public FloatMatrix Solve(IROMatrix<float> B)
     {
-      if (B.Rows != matrix.RowLength)
+      if (B.RowCount != matrix.RowLength)
       {
         throw new ArgumentException("Matrix row dimensions must agree.");
       }
@@ -181,7 +181,7 @@ namespace Altaxo.Calc.LinearAlgebra
       // Copy right hand side
       int m = matrix.RowLength;
       int n = matrix.ColumnLength;
-      int nx = B.Columns;
+      int nx = B.ColumnCount;
       FloatMatrix ret = new FloatMatrix(n, nx);
 
 #if MANAGED

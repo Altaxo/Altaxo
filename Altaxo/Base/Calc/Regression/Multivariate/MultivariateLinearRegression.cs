@@ -166,7 +166,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 				xbase = DataTableWrapper.ToROColumnMatrix(parameters.Table, selectedColsWODependent, validRows);
 			}
 
-			paramNames = new string[xbase.Columns];
+			paramNames = new string[xbase.ColumnCount];
 			if (parameters.IncludeIntercept)
 			{
 				paramNames[0] = "Intercept";
@@ -193,7 +193,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 			LinearFitBySvd fit =
 				new LinearFitBySvd(
-				xbase, yarr, earr, xbase.Rows, xbase.Columns, 1E-5);
+				xbase, yarr, earr, xbase.RowCount, xbase.ColumnCount, 1E-5);
 
 			return fit;
 		}

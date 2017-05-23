@@ -302,8 +302,8 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					out logicalColumnHeaderValues
 					);
 
-			int cols = matrix.Columns;
-			int rows = matrix.Rows;
+			int cols = matrix.ColumnCount;
+			int rows = matrix.RowCount;
 
 			if (cols <= 1 || rows <= 1)
 				return; // we cannot plot anything  if one length is zero or one

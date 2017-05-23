@@ -170,16 +170,16 @@ namespace Altaxo.Calc.LinearAlgebra
 			// Fill matrix m2 diagonal elements with 66
 			m1.MapSparseIncludingDiagonal((a, r, c) => a + (r == c ? 66 : 0), m2);
 
-			for (int i = 0; i < m2.Rows; ++i)
-				for (int j = 0; j < m2.Columns; ++j)
+			for (int i = 0; i < m2.RowCount; ++i)
+				for (int j = 0; j < m2.ColumnCount; ++j)
 					Assert.AreEqual(i == j ? 66 : 0, m2[i, j]);
 
 			// the same should work with the now already used matrix
 			// fill diagonal now with 77
 			m1.MapSparseIncludingDiagonal((a, r, c) => a + (r == c ? 77 : 0), m2);
 
-			for (int i = 0; i < m2.Rows; ++i)
-				for (int j = 0; j < m2.Columns; ++j)
+			for (int i = 0; i < m2.RowCount; ++i)
+				for (int j = 0; j < m2.ColumnCount; ++j)
 					Assert.AreEqual(i == j ? 77 : 0, m2[i, j]);
 		}
 
@@ -198,16 +198,16 @@ namespace Altaxo.Calc.LinearAlgebra
 			// Fill matrix m2 diagonal elements with 66
 			m1.MapSparseIncludingDiagonal((a, r, c) => a + (r == c ? 66 : 0), m2);
 
-			for (int i = 0; i < m2.Rows; ++i)
-				for (int j = 0; j < m2.Columns; ++j)
+			for (int i = 0; i < m2.RowCount; ++i)
+				for (int j = 0; j < m2.ColumnCount; ++j)
 					Assert.AreEqual(i == j ? 66 : 0, m2[i, j]);
 
 			// the same should work with the now already used matrix
 			// fill diagonal now with 77
 			m1.MapSparseIncludingDiagonal((a, r, c) => a + (r == c ? 77 : 0), m2);
 
-			for (int i = 0; i < m2.Rows; ++i)
-				for (int j = 0; j < m2.Columns; ++j)
+			for (int i = 0; i < m2.RowCount; ++i)
+				for (int j = 0; j < m2.ColumnCount; ++j)
 					Assert.AreEqual(i == j ? 77 : 0, m2[i, j]);
 		}
 
@@ -226,16 +226,16 @@ namespace Altaxo.Calc.LinearAlgebra
 			// Fill matrix m2 diagonal elements with 66
 			m1.MapSparseIncludingDiagonal((a, r, c) => a + (r == c ? 66 : 0), m2);
 
-			for (int i = 0; i < m2.Rows; ++i)
-				for (int j = 0; j < m2.Columns; ++j)
+			for (int i = 0; i < m2.RowCount; ++i)
+				for (int j = 0; j < m2.ColumnCount; ++j)
 					Assert.AreEqual(i == j ? 66 : 0, m2[i, j]);
 
 			// the same should work with the now already used matrix
 			// fill diagonal now with 77
 			m1.MapSparseIncludingDiagonal((a, r, c) => a + (r == c ? 77 : 0), m2);
 
-			for (int i = 0; i < m2.Rows; ++i)
-				for (int j = 0; j < m2.Columns; ++j)
+			for (int i = 0; i < m2.RowCount; ++i)
+				for (int j = 0; j < m2.ColumnCount; ++j)
 					Assert.AreEqual(i == j ? 77 : 0, m2[i, j]);
 		}
 
@@ -254,9 +254,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			// Fill matrix m2 diagonal elements with 66
 			m1.MapSparseIncludingDiagonal((a, r, c) => 3 * a + (r == c ? 66 : 0), m2);
 
-			for (int i = 0; i < m2.Rows; ++i)
+			for (int i = 0; i < m2.RowCount; ++i)
 			{
-				for (int j = 0; j < m2.Columns; ++j)
+				for (int j = 0; j < m2.ColumnCount; ++j)
 				{
 					double expected = 0;
 					if (i == j) expected = 66;
@@ -269,9 +269,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			// fill diagonal now with 77
 			m1.MapSparseIncludingDiagonal((a, r, c) => 5 * a + (r == c ? 77 : 0), m2);
 
-			for (int i = 0; i < m2.Rows; ++i)
+			for (int i = 0; i < m2.RowCount; ++i)
 			{
-				for (int j = 0; j < m2.Columns; ++j)
+				for (int j = 0; j < m2.ColumnCount; ++j)
 				{
 					double expected = 0;
 					if (i == j) expected = 77;
@@ -296,9 +296,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			// Fill matrix m2 diagonal elements with 66
 			m1.MapSparseIncludingDiagonal((a, r, c) => 3 * a + (r == c ? 66 : 0), m2);
 
-			for (int i = 0; i < m2.Rows; ++i)
+			for (int i = 0; i < m2.RowCount; ++i)
 			{
-				for (int j = 0; j < m2.Columns; ++j)
+				for (int j = 0; j < m2.ColumnCount; ++j)
 				{
 					double expected = 0;
 					if (i == j) expected = 66;
@@ -311,9 +311,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			// fill diagonal now with 77
 			m1.MapSparseIncludingDiagonal((a, r, c) => 5 * a + (r == c ? 77 : 0), m2);
 
-			for (int i = 0; i < m2.Rows; ++i)
+			for (int i = 0; i < m2.RowCount; ++i)
 			{
-				for (int j = 0; j < m2.Columns; ++j)
+				for (int j = 0; j < m2.ColumnCount; ++j)
 				{
 					double expected = 0;
 					if (i == j) expected = 77;
@@ -342,8 +342,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		private void AssertMatrixEqualsEps(SparseDoubleMatrix A, SparseDoubleMatrix B)
 		{
 			double sum = 0.0;
-			for (int i = 0; i < A.Rows; i++)
-				for (int j = 0; j < A.Columns; j++)
+			for (int i = 0; i < A.RowCount; i++)
+				for (int j = 0; j < A.ColumnCount; j++)
 					sum += A[i, j] - B[i, j];
 
 			AssertEqualsEps(sum, 0.0);

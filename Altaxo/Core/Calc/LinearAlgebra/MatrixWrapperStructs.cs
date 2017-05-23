@@ -27,7 +27,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <value>
 		/// Number of rows of the matrix.
 		/// </value>
-		public int Rows { get; private set; }
+		public int RowCount { get; private set; }
 
 		/// <summary>
 		/// Gets the number of columns of the matrix.
@@ -35,7 +35,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <value>
 		/// Number of columns of the matrix.
 		/// </value>
-		public int Columns { get; private set; }
+		public int ColumnCount { get; private set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MatrixWrapperStructForLeftSpineJaggedArray{T}"/> struct by wrapping the provided
@@ -54,8 +54,8 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException(nameof(cols), "Provided array is shorter than number of cols");
 
 			Array = array;
-			Rows = rows;
-			Columns = cols;
+			RowCount = rows;
+			ColumnCount = cols;
 		}
 
 		/// <summary>
@@ -75,12 +75,12 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException(nameof(rows), "Number of rows has to be >=0");
 			if (!(cols >= 0))
 				throw new ArgumentOutOfRangeException(nameof(cols), "Number of cols has to be >=0");
-			Rows = rows;
-			Columns = cols;
-			Array = new T[Rows][];
-			for (int i = 0; i < Rows; ++i)
+			RowCount = rows;
+			ColumnCount = cols;
+			Array = new T[RowCount][];
+			for (int i = 0; i < RowCount; ++i)
 			{
-				Array[i] = new T[Columns];
+				Array[i] = new T[ColumnCount];
 			}
 		}
 
@@ -127,7 +127,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <value>
 		/// Number of rows of the matrix.
 		/// </value>
-		public int Rows { get; private set; }
+		public int RowCount { get; private set; }
 
 		/// <summary>
 		/// Gets the number of columns of the matrix.
@@ -135,7 +135,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <value>
 		/// Number of columns of the matrix.
 		/// </value>
-		public int Columns { get; private set; }
+		public int ColumnCount { get; private set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MatrixWrapperStructForLeftSpineJaggedArray{T}"/> struct by wrapping the provided
@@ -154,8 +154,8 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException(nameof(cols), "Provided array is shorter than number of rows");
 
 			Array = array;
-			Rows = rows;
-			Columns = cols;
+			RowCount = rows;
+			ColumnCount = cols;
 		}
 
 		/// <summary>
@@ -176,8 +176,8 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException(nameof(rows), "Number of rows has to be >=0");
 			if (!(cols >= 0))
 				throw new ArgumentOutOfRangeException(nameof(cols), "Number of cols has to be >=0");
-			Rows = rows;
-			Columns = cols;
+			RowCount = rows;
+			ColumnCount = cols;
 
 			Array = new T[cols][];
 			for (int i = 0; i < cols; ++i)
@@ -228,7 +228,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <value>
 		/// Number of rows of the matrix.
 		/// </value>
-		public int Rows { get; private set; }
+		public int RowCount { get; private set; }
 
 		/// <summary>
 		/// Gets the number of columns of the matrix.
@@ -236,7 +236,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <value>
 		/// Number of columns of the matrix.
 		/// </value>
-		public int Columns { get; private set; }
+		public int ColumnCount { get; private set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MatrixWrapperStructForLeftSpineJaggedArray{T}"/> struct by wrapping the provided
@@ -255,8 +255,8 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException(nameof(cols), "Provided array is shorter than number of cols");
 
 			Array = array;
-			Rows = rows;
-			Columns = cols;
+			RowCount = rows;
+			ColumnCount = cols;
 		}
 
 		/// <summary>
@@ -276,16 +276,16 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException(nameof(rows), "Number of rows has to be >=0");
 			if (!(cols >= 0))
 				throw new ArgumentOutOfRangeException(nameof(cols), "Number of cols has to be >=0");
-			Rows = rows;
-			Columns = cols;
-			Array = new T[Rows * Columns];
+			RowCount = rows;
+			ColumnCount = cols;
+			Array = new T[RowCount * ColumnCount];
 		}
 
 		T IROMatrix<T>.this[int row, int col]
 		{
 			get
 			{
-				return Array[col * Rows + row];
+				return Array[col * RowCount + row];
 			}
 		}
 
@@ -293,11 +293,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			get
 			{
-				return Array[col * Rows + row];
+				return Array[col * RowCount + row];
 			}
 			set
 			{
-				Array[col * Rows + row] = value;
+				Array[col * RowCount + row] = value;
 			}
 		}
 	}
@@ -323,7 +323,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <value>
 		/// Number of rows of the matrix.
 		/// </value>
-		public int Rows { get; private set; }
+		public int RowCount { get; private set; }
 
 		/// <summary>
 		/// Gets the number of columns of the matrix.
@@ -331,7 +331,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <value>
 		/// Number of columns of the matrix.
 		/// </value>
-		public int Columns { get; private set; }
+		public int ColumnCount { get; private set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MatrixWrapperStructForLeftSpineJaggedArray{T}"/> struct by wrapping the provided row oriented
@@ -350,8 +350,8 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException(nameof(cols), "Provided array is shorter than number of cols");
 
 			Array = array;
-			Rows = rows;
-			Columns = cols;
+			RowCount = rows;
+			ColumnCount = cols;
 		}
 
 		/// <summary>
@@ -371,16 +371,16 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException(nameof(rows), "Number of rows has to be >=0");
 			if (!(cols >= 0))
 				throw new ArgumentOutOfRangeException(nameof(cols), "Number of cols has to be >=0");
-			Rows = rows;
-			Columns = cols;
-			Array = new T[Rows * Columns];
+			RowCount = rows;
+			ColumnCount = cols;
+			Array = new T[RowCount * ColumnCount];
 		}
 
 		T IROMatrix<T>.this[int row, int col]
 		{
 			get
 			{
-				return Array[row * Columns + col];
+				return Array[row * ColumnCount + col];
 			}
 		}
 
@@ -388,11 +388,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			get
 			{
-				return Array[row * Columns + col];
+				return Array[row * ColumnCount + col];
 			}
 			set
 			{
-				Array[row * Columns + col] = value;
+				Array[row * ColumnCount + col] = value;
 			}
 		}
 	}

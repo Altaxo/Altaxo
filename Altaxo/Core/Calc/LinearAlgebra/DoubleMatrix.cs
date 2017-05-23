@@ -317,7 +317,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		public static implicit operator MatrixWrapperStructForLeftSpineJaggedArray<double>(DoubleMatrix source)
 		{
-			return new MatrixWrapperStructForLeftSpineJaggedArray<double>(source.data, source.Rows, source.Columns);
+			return new MatrixWrapperStructForLeftSpineJaggedArray<double>(source.data, source.RowCount, source.ColumnCount);
 		}
 
 		/// <summary>
@@ -326,7 +326,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <value>
 		/// The internal data.
 		/// </value>
-		public MatrixWrapperStructForLeftSpineJaggedArray<double> InternalData { get { return new MatrixWrapperStructForLeftSpineJaggedArray<double>(this.data, this.Rows, this.Columns); } }
+		public MatrixWrapperStructForLeftSpineJaggedArray<double> InternalData { get { return new MatrixWrapperStructForLeftSpineJaggedArray<double>(this.data, this.RowCount, this.ColumnCount); } }
 
 		private class RoWrapper : IROMatrix<double>
 		{
@@ -349,9 +349,9 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 			}
 
-			public int Rows => _rows;
+			public int RowCount => _rows;
 
-			public int Columns => _columns;
+			public int ColumnCount => _columns;
 		}
 
 		public IROMatrix<double> ToROMatrix()
@@ -468,7 +468,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		///<summary>Return the number of rows in the <c>DoubleMatrix</c> variable.</summary>
 		///<returns>The number of rows.</returns>
-		public int Rows
+		public int RowCount
 		{
 			get
 			{
@@ -478,7 +478,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		///<summary>Return the number of columns in <c>DoubleMatrix</c> variable.</summary>
 		///<returns>The number of columns.</returns>
-		public int Columns
+		public int ColumnCount
 		{
 			get
 			{
@@ -533,11 +533,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		public void CopyFrom(DoubleMatrix x)
 		{
-			if (this.Rows != x.Rows || this.Columns != x.Columns)
+			if (this.RowCount != x.RowCount || this.ColumnCount != x.ColumnCount)
 				throw new RankException("Number of rows or columns of matrix to copy from does not match.");
 
-			var cols = this.Columns;
-			var rows = this.Rows;
+			var cols = this.ColumnCount;
+			var rows = this.RowCount;
 			var fromData = x.data;
 			var toData = this.data;
 			for (int i = 0; i < rows; ++i)
@@ -837,7 +837,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 			if (null == destinationVector)
 				throw new ArgumentNullException(nameof(destinationVector));
-			if (destinationVector.Count != this.Rows)
+			if (destinationVector.Count != this.RowCount)
 				throw new RankException("destinationVector.Length is not equal to matrix.Rows");
 
 			for (int i = 0; i < rows; i++)
@@ -2144,8 +2144,8 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentNullException("source", "The input ComplexDoubleMatrix cannot be null.");
 			}
 
-			this.rows = source.Rows;
-			this.columns = source.Columns;
+			this.rows = source.RowCount;
+			this.columns = source.ColumnCount;
 #if MANAGED
 			data = new double[rows][];
 			if (source is DoubleMatrix)
@@ -2181,8 +2181,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="result">The resulting array must be given.</param>
 		private static void ToLinearArray(IROMatrix<double> matrix, double[] result)
 		{
-			int rows = matrix.Rows;
-			int columns = matrix.Columns;
+			int rows = matrix.RowCount;
+			int columns = matrix.ColumnCount;
 
 			int k = 0;
 			for (int j = 0; j < columns; ++j)
@@ -2197,8 +2197,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="result">The resulting array must be given.</param>
 		private static void ToLinearArray(IROMatrix<float> matrix, double[] result)
 		{
-			int rows = matrix.Rows;
-			int columns = matrix.Columns;
+			int rows = matrix.RowCount;
+			int columns = matrix.ColumnCount;
 
 			int k = 0;
 			for (int j = 0; j < columns; ++j)
@@ -2225,7 +2225,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>Linear array of complex.</returns>
 		public static double[] ToLinearArray(IROMatrix<double> matrix)
 		{
-			double[] result = new double[matrix.Rows * matrix.Columns];
+			double[] result = new double[matrix.RowCount * matrix.ColumnCount];
 			ToLinearArray(matrix, result);
 			return result;
 		}
@@ -2237,7 +2237,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>Linear array of complex.</returns>
 		public static double[] ToLinearArray(IROMatrix<float> matrix)
 		{
-			double[] result = new double[matrix.Rows * matrix.Columns];
+			double[] result = new double[matrix.RowCount * matrix.ColumnCount];
 			ToLinearArray(matrix, result);
 			return result;
 		}

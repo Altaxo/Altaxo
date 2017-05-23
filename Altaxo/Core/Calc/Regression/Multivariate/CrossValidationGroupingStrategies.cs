@@ -64,14 +64,14 @@ namespace Altaxo.Calc.Regression.Multivariate
       newcoll.Add(0);
       groups.Add(newcoll);
       // now test all other rows of the y-matrix against the existing groups
-      for (int i = 1; i < Y.Rows; i++)
+      for (int i = 1; i < Y.RowCount; i++)
       {
         bool bNewGroup = true;
         for (int gr = 0; gr < groups.Count; gr++)
         {
           int refrow = (int)(((System.Collections.ArrayList)groups[gr])[0]);
           bool match = true;
-          for (int j = 0; j < Y.Columns; j++)
+          for (int j = 0; j < Y.ColumnCount; j++)
           {
             if (Y[i, j] != Y[refrow, j])
             {
@@ -140,9 +140,9 @@ namespace Altaxo.Calc.Regression.Multivariate
   {
     public int[][] Group(IROMatrix<double> Y)
     {
-      int[][] groups = new int[Y.Rows][];
+      int[][] groups = new int[Y.RowCount][];
 
-      for (int i = 0; i < Y.Rows; i++)
+      for (int i = 0; i < Y.RowCount; i++)
       {
         int[] newcoll = new int[1];
         newcoll[0] = i;

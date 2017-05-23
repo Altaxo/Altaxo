@@ -91,18 +91,18 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (null == name)
 				name = "";
 
-			if (a.Rows == 0 || a.Columns == 0)
-				return string.Format("EmptyMatrix {0}({1},{2})", name, a.Rows, a.Columns);
+			if (a.RowCount == 0 || a.ColumnCount == 0)
+				return string.Format("EmptyMatrix {0}({1},{2})", name, a.RowCount, a.ColumnCount);
 
 			System.Text.StringBuilder s = new System.Text.StringBuilder();
 			s.Append("Matrix " + name + ":");
-			for (int i = 0; i < a.Rows; i++)
+			for (int i = 0; i < a.RowCount; i++)
 			{
 				s.Append("\n(");
-				for (int j = 0; j < a.Columns; j++)
+				for (int j = 0; j < a.ColumnCount; j++)
 				{
 					s.Append(a[i, j].ToString());
-					if (j + 1 < a.Columns)
+					if (j + 1 < a.ColumnCount)
 						s.Append(";");
 					else
 						s.Append(")");
@@ -116,18 +116,18 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (null == name)
 				name = "";
 
-			if (a.Rows == 0 || a.Columns == 0)
-				return string.Format("EmptyMatrix {0}({1},{2})", name, a.Rows, a.Columns);
+			if (a.RowCount == 0 || a.ColumnCount == 0)
+				return string.Format("EmptyMatrix {0}({1},{2})", name, a.RowCount, a.ColumnCount);
 
 			System.Text.StringBuilder s = new System.Text.StringBuilder();
 			s.Append("Matrix " + name + ":");
-			for (int i = 0; i < a.Rows; i++)
+			for (int i = 0; i < a.RowCount; i++)
 			{
 				s.Append("\n(");
-				for (int j = 0; j < a.Columns; j++)
+				for (int j = 0; j < a.ColumnCount; j++)
 				{
 					s.Append(a[i, j].ToString());
-					if (j + 1 < a.Columns)
+					if (j + 1 < a.ColumnCount)
 						s.Append(";");
 					else
 						s.Append(")");
@@ -396,6 +396,31 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		#endregion Type conversion
 
+		#region Clear
+
+		public static void Clear<T>(IMatrix<T> matrix)
+		{
+			if (matrix is IMatrixLevel1<T> l1)
+			{
+				l1.Clear();
+			}
+			else
+			{
+				Clear_DefaultImpl(matrix);
+			}
+		}
+
+		public static void Clear_DefaultImpl<T>(IMatrix<T> matrix)
+		{
+			var rowCount = matrix.RowCount;
+			var columnCount = matrix.ColumnCount;
+			for (int i = 0; i < rowCount; ++i)
+				for (int j = 0; j < columnCount; ++j)
+					matrix[i, j] = default(T);
+		}
+
+		#endregion Clear
+
 		#region Addition, Subtraction, Multiply and combined operations
 
 		/// <summary>
@@ -406,16 +431,16 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The matrix where to store the result. Has to be of dimension (a.Rows, b.Columns).</param>
 		public static void Multiply(IROMatrix<double> a, IROMatrix<double> b, IMatrix<double> c)
 		{
-			int crows = a.Rows; // the rows of resultant matrix
-			int ccols = b.Columns; // the cols of resultant matrix
-			int numil = b.Rows; // number of summands for most inner loop
+			int crows = a.RowCount; // the rows of resultant matrix
+			int ccols = b.ColumnCount; // the cols of resultant matrix
+			int numil = b.RowCount; // number of summands for most inner loop
 
 			// Presumtion:
 			// a.Cols == b.Rows;
-			if (a.Columns != numil)
-				throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.Rows, a.Columns, b.Rows, b.Columns));
-			if (c.Rows != crows || c.Columns != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", c.Rows, c.Columns, crows, ccols));
+			if (a.ColumnCount != numil)
+				throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.RowCount, a.ColumnCount, b.RowCount, b.ColumnCount));
+			if (c.RowCount != crows || c.ColumnCount != ccols)
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", c.RowCount, c.ColumnCount, crows, ccols));
 
 			for (int i = 0; i < crows; i++)
 			{
@@ -438,13 +463,13 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The vector where to store the result. Has to be of dimension (a.Rows).</param>
 		public static void Multiply(IROMatrix<double> a, IReadOnlyList<double> b, IVector<double> c)
 		{
-			int crows = a.Rows; // the rows of resultant matrix
+			int crows = a.RowCount; // the rows of resultant matrix
 			int numil = b.Count; // number of summands for most inner loop
 
 			// Presumtion:
 			// a.Cols == b.Rows;
-			if (a.Columns != numil)
-				throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with vector of dim({2}) is not possible!", a.Rows, a.Columns, b.Count));
+			if (a.ColumnCount != numil)
+				throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with vector of dim({2}) is not possible!", a.RowCount, a.ColumnCount, b.Count));
 			if (c.Length != crows)
 				throw new ArithmeticException(string.Format("The provided resultant vector (actual dim({0}))has not the expected dimension ({1})", c.Length, crows));
 
@@ -470,10 +495,10 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			// Presumtion:
 			// a.Cols == b.Rows;
-			if (a.Rows != a.Columns)
+			if (a.RowCount != a.ColumnCount)
 				throw new ArgumentException("Matrix a has to be a square matrix");
-			if (a.Columns != numil)
-				throw new ArgumentException(string.Format("The length of the vector({2}) has to match the number of columns of the matrix({0},{1}).", a.Rows, a.Columns, b.Count));
+			if (a.ColumnCount != numil)
+				throw new ArgumentException(string.Format("The length of the vector({2}) has to match the number of columns of the matrix({0},{1}).", a.RowCount, a.ColumnCount, b.Count));
 
 			double result = 0;
 			for (int i = 0; i < numil; i++)
@@ -495,15 +520,15 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The matrix where to store the result. Has to be of dimension (a.Rows, b.Columns).</param>
 		public static void MultiplyFirstTransposed(IROMatrix<double> a, IROMatrix<double> b, IMatrix<double> c)
 		{
-			int crows = a.Columns; // the rows of resultant matrix
-			int ccols = b.Columns; // the cols of resultant matrix
-			int numil = b.Rows; // number of summands for most inner loop
+			int crows = a.ColumnCount; // the rows of resultant matrix
+			int ccols = b.ColumnCount; // the cols of resultant matrix
+			int numil = b.RowCount; // number of summands for most inner loop
 
 			// Presumtion:
-			if (a.Rows != numil)
-				throw new ArithmeticException(string.Format("Try to multiplicate a transposed matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.Rows, a.Columns, b.Rows, b.Columns));
-			if (c.Rows != crows || c.Columns != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", c.Rows, c.Columns, crows, ccols));
+			if (a.RowCount != numil)
+				throw new ArithmeticException(string.Format("Try to multiplicate a transposed matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.RowCount, a.ColumnCount, b.RowCount, b.ColumnCount));
+			if (c.RowCount != crows || c.ColumnCount != ccols)
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", c.RowCount, c.ColumnCount, crows, ccols));
 
 			for (int i = 0; i < crows; i++)
 			{
@@ -526,12 +551,12 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The matrix where to store the result. Has to be of dimension (a.Rows, b.Columns).</param>
 		public static void MultiplyFirstTransposed(IROMatrix<double> a, IReadOnlyList<double> b, IVector<double> c)
 		{
-			int crows = a.Columns; // the rows of resultant vector
-			int numil = a.Rows;
+			int crows = a.ColumnCount; // the rows of resultant vector
+			int numil = a.RowCount;
 
 			// Presumtion:
-			if (a.Rows != b.Count)
-				throw new ArithmeticException(string.Format("Try to multiplicate a transposed matrix of dim({0},{1}) with vector of dim({2}) is not possible!", a.Rows, a.Columns, b.Count));
+			if (a.RowCount != b.Count)
+				throw new ArithmeticException(string.Format("Try to multiplicate a transposed matrix of dim({0},{1}) with vector of dim({2}) is not possible!", a.RowCount, a.ColumnCount, b.Count));
 			if (crows != c.Length)
 				throw new ArithmeticException(string.Format("The provided resultant vector (actual dim({0}))has not the expected dimension ({1})", c.Length, crows));
 
@@ -553,16 +578,16 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The matrix where to store the result. Has to be of dimension (a.Rows, b.Columns).</param>
 		public static void MultiplySecondTransposed(IROMatrix<double> a, IROMatrix<double> b, IMatrix<double> c)
 		{
-			int crows = a.Rows; // the rows of resultant matrix
-			int ccols = b.Rows; // the cols of resultant matrix
-			int numil = b.Columns; // number of summands for most inner loop
+			int crows = a.RowCount; // the rows of resultant matrix
+			int ccols = b.RowCount; // the cols of resultant matrix
+			int numil = b.ColumnCount; // number of summands for most inner loop
 
 			// Presumtion:
 			// a.Cols == b.Rows;
-			if (a.Columns != numil)
-				throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.Rows, a.Columns, b.Rows, b.Columns));
-			if (c.Rows != crows || c.Columns != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", c.Rows, c.Columns, crows, ccols));
+			if (a.ColumnCount != numil)
+				throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.RowCount, a.ColumnCount, b.RowCount, b.ColumnCount));
+			if (c.RowCount != crows || c.ColumnCount != ccols)
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", c.RowCount, c.ColumnCount, crows, ccols));
 
 			for (int i = 0; i < crows; i++)
 			{
@@ -585,12 +610,12 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The resulting matrix.</param>
 		public static void MultiplyScalar(IROMatrix<double> a, double b, IMatrix<double> c)
 		{
-			if (c.Rows != a.Rows || c.Columns != a.Columns)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1})) has not the expected dimension ({2},{3})", c.Rows, c.Columns, a.Rows, a.Columns));
+			if (c.RowCount != a.RowCount || c.ColumnCount != a.ColumnCount)
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1})) has not the expected dimension ({2},{3})", c.RowCount, c.ColumnCount, a.RowCount, a.ColumnCount));
 
-			for (int i = 0; i < a.Rows; i++)
+			for (int i = 0; i < a.RowCount; i++)
 			{
-				for (int j = 0; j < a.Columns; j++)
+				for (int j = 0; j < a.ColumnCount; j++)
 				{
 					c[i, j] = a[i, j] * b;
 				}
@@ -606,14 +631,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
 		public static void MultiplyRow(IROMatrix<double> a, IROMatrix<double> b, int brow, IMatrix<double> c)
 		{
-			int arows = a.Rows;
-			int acols = a.Columns;
+			int arows = a.RowCount;
+			int acols = a.ColumnCount;
 
-			int brows = b.Rows;
-			int bcols = b.Columns;
+			int brows = b.RowCount;
+			int bcols = b.ColumnCount;
 
-			int crows = c.Rows;
-			int ccols = c.Columns;
+			int crows = c.RowCount;
+			int ccols = c.ColumnCount;
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
@@ -636,14 +661,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
 		public static void MultiplyRow(IROMatrix<double> a, IReadOnlyList<double> b, IMatrix<double> c)
 		{
-			int arows = a.Rows;
-			int acols = a.Columns;
+			int arows = a.RowCount;
+			int acols = a.ColumnCount;
 
 			int brows = 1;
 			int bcols = b.Count;
 
-			int crows = c.Rows;
-			int ccols = c.Columns;
+			int crows = c.RowCount;
+			int ccols = c.ColumnCount;
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
@@ -668,13 +693,13 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			// Presumtion:
 			// a.Cols == b.Rows;
-			if (a.Columns != b.Columns || a.Rows != b.Rows)
-				throw new ArithmeticException(string.Format("Try to add a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.Rows, a.Columns, b.Rows, b.Columns));
-			if (c.Rows != a.Rows || c.Columns != a.Columns)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the proper dimension ({2},{3})", c.Rows, c.Columns, a.Rows, a.Columns));
+			if (a.ColumnCount != b.ColumnCount || a.RowCount != b.RowCount)
+				throw new ArithmeticException(string.Format("Try to add a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.RowCount, a.ColumnCount, b.RowCount, b.ColumnCount));
+			if (c.RowCount != a.RowCount || c.ColumnCount != a.ColumnCount)
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the proper dimension ({2},{3})", c.RowCount, c.ColumnCount, a.RowCount, a.ColumnCount));
 
-			for (int i = 0; i < c.Rows; i++)
-				for (int j = 0; j < c.Columns; j++)
+			for (int i = 0; i < c.RowCount; i++)
+				for (int j = 0; j < c.ColumnCount; j++)
 					c[i, j] = a[i, j] + b[i, j];
 		}
 
@@ -688,13 +713,13 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			// Presumtion:
 			// a.Cols == b.Rows;
-			if (a.Columns != b.Columns || a.Rows != b.Rows)
-				throw new ArithmeticException(string.Format("Try to subtract a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.Rows, a.Columns, b.Rows, b.Columns));
-			if (c.Rows != a.Rows || c.Columns != a.Columns)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the proper dimension ({2},{3})", c.Rows, c.Columns, a.Rows, a.Columns));
+			if (a.ColumnCount != b.ColumnCount || a.RowCount != b.RowCount)
+				throw new ArithmeticException(string.Format("Try to subtract a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.RowCount, a.ColumnCount, b.RowCount, b.ColumnCount));
+			if (c.RowCount != a.RowCount || c.ColumnCount != a.ColumnCount)
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the proper dimension ({2},{3})", c.RowCount, c.ColumnCount, a.RowCount, a.ColumnCount));
 
-			for (int i = 0; i < c.Rows; i++)
-				for (int j = 0; j < c.Columns; j++)
+			for (int i = 0; i < c.RowCount; i++)
+				for (int j = 0; j < c.ColumnCount; j++)
 					c[i, j] = a[i, j] - b[i, j];
 		}
 
@@ -706,16 +731,16 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The matrix where to subtract the result of the multipication from. Has to be of dimension (a.Rows, b.Columns).</param>
 		public static void SubtractProductFromSelf(IROMatrix<double> a, IROMatrix<double> b, IMatrix<double> c)
 		{
-			int crows = a.Rows; // the rows of resultant matrix
-			int ccols = b.Columns; // the cols of resultant matrix
-			int numil = b.Rows; // number of summands for most inner loop
+			int crows = a.RowCount; // the rows of resultant matrix
+			int ccols = b.ColumnCount; // the cols of resultant matrix
+			int numil = b.RowCount; // number of summands for most inner loop
 
 			// Presumtion:
 			// a.Cols == b.Rows;
-			if (a.Columns != numil)
-				throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.Rows, a.Columns, b.Rows, b.Columns));
-			if (c.Rows != crows || c.Columns != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", c.Rows, c.Columns, crows, ccols));
+			if (a.ColumnCount != numil)
+				throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.RowCount, a.ColumnCount, b.RowCount, b.ColumnCount));
+			if (c.RowCount != crows || c.ColumnCount != ccols)
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", c.RowCount, c.ColumnCount, crows, ccols));
 
 			for (int i = 0; i < crows; i++)
 			{
@@ -738,12 +763,12 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The matrix where to subtract the result of the multipication from. Has to be of dimension (a.Rows, b.Columns).</param>
 		public static void SubtractProductFromSelf(IROMatrix<double> a, double b, IMatrix<double> c)
 		{
-			int crows = a.Rows; // the rows of resultant matrix
-			int ccols = a.Columns; // the cols of resultant matrix
+			int crows = a.RowCount; // the rows of resultant matrix
+			int ccols = a.ColumnCount; // the cols of resultant matrix
 
 			// Presumtion:
-			if (c.Rows != crows || c.Columns != ccols)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", c.Rows, c.Columns, crows, ccols));
+			if (c.RowCount != crows || c.ColumnCount != ccols)
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})", c.RowCount, c.ColumnCount, crows, ccols));
 
 			for (int i = 0; i < crows; i++)
 			{
@@ -762,13 +787,13 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to vector b).</param>
 		public static void AddRow(IROMatrix<double> a, IReadOnlyList<double> b, IMatrix<double> c)
 		{
-			int arows = a.Rows;
-			int acols = a.Columns;
+			int arows = a.RowCount;
+			int acols = a.ColumnCount;
 
 			int bcols = b.Count;
 
-			int crows = c.Rows;
-			int ccols = c.Columns;
+			int crows = c.RowCount;
+			int ccols = c.ColumnCount;
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
@@ -792,14 +817,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
 		public static void AddRow(IROMatrix<double> a, IROMatrix<double> b, int brow, IMatrix<double> c)
 		{
-			int arows = a.Rows;
-			int acols = a.Columns;
+			int arows = a.RowCount;
+			int acols = a.ColumnCount;
 
-			int brows = b.Rows;
-			int bcols = b.Columns;
+			int brows = b.RowCount;
+			int bcols = b.ColumnCount;
 
-			int crows = c.Rows;
-			int ccols = c.Columns;
+			int crows = c.RowCount;
+			int ccols = c.ColumnCount;
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
@@ -823,14 +848,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
 		public static void SubtractRow(IROMatrix<double> a, IROMatrix<double> b, int brow, IMatrix<double> c)
 		{
-			int arows = a.Rows;
-			int acols = a.Columns;
+			int arows = a.RowCount;
+			int acols = a.ColumnCount;
 
-			int brows = b.Rows;
-			int bcols = b.Columns;
+			int brows = b.RowCount;
+			int bcols = b.ColumnCount;
 
-			int crows = c.Rows;
-			int ccols = c.Columns;
+			int crows = c.RowCount;
+			int ccols = c.ColumnCount;
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
@@ -853,13 +878,13 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
 		public static void SubtractRow(IROMatrix<double> a, IReadOnlyList<double> b, IMatrix<double> c)
 		{
-			int arows = a.Rows;
-			int acols = a.Columns;
+			int arows = a.RowCount;
+			int acols = a.ColumnCount;
 
 			int bcols = b.Count;
 
-			int crows = c.Rows;
-			int ccols = c.Columns;
+			int crows = c.RowCount;
+			int ccols = c.ColumnCount;
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
@@ -883,14 +908,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
 		public static void SubtractColumn(IROMatrix<double> a, IROMatrix<double> b, int bcol, IMatrix<double> c)
 		{
-			int arows = a.Rows;
-			int acols = a.Columns;
+			int arows = a.RowCount;
+			int acols = a.ColumnCount;
 
-			int brows = b.Rows;
-			int bcols = b.Columns;
+			int brows = b.RowCount;
+			int bcols = b.ColumnCount;
 
-			int crows = c.Rows;
-			int ccols = c.Columns;
+			int crows = c.RowCount;
+			int ccols = c.ColumnCount;
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
@@ -915,14 +940,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
 		public static void DivideRow(IROMatrix<double> a, IROMatrix<double> b, int brow, double resultIfNull, IMatrix<double> c)
 		{
-			int arows = a.Rows;
-			int acols = a.Columns;
+			int arows = a.RowCount;
+			int acols = a.ColumnCount;
 
-			int brows = b.Rows;
-			int bcols = b.Columns;
+			int brows = b.RowCount;
+			int bcols = b.ColumnCount;
 
-			int crows = c.Rows;
-			int ccols = c.Columns;
+			int crows = c.RowCount;
+			int ccols = c.ColumnCount;
 
 			// Presumtion:
 			if (arows != crows || acols != ccols)
@@ -952,14 +977,64 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>True if any element of the provided matrix <paramref name="a"/> fulfills the given predicate; otherwise false.</returns>
 		public static bool Any(this IROMatrix<double> a, Func<int, int, double, bool> predicate)
 		{
-			int NC = a.Columns;
-			int NR = a.Rows;
+			int NC = a.ColumnCount;
+			int NR = a.RowCount;
 			for (int c = 0; c < NC; ++c)
 				for (int r = 0; r < NR; ++r)
 					if (predicate(r, c, a[r, c]))
 						return true;
 
 			return false;
+		}
+
+		public static IEnumerable<(int row, int column, T value)> EnumerateElementsIndexed<T>(IROMatrix<T> matrix, Zeros zeros = Zeros.AllowSkip)
+		{
+			if (matrix is IROBandMatrix<T> bm)
+				return bm.EnumerateElementsIndexed();
+			else if (matrix is IROMatrixLevel1<T> sm)
+				return sm.EnumerateElementsIndexed();
+			else
+				return InternalEnumerateElementsIndexed(matrix);
+		}
+
+		private static IEnumerable<(int row, int column, T value)> InternalEnumerateElementsIndexed<T>(IROMatrix<T> matrix)
+		{
+			{
+				int rowCount = matrix.RowCount;
+				int columnCount = matrix.ColumnCount;
+				for (int i = 0; i < rowCount; ++i)
+					for (int j = 0; j < rowCount; ++j)
+						yield return (i, j, matrix[i, j]);
+			}
+		}
+
+		public static void MapIndexed<T, T1>(this IROMatrix<T> src1, T1 parameter1, Func<int, int, T, T1, T> function, IMatrix<T> result, Zeros zeros = Zeros.AllowSkip)
+		{
+			if (src1 is IROMatrixLevel1<T> l1)
+				l1.MapIndexed(parameter1, function, result, zeros);
+			else
+				MapIndexed_DefaultImpl(src1, parameter1, function, result);
+		}
+
+		private static void MapIndexed_DefaultImpl<T, T1>(this IROMatrix<T> src1, T1 parameter1, Func<int, int, T, T1, T> function, IMatrix<T> result)
+		{
+			if (null == src1)
+				throw new ArgumentNullException(nameof(src1));
+			if (null == result)
+				throw new ArgumentNullException(nameof(result));
+
+			if (src1.RowCount != result.RowCount || src1.ColumnCount != result.ColumnCount)
+				throw new RankException("Mismatch of dimensions of src1 and result");
+
+			var cols = src1.ColumnCount;
+			var rows = src1.RowCount;
+			for (int i = 0; i < rows; ++i)
+			{
+				for (int j = 0; j < cols; ++j)
+				{
+					result[i, j] = function(i, j, src1[i, j], parameter1);
+				}
+			}
 		}
 
 		#endregion Iterations
@@ -984,8 +1059,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			var result = MatrixGenerator(NRR, NCC);
 
-			int NC = a.Columns;
-			int NR = a.Rows;
+			int NC = a.ColumnCount;
+			int NR = a.RowCount;
 
 			for (int c = 0, cc = 0; c < NC; ++c)
 			{
@@ -1022,8 +1097,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			var result = MatrixGenerator(NRR, NCC);
 
-			int NC = a.Columns;
-			int NR = a.Rows;
+			int NC = a.ColumnCount;
+			int NR = a.RowCount;
 
 			for (int cc = 0; cc < NCC; ++cc)
 			{
@@ -1058,8 +1133,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			var result = MatrixGenerator(NRR, NCC);
 
-			int NC = a.Columns;
-			int NR = a.Rows;
+			int NC = a.ColumnCount;
+			int NR = a.RowCount;
 
 			for (int c = 0, cc = 0; c < NC; ++c)
 			{
@@ -1095,8 +1170,8 @@ namespace Altaxo.Calc.LinearAlgebra
 
 			var result = MatrixGenerator(NRR, NCC);
 
-			int NC = a.Columns;
-			int NR = a.Rows;
+			int NC = a.ColumnCount;
+			int NR = a.RowCount;
 
 			for (int cc = 0; cc < NCC; ++cc)
 			{
@@ -1153,8 +1228,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="replacementValue">The replacement value. This value is assigned to any matrix element that has the value NaN (Not a Number).</param>
 		public static void ReplaceNaNElementsWith(this IMatrix<double> m, double replacementValue)
 		{
-			int rows = m.Rows;
-			int cols = m.Columns;
+			int rows = m.RowCount;
+			int cols = m.ColumnCount;
 			for (int i = 0; i < rows; ++i)
 			{
 				for (int j = 0; j < cols; ++j)
@@ -1170,8 +1245,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="replacementValue">The replacement value. This value is assigned to any matrix element that has the value NaN (Not a Number) or that is infinite.</param>
 		public static void ReplaceNaNAndInfiniteElementsWith(this IMatrix<double> m, double replacementValue)
 		{
-			int rows = m.Rows;
-			int cols = m.Columns;
+			int rows = m.RowCount;
+			int cols = m.ColumnCount;
 			for (int i = 0; i < rows; ++i)
 			{
 				for (int j = 0; j < cols; ++j)
@@ -1190,8 +1265,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="mean">The calculated mean value of the original matrix.</param>
 		public static void ToZeroMean(this IMatrix<double> a, out double mean)
 		{
-			int rows = a.Rows;
-			int cols = a.Columns;
+			int rows = a.RowCount;
+			int cols = a.ColumnCount;
 
 			if (rows == 0)
 				throw new InvalidDimensionMatrixException("The number of rows of the matrix is zero!");
@@ -1239,16 +1314,16 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// centered matrix. The original matrix data are lost.</remarks>
 		public static void ColumnsToZeroMean(IMatrix<double> a, IVector<double> mean)
 		{
-			if (null != mean && mean.Length != a.Columns)
-				throw new ArithmeticException(string.Format("The provided resultant vector (actual length({0}) has not the expected dimension ({1})", mean.Length, a.Columns));
+			if (null != mean && mean.Length != a.ColumnCount)
+				throw new ArithmeticException(string.Format("The provided resultant vector (actual length({0}) has not the expected dimension ({1})", mean.Length, a.ColumnCount));
 
-			for (int col = 0; col < a.Columns; col++)
+			for (int col = 0; col < a.ColumnCount; col++)
 			{
 				double sum = 0;
-				for (int row = 0; row < a.Rows; row++)
+				for (int row = 0; row < a.RowCount; row++)
 					sum += a[row, col];
-				sum /= a.Rows; // calculate the mean
-				for (int row = 0; row < a.Rows; row++)
+				sum /= a.RowCount; // calculate the mean
+				for (int row = 0; row < a.RowCount; row++)
 					a[row, col] -= sum; // subtract the mean from every element in the column
 
 				if (null != mean)
@@ -1266,27 +1341,27 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// centered matrix. The original matrix data are lost.</remarks>
 		public static void ColumnsToZeroMeanAndUnitVariance(IMatrix<double> a, IVector<double> meanvec, IVector<double> scalevec)
 		{
-			if (null != meanvec && (meanvec.Length != a.Columns))
-				throw new ArithmeticException(string.Format("The provided resultant mean vector (actual dim({0})has not the expected length ({1})", meanvec.Length, a.Columns));
-			if (null != scalevec && (scalevec.Length != a.Columns))
-				throw new ArithmeticException(string.Format("The provided resultant scale vector (actual dim({0})has not the expected length ({1})", scalevec.Length, a.Columns));
+			if (null != meanvec && (meanvec.Length != a.ColumnCount))
+				throw new ArithmeticException(string.Format("The provided resultant mean vector (actual dim({0})has not the expected length ({1})", meanvec.Length, a.ColumnCount));
+			if (null != scalevec && (scalevec.Length != a.ColumnCount))
+				throw new ArithmeticException(string.Format("The provided resultant scale vector (actual dim({0})has not the expected length ({1})", scalevec.Length, a.ColumnCount));
 
-			for (int col = 0; col < a.Columns; col++)
+			for (int col = 0; col < a.ColumnCount; col++)
 			{
 				double sum = 0;
 				double sumsqr = 0;
-				for (int row = 0; row < a.Rows; row++)
+				for (int row = 0; row < a.RowCount; row++)
 				{
 					sum += a[row, col];
 					sumsqr += Square(a[row, col]);
 				}
-				double mean = sum / a.Rows; // calculate the mean
+				double mean = sum / a.RowCount; // calculate the mean
 				double scor;
-				if (a.Rows > 1 && sumsqr - mean * sum > 0)
-					scor = Math.Sqrt((a.Rows - 1) / (sumsqr - mean * sum));
+				if (a.RowCount > 1 && sumsqr - mean * sum > 0)
+					scor = Math.Sqrt((a.RowCount - 1) / (sumsqr - mean * sum));
 				else
 					scor = 1;
-				for (int row = 0; row < a.Rows; row++)
+				for (int row = 0; row < a.RowCount; row++)
 					a[row, col] = (a[row, col] - mean) * scor; // subtract the mean from every element in the column
 
 				if (null != meanvec)
@@ -1304,8 +1379,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		public static double SumOfSquares(IROMatrix<double> a)
 		{
 			double sum = 0;
-			for (int i = 0; i < a.Rows; i++)
-				for (int j = 0; j < a.Columns; j++)
+			for (int i = 0; i < a.RowCount; i++)
+				for (int j = 0; j < a.ColumnCount; j++)
 					sum += Square(a[i, j]);
 			return sum;
 		}
@@ -1318,12 +1393,12 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>The sum of the squared differences of each element in a to the corresponding element in b, i.e. Sum[(a[i,j]-b[i,j])²].</returns>
 		public static double SumOfSquaredDifferences(IROMatrix<double> a, IROMatrix<double> b)
 		{
-			if (a.Rows != b.Rows || a.Columns != b.Columns)
-				throw new ArithmeticException(string.Format("The two provided matrices (a({0},{1})) and b({2},{3})) have not the same dimensions.", a.Rows, a.Columns, b.Rows, b.Columns));
+			if (a.RowCount != b.RowCount || a.ColumnCount != b.ColumnCount)
+				throw new ArithmeticException(string.Format("The two provided matrices (a({0},{1})) and b({2},{3})) have not the same dimensions.", a.RowCount, a.ColumnCount, b.RowCount, b.ColumnCount));
 
 			double sum = 0;
-			for (int i = 0; i < a.Rows; i++)
-				for (int j = 0; j < a.Columns; j++)
+			for (int i = 0; i < a.RowCount; i++)
+				for (int j = 0; j < a.ColumnCount; j++)
 					sum += Square(a[i, j] - b[i, j]);
 			return sum;
 		}
@@ -1345,11 +1420,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>True if all elements are zero or if one of the two dimensions of the matrix is zero. False if the matrix contains nonzero elements.</returns>
 		public static bool IsZeroMatrix(IROMatrix<double> a)
 		{
-			if (a.Rows == 0 || a.Columns == 0)
+			if (a.RowCount == 0 || a.ColumnCount == 0)
 				return true; // we consider a matrix with one dimension zero also as zero matrix
 
-			for (int i = 0; i < a.Rows; i++)
-				for (int j = 0; j < a.Columns; j++)
+			for (int i = 0; i < a.RowCount; i++)
+				for (int j = 0; j < a.ColumnCount; j++)
 					if (a[i, j] != 0)
 						return false;
 
@@ -1363,8 +1438,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="scalar">The value which is used to set each element with.</param>
 		public static void SetMatrixElements(this IMatrix<double> a, double scalar)
 		{
-			for (int i = 0; i < a.Rows; i++)
-				for (int j = 0; j < a.Columns; j++)
+			for (int i = 0; i < a.RowCount; i++)
+				for (int j = 0; j < a.ColumnCount; j++)
 					a[i, j] = scalar;
 		}
 
@@ -1375,8 +1450,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="Setter">The setter function. First arg is the row index, 2nd arg the column index. The return value is used to set the matrix element.</param>
 		public static void SetMatrixElements(this IMatrix<double> a, Func<int, int, double> Setter)
 		{
-			for (int i = 0; i < a.Rows; i++)
-				for (int j = 0; j < a.Columns; j++)
+			for (int i = 0; i < a.RowCount; i++)
+				for (int j = 0; j < a.ColumnCount; j++)
 					a[i, j] = Setter(i, j);
 		}
 
@@ -1398,8 +1473,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="coloffset">The column offset = horizontal origin of the submatrix in the source matrix.</param>
 		public static void Submatrix(IROMatrix<double> src, IMatrix<double> dest, int rowoffset, int coloffset)
 		{
-			for (int i = 0; i < dest.Rows; i++)
-				for (int j = 0; j < dest.Columns; j++)
+			for (int i = 0; i < dest.RowCount; i++)
+				for (int j = 0; j < dest.ColumnCount; j++)
 					dest[i, j] = src[i + rowoffset, j + coloffset];
 		}
 
@@ -1411,8 +1486,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="dest">The destination matrix where to store the submatrix. It's dimensions are the dimensions of the submatrix.</param>
 		public static void Submatrix(IROMatrix<double> src, IMatrix<double> dest)
 		{
-			for (int i = 0; i < dest.Rows; i++)
-				for (int j = 0; j < dest.Columns; j++)
+			for (int i = 0; i < dest.RowCount; i++)
+				for (int j = 0; j < dest.ColumnCount; j++)
 					dest[i, j] = src[i, j];
 		}
 
@@ -1423,11 +1498,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="dest">The destination matrix to copy to.</param>
 		public static void Copy(IROMatrix<double> src, IMatrix<double> dest)
 		{
-			if (dest.Rows != src.Rows || dest.Columns != src.Columns)
-				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the dimension of the source matrix ({2},{3})", dest.Rows, dest.Columns, src.Rows, src.Columns));
+			if (dest.RowCount != src.RowCount || dest.ColumnCount != src.ColumnCount)
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the dimension of the source matrix ({2},{3})", dest.RowCount, dest.ColumnCount, src.RowCount, src.ColumnCount));
 
-			int rows = src.Rows;
-			int cols = src.Columns;
+			int rows = src.RowCount;
+			int cols = src.ColumnCount;
 			for (int i = 0; i < rows; i++)
 				for (int j = 0; j < cols; j++)
 					dest[i, j] = src[i, j];
@@ -1443,8 +1518,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destcol">The horizontal origin of copy operation in the destination matrix.</param>
 		public static void Copy(IROMatrix<double> src, IMatrix<double> dest, int destrow, int destcol)
 		{
-			int rows = src.Rows;
-			int cols = src.Columns;
+			int rows = src.RowCount;
+			int cols = src.ColumnCount;
 			for (int i = 0; i < rows; i++)
 				for (int j = 0; j < cols; j++)
 					dest[i + destrow, j + destcol] = src[i, j];
@@ -1459,14 +1534,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destcol">The column in the destination matrix where to copy the vector to.</param>
 		public static void SetColumn(IROMatrix<double> src, int srccol, IMatrix<double> dest, int destcol)
 		{
-			if (destcol >= dest.Columns)
-				throw new ArithmeticException(string.Format("Try to set column {0} in the matrix with dim({1},{2}) is not allowed!", destcol, dest.Rows, dest.Columns));
-			if (srccol >= src.Columns)
-				throw new ArithmeticException(string.Format("Parameter srccol out of range ({0}>={1})!", srccol, src.Columns));
-			if (dest.Rows != src.Rows)
-				throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({2})!", destcol, dest.Rows, src.Rows));
+			if (destcol >= dest.ColumnCount)
+				throw new ArithmeticException(string.Format("Try to set column {0} in the matrix with dim({1},{2}) is not allowed!", destcol, dest.RowCount, dest.ColumnCount));
+			if (srccol >= src.ColumnCount)
+				throw new ArithmeticException(string.Format("Parameter srccol out of range ({0}>={1})!", srccol, src.ColumnCount));
+			if (dest.RowCount != src.RowCount)
+				throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({2})!", destcol, dest.RowCount, src.RowCount));
 
-			for (int i = 0; i < dest.Rows; i++)
+			for (int i = 0; i < dest.RowCount; i++)
 				dest[i, destcol] = src[i, srccol];
 		}
 
@@ -1478,14 +1553,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="col">The column in the destination matrix where to copy the vector to.</param>
 		public static void SetColumn(IROMatrix<double> src, IMatrix<double> dest, int col)
 		{
-			if (col >= dest.Columns)
-				throw new ArithmeticException(string.Format("Try to set column {0} in the matrix with dim({1},{2}) is not allowed!", col, dest.Rows, dest.Columns));
-			if (src.Columns != 1)
-				throw new ArithmeticException(string.Format("Try to set column {0} with a matrix of more than one, namely {1} columns, is not allowed!", col, src.Columns));
-			if (dest.Rows != src.Rows)
-				throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({2})!", col, dest.Rows, src.Rows));
+			if (col >= dest.ColumnCount)
+				throw new ArithmeticException(string.Format("Try to set column {0} in the matrix with dim({1},{2}) is not allowed!", col, dest.RowCount, dest.ColumnCount));
+			if (src.ColumnCount != 1)
+				throw new ArithmeticException(string.Format("Try to set column {0} with a matrix of more than one, namely {1} columns, is not allowed!", col, src.ColumnCount));
+			if (dest.RowCount != src.RowCount)
+				throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({2})!", col, dest.RowCount, src.RowCount));
 
-			for (int i = 0; i < dest.Rows; i++)
+			for (int i = 0; i < dest.RowCount; i++)
 				dest[i, col] = src[i, 0];
 		}
 
@@ -1498,14 +1573,14 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destRow">The row in the destination matrix where to copy the vector to.</param>
 		public static void SetRow(IROMatrix<double> src, int srcRow, IMatrix<double> dest, int destRow)
 		{
-			if (destRow >= dest.Rows)
-				throw new ArithmeticException(string.Format("Try to set row {0} in the matrix with dim({1},{2}) is not allowed!", destRow, dest.Rows, dest.Columns));
-			if (srcRow >= src.Rows)
-				throw new ArithmeticException(string.Format("The source row number ({0}) exceeds the actual number of rows ({1})in the source matrix!", srcRow, src.Rows));
-			if (dest.Columns != src.Columns)
-				throw new ArithmeticException(string.Format("Number of columns of the matrix ({0}) not match number of colums of the vector ({1})!", dest.Columns, src.Columns));
+			if (destRow >= dest.RowCount)
+				throw new ArithmeticException(string.Format("Try to set row {0} in the matrix with dim({1},{2}) is not allowed!", destRow, dest.RowCount, dest.ColumnCount));
+			if (srcRow >= src.RowCount)
+				throw new ArithmeticException(string.Format("The source row number ({0}) exceeds the actual number of rows ({1})in the source matrix!", srcRow, src.RowCount));
+			if (dest.ColumnCount != src.ColumnCount)
+				throw new ArithmeticException(string.Format("Number of columns of the matrix ({0}) not match number of colums of the vector ({1})!", dest.ColumnCount, src.ColumnCount));
 
-			for (int j = 0; j < dest.Columns; j++)
+			for (int j = 0; j < dest.ColumnCount; j++)
 				dest[destRow, j] = src[srcRow, j];
 		}
 
@@ -1517,12 +1592,12 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destRow">The row in the destination matrix where to copy the vector to.</param>
 		public static void SetRow(IReadOnlyList<double> src, IMatrix<double> dest, int destRow)
 		{
-			if (destRow >= dest.Rows)
-				throw new ArithmeticException(string.Format("Try to set row {0} in the matrix with dim({1},{2}) is not allowed!", destRow, dest.Rows, dest.Columns));
-			if (dest.Columns != src.Count)
-				throw new ArithmeticException(string.Format("Number of columns of the matrix ({0}) not match number of elements of the vector ({1})!", dest.Columns, src.Count));
+			if (destRow >= dest.RowCount)
+				throw new ArithmeticException(string.Format("Try to set row {0} in the matrix with dim({1},{2}) is not allowed!", destRow, dest.RowCount, dest.ColumnCount));
+			if (dest.ColumnCount != src.Count)
+				throw new ArithmeticException(string.Format("Number of columns of the matrix ({0}) not match number of elements of the vector ({1})!", dest.ColumnCount, src.Count));
 
-			for (int j = 0; j < dest.Columns; j++)
+			for (int j = 0; j < dest.ColumnCount; j++)
 				dest[destRow, j] = src[j];
 		}
 
@@ -1533,16 +1608,16 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="a">The matrix which should be row normalized.</param>
 		public static void NormalizeRows(IMatrix<double> a)
 		{
-			for (int i = 0; i < a.Rows; i++)
+			for (int i = 0; i < a.RowCount; i++)
 			{
 				double sum = 0;
-				for (int j = 0; j < a.Columns; j++)
+				for (int j = 0; j < a.ColumnCount; j++)
 					sum += Square(a[i, j]);
 
 				if (sum != 0) // Normalize only of at least one element is not null
 				{
 					sum = 1 / Math.Sqrt(sum);
-					for (int j = 0; j < a.Columns; j++)
+					for (int j = 0; j < a.ColumnCount; j++)
 						a[i, j] *= sum;
 				}
 			}
@@ -1555,16 +1630,16 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="a">The matrix which should be column normalized.</param>
 		public static void NormalizeCols(IMatrix<double> a)
 		{
-			for (int i = 0; i < a.Columns; i++)
+			for (int i = 0; i < a.ColumnCount; i++)
 			{
 				double sum = 0;
-				for (int j = 0; j < a.Rows; j++)
+				for (int j = 0; j < a.RowCount; j++)
 					sum += Square(a[j, i]);
 
 				if (sum != 0)
 				{
 					sum = 1 / Math.Sqrt(sum);
-					for (int j = 0; j < a.Rows; j++)
+					for (int j = 0; j < a.RowCount; j++)
 						a[j, i] *= sum;
 				}
 			}
@@ -1578,15 +1653,15 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>Square root of the sum of squares of the column, i.e. the original length of the column vector before normalization.</returns>
 		public static double NormalizeOneColumn(IMatrix<double> a, int col)
 		{
-			if (col >= a.Columns)
-				throw new ArithmeticException(string.Format("Matrix a is expected to have at least {0} columns, but has the actual dimensions({1},{2})", col + 1, a.Rows, a.Columns));
+			if (col >= a.ColumnCount)
+				throw new ArithmeticException(string.Format("Matrix a is expected to have at least {0} columns, but has the actual dimensions({1},{2})", col + 1, a.RowCount, a.ColumnCount));
 
 			double sum = 0;
-			for (int i = 0; i < a.Rows; i++)
+			for (int i = 0; i < a.RowCount; i++)
 				sum += Square(a[i, 0]);
 
 			sum = Math.Sqrt(sum);
-			for (int i = 0; i < a.Rows; i++)
+			for (int i = 0; i < a.RowCount; i++)
 				a[i, 0] /= sum;
 
 			return sum;
@@ -1601,8 +1676,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// the diagonal elements are replaced by their inverses, and the outer diagonal elements are set to zero.</param>
 		public static void InvertDiagonalMatrix(IMatrix<double> a)
 		{
-			int rows = a.Rows;
-			int cols = a.Columns;
+			int rows = a.RowCount;
+			int cols = a.ColumnCount;
 
 			if (cols != rows)
 				throw new ArithmeticException(string.Format("A diagonal matrix has to be quadratic, but you provided a matrix of dimension({0},{1})!", rows, cols));
@@ -1624,12 +1699,12 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			// Presumtion:
 			// a.Cols == b.Rows;
-			if (a.Columns != b.Columns || a.Rows != b.Rows)
-				throw new ArithmeticException(string.Format("Try to compare a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.Rows, a.Columns, b.Rows, b.Columns));
+			if (a.ColumnCount != b.ColumnCount || a.RowCount != b.RowCount)
+				throw new ArithmeticException(string.Format("Try to compare a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!", a.RowCount, a.ColumnCount, b.RowCount, b.ColumnCount));
 
-			double thresh = Math.Sqrt(SumOfSquares(b)) * accuracy / ((double)b.Rows * b.Columns); ;
-			for (int i = 0; i < a.Rows; i++)
-				for (int j = 0; j < a.Columns; j++)
+			double thresh = Math.Sqrt(SumOfSquares(b)) * accuracy / ((double)b.RowCount * b.ColumnCount); ;
+			for (int i = 0; i < a.RowCount; i++)
+				for (int j = 0; j < a.ColumnCount; j++)
 					if (Math.Abs(a[i, j] - b[i, j]) > thresh)
 						return false;
 
@@ -1663,11 +1738,11 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (null != residualVarianceVector)
 				residualVarianceVector.AppendBottom(new MatrixMath.ScalarAsMatrix<double>(originalVariance));
 
-			IMatrix<double> l = new MatrixWithOneRow<double>(X.Columns);
+			IMatrix<double> l = new MatrixWithOneRow<double>(X.ColumnCount);
 			IMatrix<double> t_prev = null;
-			IMatrix<double> t = new MatrixWithOneColumn<double>(X.Rows);
+			IMatrix<double> t = new MatrixWithOneColumn<double>(X.RowCount);
 
-			int maxFactors = numFactors <= 0 ? X.Columns : Math.Min(numFactors, X.Columns);
+			int maxFactors = numFactors <= 0 ? X.ColumnCount : Math.Min(numFactors, X.ColumnCount);
 
 			for (int nFactor = 0; nFactor < maxFactors; nFactor++)
 			{
@@ -1678,7 +1753,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				{
 					Submatrix(X, l, rowoffset, 0);     // l is now a horizontal vector
 					rowoffset++;
-				} while (IsZeroMatrix(l) && rowoffset < X.Rows);
+				} while (IsZeroMatrix(l) && rowoffset < X.RowCount);
 
 				for (int iter = 0; iter < 500; iter++)
 				{
@@ -1697,7 +1772,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 					// 4. Goto step 2 or break after a number of iterations
 					if (t_prev == null)
-						t_prev = new MatrixWithOneColumn<double>(X.Rows);
+						t_prev = new MatrixWithOneColumn<double>(X.RowCount);
 					Copy(t, t_prev); // stores the content of t in t_prev
 				}
 
@@ -1747,16 +1822,16 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>The pseudo inverse of matrix <c>input</c>.</returns>
 		public static IMatrix<double> PseudoInverse(IROMatrix<double> input, out int rank)
 		{
-			var ma = new LeftSpineJaggedArrayMatrix<double>(input.Rows, input.Columns);
+			var ma = new LeftSpineJaggedArrayMatrix<double>(input.RowCount, input.ColumnCount);
 			MatrixMath.Copy(input, ma);
 			SingularValueDecomposition svd = new SingularValueDecomposition(ma);
 
-			double[][] B = GetMatrixArray(input.Columns, input.Rows);
+			double[][] B = GetMatrixArray(input.ColumnCount, input.RowCount);
 
 			/* compute the pseudoinverse in B */
 			double[] s = svd.Diagonal;
-			int m = input.Rows;
-			int n = input.Columns;
+			int m = input.RowCount;
+			int n = input.ColumnCount;
 			int minmn = Math.Min(m, n);
 
 			double[][] v = svd.V;
@@ -1799,8 +1874,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			double min = a[0, 0];
 
-			for (int i = 0; i < a.Rows; ++i)
-				for (int j = 0; j < a.Columns; ++j)
+			for (int i = 0; i < a.RowCount; ++i)
+				for (int j = 0; j < a.ColumnCount; ++j)
 					min = Math.Min(min, a[i, j]);
 
 			return min;
@@ -1815,8 +1890,8 @@ namespace Altaxo.Calc.LinearAlgebra
 		{
 			double max = a[0, 0];
 
-			for (int i = 0; i < a.Rows; ++i)
-				for (int j = 0; j < a.Columns; ++j)
+			for (int i = 0; i < a.RowCount; ++i)
+				for (int j = 0; j < a.ColumnCount; ++j)
 					max = Math.Max(max, a[i, j]);
 
 			return max;
@@ -1829,11 +1904,11 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>Trace of square matrix <paramref name="a"/>, i.e. the sum of diagonal elements.</returns>
 		public static double Trace(this IROMatrix<double> a)
 		{
-			if (a.Rows != a.Columns)
-				throw new ArgumentException(string.Format("Matrix needs to be a square matrix, but has dimensions {0}x{1}", a.Rows, a.Columns), nameof(a));
+			if (a.RowCount != a.ColumnCount)
+				throw new ArgumentException(string.Format("Matrix needs to be a square matrix, but has dimensions {0}x{1}", a.RowCount, a.ColumnCount), nameof(a));
 
 			double sum = 0;
-			for (int i = a.Columns - 1; i >= 0; --i)
+			for (int i = a.ColumnCount - 1; i >= 0; --i)
 				sum += a[i, i];
 
 			return sum;
@@ -1849,10 +1924,10 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				case MatrixNorm.M1Norm:
 					{
-						for (int c = 0; c < a.Columns; ++c)
+						for (int c = 0; c < a.ColumnCount; ++c)
 						{
 							double sum = 0;
-							for (int r = 0; r < a.Rows; ++r)
+							for (int r = 0; r < a.RowCount; ++r)
 								sum += Math.Abs(a[r, c]);
 
 							result = Math.Max(result, sum);
@@ -1915,8 +1990,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			/// <param name="a">Matrix to decompose, on return: decomposed matrix.</param>
 			public void ComputeSingularValueDecomposition(IMatrix<double> a)
 			{
-				m = a.Rows;
-				n = a.Columns;
+				m = a.RowCount;
+				n = a.ColumnCount;
 				int nu = Math.Min(m, n);
 				s = new double[Math.Min(m + 1, n)];
 				//U = new Matrix(m, nu);
@@ -2368,7 +2443,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				if (tempstorage is SolveTempStorage)
 				{
 					sts = (SolveTempStorage)tempstorage;
-					if (sts.A.Rows == A.Rows && sts.A.Columns == A.Columns)
+					if (sts.A.RowCount == A.RowCount && sts.A.ColumnCount == A.ColumnCount)
 					{
 						MatrixMath.Copy(A, sts.A);
 						sts.SVD.ComputeSingularValueDecomposition(sts.A);
@@ -2378,7 +2453,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				}
 				// tempstorage can not be used
 				sts = new SolveTempStorage();
-				sts.A = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(A.Rows, A.Columns);
+				sts.A = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(A.RowCount, A.ColumnCount);
 				MatrixMath.Copy(A, sts.A);
 				sts.SVD = new SingularValueDecomposition(sts.A);
 				sts.SVD.Backsubstitution(B, x);

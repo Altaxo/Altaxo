@@ -62,9 +62,9 @@ namespace Altaxo.Calc.Interpolation
         throw new ArgumentException("x.Length is less or equal 1 (you can use univariate interpolation instead)");
       if (_y.Count < 2)
         throw new ArgumentException("y.Length is less or equal 1 (you can use univariate interpolation instead)");
-      if (_x.Count != _vmatrix.Rows)
+      if (_x.Count != _vmatrix.RowCount)
         throw new ArgumentException("Length of vector x is not equal to datamatrix.Rows");
-      if (_y.Count != _vmatrix.Columns)
+      if (_y.Count != _vmatrix.ColumnCount)
         throw new ArgumentException("Length of vector y is not equal to datamatrix.Columns");
 
       if (!VectorMath.IsStrictlyIncreasingOrDecreasing(_x, out _isXDecreasing))

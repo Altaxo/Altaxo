@@ -78,7 +78,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		public void Decompose(IROMatrix<double> A)
 		{
 			// Initialize.
-			if (m == A.Rows && n == A.Columns)
+			if (m == A.RowCount && n == A.ColumnCount)
 			{
 				MatrixMath.Copy(A, new JaggedArrayMatrix(QR, m, n));
 				//JaggedArrayMath.Copy(A, QR);
@@ -86,8 +86,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			else
 			{
 				QR = JaggedArrayMath.GetMatrixCopy(A);
-				m = A.Rows;
-				n = A.Columns;
+				m = A.RowCount;
+				n = A.ColumnCount;
 				Rdiag = new double[n];
 			}
 
@@ -242,7 +242,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		public IMatrix<double> GetSolution(IROMatrix<double> B)
 		{
-			JaggedArrayMatrix result = new JaggedArrayMatrix(m, B.Columns);
+			JaggedArrayMatrix result = new JaggedArrayMatrix(m, B.ColumnCount);
 			Solve(B, result);
 			return result;
 		}
@@ -250,7 +250,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		public IMatrix<double> GetSolution(IROMatrix<double> A, IROMatrix<double> B)
 		{
 			Decompose(A);
-			JaggedArrayMatrix result = new JaggedArrayMatrix(m, B.Columns);
+			JaggedArrayMatrix result = new JaggedArrayMatrix(m, B.ColumnCount);
 			Solve(B, result);
 			return result;
 		}
@@ -291,7 +291,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		public void Solve(IROMatrix<double> B, IMatrix<double> result)
 		{
-			if (B.Rows != m)
+			if (B.RowCount != m)
 			{
 				throw new ArgumentException("Matrix row dimensions must agree.");
 			}
@@ -301,9 +301,9 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 
 			// Copy right hand side
-			int nx = B.Columns;
+			int nx = B.ColumnCount;
 			double[][] X;
-			if (_solveMatrixWorkspace != null && _solveMatrixWorkspace.Rows == B.Rows && _solveMatrixWorkspace.Columns == B.Columns)
+			if (_solveMatrixWorkspace != null && _solveMatrixWorkspace.RowCount == B.RowCount && _solveMatrixWorkspace.ColumnCount == B.ColumnCount)
 			{
 				X = _solveMatrixWorkspace.Array;
 				MatrixMath.Copy(B, _solveMatrixWorkspace);
@@ -311,7 +311,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			else
 			{
 				X = JaggedArrayMath.GetMatrixCopy(B);
-				_solveMatrixWorkspace = new JaggedArrayMatrix(X, B.Rows, B.Columns);
+				_solveMatrixWorkspace = new JaggedArrayMatrix(X, B.RowCount, B.ColumnCount);
 			}
 
 			// Compute Y = transpose(Q)*B

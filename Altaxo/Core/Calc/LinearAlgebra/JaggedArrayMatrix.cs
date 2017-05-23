@@ -134,7 +134,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <summary>
 		/// Number of Rows of the matrix.
 		/// </summary>
-		public int Rows
+		public int RowCount
 		{
 			get
 			{
@@ -145,7 +145,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <summary>
 		/// Number of columns of the matrix.
 		/// </summary>
-		public int Columns
+		public int ColumnCount
 		{
 			get
 			{
@@ -164,20 +164,20 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="a">Matrix to append to the bottom of this matrix.</param>
 		public void AppendBottom(IROMatrix<double> a)
 		{
-			if (a.Rows == 0)
+			if (a.RowCount == 0)
 				return; // nothing to append
 
-			if (this.Columns > 0)
+			if (this.ColumnCount > 0)
 			{
-				if (a.Columns != this.Columns) // throw an error if this column is not empty and the columns does not match
-					throw new ArithmeticException(string.Format("The number of columns of this matrix ({0}) and of the matrix to append ({1}) does not match!", this.Columns, a.Columns));
+				if (a.ColumnCount != this.ColumnCount) // throw an error if this column is not empty and the columns does not match
+					throw new ArithmeticException(string.Format("The number of columns of this matrix ({0}) and of the matrix to append ({1}) does not match!", this.ColumnCount, a.ColumnCount));
 			}
 			else // if the matrix was empty before
 			{
-				m_Cols = a.Columns;
+				m_Cols = a.ColumnCount;
 			}
 
-			int newRows = a.Rows + this.Rows;
+			int newRows = a.RowCount + this.RowCount;
 
 			// we must reallocate the array if neccessary
 			if (newRows >= m_Array.Length)

@@ -149,14 +149,14 @@ namespace Altaxo.Calc.Regression.Multivariate
 			// for MSC (the x in linear regression) and another to center the MSC corrected spectra
 
 			IVector<double> xMeanBefore = null;
-			double threshold = 1E-14 * MatrixMath.SumOfSquares(xMatrix) / xMatrix.Rows;
+			double threshold = 1E-14 * MatrixMath.SumOfSquares(xMatrix) / xMatrix.RowCount;
 			for (int cycle = 0; cycle < 50; cycle++)
 			{
 				// 1.) Get the mean spectrum
 				// we want to have the mean of each matrix column, but not center the matrix now, since this
 				// is done later on
-				int cols = xMatrix.Columns;
-				int rows = xMatrix.Rows;
+				int cols = xMatrix.ColumnCount;
+				int rows = xMatrix.RowCount;
 				for (int n = 0; n < cols; n++)
 				{
 					double sum = 0;
@@ -196,7 +196,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		{
 			for (int i = 0; i <= regions.Length; i++)
 			{
-				ProcessForPrediction(xMatrix, xMean, xScale, RegionStart(i, regions), RegionEnd(i, regions, xMatrix.Columns));
+				ProcessForPrediction(xMatrix, xMean, xScale, RegionStart(i, regions), RegionEnd(i, regions, xMatrix.ColumnCount));
 			}
 		}
 
@@ -212,7 +212,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		{
 			int regionlength = regionend - regionstart;
 
-			for (int n = 0; n < xMatrix.Rows; n++)
+			for (int n = 0; n < xMatrix.RowCount; n++)
 			{
 				// 2.) Do linear regression of the current spectrum versus the mean spectrum
 				QuickLinearRegression regression = new QuickLinearRegression();
@@ -270,7 +270,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		{
 			for (int i = 0; i <= regions.Length; i++)
 			{
-				ProcessForPrediction(xMatrix, xMean, xScale, RegionStart(i, regions), RegionEnd(i, regions, xMatrix.Columns));
+				ProcessForPrediction(xMatrix, xMean, xScale, RegionStart(i, regions), RegionEnd(i, regions, xMatrix.ColumnCount));
 			}
 		}
 
@@ -286,7 +286,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		{
 			int regionlength = regionend - regionstart;
 
-			for (int n = 0; n < xMatrix.Rows; n++)
+			for (int n = 0; n < xMatrix.RowCount; n++)
 			{
 				// 1.) Get the mean response of a spectrum
 				double mean = 0;
@@ -364,7 +364,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		{
 			for (int i = 0; i <= regions.Length; i++)
 			{
-				ProcessForPrediction(xMatrix, xMean, xScale, RegionStart(i, regions), RegionEnd(i, regions, xMatrix.Columns));
+				ProcessForPrediction(xMatrix, xMean, xScale, RegionStart(i, regions), RegionEnd(i, regions, xMatrix.ColumnCount));
 			}
 		}
 
@@ -381,7 +381,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int regionlength = regionend - regionstart;
 
 			var helpervector = VectorMath.ToVector(new double[regionlength]);
-			for (int n = 0; n < xMatrix.Rows; n++)
+			for (int n = 0; n < xMatrix.RowCount; n++)
 			{
 				var vector = MatrixMath.RowToVector(xMatrix, n, regionstart, regionlength);
 				_filter.Apply(vector, helpervector);
@@ -443,7 +443,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		public override void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale, int[] regions)
 		{
 			for (int i = 0; i <= regions.Length; i++)
-				Process(xMatrix, xMean, xScale, RegionStart(i, regions), RegionEnd(i, regions, xMatrix.Columns));
+				Process(xMatrix, xMean, xScale, RegionStart(i, regions), RegionEnd(i, regions, xMatrix.ColumnCount));
 		}
 
 		/// <summary>
@@ -462,7 +462,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			switch (currentorder)
 			{
 				case 0: // Detrending of order 0 - subtract mean
-					for (int n = 0; n < xMatrix.Rows; n++)
+					for (int n = 0; n < xMatrix.RowCount; n++)
 					{
 						// 1.) Get the mean response of a spectrum
 						double mean = 0;
@@ -476,7 +476,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 					break;
 
 				case 1: // Detrending of order 1 - subtract linear regression line
-					for (int n = 0; n < xMatrix.Rows; n++)
+					for (int n = 0; n < xMatrix.RowCount; n++)
 					{
 						QuickLinearRegression regression = new QuickLinearRegression();
 						for (int i = regionstart; i < regionend; i++)
@@ -491,7 +491,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 					break;
 
 				case 2: // Detrending of order 2 - subtract quadratic regression line
-					for (int n = 0; n < xMatrix.Rows; n++)
+					for (int n = 0; n < xMatrix.RowCount; n++)
 					{
 						QuickQuadraticRegression regression = new QuickQuadraticRegression();
 						for (int i = regionstart; i < regionend; i++)

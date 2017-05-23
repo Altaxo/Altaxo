@@ -47,8 +47,8 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (MatrixMath.Min(A) < 0)
 				throw new ArgumentException("Input matrix must not contain negative elements", nameof(A));
 
-			int m = A.Rows;
-			int n = A.Columns;
+			int m = A.RowCount;
+			int n = A.ColumnCount;
 			// Check input arguments
 
 			//if ˜exist(’r’)

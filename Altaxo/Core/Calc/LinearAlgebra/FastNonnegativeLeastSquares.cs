@@ -44,11 +44,11 @@ namespace Altaxo.Calc.LinearAlgebra
 			if (null == isRestrictedToPositiveValues)
 				throw new ArgumentNullException(nameof(isRestrictedToPositiveValues));
 
-			if (XtX.Rows != XtX.Columns)
+			if (XtX.RowCount != XtX.ColumnCount)
 				throw new ArgumentException("Matrix should be a square matrix", nameof(XtX));
-			if (Xty.Columns != 1)
+			if (Xty.ColumnCount != 1)
 				throw new ArgumentException(nameof(Xty) + " should be a column vector (number of columns should be equal to 1)", nameof(Xty));
-			if (Xty.Rows != XtX.Columns)
+			if (Xty.RowCount != XtX.ColumnCount)
 				throw new ArgumentException("Number of rows in " + nameof(Xty) + " should match number of columns in " + nameof(XtX), nameof(Xty));
 
 			var matrixGenerator = new Func<int, int, DoubleMatrix>((rows, cols) => new DoubleMatrix(rows, cols));
@@ -56,10 +56,10 @@ namespace Altaxo.Calc.LinearAlgebra
 			// if nargin < 3
 			//   tol = 10 * eps * norm(XtX, 1) * length(XtX);
 			// end
-			double tol = tolerance.HasValue ? tolerance.Value : 10 * DoubleConstants.DBL_EPSILON * MatrixMath.Norm(XtX, MatrixNorm.M1Norm) * Math.Max(XtX.Rows, XtX.Columns);
+			double tol = tolerance.HasValue ? tolerance.Value : 10 * DoubleConstants.DBL_EPSILON * MatrixMath.Norm(XtX, MatrixNorm.M1Norm) * Math.Max(XtX.RowCount, XtX.ColumnCount);
 
 			//	[m, n] = size(XtX);
-			int n = XtX.Columns;
+			int n = XtX.ColumnCount;
 
 			// P = zeros(1, n);
 			// Z = 1:n;

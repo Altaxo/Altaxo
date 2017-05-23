@@ -90,10 +90,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
 		protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
 		{
-			int numFactors = Math.Min(matrixX.Columns, maxFactors);
+			int numFactors = Math.Min(matrixX.ColumnCount, maxFactors);
 			ExecuteAnalysis(matrixX, matrixY, ref numFactors, out var xLoads, out var xScores, out var V);
 
-			var yLoads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixY.Rows, matrixY.Columns);
+			var yLoads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixY.RowCount, matrixY.ColumnCount);
 			MatrixMath.Copy(matrixY, yLoads);
 
 			_calib.NumberOfFactors = numFactors;
@@ -156,15 +156,15 @@ namespace Altaxo.Calc.Regression.Multivariate
 			out IROVector<double> V  // vector of cross products
 			)
 		{
-			var matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(X.Rows, X.Columns);
+			var matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(X.RowCount, X.ColumnCount);
 			MatrixMath.Copy(X, matrixX);
 			MatrixMath.SingularValueDecomposition decompose = new MatrixMath.SingularValueDecomposition(matrixX);
 
-			numFactors = Math.Min(numFactors, matrixX.Columns);
-			numFactors = Math.Min(numFactors, matrixX.Rows);
+			numFactors = Math.Min(numFactors, matrixX.ColumnCount);
+			numFactors = Math.Min(numFactors, matrixX.RowCount);
 
-			xLoads = JaggedArrayMath.ToTransposedROMatrix(decompose.V, Y.Rows, X.Columns);
-			xScores = JaggedArrayMath.ToMatrix(decompose.U, Y.Rows, Y.Rows);
+			xLoads = JaggedArrayMath.ToTransposedROMatrix(decompose.V, Y.RowCount, X.ColumnCount);
+			xScores = JaggedArrayMath.ToMatrix(decompose.U, Y.RowCount, Y.RowCount);
 			V = VectorMath.ToROVector(decompose.Diagonal, numFactors);
 		}
 
@@ -178,12 +178,12 @@ namespace Altaxo.Calc.Regression.Multivariate
 			)
 		{
 			var U = xScores;
-			var UtY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(Y.Rows, Y.Columns);
+			var UtY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(Y.RowCount, Y.ColumnCount);
 			MatrixMath.MultiplyFirstTransposed(U, Y, UtY);
 
-			var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(Y.Rows, Y.Columns);
-			var subU = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(Y.Rows, 1);
-			var subY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(Y.Rows, Y.Columns);
+			var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(Y.RowCount, Y.ColumnCount);
+			var subU = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(Y.RowCount, 1);
+			var subY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(Y.RowCount, Y.ColumnCount);
 
 			PRESS[0] = MatrixMath.SumOfSquares(Y);
 
@@ -196,9 +196,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 			// and multiplying with one row of U in every factor step, summing up the predictedY
 			for (int nf = 0; nf < numFactors; nf++)
 			{
-				for (int cn = 0; cn < Y.Columns; cn++)
+				for (int cn = 0; cn < Y.ColumnCount; cn++)
 				{
-					for (int k = 0; k < Y.Rows; k++)
+					for (int k = 0; k < Y.RowCount; k++)
 						predictedY[k, cn] += U[k, nf] * UtY[nf, cn];
 				}
 				PRESS[nf + 1] = MatrixMath.SumOfSquaredDifferences(Y, predictedY);
@@ -215,9 +215,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 			IMatrix<double> predictedY,
 			IMatrix<double> spectralResiduals)
 		{
-			int numX = xLoads.Columns;
-			int numY = yLoads.Columns;
-			int numM = yLoads.Rows;
+			int numX = xLoads.ColumnCount;
+			int numY = yLoads.ColumnCount;
+			int numM = yLoads.RowCount;
 
 			var predictionScores = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numX, numY);
 			GetPredictionScoreMatrix(xLoads, yLoads, xScores, crossProduct, numberOfFactors, predictionScores);
@@ -235,11 +235,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int numberOfFactors,
 			IMatrix<double> predictionScores)
 		{
-			int numX = xLoads.Columns;
-			int numY = yLoads.Columns;
-			int numM = yLoads.Rows;
+			int numX = xLoads.ColumnCount;
+			int numY = yLoads.ColumnCount;
+			int numM = yLoads.RowCount;
 
-			var UtY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(xScores.Columns, yLoads.Columns);
+			var UtY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(xScores.ColumnCount, yLoads.ColumnCount);
 			MatrixMath.MultiplyFirstTransposed(xScores, yLoads, UtY);
 
 			MatrixMath.ZeroMatrix(predictionScores);
@@ -261,11 +261,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int numberOfFactors,
 			out IROVector<double> press)
 		{
-			int numMeasurements = yLoads.Rows;
+			int numMeasurements = yLoads.RowCount;
 
 			IExtensibleVector<double> PRESS = VectorMath.CreateExtensibleVector<double>(numberOfFactors + 1);
-			var UtY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(yLoads.Rows, yLoads.Columns);
-			var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(yLoads.Rows, yLoads.Columns);
+			var UtY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(yLoads.RowCount, yLoads.ColumnCount);
+			var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(yLoads.RowCount, yLoads.ColumnCount);
 			press = PRESS;
 
 			MatrixMath.MultiplyFirstTransposed(xScores, yLoads, UtY);
@@ -278,9 +278,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 			PRESS[0] = MatrixMath.SumOfSquares(yLoads);
 			for (int nf = 0; nf < numberOfFactors; nf++)
 			{
-				for (int cn = 0; cn < yLoads.Columns; cn++)
+				for (int cn = 0; cn < yLoads.ColumnCount; cn++)
 				{
-					for (int k = 0; k < yLoads.Rows; k++)
+					for (int k = 0; k < yLoads.RowCount; k++)
 						predictedY[k, cn] += xScores[k, nf] * UtY[nf, cn];
 				}
 				PRESS[nf + 1] = MatrixMath.SumOfSquaredDifferences(yLoads, predictedY);
@@ -296,7 +296,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int numberOfFactors,
 			out IROVector<double> PRESS)
 		{
-			IMatrix<double> predictedY = new JaggedArrayMatrix(yLoads.Rows, yLoads.Columns);
+			IMatrix<double> predictedY = new JaggedArrayMatrix(yLoads.RowCount, yLoads.ColumnCount);
 			var press = VectorMath.CreateExtensibleVector<double>(numberOfFactors + 1);
 			PRESS = press;
 
@@ -317,11 +317,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int numberOfFactors,
 			IMatrix<double> spectralResiduals)
 		{
-			int numX = xLoads.Columns;
-			int numY = yLoads.Columns;
-			int numM = yLoads.Rows;
+			int numX = xLoads.ColumnCount;
+			int numY = yLoads.ColumnCount;
+			int numM = yLoads.RowCount;
 
-			var reconstructedSpectra = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.Rows, matrixX.Columns);
+			var reconstructedSpectra = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.RowCount, matrixX.ColumnCount);
 			MatrixMath.ZeroMatrix(reconstructedSpectra);
 
 			for (int nf = 0; nf < numberOfFactors; nf++)
@@ -335,8 +335,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 			}
 			for (int m = 0; m < numM; m++)
 				spectralResiduals[m, 0] = MatrixMath.SumOfSquaredDifferences(
-					MatrixMath.ToROSubMatrix(matrixX, m, 0, 1, matrixX.Columns),
-					MatrixMath.ToROSubMatrix(reconstructedSpectra, m, 0, 1, matrixX.Columns));
+					MatrixMath.ToROSubMatrix(matrixX, m, 0, 1, matrixX.ColumnCount),
+					MatrixMath.ToROSubMatrix(reconstructedSpectra, m, 0, 1, matrixX.ColumnCount));
 		}
 
 		public static void CalculateXLeverageFromPreprocessed(
@@ -344,12 +344,12 @@ namespace Altaxo.Calc.Regression.Multivariate
 			int numberOfFactors,
 			IMatrix<double> leverage)
 		{
-			var subscores = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(xScores.Rows, numberOfFactors);
+			var subscores = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(xScores.RowCount, numberOfFactors);
 			MatrixMath.Submatrix(xScores, subscores);
 
 			MatrixMath.SingularValueDecomposition decompose = new MatrixMath.SingularValueDecomposition(subscores);
 
-			for (int i = 0; i < xScores.Rows; i++)
+			for (int i = 0; i < xScores.RowCount; i++)
 				leverage[i, 0] = decompose.HatDiagonal[i];
 		}
 	}

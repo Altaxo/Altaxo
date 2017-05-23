@@ -88,7 +88,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 		/// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
 		protected override void AnalyzeFromPreprocessedWithoutReset(IROMatrix<double> matrixX, IROMatrix<double> matrixY, int maxFactors)
 		{
-			int numberOfFactors = _calib.NumberOfFactors = Math.Min(matrixX.Columns, maxFactors);
+			int numberOfFactors = _calib.NumberOfFactors = Math.Min(matrixX.ColumnCount, maxFactors);
 
 			var _xLoads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
 			var _yLoads = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(0, 0);
@@ -182,23 +182,23 @@ namespace Altaxo.Calc.Regression.Multivariate
 			const double accuracy = 1E-12; // accuracy that should be reached between subsequent calculations of the u-vector
 
 			// use the mean spectrum as first row of the W matrix
-			var mean = new MatrixMath.MatrixWithOneRow<double>(_X.Columns);
+			var mean = new MatrixMath.MatrixWithOneRow<double>(_X.ColumnCount);
 			//  MatrixMath.ColumnsToZeroMean(X,mean);
 			//W.AppendBottom(mean);
 
-			var X = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_X.Rows, _X.Columns);
+			var X = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_X.RowCount, _X.ColumnCount);
 			MatrixMath.Copy(_X, X);
-			var Y = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_Y.Rows, _Y.Columns);
+			var Y = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(_Y.RowCount, _Y.ColumnCount);
 			MatrixMath.Copy(_Y, Y);
 
 			IMatrix<double> u_prev = null;
-			var w = new MatrixMath.MatrixWithOneRow<double>(X.Columns); // horizontal vector of X (spectral) weighting
-			var t = new MatrixMath.MatrixWithOneColumn<double>(X.Rows); // vertical vector of X  scores
-			var u = new MatrixMath.MatrixWithOneColumn<double>(X.Rows); // vertical vector of Y scores
-			var p = new MatrixMath.MatrixWithOneRow<double>(X.Columns); // horizontal vector of X loads
-			var q = new MatrixMath.MatrixWithOneRow<double>(Y.Columns); // horizontal vector of Y loads
+			var w = new MatrixMath.MatrixWithOneRow<double>(X.ColumnCount); // horizontal vector of X (spectral) weighting
+			var t = new MatrixMath.MatrixWithOneColumn<double>(X.RowCount); // vertical vector of X  scores
+			var u = new MatrixMath.MatrixWithOneColumn<double>(X.RowCount); // vertical vector of Y scores
+			var p = new MatrixMath.MatrixWithOneRow<double>(X.ColumnCount); // horizontal vector of X loads
+			var q = new MatrixMath.MatrixWithOneRow<double>(Y.ColumnCount); // horizontal vector of Y loads
 
-			int maxFactors = Math.Min(X.Columns, X.Rows);
+			int maxFactors = Math.Min(X.ColumnCount, X.RowCount);
 			numFactors = numFactors <= 0 ? maxFactors : Math.Min(numFactors, maxFactors);
 
 			if (PRESS != null)
@@ -241,7 +241,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 					if (u_prev != null && MatrixMath.IsEqual(u_prev, u, accuracy))
 						break;
 					if (u_prev == null)
-						u_prev = new MatrixMath.MatrixWithOneColumn<double>(X.Rows);
+						u_prev = new MatrixMath.MatrixWithOneColumn<double>(X.RowCount);
 					MatrixMath.Copy(u, u_prev); // stores the content of u in u_prev
 				} // for all iterations
 
@@ -300,20 +300,20 @@ namespace Altaxo.Calc.Regression.Multivariate
 		{
 			// now predicting a "unkown" spectra
 			var si = new MatrixMath.ScalarAsMatrix<double>(0);
-			var Cu = new MatrixMath.MatrixWithOneRow<double>(yLoads.Columns);
+			var Cu = new MatrixMath.MatrixWithOneRow<double>(yLoads.ColumnCount);
 
-			var wi = new MatrixMath.MatrixWithOneRow<double>(XU.Columns);
-			var cuadd = new MatrixMath.MatrixWithOneRow<double>(yLoads.Columns);
+			var wi = new MatrixMath.MatrixWithOneRow<double>(XU.ColumnCount);
+			var cuadd = new MatrixMath.MatrixWithOneRow<double>(yLoads.ColumnCount);
 
 			// xu holds a single spectrum extracted out of XU
-			var xu = new MatrixMath.MatrixWithOneRow<double>(XU.Columns);
+			var xu = new MatrixMath.MatrixWithOneRow<double>(XU.ColumnCount);
 
 			// xl holds temporarily a row of the xLoads matrix+
-			var xl = new MatrixMath.MatrixWithOneRow<double>(xLoads.Columns);
+			var xl = new MatrixMath.MatrixWithOneRow<double>(xLoads.ColumnCount);
 
-			int maxFactors = Math.Min(yLoads.Rows, numFactors);
+			int maxFactors = Math.Min(yLoads.RowCount, numFactors);
 
-			for (int nSpectrum = 0; nSpectrum < XU.Rows; nSpectrum++)
+			for (int nSpectrum = 0; nSpectrum < XU.RowCount; nSpectrum++)
 			{
 				MatrixMath.Submatrix(XU, xu, nSpectrum, 0); // extract one spectrum to predict
 				MatrixMath.ZeroMatrix(Cu); // Set Cu=0
@@ -368,19 +368,19 @@ namespace Altaxo.Calc.Regression.Multivariate
 			)
 		{
 			Matrix bidiag = new Matrix(numFactors, numFactors);
-			var subweights = MatrixMath.ToROSubMatrix(W, 0, 0, numFactors, W.Columns);
-			var subxloads = MatrixMath.ToROSubMatrix(xLoads, 0, 0, numFactors, xLoads.Columns);
+			var subweights = MatrixMath.ToROSubMatrix(W, 0, 0, numFactors, W.ColumnCount);
+			var subxloads = MatrixMath.ToROSubMatrix(xLoads, 0, 0, numFactors, xLoads.ColumnCount);
 			MatrixMath.MultiplySecondTransposed(subxloads, subweights, bidiag);
 			IMatrix<double> invbidiag = bidiag.Inverse;
 
-			Matrix subyloads = new Matrix(numFactors, yLoads.Columns);
+			Matrix subyloads = new Matrix(numFactors, yLoads.ColumnCount);
 			MatrixMath.Submatrix(yLoads, subyloads, 0, 0);
 			// multiply each row of the subyloads matrix by the appropriate weight
-			for (int i = 0; i < subyloads.Rows; i++)
-				for (int j = 0; j < subyloads.Columns; j++)
+			for (int i = 0; i < subyloads.RowCount; i++)
+				for (int j = 0; j < subyloads.ColumnCount; j++)
 					subyloads[i, j] *= V[0, i];
 
-			Matrix helper = new Matrix(numFactors, yLoads.Columns);
+			Matrix helper = new Matrix(numFactors, yLoads.ColumnCount);
 			MatrixMath.Multiply(invbidiag, subyloads, helper);
 
 			//Matrix scores = new Matrix(yLoads.Columns,xLoads.Columns);
@@ -401,14 +401,14 @@ namespace Altaxo.Calc.Regression.Multivariate
 			)
 		{
 			// get the score matrix
-			var weights = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numFactors, W.Columns);
+			var weights = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numFactors, W.ColumnCount);
 			MatrixMath.Submatrix(W, weights, 0, 0);
-			var scoresMatrix = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.Rows, weights.Rows);
+			var scoresMatrix = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.RowCount, weights.RowCount);
 			MatrixMath.MultiplySecondTransposed(matrixX, weights, scoresMatrix);
 
 			MatrixMath.SingularValueDecomposition decomposition = MatrixMath.GetSingularValueDecomposition(scoresMatrix);
 
-			for (int i = 0; i < matrixX.Rows; i++)
+			for (int i = 0; i < matrixX.RowCount; i++)
 				leverage[i, leverageColumn] = decomposition.HatDiagonal[i];
 		}
 	}

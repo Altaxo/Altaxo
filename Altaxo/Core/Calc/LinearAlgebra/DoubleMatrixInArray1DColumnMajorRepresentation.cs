@@ -58,7 +58,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new ArgumentOutOfRangeException("rows or columns is less than zero.");
 			if (array == null)
 				throw new ArgumentNullException("array");
-			if (array.Length < Rows * columns)
+			if (array.Length < RowCount * columns)
 				throw new ArgumentException(string.Format("Length of array {0} is not a multiple of nRows={1}", array.Length, rows));
 
 			_arrayColumnMajor = array;
@@ -74,12 +74,12 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-		public int Rows
+		public int RowCount
 		{
 			get { return _numberOfRows; }
 		}
 
-		public int Columns
+		public int ColumnCount
 		{
 			get { return _numberOfColumns; }
 		}

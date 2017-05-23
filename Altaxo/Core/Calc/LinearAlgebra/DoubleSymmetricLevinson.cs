@@ -985,7 +985,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (m_Order != Y.Columns)
+			else if (m_Order != Y.ColumnCount)
 			{
 				throw new RankException("The numer of rows in Y is not equal to the number of rows in the Toeplitz matrix.");
 			}
@@ -997,7 +997,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				throw new SingularMatrixException("The Toeplitz matrix or one of the the leading sub-matrices is singular.");
 			}
 
-			int M = Y.Rows;
+			int M = Y.RowCount;
 			int i, j, l, m;     // index/loop variables
 			double[] Inner;     // inner product
 			double[] G;       // scaling constant
@@ -1335,7 +1335,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				throw new System.ArgumentNullException("Y");
 			}
-			else if (T.Count != Y.Columns)
+			else if (T.Count != Y.ColumnCount)
 			{
 				throw new RankException("The length of T and Y are not equal.");
 			}
@@ -1343,7 +1343,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			{
 				// allocate memory
 				int N = T.Count;
-				int M = Y.Rows;
+				int M = Y.RowCount;
 				X = new DoubleMatrix(N, M);                 // solution matrix
 				DoubleVector Z = new DoubleVector(N);       // temporary storage vector
 				double e;                                   // prediction error

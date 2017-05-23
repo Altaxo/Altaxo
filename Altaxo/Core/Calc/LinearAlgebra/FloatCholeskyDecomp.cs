@@ -62,12 +62,12 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new System.ArgumentNullException("matrix cannot be null.");
       }
 
-      if (matrix.Rows != matrix.Columns)
+      if (matrix.RowCount != matrix.ColumnCount)
       {
         throw new NotSquareMatrixException("Matrix must be square.");
       }
 
-      order = matrix.Columns;
+      order = matrix.ColumnCount;
       this.matrix = new FloatMatrix(matrix);
     }
 
@@ -187,13 +187,13 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       else
       {
-        if (B.Rows != order)
+        if (B.RowCount != order)
         {
           throw new System.ArgumentException("Matrix row dimensions must agree.");
         }
 #if MANAGED
         // Copy right hand side.
-        int cols = B.Columns;
+        int cols = B.ColumnCount;
         FloatMatrix X = new FloatMatrix(B);
         for (int c = 0; c < cols; c++)
         {

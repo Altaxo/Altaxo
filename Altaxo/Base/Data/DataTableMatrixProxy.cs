@@ -66,12 +66,12 @@ namespace Altaxo.Data
 				}
 			}
 
-			public int Rows
+			public int RowCount
 			{
 				get { return _rows; }
 			}
 
-			public int Columns
+			public int ColumnCount
 			{
 				get { return _columns; }
 			}
@@ -203,12 +203,12 @@ namespace Altaxo.Data
 				get { return _data[_participatingCols[col]][_participatingRows[row]]; }
 			}
 
-			public int Rows
+			public int RowCount
 			{
 				get { return _participatingRows.Count; }
 			}
 
-			public int Columns
+			public int ColumnCount
 			{
 				get { return _participatingCols.Count; }
 			}

@@ -16,7 +16,7 @@ using System.Linq;
 namespace Altaxo.Calc.LinearAlgebra
 {
 	/// <summary>Sparse matrix class</summary>
-	public class SparseDoubleMatrix
+	public class SparseDoubleMatrix : IROSparseMatrix<double>, IMatrix<double>
 	{
 		private const int Delta = 1;
 
@@ -56,14 +56,14 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		/// <summary>Get row dimension.</summary>
 		/// <returns>     m, the number of rows</returns>
-		public int Rows
+		public int RowCount
 		{
 			get { return m; }
 		}
 
 		/// <summary>Get column dimension.</summary>
 		/// <returns>     n, the number of columns.</returns>
-		public int Columns
+		public int ColumnCount
 		{
 			get { return n; }
 		}
@@ -87,7 +87,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			int maxLowerBandwidth = 0;
 			int maxUpperBandwidth = 0;
 
-			for (int iRow = 0; iRow < Rows; ++iRow)
+			for (int iRow = 0; iRow < RowCount; ++iRow)
 			{
 				if (count[iRow] == 0)
 					continue;
@@ -102,7 +102,7 @@ namespace Altaxo.Calc.LinearAlgebra
 					maxUpperBandwidth = upper;
 			}
 
-			return (maxLowerBandwidth < Rows - 1 || maxUpperBandwidth < Columns - 1, maxLowerBandwidth, maxUpperBandwidth);
+			return (maxLowerBandwidth < RowCount - 1 || maxUpperBandwidth < ColumnCount - 1, maxLowerBandwidth, maxUpperBandwidth);
 		}
 
 		public SparseDoubleMatrix Clone()
@@ -372,6 +372,40 @@ namespace Altaxo.Calc.LinearAlgebra
 			return A.times(B);
 		}
 
+		public IEnumerable<(int row, int column, double value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip)
+		{
+			switch (zeros)
+			{
+				case Zeros.AllowSkip:
+					{
+						for (int i = 0; i < m; ++i)
+						{
+							var srcIndicesLength = count[i];
+							if (srcIndicesLength > 0)
+							{
+								var srcIndices = this.indices[i];
+								var items_i = items[i];
+								for (int jj = 0; jj < srcIndices.Length; ++jj)
+									yield return (i, srcIndices[jj], items_i[jj]);
+							}
+						}
+					}
+					break;
+
+				case Zeros.AllowSkipButIncludeDiagonal:
+					{
+						throw new NotImplementedException("Yet to be implemented and tested");
+					}
+					break;
+
+				case Zeros.Include:
+					{
+						throw new NotImplementedException("Yet to be implemented and tested");
+					}
+					break;
+			}
+		}
+
 		/// <summary>
 		/// Maps the present elements of this matrix (and additionally the diagonal elements, independently if they are present or not),
 		/// via a evaluation function to a resulting sparse matrix.
@@ -557,9 +591,9 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>New matrix that is the transposed of the original.</returns>
 		public SparseDoubleMatrix Transpose()
 		{
-			var At = new SparseDoubleMatrix(this.Columns, this.Rows);
+			var At = new SparseDoubleMatrix(this.ColumnCount, this.RowCount);
 
-			for (int i = 0; i < this.Rows; i++)
+			for (int i = 0; i < this.RowCount; i++)
 				for (int j = 0; j < this.GetRow(i).count; j++)
 					At[this.GetRow(i).indices[j], i] = this.GetRow(i).items[j];
 
@@ -663,7 +697,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <summary>Check if size(A) == size(B)</summary>
 		private void CheckMatrixDimensions(Matrix B)
 		{
-			if (B.Rows != m || B.Columns != n)
+			if (B.RowCount != m || B.ColumnCount != n)
 			{
 				throw new System.ArgumentException("Sparse matrix dimensions must agree.");
 			}
