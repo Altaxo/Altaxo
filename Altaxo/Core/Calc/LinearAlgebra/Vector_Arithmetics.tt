@@ -514,7 +514,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A new <c>DoubleVector</c> with the same elements as the column of the given matrix.</returns>
 		public static <#= vecName #> GetColumn(<#= roMatrixT #> mat, int col)
 		{
-			var result = new <#= vecName #>(mat.Rows);
+			var result = new <#= vecName #>(mat.RowCount);
 			for (int i = 0; i < result._array.Length; ++i)
 				result._array[i] = mat[i, col];
 
@@ -529,7 +529,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A new array of <c>double</c> with the same elements as the column of the given matrix.</returns>
 		public static <#= scalT #>[] GetColumnAsArray(<#= roMatrixT #> mat, int col)
 		{
-			var result = new <#= scalT #>[mat.Rows];
+			var result = new <#= scalT #>[mat.RowCount];
 			for (int i = 0; i < result.Length; ++i)
 				result[i] = mat[i, col];
 
@@ -544,7 +544,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <returns>A new <c>DoubleVector</c> with the same elements as the row of the given matrix.</returns>
 		public static <#= vecName #> GetRow(<#= roMatrixT #> mat, int row)
 		{
-			var result = new <#= vecName #>(mat.Columns);
+			var result = new <#= vecName #>(mat.ColumnCount);
 			for (int i = 0; i < result._array.Length; ++i)
 				result._array[i] = mat[row, i];
 

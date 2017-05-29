@@ -370,6 +370,10 @@ namespace Altaxo.Calc.Ode
 						P = new DoubleMatrix(J.RowCount, J.ColumnCount);
 						break;
 
+					case IROMatrix<double> rm:
+						P = new DoubleMatrix(J.RowCount, J.ColumnCount);
+						break;
+
 					default:
 						throw new NotImplementedException(string.Format("Jacobian is a matrix of type {0}, which is not implemented here!", J.GetType()));
 				}
@@ -431,23 +435,24 @@ namespace Altaxo.Calc.Ode
 						VectorMath.Copy(xcurr, xprev);
 						f(t + dt, xcurr, ftdt);
 						MatrixMath.CopyColumn(z0, 1, colExtract); // 1st derivative/dt
-						VectorMath.Map(ftdt, colExtract, ecurr, (ff, c, e) => dt * ff - c - e, gm); // gm = dt * f(t + dt, xcurr) - z0.GetColumn(1) - ecurr;
+						VectorMath.Map(ftdt, colExtract, ecurr, dt, (ff, c, e, local_dt) => local_dt * ff - c - e, gm); // gm = dt * f(t + dt, xcurr) - z0.GetColumn(1) - ecurr;
 						gaussSolver.SolveDestructive(P, gm, tmpVec1);
 						VectorMath.Add(ecurr, tmpVec1, ecurr); //	ecurr = ecurr + P.SolveGE(gm);
-						VectorMath.Map(x0, ecurr, (x, e) => x + e * b[qcurr - 1], xcurr); //	xcurr = x0 + b[qcurr - 1] * ecurr;
+						VectorMath.Map(x0, ecurr, b[qcurr - 1], (x, e, local_b) => x + e * local_b, xcurr); //	xcurr = x0 + b[qcurr - 1] * ecurr;
 
 						//Row dimension is smaller than zcurr has
 						int M_Rows = ecurr.Length;
 						int M_Columns = l[qcurr - 1].Length;
 						//So, "expand" the matrix
-						MatrixMath.Map(z0, (z, i, j) => z + (i < M_Rows && j < M_Columns ? ecurr[i] * l[qcurr - 1][j] : 0.0d), zcurr);
+						MatrixMath.MapIndexed(z0, (i, j, z) => z + (i < M_Rows && j < M_Columns ? ecurr[i] * l[qcurr - 1][j] : 0.0d), zcurr);
 
 						Dq = ToleranceNorm(ecurr, opts.RelativeTolerance, opts.AbsoluteTolerance, xprev);
 						var factor_deltaE = (1.0 / (qcurr + 2) * l[qcurr - 1][qcurr - 1]);
-						VectorMath.Map(ecurr, currstate._en, (e, c) => (e - c) * factor_deltaE, deltaE); // deltaE = (ecurr - currstate.en)*(1.0 / (qcurr + 2) * l[qcurr - 1][qcurr - 1])
+						VectorMath.Map(ecurr, currstate._en, factor_deltaE, (e, c, factor) => (e - c) * factor, deltaE); // deltaE = (ecurr - currstate.en)*(1.0 / (qcurr + 2) * l[qcurr - 1][qcurr - 1])
 
 						DqUp = ToleranceNorm(deltaE, opts.RelativeTolerance, opts.AbsoluteTolerance, xcurr);
-						DqDown = ToleranceNorm(zcurr.GetColumn(qcurr - 1), opts.RelativeTolerance, opts.AbsoluteTolerance, xcurr);
+						zcurr.CopyColumn(qcurr - 1, colExtract);
+						DqDown = ToleranceNorm(colExtract, opts.RelativeTolerance, opts.AbsoluteTolerance, xcurr);
 						delta = Dq / (tau / (2 * (qcurr + 2)));
 						count++;
 					} while (delta > 1.0d && count < opts.NumberOfIterations);
@@ -472,7 +477,7 @@ namespace Altaxo.Calc.Ode
 						int M_Rows = ecurr.Length;
 						int M_Columns = l[qcurr - 1].Length;
 						//So, "expand" the matrix
-						MatrixMath.Map(z0, (z, i, j) => z + (i < M_Rows && j < M_Columns ? ecurr[i] * l[qcurr - 1][j] : 0.0d), zcurr);
+						MatrixMath.MapIndexed(z0, (i, j, z) => z + (i < M_Rows && j < M_Columns ? ecurr[i] * l[qcurr - 1][j] : 0.0d), zcurr);
 
 						Dq = ToleranceNorm(ecurr, opts.RelativeTolerance, opts.AbsoluteTolerance, xprev);
 						var factor_deltaE = (1.0 / (qcurr + 2) * l[qcurr - 1][qcurr - 1]);

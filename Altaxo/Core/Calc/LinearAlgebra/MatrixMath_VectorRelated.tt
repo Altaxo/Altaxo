@@ -40,14 +40,14 @@
 		/// <param name="destinationVector">Vector to copy the column data to.</param>
 		public static void CopyColumn(this IROMatrix<double> sourceMatrix, int columnNumber, <#= rwVecT #> destinationVector)
 		{
-			if (columnNumber < 0 || columnNumber >= sourceMatrix.Columns)
+			if (columnNumber < 0 || columnNumber >= sourceMatrix.ColumnCount)
 				throw new ArgumentOutOfRangeException(nameof(columnNumber), "column must be greater than or equal to zero and less than ColumnLength.");
 			if (null == destinationVector)
 				throw new ArgumentNullException(nameof(destinationVector));
-			if (destinationVector.<#= vecLength #> != sourceMatrix.Rows)
+			if (destinationVector.<#= vecLength #> != sourceMatrix.RowCount)
 				throw new RankException("Length of destinationVector does not match number of rows of source matrix");
 
-			var rows = sourceMatrix.Rows;
+			var rows = sourceMatrix.RowCount;
 			for (int i = 0; i < rows; ++i)
 			{
 				destinationVector[i] = sourceMatrix[i, columnNumber];

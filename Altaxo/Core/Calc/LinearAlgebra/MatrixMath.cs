@@ -1602,6 +1602,23 @@ namespace Altaxo.Calc.LinearAlgebra
 		}
 
 		/// <summary>
+		/// Sets one row in the destination matrix equal to the vector provided by src.
+		/// </summary>
+		/// <param name="src">The source vector. Must be of same length as the number of columns of the destination matrix.</param>
+		/// <param name="dest">The destination matrix where to copy the horizontal vector into.</param>
+		/// <param name="destColumn">The row in the destination matrix where to copy the vector to.</param>
+		public static void SetColumn(IReadOnlyList<double> src, IMatrix<double> dest, int destColumn)
+		{
+			if (destColumn >= dest.ColumnCount)
+				throw new ArithmeticException(string.Format("Try to set column {0} in the matrix with dim({1},{2}) is not allowed!", destColumn, dest.RowCount, dest.ColumnCount));
+			if (dest.RowCount != src.Count)
+				throw new ArithmeticException(string.Format("Number of rows of the matrix ({0}) not match number of elements of the vector ({1})!", dest.RowCount, src.Count));
+
+			for (int j = 0; j < src.Count; j++)
+				dest[j, destColumn] = src[j];
+		}
+
+		/// <summary>
 		/// Normalizes each row (each horizontal vector) of the matrix. After
 		/// normalization, each row has the norm 1, i.e. the sum of squares of the elements of each row is 1 (one).
 		/// </summary>

@@ -52,21 +52,6 @@
 		}
 
 		/// <summary>
-		/// Elementwise application of a function to each element of a vector.
-		/// </summary>
-		/// <param name="src1">The source vector.</param>
-		/// <param name="function">The function to apply to every element. 1st argument is the element, 2nd argument is the element's index.</param>
-		/// <param name="result">The vector to store the results. This may be the same instance as the source vector.</param>
-		public static void Map(<#= arrT #> src1, Func<<#= scalT #>, int, <#= scalT #>> function, <#= rwArrT #> result)
-		{
-			if (src1.<#= length #> != result.<#= length #>)
-				throw new RankException("Mismatch of dimensions of src1 and result");
-
-			for (int i = src1.<#= length #> - 1; i >= 0; --i)
-				result[i] = function(src1[i], i);
-		}
-
-		/// <summary>
 		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
 		/// </summary>
 		/// <param name="src1">First source vector.</param>
@@ -85,24 +70,6 @@
 		}
 
 		/// <summary>
-		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
-		/// </summary>
-		/// <param name="src1">First source vector.</param>
-		/// <param name="src2">Second source vector.</param>
-		/// <param name="function">The function to apply to every element. 1st argument is the element from src1, 2nd argument is the element from src2, 3rd argument is the element's index.</param>
-		/// <param name="result">The vector to store the results. This may or may not be the same instance as the source vector.</param>
-		public static void Map(<#= arrT #> src1, <#= arrT #> src2, Func<<#= scalT #>, <#= scalT #>, int, <#= scalT #>> function, <#= rwArrT #> result)
-		{
-			if (src1.<#= length #> != src2.<#= length #>)
-				throw new RankException("Mismatch of dimensions of src1 and src2");
-			if (src1.<#= length #> != result.<#= length #>)
-				throw new RankException("Mismatch of dimensions of src1 and result");
-
-			for (int i = src1.<#= length #> - 1; i >= 0; --i)
-				result[i] = function(src1[i], src2[i], i);
-		}
-
-			/// <summary>
 		/// Elementwise application of a function to corresponding elements of three vectors. The result is stored in another vector or in the same vector.
 		/// </summary>
 		/// <param name="src1">First source vector.</param>
@@ -123,6 +90,103 @@
 				result[i] = function(src1[i], src2[i], src3[i]);
 		}
 
+		// -------------------- Map with one auxillary parameter -------------------------------------
+
+		/// <summary>
+		/// Elementwise application of a function to each element of a vector. The result is stored in another vector or in the same vector.
+		/// </summary>
+		/// <param name="src1">The source vector.</param>
+		/// <param name="parameter1">An auxillary parameter.</param>
+		/// <param name="function">The function to apply to every element. 1st arg is the element of vector src1, 2nd argument is the auxillary parameter1.</param>
+		/// <param name="result">The vector to store the results. This may or may not be the same instance as the source vector.</param>
+		public static void Map<T1>(<#= arrT #> src1, T1 parameter1, Func<<#= scalT #>, T1, <#= scalT #>> function, <#= rwArrT #> result)
+		{
+			if (src1.<#= length #> != result.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and result");
+
+			for (int i = src1.<#= length #> - 1; i >= 0; --i)
+				result[i] = function(src1[i], parameter1);
+		}
+
+		/// <summary>
+		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
+		/// </summary>
+		/// <param name="src1">First source vector.</param>
+		/// <param name="src2">Second source vector.</param>
+		/// <param name="parameter1">An auxillary parameter.</param>
+		/// <param name="function">The function to apply to every element. 1st argument is the element from src1, 2nd argument is the element from src2, 3rd argument is the auxillary parameter1.</param>
+		/// <param name="result">The vector to store the results. This may or may not be the same instance as the source vector.</param>
+		public static void Map<T1>(<#= arrT #> src1, <#= arrT #> src2, T1 parameter1, Func<<#= scalT #>, <#= scalT #>, T1, <#= scalT #>> function, <#= rwArrT #> result)
+		{
+			if (src1.<#= length #> != src2.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and src2");
+			if (src1.<#= length #> != result.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and result");
+
+			for (int i = src1.<#= length #> - 1; i >= 0; --i)
+				result[i] = function(src1[i], src2[i], parameter1);
+		}
+
+		/// <summary>
+		/// Elementwise application of a function to corresponding elements of three vectors. The result is stored in another vector or in the same vector.
+		/// </summary>
+		/// <param name="src1">First source vector.</param>
+		/// <param name="src2">Second source vector.</param>
+		/// <param name="src3">Third source vector.</param>
+		/// <param name="parameter1">An auxillary parameter.</param>
+		/// <param name="function">The function to apply to every element. 1st argument is the element from src1, 2nd argument is the element from src2, 3rd argument is the element from src3, 4th argument is the auxillary parameter1.</param>
+		/// <param name="result">The vector to store the results. This may or may not be the same instance as the source vector.</param>
+		public static void Map<T1>(<#= arrT #> src1, <#= arrT #> src2,  <#= arrT #> src3, T1 parameter1, Func<<#= scalT #>, <#= scalT #>, <#= scalT #>, T1, <#= scalT #>> function, <#= rwArrT #> result)
+		{
+			if (src1.<#= length #> != src2.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and src2");
+			if (src1.<#= length #> != src3.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and src3");
+			if (src1.<#= length #> != result.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and result");
+
+			for (int i = src1.<#= length #> - 1; i >= 0; --i)
+				result[i] = function(src1[i], src2[i], src3[i], parameter1);
+		}
+
+
+
+		/// <summary>
+		/// Elementwise application of a function to each element of a vector.
+		/// </summary>
+		/// <param name="src1">The source vector.</param>
+		/// <param name="function">The function to apply to every element. 1st argument is the element, 2nd argument is the element's index.</param>
+		/// <param name="result">The vector to store the results. This may be the same instance as the source vector.</param>
+		public static void MapIndexed(<#= arrT #> src1, Func<int, <#= scalT #>, <#= scalT #>> function, <#= rwArrT #> result)
+		{
+			if (src1.<#= length #> != result.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and result");
+
+			for (int i = src1.<#= length #> - 1; i >= 0; --i)
+				result[i] = function(i, src1[i]);
+		}
+
+	
+
+		/// <summary>
+		/// Elementwise application of a function to corresponding elements of two vectors. The result is stored in another vector or in the same vector.
+		/// </summary>
+		/// <param name="src1">First source vector.</param>
+		/// <param name="src2">Second source vector.</param>
+		/// <param name="function">The function to apply to every element. 1st argument is the element from src1, 2nd argument is the element from src2, 3rd argument is the element's index.</param>
+		/// <param name="result">The vector to store the results. This may or may not be the same instance as the source vector.</param>
+		public static void MapIndexed(<#= arrT #> src1, <#= arrT #> src2, Func<int, <#= scalT #>, <#= scalT #>, <#= scalT #>> function, <#= rwArrT #> result)
+		{
+			if (src1.<#= length #> != src2.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and src2");
+			if (src1.<#= length #> != result.<#= length #>)
+				throw new RankException("Mismatch of dimensions of src1 and result");
+
+			for (int i = src1.<#= length #> - 1; i >= 0; --i)
+				result[i] = function(i, src1[i], src2[i]);
+		}
+
+
 		/// <summary>
 		/// Elementwise application of a function to corresponding elements of three vectors. The result is stored in another vector or in the same vector.
 		/// </summary>
@@ -131,7 +195,7 @@
 		/// <param name="src3">Third source vector.</param>
 		/// <param name="function">The function to apply to every element. 1st argument is the element from src1, 2nd argument is the element from src2, 3rd argument is the element from src3, 4th argument is the element's index.</param>
 		/// <param name="result">The vector to store the results. This may or may not be the same instance as the source vector.</param>
-		public static void Map(<#= arrT #> src1, <#= arrT #> src2, <#= arrT #> src3, Func<<#= scalT #>, <#= scalT #>, <#= scalT #>, int, <#= scalT #>> function, <#= rwArrT #> result)
+		public static void MapIndexed(<#= arrT #> src1, <#= arrT #> src2, <#= arrT #> src3, Func<int, <#= scalT #>, <#= scalT #>, <#= scalT #>, <#= scalT #>> function, <#= rwArrT #> result)
 		{
 			if (src1.<#= length #> != src2.<#= length #>)
 				throw new RankException("Mismatch of dimensions of src1 and src2");
@@ -139,7 +203,7 @@
 				throw new RankException("Mismatch of dimensions of src1 and result");
 
 			for (int i = src1.<#= length #> - 1; i >= 0; --i)
-				result[i] = function(src1[i], src2[i], src3[i], i);
+				result[i] = function(i, src1[i], src2[i], src3[i]);
 		}
 
 
@@ -288,6 +352,27 @@
 			{
 				tmp = (double)vector1[i] - vector2[i];
 				sum += tmp * tmp;
+			}
+
+			return sum;
+		}
+
+
+		/// <summary>
+		/// Returns the dot product of vector1 and vector2.
+		/// </summary>
+		/// <param name="vector1">The first array.</param>
+		/// <param name="vector2">The other array.</param>
+		/// <returns>The dot product (sum of vector1[i]*vector2[i].</returns>
+		public static double DotProduct(<#= arrT #> vector1, <#= arrT #> vector2)
+		{
+			if (vector1.<#= length #> != vector2.<#= length #>)
+				throw new ArgumentException("Length of vector1 is different from length of vector2");
+
+			double sum = 0;
+			for (int i = vector1.<#= length #>-1; i>=0; --i)
+			{
+				sum += ((double)vector1[i]) * vector2[i];
 			}
 
 			return sum;

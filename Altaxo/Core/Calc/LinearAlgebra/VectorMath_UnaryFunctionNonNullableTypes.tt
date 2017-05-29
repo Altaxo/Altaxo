@@ -606,6 +606,90 @@
       return sum / (double)vector.<#= length #>; 
     }
 
+		/// <summary>
+    /// Returns the average (=sum/N) of the elements in <paramref name="vector"/>.
+    /// </summary>
+    /// <param name="vector">The vector.</param>
+    /// <returns>The average of all elements in <paramref name="vector"/>.</returns>
+    public static double Mean(this <#= arrT #> vector)
+    {
+			return Average(vector);
+		}
+
+
+		/// <summary>
+    /// Returns the average (=sum/N) of the elements in <paramref name="vector"/>, as well as the variance (sum of squares of the mean centered values divided by length of the vector).
+    /// </summary>
+    /// <param name="vector">The vector.</param>
+    /// <returns>The mean and variance of all elements in <paramref name="vector"/>.</returns>
+    public static (double Mean, double Variance) MeanAndVariance(this <#= arrT #> vector)
+    {
+			var mean = Mean(vector);
+
+			double sum = 0;
+      for (int i = 0; i < vector.<#= length #>; ++i)
+        {
+				var diff = vector[i] - mean;
+				sum += (diff*diff);
+				}
+
+      return (mean, sum / (double)vector.<#= length #>);
+		}
+
+		/// <summary>
+    /// Returns the kurtosis of the elements in <paramref name="vector"/>. The kurtosis is defined as
+		/// kurtosis(X) = E{(X-µ)^4}/((E{(X-µ)²})².
+    /// </summary>
+    /// <param name="vector">The vector.</param>
+    /// <returns>The kurtosis of the elements in <paramref name="vector"/>.</returns>
+		public static double Kurtosis(this <#= arrT #> vector)
+    {
+			var N = vector.<#= length #>;
+			double sum = 0;
+      for (int i = N-1; i>=0; --i)
+        {
+				sum += vector[i];
+				}
+			var mean = sum/N;
+
+			double sumy2 = 0;
+      double sumy4 = 0;
+      for (int i = N-1; i>=0; --i)
+        {
+				var e = vector[i]-mean;
+				var e2 = e*e;
+				sumy2 += e2;
+				sumy4 += e2*e2;
+				}
+
+
+      return N*sumy4/(sumy2*sumy2);
+    }
+
+		/// <summary>
+    /// Returns the excess kurtosis of the elements in <paramref name="vector"/>. The excess kurtosis is defined as
+		/// excesskurtosis(X) = E{X^4} - 3(E{X²})². 
+    /// </summary>
+    /// <param name="vector">The vector.</param>
+    /// <returns>The excess kurtosis of the elements in <paramref name="vector"/>.</returns>
+    public static double ExcessKurtosisOfNormalized(this <#= arrT #> vector)
+    {
+      double sumy4 = 0;
+			double sumy2 = 0;
+      for (int i = 0; i < vector.<#= length #>; ++i)
+        {
+				var e = vector[i];
+				var e2 = e*e;
+				sumy2 += e2;
+				sumy4 += e2*e2;
+				}
+
+			var N = vector.<#= length #>;
+
+      return sumy4/N -3*RMath.Pow2(sumy2/N); 
+    }
+
+
 <# 
 // ----------- End of code before previous line --------------------------------------------------------------------
     }

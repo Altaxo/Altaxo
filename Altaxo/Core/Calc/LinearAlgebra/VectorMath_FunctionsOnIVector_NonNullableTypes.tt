@@ -62,6 +62,35 @@
 		}
 
 		/// <summary>
+		/// Normalizes the vector elements so that the mean of the elements is zero.
+		/// </summary>
+		/// <param name="v">The vector.</param>
+		public static void ToZeroMean(this <#= rwArrT #> v)
+			{
+				var mean = Mean(v);
+
+				for (int i = v.<#= length #> - 1; i >= 0; --i)
+				{
+				v[i] = (<#= scalT #>)(v[i]-mean);
+				}
+			}
+
+		/// <summary>
+		/// Normalizes the vector elements so that the mean of the elements is zero.
+		/// </summary>
+		/// <param name="v">The vector.</param>
+		public static void ToZeroMeanAndUnitVariance(this <#= rwArrT #> v)
+			{
+				var (mean, variance) = MeanAndVariance(v);
+				var factor = 1/Math.Sqrt(variance);
+
+				for (int i = v.<#= length #> - 1; i >= 0; --i)
+				{
+				v[i] = (<#= scalT #>)((v[i]-mean)*factor);
+				}
+			}
+
+		/// <summary>
 		/// Sets the element of the vector to the result of scalar x divided by each element y[i].
 		/// </summary>
 		/// <param name="x">A scalar value</param>
