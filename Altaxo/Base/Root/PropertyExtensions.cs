@@ -300,7 +300,7 @@ namespace Altaxo
 		}
 
 		/// <summary>
-		/// Gets the property value.
+		/// Gets the property value. The property is searched in the provided owner, then in the containing folder, and then the hierarchy down to the built-in property bag.
 		/// </summary>
 		/// <typeparam name="T">Type of the property value to be retrieved.</typeparam>
 		/// <param name="owner">The owner of a property bag to start the search for the property. Then the other bags down the hierarchy are also searched for the property.</param>
@@ -315,6 +315,30 @@ namespace Altaxo
 			foreach (var bagTuple in GetPropertyBags(owner))
 			{
 				if (bagTuple.Bag.TryGetValue<T>(p, out returnValue))
+					return returnValue;
+			}
+
+			if (null != resultCreationIfNotFound)
+				return resultCreationIfNotFound();
+			else
+				return default(T);
+		}
+
+		/// Gets the property value. The property is searched in the provided owner, then in the containing folder, and then the hierarchy down to the built-in property bag.
+		/// </summary>
+		/// <typeparam name="T">Type of the property value to be retrieved.</typeparam>
+		/// <param name="owner">The owner of a property bag to start the search for the property. Then the other bags down the hierarchy are also searched for the property.</param>
+		/// <param name="propertyKeyString">The property key string.</param>
+		/// <param name="resultCreationIfNotFound">If the property is not found, a new property value can be created by this procedure. If this value is <c>null</c>, the default
+		/// value for this type of property value is returned.</param>
+		/// <returns>If the property is found anywhere in the hierarchy of property bags, the property value of the topmost bag that contains the property is returned.
+		/// Otherwise, if <paramref name="resultCreationIfNotFound"/> is not null, the result of this procedure is returned. Else the default value of the type of property value is returned.</returns>
+		public static T GetPropertyValue<T>(this IPropertyBagOwner owner, string propertyKeyString, Func<T> resultCreationIfNotFound = null)
+		{
+			T returnValue; ;
+			foreach (var bagTuple in GetPropertyBags(owner))
+			{
+				if (bagTuple.Bag.TryGetValue<T>(propertyKeyString, out returnValue))
 					return returnValue;
 			}
 
