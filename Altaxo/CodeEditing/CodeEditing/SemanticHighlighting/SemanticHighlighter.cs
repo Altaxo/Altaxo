@@ -222,13 +222,13 @@ namespace Altaxo.CodeEditing.SemanticHighlighting
 				var highlightedLine = new HighlightedLine(_avalonEditTextDocument, documentLine);
 				foreach (var classifiedSpan in classifiedSpans)
 				{
-					if (!IsOutsideLine(classifiedSpan, offset, endOffset))
+					if (IsSpanIntersectingDocumentLine(classifiedSpan, offset, endOffset, out var startOfIntersection, out var lengthOfIntersection))
 					{
 						highlightedLine.Sections.Add(new HighlightedSection
 						{
 							Color = _highlightingColors.GetColor(classifiedSpan.ClassificationType),
-							Offset = classifiedSpan.TextSpan.Start,
-							Length = classifiedSpan.TextSpan.Length
+							Offset = startOfIntersection,
+							Length = lengthOfIntersection
 						});
 					}
 				}
@@ -243,11 +243,12 @@ namespace Altaxo.CodeEditing.SemanticHighlighting
 			}
 		}
 
-		private static bool IsOutsideLine(ClassifiedSpan classifiedSpan, int documentLineOffset, int documentLineEndOffset)
+		private static bool IsSpanIntersectingDocumentLine(ClassifiedSpan classifiedSpan, int documentLineOffset, int documentLineEndOffset, out int startOfIntersection, out int lengthOfIntersection)
 		{
-			return classifiedSpan.TextSpan.Start < documentLineOffset ||
-						 classifiedSpan.TextSpan.Start > documentLineEndOffset ||
-						 classifiedSpan.TextSpan.End > documentLineEndOffset;
+			startOfIntersection = Math.Max(documentLineOffset, classifiedSpan.TextSpan.Start);
+			var endOfIntersection = Math.Min(documentLineEndOffset, classifiedSpan.TextSpan.End);
+			lengthOfIntersection = endOfIntersection - startOfIntersection;
+			return lengthOfIntersection > 0;
 		}
 
 		/// <summary>
