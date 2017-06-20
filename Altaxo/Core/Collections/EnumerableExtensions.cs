@@ -35,6 +35,53 @@ namespace Altaxo.Collections
 	public static class EnumerableExtensions
 	{
 		/// <summary>
+		/// Converts a recursive data structure into a flat list. The root element is enumerated before its corresponding child element(s).
+		/// </summary>
+		/// <param name="root">The root element of the recursive data structure.</param>
+		/// <param name="recursion">The function that gets the children of an element.</param>
+		/// <returns>Iterator that enumerates the tree structure in preorder.</returns>
+		public static IEnumerable<T> FlattenFromRootToLeaves<T>(T root, Func<T, IEnumerable<T>> recursion)
+		{
+			return FlattenFromRootToLeaves(new T[] { root }, recursion);
+		}
+
+		/// <summary>
+		/// Converts a recursive data structure into a flat list. The root element is enumerated before its corresponding child element(s).
+		/// </summary>
+		/// <param name="input">The root elements of the recursive data structure.</param>
+		/// <param name="recursion">The function that gets the children of an element.</param>
+		/// <returns>Iterator that enumerates the tree structure in preorder.</returns>
+		public static IEnumerable<T> FlattenFromRootToLeaves<T>(this IEnumerable<T> input, Func<T, IEnumerable<T>> recursion)
+		{
+			Stack<IEnumerator<T>> stack = new Stack<IEnumerator<T>>();
+			try
+			{
+				stack.Push(input.GetEnumerator());
+				while (stack.Count > 0)
+				{
+					while (stack.Peek().MoveNext())
+					{
+						T element = stack.Peek().Current;
+						yield return element;
+						IEnumerable<T> children = recursion(element);
+						if (children != null)
+						{
+							stack.Push(children.GetEnumerator());
+						}
+					}
+					stack.Pop().Dispose();
+				}
+			}
+			finally
+			{
+				while (stack.Count > 0)
+				{
+					stack.Pop().Dispose();
+				}
+			}
+		}
+
+		/// <summary>
 		/// Returns the first value of the enumeration, or, if the enumeration is empty, the other value provided in the arguments.
 		/// </summary>
 		/// <typeparam name="T">Type of enumerable value.</typeparam>

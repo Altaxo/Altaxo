@@ -37,6 +37,7 @@ namespace Altaxo.Graph.Gdi.Axis
 	public class GridStyle
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
+		IRoutedPropertyReceiver,
 		ICloneable
 	{
 		private PenX _minorPen;
@@ -268,5 +269,25 @@ namespace Altaxo.Graph.Gdi.Axis
 		}
 
 		#endregion ICloneable Members
+
+		#region IRoutedPropertyReceiver Members
+
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
+		{
+			switch (propertyName)
+			{
+				case "StrokeWidth":
+					if (null != _majorPen)
+						yield return (propertyName, _majorPen.Width, (value) => _majorPen.Width = (double)value);
+					if (null != _minorPen)
+						yield return (propertyName, _minorPen.Width, (value) => _minorPen.Width = (double)value);
+
+					break;
+			}
+
+			yield break;
+		}
+
+		#endregion IRoutedPropertyReceiver Members
 	}
 }

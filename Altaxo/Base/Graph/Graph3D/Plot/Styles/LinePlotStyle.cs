@@ -667,31 +667,17 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		#region IRoutedPropertyReceiver Members
 
-		public void SetRoutedProperty(IRoutedSetterProperty property)
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
 		{
-			switch (property.Name)
+			switch (propertyName)
 			{
 				case "StrokeWidth":
-					{
-						var prop = (RoutedSetterProperty<double>)property;
-						this._linePen = this._linePen.WithUniformThickness(prop.Value);
-						EhSelfChanged(EventArgs.Empty);
-					}
+					yield return (propertyName, _linePen.Thickness1, (w) => LinePen = _linePen.WithThickness1((double)w));
+					yield return (propertyName, _linePen.Thickness2, (w) => LinePen = _linePen.WithThickness2((double)w));
 					break;
 			}
-		}
 
-		public void GetRoutedProperty(IRoutedGetterProperty property)
-		{
-			switch (property.Name)
-			{
-				case "StrokeWidth":
-					{
-						var prop = (RoutedGetterProperty<double>)property;
-						prop.Merge(Math.Max(this._linePen.Thickness1, this._linePen.Thickness2));
-					}
-					break;
-			}
+			yield break;
 		}
 
 		/// <inheritdoc/>

@@ -39,7 +39,7 @@ namespace Altaxo.Graph.Gdi.Plot
 	using Styles;
 
 	[Serializable]
-	public abstract class G2DPlotItem : PlotItem, IRoutedPropertyReceiver
+	public abstract class G2DPlotItem : PlotItem
 	{
 		protected G2DPlotStyleCollection _plotStyles;
 
@@ -337,19 +337,5 @@ namespace Altaxo.Graph.Gdi.Plot
 			_plotStyles.VisitDocumentReferences(Report);
 			base.VisitDocumentReferences(Report);
 		}
-
-		#region IRoutedPropertyReceiver Members
-
-		public void SetRoutedProperty(IRoutedSetterProperty property)
-		{
-			_plotStyles.SetRoutedProperty(property);
-		}
-
-		public void GetRoutedProperty(IRoutedGetterProperty property)
-		{
-			_plotStyles.GetRoutedProperty(property);
-		}
-
-		#endregion IRoutedPropertyReceiver Members
 	} // end of class PlotItem
 }

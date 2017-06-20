@@ -653,35 +653,22 @@ namespace Altaxo.Graph.Gdi.Axis
 
 		#region IRoutedPropertyReceiver Members
 
-		public void SetRoutedProperty(IRoutedSetterProperty property)
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
 		{
-			switch (property.Name)
+			switch (propertyName)
 			{
 				case "StrokeWidth":
-					{
-						var prop = (RoutedSetterProperty<double>)property;
-						this._axisPen.Width = prop.Value;
-						this._majorTickPen.Width = prop.Value;
-						this._minorTickPen.Width = prop.Value;
-						EhSelfChanged(EventArgs.Empty);
-					}
+					yield return (propertyName, _axisPen.Width, (value) => _axisPen.Width = (double)value);
+					yield return (propertyName, _majorTickPen.Width, (value) => _majorTickPen.Width = (double)value);
+					yield return (propertyName, _minorTickPen.Width, (value) => _minorTickPen.Width = (double)value);
 					break;
-			}
-		}
 
-		public void GetRoutedProperty(IRoutedGetterProperty property)
-		{
-			switch (property.Name)
-			{
-				case "StrokeWidth":
-					{
-						var prop = (RoutedGetterProperty<double>)property;
-						prop.Merge(this._axisPen.Width);
-						prop.Merge(this._majorTickPen.Width);
-						prop.Merge(this._minorTickPen.Width);
-					}
+				case "MajorTickLength":
+					yield return (propertyName, _majorTickLength, (value) => { MajorTickLength = (double)value; MinorTickLength = 0.5 * (double)value; });
 					break;
 			}
+
+			yield break;
 		}
 
 		#endregion IRoutedPropertyReceiver Members

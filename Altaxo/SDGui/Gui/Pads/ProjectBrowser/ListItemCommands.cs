@@ -271,7 +271,30 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			else
 			{
 				Altaxo.Graph.Gdi.GraphDocumentExportActions.ShowExportMultipleGraphsDialogAndExportOptions(list);
-				Current.Gui.InfoMessageBox(string.Format("Axes of {0} graph document(s) rescaled.", "Success"));
+				Current.Gui.InfoMessageBox(string.Format("Axes of {0} graph document(s) rescaled.", list.Count()), "Success");
+			}
+		}
+	}
+
+	/// 	/// <summary>
+	/// This command will rescale all axes in all layers of all selected graph documents.
+	/// </summary>
+	public class CmdMultiResizeGraphs : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.Gdi.GraphDocument>();
+			int count = list.Count();
+
+			if (count == 0)
+			{
+				Current.Gui.ErrorMessageBox("There were no graph documents selected for resizing!", "No graph documents selected");
+				return;
+			}
+			else
+			{
+				if (Altaxo.Gui.Graph.Graph2D.ResizeGraphController.ShowResizeGraphDialog(list))
+					Current.Gui.InfoMessageBox(string.Format("{0} graph(s) resized.", list.Count()), "Success");
 			}
 		}
 	}

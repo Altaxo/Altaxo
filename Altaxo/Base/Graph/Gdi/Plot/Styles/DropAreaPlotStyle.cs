@@ -73,13 +73,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		/// <summary>Designates if the fill color is independent or dependent.</summary>
 		protected ColorLinkage _frameColorLinkage = ColorLinkage.PreserveAlpha;
 
-
 		/// <summary>Logical x shift between the location of the real data point and the point where the item is finally drawn.</summary>
 		private double _cachedLogicalShiftX;
 
 		/// <summary>Logical y shift between the location of the real data point and the point where the item is finally drawn.</summary>
 		private double _cachedLogicalShiftY;
-
 
 		#region Serialization
 
@@ -419,7 +417,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			PointF[] plotPositions = pdata.PlotPointsInAbsoluteLayerCoordinates;
 
-			if(_independentOnShiftingGroupStyles)
+			if (_independentOnShiftingGroupStyles)
 			{
 				_cachedLogicalShiftX = _cachedLogicalShiftY = 0;
 			}
@@ -561,31 +559,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region IRoutedPropertyReceiver Members
 
-		public void SetRoutedProperty(IRoutedSetterProperty property)
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
 		{
-			switch (property.Name)
+			switch (propertyName)
 			{
 				case "StrokeWidth":
-					{
-						var prop = (RoutedSetterProperty<double>)property;
-						this._framePen.Width = (float)prop.Value;
-						EhSelfChanged(EventArgs.Empty);
-					}
+					yield return (propertyName, _framePen.Width, (w) => _framePen.Width = (double)w);
 					break;
 			}
-		}
 
-		public void GetRoutedProperty(IRoutedGetterProperty property)
-		{
-			switch (property.Name)
-			{
-				case "StrokeWidth":
-					{
-						var prop = (RoutedGetterProperty<double>)property;
-						prop.Merge(this._framePen.Width);
-					}
-					break;
-			}
+			yield break;
 		}
 
 		#endregion IRoutedPropertyReceiver Members

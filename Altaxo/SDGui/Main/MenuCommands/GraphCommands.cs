@@ -106,6 +106,17 @@ namespace Altaxo.Graph.Commands
 	}
 
 	/// <summary>
+	/// Handler for the menu item "Graph - Resize Graph".
+	/// </summary>
+	public class ResizeGraph : AbstractGraphControllerCommand
+	{
+		public override void Run(GraphController ctrl)
+		{
+			Altaxo.Gui.Graph.Graph2D.ResizeGraphController.ShowResizeGraphDialog(ctrl.Doc);
+		}
+	}
+
+	/// <summary>
 	/// Handler for the menu item "Edit" - "CopyPage".
 	/// </summary>
 	public class CopyPage : AbstractGraphControllerCommand

@@ -892,6 +892,15 @@ namespace Altaxo.Main
 			return result;
 		}
 
+		/// <summary>
+		/// Enumerates all document node including this node, its child nodes, its child-child nodes up to the leaf nodes.
+		/// </summary>
+		/// <returns>Enumeration of all document nodes starting with this node, up to the leaf nodes.</returns>
+		public IEnumerable<IDocumentLeafNode> EnumerateFromHereToLeaves()
+		{
+			return Altaxo.Collections.EnumerableExtensions.FlattenFromRootToLeaves<IDocumentLeafNode>(this, node => (node as SuspendableDocumentNode)?.GetDocumentNodeChildrenWithName().Select(item => item.DocumentNode));
+		}
+
 		#endregion Helper functions
 
 		IEnumerable<IDocumentLeafNode> Collections.ITreeNode<IDocumentLeafNode>.ChildNodes

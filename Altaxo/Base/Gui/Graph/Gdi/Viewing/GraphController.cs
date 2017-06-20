@@ -1473,20 +1473,18 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		{
 			foreach (IHitTestObject o in this.SelectedObjects)
 			{
-				if (o.HittedObject is IRoutedPropertyReceiver)
+				if (o.HittedObject is SuspendableDocumentNode docNode)
 				{
-					((IRoutedPropertyReceiver)(o.HittedObject)).SetRoutedProperty(property);
+					foreach (var node in docNode.EnumerateFromHereToLeaves().OfType<Altaxo.Graph.IRoutedPropertyReceiver>())
+					{
+						foreach (var prop in node.GetRoutedProperties(property.Name))
+							prop.PropertySetter(property.ValueAsObject);
+					}
 				}
-			}
-		}
-
-		public void GetSelectedObjectsProperty(IRoutedGetterProperty property)
-		{
-			foreach (IHitTestObject o in this.SelectedObjects)
-			{
-				if (o.HittedObject is IRoutedPropertyReceiver)
+				else if (o.HittedObject is IRoutedPropertyReceiver node)
 				{
-					((IRoutedPropertyReceiver)(o.HittedObject)).GetRoutedProperty(property);
+					foreach (var prop in node.GetRoutedProperties(property.Name))
+						prop.PropertySetter(property.ValueAsObject);
 				}
 			}
 		}

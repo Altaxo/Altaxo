@@ -43,6 +43,52 @@ namespace Altaxo
 			to = from;
 		}
 
+		/// <summary>
+		/// Try to copy one object to another object.
+		/// </summary>
+		/// <typeparam name="T">The type of the object to copy.</typeparam>
+		/// <param name="to">Reference where to copy to.</param>
+		/// <param name="from">Object to copy from.</param>
+		/// <returns></returns>
+		public static bool TryCopy<T>(ref T to, T from)
+		{
+			ICloneable fromC = from as ICloneable;
+
+			if (object.ReferenceEquals(to, from))
+			{
+				return true;
+			}
+			else if (from is Main.IImmutable)
+			{
+				to = from;
+				return true;
+			}
+			else if (from == null)
+			{
+				to = default(T);
+				return true;
+			}
+			else if (to == null && fromC != null)
+			{
+				to = (T)fromC.Clone();
+				return true;
+			}
+			else if (to is Main.ICopyFrom toc && to.GetType() == from.GetType())
+			{
+				toc.CopyFrom(from);
+				return true;
+			}
+			else if (fromC != null)
+			{
+				to = (T)fromC.Clone();
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
 		/// <summary>Copies an instance.</summary>
 		/// <typeparam name="T">The type of the instance to copy.</typeparam>
 		/// <param name="to">The variable to copy to.</param>

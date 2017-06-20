@@ -823,43 +823,20 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 		#region IRoutedPropertyReceiver Members
 
-		public virtual void SetRoutedProperty(IRoutedSetterProperty property)
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
 		{
-			switch (property.Name)
+			switch (propertyName)
 			{
 				case "FontSize":
-					{
-						var prop = (RoutedSetterProperty<double>)property;
-						this.FontSize = prop.Value;
-						EhSelfChanged(EventArgs.Empty);
-					}
+					yield return (propertyName, _font.Size, (value) => Font = _font.WithSize((double)value));
 					break;
 
 				case "FontFamily":
-					{
-						var prop = (RoutedSetterProperty<string>)property;
-						try
-						{
-							var newFont = _font.WithFamily(prop.Value);
-							_font = newFont;
-							EhSelfChanged(EventArgs.Empty);
-						}
-						catch (Exception)
-						{
-						}
-					}
+					yield return (propertyName, _font.FontFamilyName, (value) => Font = _font.WithFamily((string)value));
 					break;
 			}
-		}
 
-		public virtual void GetRoutedProperty(IRoutedGetterProperty property)
-		{
-			switch (property.Name)
-			{
-				case "FontSize":
-					((RoutedGetterProperty<double>)property).Merge(this.FontSize);
-					break;
-			}
+			yield break;
 		}
 
 		#endregion IRoutedPropertyReceiver Members

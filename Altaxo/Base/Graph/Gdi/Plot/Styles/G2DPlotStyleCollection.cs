@@ -41,8 +41,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		:
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<PlotItemStyleChangedEventArgs>,
 		IEnumerable<IG2DPlotStyle>,
-		IG2DPlotStyle,
-		IRoutedPropertyReceiver
+		IG2DPlotStyle
 	{
 		/// <summary>
 		/// Holds the plot styles
@@ -583,28 +582,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		#endregion IDocumentNode Members
-
-		#region IRoutedPropertyReceiver Members
-
-		public void SetRoutedProperty(IRoutedSetterProperty property)
-		{
-			foreach (object o in _innerList)
-			{
-				if (o is IRoutedPropertyReceiver)
-					(o as IRoutedPropertyReceiver).SetRoutedProperty(property);
-			}
-		}
-
-		public void GetRoutedProperty(IRoutedGetterProperty property)
-		{
-			foreach (object o in _innerList)
-			{
-				if (o is IRoutedPropertyReceiver)
-					(o as IRoutedPropertyReceiver).GetRoutedProperty(property);
-			}
-		}
-
-		#endregion IRoutedPropertyReceiver Members
 
 		string INamedObject.Name
 		{

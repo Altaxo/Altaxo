@@ -31,9 +31,12 @@ namespace Altaxo.Graph
 {
 	public interface IRoutedPropertyReceiver
 	{
-		void SetRoutedProperty(IRoutedSetterProperty property);
-
-		void GetRoutedProperty(IRoutedGetterProperty property);
+		/// <summary>
+		/// Gets the routed properties of this object, along with an action to set this property.
+		/// </summary>
+		/// <param name="propertyName">Name of the property.</param>
+		/// <returns>Enumeration of all properties (with the provided name) of this object.</returns>
+		IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName);
 	}
 
 	public interface IRoutedSetterProperty
@@ -85,27 +88,30 @@ namespace Altaxo.Graph
 
 	public class RoutedGetterProperty<T> : IRoutedGetterProperty
 	{
-		public string Name { get; set; }
+		public string Name { get; private set; }
+
+		public RoutedGetterProperty(string name)
+		{
+			Name = name;
+		}
 
 		public System.Type TypeOfValue { get { return typeof(T); } }
 
-		private T _value;
-		private bool _wasSet;
-		private bool _doNotMatch;
-
-		public T Value { get { return _value; } }
+		public T Value { get; private set; }
+		public bool WasSet { get; private set; }
+		public bool DoNotMatch { get; private set; }
 
 		public void Merge(T t)
 		{
-			if (!_wasSet)
+			if (!WasSet)
 			{
-				_value = t;
-				_wasSet = true;
+				Value = t;
+				WasSet = true;
 			}
 			else
 			{
-				if (!_doNotMatch && !object.Equals(t, _value))
-					_doNotMatch = true;
+				if (!DoNotMatch && !object.Equals(t, Value))
+					DoNotMatch = true;
 			}
 		}
 	}

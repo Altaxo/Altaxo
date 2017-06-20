@@ -844,8 +844,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				{
 					// plot a line with the length of symbolsize from
 					var symGap = (float)(_symbolGapOffset + _symbolGapFactor * _symbolSize);
-					PaintLine(g, new PointF(-halfwidth, 0), new PointF(-symGap/2, 0));
-					PaintLine(g, new PointF(symGap/2, 0), new PointF(halfwidth, 0));
+					PaintLine(g, new PointF(-halfwidth, 0), new PointF(-symGap / 2, 0));
+					PaintLine(g, new PointF(symGap / 2, 0), new PointF(halfwidth, 0));
 				}
 				else // no gap
 				{
@@ -1072,31 +1072,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#region IRoutedPropertyReceiver Members
 
-		public void SetRoutedProperty(IRoutedSetterProperty property)
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
 		{
-			switch (property.Name)
+			switch (propertyName)
 			{
 				case "StrokeWidth":
-					{
-						var prop = (RoutedSetterProperty<double>)property;
-						this._linePen.Width = (float)prop.Value;
-						EhSelfChanged(EventArgs.Empty);
-					}
+					yield return (propertyName, _linePen.Width, (w) => _linePen.Width = (double)w);
 					break;
 			}
-		}
 
-		public void GetRoutedProperty(IRoutedGetterProperty property)
-		{
-			switch (property.Name)
-			{
-				case "StrokeWidth":
-					{
-						var prop = (RoutedGetterProperty<double>)property;
-						prop.Merge(this._linePen.Width);
-					}
-					break;
-			}
+			yield break;
 		}
 
 		#endregion IRoutedPropertyReceiver Members

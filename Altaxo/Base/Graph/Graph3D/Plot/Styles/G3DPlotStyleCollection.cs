@@ -43,8 +43,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		:
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<PlotItemStyleChangedEventArgs>,
 		IEnumerable<IG3DPlotStyle>,
-		IG3DPlotStyle,
-		IRoutedPropertyReceiver
+		IG3DPlotStyle
 	{
 		/// <summary>
 		/// Holds the plot styles
@@ -524,24 +523,6 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		#endregion IDocumentNode Members
 
 		#region IRoutedPropertyReceiver Members
-
-		public void SetRoutedProperty(IRoutedSetterProperty property)
-		{
-			foreach (object o in _innerList)
-			{
-				if (o is IRoutedPropertyReceiver)
-					(o as IRoutedPropertyReceiver).SetRoutedProperty(property);
-			}
-		}
-
-		public void GetRoutedProperty(IRoutedGetterProperty property)
-		{
-			foreach (object o in _innerList)
-			{
-				if (o is IRoutedPropertyReceiver)
-					(o as IRoutedPropertyReceiver).GetRoutedProperty(property);
-			}
-		}
 
 		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn>>> GetAdditionallyUsedColumns()
 		{

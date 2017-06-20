@@ -799,38 +799,21 @@ namespace Altaxo.Graph.Graph3D.Axis
 
 		#region IRoutedPropertyReceiver Members
 
-		public void SetRoutedProperty(IRoutedSetterProperty property)
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
 		{
-			switch (property.Name)
+			switch (propertyName)
 			{
 				case "StrokeWidth":
-					{
-						var prop = (RoutedSetterProperty<double>)property;
-						_axisPen = _axisPen.WithUniformThickness(prop.Value);
-						_majorTickPen = _majorTickPen.WithUniformThickness(prop.Value);
-						_minorTickPen = _minorTickPen.WithUniformThickness(prop.Value);
-						EhSelfChanged(EventArgs.Empty);
-					}
+					yield return (propertyName, _axisPen.Thickness1, (w) => _axisPen = _axisPen.WithThickness1((double)w));
+					yield return (propertyName, _axisPen.Thickness2, (w) => _axisPen = _axisPen.WithThickness2((double)w));
+					yield return (propertyName, _axisPen.Thickness1, (w) => _majorTickPen = _majorTickPen.WithThickness1((double)w));
+					yield return (propertyName, _axisPen.Thickness2, (w) => _majorTickPen = _majorTickPen.WithThickness2((double)w));
+					yield return (propertyName, _axisPen.Thickness1, (w) => _minorTickPen = _minorTickPen.WithThickness1((double)w));
+					yield return (propertyName, _axisPen.Thickness2, (w) => _minorTickPen = _minorTickPen.WithThickness2((double)w));
 					break;
 			}
-		}
 
-		public void GetRoutedProperty(IRoutedGetterProperty property)
-		{
-			switch (property.Name)
-			{
-				case "StrokeWidth":
-					{
-						var prop = (RoutedGetterProperty<double>)property;
-						prop.Merge(this._axisPen.Thickness1);
-						prop.Merge(this._axisPen.Thickness2);
-						prop.Merge(this._majorTickPen.Thickness1);
-						prop.Merge(this._majorTickPen.Thickness2);
-						prop.Merge(this._minorTickPen.Thickness1);
-						prop.Merge(this._minorTickPen.Thickness2);
-					}
-					break;
-			}
+			yield break;
 		}
 
 		#endregion IRoutedPropertyReceiver Members

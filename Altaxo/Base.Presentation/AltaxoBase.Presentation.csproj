@@ -607,6 +607,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Graph\Graph2D\ResizeGraphControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Graph\Graph3D\Axis\AxisCreationControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1327,6 +1331,9 @@
     </Compile>
     <Compile Include="Gui\Graph\Graph2D\Plot\Styles\ScatterSymbols\PlotColorInfluenceControl.xaml.cs">
       <DependentUpon>PlotColorInfluenceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Graph\Graph2D\ResizeGraphControl.xaml.cs">
+      <DependentUpon>ResizeGraphControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Graph\Graph3D\Plot\Styles\BarGraphPlotStyleControl.xaml.cs">
       <DependentUpon>BarGraphPlotStyleControl.xaml</DependentUpon>
