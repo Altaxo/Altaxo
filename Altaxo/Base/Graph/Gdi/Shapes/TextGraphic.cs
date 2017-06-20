@@ -468,9 +468,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 			set
 			{
-				_font = value;
-				this._isStructureInSync = false; // since the font is cached in the structure, it must be renewed
-				this._isMeasureInSync = false;
+				if (!(_font == value))
+				{
+					_font = value;
+					this._isStructureInSync = false; // since the font is cached in the structure, it must be renewed
+					this._isMeasureInSync = false;
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -487,8 +491,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 			set
 			{
-				_text = value;
-				this._isStructureInSync = false;
+				if (!(_text == value))
+				{
+					_text = value;
+					this._isStructureInSync = false;
+					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
