@@ -89,6 +89,8 @@ namespace Altaxo.Data.Selections
 		protected IntersectionOfRowSelections(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, List<IRowSelection> list)
 		{
 			_rowSelections = list;
+			foreach (var element in _rowSelections)
+				element.ParentObject = this;
 		}
 
 		/// <summary>
@@ -185,7 +187,7 @@ namespace Altaxo.Data.Selections
 				}
 			}
 
-		BreakEnumeration:
+			BreakEnumeration:
 
 			for (int i = 0; i < _rowSelections.Count; ++i)
 			{

@@ -587,7 +587,15 @@ namespace Altaxo.Main
 			{
 				var currentProject = Current.Project;
 				if (null == currentProject) // probably we are loading the AltaxoDocument now, and it is not set yet
-					currentProject = (AltaxoDocument)AbsoluteDocumentPath.GetRootNode(this);
+				{
+					var rootNode = AbsoluteDocumentPath.GetRootNode(this);
+					currentProject = rootNode as AltaxoDocument;
+
+					if (null == currentProject)
+					{
+						throw new ApplicationException("Could not find document root. Please debug to find the node which has not set its ParentObject.");
+					}
+				}
 
 				return ResolveDocumentObject(currentProject);
 			}
