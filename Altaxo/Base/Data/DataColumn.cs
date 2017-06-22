@@ -470,6 +470,18 @@ namespace Altaxo.Data
 			return -1;
 		}
 
+		/// <summary>
+		/// Gets all indices where the element is equal to the value given in <paramref name="item"/>.
+		/// </summary>
+		/// <param name="item">The value to compare with</param>
+		/// <returns>All indices where the element is equal to the value given in <paramref name="item"/>.</returns>
+		public IEnumerable<int> IndicesOf(AltaxoVariant item)
+		{
+			for (int i = 0; i < Count; i++)
+				if (GetVariantAt(i) == item)
+					yield return i;
+		}
+
 		public void Insert(int index, AltaxoVariant item)
 		{
 			InsertRows(index, 1);
