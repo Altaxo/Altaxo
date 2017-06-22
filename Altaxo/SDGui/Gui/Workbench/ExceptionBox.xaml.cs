@@ -37,7 +37,17 @@ namespace Altaxo.Gui.Workbench
 		{
 			this.exceptionThrown = exception;
 			this.message = message;
-			InitializeComponent();
+
+			try
+			{
+				InitializeComponent(); // Exception can occur in InitializeComponent during shutdown of the application
+			}
+			catch (InvalidOperationException)
+			{
+				MessageBox.Show("Exception thrown:\r\n" + exception.ToString(), "Exception in Altaxo", MessageBoxButton.OK, MessageBoxImage.Error);
+				return;
+			}
+
 			if (mustTerminate)
 			{
 				continueButton.Visibility = Visibility.Hidden;
