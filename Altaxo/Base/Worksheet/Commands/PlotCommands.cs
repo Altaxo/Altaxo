@@ -133,8 +133,7 @@ namespace Altaxo.Worksheet.Commands
 
 						case ColumnKind.Err:
 							ErrorBarPlotStyle errStyle = new ErrorBarYPlotStyle(context);
-							errStyle.PositiveErrorColumn = col as INumericColumn;
-							errStyle.NegativeErrorColumn = col as INumericColumn;
+							errStyle.CommonErrorColumn = col as INumericColumn;
 							ps.Add(errStyle);
 							break;
 
