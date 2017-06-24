@@ -60,11 +60,14 @@ namespace Altaxo.Graph.Gdi.Shapes
 				info.GetBaseValueEmbedded(s, typeof(ShapeGroup).BaseType, parent);
 
 				int count = info.OpenArray("Elements");
-				var list = new GraphicBase[count];
-				for (int i = 0; i < count; i++)
-					list[i] = (GraphicBase)info.GetValue("e", s);
+                s._groupedObjects = new List<GraphicBase>(count);
+                for (int i = 0; i < count; i++)
+                {
+                    var item = (GraphicBase)info.GetValue("e", s);
+                    item.ParentObject = s;
+                    s._groupedObjects.Add(item);
+                }
 				info.CloseArray(count);
-				s.AddRange(list);
 
 				return s;
 			}
@@ -75,6 +78,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		private ShapeGroup()
 			: base(new ItemLocationDirectAutoSize())
 		{
+            _groupedObjects = new List<GraphicBase>();
 		}
 
 		/// <summary>
