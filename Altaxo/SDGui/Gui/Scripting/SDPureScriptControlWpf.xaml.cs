@@ -53,6 +53,8 @@ namespace Altaxo.Gui.Scripting
 		protected static Altaxo.Gui.HelpViewing.HelpViewerStarter _helpViewerStarter;
 		protected static Thread _helpViewerMainThread;
 
+		protected static bool _isFrameworkVersion47Installed; // If .NET Framework 4.7 is installed, we must not include System.ValueTuple in the list of referenced DLLs.
+
 		/// <summary>
 		/// Not used here because this is handled by the view.
 		/// </summary>
@@ -69,6 +71,8 @@ namespace Altaxo.Gui.Scripting
 				typeof(Altaxo.Gui.GuiHelper).Assembly, // Presentation
 				typeof(SDPureScriptControlWpf).Assembly // SDGui
 			};
+
+			_isFrameworkVersion47Installed = Altaxo.Serialization.AutoUpdates.NetFrameworkVersionDetermination.IsVersion47Installed();
 		}
 
 		public SDPureScriptControlWpf()
@@ -78,9 +82,20 @@ namespace Altaxo.Gui.Scripting
 			Unloaded += (s, e) => UninitializeEditor();
 		}
 
+		private static IEnumerable<Assembly> GetReferencedAssemblies()
+		{
+			var referencedAssemblies = Altaxo.Settings.Scripting.ReferencedAssemblies.All;
+			if (_isFrameworkVersion47Installed)
+			{
+				referencedAssemblies = Altaxo.Settings.Scripting.ReferencedAssemblies.All.Where(ass => !(ass.GetName().Name.ToUpperInvariant().StartsWith("SYSTEM.VALUETUPLE")));
+			}
+
+			return referencedAssemblies;
+		}
+
 		private void InitializeEditor(string initialText, string scriptName)
 		{
-			this._codeView = _factory.NewCodeEditorWithDiagnostics(initialText, Altaxo.Settings.Scripting.ReferencedAssemblies.All);
+			this._codeView = _factory.NewCodeEditorWithDiagnostics(initialText, GetReferencedAssemblies());
 			this._codeView.Name = "edFormula";
 			this._codeView.Adapter.ExternalHelpRequired += EhExternalHelpRequired;
 			this.Content = _codeView;
@@ -205,7 +220,7 @@ namespace Altaxo.Gui.Scripting
 
 		public IScriptCompilerResult Compile()
 		{
-			var result = _codeView.Compile(texts => new CodeTextsWithHash(texts).Hash, Altaxo.Settings.Scripting.ReferencedAssemblies.All);
+			var result = _codeView.Compile(texts => new CodeTextsWithHash(texts).Hash, GetReferencedAssemblies());
 			var scriptTextsWithHash = new CodeTextsWithHash(result.CodeText);
 
 			if (result.CompiledAssembly != null)

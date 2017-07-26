@@ -108,8 +108,16 @@ namespace Altaxo.Serialization.AutoUpdates
 			if (!release.HasValue)
 				return false;
 			else
-				return release >= 394802
-;
+				return release >= 394802;
+		}
+
+		public static bool IsVersion47Installed()
+		{
+			var release = GetFramework45ReleaseNumber();
+			if (!release.HasValue)
+				return false;
+			else
+				return release >= 460798;
 		}
 	}
 }
