@@ -556,6 +556,34 @@
 			return max;
 		}
 
+			/// <summary>
+		/// Returns the maximum of the elements in <paramref name="vector"/>.
+		/// </summary>
+		/// <param name="vector">The vector.</param>
+		/// <param name="start">First element of the vector to include in the evaluation.</param>
+		/// <param name="count">Number of elements of the vector to include in the evaluation.</param>
+		/// <returns>The maximum of all elements in <paramref name="vector"/>.</returns>
+		public static <#= scalT #> Max(this <#= arrT #> vector, int start, int count)
+		{
+			if (!(start >= 0))
+				throw new ArgumentException("must be >=0", nameof(start));
+			if (!(count > 0))
+				throw new ArgumentException("Result undefined for count <=0", nameof(count));
+			int end = start + count;
+			if(!(end<=vector.<#= length #>))
+				throw new ArgumentException("must be <= vector.count - start", nameof(count));
+
+			<#= scalT #> max = <#= negInf #>;
+			<#= scalT #> tmp;
+			for (int i = start; i < end; ++i)
+			{
+				tmp = vector[i];
+				if (tmp > max)
+					max = tmp;
+			}
+			return max;
+		}
+
 		/// <summary>
 		/// Returns the minimum of the elements in <paramref name="vector"/>.
 		/// </summary>
@@ -566,16 +594,45 @@
 			if (vector.<#= length #> == 0)
 				throw new ArgumentException("Result undefined for vector of zero length", nameof(vector));
 
-			<#= scalT #> max = <#= posInf #>;
+			<#= scalT #> min = <#= posInf #>;
 			<#= scalT #> tmp;
 			for (int i = 0; i < vector.<#= length #>; ++i)
 			{
 				tmp = vector[i];
-				if (tmp < max)
-					max = tmp;
+				if (tmp < min)
+					min = tmp;
 			}
-			return max;
+			return min;
 		}
+
+		/// <summary>
+		/// Returns the minimum of the elements in <paramref name="vector"/>.
+		/// </summary>
+		/// <param name="vector">The vector.</param>
+		/// <param name="start">First element of the vector to include in the evaluation.</param>
+		/// <param name="count">Number of elements of the vector to include in the evaluation.</param>
+		/// <returns>The minimum of all elements in <paramref name="vector"/>.</returns>
+		public static <#= scalT #> Min(this <#= arrT #> vector, int start, int count)
+		{
+			if (!(start >= 0))
+				throw new ArgumentException("must be >=0", nameof(start));
+			if (!(count > 0))
+				throw new ArgumentException("Result undefined for count <=0", nameof(count));
+			int end = start + count;
+			if(!(end<=vector.<#= length #>))
+				throw new ArgumentException("must be <= vector.count - start", nameof(count));
+
+			<#= scalT #> min = <#= posInf #>;
+			<#= scalT #> tmp;
+			for (int i = start; i < end; ++i)
+			{
+				tmp = vector[i];
+				if (tmp < min)
+					min = tmp;
+			}
+			return min;
+		}
+
 
     /// <summary>
     /// Returns the sum of the elements in <paramref name="vector"/>.

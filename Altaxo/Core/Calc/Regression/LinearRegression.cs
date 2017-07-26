@@ -84,13 +84,13 @@ namespace Altaxo.Calc.Regression
 		/// <param name="evaluateFunctionBase">The function base used to fit.</param>
 		/// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
 		public LinearFitBySvd(
-			double[] xarr,
-			double[] yarr,
-			double[] stddev,
-			int numberOfData,
-			int numberOfParameter,
-			FunctionBaseEvaluator evaluateFunctionBase,
-			double threshold)
+				double[] xarr,
+				double[] yarr,
+				double[] stddev,
+				int numberOfData,
+				int numberOfParameter,
+				FunctionBaseEvaluator evaluateFunctionBase,
+				double threshold)
 		{
 			var u = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfData, numberOfParameter);
 
@@ -106,12 +106,12 @@ namespace Altaxo.Calc.Regression
 			}
 
 			Calculate(
-				u,
-				VectorMath.ToROVector(yarr),
-				VectorMath.ToROVector(stddev),
-				numberOfData,
-				numberOfParameter,
-				threshold);
+					u,
+					VectorMath.ToROVector(yarr),
+					VectorMath.ToROVector(stddev),
+					numberOfData,
+					numberOfParameter,
+					threshold);
 		}
 
 		/// <summary>
@@ -125,13 +125,13 @@ namespace Altaxo.Calc.Regression
 		/// <param name="evaluateFunctionBase">The function base used to fit.</param>
 		/// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
 		public LinearFitBySvd(
-			IReadOnlyList<double> xarr,
-			IReadOnlyList<double> yarr,
-			IReadOnlyList<double> stddev,
-			int numberOfData,
-			int numberOfParameter,
-			FunctionBaseEvaluator evaluateFunctionBase,
-			double threshold)
+				IReadOnlyList<double> xarr,
+				IReadOnlyList<double> yarr,
+				IReadOnlyList<double> stddev,
+				int numberOfData,
+				int numberOfParameter,
+				FunctionBaseEvaluator evaluateFunctionBase,
+				double threshold)
 		{
 			var u = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfData, numberOfParameter);
 
@@ -147,12 +147,12 @@ namespace Altaxo.Calc.Regression
 			}
 
 			Calculate(
-				u,
-				yarr,
-				stddev,
-				numberOfData,
-				numberOfParameter,
-				threshold);
+					u,
+					yarr,
+					stddev,
+					numberOfData,
+					numberOfParameter,
+					threshold);
 		}
 
 		/// <summary>
@@ -165,12 +165,12 @@ namespace Altaxo.Calc.Regression
 		/// <param name="numberOfParameter">The number of parameters to fit == size of the function base.</param>
 		/// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
 		public LinearFitBySvd(
-			IROMatrix<double> xbase, // NumberOfData, NumberOfParameters
-			double[] yarr,
-			double[] stddev,
-			int numberOfData,
-			int numberOfParameter,
-			double threshold)
+				IROMatrix<double> xbase, // NumberOfData, NumberOfParameters
+				double[] yarr,
+				double[] stddev,
+				int numberOfData,
+				int numberOfParameter,
+				double threshold)
 		{
 			Calculate(xbase, VectorMath.ToROVector(yarr), VectorMath.ToROVector(stddev), numberOfData, numberOfParameter, threshold);
 		}
@@ -185,12 +185,12 @@ namespace Altaxo.Calc.Regression
 		/// <param name="numberOfParameter">The number of parameters to fit == size of the function base.</param>
 		/// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
 		public LinearFitBySvd Calculate(
-			IROMatrix<double> xbase, // NumberOfData, NumberOfParameters
-			IReadOnlyList<double> yarr,
-			IReadOnlyList<double> stddev,
-			int numberOfData,
-			int numberOfParameter,
-			double threshold)
+				IROMatrix<double> xbase, // NumberOfData, NumberOfParameters
+				IReadOnlyList<double> yarr,
+				IReadOnlyList<double> stddev,
+				int numberOfData,
+				int numberOfParameter,
+				double threshold)
 		{
 			_numberOfParameter = numberOfParameter;
 			_numberOfFreeParameter = numberOfParameter;
@@ -360,6 +360,20 @@ namespace Altaxo.Calc.Regression
 		}
 
 		/// <summary>
+		/// Gets the condition number. The decadic logarithm of the condition number is roughly the loss of precision (in digits) during the calculation.
+		/// </summary>
+		/// <value>
+		/// The condition number.
+		/// </value>
+		public double ConditionNumber
+		{
+			get
+			{
+				return _decomposition.Condition;
+			}
+		}
+
+		/// <summary>
 		/// Gets the estimated standard error of parameter <c>i</c>.
 		/// </summary>
 		/// <param name="i">Index of the parameter.</param>
@@ -509,6 +523,135 @@ namespace Altaxo.Calc.Regression
 				throw new ArgumentOutOfRangeException("Order must be > 0");
 
 			return new PolynomialFunction(order).Evaluate;
+		}
+
+		/// <summary>
+		/// Fits data provided as xcolumn and ycolumn with a polynomial base. Here special measures are taken (scaling of the x-variable) in order
+		/// to keep the precision high.
+		/// </summary>
+		/// <param name="order">The order of the fit (1:linear, 2:quadratic, etc.)</param>
+		/// <param name="xValues">The column of x-values. Only those values are used, that are not NaN</param>
+		/// <param name="yValues">The column of y-values.</param>
+		/// <param name="start">Index of first data point to use.</param>
+		/// <param name="count">Number of data points to use.</param>
+		/// <param name="doRemoveNaNValues">If true, value pairs containing NaN are removed before calculation of the fit.</param>
+		/// <returns>The fit.</returns>
+		public static LinearFitBySvd FitPolymomial(int order, IReadOnlyList<double> xValues, IReadOnlyList<double> yValues, int start, int count, bool doRemoveNaNValues)
+		{
+			if (!(xValues != null))
+				throw new ArgumentNullException(nameof(xValues));
+			if (!(yValues != null))
+				throw new ArgumentNullException(nameof(yValues));
+			if (!(start >= 0))
+				throw new ArgumentOutOfRangeException(nameof(count), "must be >=0");
+			if (!(count > 0))
+				throw new ArgumentOutOfRangeException(nameof(count), "must be >0");
+			int end = start + count;
+			if (!(end <= xValues.Count))
+				throw new ArgumentOutOfRangeException(nameof(count), "exceeds capacity of array " + nameof(xValues));
+			if (!(end <= yValues.Count))
+				throw new ArgumentOutOfRangeException(nameof(count), "exceeds capacity of array " + nameof(yValues));
+
+			double[] xarr = new double[count];
+			double[] yarr = new double[count];
+			double[] earr = new double[count];
+
+			int numberOfDataPoints = 0;
+			if (doRemoveNaNValues)
+			{
+				for (int i = start; i < end; ++i)
+				{
+					double x = xValues[i];
+					double y = yValues[i];
+					if (double.IsNaN(x) || double.IsNaN(y))
+						continue;
+
+					xarr[numberOfDataPoints] = x;
+					yarr[numberOfDataPoints] = y;
+					earr[numberOfDataPoints] = 1;
+					numberOfDataPoints++;
+				}
+			}
+			else
+			{
+				for (int i = start; i < end; ++i)
+				{
+					xarr[numberOfDataPoints] = xValues[i];
+					yarr[numberOfDataPoints] = yValues[i];
+					earr[numberOfDataPoints] = 1;
+					numberOfDataPoints++;
+				}
+			}
+
+			return FitPolymomialDestructive(order, xarr, yarr, earr, numberOfDataPoints);
+		}
+
+		/// <summary>
+		/// Fits data provided as xcolumn and ycolumn with a polynomial base. Here special measures are taken (scaling of the x-variable) in order
+		/// to keep the precision high.
+		/// </summary>
+		/// <param name="order">The order of the fit (1:linear, 2:quadratic, etc.)</param>
+		/// <param name="xValues">The array of x-values. The values of the array are destroyed (altered) during the evaluation!</param>
+		/// <param name="yValues">The array of y-values.</param>
+		/// <param name="errorValues">The column of errorValues. If null, errorValues are set to 1 for each element.</param>
+		/// <param name="count">Number of values to use (array[0] ... array[count-1].</param>
+		/// <returns>The fit.</returns>
+		public static LinearFitBySvd FitPolymomialDestructive(int order, double[] xValues, double[] yValues, double[] errorValues, int count)
+		{
+			if (!(xValues != null))
+				throw new ArgumentNullException(nameof(xValues));
+			if (!(yValues != null))
+				throw new ArgumentNullException(nameof(yValues));
+			if (!(count > 0))
+				throw new ArgumentOutOfRangeException(nameof(count), "must be >0");
+			if (!(count <= xValues.Length))
+				throw new ArgumentOutOfRangeException(nameof(count), "exceeds capacity of array " + nameof(xValues));
+			if (!(count <= yValues.Length))
+				throw new ArgumentOutOfRangeException(nameof(count), "exceeds capacity of array " + nameof(yValues));
+			if (null != errorValues && !(count <= errorValues.Length))
+				throw new ArgumentOutOfRangeException(nameof(count), "exceeds capacity of array " + nameof(errorValues));
+
+			double[] xarr = xValues;
+			double[] yarr = yValues;
+			double[] earr = errorValues;
+
+			if (null == earr)
+			{
+				earr = new double[count];
+				VectorMath.FillWith(earr, 1);
+			}
+
+			int numberOfDataPoints = count;
+
+			// we scale the x-values in order to keep the Condition number reasonable
+
+			var xmin = Altaxo.Calc.LinearAlgebra.VectorMath.Min(xarr, 0, numberOfDataPoints);
+			var xmax = Altaxo.Calc.LinearAlgebra.VectorMath.Max(xarr, 0, numberOfDataPoints);
+
+			double xscale = Math.Max(-xmin, xmax);
+			double xinvscale = 1 / xscale;
+
+			if (0 == xscale)
+			{
+				xscale = xinvscale = 1;
+			}
+
+			for (int i = 0; i < numberOfDataPoints; ++i)
+				xarr[i] *= xinvscale;
+
+			LinearFitBySvd fit =
+					new LinearFitBySvd(
+					xarr, yarr, earr, numberOfDataPoints, order + 1, new FunctionBaseEvaluator(GetPolynomialFunctionBase(order)), 1E-15);
+
+			// rescale parameter of fit in order to account for rescaled x variable
+			for (int i = 0; i <= order; ++i)
+			{
+				fit._parameter[i] *= RMath.Pow(xinvscale, i);
+				for (int j = 0; j <= order; ++j)
+					fit._covarianceMatrix[i][j] *= RMath.Pow(xinvscale, i + j);
+			}
+
+			return fit;
 		}
 
 		#endregion Default function bases
