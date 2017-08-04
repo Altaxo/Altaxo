@@ -148,7 +148,7 @@ namespace Altaxo.Data
 			{
 				var src = (DoubleColumn)o;
 				_data = null == src._data ? null : (double[])src._data.Clone();
-				_capacity = _data.Length;
+				_capacity = _data?.Length ?? 0;
 				_count = src._count;
 			}
 			else

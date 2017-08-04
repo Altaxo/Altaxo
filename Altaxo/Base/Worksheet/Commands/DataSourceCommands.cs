@@ -100,6 +100,8 @@ namespace Altaxo.Worksheet.Commands
 				catch (Exception ex)
 				{
 					table.Notes.WriteLine("Error during requerying the table data source: {0}", ex.Message);
+					table.Notes.WriteLine("Details of exception:");
+					table.Notes.WriteLine(ex.ToString());
 				}
 
 				if (!(null != table.DataSource)) throw new InvalidProgramException("table.DataSource.FillData should never set the data source to zero!");
