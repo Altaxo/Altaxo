@@ -1058,6 +1058,7 @@ namespace Altaxo.Graph.Plot.Data
 			int maxRowIndex = GetMaximumRowIndexFromDataColumns();
 
 			int plotArrayIdx = 0;
+			int previousDataRowIdx = -1;
 			foreach (int dataRowIdx in _dataRowSelection.GetSelectedRowIndicesFromTo(0, maxRowIndex, _dataTable?.Document?.DataColumns, maxRowIndex))
 			{
 				if (xColumn.IsElementEmpty(dataRowIdx) || yColumn.IsElementEmpty(dataRowIdx))
@@ -1069,6 +1070,14 @@ namespace Altaxo.Graph.Plot.Data
 					}
 					continue;
 				}
+
+				if (dataRowIdx != (1 + previousDataRowIdx) && !bInPlotSpace)
+				{
+					bInPlotSpace = true;
+					rangeList.Add(new PlotRange(plotRangeStart, plotArrayIdx, rangeOffset));
+				}
+
+				previousDataRowIdx = dataRowIdx;
 
 				double x_rel, y_rel;
 				double xcoord, ycoord;
