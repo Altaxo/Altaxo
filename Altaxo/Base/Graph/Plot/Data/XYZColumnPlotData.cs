@@ -830,6 +830,7 @@ namespace Altaxo.Graph.Plot.Data
 
 			int maxRowIndex = GetMaximumRowIndexFromDataColumns();
 			int plotArrayIdx = 0;
+			int previousDataRowIdx = -1;
 			foreach (int dataRowIdx in _dataRowSelection.GetSelectedRowIndicesFromTo(0, maxRowIndex, _dataTable?.Document?.DataColumns, maxRowIndex))
 			{
 				if (xColumn.IsElementEmpty(dataRowIdx) || yColumn.IsElementEmpty(dataRowIdx) || zColumn.IsElementEmpty(dataRowIdx))
@@ -840,6 +841,11 @@ namespace Altaxo.Graph.Plot.Data
 						rangeList.Add(new PlotRange(rangeStart, plotArrayIdx, rangeOffset));
 					}
 					continue;
+				}
+				if (dataRowIdx != (1 + previousDataRowIdx) && !bInPlotSpace)
+				{
+					bInPlotSpace = true;
+					rangeList.Add(new PlotRange(rangeStart, plotArrayIdx, rangeOffset));
 				}
 
 				double x_rel, y_rel, z_rel;
