@@ -20,6 +20,7 @@
 		<!--axogg:XYPlotStyleCollectionControl x:Name="_plotStyleCollControl" Grid.Column="0"/-->
 		<TabControl x:Name="_tabControl" Grid.Column="2" SelectionChanged="EhTabControl_SelectionChanged">
 		</TabControl>
+		<GridSplitter Grid.Column="3" Width="4" HorizontalAlignment="Stretch" />
 		<Border Grid.Column="4"  Background="Bisque">
 			<GroupBox x:Name="_plotGroupCollectionControlHost" Header="Plot item grouping:"  Padding="2,4,2,2" />
 		</Border>
