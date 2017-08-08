@@ -246,6 +246,7 @@
     <Compile Include="Data\IVariantToVariantTransformation.cs" />
     <Compile Include="Data\Selections\IRowSelection.cs" />
     <Compile Include="Data\Selections\AllRows.cs" />
+    <Compile Include="Data\Selections\IncludeSingleNumericalValue.cs" />
     <Compile Include="Data\Selections\RangeOfNumericalValues.cs" />
     <Compile Include="Data\Selections\RangeOfRowIndices.cs" />
     <Compile Include="Data\Selections\IntersectionOfRowSelections.cs" />
@@ -660,6 +661,7 @@
     <Compile Include="Gui\Data\Selections\IDataColumnController.cs" />
     <Compile Include="Gui\Data\Selections\IntersectionOfRowSelectionsController.cs" />
     <Compile Include="Gui\Data\Selections\AllRowsController.cs" />
+    <Compile Include="Gui\Data\Selections\IncludeSingleNumericalValueController.cs" />
     <Compile Include="Gui\Data\Selections\RangeOfNumericalValuesController.cs" />
     <Compile Include="Gui\Data\Selections\RangeOfRowIndicesController.cs" />
     <Compile Include="Gui\Data\Selections\RowSelectionController.cs" />

@@ -195,6 +195,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Data\Selections\IncludeSingleNumericalValueControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Drawing\ColorManagement\ColorCircleSurfaceControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1256,6 +1260,9 @@
     </Compile>
     <Compile Include="Gui\Data\Selections\AllRowsControl.xaml.cs">
       <DependentUpon>AllRowsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\Selections\IncludeSingleNumericalValueControl.xaml.cs">
+      <DependentUpon>IncludeSingleNumericalValueControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Data\Selections\RangeOfNumericalValuesControl.xaml.cs">
       <DependentUpon>RangeOfNumericalValuesControl.xaml</DependentUpon>
