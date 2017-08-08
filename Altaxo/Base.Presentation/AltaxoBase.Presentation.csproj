@@ -199,6 +199,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Data\Selections\PeriodicRowIndexSegmentsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Drawing\ColorManagement\ColorCircleSurfaceControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1266,6 +1270,9 @@
     </Compile>
     <Compile Include="Gui\Data\Selections\RangeOfNumericalValuesControl.xaml.cs">
       <DependentUpon>RangeOfNumericalValuesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Data\Selections\PeriodicRowIndexSegmentsControl.xaml.cs">
+      <DependentUpon>PeriodicRowIndexSegmentsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Data\Selections\RangeOfRowIndicesControl.xaml.cs">
       <DependentUpon>RangeOfRowIndicesControl.xaml</DependentUpon>
