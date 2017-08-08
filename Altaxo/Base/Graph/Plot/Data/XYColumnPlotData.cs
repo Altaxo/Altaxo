@@ -966,12 +966,15 @@ namespace Altaxo.Graph.Plot.Data
 				IReadableColumn xColumn = this.XColumn;
 				IReadableColumn yColumn = this.YColumn;
 
-				foreach (var rowIdx in _dataRowSelection.GetSelectedRowIndicesFromTo(0, _pointCount, _dataTable?.Document?.DataColumns, _pointCount))
+				foreach (var segment in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, _pointCount, _dataTable?.Document?.DataColumns, _pointCount))
 				{
-					if (!xColumn.IsElementEmpty(rowIdx) && !yColumn.IsElementEmpty(rowIdx))
+					for (int rowIdx = segment.start; rowIdx < segment.endExclusive; ++rowIdx)
 					{
-						_xBoundaries?.Add(xColumn, rowIdx);
-						_yBoundaries?.Add(yColumn, rowIdx);
+						if (!xColumn.IsElementEmpty(rowIdx) && !yColumn.IsElementEmpty(rowIdx))
+						{
+							_xBoundaries?.Add(xColumn, rowIdx);
+							_yBoundaries?.Add(yColumn, rowIdx);
+						}
 					}
 				}
 
@@ -1045,8 +1048,8 @@ namespace Altaxo.Graph.Plot.Data
 			// Fill the array with values
 			// only the points where x and y are not NaNs are plotted!
 
-			bool bInPlotSpace = true;
-			int plotRangeStart = 0;
+			bool weAreInsideSegment = false;
+			int rangeStart = 0;
 			int rangeOffset = 0;
 			rangeList = new PlotRangeList();
 			result.RangeList = rangeList;
@@ -1058,72 +1061,67 @@ namespace Altaxo.Graph.Plot.Data
 			int maxRowIndex = GetMaximumRowIndexFromDataColumns();
 
 			int plotArrayIdx = 0;
-			int previousDataRowIdx = -1;
-			foreach (int dataRowIdx in _dataRowSelection.GetSelectedRowIndicesFromTo(0, maxRowIndex, _dataTable?.Document?.DataColumns, maxRowIndex))
+
+			foreach ((int start, int endExclusive) in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, maxRowIndex, _dataTable?.Document?.DataColumns, maxRowIndex))
 			{
-				if (xColumn.IsElementEmpty(dataRowIdx) || yColumn.IsElementEmpty(dataRowIdx))
+				for (int dataRowIdx = start; dataRowIdx < endExclusive; ++dataRowIdx)
 				{
-					if (!bInPlotSpace)
+					if (xColumn.IsElementEmpty(dataRowIdx) || yColumn.IsElementEmpty(dataRowIdx))
 					{
-						bInPlotSpace = true;
-						rangeList.Add(new PlotRange(plotRangeStart, plotArrayIdx, rangeOffset));
+						if (weAreInsideSegment)
+						{
+							weAreInsideSegment = false;
+							rangeList.Add(new PlotRange(rangeStart, plotArrayIdx, rangeOffset));
+						}
+						continue;
 					}
-					continue;
-				}
 
-				if (dataRowIdx != (1 + previousDataRowIdx) && !bInPlotSpace)
-				{
-					bInPlotSpace = true;
-					rangeList.Add(new PlotRange(plotRangeStart, plotArrayIdx, rangeOffset));
-				}
+					double x_rel, y_rel;
+					double xcoord, ycoord;
 
-				previousDataRowIdx = dataRowIdx;
+					x_rel = xAxis.PhysicalVariantToNormal(xColumn[dataRowIdx]);
+					y_rel = yAxis.PhysicalVariantToNormal(yColumn[dataRowIdx]);
 
-				double x_rel, y_rel;
-				double xcoord, ycoord;
+					// chop relative values to an range of about -+ 10^6
+					if (x_rel > MaxRelativeValue)
+						x_rel = MaxRelativeValue;
+					if (x_rel < -MaxRelativeValue)
+						x_rel = -MaxRelativeValue;
+					if (y_rel > MaxRelativeValue)
+						y_rel = MaxRelativeValue;
+					if (y_rel < -MaxRelativeValue)
+						y_rel = -MaxRelativeValue;
 
-				x_rel = xAxis.PhysicalVariantToNormal(xColumn[dataRowIdx]);
-				y_rel = yAxis.PhysicalVariantToNormal(yColumn[dataRowIdx]);
-
-				// chop relative values to an range of about -+ 10^6
-				if (x_rel > MaxRelativeValue)
-					x_rel = MaxRelativeValue;
-				if (x_rel < -MaxRelativeValue)
-					x_rel = -MaxRelativeValue;
-				if (y_rel > MaxRelativeValue)
-					y_rel = MaxRelativeValue;
-				if (y_rel < -MaxRelativeValue)
-					y_rel = -MaxRelativeValue;
-
-				// after the conversion to relative coordinates it is possible
-				// that with the choosen axis the point is undefined
-				// (for instance negative values on a logarithmic axis)
-				// in this case the returned value is NaN
-				if (coordsys.LogicalToLayerCoordinates(new Logical3D(x_rel, y_rel), out xcoord, out ycoord))
-				{
-					if (bInPlotSpace)
+					// after the conversion to relative coordinates it is possible
+					// that with the choosen axis the point is undefined
+					// (for instance negative values on a logarithmic axis)
+					// in this case the returned value is NaN
+					if (coordsys.LogicalToLayerCoordinates(new Logical3D(x_rel, y_rel), out xcoord, out ycoord))
 					{
-						bInPlotSpace = false;
-						plotRangeStart = plotArrayIdx;
-						rangeOffset = dataRowIdx - plotArrayIdx;
+						if (!weAreInsideSegment)
+						{
+							weAreInsideSegment = true;
+							rangeStart = plotArrayIdx;
+							rangeOffset = dataRowIdx - plotArrayIdx;
+						}
+						_tlsBufferedPlotData.Add(new PointF((float)xcoord, (float)ycoord));
+						plotArrayIdx++;
 					}
-					_tlsBufferedPlotData.Add(new PointF((float)xcoord, (float)ycoord));
-					plotArrayIdx++;
-				}
-				else
-				{
-					if (!bInPlotSpace)
+					else
 					{
-						bInPlotSpace = true;
-						rangeList.Add(new PlotRange(plotRangeStart, plotArrayIdx, rangeOffset));
+						if (weAreInsideSegment)
+						{
+							weAreInsideSegment = false;
+							rangeList.Add(new PlotRange(rangeStart, plotArrayIdx, rangeOffset));
+						}
 					}
+				} // end for
+				if (weAreInsideSegment)
+				{
+					weAreInsideSegment = false;
+					rangeList.Add(new PlotRange(rangeStart, plotArrayIdx, rangeOffset));
 				}
 			} // end foreach
-			if (!bInPlotSpace)
-			{
-				bInPlotSpace = true;
-				rangeList.Add(new PlotRange(plotRangeStart, plotArrayIdx, rangeOffset)); // add the last range
-			}
 
 			result.PlotPointsInAbsoluteLayerCoordinates = _tlsBufferedPlotData.ToArray();
 

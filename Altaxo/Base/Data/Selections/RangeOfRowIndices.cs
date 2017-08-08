@@ -140,13 +140,13 @@ namespace Altaxo.Data.Selections
 		}
 
 		/// <inheritdoc/>
-		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex, DataColumnCollection table, int totalRowCount)
+		public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndex, DataColumnCollection table, int totalRowCount)
 		{
 			int start = Math.Max(startIndex, _firstRowIndexInclusive >= 0 ? _firstRowIndexInclusive : _firstRowIndexInclusive + totalRowCount);
 			int endInclusive = Math.Min(Math.Min(maxIndex - 1, totalRowCount - 1), _lastRowIndexInclusive >= 0 ? _lastRowIndexInclusive : _lastRowIndexInclusive + totalRowCount);
 
-			for (int r = start; r <= endInclusive; ++r)
-				yield return r;
+			if (endInclusive >= start)
+				yield return (start, endInclusive + 1);
 		}
 
 		/// <summary>

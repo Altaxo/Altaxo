@@ -25,6 +25,7 @@
 using Altaxo.Calc;
 using Altaxo.Calc.Probability;
 using Altaxo.Calc.Regression;
+using Altaxo.Data.Selections;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;

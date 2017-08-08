@@ -33,15 +33,15 @@ namespace Altaxo.Data.Selections
 	public interface IRowSelection : Main.IDocumentLeafNode, ICloneable
 	{
 		/// <summary>
-		/// Gets the selected row indices continuously, beginning with no less than the start index and less than the maximum index.
+		/// Gets the selected row indices as segments of (startIndex, endIndexExclusive), beginning with no less than the start index and less than the maximum index.
 		/// </summary>
-		/// <param name="startIndex">The start index. Each row index that is returned has to be equal to or greater than this value.</param>
-		/// <param name="maxIndexExclusive">The maximum index.  Each row index that is returned has to be less than this value.</param>
+		/// <param name="startIndex">The start index. Each segment that is returned has to start at an index being equal to or greater than this value.</param>
+		/// <param name="maxIndexExclusive">The maximum index.  Each segment that is returned has to have an endExclusive value being less than or equal to this value.</param>
 		/// <param name="table">The underlying data column collection. All columns that are part of the row selection should either be standalone or belong to this collection.</param>
 		/// <param name="totalRowCount">The maximum number of rows (and therefore the row index after the last inclusive row index) that could theoretically be returned, for instance if the selection is <see cref="AllRows"/>.
 		/// This parameter is neccessary because some of the selections (e.g. <see cref="RangeOfRowIndices"/>) work <b>relative</b> to the start or to the end of the maximum possible range, and therefore need this range for calculations.  </param>
-		/// <returns>The selected row indices, beginning with no less than the start index and less than the maximum index.</returns>
-		IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount);
+		/// <returns>The segments of selected row indices, beginning with a segment starting at no less than the start index and ending with a segment whose endExclusive value is less than or equal to the maximum index.</returns>
+		IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount);
 
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
@@ -63,5 +63,30 @@ namespace Altaxo.Data.Selections
 		IRowSelectionCollection WithChangedItem(int idx, IRowSelection item);
 
 		IRowSelectionCollection NewWithItems(IEnumerable<IRowSelection> items);
+	}
+
+	/// <summary>
+	/// Helper class for <see cref="IRowSelection"/> instances.
+	/// </summary>
+	public static class IRowSelectionExtensions
+	{
+		/// <summary>
+		/// Gets the selected row indices continuously, beginning with no less than the start index and less than the maximum index.
+		/// </summary>
+		/// <param name="rowSelection">The row selection.</param>
+		/// <param name="startIndex">The start index. Each row index that is returned has to be equal to or greater than this value.</param>
+		/// <param name="maxIndexExclusive">The maximum index.  Each row index that is returned has to be less than this value.</param>
+		/// <param name="table">The underlying data column collection. All columns that are part of the row selection should either be standalone or belong to this collection.</param>
+		/// <param name="totalRowCount">The maximum number of rows (and therefore the row index after the last inclusive row index) that could theoretically be returned, for instance if the selection is <see cref="AllRows"/>.
+		/// This parameter is neccessary because some of the selections (e.g. <see cref="RangeOfRowIndices"/>) work <b>relative</b> to the start or to the end of the maximum possible range, and therefore need this range for calculations.  </param>
+		/// <returns>The selected row indices, beginning with no less than the start index and less than the maximum index.</returns>
+		public static IEnumerable<int> GetSelectedRowIndicesFromTo(this IRowSelection rowSelection, int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
+		{
+			foreach (var segment in rowSelection.GetSelectedRowIndexSegmentsFromTo(startIndex, maxIndexExclusive, table, totalRowCount))
+			{
+				for (int i = segment.start; i < segment.endExclusive; ++i)
+					yield return i;
+			}
+		}
 	}
 }

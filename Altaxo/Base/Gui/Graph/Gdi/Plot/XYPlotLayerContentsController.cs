@@ -792,13 +792,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 				if (pi == null)
 					continue;
 
-				int minIncl, maxIncl;
 				int totalRows = pi.Data.GetMaximumRowIndexFromDataColumns();
 				maxExclusive = Math.Min(totalRows, maxExclusive);
-				if (pi.Data.DataRowSelection.GetSelectedRowIndicesFromTo(minInclusive, maxExclusive, pi.Data.DataTable?.DataColumns, totalRows).TryGetFirstAndLast(out minIncl, out maxIncl))
+				if (pi.Data.DataRowSelection.GetSelectedRowIndexSegmentsFromTo(minInclusive, maxExclusive, pi.Data.DataTable?.DataColumns, totalRows).TryGetFirstAndLast(out var firstSeg, out var lastSeg))
 				{
-					minInclusive = Math.Max(minInclusive, minIncl);
-					maxExclusive = Math.Min(maxExclusive, maxIncl + 1);
+					minInclusive = Math.Max(minInclusive, firstSeg.start);
+					maxExclusive = Math.Min(maxExclusive, lastSeg.endExclusive);
 				}
 				result = true;
 			}

@@ -62,12 +62,12 @@ namespace Altaxo.Data.Selections
 		}
 
 		/// <inheritdoc/>
-		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
+		public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
 		{
 			int endExclusive = Math.Min(maxIndexExclusive, totalRowCount);
 
-			for (int r = startIndex; r < endExclusive; ++r)
-				yield return r;
+			if (endExclusive > startIndex)
+				yield return (startIndex, endExclusive);
 		}
 
 		public override int GetHashCode()

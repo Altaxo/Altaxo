@@ -133,7 +133,7 @@ namespace Altaxo.Data.Selections
 		}
 
 		/// <inheritdoc/>
-		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
+		public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
 		{
 			var column = _columnProxy?.Document;
 
@@ -144,35 +144,43 @@ namespace Altaxo.Data.Selections
 			if (column.Count.HasValue)
 				endExclusive = Math.Min(endExclusive, column.Count.Value);
 
+			bool weAreInsideSegment = false;
+			int indexOfStartOfSegment = 0;
+
 			for (int i = startIndex; i < endExclusive; ++i)
 			{
-				if (column.IsElementEmpty(i))
-					continue;
-
 				var x = column[i];
 
-				if (_isLowerInclusive)
+				if (
+					column.IsElementEmpty(i) ||
+					(_isLowerInclusive && !(x >= _lowerValue)) ||
+					(!_isLowerInclusive && !(x > _lowerValue)) ||
+					(_isUpperInclusive && !(x <= _upperValue)) ||
+					(!_isUpperInclusive && !(x < _upperValue))
+					)
 				{
-					if (!(x >= _lowerValue))
-						continue;
+					if (weAreInsideSegment)
+					{
+						yield return (indexOfStartOfSegment, i);
+					}
+					weAreInsideSegment = false;
+					continue;
 				}
 				else
 				{
-					if (!(x > _lowerValue))
-						continue;
+					// this is a index which should be included
+					if (!weAreInsideSegment)
+					{
+						indexOfStartOfSegment = i;
+						weAreInsideSegment = true;
+					}
 				}
-				if (_isUpperInclusive)
-				{
-					if (!(x <= _upperValue))
-						continue;
-				}
-				else
-				{
-					if (!(x < _upperValue))
-						continue;
-				}
+			}
 
-				yield return i;
+			// yield the last segment
+			if (weAreInsideSegment)
+			{
+				yield return (indexOfStartOfSegment, endExclusive);
 			}
 		}
 

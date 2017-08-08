@@ -137,52 +137,48 @@ namespace Altaxo.Data.Selections
 		}
 
 		/// <inheritdoc/>
-		public IEnumerable<int> GetSelectedRowIndicesFromTo(int startIndex, int maxIndex, DataColumnCollection table, int totalRowCount)
+		public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
 		{
-			IEnumerator<int>[] _enumerators = new IEnumerator<int>[_rowSelections.Count];
+			IEnumerator<(int start, int endExclusive)>[] _enumerators = new IEnumerator<(int start, int endExclusive)>[_rowSelections.Count];
 
-			int maxCurrentIndex = 0;
-			int currentIndex0 = 0;
-			bool isUniform = false;
-
+			// get the enumerators
 			for (int i = 0; i < _rowSelections.Count; ++i)
 			{
-				_enumerators[i] = _rowSelections[i].GetSelectedRowIndicesFromTo(startIndex, maxIndex, table, totalRowCount).GetEnumerator();
+				_enumerators[i] = _rowSelections[i].GetSelectedRowIndexSegmentsFromTo(startIndex, maxIndexExclusive, table, totalRowCount).GetEnumerator();
+			}
+
+			// at start, move all iterators to a valid segment
+			for (int i = 0; i < _rowSelections.Count; ++i)
+			{
+				if (!_enumerators[i].MoveNext())
+					goto BreakEnumeration; // if one enumerator has no more items, we can end this enumeration
 			}
 
 			for (;;)
 			{
+				// find start and endExclusive of the current combination of selections
+				int start = -1;
+				int endExclusive = Math.Min(totalRowCount, maxIndexExclusive);
 				for (int i = 0; i < _rowSelections.Count; ++i)
 				{
-					if (!_enumerators[i].MoveNext())
-						goto BreakEnumeration; // if one enumerator has no more items, we can end this enumeration
-
-					if (i == 0)
-					{
-						currentIndex0 = maxCurrentIndex = _enumerators[i].Current;
-						isUniform = true;
-					}
-					else
-					{
-						isUniform &= (_enumerators[i].Current == currentIndex0);
-						maxCurrentIndex = Math.Max(_enumerators[i].Current, maxCurrentIndex);
-					}
+					var c = _enumerators[i].Current;
+					start = Math.Max(start, c.start);
+					endExclusive = Math.Min(endExclusive, c.endExclusive);
 				}
 
-				if (!(maxCurrentIndex <= maxIndex))
-					goto BreakEnumeration; // end of range is reached
+				if (endExclusive > start)
+					yield return (start, endExclusive);
+				else
+					endExclusive = start;
 
-				if (isUniform) // all enumerators have the same current value -> thus we can yield this value;
+				// now move those segments forward, whose endExclusive is smaller than or equal to the current endExclusive
+				for (int i = 0; i < _rowSelections.Count; ++i)
 				{
-					yield return currentIndex0;
-					continue; // and we try to move all enumerators to the next item.
-				}
-				else // not uniform
-				{
-					for (int i = 0; i < _rowSelections.Count; ++i)
+					var c = _enumerators[i].Current;
+					if (c.endExclusive <= endExclusive)
 					{
-						_enumerators[i].Dispose(); // dispose old enumerators
-						_enumerators[i] = _rowSelections[i].GetSelectedRowIndicesFromTo(maxCurrentIndex, maxIndex, table, totalRowCount).GetEnumerator(); // use new enumerators which start at maxCurrentItem
+						if (!_enumerators[i].MoveNext())
+							goto BreakEnumeration; // if one enumerator has no more items, we can end this enumeration
 					}
 				}
 			}
