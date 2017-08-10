@@ -21,7 +21,7 @@
 			<ColumnDefinition Width="*" MinWidth="8" />
 		</Grid.ColumnDefinitions>
 		<Label Content="Include:" Grid.Column="0" />
-		<agc:DoubleUpDown x:Name="_guiValue" Grid.Column="1"  MinWidth="60" Minimum="{x:Static Member=system:Double.NegativeInfinity}" Maximum="{x:Static Member=system:Double.PositiveInfinity}" IsGotoMinimumAndMaximumVisible="True" ToolTip="Lower boundary of the range." />
+		<agc:DoubleUpDown x:Name="_guiValue" Grid.Column="1"  MinWidth="60" Minimum="{x:Static Member=system:Double.NegativeInfinity}" Maximum="{x:Static Member=system:Double.PositiveInfinity}" IsGotoMinimumAndMaximumVisible="True" ToolTip="Numerical value to include" />
 		<Label Grid.Column="2" Content="==" />
 		<Label x:Name="_guiDataLabel" Content="Data:" Grid.Column="3" />
 		<TextBox x:Name="_guiColumnTransformation" MinWidth="40" Grid.Column="4" IsEnabled="True" IsReadOnly="True" />

@@ -244,6 +244,7 @@
     <Compile Include="Data\DataTableProxy.cs" />
     <Compile Include="Data\ITransformedReadableColumn.cs" />
     <Compile Include="Data\IVariantToVariantTransformation.cs" />
+    <Compile Include="Data\Selections\UnionOfRowSelections.cs" />
     <Compile Include="Data\Selections\IRowSelection.cs" />
     <Compile Include="Data\Selections\AllRows.cs" />
     <Compile Include="Data\Selections\IncludeSingleNumericalValue.cs" />
@@ -660,6 +661,7 @@
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceController.cs" />
     <Compile Include="Gui\Data\OtherColumnsController.cs" />
     <Compile Include="Gui\Data\Selections\IDataColumnController.cs" />
+    <Compile Include="Gui\Data\Selections\UnionOfRowSelectionsController.cs" />
     <Compile Include="Gui\Data\Selections\IntersectionOfRowSelectionsController.cs" />
     <Compile Include="Gui\Data\Selections\AllRowsController.cs" />
     <Compile Include="Gui\Data\Selections\IncludeSingleNumericalValueController.cs" />
