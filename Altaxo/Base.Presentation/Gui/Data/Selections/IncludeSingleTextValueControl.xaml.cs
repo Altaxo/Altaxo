@@ -96,5 +96,8 @@ namespace Altaxo.Gui.Data.Selections
 				_guiIgnoreCase.IsChecked = value;
 			}
 		}
+
+		public string ActionString { set => _guiActionLabel.Content = value; }
+		public string TextFieldToolTip { set => _guiValue.ToolTip = value; }
 	}
 }

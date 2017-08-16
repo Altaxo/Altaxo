@@ -20,12 +20,12 @@
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" MinWidth="8" />
 		</Grid.ColumnDefinitions>
-		<CheckBox x:Name="_guiIgnoreCase" Content="Ignore case" Grid.Column="0" VerticalAlignment="Center" />
-		<Label Content="Include:" Grid.Column="1" />
-		<TextBox x:Name="_guiValue" Grid.Column="2"  MinWidth="60" ToolTip="Text value to include" />
-		<Label Grid.Column="3" Content="==" />
-		<Label x:Name="_guiDataLabel" Content="Data:" Grid.Column="4" />
-		<TextBox x:Name="_guiColumnTransformation" MinWidth="40" Grid.Column="5" IsEnabled="True" IsReadOnly="True" />
-		<TextBox x:Name="_guiColumn" Grid.Column="6" IsEnabled="True" IsReadOnly="True" MinWidth="40" ToolTip="This field is read-only. Please select a data column for this field below." />
+		<Label  Content="Include from" Grid.Column="0" />
+		<Label x:Name="_guiDataLabel" Content="Col#1" Grid.Column="1" />
+		<TextBox x:Name="_guiColumnTransformation" MinWidth="40" Grid.Column="2" IsEnabled="True" IsReadOnly="True" />
+		<TextBox x:Name="_guiColumn" Grid.Column="3" IsEnabled="True" IsReadOnly="True" MinWidth="40" ToolTip="This field is read-only. Please select a data column for this field below." />
+		<Label x:Name="_guiActionLabel" Grid.Column="4" Content="that is text: " />
+		<TextBox x:Name="_guiValue" Grid.Column="5"  MinWidth="60" ToolTip="Text value to include" />
+		<CheckBox x:Name="_guiIgnoreCase" Content="Ignore case" Grid.Column="6" VerticalAlignment="Center" Margin="6,0,6,0" />
 	</Grid>
 </UserControl>

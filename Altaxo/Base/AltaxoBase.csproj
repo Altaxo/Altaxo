@@ -244,7 +244,11 @@
     <Compile Include="Data\DataTableProxy.cs" />
     <Compile Include="Data\ITransformedReadableColumn.cs" />
     <Compile Include="Data\IVariantToVariantTransformation.cs" />
+    <Compile Include="Data\Selections\IncludeTextContains.cs" />
+    <Compile Include="Data\Selections\IncludeTextEndsWith.cs" />
+    <Compile Include="Data\Selections\IncludeTextStartsWith.cs" />
     <Compile Include="Data\Selections\IncludeSingleTextValue.cs" />
+    <Compile Include="Data\Selections\ExcludeUnionOfRowSelections.cs" />
     <Compile Include="Data\Selections\UnionOfRowSelections.cs" />
     <Compile Include="Data\Selections\IRowSelection.cs" />
     <Compile Include="Data\Selections\AllRows.cs" />
@@ -662,7 +666,11 @@
     <Compile Include="Gui\Data\ExpandCyclingVariableDataSourceController.cs" />
     <Compile Include="Gui\Data\OtherColumnsController.cs" />
     <Compile Include="Gui\Data\Selections\IDataColumnController.cs" />
+    <Compile Include="Gui\Data\Selections\IncludeTextEndsWithController.cs" />
+    <Compile Include="Gui\Data\Selections\IncludeTextStartsWithController.cs" />
+    <Compile Include="Gui\Data\Selections\IncludeTextContainsController.cs" />
     <Compile Include="Gui\Data\Selections\IncludeSingleTextValueController.cs" />
+    <Compile Include="Gui\Data\Selections\ExcludeUnionOfRowSelectionsController.cs" />
     <Compile Include="Gui\Data\Selections\UnionOfRowSelectionsController.cs" />
     <Compile Include="Gui\Data\Selections\IntersectionOfRowSelectionsController.cs" />
     <Compile Include="Gui\Data\Selections\AllRowsController.cs" />

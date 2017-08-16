@@ -33,23 +33,9 @@ using System.Text;
 
 namespace Altaxo.Gui.Data.Selections
 {
-	public interface IIncludeSingleTextValueView
-	{
-		void Init_Column(string boxText, string toolTip, int status);
-
-		void Init_ColumnTransformation(string boxText, string toolTip);
-
-		void Init_Index(int idx);
-
-		string Value { get; set; }
-		bool IgnoreCase { get; set; }
-		string ActionString { set; }
-		string TextFieldToolTip { set; }
-	}
-
-	[UserControllerForObject(typeof(IncludeSingleTextValue), 100)]
+	[UserControllerForObject(typeof(IncludeTextContains), 100)]
 	[ExpectedTypeOfView(typeof(IIncludeSingleTextValueView))]
-	public class IncludeSingleTextValueController : MVCANControllerEditCopyOfDocBase<IncludeSingleTextValue, IIncludeSingleTextValueView>, IDataColumnController
+	public class IncludeTextContainsController : MVCANControllerEditCopyOfDocBase<IncludeTextContains, IIncludeSingleTextValueView>, IDataColumnController
 	{
 		/// <summary>
 		/// The data table that the column of the style should belong to.
@@ -84,6 +70,8 @@ namespace Altaxo.Gui.Data.Selections
 				_view.Value = _doc.Value;
 				_view.IgnoreCase = _doc.IgnoreCase;
 				View_InitializeColumn();
+				_view.ActionString = "that contains text:";
+				_view.TextFieldToolTip = "Enter text that should be contained in data";
 			}
 		}
 
@@ -113,7 +101,7 @@ namespace Altaxo.Gui.Data.Selections
 			var value = _view.Value;
 			var ignoreCase = _view.IgnoreCase;
 
-			_doc = new IncludeSingleTextValue(value, ignoreCase, column);
+			_doc = new IncludeTextContains(value, ignoreCase, column);
 
 			return ApplyEnd(true, disposeController);
 		}
@@ -129,8 +117,6 @@ namespace Altaxo.Gui.Data.Selections
 			_supposedGroupNumber = supposedGroupNumber;
 			_doc.Column = column;
 			View_InitializeColumn();
-			_view.ActionString = "that is text:";
-			_view.TextFieldToolTip = "Enter text that should be equal to data";
 		}
 
 		IReadableColumn IDataColumnController.Column

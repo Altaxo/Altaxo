@@ -63,6 +63,15 @@ namespace Altaxo.Data.Selections
 		IRowSelectionCollection WithChangedItem(int idx, IRowSelection item);
 
 		IRowSelectionCollection NewWithItems(IEnumerable<IRowSelection> items);
+
+		/// <summary>
+		/// Gets a value indicating whether the collection with only one item returns the same selection than the one item alone.
+		/// This is the case e.g. for union and intersection, but not for exclusion of a union.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> if the collection with only one item returns the same selection than the one item alone.
+		/// </value>
+		bool IsCollectionWithOneItemEquivalentToThisItem { get; }
 	}
 
 	/// <summary>

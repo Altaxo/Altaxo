@@ -30,7 +30,7 @@ using System.Text;
 
 namespace Altaxo.Data.Selections
 {
-	public class IncludeSingleTextValue : Main.SuspendableDocumentNodeWithEventArgs, IRowSelection
+	public class IncludeTextContains : Main.SuspendableDocumentNodeWithEventArgs, IRowSelection
 	{
 		private string _value;
 		private bool _ignoreCase;
@@ -39,14 +39,14 @@ namespace Altaxo.Data.Selections
 		#region Serialization
 
 		/// <summary>
-		/// 2017-08-13 initial version.
+		/// 2017-08-16 initial version.
 		/// </summary>
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IncludeSingleTextValue), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IncludeTextContains), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (IncludeSingleTextValue)obj;
+				var s = (IncludeTextContains)obj;
 
 				info.AddValue("Value", s._value);
 				info.AddValue("IgnoreCase", s._ignoreCase);
@@ -59,23 +59,23 @@ namespace Altaxo.Data.Selections
 				var ignoreCase = info.GetBoolean("IgnoreCase");
 				var columnProxy = (IReadableColumnProxy)info.GetValue("Column", parent);
 
-				return new IncludeSingleTextValue(info, value, ignoreCase, columnProxy);
+				return new IncludeTextContains(info, value, ignoreCase, columnProxy);
 			}
 		}
 
 		#endregion Serialization
 
-		public IncludeSingleTextValue()
+		public IncludeTextContains()
 		{
 			_value = string.Empty;
 			_columnProxy = null;
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="IncludeSingleTextValue"/> class.
+		/// Initializes a new instance of the <see cref="IncludeTextContains"/> class.
 		/// </summary>
 		/// <param name="from">Instance to copy the values from.</param>
-		public IncludeSingleTextValue(IncludeSingleTextValue from)
+		public IncludeTextContains(IncludeTextContains from)
 		{
 			_value = from._value;
 			_ignoreCase = from._ignoreCase;
@@ -84,24 +84,24 @@ namespace Altaxo.Data.Selections
 
 		public object Clone()
 		{
-			return new IncludeSingleTextValue(this);
+			return new IncludeTextContains(this);
 		}
 
 		/// <summary>
-		/// Deserialization constructor. Initializes a new instance of the <see cref="IncludeSingleTextValue"/> class.
+		/// Deserialization constructor. Initializes a new instance of the <see cref="IncludeTextContains"/> class.
 		/// </summary>
 		/// <param name="info">The deserialization information.</param>
 		/// <param name="value">The numerical value.</param>
 		/// <param name="ignoreCase">If true, string comparison is done case-insensitive.</param>
 		/// <param name="columnProxy">The column.</param>
-		protected IncludeSingleTextValue(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, string value, bool ignoreCase, IReadableColumnProxy columnProxy)
+		protected IncludeTextContains(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, string value, bool ignoreCase, IReadableColumnProxy columnProxy)
 		{
 			_value = value;
 			_ignoreCase = ignoreCase;
 			ChildSetMember(ref _columnProxy, columnProxy);
 		}
 
-		public IncludeSingleTextValue(string value, bool ignoreCase, IReadableColumn column)
+		public IncludeTextContains(string value, bool ignoreCase, IReadableColumn column)
 		{
 			_value = value;
 			_ignoreCase = ignoreCase;
@@ -133,7 +133,7 @@ namespace Altaxo.Data.Selections
 
 				if (
 					column.IsElementEmpty(i) ||
-					(!(x == compareString))
+					(0 > x.IndexOf(compareString))
 					)
 				{
 					if (weAreInsideSegment)

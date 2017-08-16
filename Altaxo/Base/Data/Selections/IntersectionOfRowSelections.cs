@@ -137,6 +137,9 @@ namespace Altaxo.Data.Selections
 		}
 
 		/// <inheritdoc/>
+		public bool IsCollectionWithOneItemEquivalentToThisItem { get { return true; } }
+
+		/// <inheritdoc/>
 		public IEnumerable<(int start, int endExclusive)> GetSelectedRowIndexSegmentsFromTo(int startIndex, int maxIndexExclusive, DataColumnCollection table, int totalRowCount)
 		{
 			IEnumerator<(int start, int endExclusive)>[] _enumerators = new IEnumerator<(int start, int endExclusive)>[_rowSelections.Count];
@@ -154,7 +157,7 @@ namespace Altaxo.Data.Selections
 					goto BreakEnumeration; // if one enumerator has no more items, we can end this enumeration
 			}
 
-			for (;;)
+			for (; ; )
 			{
 				// find start and endExclusive of the current combination of selections
 				int start = -1;

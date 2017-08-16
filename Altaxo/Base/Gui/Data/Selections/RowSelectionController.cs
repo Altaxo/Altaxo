@@ -97,7 +97,6 @@ namespace Altaxo.Gui.Data.Selections
 		/// </summary>
 		private int _supposedGroupNumber;
 
-
 		public override bool InitializeDocument(params object[] args)
 		{
 			if (args.Length >= 2 && (args[1] is DataTable))
@@ -414,7 +413,7 @@ namespace Altaxo.Gui.Data.Selections
 			if (parentIdx >= 0 && parentIdx <= _rsEntryList.Count)
 			{
 				int numberOfChilds = GetNumberOfChilds(parentIdx);
-				if (1 == numberOfChilds)
+				if (1 == numberOfChilds && ((IRowSelectionCollection)_rsEntryList[parentIdx].RowSelection).IsCollectionWithOneItemEquivalentToThisItem)
 				{
 					_rsEntryList[parentIdx + 1].IndentationLevel--; // unindent the only child item
 					_rsEntryList.RemoveAt(parentIdx); // remove parent item
