@@ -129,6 +129,7 @@ namespace Altaxo.Gui.Graph.Graph2D
 			var bag = new Altaxo.Main.Properties.PropertyBag();
 			bag.SetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultFont, font);
 			var newLineWidth = Altaxo.Graph.Gdi.GraphDocument.GetDefaultPenWidth(bag);
+			var newMajorTickLength = Altaxo.Graph.Gdi.GraphDocument.GetDefaultMajorTickLength(bag);
 
 			var cult = Altaxo.Settings.GuiCulture.Instance;
 			var stb = new StringBuilder();
@@ -138,8 +139,14 @@ namespace Altaxo.Gui.Graph.Graph2D
 			stb.AppendLine();
 			stb.AppendFormat(cult, "Derived line width: {0} pt", newLineWidth);
 			stb.AppendLine();
-			stb.AppendFormat(cult, "Derived major tick length: {0} pt", Altaxo.Graph.Gdi.GraphDocument.GetDefaultMajorTickLength(bag));
+			stb.AppendFormat(cult, "Derived major tick length: {0} pt", newMajorTickLength);
 			_view.SetReportOfDerivedValues(stb.ToString());
+
+			if (!_view.IsUserDefinedLineThicknessChosen)
+				_view.SetOldStandardLineThickness(newLineWidth);
+
+			if (!_view.IsUserDefinedMajorTickLengthChosen)
+				_view.SetOldStandardMajorTickLength(newMajorTickLength);
 		}
 
 		public override bool Apply(bool disposeController)
