@@ -105,11 +105,7 @@ namespace Altaxo.Gui.Settings
 		public override void Initialize(object optionPanelOwner)
 		{
 			_controller = new AutoUpdateSettingsController();
-
-			var doc = Current.PropertyService.GetValue<AutoUpdateSettings>(AutoUpdateSettings.PropertyKeyAutoUpdate, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin);
-			if (null == doc)
-				doc = new AutoUpdateSettings();
-
+			var doc = Current.PropertyService.GetValue<AutoUpdateSettings>(AutoUpdateSettings.PropertyKeyAutoUpdate, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin, () => new AutoUpdateSettings());
 			_controller.InitializeDocument(doc);
 		}
 
