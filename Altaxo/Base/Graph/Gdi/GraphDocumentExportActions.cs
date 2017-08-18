@@ -200,7 +200,7 @@ namespace Altaxo.Graph.Gdi
 
 			if (Current.Gui.ShowSaveFileDialog(saveOptions))
 			{
-				using (Stream myStream = new FileStream(saveOptions.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
+				using (Stream myStream = new FileStream(saveOptions.FileName, FileMode.Create, FileAccess.ReadWrite, FileShare.Read)) // we need FileAccess.ReadWrite when exporting to EMF/WMF format
 				{
 					doc.RenderToStream(myStream, graphExportOptions);
 					myStream.Close();
