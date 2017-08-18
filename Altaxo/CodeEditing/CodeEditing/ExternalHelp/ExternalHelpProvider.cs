@@ -53,10 +53,14 @@ namespace Altaxo.CodeEditing.ExternalHelp
 
 			var desc = model.Item2[0];
 
+			if (desc.Kind == SymbolKind.Parameter && model.Item2.Count >= 2) // for a parameter, we rather want to have the type of the parameter
+				desc = model.Item2[1];
+
+
 			if (!desc.CanBeReferencedByName)
 				return null;
 
-			if (desc.DeclaredAccessibility < Accessibility.Protected)
+			if (desc.DeclaredAccessibility != Accessibility.NotApplicable && desc.DeclaredAccessibility < Accessibility.Protected)
 				return null; // only types that are at least protected should be reported
 
 			var assemblySymbol = (IAssemblySymbol)desc.ContainingAssembly;
@@ -72,8 +76,15 @@ namespace Altaxo.CodeEditing.ExternalHelp
 				typeName = typeSymbol.GetNameParts();
 				memberName = null;
 			}
+			else if(desc is ILocalSymbol lsymb)
+			{
+				typeName = lsymb.Type.GetNameParts();
+				memberName = null;
+				assemblySymbol = (IAssemblySymbol)lsymb.Type.ContainingAssembly;
+				assemblyIdentity = assemblySymbol.Identity;
+			}
 
-			char typeChar = 'T';
+			char typeChar = 'T'; // if it is not a field, a method, or a property, then it is a type
 			if (desc.Kind == SymbolKind.Event)
 				typeChar = 'E';
 			else if (desc.Kind == SymbolKind.Field)
@@ -82,8 +93,7 @@ namespace Altaxo.CodeEditing.ExternalHelp
 				typeChar = 'M';
 			else if (desc.Kind == SymbolKind.Property)
 				typeChar = 'P';
-			else if (desc.Kind == SymbolKind.NamedType)
-				typeChar = 'T';
+			
 
 			return new ExternalHelpItem(
 				assemblyIdentity: assemblyIdentity,

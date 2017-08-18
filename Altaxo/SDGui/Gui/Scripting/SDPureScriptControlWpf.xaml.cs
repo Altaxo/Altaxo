@@ -113,21 +113,51 @@ namespace Altaxo.Gui.Scripting
 		private static void EhExternalHelpRequired(ExternalHelpItem helpItem)
 		{
 			if (null == helpItem.GetOneOfTheseAssembliesOrNull(_additionalReferencedAssemblies))
-				return;
-
-			string chmFileName = FileUtility.ApplicationRootPath +
-				Path.DirectorySeparatorChar + "doc" +
-				Path.DirectorySeparatorChar + "help" +
-				Path.DirectorySeparatorChar + "AltaxoClassRef.chm";
-			if (FileUtility.TestFileExists(chmFileName))
 			{
-				string topic = "html/" + helpItem.DocumentationReferenceIdentifier + ".htm";
-
-				ShowClassRefHelpFromChmFile(chmFileName, topic);
+				ShowMicrosoftClassReferenceHelp(helpItem);
+			}
+			else
+			{
+				string chmFileName = FileUtility.ApplicationRootPath +
+					Path.DirectorySeparatorChar + "doc" +
+					Path.DirectorySeparatorChar + "help" +
+					Path.DirectorySeparatorChar + "AltaxoClassRef.chm";
+				if (System.IO.File.Exists(chmFileName))
+				{
+					string topic = "html/" + helpItem.DocumentationReferenceIdentifier + ".htm";
+					ShowAltaxoClassRefHelpFromChmFile(chmFileName, topic);
+				}
+				else
+				{
+					ShowAltaxoClassRefHelpFromWeb(helpItem);
+				}
 			}
 		}
 
-		protected static void ShowClassRefHelpFromChmFile(string chmFileName, string chmTopic)
+		protected static void ShowMicrosoftClassReferenceHelp(ExternalHelpItem helpItem)
+		{
+			string url = "https://msdn.microsoft.com/library/";
+
+			for (int i = 0; i < helpItem.NameParts.Count; ++i)
+			{
+				url += helpItem.NameParts[i];
+				if (i < helpItem.NameParts.Count - 1)
+					url += ".";
+			}
+
+			// Invoke standard browser of the system
+			System.Diagnostics.Process.Start(url);
+		}
+
+		protected static void ShowAltaxoClassRefHelpFromWeb(ExternalHelpItem helpItem)
+		{
+			string url = "http://altaxo.sourceforge.net/AltaxoClassRef/html/" + helpItem.DocumentationReferenceIdentifier + ".htm";
+
+			// Invoke standard browser of the system
+			System.Diagnostics.Process.Start(url);
+		}
+
+		protected static void ShowAltaxoClassRefHelpFromChmFile(string chmFileName, string chmTopic)
 		{
 			if (null == _helpViewerAppDomain)
 			{
