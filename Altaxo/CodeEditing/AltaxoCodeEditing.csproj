@@ -130,8 +130,11 @@
     <Compile Include="CodeEditing\Completion\CompletionHelper.cs" />
     <Compile Include="CodeEditing\Completion\CompletionItemExtensions.cs" />
     <Compile Include="CodeEditing\GoToDefinition\AbstractGoToDefinitionService.cs" />
+    <Compile Include="CodeEditing\GoToDefinition\ClassifiedSpansAndHighlightSpanFactory.cs" />
     <Compile Include="CodeEditing\GoToDefinition\CSharp\CSharpGoToDefinitionService.cs" />
     <Compile Include="CodeEditing\GoToDefinition\GoToDefinitionHelpers.cs" />
+    <Compile Include="CodeEditing\GoToDefinition\IDefinitionAndReferencesFactory.cs" />
+    <Compile Include="CodeEditing\GoToDefinition\IEditorClassificationService.cs" />
     <Compile Include="CodeEditing\GoToDefinition\IGotoDefinitionService.cs" />
     <Compile Include="CodeEditing\RoslynSourceTextContainerAdapter.cs" />
     <Compile Include="CodeEditing\Completion\Glyph.cs" />

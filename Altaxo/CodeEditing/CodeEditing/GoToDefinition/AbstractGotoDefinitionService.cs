@@ -59,7 +59,7 @@ namespace Altaxo.CodeEditing.GoToDefinition
 
 			// Try to compute source definitions from symbol.
 			var items = symbol != null
-					? NavigableItemFactory.GetItemsFromPreferredSourceLocations(document.Project.Solution, symbol, displayTaggedParts: null)
+					? NavigableItemFactory.GetItemsFromPreferredSourceLocations(document.Project.Solution, symbol, displayTaggedParts: null, cancellationToken: cancellationToken)
 					: null;
 
 			// realize the list here so that the consumer await'ing the result doesn't lazily cause

@@ -217,7 +217,7 @@ namespace Altaxo.CodeEditing.SemanticHighlighting
 				var classifiedSpans = await Classifier.GetClassifiedSpansAsync(
 						document,
 						new TextSpan(offset, totalLength),
-						CancellationToken.None).ConfigureAwait(true); // back to Gui context
+						default(CancellationToken)).ConfigureAwait(true); // back to Gui context
 
 				var highlightedLine = new HighlightedLine(_avalonEditTextDocument, documentLine);
 				foreach (var classifiedSpan in classifiedSpans)
