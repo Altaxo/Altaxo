@@ -40,7 +40,8 @@ namespace Altaxo.Units
 		public UnitWithLimitedPrefixes(IUnit unit, IEnumerable<SIPrefix> allowedPrefixes)
 		{
 			if (null == unit)
-				throw new ArgumentNullException("unit must not be null");
+				throw new ArgumentNullException(nameof(unit));
+
 			_unit = unit;
 
 			if (null != allowedPrefixes)
@@ -71,11 +72,28 @@ namespace Altaxo.Units
 			return _unit.FromSIUnit(x);
 		}
 
+		/// <summary>
+		/// Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).
+		/// </summary>
 		public ISIPrefixList Prefixes
 		{
 			get { return _prefixes; }
 		}
 
+		/// <summary>
+		/// Gets the underlying unit.
+		/// </summary>
+		/// <value>
+		/// The underlying unit.
+		/// </value>
+		public IUnit Unit
+		{
+			get { return _unit; }
+		}
+
+		/// <summary>
+		/// Returns the underlying unit, transformed to the corresponding SI unit.
+		/// </summary>
 		public SIUnit SIUnit
 		{
 			get { return _unit.SIUnit; }

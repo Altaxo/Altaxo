@@ -45,6 +45,9 @@ namespace Altaxo.Units
 		/// <summary>List with only the prefix <see cref="None"/>.</summary>
 		private static SIPrefixList _nonePrefixList;
 
+		/// <summary>Dictionary of known prefixes, where the key is the exponent and the value is the known prefix.</summary>
+		private static Dictionary<int, SIPrefix> _prefixByExponent;
+
 		private static SIPrefix _prefix_yocto;
 		private static SIPrefix _prefix_zepto;
 		private static SIPrefix _prefix_atto;
@@ -140,6 +143,10 @@ namespace Altaxo.Units
 
 			_nonePrefixList = new SIPrefixList(new SIPrefix[] { _prefix_none });
 			_allPrefixe = new SIPrefixList(_instances);
+
+			_prefixByExponent = new Dictionary<int, SIPrefix>();
+			foreach (var prefix in _instances)
+				_prefixByExponent.Add(prefix.Exponent, prefix);
 		}
 
 		/// <summary>
@@ -174,7 +181,14 @@ namespace Altaxo.Units
 			get { return SIPrefix.ListWithNonePrefixOnly; }
 		}
 
-		private SIPrefix(string name, string shortCut, int exponent)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SIPrefix"/> class. Do not use this constructor unless you don't find
+		/// the prefix in the list of known prefixes.
+		/// </summary>
+		/// <param name="name">The name of the prefix.</param>
+		/// <param name="shortCut">The short cut of the prefix.</param>
+		/// <param name="exponent">The exponent associated with the prefix.</param>
+		public SIPrefix(string name, string shortCut, int exponent)
 		{
 			_name = name;
 			_shortCut = shortCut;
@@ -183,14 +197,42 @@ namespace Altaxo.Units
 			_divider = Altaxo.Calc.RMath.Pow(10, -exponent);
 		}
 
+		/// <summary>
+		/// Full name of the prefix (in lower letters). Examples: nano, micro, giga, exa.
+		/// </summary>
 		public string Name
 		{
 			get { return _name; }
 		}
 
+		/// <summary>
+		/// Usual shortcut of this prefix. Example: M for Mega, or n for nano.
+		/// </summary>
 		public string ShortCut
 		{
 			get { return _shortCut; }
+		}
+
+		/// <summary>
+		/// Gets the exponent that is associated with this prefix.
+		/// </summary>
+		/// <value>
+		/// The exponent associated with this prefix.
+		/// </value>
+		public int Exponent
+		{
+			get { return _exponent; }
+		}
+
+		/// <summary>
+		/// Try to get a known prefix with a given exponent.
+		/// </summary>
+		/// <param name="exponent">The exponent.</param>
+		/// <param name="prefix">If sucessfull, returns the prefix.</param>
+		/// <returns>True if a known prefix with the given exponent was found; otherwise, false.</returns>
+		public static bool TryGetPrefixFromExponent(int exponent, out SIPrefix prefix)
+		{
+			return _prefixByExponent.TryGetValue(exponent, out prefix);
 		}
 
 		public double ToSIUnit(double x)

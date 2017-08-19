@@ -965,6 +965,15 @@
     <Compile Include="Serialization\Xml\FrameworkSurrogates\System_Drawing_Imaging_ImageFormat.cs" />
     <Compile Include="Serialization\Xml\FrameworkXmlSerializationWrapper.cs" />
     <Compile Include="Serialization\Xml\SerializationOfBasicTypes.cs" />
+    <Compile Include="Units\Angle\Serialization.cs" />
+    <Compile Include="Units\Dimensionless\Serialization.cs" />
+    <Compile Include="Units\Length\Serialization.cs" />
+    <Compile Include="Units\DimensionfulQuantitySerialization.cs" />
+    <Compile Include="Units\UnitWithLimitedPrefixesSerialization.cs" />
+    <Compile Include="Units\SIPrefixListSerialization.cs" />
+    <Compile Include="Units\PrefixedUnitSerialization.cs" />
+    <Compile Include="Units\SIPrefixSerialization.cs" />
+    <Compile Include="Units\Time\Serialization.cs" />
     <Compile Include="Worksheet\Commands\Analysis\FourierTransformation2DDataSource.cs" />
     <Compile Include="Worksheet\Commands\Analysis\RealFourierTransformation2DOptions.cs" />
     <Compile Include="Worksheet\Commands\DataSourceCommands.cs" />
