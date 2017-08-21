@@ -82,6 +82,16 @@ namespace Altaxo.Graph.Gdi.Shapes
 		/// <summary>Cached path of the isoline.</summary>
 		private GraphicsPath _cachedPath;
 
+		/// <summary>
+		/// A segment of the underlying X-X layer, that has the position and the size of the floating scale we want to draw.
+		/// </summary>
+		private LayerSegment _cachedLayerSegment;
+
+		/// <summary>
+		/// A scale of the same type as the scale of the underlying X-Y layer, which is used for drawing this floating scale.
+		/// </summary>
+		private ScaleSegment _cachedScale;
+
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FloatingScale), 0)]
@@ -202,8 +212,61 @@ namespace Altaxo.Graph.Gdi.Shapes
 			base.FixupInternalDataStructures();
 
 			var layer = Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
+			if (null == layer)
+			{
+				_cachedLayerSegment = null;
 
-			_axisStyle.FixupInternalDataStructures(layer);
+				_cachedScale?.Dispose();
+				_cachedScale = null;
+				return;
+			}
+
+			Logical3D rBegin;
+			layer.CoordinateSystem.LayerToLogicalCoordinates(X, Y, out rBegin);
+
+			Logical3D rEnd = rBegin;
+			switch (_scaleSpanType)
+			{
+				case FloatingScaleSpanType.IsLogicalValue:
+					rEnd[_scaleNumber] = rBegin[_scaleNumber] + _scaleSpanValue;
+					break;
+
+				case FloatingScaleSpanType.IsPhysicalEndOrgDifference:
+					{
+						var physValue = layer.Scales[_scaleNumber].NormalToPhysicalVariant(rBegin[this._scaleNumber]);
+						physValue += _scaleSpanValue; // to be replaced by the scale span
+						var logValue = layer.Scales[_scaleNumber].PhysicalVariantToNormal(physValue);
+						rEnd[_scaleNumber] = logValue;
+					}
+					break;
+
+				case FloatingScaleSpanType.IsPhysicalEndOrgRatio:
+					{
+						var physValue = layer.Scales[_scaleNumber].NormalToPhysicalVariant(rBegin[this._scaleNumber]);
+						physValue *= _scaleSpanValue; // to be replaced by the scale span
+						var logValue = layer.Scales[_scaleNumber].PhysicalVariantToNormal(physValue);
+						rEnd[_scaleNumber] = logValue;
+					}
+					break;
+			}
+
+			// axis style
+			var csLineId = new CSLineID(_scaleNumber, rBegin);
+			if (_axisStyle.StyleID != csLineId)
+			{
+				var propertyContext = this.GetPropertyContext();
+				var axStyle = new AxisStyle(new CSLineID(_scaleNumber, rBegin), false, false, false, null, propertyContext);
+				axStyle.CopyWithoutIdFrom(_axisStyle);
+				_axisStyle = axStyle;
+			}
+
+			_cachedScale?.Dispose();
+			_cachedScale = new ScaleSegment(layer.Scales[_scaleNumber], rBegin[_scaleNumber], rEnd[_scaleNumber], _scaleSegmentType);
+			_tickSpacing.FinalProcessScaleBoundaries(_cachedScale.OrgAsVariant, _cachedScale.EndAsVariant, _cachedScale);
+			_cachedScale.TickSpacing = _tickSpacing;
+			_cachedLayerSegment = new LayerSegment(layer, _cachedScale, rBegin, rEnd, _scaleNumber);
+
+			_axisStyle.FixupInternalDataStructures(_cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation); // we use here special AxisStyleInformation not provided by the underlying CS, but by the layer segment
 		}
 
 		public override bool IsCompatibleWithParent(object parentObject)
@@ -419,61 +482,15 @@ namespace Altaxo.Graph.Gdi.Shapes
 
 		public override void Paint(Graphics g, IPaintContext paintContext)
 		{
-			var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYPlotLayer>(this);
-
-			if (null == layer)
+			if (null == _cachedLayerSegment) // _privLayer should be set before in FixupInternalDataStructures
 			{
 				PaintErrorInvalidLayerType(g, paintContext);
 				return;
 			}
 
-			Logical3D rBegin;
-			layer.CoordinateSystem.LayerToLogicalCoordinates(X, Y, out rBegin);
-
-			Logical3D rEnd = rBegin;
-			switch (_scaleSpanType)
-			{
-				case FloatingScaleSpanType.IsLogicalValue:
-					rEnd[_scaleNumber] = rBegin[_scaleNumber] + _scaleSpanValue;
-					break;
-
-				case FloatingScaleSpanType.IsPhysicalEndOrgDifference:
-					{
-						var physValue = layer.Scales[_scaleNumber].NormalToPhysicalVariant(rBegin[this._scaleNumber]);
-						physValue += _scaleSpanValue; // to be replaced by the scale span
-						var logValue = layer.Scales[_scaleNumber].PhysicalVariantToNormal(physValue);
-						rEnd[_scaleNumber] = logValue;
-					}
-					break;
-
-				case FloatingScaleSpanType.IsPhysicalEndOrgRatio:
-					{
-						var physValue = layer.Scales[_scaleNumber].NormalToPhysicalVariant(rBegin[this._scaleNumber]);
-						physValue *= _scaleSpanValue; // to be replaced by the scale span
-						var logValue = layer.Scales[_scaleNumber].PhysicalVariantToNormal(physValue);
-						rEnd[_scaleNumber] = logValue;
-					}
-					break;
-			}
-
-			// axis style
-			var csLineId = new CSLineID(_scaleNumber, rBegin);
-			if (_axisStyle.StyleID != csLineId)
-			{
-				var propertyContext = this.GetPropertyContext();
-				var axStyle = new AxisStyle(new CSLineID(_scaleNumber, rBegin), false, false, false, null, propertyContext);
-				axStyle.CopyWithoutIdFrom(_axisStyle);
-				_axisStyle = axStyle;
-			}
-
-			var privScale = new ScaleSegment(layer.Scales[_scaleNumber], rBegin[_scaleNumber], rEnd[_scaleNumber], _scaleSegmentType);
-			_tickSpacing.FinalProcessScaleBoundaries(privScale.OrgAsVariant, privScale.EndAsVariant, privScale);
-			privScale.TickSpacing = _tickSpacing;
-			var privLayer = new LayerSegment(layer, privScale, rBegin, rEnd, _scaleNumber);
-
 			if (_background == null)
 			{
-				_axisStyle.Paint(g, paintContext, privLayer, privLayer.GetAxisStyleInformation);
+				_axisStyle.Paint(g, paintContext, _cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation);
 			}
 			else
 			{
@@ -483,12 +500,12 @@ namespace Altaxo.Graph.Gdi.Shapes
 				{
 					using (Graphics gg = Graphics.FromImage(bmp))
 					{
-						_axisStyle.Paint(gg, paintContext, privLayer, privLayer.GetAxisStyleInformation);
+						_axisStyle.Paint(gg, paintContext, _cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation);
 					}
 				}
 			}
 
-			_cachedPath = _axisStyle.AxisLineStyle.GetObjectPath(privLayer, true);
+			_cachedPath = _axisStyle.AxisLineStyle.GetObjectPath(_cachedLayerSegment, true);
 
 			// calculate size information
 			RectangleD2D bounds1 = _cachedPath.GetBounds();
@@ -514,14 +531,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 				}
 			}
 
-			((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds1.Size);
-			//this._leftTop = bounds1.Location - this.GetPosition();
-			//throw new NotImplementedException("debug the previous statement");
+			((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds1.Size, false); // size here is important only for selection, thus we set size silently
+
 			if (_background != null)
 			{
 				bounds1.Expand(_backgroundPadding);
 				_background.Draw(g, bounds1);
-				_axisStyle.Paint(g, paintContext, privLayer, privLayer.GetAxisStyleInformation);
+				_axisStyle.Paint(g, paintContext, _cachedLayerSegment, _cachedLayerSegment.GetAxisStyleInformation);
 			}
 		}
 
