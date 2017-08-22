@@ -6,6 +6,7 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Gdi.Shapes"
+   				   xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
 						 mc:Ignorable="d"
 >
 	<UserControl.Resources>
@@ -47,16 +48,16 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Label x:Name="_guiLabelPositionX" Grid.Column="0" Grid.Row="2" Content="Pos. X:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiPositionX"  Grid.Column="1" Grid.Row="2" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiPositionX"  Grid.Column="1" Grid.Row="2"  UnitEnvironment="{x:Static axog:PositionEnvironment.Instance}" />
 
 		<Label x:Name="_guiLabelPositionY" Grid.Column="2" Grid.Row="2" Content="Pos. Y:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiPositionY" Grid.Column="3" Grid.Row="2" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiPositionY" Grid.Column="3" Grid.Row="2"  UnitEnvironment="{x:Static axog:PositionEnvironment.Instance}" />
 
 		<Label x:Name="_guiSizeLabelX" Grid.Column="0" Grid.Row="4" Content="Size X:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiSizeX"  Grid.Column="1" Grid.Row="4" SelectedQuantityChanged="EhSizeXChanged" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiSizeX"  Grid.Column="1" Grid.Row="4" SelectedQuantityChanged="EhSizeXChanged" UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" />
 
 		<Label x:Name="_guiSizeLabelY" Grid.Column="2" Grid.Row="4" Content="Size Y:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiSizeY"  Grid.Column="3" Grid.Row="4"  SelectedQuantityChanged="EhSizeYChanged" />
+		<axogc:QuantityWithUnitTextBox x:Name="_guiSizeY"  Grid.Column="3" Grid.Row="4"  SelectedQuantityChanged="EhSizeYChanged"  UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" />
 
 		<Label Grid.Column="0" Grid.Row="6" Content="Rotation:" />
 		<axogcd:RotationComboBox  x:Name="_guiRotation" Grid.Column="1" Grid.Row="6" />

@@ -236,6 +236,8 @@
     <Compile Include="Gui\Workbench\ExceptionBox.xaml.cs">
       <DependentUpon>ExceptionBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Main\GraphExportBindingDoozer.cs" />
+    <Compile Include="Main\IProjectItemExportBindingDescriptor.cs" />
     <Compile Include="Main\Services\MessageServiceImpl.cs" />
     <Compile Include="Main\Services\PropertyService.cs" />
     <Compile Include="Main\Services\RoslynScriptCompilerService.cs" />

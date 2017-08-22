@@ -40,7 +40,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	public class LabelPlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
-		IG2DPlotStyle
+		IG2DPlotStyle,
+		IRoutedPropertyReceiver
 	{
 		protected Altaxo.Data.IReadableColumnProxy _labelColumnProxy;
 
@@ -822,10 +823,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			{
 				if (null == value)
 					throw new ArgumentNullException();
-				var oldValue = _font;
-				_font = value;
-				if (!value.Equals(oldValue))
+
+				if (!object.ReferenceEquals(_font, value))
+				{
+					_font = value;
 					EhSelfChanged(EventArgs.Empty);
+				}
 			}
 		}
 
@@ -1570,5 +1573,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		#endregion IDocumentNode Members
+
+		#region IRoutedPropertyReceiver Members
+
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
+		{
+			switch (propertyName)
+			{
+				case "FontSize":
+					yield return (propertyName, _fontSizeOffset, (value) => { if (0 != _fontSizeOffset) { FontSizeOffset = (double)value; } });
+					break;
+
+				case "SymbolSize":
+					if (_independentSymbolSize)
+						yield return (propertyName, _symbolSize, (w) => SymbolSize = (double)w);
+					break;
+			}
+
+			yield break;
+		}
+
+		#endregion IRoutedPropertyReceiver Members
 	}
 }

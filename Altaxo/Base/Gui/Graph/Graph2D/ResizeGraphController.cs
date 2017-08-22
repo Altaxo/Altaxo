@@ -38,6 +38,8 @@ namespace Altaxo.Gui.Graph.Graph2D
 
 		SelectableListNodeList ActionsForFontSize { set; }
 
+		SelectableListNodeList ActionsForSymbolSize { set; }
+
 		SelectableListNodeList ActionsForLineThickness { set; }
 		bool IsUserDefinedLineThicknessChosen { get; }
 		double UserDefinedLineThickness { get; }
@@ -57,6 +59,7 @@ namespace Altaxo.Gui.Graph.Graph2D
 	public class ResizeGraphController : MVCANControllerEditOriginalDocBase<ResizeGraphOptions, IResizeGraphView>
 	{
 		private SelectableListNodeList _actionsForFontSize;
+		private SelectableListNodeList _actionsForSymbolSize;
 		private SelectableListNodeList _actionsForLineThickness;
 		private SelectableListNodeList _actionsForTickLength;
 
@@ -74,6 +77,7 @@ namespace Altaxo.Gui.Graph.Graph2D
 			if (initData)
 			{
 				_actionsForFontSize = new SelectableListNodeList(_doc.ActionForFontSize);
+				_actionsForSymbolSize = new SelectableListNodeList(_doc.ActionForSymbolSize);
 				_actionsForLineThickness = new SelectableListNodeList(_doc.ActionForLineThickness);
 				_actionsForTickLength = new SelectableListNodeList(_doc.ActionForTickLength);
 
@@ -103,6 +107,7 @@ namespace Altaxo.Gui.Graph.Graph2D
 					_view.SetOldStandardLineThickness(_doc.OldLineThickness.Value);
 
 				_view.ActionsForFontSize = _actionsForFontSize;
+				_view.ActionsForSymbolSize = _actionsForSymbolSize;
 				_view.ActionsForLineThickness = _actionsForLineThickness;
 				_view.ActionsForTickLength = _actionsForTickLength;
 			}
@@ -169,6 +174,8 @@ namespace Altaxo.Gui.Graph.Graph2D
 				_doc.NewStandardFontSize = null;
 
 			_doc.ActionForFontSize = (ResizeGraphOptions.ScalarSizeActions)_actionsForFontSize.FirstSelectedNode.Tag;
+
+			_doc.ActionForSymbolSize = (ResizeGraphOptions.ScalarSizeActions)_actionsForSymbolSize.FirstSelectedNode.Tag;
 
 			_doc.ActionForLineThickness = (ResizeGraphOptions.ScalarSizeActions)_actionsForLineThickness.FirstSelectedNode.Tag;
 

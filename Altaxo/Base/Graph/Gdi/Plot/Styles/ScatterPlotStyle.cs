@@ -45,7 +45,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	public partial class ScatterPlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
-		IG2DPlotStyle
+		IG2DPlotStyle,
+		IRoutedPropertyReceiver
 	{
 		/// <summary>
 		/// Indicates whether <see cref="SkipFrequency"/> is independent of other sub-styles.
@@ -62,8 +63,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		/// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
 		private bool _independentOnShiftingGroupStyles = true;
-
-
 
 		protected bool _independentScatterSymbol;
 
@@ -124,7 +123,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		/// <summary>Logical y shift between the location of the real data point and the point where the item is finally drawn.</summary>
 		private double _cachedLogicalShiftY;
-
 
 		#region Copying
 
@@ -795,7 +793,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 			return true;
 		}
 
-
 		private void PaintOneRange(
 			Graphics g,
 			IPlotArea layer,
@@ -821,8 +818,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				CalculatePaths(scatterSymbol, _symbolSize, ref cachedPathData);
 				CalculateBrushes(scatterSymbol, _color, cachedPathData, ref cachedBrushData);
 
-
-
 				for (int plotPointIndex = range.LowerBound; plotPointIndex < range.UpperBound; plotPointIndex += _skipFreq)
 				{
 					xdiff = ptArray[plotPointIndex].X - xpos;
@@ -840,8 +835,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					if (null != cachedPathData.FramePath)
 						g.FillPath(cachedBrushData.FrameBrush, cachedPathData.FramePath);
 				} // end for
-
-
 			}
 			else // using a variable symbol size or variable symbol color
 			{
@@ -879,15 +872,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 					if (null != cachedPathData.FramePath)
 						g.FillPath(cachedBrushData.FrameBrush, cachedPathData.FramePath);
-
 				}
 			}
 
 			g.Restore(gs); // Restore the graphics state
 		}
-
-
-		
 
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
@@ -909,11 +898,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				plotPositions = Processed2DPlotData.GetPlotPointsInAbsoluteLayerCoordinatesWithShift(pdata, layer, _cachedLogicalShiftX, _cachedLogicalShiftY);
 			}
 
-
-
 			// Calculate current scatterSymbol overridden with frame and inset
 			var scatterSymbol = CalculateOverriddenScatterSymbol();
-
 
 			if (this._ignoreMissingDataPoints)
 			{
@@ -930,7 +916,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					this.PaintOneRange(g, layer, plotPositions, rangeList[i], scatterSymbol, ref cachedPathData, ref cachedBrushData);
 				}
 			}
-
 
 			cachedBrushData.Clear();
 			cachedPathData.Clear();
@@ -1016,14 +1001,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			// IgnoreMissingDataPoints should be the same for all sub plot styles, so there is no "private" property
 			IgnoreMissingDataPointsGroupStyle.PrepareStyle(externalGroups, localGroups, () => _ignoreMissingDataPoints);
-
 		}
 
 		public void ApplyGroupStyles(PlotGroupStyleCollection externalGroups, PlotGroupStyleCollection localGroups)
 		{
 			// IgnoreMissingDataPoints is the same for all sub plot styles
 			IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
-
 
 			if (this.IsColorReceiver)
 			{
@@ -1087,5 +1070,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		#endregion IDocumentNode Members
+
+		#region IRoutedPropertyReceiver Members
+
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
+		{
+			switch (propertyName)
+			{
+				case "SymbolSize":
+					yield return (propertyName, _symbolSize, (value) => SymbolSize = (double)value);
+					break;
+			}
+
+			yield break;
+		}
+
+		#endregion IRoutedPropertyReceiver Members
 	}
 }

@@ -43,7 +43,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	public class DropLinePlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
-		IG2DPlotStyle
+		IG2DPlotStyle,
+		IRoutedPropertyReceiver
 	{
 		/// <summary>A value indicating whether the skip frequency value is independent from other values.</summary>
 		protected bool _independentSkipFrequency;
@@ -58,7 +59,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		/// <summary>If true, group styles that shift the logical position of the items (for instance <see cref="BarSizePosition3DGroupStyle"/>) are not applied. I.e. when true, the position of the item remains unperturbed.</summary>
 		private bool _independentOnShiftingGroupStyles = true;
-
 
 		/// <summary>Target(s) for the drop line.</summary>
 		protected CSPlaneIDList _dropTargets;
@@ -716,7 +716,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 		#endregion I3DPlotItem Members
 
-
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
 			// adjust the skip frequency if it was not set appropriate
@@ -728,10 +727,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_cachedLogicalShiftX = _cachedLogicalShiftY = 0;
 			}
 
-
 			PlotRangeList rangeList = pdata.RangeList;
-
-
 
 			if (this._ignoreMissingDataPoints)
 			{
@@ -786,7 +782,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				var gapStart = 0.5 * (_gapAtStartOffset + _gapAtStartFactor * _cachedSymbolSize);
 				var gapEnd = 0.5 * (_gapAtEndOffset + _gapAtEndFactor * _cachedSymbolSize);
 
-
 				int lower = range.LowerBound;
 				int upper = range.UpperBound;
 
@@ -817,11 +812,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						}
 					}
 				}
-
 			}
 			else // using a variable symbol size or variable symbol color
 			{
-
 				int lower = range.LowerBound;
 				int upper = range.UpperBound;
 				for (int j = lower; j < upper; j += _skipFrequency)
@@ -870,7 +863,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 						}
 					}
 				}
-
 			}
 		}
 
@@ -924,7 +916,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		{
 			// IgnoreMissingDataPoints is the same for all sub plot styles
 			IgnoreMissingDataPointsGroupStyle.ApplyStyle(externalGroups, localGroups, (ignoreMissingDataPoints) => this._ignoreMissingDataPoints = ignoreMissingDataPoints);
-
 
 			if (this.IsColorReceiver)
 			{
@@ -988,5 +979,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		#endregion IDocumentNode Members
+
+		#region IRoutedPropertyReceiver Members
+
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
+		{
+			switch (propertyName)
+			{
+				case "StrokeWidth":
+					yield return (propertyName, _pen.Width, (w) => _pen.Width = (double)w);
+					break;
+
+				case "SymbolSize":
+					if (_independentSymbolSize)
+						yield return (propertyName, _symbolSize, (w) => SymbolSize = (double)w);
+					break;
+			}
+
+			yield break;
+		}
+
+		#endregion IRoutedPropertyReceiver Members
 	}
 }

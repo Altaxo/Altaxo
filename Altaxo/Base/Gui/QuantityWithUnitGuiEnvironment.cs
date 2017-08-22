@@ -97,6 +97,7 @@ namespace Altaxo.Gui
 		public QuantityWithUnitGuiEnvironment(QuantityWithUnitGuiEnvironment from, IEnumerable<IUnit> additionalUnits)
 		{
 			_fixedUnits = from._fixedUnits;
+			_defaultUnit = from._defaultUnit;
 			_additionalUnits = new ObservableCollection<IUnit>(additionalUnits);
 			CreateUnitListSortedByShortcutLengthDescending();
 			_additionalUnits.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(EhAdditionalUnits_CollectionChanged);

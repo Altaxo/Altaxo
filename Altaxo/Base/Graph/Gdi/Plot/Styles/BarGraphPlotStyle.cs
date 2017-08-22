@@ -44,7 +44,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	public class BarGraphPlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
-		IG2DPlotStyle
+		IG2DPlotStyle,
+		IRoutedPropertyReceiver
 	{
 		/// <summary>
 		/// Relative gap between the bars belonging to the same x-value (relative to the width of a single bar).
@@ -519,8 +520,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				j++;
 
 				double xcn = _xOffsetLogical + layer.XAxis.PhysicalVariantToNormal(pdata.GetXPhysical(originalRowIndex));
-				double xln = xcn  - 0.5 * _xSizeLogical;
-				double xrn = xcn  + 0.5 * _xSizeLogical;
+				double xln = xcn - 0.5 * _xSizeLogical;
+				double xrn = xcn + 0.5 * _xSizeLogical;
 
 				double ycn = layer.YAxis.PhysicalVariantToNormal(pdata.GetYPhysical(originalRowIndex));
 				double ynbase = globalBaseValue;
@@ -605,5 +606,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		#endregion IDocumentNode Members
+
+		#region IRoutedPropertyReceiver Members
+
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
+		{
+			switch (propertyName)
+			{
+				case "StrokeWidth":
+					yield return (propertyName, _framePen.Width, (w) => _framePen.Width = (double)w);
+					break;
+			}
+
+			yield break;
+		}
+
+		#endregion IRoutedPropertyReceiver Members
 	}
 }

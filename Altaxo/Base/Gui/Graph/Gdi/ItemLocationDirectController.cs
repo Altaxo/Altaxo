@@ -135,15 +135,15 @@ namespace Altaxo.Gui.Graph.Gdi
 
 				if (!_doc.IsAutoSized)
 				{
-					var xSize = _doc.SizeX.IsAbsolute ? new DimensionfulQuantity(_doc.SizeX.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.SizeX.Value * 100, _percentLayerXSizeUnit);
+					var xSize = _doc.SizeX.IsAbsolute ? new DimensionfulQuantity(_doc.SizeX.Value, Units.Length.Point.Instance).AsQuantityIn(SizeEnvironment.Instance.DefaultUnit) : new DimensionfulQuantity(_doc.SizeX.Value * 100, _percentLayerXSizeUnit);
 					_view.InitializeXSize(xSize, _xSizeEnvironment);
-					var ySize = _doc.SizeY.IsAbsolute ? new DimensionfulQuantity(_doc.SizeY.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.SizeY.Value * 100, _percentLayerYSizeUnit);
+					var ySize = _doc.SizeY.IsAbsolute ? new DimensionfulQuantity(_doc.SizeY.Value, Units.Length.Point.Instance).AsQuantityIn(SizeEnvironment.Instance.DefaultUnit) : new DimensionfulQuantity(_doc.SizeY.Value * 100, _percentLayerYSizeUnit);
 					_view.InitializeYSize(ySize, _ySizeEnvironment);
 				}
 
-				var xPos = _doc.PositionX.IsAbsolute ? new DimensionfulQuantity(_doc.PositionX.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.PositionX.Value * 100, _percentLayerXSizeUnit);
+				var xPos = _doc.PositionX.IsAbsolute ? new DimensionfulQuantity(_doc.PositionX.Value, Units.Length.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit) : new DimensionfulQuantity(_doc.PositionX.Value * 100, _percentLayerXSizeUnit);
 				_view.InitializeXPosition(xPos, _xPositionEnvironment);
-				var yPos = _doc.PositionY.IsAbsolute ? new DimensionfulQuantity(_doc.PositionY.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.PositionY.Value * 100, _percentLayerYSizeUnit);
+				var yPos = _doc.PositionY.IsAbsolute ? new DimensionfulQuantity(_doc.PositionY.Value, Units.Length.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit) : new DimensionfulQuantity(_doc.PositionY.Value * 100, _percentLayerYSizeUnit);
 				_view.InitializeYPosition(yPos, _yPositionEnvironment);
 
 				_view.Rotation = _doc.Rotation;

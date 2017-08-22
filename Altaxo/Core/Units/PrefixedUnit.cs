@@ -50,5 +50,10 @@ namespace Altaxo.Units
 		public IUnit Unit { get { return _unit ?? Units.Dimensionless.Unity.Instance; } }
 
 		public SIPrefix Prefix { get { return _prefix ?? SIPrefix.None; } }
+
+		public override string ToString()
+		{
+			return Prefix.ShortCut + Unit.ShortCut;
+		}
 	}
 }

@@ -48,6 +48,7 @@ namespace Altaxo.Gui.Graph.Graph2D
 		public double UserDefinedLineThickness => _guiUserDefinedLineThicknessValue.SelectedQuantityAsValueInPoints;
 
 		public SelectableListNodeList ActionsForFontSize { set => _guiActionForFontSize.Initialize(value); }
+		public SelectableListNodeList ActionsForSymbolSize { set => _guiActionForSymbolSize.Initialize(value); }
 		public SelectableListNodeList ActionsForLineThickness { set => _guiActionForLineThickness.Initialize(value); }
 
 		public SelectableListNodeList ActionsForTickLength { set => _guiActionForTickLength.Initialize(value); }

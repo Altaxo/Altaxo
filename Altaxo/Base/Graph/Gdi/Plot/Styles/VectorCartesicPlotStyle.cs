@@ -42,7 +42,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 	public class VectorCartesicPlotStyle
 		:
-		Main.SuspendableDocumentNodeWithEventArgs, IG2DPlotStyle
+		Main.SuspendableDocumentNodeWithEventArgs,
+		IG2DPlotStyle,
+		IRoutedPropertyReceiver
 	{
 		/// <summary>
 		/// Designates how to interpret the values of the error columns.
@@ -174,7 +176,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				info.AddValue("UseSymbolGap", s._useSymbolGap);
 				info.AddValue("SymbolGapOffset", s._symbolGapOffset);
 				info.AddValue("SymbolGapFactor", s._symbolGapFactor);
-
 			}
 
 			protected virtual VectorCartesicPlotStyle SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -215,7 +216,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				s._useSymbolGap = info.GetBoolean("UseSymbolGap");
 				s._symbolGapOffset = info.GetDouble("SymbolGapOffset");
 				s._symbolGapFactor = info.GetDouble("SymbolGapFactor");
-
 
 				return s;
 			}
@@ -810,10 +810,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				_cachedLogicalShiftX = _cachedLogicalShiftY = 0;
 			}
 
-
 			PlotRangeList rangeList = pdata.RangeList;
-
-
 
 			if (this._ignoreMissingDataPoints)
 			{
@@ -851,10 +848,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
 			using (GraphicsPath isoLine = new GraphicsPath())
 			{
-
 				int lower = range.LowerBound;
 				int upper = range.UpperBound;
-
 
 				for (int j = lower; j < upper; j += _skipFrequency)
 				{
@@ -958,7 +953,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 					else
 						g.DrawPath(strokePen, isoLine);
 				}
-
 			}
 		}
 
@@ -1018,5 +1012,26 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		}
 
 		#endregion IDocumentNode Members
+
+		#region IRoutedPropertyReceiver Members
+
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
+		{
+			switch (propertyName)
+			{
+				case "StrokeWidth":
+					yield return (propertyName, _strokePen.Width, (w) => _strokePen.Width = (double)w);
+					break;
+
+				case "SymbolSize":
+					if (_independentSymbolSize)
+						yield return (propertyName, _symbolSize, (w) => SymbolSize = (double)w);
+					break;
+			}
+
+			yield break;
+		}
+
+		#endregion IRoutedPropertyReceiver Members
 	}
 }

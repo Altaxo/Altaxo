@@ -58,6 +58,7 @@
 			<Doozer name="OptionPanel" class="Altaxo.Main.OptionPanelDoozer" />
 			<Doozer name="NamedColor" class="Altaxo.Main.NamedColorDoozer" />
 			<Doozer name="ColorSet" class="Altaxo.Main.ColorSetDoozer" />
+			<Doozer name="GraphExportBinding" class="Altaxo.Main.GraphExportBindingDoozer" />
 		</Import>
 	</Runtime>
 
@@ -1005,15 +1006,17 @@
 			<MenuItem id="Rename" label="${res:XML.ProjectBrowserMenu.Rename}" description="${res:XML.ProjectBrowserMenu.Rename.Description}"
 							class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemRename" />
 		</Condition>
-		<Condition name="ProjbrowserListItemSelection" selcount=">1" selitems="Altaxo.Data.DataTable" action="Disable">
+		<Condition name="ProjbrowserListItemSelection" selcount=">1" selitems="Altaxo.Data.DataTable, AltaxoBase" action="Disable">
 			<MenuItem id="PlotCommonCols" label="${res:XML.ProjectBrowserMenu.PlotCommonColumns}" description="${res:XML.ProjectBrowserMenu.PlotCommonColumns.Description}"
 							class="Altaxo.Gui.Pads.ProjectBrowser.CmdPlotCommonColumns" />
 		</Condition>
-		<Condition name="ProjbrowserListItemSelection" selcount=">0" selitems="Altaxo.Graph.Gdi.GraphDocument" action="Disable">
+		<Condition name="ProjbrowserListItemSelection" selcount=">0" selitems="Altaxo.Graph.GraphDocumentBase, AltaxoBase" action="Disable">
 			<MenuItem id="MultiExportGraphs" label="${res:XML.ProjectBrowserMenu.MultiExportGraphs}" description="${res:XML.ProjectBrowserMenu.MultiExportGraphs.Description}"
 				class="Altaxo.Gui.Pads.ProjectBrowser.CmdMultiExportGraphs" />
 			<MenuItem id="MultiRescaleGraphs" label="${res:XML.ProjectBrowserMenu.MultiRescaleGraphs}" description="${res:XML.ProjectBrowserMenu.MultiRescaleGraphs.Description}"
 				class="Altaxo.Gui.Pads.ProjectBrowser.CmdMultiRescaleGraphs" />
+		</Condition>
+		<Condition name="ProjbrowserListItemSelection" selcount=">0" selitems="Altaxo.Graph.Gdi.GraphDocument, AltaxoBase" action="Disable">
 			<MenuItem id="MultiResizeGraphs" label="${res:XML.ProjectBrowserMenu.MultiResizeGraphs}" description="${res:XML.ProjectBrowserMenu.MultiResizeGraphs.Description}"
 				class="Altaxo.Gui.Pads.ProjectBrowser.CmdMultiResizeGraphs" />
 		</Condition>
@@ -1310,5 +1313,11 @@
 								 icon    = "Icons.16x16.BrowserWindow"
 								 tooltip = "${res:AddIns.HtmlHelp2.NewWindow}"
 								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.NewWindow" />
+	</Path>
+
+	<Path name = "/Altaxo/Workbench/ProjectItemExportBindings">
+		<GraphExportBinding id = "GraphGdiExport"
+										ProjectItemClass = "Altaxo.Graph.Gdi.GraphDocument, AltaxoBase"
+										ExporterClass  = "Altaxo.Graph.Gdi.GraphDocumentImageExporter, AltaxoBase" />
 	</Path>
 </AddIn>

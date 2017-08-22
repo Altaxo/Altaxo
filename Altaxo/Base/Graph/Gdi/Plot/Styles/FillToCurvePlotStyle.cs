@@ -39,7 +39,8 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	public class FillToCurvePlotStyle
 		:
 		Main.SuspendableDocumentNodeWithEventArgs,
-		IG2DPlotStyle
+		IG2DPlotStyle,
+		IRoutedPropertyReceiver
 	{
 		/// <summary>
 		/// Indicates whether the fill color is dependent (can be set by the ColorGroupStyle) or not.
@@ -503,5 +504,21 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		#endregion StraightConnection
 
 		#endregion Work
+
+		#region IRoutedPropertyReceiver Members
+
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
+		{
+			switch (propertyName)
+			{
+				case "StrokeWidth":
+					yield return (propertyName, _framePen.Width, (w) => _framePen.Width = (double)w);
+					break;
+			}
+
+			yield break;
+		}
+
+		#endregion IRoutedPropertyReceiver Members
 	}
 }

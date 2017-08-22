@@ -30,7 +30,7 @@ using System.Linq;
 namespace Altaxo.Graph.Gdi.Shapes
 {
 	[Serializable]
-	public abstract class ClosedPathShapeBase : GraphicBase
+	public abstract class ClosedPathShapeBase : GraphicBase, IRoutedPropertyReceiver
 	{
 		protected BrushX _fillBrush;
 		protected PenX _linePen;
@@ -173,5 +173,22 @@ namespace Altaxo.Graph.Gdi.Shapes
 			((ClosedPathShapeBase)hitted).EhSelfChanged(EventArgs.Empty);
 			return true;
 		}
+
+		#region IRoutedPropertyReceiver Members
+
+		public virtual IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
+		{
+			switch (propertyName)
+			{
+				case "StrokeWidth":
+					if (null != _linePen)
+						yield return (propertyName, _linePen.Width, (w) => _linePen.Width = (double)w);
+					break;
+			}
+
+			yield break;
+		}
+
+		#endregion IRoutedPropertyReceiver Members
 	} //  End Class
 } // end Namespace

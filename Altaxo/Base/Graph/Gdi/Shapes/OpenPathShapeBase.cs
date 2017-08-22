@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 	/// Base class for all open (not closed) shapes, like line, curly brace etc.
 	/// </summary>
 	[Serializable]
-	public abstract class OpenPathShapeBase : GraphicBase
+	public abstract class OpenPathShapeBase : GraphicBase, IRoutedPropertyReceiver
 	{
 		/// <summary>If not null, this pens draw the outline of the shape.</summary>
 		protected PenX _outlinePen;
@@ -173,5 +173,25 @@ namespace Altaxo.Graph.Gdi.Shapes
 			((OpenPathShapeBase)hitted).EhSelfChanged(EventArgs.Empty);
 			return true;
 		}
+
+		#region IRoutedPropertyReceiver Members
+
+		public IEnumerable<(string PropertyName, object PropertyValue, Action<object> PropertySetter)> GetRoutedProperties(string propertyName)
+		{
+			switch (propertyName)
+			{
+				case "StrokeWidth":
+					if (null != _linePen)
+						yield return (propertyName, _linePen.Width, (w) => _linePen.Width = (double)w);
+
+					if (null != _outlinePen)
+						yield return (propertyName, _outlinePen.Width, (w) => _outlinePen.Width = (double)w);
+					break;
+			}
+
+			yield break;
+		}
+
+		#endregion IRoutedPropertyReceiver Members
 	} //  End Class
 } // end Namespace

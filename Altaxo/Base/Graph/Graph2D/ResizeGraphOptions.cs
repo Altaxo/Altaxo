@@ -125,6 +125,14 @@ namespace Altaxo.Graph.Graph2D
 		public ScalarSizeActions ActionForFontSize { get; set; } = ScalarSizeActions.RescaleByRatioNewToOldValue;
 
 		/// <summary>
+		/// Gets or sets the action concerning the symbol size.
+		/// </summary>
+		/// <value>
+		/// The action concerning the font size of the elements of the graph.
+		/// </value>
+		public ScalarSizeActions ActionForSymbolSize { get; set; } = ScalarSizeActions.RescaleByRatioNewToOldValue;
+
+		/// <summary>
 		/// Gets or sets the action concerning the line thickness.
 		/// </summary>
 		/// <value>
@@ -201,8 +209,15 @@ namespace Altaxo.Graph.Graph2D
 					doc.RootLayer.Size = NewRootLayerSize.Value;
 				}
 
+				var alreadyProcessedItems = new HashSet<object>(EqualityComparer<object>.Default); // because Gdi graphs have objects in the normal hierarchy as well as cached objects in the GraphObjects collection, we have to keep track of already processed items
+
 				foreach (var node in doc.EnumerateFromHereToLeaves().OfType<Altaxo.Graph.IRoutedPropertyReceiver>())
 				{
+					if (alreadyProcessedItems.Contains(node))
+						continue; // already processed
+					else
+						alreadyProcessedItems.Add(node);
+
 					// Font family
 					if (!string.IsNullOrEmpty(NewStandardFontFamily))
 					{
@@ -234,6 +249,32 @@ namespace Altaxo.Graph.Graph2D
 						else if (ActionForFontSize == ScalarSizeActions.RescaleByRatioNewToOldValue)
 						{
 							foreach (var prop in node.GetRoutedProperties("FontSize"))
+							{
+								if (newFont.Size != oldFont.Size)
+								{
+									var oldValue = (double)prop.PropertyValue;
+									var newValue = oldValue * newFont.Size / oldFont.Size;
+									prop.PropertySetter(newValue);
+								}
+							}
+						}
+						else
+						{
+							throw new NotImplementedException();
+						}
+					}
+
+					// Symbol size (the value to scale symbol size is used from the font size)
+					if (NewStandardFontSize.HasValue && ActionForSymbolSize != ScalarSizeActions.None)
+					{
+						if (ActionForSymbolSize == ScalarSizeActions.ResetAllToStandardValue)
+						{
+							foreach (var prop in node.GetRoutedProperties("SymbolSize"))
+								prop.PropertySetter(NewStandardFontSize.Value);
+						}
+						else if (ActionForSymbolSize == ScalarSizeActions.RescaleByRatioNewToOldValue)
+						{
+							foreach (var prop in node.GetRoutedProperties("SymbolSize"))
 							{
 								if (newFont.Size != oldFont.Size)
 								{

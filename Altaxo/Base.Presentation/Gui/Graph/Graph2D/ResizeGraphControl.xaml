@@ -45,6 +45,8 @@
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 
 		<Expander Grid.ColumnSpan="9" ExpandDirection="Down" Header="Values of the graph before resizing">
@@ -72,20 +74,24 @@
 			<agc:SingleChoiceRadioStackPanel x:Name="_guiActionForFontSize" />
 		</GroupBox>
 
-		<GroupBox Header="Action for line width:" Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="7">
+		<GroupBox Header="Action for symbol size:" Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="7">
+			<agc:SingleChoiceRadioStackPanel x:Name="_guiActionForSymbolSize" />
+		</GroupBox>
+
+		<GroupBox Header="Action for line width:" Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="7">
 			<agc:SingleChoiceRadioStackPanel x:Name="_guiActionForLineThickness" />
 		</GroupBox>
 
-		<StackPanel Orientation="Vertical" Grid.Row="14" Grid.Column="8" VerticalAlignment="Bottom">
-			<CheckBox x:Name="_guiIsUserDefinedLineThicknessChosen" Content="User defined line width:" Grid.Row="16" Grid.Column="0" Margin="0,0,0,4" />
-			<agcd:LineThicknessComboBox x:Name="_guiUserDefinedLineThicknessValue" Grid.Row="16" Grid.Column="2" Grid.ColumnSpan="7" IsEnabled="{Binding ElementName=_guiIsUserDefinedLineThicknessChosen, Path=IsChecked}" />
+		<StackPanel Orientation="Vertical" Grid.Row="16" Grid.Column="8" VerticalAlignment="Bottom">
+			<CheckBox x:Name="_guiIsUserDefinedLineThicknessChosen" Content="User defined line width:"  Margin="0,0,0,4" />
+			<agcd:LineThicknessComboBox x:Name="_guiUserDefinedLineThicknessValue" IsEnabled="{Binding ElementName=_guiIsUserDefinedLineThicknessChosen, Path=IsChecked}" />
 		</StackPanel>
 
-		<GroupBox Header="Action for tick length:" Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="7">
+		<GroupBox Header="Action for tick length:" Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="7">
 			<agc:SingleChoiceRadioStackPanel x:Name="_guiActionForTickLength" />
 		</GroupBox>
 
-		<StackPanel Orientation="Vertical" Grid.Row="16" Grid.Column="8" VerticalAlignment="Bottom">
+		<StackPanel Orientation="Vertical" Grid.Row="18" Grid.Column="8" VerticalAlignment="Bottom">
 			<CheckBox x:Name="_guiIsUserDefinedMajorTickLengthChosen" Content="User defined major tick length:" Margin="0,0,0,4" />
 			<agcd:LineThicknessComboBox x:Name="_guiUserDefinedMajorTickLength" IsEnabled="{Binding ElementName=_guiIsUserDefinedTickLengthChosen, Path=IsChecked}" />
 		</StackPanel>

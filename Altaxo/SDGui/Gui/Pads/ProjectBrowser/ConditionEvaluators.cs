@@ -110,9 +110,20 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			if (expectedItemType != "Folder") // if folder, then do no expansion of selected items!
 				selItems = Current.Project.Folders.GetExpandedProjectItemSet(selItems);
 
-			foreach (object item in selItems)
-				if (expectedItemType != item.GetType().ToString())
-					return false;
+			var type = Type.GetType(expectedItemType, false, false);
+
+			if (type != null)
+			{
+				foreach (object item in selItems)
+					if (!(type.IsAssignableFrom(item.GetType())))
+						return false;
+			}
+			else// if type is null, we compare simply by name, ignoring the assembly
+			{
+				foreach (object item in selItems)
+					if (expectedItemType != item.GetType().ToString())
+						return false;
+			}
 
 			return true;
 		}

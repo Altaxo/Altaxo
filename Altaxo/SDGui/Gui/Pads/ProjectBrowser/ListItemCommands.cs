@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -241,15 +242,15 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	{
 		protected override void Run(ProjectBrowseController ctrl)
 		{
-			var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.Gdi.GraphDocument>();
+			var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.GraphDocumentBase>();
 			int count = list.Count();
 
 			if (count == 0)
 				return;
 			if (count == 1)
-				Altaxo.Graph.Gdi.GraphDocumentExportActions.ShowFileExportSpecificDialog(list.First());
+				Altaxo.Graph.GraphDocumentBaseExportActions.ShowFileExportSpecificDialog(list.First());
 			else
-				Altaxo.Graph.Gdi.GraphDocumentExportActions.ShowExportMultipleGraphsDialogAndExportOptions(list);
+				Altaxo.Graph.GraphDocumentBaseExportActions.ShowExportMultipleGraphsDialogAndExportOptions(list);
 		}
 	}
 
@@ -260,7 +261,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	{
 		protected override void Run(ProjectBrowseController ctrl)
 		{
-			var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.Gdi.GraphDocument>();
+			var list = ctrl.GetSelectedListItems().OfType<Altaxo.Graph.GraphDocumentBase>();
 			int count = list.Count();
 
 			if (count == 0)
@@ -270,9 +271,32 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 			else
 			{
-				Altaxo.Graph.Gdi.GraphDocumentExportActions.ShowExportMultipleGraphsDialogAndExportOptions(list);
+				foreach (var graph in list)
+				{
+					if (graph is Altaxo.Graph.Gdi.GraphDocument gdiDoc)
+						RescaleAllLayers(gdiDoc);
+					else if (graph is Altaxo.Graph.Graph3D.GraphDocument graph3DDoc)
+						RescaleAllLayers(graph3DDoc);
+					else
+						throw new NotImplementedException("This type of graph document is not known here.");
+				}
+
 				Current.Gui.InfoMessageBox(string.Format("Axes of {0} graph document(s) rescaled.", list.Count()), "Success");
 			}
+		}
+
+		private void RescaleAllLayers(Altaxo.Graph.Gdi.GraphDocument doc)
+		{
+			var layers = TreeNodeExtensions.TakeFromFirstLeavesToHere(doc.RootLayer).OfType<Altaxo.Graph.Gdi.XYPlotLayer>();
+			foreach (var layer in layers)
+				layer.OnUserRescaledAxes();
+		}
+
+		private void RescaleAllLayers(Altaxo.Graph.Graph3D.GraphDocument doc)
+		{
+			var layers = TreeNodeExtensions.TakeFromFirstLeavesToHere(doc.RootLayer).OfType<Altaxo.Graph.Graph3D.XYZPlotLayer>();
+			foreach (var layer in layers)
+				layer.OnUserRescaledAxes();
 		}
 	}
 

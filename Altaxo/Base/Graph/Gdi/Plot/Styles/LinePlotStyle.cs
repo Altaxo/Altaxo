@@ -1079,6 +1079,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				case "StrokeWidth":
 					yield return (propertyName, _linePen.Width, (w) => _linePen.Width = (double)w);
 					break;
+
+				case "SymbolSize":
+					if (_independentSymbolSize)
+						yield return (propertyName, _symbolSize, (w) => SymbolSize = (double)w);
+					break;
 			}
 
 			yield break;
