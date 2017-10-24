@@ -100,30 +100,33 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					G2DPlotItem gpi = (G2DPlotItem)pi;
 					Processed2DPlotData pdata = plotDataList[gpi];
 
-					// Note: we can not use AddUp function here, since
-					// when we have positive/negative items, the intermediate bounds
-					// might be wider than the bounds of the end result
-
-					if (ySumArray == null)
+					if (null != pdata)
 					{
-						ySumArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
+						// Note: we can not use AddUp function here, since
+						// when we have positive/negative items, the intermediate bounds
+						// might be wider than the bounds of the end result
 
-						int j = -1;
-						foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+						if (ySumArray == null)
 						{
-							j++;
-							ySumArray[j] = pdata.GetYPhysical(originalIndex);
-							pb.Add(ySumArray[j]);
+							ySumArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
+
+							int j = -1;
+							foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+							{
+								j++;
+								ySumArray[j] = pdata.GetYPhysical(originalIndex);
+								pb.Add(ySumArray[j]);
+							}
 						}
-					}
-					else // this is not the first item
-					{
-						int j = -1;
-						foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+						else // this is not the first item
 						{
-							j++;
-							ySumArray[j] += pdata.GetYPhysical(originalIndex);
-							pb.Add(ySumArray[j]);
+							int j = -1;
+							foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+							{
+								j++;
+								ySumArray[j] += pdata.GetYPhysical(originalIndex);
+								pb.Add(ySumArray[j]);
+							}
 						}
 					}
 				}
@@ -154,29 +157,32 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 					Processed2DPlotData pdata = gpi.GetRangesAndPoints(layer);
 					plotDataList.Add(gpi, pdata);
 
-					if (xArray == null)
+					if (null != pdata)
 					{
-						xArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
-
-						int j = -1;
-						foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+						if (xArray == null)
 						{
-							j++;
-							xArray[j] = pdata.GetXPhysical(originalIndex);
+							xArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
+
+							int j = -1;
+							foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+							{
+								j++;
+								xArray[j] = pdata.GetXPhysical(originalIndex);
+							}
 						}
-					}
-					else // this is not the first item
-					{
-						if (pdata.RangeList.PlotPointCount != xArray.Length)
-							return false;
-
-						int j = -1;
-						foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+						else // this is not the first item
 						{
-							j++;
-
-							if (xArray[j] != pdata.GetXPhysical(originalIndex))
+							if (pdata.RangeList.PlotPointCount != xArray.Length)
 								return false;
+
+							int j = -1;
+							foreach (int originalIndex in pdata.RangeList.OriginalRowIndices())
+							{
+								j++;
+
+								if (xArray[j] != pdata.GetXPhysical(originalIndex))
+									return false;
+							}
 						}
 					}
 				}
