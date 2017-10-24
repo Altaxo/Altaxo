@@ -281,7 +281,7 @@ namespace Altaxo.Graph.Scales
 		/// 0 for axis origin, 1 for axis end</returns>
 		public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
 		{
-			return PhysicalToNormal(x.ToDouble());
+			return PhysicalToNormal(x.ToDoubleOrNaN());
 		}
 
 		/// <summary>

@@ -344,6 +344,36 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
+		/// Converts the content to a double, if possible. The structure remains unchanged.
+		/// </summary>
+		/// <returns>The content converted to a double.</returns>
+		/// <remarks>No exception is thrown if the conversion is not possible. Instead, NaN is returned.</remarks>
+		public double ToDoubleOrNaN()
+		{
+			if (_typeOfContent == Content.VDouble)
+				return _double;
+			else if (_typeOfContent == Content.VDateTime)
+				return ((DateTime)_object).Ticks / 10000000.0;
+			else if (_typeOfContent == Content.VString)
+			{
+				if (double.TryParse((string)_object, System.Globalization.NumberStyles.Float, Altaxo.Settings.GuiCulture.Instance, out double result))
+					return result;
+			}
+			else if (_object != null)
+			{
+				try
+				{
+					return System.Convert.ToDouble(_object.ToString());
+				}
+				catch (Exception)
+				{
+				}
+			}
+
+			return double.NaN;
+		}
+
+		/// <summary>
 		/// Converts the content to a DateTime if possible. The structure remains unchanged.
 		/// </summary>
 		/// <returns>The contents converted to a DateTime.</returns>
