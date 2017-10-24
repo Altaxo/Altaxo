@@ -312,7 +312,7 @@ namespace Altaxo.Graph.Scales
 				}
 
 				_rescaling.OnDataBoundsChanged(xorg, xend);
-				e = null;
+				e = EventArgs.Empty;
 				return false;
 			}
 			else if (object.ReferenceEquals(sender, _rescaling)) // Rescaling has changed
