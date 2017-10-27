@@ -667,7 +667,7 @@ namespace Altaxo.Data
 			else
 			{
 				var dc = table.DataColumns;
-				int rows = participatingColumns.Select(i => dc[i].Count).MinOrDefault(0);
+				int rows = participatingColumns.Select(i => dc[i].Count).MaxOrDefault(0);
 
 				result.AddRange(0, rows);
 			}
