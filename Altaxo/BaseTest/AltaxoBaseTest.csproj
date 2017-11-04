@@ -167,6 +167,7 @@
     <Compile Include="Data\DoubleColumn_Test.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Geometry\TestMath2D.cs" />
     <Compile Include="Graph\CS\G2DCartesicCoordinateSystem_Test.cs" />
     <Compile Include="Graph\Gdi\Plot\Styles\ScatterSymbols\TestSquare.cs" />
     <Compile Include="Graph\Graph3D\Camera\TestPerspectiveCamera.cs" />

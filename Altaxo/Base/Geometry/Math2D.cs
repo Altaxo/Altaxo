@@ -128,5 +128,156 @@ namespace Altaxo.Geometry
 			}
 			return false;
 		}
+
+		/// <summary>
+		/// Calculates the area of a closed polygons. The polygon points are given in <paramref name="points"/>.
+		/// The result is positive if, in a cartesic coordinate system with x to the right and y to the top, the polygon points are circulating counterclockwise around the enclosed area.
+		/// Otherwise, the result is negative.
+		/// </summary>
+		/// <param name="points">The polygon points. There is no need to repeat the first point at the end of the enumeration.</param>
+		/// <returns>The polygon area (in a cartesic coordinate system: positive for a counterclockwise oriented polygon, negative for a clockwise oriented polygon)</returns>
+		public static double PolygonArea(IEnumerable<PointD2D> points)
+		{
+			bool isFirst = true;
+			PointD2D firstPoint = default(PointD2D);
+			PointD2D prevPoint = default(PointD2D);
+			double area = 0;
+			foreach (var point in points)
+			{
+				if (isFirst)
+				{
+					firstPoint = prevPoint = point;
+					isFirst = false;
+					continue;
+				}
+				// we substract the first point from all points in order to improve accuracy of calculation
+				area += (prevPoint.X - firstPoint.X) * (point.Y - firstPoint.Y) - (prevPoint.Y - firstPoint.Y) * (point.X - firstPoint.X);
+				prevPoint = point;
+			}
+			return 0.5 * area;
+		}
+
+		/// <summary>
+		/// A very general flood fill algorithm (4-Neighbour algorithm).
+		/// It tests iteratively the 4 neighbouring pixels.
+		/// </summary>
+		/// <param name="IsPixelToBeFilled">
+		/// Function that evaluated if the pixel fulfills a condition so that it should be set to a new value.
+		/// Args are the x and y pixel coordinates,
+		/// the return value is true if the pixel should be set to a new value.
+		/// </param>
+		/// <param name="SetPixelToNewValue">
+		/// Action to set the pixel to a new value.
+		/// Args are the x and y coordinates of the pixel.
+		/// Since the pixel's value is never tested again, there is no need to really set the pixel's value.
+		/// Thus, this action can also be used to count the pixels that fulfill the condition given in <paramref name="IsPixelToBeFilled"/>, etc.
+		/// </param>
+		/// <param name="xStart">The start pixel's x coordinate.</param>
+		/// <param name="yStart">The start pixel's x coordinate.</param>
+		/// <param name="xLower">The lowest possible value for a pixel's x coordinate.</param>
+		/// <param name="yLower">The lowest possible value for a pixel's y coordinate</param>
+		/// <param name="xSize">The x size. The x coordinate can take values from <paramref name="xStart"/> to <paramref name="xStart"/>+<paramref name="xSize"/>-1.</param>
+		/// <param name="ySize">The y size. The y coordinate can take values from <paramref name="yStart"/> to <paramref name="yStart"/>+<paramref name="ySize"/>-1.</param>
+		public static void FloodFill_4Neighbour(Func<int, int, bool> IsPixelToBeFilled, Action<int, int> SetPixelToNewValue, int xStart, int yStart, int xLower, int yLower, int xSize, int ySize)
+		{
+			int xUpper = xLower + xSize;
+			int yUpper = yLower + ySize;
+
+			// Test arguments
+			if (null == IsPixelToBeFilled)
+				throw new ArgumentNullException(nameof(IsPixelToBeFilled));
+			if (null == SetPixelToNewValue)
+				throw new ArgumentNullException(nameof(SetPixelToNewValue));
+			if (!(xLower < xUpper))
+				throw new ArgumentException("xSize should be >0", nameof(xSize));
+			if (!(yLower < yUpper))
+				throw new ArgumentException("ySize should be >0", nameof(ySize));
+			if (!(xLower <= xStart && xStart < xUpper))
+				throw new ArgumentException("xStart should be >= xLower and < xLower+xSize", nameof(xStart));
+			if (!(yLower <= yStart && yStart < yUpper))
+				throw new ArgumentException("yStart should be >= yLower and < yLower+ySize", nameof(xStart));
+
+			FloodFill_4Neighbour(
+				xStart, yStart,
+				IsPixelToBeFilled,
+				SetPixelToNewValue,
+				(x, y) => (x >= xLower && y >= yLower && x < xUpper && y < yUpper)
+				);
+		}
+
+		/// <summary>
+		/// A very general flood fill algorithm (4-Neighbour algorithm).
+		/// It tests iteratively the 4 neighbouring pixels.
+		/// </summary>
+		/// <param name="IsPixelToBeFilled">
+		/// Function that evaluated if the pixel fulfills a condition so that it should be set to a new value.
+		/// Args are the x and y pixel coordinates,
+		/// the return value is true if the pixel should be set to a new value.
+		/// </param>
+		/// <param name="SetPixelToNewValue">
+		/// Action to set the pixel to a new value.
+		/// Args are the x and y coordinates of the pixel.
+		/// Since the pixel's value is never tested again, there is no need to really set the pixel's value.
+		/// Thus, this action can also be used to count the pixels that fulfill the condition given in <paramref name="IsPixelToBeFilled"/>, etc.
+		/// </param>
+		/// <param name="xStart">The start pixel's x coordinate.</param>
+		/// <param name="yStart">The start pixel's x coordinate.</param>
+		/// <param name="IsPixelCoordinateValid">Tests the pixel coordinate to find out if it is in a valid range. Params are x, y of the pixel coordinate. The return value is true if the coordinate is valid, i.e. the pixel should be processed; otherwise, it is false.</param>
+		public static void FloodFill_4Neighbour(int xStart, int yStart, Func<int, int, bool> IsPixelToBeFilled, Action<int, int> SetPixelToNewValue, Func<int, int, bool> IsPixelCoordinateValid)
+		{
+			// Test arguments
+			if (null == IsPixelToBeFilled)
+				throw new ArgumentNullException(nameof(IsPixelToBeFilled));
+			if (null == SetPixelToNewValue)
+				throw new ArgumentNullException(nameof(SetPixelToNewValue));
+			if (null == IsPixelCoordinateValid)
+				throw new ArgumentNullException(nameof(IsPixelCoordinateValid));
+			if (!IsPixelCoordinateValid(xStart, yStart))
+				throw new ArgumentException("Coordinates of the start pixel are not valid!");
+
+			var pixelsConsidered = new HashSet<(int, int)>();
+			var pixelsToProcess = new Stack<(int, int)>();
+
+			pixelsConsidered.Add((xStart, yStart));
+			pixelsToProcess.Push((xStart, yStart));
+
+			(int x, int y) newPixel = (0, 0);
+			while (pixelsToProcess.Count > 0)
+			{
+				var (x, y) = pixelsToProcess.Pop();
+				if (IsPixelToBeFilled(x, y))
+				{
+					SetPixelToNewValue(x, y);
+
+					newPixel = (x, y + 1);
+					if (IsPixelCoordinateValid(newPixel.x, newPixel.y) && !pixelsConsidered.Contains(newPixel))
+					{
+						pixelsToProcess.Push(newPixel);
+						pixelsConsidered.Add(newPixel);
+					}
+
+					newPixel = (x, y - 1);
+					if (IsPixelCoordinateValid(newPixel.x, newPixel.y) && !pixelsConsidered.Contains(newPixel))
+					{
+						pixelsToProcess.Push(newPixel);
+						pixelsConsidered.Add(newPixel);
+					}
+
+					newPixel = (x + 1, y);
+					if (IsPixelCoordinateValid(newPixel.x, newPixel.y) && !pixelsConsidered.Contains(newPixel))
+					{
+						pixelsToProcess.Push(newPixel);
+						pixelsConsidered.Add(newPixel);
+					}
+
+					newPixel = (x - 1, y);
+					if (IsPixelCoordinateValid(newPixel.x, newPixel.y) && !pixelsConsidered.Contains(newPixel))
+					{
+						pixelsToProcess.Push(newPixel);
+						pixelsConsidered.Add(newPixel);
+					}
+				}
+			}
+		}
 	}
 }
