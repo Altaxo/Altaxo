@@ -95,9 +95,9 @@ namespace BaseTest.Geometry
 
 			int pixelsWith0 = 0;
 			Math2D.FloodFill_4Neighbour(
-				(x, y) => field[y][x] == 0,
-				(x, y) => ++pixelsWith0,
-				5, 5,
+				5,
+				5,
+				(x, y) => field[y][x] == 0, (x, y) => ++pixelsWith0,
 				0, 0, 10, 10
 				);
 

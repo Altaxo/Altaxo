@@ -161,6 +161,8 @@ namespace Altaxo.Geometry
 		/// A very general flood fill algorithm (4-Neighbour algorithm).
 		/// It tests iteratively the 4 neighbouring pixels.
 		/// </summary>
+		/// <param name="xStart">The start pixel's x coordinate.</param>
+		/// <param name="yStart">The start pixel's x coordinate.</param>
 		/// <param name="IsPixelToBeFilled">
 		/// Function that evaluated if the pixel fulfills a condition so that it should be set to a new value.
 		/// Args are the x and y pixel coordinates,
@@ -172,13 +174,11 @@ namespace Altaxo.Geometry
 		/// Since the pixel's value is never tested again, there is no need to really set the pixel's value.
 		/// Thus, this action can also be used to count the pixels that fulfill the condition given in <paramref name="IsPixelToBeFilled"/>, etc.
 		/// </param>
-		/// <param name="xStart">The start pixel's x coordinate.</param>
-		/// <param name="yStart">The start pixel's x coordinate.</param>
 		/// <param name="xLower">The lowest possible value for a pixel's x coordinate.</param>
 		/// <param name="yLower">The lowest possible value for a pixel's y coordinate</param>
 		/// <param name="xSize">The x size. The x coordinate can take values from <paramref name="xStart"/> to <paramref name="xStart"/>+<paramref name="xSize"/>-1.</param>
 		/// <param name="ySize">The y size. The y coordinate can take values from <paramref name="yStart"/> to <paramref name="yStart"/>+<paramref name="ySize"/>-1.</param>
-		public static void FloodFill_4Neighbour(Func<int, int, bool> IsPixelToBeFilled, Action<int, int> SetPixelToNewValue, int xStart, int yStart, int xLower, int yLower, int xSize, int ySize)
+		public static void FloodFill_4Neighbour(int xStart, int yStart, Func<int, int, bool> IsPixelToBeFilled, Action<int, int> SetPixelToNewValue, int xLower, int yLower, int xSize, int ySize)
 		{
 			int xUpper = xLower + xSize;
 			int yUpper = yLower + ySize;
