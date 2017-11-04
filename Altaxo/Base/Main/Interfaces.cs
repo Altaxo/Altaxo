@@ -77,6 +77,14 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <returns>The suspend token. To resume events on this object, you have to dispose the returned suspend token.</returns>
 		ISuspendToken SuspendGetToken();
+
+		/// <summary>
+		/// Gets a value indicating whether this instance is suspended.
+		/// </summary>
+		/// <value>
+		/// <c>true</c> if this instance is suspended; otherwise, <c>false</c>.
+		/// </value>
+		bool IsSuspended { get; }
 	}
 
 	/// <summary>ChangedEventArgs can be used by originators of a Changed event to preserve the originator of the Changed event, even if

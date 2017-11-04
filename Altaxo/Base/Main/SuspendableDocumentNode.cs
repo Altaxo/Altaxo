@@ -980,6 +980,34 @@ namespace Altaxo.Main
 			return problemsDetected;
 		}
 
+		/// <summary>
+		/// Reports all suspended nodes in the document tree.
+		/// </summary>
+		/// <param name="node">The root node.</param>
+		/// <returns></returns>
+		public static bool ReportSuspendedNodesProblems(IDocumentLeafNode node)
+		{
+			var stb = new StringBuilder();
+
+			foreach (var child in Altaxo.Collections.TreeNodeExtensions.TakeFromFirstLeavesToHere(node))
+			{
+				if (child.IsSuspended)
+				{
+					stb.AppendFormat("Node {0} (type: {1}) is suspended!", AbsoluteDocumentPath.GetPathString(child, int.MaxValue), node.GetType());
+				}
+			}
+
+			if (stb.Length != 0)
+			{
+				Current.Console.WriteLine();
+				Current.Console.WriteLine("Some problems with suspended nodes were detected:");
+				Current.Console.WriteLine(stb.ToString());
+				return true;
+			}
+
+			return false;
+		}
+
 #if DEBUG && TRACEDOCUMENTNODES
 
 		public static bool ReportChildListProblems()

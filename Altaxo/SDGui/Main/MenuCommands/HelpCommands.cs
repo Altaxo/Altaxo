@@ -120,6 +120,7 @@ namespace Altaxo.Main.Commands
 		{
 			GC.Collect();
 			Altaxo.Main.SuspendableDocumentNode.ReportParentChildAndDisposedProblems(Current.Project, true);
+			Altaxo.Main.SuspendableDocumentNode.ReportSuspendedNodesProblems(Current.Project);
 		}
 	}
 

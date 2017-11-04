@@ -62,6 +62,8 @@ namespace Altaxo.Main
 				throw new InvalidOperationException("This is a static instance of DocumentNode, intended for infrastructural purposes only.");
 			}
 
+			public bool IsSuspended { get { return false; } }
+
 			protected void OnChanged()
 			{
 				Changed?.Invoke(this, EventArgs.Empty);

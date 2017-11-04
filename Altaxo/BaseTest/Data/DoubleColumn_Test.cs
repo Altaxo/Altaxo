@@ -291,6 +291,14 @@ namespace AltaxoTest.Data
 				throw new NotImplementedException();
 			}
 
+			public bool IsSuspended
+			{
+				get
+				{
+					throw new NotImplementedException();
+				}
+			}
+
 			public Altaxo.Main.IDocumentNode ParentObject
 			{
 				get
