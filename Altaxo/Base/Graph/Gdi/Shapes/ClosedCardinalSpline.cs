@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Geometry;
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -203,9 +204,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 			}
 		}
 
-		public void SetPoint(int idx, PointD2D newPos)
+		public void SetPoint(int idx, PointD2D value)
 		{
-			_curvePoints[idx] = newPos;
+			if (!(_curvePoints[idx] == value))
+			{
+				_curvePoints[idx] = value;
+				EhSelfChanged(EventArgs.Empty);
+			}
 		}
 
 		public GraphicsPath GetSelectionPath()
@@ -353,6 +358,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			private int _pointNumber;
 			private PointD2D _offset;
+			private ISuspendToken _suspendToken;
 
 			public ClosedCardinalSplinePathNodeGripHandle(IHitTestObject parent, int pointNr, PointD2D gripCenter, double gripRadius)
 				: base(parent, new PointD2D(0, 0), gripCenter, gripRadius)
@@ -366,6 +372,9 @@ namespace Altaxo.Graph.Gdi.Shapes
 				newPosition = _parent.Transformation.InverseTransformPoint(newPosition);
 				var obj = (ClosedCardinalSpline)GraphObject;
 				newPosition = obj._transformation.InverseTransformPoint(newPosition);
+
+				if (null == _suspendToken)
+					_suspendToken = obj.SuspendGetToken();
 				obj.SetPoint(_pointNumber, newPosition - _offset);
 			}
 
@@ -382,9 +391,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 					obj.UpdateTransformationMatrix();
 					PointD2D newOtherPointCoord = obj._transformation.TransformPoint(obj._curvePoints[otherPointIndex] + obj.Location.AbsoluteVectorPivotToLeftUpper);
 					obj.ShiftPosition(oldOtherPointCoord - newOtherPointCoord);
-
-					token.Resume();
 				}
+
+				_suspendToken?.Dispose();
+				_suspendToken = null;
 
 				return false;
 			}

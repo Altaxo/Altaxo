@@ -23,6 +23,8 @@
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="2">
 			<Button Content="Copy" Click="EhCopyCurvePoints" />
 			<Button Content="Paste" Margin="8,0,0,0" Click="EhPasteCurvePoints" />
+			<Button Content="Copy Physical" Margin="8,0,0,0" Click="EhCopyCurvePointsAsPhysical" ToolTip="Copy the spline points in physical coordinates" />
+			<Button Content="Copy Logical" Margin="8,0,0,0" Click="EhCopyCurvePointsAsLogical" ToolTip="Copy the spline points in logical coordinates" />
 		</StackPanel>
 
 		<Label Grid.Column="0" Grid.Row="2" Content="Curve points:" />

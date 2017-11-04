@@ -24,6 +24,7 @@
 
 using Altaxo.Geometry;
 using Altaxo.Graph;
+using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Units;
 using System;
 using System.Collections.Generic;
@@ -40,18 +41,26 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
 		event Action CurvePointsCopyTriggered;
 
+		event Action CurvePointsCopyAsPhysicalTriggered;
+
+		event Action CurvePointsCopyAsLogicalTriggered;
+
 		event Action CurvePointsPasteTriggered;
 	}
 
 	public class CardinalSplinePointsController
 	{
 		private ICardinalSplinePointsView _view;
+		private GraphicBase _doc;
 
-		public CardinalSplinePointsController(ICardinalSplinePointsView view, List<PointD2D> curvePoints, double tension)
+		public CardinalSplinePointsController(ICardinalSplinePointsView view, List<PointD2D> curvePoints, double tension, GraphicBase documentNode)
 		{
 			_view = view;
+			_doc = documentNode;
 
 			_view.CurvePointsCopyTriggered += new Action(EhCurvePointsCopyTriggered);
+			_view.CurvePointsCopyAsPhysicalTriggered += new Action(EhCurvePointsCopyPhysicalTriggered);
+			_view.CurvePointsCopyAsLogicalTriggered += new Action(EhCurvePointsCopyLogicalTriggered);
 			_view.CurvePointsPasteTriggered += new Action(EhCurvePointsPasteTriggered);
 
 			_view.Tension = tension;
@@ -120,9 +129,85 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 				ycol[i] = new DimensionfulQuantity(points[i].Y, Units.Length.Point.Instance).AsValueIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 
+			PutXYColumnsToClipboard(xcol, ycol);
+		}
+
+		private void EhCurvePointsCopyPhysicalTriggered()
+		{
+			var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_doc);
+
+			if (null == layer)
+			{
+				Current.Gui.ErrorMessageBox("Could not find a parent X-Y layer. Thus, the calculation of physical coordinates is not possible!");
+				return;
+			}
+
+			var cachedTransformation = _doc.TransformationFromHereToParent(layer);
+
+			var points = _view.CurvePoints;
+
+			Altaxo.Data.DoubleColumn xcol = new Altaxo.Data.DoubleColumn();
+			Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn();
+			for (int i = 0; i < points.Count; i++)
+			{
+				var pt = cachedTransformation.TransformPoint(points[i]);
+				if (layer.CoordinateSystem.LayerToLogicalCoordinates(pt.X, pt.Y, out var r))
+				{
+					var x = layer.XAxis.NormalToPhysicalVariant(r.RX);
+					var y = layer.YAxis.NormalToPhysicalVariant(r.RY);
+					xcol[i] = x;
+					ycol[i] = y;
+				}
+				else
+				{
+					xcol[i] = ycol[i] = double.NaN;
+				}
+			}
+
+			PutXYColumnsToClipboard(xcol, ycol);
+		}
+
+		private void EhCurvePointsCopyLogicalTriggered()
+		{
+			var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_doc);
+
+			if (null == layer)
+			{
+				Current.Gui.ErrorMessageBox("Could not find a parent X-Y layer. Thus, the calculation of logical coordinates is not possible!");
+				return;
+			}
+
+			var cachedTransformation = _doc.TransformationFromHereToParent(layer);
+			var points = _view.CurvePoints;
+
+			Altaxo.Data.DoubleColumn xcol = new Altaxo.Data.DoubleColumn();
+			Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn();
+			for (int i = 0; i < points.Count; i++)
+			{
+				var pt = cachedTransformation.TransformPoint(points[i]);
+				if (layer.CoordinateSystem.LayerToLogicalCoordinates(pt.X, pt.Y, out var r))
+				{
+					var x = r.RX;
+					var y = r.RY;
+					xcol[i] = x;
+					ycol[i] = y;
+				}
+				else
+				{
+					xcol[i] = ycol[i] = double.NaN;
+				}
+			}
+
+			PutXYColumnsToClipboard(xcol, ycol);
+		}
+
+		private static void PutXYColumnsToClipboard(Altaxo.Data.DoubleColumn xcol, Altaxo.Data.DoubleColumn ycol)
+		{
 			Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
 			tb.DataColumns.Add(xcol, "XPosition", Altaxo.Data.ColumnKind.V, 0);
 			tb.DataColumns.Add(ycol, "YPosition", Altaxo.Data.ColumnKind.V, 0);
+
+			var dao = Current.Gui.GetNewClipboardDataObject();
 			Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
 				tb, new Altaxo.Collections.AscendingIntegerCollection(),
 				new Altaxo.Collections.AscendingIntegerCollection(),

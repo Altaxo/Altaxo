@@ -43,6 +43,10 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 	{
 		public event Action CurvePointsCopyTriggered;
 
+		public event Action CurvePointsCopyAsPhysicalTriggered;
+
+		public event Action CurvePointsCopyAsLogicalTriggered;
+
 		public event Action CurvePointsPasteTriggered;
 
 		public CardinalSplinePointsControl()
@@ -140,6 +144,16 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 		{
 			if (null != CurvePointsCopyTriggered)
 				CurvePointsCopyTriggered();
+		}
+
+		private void EhCopyCurvePointsAsPhysical(object sender, RoutedEventArgs e)
+		{
+			CurvePointsCopyAsPhysicalTriggered?.Invoke();
+		}
+
+		private void EhCopyCurvePointsAsLogical(object sender, RoutedEventArgs e)
+		{
+			CurvePointsCopyAsLogicalTriggered?.Invoke();
 		}
 
 		private void EhPasteCurvePoints(object sender, RoutedEventArgs e)

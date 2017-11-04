@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 				if (null == _lineCtrl.ViewObject)
 					_lineCtrl.ViewObject = _view.LineGraphicView;
 
-				_splinePointsCtrl = new CardinalSplinePointsController(_view.SplinePointsView, _doc.CurvePoints, _doc.Tension);
+				_splinePointsCtrl = new CardinalSplinePointsController(_view.SplinePointsView, _doc.CurvePoints, _doc.Tension, _doc);
 			}
 		}
 

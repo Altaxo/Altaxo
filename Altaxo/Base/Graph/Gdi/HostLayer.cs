@@ -655,6 +655,15 @@ namespace Altaxo.Graph.Gdi
 		}
 
 		/// <summary>
+		/// Appends the transformation matrix of this instance to the matrix given in <paramref name="matrix"/>.
+		/// </summary>
+		/// <param name="matrix">The matrix to append to.</param>
+		public void PrependTransformationTo(MatrixD2D matrix)
+		{
+			matrix.PrependTransform(_transformation);
+		}
+
+		/// <summary>
 		/// Transforms a <see cref="PointD2D" /> from layer coordinates to graph (=printable area) coordinates
 		/// </summary>
 		/// <param name="layerCoordinates">The layer coordinates to convert.</param>

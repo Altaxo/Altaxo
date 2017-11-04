@@ -682,6 +682,50 @@ namespace Altaxo.Graph.Gdi.Shapes
 		}
 
 		/// <summary>
+		/// Transforms a <see cref="PointD2D" /> from our own coordinates to the coordinates of the parent.
+		/// </summary>
+		/// <param name="layerCoordinates">The own coordinates to convert.</param>
+		/// <returns>Coordinates in the parent system.</returns>
+		public PointD2D TransformCoordinatesFromHereToParent(PointD2D layerCoordinates)
+		{
+			return _transformation.TransformPoint(layerCoordinates);
+		}
+
+		/// <summary>
+		/// Transforms a <see cref="PointD2D" /> from our own coordinates to the coordinates of the parent.
+		/// </summary>
+		/// <param name="parent">The parent instance. Must be a ancestor node of this instance.</param>
+		/// <returns>Coordinates in the parent system.</returns>
+		public MatrixD2D TransformationFromHereToParent(Main.IDocumentNode parent)
+		{
+			var result = _transformation.Clone();
+
+			var node = this.ParentObject;
+			for (; ; )
+			{
+				if (object.ReferenceEquals(node, parent))
+					break;
+
+				if (null == node)
+					throw new InvalidOperationException("The parent given in the argument is not an ancestor node of this instance");
+
+				if (node is GraphicBase gb)
+				{
+					result.PrependTransform(gb._transformation);
+				}
+				else if (node is HostLayer hl)
+				{
+					hl.PrependTransformationTo(result);
+				}
+				else
+				{
+					throw new NotImplementedException("Don't know how to process node of type " + node.GetType().ToString());
+				}
+			}
+			return result;
+		}
+
+		/// <summary>
 		/// Determines whether this graphical object is compatible with the parent specified in the argument.
 		/// </summary>
 		/// <param name="parentObject">The parent object.</param>
