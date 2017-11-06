@@ -1162,6 +1162,9 @@ namespace Altaxo.Data
 			}
 
 			var table = null == _dataTable ? null : _dataTable.Document;
+			if (null == table)
+				return; // nothing to do if we can not resolve the table
+
 			int rowCount = _participatingDataRows.Count;
 			int columnCount = _participatingDataColumns.Count;
 
