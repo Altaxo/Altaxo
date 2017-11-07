@@ -387,7 +387,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 			int lylm1 = ly.Count - 1;
 
 			var vertexPoints = new PointD3D[lxl, lyl];
-			var vertexColors = new Color[lxl, lyl];
+			var isValid = new bool[lxl, lyl]; // array which stores for every point[i, j], if it is valid, to speed up calculations
 
 			PointD3D pt;
 			var zScale = gl.ZAxis;
@@ -398,27 +398,78 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 					double lz = zScale.PhysicalVariantToNormal(matrix[i, j]);
 					gl.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(lx[i], ly[j], lz), out pt);
 
+					isValid[i, j] = !pt.IsNaN;
 					vertexPoints[i, j] = pt;
-					vertexColors[i, j] = _colorProvider.GetColor(null == _colorScale ? lz : _colorScale.PhysicalVariantToNormal(matrix[i, j])); // either use the scale of the coordinate system or our own color scale
 				}
 			}
 
-			// calculate the normals
-			for (int i = 0; i < lx.Count; ++i)
+			// ------------------------------------------------------------------
+			// ------------------ Calculation of normals ------------------------
+			// (this can be laborious, if both neighboring points are invalid)
+			// ------------------------------------------------------------------
+			for (int i = 0; i < lxl; ++i)
 			{
-				for (int j = 0; j < ly.Count; ++j)
+				for (int j = 0; j < lyl; ++j)
 				{
-					var pm = vertexPoints[i, j];
-					var vec1 = vertexPoints[Math.Min(i + 1, lxlm1), j] - vertexPoints[Math.Max(i - 1, 0), j];
-					var vec2 = vertexPoints[i, Math.Min(j + 1, lylm1)] - vertexPoints[i, Math.Max(j - 1, 0)];
+					if (isValid[i, j])
+					{
+						var pm = vertexPoints[i, j];
 
-					var normal = VectorD3D.CrossProduct(vec1, vec2).Normalized;
-					double lz = null != _colorScale ? _colorScale.PhysicalVariantToNormal(matrix[i, j]) : zScale.PhysicalVariantToNormal(matrix[i, j]);
-					buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, normal.X, normal.Y, normal.Z, lz);
-					buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, -normal.X, -normal.Y, -normal.Z, lz);
+						// Strategy here: we calculate the vectors (right-left) and (upper-lower) and calculate the cross product. This is our normal vector.
+
+						// right - left
+						var vec1 = vertexPoints[(i < lxlm1 && isValid[i + 1, j]) ? i + 1 : i, j] - // right side
+												vertexPoints[(i > 0 && isValid[i - 1, j]) ? i - 1 : i, j]; // left side
+
+						if (vec1.IsEmpty) // if vector 1 is empty (because both the right _and_ the left neighbor points are invalid), then we have to try the diagonals
+						{
+							bool rightup = (i < lxlm1 && j < lylm1 && isValid[i + 1, j + 1]); // right-up neighbor valid?
+							bool leftlow = (i > 0 && j > 0 && isValid[i - 1, j - 1]); // left-lower neighbor valid?
+							var vec1a = vertexPoints[rightup ? i + 1 : i, rightup ? j + 1 : j] - // right / upper side
+												vertexPoints[leftlow ? i - 1 : i, leftlow ? j - 1 : j]; // left / lower side
+
+							bool rightlow = (i < lxlm1 && j > 0 && isValid[i + 1, j - 1]); // right-lower neighbor valid?
+							bool leftup = (i > 0 && j < lylm1 && isValid[i - 1, j + 1]); // left-upper neighbor valid?
+							var vec1b = vertexPoints[rightlow ? i + 1 : i, rightlow ? j - 1 : j] - // right / lower side
+													vertexPoints[leftup ? i - 1 : i, leftup ? j + 1 : j]; // left / upper side
+
+							vec1 = vec1a + vec1b; // if one of these two vectors is empty, it doesn't matter for the addition
+						}
+
+						// upper - lower
+						var vec2 = vertexPoints[i, (j < lylm1 && isValid[i, j + 1]) ? j + 1 : j] - // upper side
+												vertexPoints[i, (j > 0 && isValid[i, j - 1]) ? j - 1 : j]; // lower side
+
+						if (vec2.IsEmpty) // if vector 2 is empty (because both the upper _and_ the lower neighbor points are invalid, then we have to try the diagonals
+						{
+							bool rightup = (i < lxlm1 && j < lylm1 && isValid[i + 1, j + 1]); // right-up neighbor valid?
+							bool leftlow = (i > 0 && j > 0 && isValid[i - 1, j - 1]); // left-lower neighbor valid?
+							var vec2a = vertexPoints[rightup ? i + 1 : i, rightup ? j + 1 : j] - // upper side / right
+												vertexPoints[leftlow ? i - 1 : i, leftlow ? j - 1 : j]; // lower side / left
+
+							bool leftup = (i > 0 && j < lylm1 && isValid[i - 1, j + 1]); // left-upper neighbor valid?
+							bool rightlow = (i < lxlm1 && j > 0 && isValid[i + 1, j - 1]); // right-lower neighbor valid?
+							var vec2b = vertexPoints[leftup ? i - 1 : i, leftup ? j + 1 : j] - // upper side / left
+												vertexPoints[rightlow ? i + 1 : i, rightlow ? j - 1 : j]; // lower side / right
+
+							vec2 = vec2a + vec2b; // if one of these two vectors is empty, it doesn't matter for the addition
+						}
+
+						var normal = VectorD3D.CrossProduct(vec1, vec2).Normalized;
+						double lz = null != _colorScale ? _colorScale.PhysicalVariantToNormal(matrix[i, j]) : zScale.PhysicalVariantToNormal(matrix[i, j]);
+						buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, normal.X, normal.Y, normal.Z, lz);
+						buf.AddTriangleVertex(pm.X, pm.Y, pm.Z, -normal.X, -normal.Y, -normal.Z, lz);
+					}
+					else // if this point is not valid, we still add triangle vertices to keep the order of points
+					{
+						buf.AddTriangleVertex(double.NaN, double.NaN, double.NaN, double.NaN, double.NaN, double.NaN, double.NaN);
+						buf.AddTriangleVertex(double.NaN, double.NaN, double.NaN, double.NaN, double.NaN, double.NaN, double.NaN);
+					}
 				}
 			}
 
+			// now add the triangle indices
+			// we don't make the effort to sort out the invalid point, because they are suppressed anyways
 			for (int i = 0; i < lxlm1; ++i)
 			{
 				for (int j = 0; j < lylm1; ++j)
