@@ -489,7 +489,9 @@
     <Compile Include="Graph\Graph3D\Plot\Styles\ErrorBarPlotStyle.cs" />
     <Compile Include="Graph\Plot\Data\IColumnPlotData.cs" />
     <Compile Include="Graph\Plot\Data\IPlotRange.cs" />
+    <Compile Include="Graph\Plot\Data\IXYFunctionPlotData.cs" />
     <Compile Include="Graph\Plot\Data\PlotRangeCompound.cs" />
+    <Compile Include="Graph\Plot\Data\XYNonlinearFitFunctionConfidenceIntervalPlotData.cs" />
     <Compile Include="Graph\Plot\Data\XYNonlinearFitFunctionPlotData.cs" />
     <Compile Include="Graph\Plot\Groups\BarShiftStrategy3D.cs" />
     <Compile Include="Graph\Plot\Groups\BarSizePosition3DGroupStyle.cs" />
