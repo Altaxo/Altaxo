@@ -98,6 +98,8 @@
 
 	<Path name = "/Altaxo/Workbench/ToolBar/Standard">
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraph3DViewContent" action="Exclude">
+			<ToolbarItem id="Graph3DRescaleAxes" icon="Icons.16x16.RescaleAxes" tooltip="${res:XML.MainMenu.GraphMenu.RescaleAxes.Description}"
+								class="Altaxo.Graph.Graph3D.Commands.RescaleAxes" />
 			<ToolbarItem id="ViewFront" icon="Icons.16x16.ViewFront" tooltip="${res:XML.MainMenu.Graph3DMenu.ViewFront.Description}"
 				class="Altaxo.Graph.Graph3D.Commands.ViewFront" />
 			<ToolbarItem id="ViewRight" icon="Icons.16x16.ViewRight" tooltip="${res:XML.MainMenu.Graph3DMenu.ViewRight.Description}"

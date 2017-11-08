@@ -396,6 +396,22 @@ namespace Altaxo.Graph.Graph3D.Commands
 		}
 	}
 
+	/// <summary>
+	/// Handler for the toolbar item Rescale axes.
+	/// </summary>
+	public class RescaleAxes : AbstractGraph3DControllerCommand
+	{
+		public override void Run(Graph3DController ctrl)
+		{
+			ctrl.Doc.RootLayer.IsValidIndex(ctrl.CurrentLayerNumber, out var layer);
+
+			if (layer is XYZPlotLayer xyzLayer)
+			{
+				xyzLayer.OnUserRescaledAxes();
+			}
+		}
+	}
+
 	#region Camera
 
 	/// <summary>

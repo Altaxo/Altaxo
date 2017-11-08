@@ -634,8 +634,10 @@ namespace Altaxo.Graph.Graph3D
 		{
 			EhXBoundaryChangedEventFromPlotItem();
 			EhYBoundaryChangedEventFromPlotItem();
+			EhZBoundaryChangedEventFromPlotItem();
 			_scales.X.OnUserRescaled();
 			_scales.Y.OnUserRescaled();
+			_scales.Z.OnUserRescaled();
 		}
 
 		/// <summary>Gets or sets the y axis of this layer.</summary>
@@ -986,7 +988,7 @@ namespace Altaxo.Graph.Graph3D
 				EhXBoundaryChangedEventFromPlotItem();
 			if (data.HasFlag(BoundariesChangedData.YBoundariesChanged))
 				EhYBoundaryChangedEventFromPlotItem();
-			if (data.HasFlag(BoundariesChangedData.ZBoundariesChanged))
+			if (data.HasFlag(BoundariesChangedData.VBoundariesChanged) || data.HasFlag(BoundariesChangedData.ZBoundariesChanged))
 				EhZBoundaryChangedEventFromPlotItem();
 		}
 
