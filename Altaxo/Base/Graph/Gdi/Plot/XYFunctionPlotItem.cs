@@ -122,7 +122,7 @@ namespace Altaxo.Graph.Gdi.Plot
             return GetLocalDocumentNodeChildrenWithName().Concat(base.GetDocumentNodeChildrenWithName());
         }
 
-        public XYFunctionPlotItem(XYFunctionPlotData pa, G2DPlotStyleCollection ps)
+        public XYFunctionPlotItem(IXYFunctionPlotData pa, G2DPlotStyleCollection ps)
         {
             this.Data = pa;
             this.Style = ps;

@@ -35,11 +35,8 @@ namespace Altaxo.Graph.Plot.Data
     /// Summary description for XYFunctionPlotData.
     /// </summary>
     [Serializable]
-    public class XYFunctionPlotData
-        :
-        Main.SuspendableDocumentNodeWithSingleAccumulatedData<PlotItemDataChangedEventArgs>,
-        IXYFunctionPlotData,
-        Calc.IScalarFunctionDD
+    public class XYFunctionPlotData : XYFunctionPlotDataBase
+
     {
         protected Altaxo.Calc.IScalarFunctionDD _function;
 
@@ -69,6 +66,8 @@ namespace Altaxo.Graph.Plot.Data
 
         #endregion Serialization
 
+        #region Construction and Copying
+
         /// <summary>
         /// Only for derived classes and deserialization.
         /// </summary>
@@ -89,10 +88,13 @@ namespace Altaxo.Graph.Plot.Data
             CopyFrom(from);
         }
 
-        public virtual bool CopyFrom(object obj)
+        public override bool CopyFrom(object obj)
         {
             if (object.ReferenceEquals(this, obj))
                 return true;
+
+            if (!base.CopyFrom(obj))
+                return false;
 
             if (obj is XYFunctionPlotData from)
             {
@@ -105,6 +107,13 @@ namespace Altaxo.Graph.Plot.Data
             }
             return false;
         }
+
+        public override object Clone()
+        {
+            return new XYFunctionPlotData(this);
+        }
+
+        #endregion Construction and Copying
 
         protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
         {
@@ -148,152 +157,14 @@ namespace Altaxo.Graph.Plot.Data
             }
         }
 
-        #region ICloneable Members
-
-        public virtual object Clone()
-        {
-            return new XYFunctionPlotData(this);
-        }
-
-        #endregion ICloneable Members
-
         #region IScalarFunctionDD Members
 
-        public double Evaluate(double x)
+        public override double Evaluate(double x)
         {
             return _function == null ? 0 : _function.Evaluate(x);
         }
 
         #endregion IScalarFunctionDD Members
-
-        #region Changed event handling
-
-        protected override void AccumulateChangeData(object sender, EventArgs e)
-        {
-            _accumulatedEventData = PlotItemDataChangedEventArgs.Empty;
-        }
-
-        #endregion Changed event handling
-
-        private class MyPlotData
-        {
-            public double[] _xPhysical;
-            public double[] _yPhysical;
-
-            public Altaxo.Data.AltaxoVariant GetXPhysical(int originalRowIndex)
-            {
-                return _xPhysical[originalRowIndex];
-            }
-
-            public Altaxo.Data.AltaxoVariant GetYPhysical(int originalRowIndex)
-            {
-                return _yPhysical[originalRowIndex];
-            }
-        }
-
-        /// <summary>
-        /// This will create a point list out of the data, which can be used to plot the data. In order to create this list,
-        /// the function must have knowledge how to calculate the points out of the data. This will be done
-        /// by a function provided by the calling function.
-        /// </summary>
-        /// <param name="layer">The plot layer.</param>
-        /// <returns>An array of plot points in layer coordinates.</returns>
-        public Processed2DPlotData GetRangesAndPoints(
-            Gdi.IPlotArea layer)
-        {
-            const int functionPoints = 1000;
-            const double MaxRelativeValue = 1E6;
-
-            // allocate an array PointF to hold the line points
-            PointF[] ptArray = new PointF[functionPoints];
-            Processed2DPlotData result = new Processed2DPlotData();
-            MyPlotData pdata = new MyPlotData();
-            result.PlotPointsInAbsoluteLayerCoordinates = ptArray;
-            double[] xPhysArray = new double[functionPoints];
-            double[] yPhysArray = new double[functionPoints];
-            pdata._xPhysical = xPhysArray;
-            pdata._yPhysical = yPhysArray;
-            result.XPhysicalAccessor = new IndexedPhysicalValueAccessor(pdata.GetXPhysical);
-            result.YPhysicalAccessor = new IndexedPhysicalValueAccessor(pdata.GetYPhysical);
-
-            // double xorg = layer.XAxis.Org;
-            // double xend = layer.XAxis.End;
-            // Fill the array with values
-            // only the points where x and y are not NaNs are plotted!
-
-            int i, j;
-
-            bool bInPlotSpace = true;
-            int rangeStart = 0;
-            PlotRangeList rangeList = new PlotRangeList();
-            result.RangeList = rangeList;
-            Gdi.G2DCoordinateSystem coordsys = layer.CoordinateSystem;
-
-            var xaxis = layer.XAxis;
-            var yaxis = layer.YAxis;
-            if (xaxis == null || yaxis == null)
-                return null;
-
-            for (i = 0, j = 0; i < functionPoints; i++)
-            {
-                double x_rel = ((double)i) / (functionPoints - 1);
-                var x_variant = xaxis.NormalToPhysicalVariant(x_rel);
-                double x = x_variant.ToDouble();
-                double y = Evaluate(x);
-
-                if (Double.IsNaN(x) || Double.IsNaN(y))
-                {
-                    if (!bInPlotSpace)
-                    {
-                        bInPlotSpace = true;
-                        rangeList.Add(new PlotRange(rangeStart, j));
-                    }
-                    continue;
-                }
-
-                // double x_rel = layer.XAxis.PhysicalToNormal(x);
-                double y_rel = yaxis.PhysicalVariantToNormal(y);
-
-                // chop relative values to an range of about -+ 10^6
-                if (y_rel > MaxRelativeValue)
-                    y_rel = MaxRelativeValue;
-                if (y_rel < -MaxRelativeValue)
-                    y_rel = -MaxRelativeValue;
-
-                // after the conversion to relative coordinates it is possible
-                // that with the choosen axis the point is undefined
-                // (for instance negative values on a logarithmic axis)
-                // in this case the returned value is NaN
-                double xcoord, ycoord;
-                if (coordsys.LogicalToLayerCoordinates(new Logical3D(x_rel, y_rel), out xcoord, out ycoord))
-                {
-                    if (bInPlotSpace)
-                    {
-                        bInPlotSpace = false;
-                        rangeStart = j;
-                    }
-                    xPhysArray[j] = x;
-                    yPhysArray[j] = y;
-                    ptArray[j].X = (float)xcoord;
-                    ptArray[j].Y = (float)ycoord;
-                    j++;
-                }
-                else
-                {
-                    if (!bInPlotSpace)
-                    {
-                        bInPlotSpace = true;
-                        rangeList.Add(new PlotRange(rangeStart, j));
-                    }
-                }
-            } // end for
-            if (!bInPlotSpace)
-            {
-                bInPlotSpace = true;
-                rangeList.Add(new PlotRange(rangeStart, j)); // add the last range
-            }
-            return result;
-        }
     }
 
     #endregion XYFunctionPlotData
