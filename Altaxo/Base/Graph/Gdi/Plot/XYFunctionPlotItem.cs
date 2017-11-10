@@ -92,8 +92,8 @@ namespace Altaxo.Graph.Gdi.Plot
 
             public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
             {
-                XYFunctionPlotData pa = (XYFunctionPlotData)info.GetValue("Data", null);
-                G2DPlotStyleCollection ps = (G2DPlotStyleCollection)info.GetValue("Style", null);
+                var pa = (IXYFunctionPlotData)info.GetValue("Data", null);
+                var ps = (G2DPlotStyleCollection)info.GetValue("Style", null);
 
                 if (null == o)
                 {

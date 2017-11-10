@@ -36,6 +36,7 @@ using System;
 using Altaxo.Data.Transformations;
 using Altaxo.Main.Services;
 using System.Threading;
+using System.Linq;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -43,6 +44,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public interface INonlinearFitView
     {
+        bool ShowUnusedDependentVariables { get; set; }
+
+        bool ShowConfidenceBands { get; set; }
+
+        double ConfidenceLevel { get; set; }
+
         INonlinearFitViewEventSink Controller { get; set; }
 
         void SetParameterControl(object control);
@@ -103,8 +110,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         private Common.EquallySpacedInterval _generationInterval;
         private Common.EquallySpacedIntervalController _generationIntervalController;
         private double _chiSquare;
+        private double _sigmaSquare;
         private int _numberOfFitPoints;
         private double[] _covarianceMatrix; // length of covariance matrix is always a square number
+
+        private bool _showUnusedDependentVariables;
+        private bool _showConfidenceBands;
+        private double _confidenceLevel = 0.95;
 
         /// <summary>
         /// If a fit was made, new function plot items with a new Guid identifier are created. This is the identifier of the old function plot items.
@@ -162,6 +174,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
                 _view.SetParameterControl(_parameterController.ViewObject);
                 _view.SetSelectFunctionControl(_funcselController.ViewObject);
                 _view.SetFitEnsembleControl(_fitEnsembleController.ViewObject);
+                _view.ConfidenceLevel = _confidenceLevel;
+                _view.ShowConfidenceBands = _showConfidenceBands;
+                _view.ShowUnusedDependentVariables = _showUnusedDependentVariables;
             }
         }
 
@@ -196,9 +211,27 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         public void EhView_DoFit()
         {
+            _showConfidenceBands = _view.ShowConfidenceBands;
+            if (_showConfidenceBands)
+            {
+                var level = _view.ConfidenceLevel;
+                if (!(level > 0 && level < 1))
+                {
+                    Current.Gui.ErrorMessageBox("Confidence level must be > 0 and < 1");
+                    return;
+                }
+                _confidenceLevel = level;
+            }
+            _showUnusedDependentVariables = _view.ShowUnusedDependentVariables;
+
             if (true == this._parameterController.Apply(false))
             {
-                //        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
+                // test if there are any parameters to vary
+                if (null == _doc.CurrentParameters.Where(x => x.Vary).FirstOrDefault())
+                {
+                    Current.Gui.ErrorMessageBox("You should select at least one parameter to vary!");
+                    return;
+                }
 
                 LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
@@ -208,6 +241,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
                 if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
                 {
                     this._chiSquare = fitAdapter.ResultingChiSquare;
+                    this._sigmaSquare = fitAdapter.ResultingSigmaSquare;
                     this._numberOfFitPoints = fitAdapter.NumberOfData;
                     this._covarianceMatrix = (double[])fitAdapter.CovarianceMatrix.Clone();
 
@@ -302,8 +336,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
                     fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
 
-                    //_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
-                    //_doc.FitEnsemble.DistributeParameters();
+                    // remove covariance matrix because we don't have covariances now
+                    _covarianceMatrix = null;
 
                     OnAfterFittingStep();
                 }
@@ -485,10 +519,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
                 }
 
                 if (pi is XYFunctionPlotItem fpi &&
-                    fpi.Data is XYNonlinearFitFunctionConfidenceIntervalPlotData fcPlotData &&
+                    fpi.Data is XYNonlinearFitFunctionConfidenceBandPlotData fcPlotData &&
                     fcPlotData.FitDocumentIdentifier == _previousFitDocumentIdentifier)
                 {
-                    oldItemsDictionary.Add((fcPlotData.FitElementIndex, fcPlotData.DependentVariableIndex, fcPlotData.IsLowerConfidenceBand ? -1 : 1), fpi);
+                    oldItemsDictionary.Add((fcPlotData.FitElementIndex, fcPlotData.DependentVariableIndex, fcPlotData.IsLowerBand ? -1 : 1), fpi);
                 }
 
                 if (pi is XYColumnPlotItem columnPlotItem)
@@ -511,6 +545,21 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
                 for (int idxDependentVariable = 0; idxDependentVariable < fitEle.NumberOfDependentVariables; idxDependentVariable++, funcNumber++)
                 {
                     oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, 0), out var oldPlotItem);
+
+                    // if unused variables should not be shown, we remove them from the plot item collection
+                    if (!_showUnusedDependentVariables && null == fitEle.DependentVariables(idxDependentVariable))
+                    {
+                        if (null != oldPlotItem)
+                            oldPlotItem.ParentCollection.Remove(oldPlotItem);
+                        if (oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, -1), out var oldPlotItemLowerConfBand))
+                            oldPlotItemLowerConfBand.ParentCollection.Remove(oldPlotItemLowerConfBand);
+                        if (oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, +1), out var oldPlotItemUpperConfBand))
+                            oldPlotItemUpperConfBand.ParentCollection.Remove(oldPlotItemUpperConfBand);
+
+                        continue;
+                    }
+
+                    // Plot style for the new item
                     var newPlotStyle = oldPlotItem?.Style.Clone() ?? new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext());
 
                     // get the transformation for the plot item
@@ -528,14 +577,21 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
                     }
 
                     // Plot items for confidence intervals
-                    if (true && _covarianceMatrix != null)
+                    if (_showConfidenceBands && _covarianceMatrix != null)
                     {
                         { // generate new item for the lower confidence band
                             oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, -1), out var oldPlotItemLowerConfBand);
-                            var newPlotStyleLowerConfBand = oldPlotItemLowerConfBand?.Style.Clone() ?? new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext());
+                            var newPlotStyleLowerConfBand = oldPlotItemLowerConfBand?.Style.Clone();
+                            if (null == newPlotStyleLowerConfBand)
+                            {
+                                newPlotStyleLowerConfBand = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext());
+                                newPlotStyleLowerConfBand.Styles.OfType<LinePlotStyle>().First().LinePen.DashPattern = Altaxo.Drawing.DashPatterns.DashDot.Instance;
+                            }
 
-                            var newPlotDataLowerConfBand = new XYNonlinearFitFunctionConfidenceIntervalPlotData(
+                            var newPlotDataLowerConfBand = new XYNonlinearFitFunctionConfidenceBandPlotData(
+                                false,
                                 true, // lower confidence band
+                                _confidenceLevel,
                                 newFitDocumentIdentifier,
                                 _doc,
                                 idxFitEnsemble,
@@ -544,6 +600,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
                                 0,
                                 functionIndepVarPlotItemTransformation,
                                 _numberOfFitPoints,
+                                _sigmaSquare,
                                 _covarianceMatrix
                                 );
                             var newPlotItemLowerConfBand = new XYFunctionPlotItem(newPlotDataLowerConfBand, newPlotStyleLowerConfBand);
@@ -556,10 +613,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
                         { // generate new item for the upper confidence band
                             oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, +1), out var oldPlotItemUpperConfBand);
-                            var newPlotStyleUpperConfBand = oldPlotItemUpperConfBand?.Style.Clone() ?? new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext());
+                            var newPlotStyleUpperConfBand = oldPlotItemUpperConfBand?.Style.Clone();
+                            if (null == newPlotStyleUpperConfBand)
+                            {
+                                newPlotStyleUpperConfBand = new G2DPlotStyleCollection(LineScatterPlotStyleKind.Line, xylayer.GetPropertyContext());
+                                newPlotStyleUpperConfBand.Styles.OfType<LinePlotStyle>().First().LinePen.DashPattern = Altaxo.Drawing.DashPatterns.DashDot.Instance;
+                            }
 
-                            var newPlotDataUpperConfBand = new XYNonlinearFitFunctionConfidenceIntervalPlotData(
+                            var newPlotDataUpperConfBand = new XYNonlinearFitFunctionConfidenceBandPlotData(
+                                false, // confidence band
                                 false, // upper confidence band
+                                _confidenceLevel,
                                 newFitDocumentIdentifier,
                                 _doc,
                                 idxFitEnsemble,
@@ -568,6 +632,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
                                 0,
                                 functionIndepVarPlotItemTransformation,
                                 _numberOfFitPoints,
+                                _sigmaSquare,
                                 _covarianceMatrix
                                 );
                             var newPlotItemUpperConf = new XYFunctionPlotItem(newPlotDataUpperConfBand, newPlotStyleUpperConfBand);
@@ -577,6 +642,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
                             else
                                 xylayer.PlotItems.Add(newPlotItemUpperConf);
                         }
+                    }
+                    else // do not show confidence bands, thus we delete them here
+                    {
+                        oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, -1), out var oldPlotItemLowerConfBand);
+                        oldItemsDictionary.TryGetValue((idxFitEnsemble, idxDependentVariable, +1), out var oldPlotItemUpperConfBand);
+
+                        if (null != oldPlotItemLowerConfBand)
+                            oldPlotItemLowerConfBand.ParentCollection.Remove(oldPlotItemLowerConfBand);
+                        if (null != oldPlotItemUpperConfBand)
+                            oldPlotItemUpperConfBand.ParentCollection.Remove(oldPlotItemUpperConfBand);
                     }
 
                     // New plot item for fit function

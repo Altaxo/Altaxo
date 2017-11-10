@@ -492,7 +492,7 @@
     <Compile Include="Graph\Plot\Data\IXYFunctionPlotData.cs" />
     <Compile Include="Graph\Plot\Data\PlotRangeCompound.cs" />
     <Compile Include="Graph\Plot\Data\XYFunctionPlotDataBase.cs" />
-    <Compile Include="Graph\Plot\Data\XYNonlinearFitFunctionConfidenceIntervalPlotData.cs" />
+    <Compile Include="Graph\Plot\Data\XYNonlinearFitFunctionConfidenceBandPlotData.cs" />
     <Compile Include="Graph\Plot\Data\XYNonlinearFitFunctionPlotData.cs" />
     <Compile Include="Graph\Plot\Groups\BarShiftStrategy3D.cs" />
     <Compile Include="Graph\Plot\Groups\BarSizePosition3DGroupStyle.cs" />

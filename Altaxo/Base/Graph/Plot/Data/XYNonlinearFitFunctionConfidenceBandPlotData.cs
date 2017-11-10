@@ -38,7 +38,7 @@ namespace Altaxo.Graph.Plot.Data
     /// Summary description for XYFunctionPlotData.
     /// </summary>
     [Serializable]
-    public class XYNonlinearFitFunctionConfidenceIntervalPlotData : XYFunctionPlotDataBase
+    public class XYNonlinearFitFunctionConfidenceBandPlotData : XYFunctionPlotDataBase
     {
         /// <summary>
         /// A Guid string that is identical for all fit function elements with the same fit document.
@@ -52,24 +52,44 @@ namespace Altaxo.Graph.Plot.Data
         private int _fitElementIndex;
 
         /// <summary>
+        /// Index of the the independent variable of the fit element that is shown in this plot item.
+        /// </summary>
+        private int _independentVariableIndex;
+
+        private IVariantToVariantTransformation _independentVariableTransformation;
+
+        /// <summary>
         /// Index of the the dependent variable of the fit element that is shown in this plot item.
         /// </summary>
         private int _dependentVariableIndex;
 
-        /// <summary>
-        /// If false, this function represents the upper confidence interval, if true, the lower confidence interval.
-        /// </summary>
-        public bool IsLowerConfidenceBand { get; protected set; }
-
-        /// <summary>
-        /// The covariance matrix of the fit parameters, multiplied with sigma².
-        /// </summary>
-        private double[,] _covarianceMatrix;
+        private IVariantToVariantTransformation _dependentVariableTransformation;
 
         /// <summary>
         /// The number of fit points. Used to calculate the quantile of the student's distribution.
         /// </summary>
         private int _numberOfFitPoints;
+
+        private double _sigmaSquare;
+
+        /// <summary>
+        /// The covariance matrix of the fit parameters.
+        /// </summary>
+        private double[,] _covarianceMatrix;
+
+        /// <summary>
+        /// If false, this function represents the upper confidence interval, if true, the lower confidence interval.
+        /// </summary>
+        public bool IsLowerBand { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is prediction band. If it is a prediction band, then the value of sigmaSquare
+        /// is added to the confidence band.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is prediction band; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsPredictionBand { get; protected set; }
 
         private double _confidenceLevel = 0.95;
 
@@ -93,23 +113,29 @@ namespace Altaxo.Graph.Plot.Data
         /// <summary>
         /// Initial version, 2017-11-09.
         /// </summary>
-        [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYNonlinearFitFunctionConfidenceIntervalPlotData), 0)]
+        [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYNonlinearFitFunctionConfidenceBandPlotData), 0)]
         private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
         {
             public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
             {
-                var s = (XYNonlinearFitFunctionConfidenceIntervalPlotData)obj;
+                var s = (XYNonlinearFitFunctionConfidenceBandPlotData)obj;
 
                 info.AddValue("FitDocumentIdentifier", s._fitDocumentIdentifier);
                 info.AddValue("FitDocument", s._fitDocument);
                 info.AddValue("FitElementIndex", s._fitElementIndex);
+                info.AddValue("IndependentVariableIndex", s._dependentVariableIndex);
+                info.AddValue("IndependentVariableTransformation", s._independentVariableTransformation);
                 info.AddValue("DependentVariableIndex", s._dependentVariableIndex);
-                info.AddValue("ConfidenceLevel", s._confidenceLevel);
-                info.AddValue("IsLowerConfidenceBand", s.IsLowerConfidenceBand);
+                info.AddValue("DependentVariableTransformation", s._dependentVariableTransformation);
                 info.AddValue("NumberOfFitPoints", s._numberOfFitPoints);
+                info.AddValue("SigmaSquare", s._sigmaSquare);
+
+                info.AddValue("IsLowerBand", s.IsLowerBand);
+                info.AddValue("IsPredictionBand", s.IsPredictionBand);
+                info.AddValue("ConfidenceLevel", s._confidenceLevel);
 
                 {
-                    info.CreateArray("CovarianceArray", s._cachedIndicesOfVaryingParametersOfThisFitElement.Length * s._cachedIndicesOfVaryingParametersOfThisFitElement.Length);
+                    info.CreateArray("Covariances", s._cachedIndicesOfVaryingParametersOfThisFitElement.Length * s._cachedIndicesOfVaryingParametersOfThisFitElement.Length);
                     foreach (var i in s._cachedIndicesOfVaryingParametersOfThisFitElement)
                         foreach (var j in s._cachedIndicesOfVaryingParametersOfThisFitElement)
                             info.AddValue("e", s._covarianceMatrix[i, j]);
@@ -119,20 +145,25 @@ namespace Altaxo.Graph.Plot.Data
 
             public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
             {
-                var s = null != o ? (XYNonlinearFitFunctionConfidenceIntervalPlotData)o : new XYNonlinearFitFunctionConfidenceIntervalPlotData();
+                var s = null != o ? (XYNonlinearFitFunctionConfidenceBandPlotData)o : new XYNonlinearFitFunctionConfidenceBandPlotData();
 
                 s._fitDocumentIdentifier = info.GetString("FitDocumentIdentifier");
                 s.ChildSetMember(ref s._fitDocument, (NonlinearFitDocument)info.GetValue("FitDocument", s));
                 s._fitElementIndex = info.GetInt32("FitElementIndex");
+                s._independentVariableIndex = info.GetInt32("IndependentVariableIndex");
+                s._independentVariableTransformation = (IVariantToVariantTransformation)info.GetValue("IndependentVariableTransformation", null);
                 s._dependentVariableIndex = info.GetInt32("DependentVariableIndex");
-                s._confidenceLevel = info.GetDouble("ConfidenceLevel");
-                s.IsLowerConfidenceBand = info.GetBoolean("IsLowerConfidenceBand");
+                s._dependentVariableTransformation = (IVariantToVariantTransformation)info.GetValue("DependentVariableTransformation", null);
                 s._numberOfFitPoints = info.GetInt32("NumberOfFitPoints");
+                s._sigmaSquare = info.GetDouble("SigmaSquare");
+                s.IsLowerBand = info.GetBoolean("IsLowerBand");
+                s.IsPredictionBand = info.GetBoolean("IsPredictionBand");
+                s._confidenceLevel = info.GetDouble("ConfidenceLevel");
 
                 s.CreateCachedMembers();
 
                 { // Deserialize covariances
-                    int count = info.OpenArray("CovarianceArray");
+                    int count = info.OpenArray("Covariances");
                     if (!(count == s._cachedIndicesOfVaryingParametersOfThisFitElement.Length * s._cachedIndicesOfVaryingParametersOfThisFitElement.Length))
                         throw new InvalidOperationException("Number of elements in covariance array does not match the number of varying parameters");
 
@@ -153,11 +184,11 @@ namespace Altaxo.Graph.Plot.Data
         /// <summary>
         /// Only for deserialization purposes.
         /// </summary>
-        protected XYNonlinearFitFunctionConfidenceIntervalPlotData()
+        protected XYNonlinearFitFunctionConfidenceBandPlotData()
         {
         }
 
-        public XYNonlinearFitFunctionConfidenceIntervalPlotData(XYNonlinearFitFunctionConfidenceIntervalPlotData from)
+        public XYNonlinearFitFunctionConfidenceBandPlotData(XYNonlinearFitFunctionConfidenceBandPlotData from)
         {
             CopyFrom(from);
         }
@@ -172,9 +203,6 @@ namespace Altaxo.Graph.Plot.Data
             _cachedJacobian = new double[_cachedParameters.Length];
             _functionValues = new double[_cachedFitFunction.NumberOfDependentVariables];
 
-            // for a given confidence interval, e.g. 0.95, we need to make 0.975 out of it
-            _cachedQuantileOfStudentsDistribution = Altaxo.Calc.Probability.StudentsTDistribution.Quantile(1 - (0.5 * (1 - _confidenceLevel)), _numberOfFitPoints);
-
             // CovarianceMatrix: we have to pick exactly the varying parameters of this fitelement!
 
             // next line retrieves all varying parameters of all fitelements, this corresponds to the rows of the provided covariance matrix
@@ -187,6 +215,12 @@ namespace Altaxo.Graph.Plot.Data
             var indicesOfThisFitElementsVaryingParametersInAllVaryingParameters = Enumerable.Range(0, _cachedIndicesOfVaryingParametersOfThisFitElement.Length).Select(i => allVaryingParameterNames.IndexOf(fitElement.ParameterName(_cachedIndicesOfVaryingParametersOfThisFitElement[i]))).ToArray();
             // now we are able to pick the values out of the covariance matrix
 
+            if (!(_numberOfFitPoints > _cachedIndicesOfVaryingParametersOfThisFitElement.Length))
+                _cachedQuantileOfStudentsDistribution = double.NaN; // 0 degrees of freedom
+            else
+                // for a given confidence interval, e.g. 0.95, we need to make 0.975 out of it
+                _cachedQuantileOfStudentsDistribution = Altaxo.Calc.Probability.StudentsTDistribution.Quantile(1 - (0.5 * (1 - _confidenceLevel)), _numberOfFitPoints - _cachedIndicesOfVaryingParametersOfThisFitElement.Length);
+
             // for convenience, we let this covariance matrix to be of dimension NumberOfParameters x NumberOfParameters, but we
             // don't set the elements corresponding to the non-varying parameters, thus they remain zero
             _covarianceMatrix = new double[fitElement.NumberOfParameters, fitElement.NumberOfParameters];
@@ -195,9 +229,11 @@ namespace Altaxo.Graph.Plot.Data
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="XYNonlinearFitFunctionConfidenceIntervalPlotData"/> class.
+        /// Initializes a new instance of the <see cref="XYNonlinearFitFunctionConfidenceBandPlotData"/> class.
         /// </summary>
-        /// <param name="isLowerConfidenceInterval">True if this data present the lower confidence band; true if the data represent the upper confidence band.</param>
+        /// <param name="isPredictionBand">If true, the prediction band is displayed instead of the confidence band. The prediction band is a little wider, because the sigma of the data points give an additional contribution.</param>
+        /// <param name="isLowerBand">True if this data present the lower confidence (or prediction) band; true if the data represent the upper confidence (or prediction) band.</param>
+        /// <param name="confidenceLevel">A number greater than 0 and less than 1 representing the confidence level. Usual values are e.g. 0.95, 0.99, 0.999.</param>
         /// <param name="fitDocumentIdentifier">The fit document identifier.</param>
         /// <param name="fitDocument">The fit document. The document will be cloned before stored in this instance.</param>
         /// <param name="fitElementIndex">Index of the fit element.</param>
@@ -206,9 +242,12 @@ namespace Altaxo.Graph.Plot.Data
         /// <param name="independentVariableIndex">Index of the independent variable of the fit element.</param>
         /// <param name="independentVariableTransformation">Transformation, which is applied to the x value before it is applied to the fit function. Can be null.</param>
         /// <param name="numberOfFittedPoints">Number of points that were used for fitting. Needed to calculate the Student's distribution quantile.</param>
+        /// <param name="sigmaSquare">Mean square difference between data points and fitting curve = sumChiSquare/(n-r).</param>
         /// <param name="covarianceMatrixTimesSigmaSquare">A matrix, representing sigma²(A*At)^-1, which are the covariances of the parameter.</param>
-        public XYNonlinearFitFunctionConfidenceIntervalPlotData(
-            bool isLowerConfidenceInterval,
+        public XYNonlinearFitFunctionConfidenceBandPlotData(
+            bool isPredictionBand,
+            bool isLowerBand,
+            double confidenceLevel,
             string fitDocumentIdentifier,
             NonlinearFitDocument fitDocument,
             int fitElementIndex,
@@ -217,18 +256,27 @@ namespace Altaxo.Graph.Plot.Data
             int independentVariableIndex,
             IVariantToVariantTransformation independentVariableTransformation,
             int numberOfFittedPoints,
+            double sigmaSquare,
             double[] covarianceMatrixTimesSigmaSquare)
         {
             if (null == fitDocumentIdentifier)
                 throw new ArgumentNullException(nameof(fitDocumentIdentifier));
             if (null == fitDocument)
                 throw new ArgumentNullException(nameof(fitDocument));
+            if (!(confidenceLevel > 0 && confidenceLevel < 1))
+                throw new ArgumentOutOfRangeException("Confidence level must be > 0 and < 1", nameof(confidenceLevel));
+            if (!(sigmaSquare >= 0))
+                throw new ArgumentOutOfRangeException("SigmaSquare must be >=0", nameof(sigmaSquare));
 
-            IsLowerConfidenceBand = isLowerConfidenceInterval;
+            IsLowerBand = isLowerBand;
+            _confidenceLevel = confidenceLevel;
+            _sigmaSquare = sigmaSquare;
             ChildCloneToMember(ref _fitDocument, fitDocument); // clone here, because we want to have a local copy which can not change.
             _fitDocumentIdentifier = fitDocumentIdentifier;
             _fitElementIndex = fitElementIndex;
             _dependentVariableIndex = dependentVariableIndex;
+            _dependentVariableTransformation = dependentVariableTransformation;
+            _independentVariableTransformation = independentVariableTransformation;
             _numberOfFitPoints = numberOfFittedPoints;
 
             var (allVaryingParameterNames, indicesOfThisFitElementsVaryingParametersInAllVaryingParameters) = CreateCachedMembers();
@@ -255,7 +303,7 @@ namespace Altaxo.Graph.Plot.Data
 
         public override object Clone()
         {
-            return new XYNonlinearFitFunctionConfidenceIntervalPlotData(this);
+            return new XYNonlinearFitFunctionConfidenceBandPlotData(this);
         }
 
         public override bool CopyFrom(object obj)
@@ -266,12 +314,24 @@ namespace Altaxo.Graph.Plot.Data
             if (!base.CopyFrom(obj))
                 return false;
 
-            if (obj is XYNonlinearFitFunctionConfidenceIntervalPlotData from)
+            if (obj is XYNonlinearFitFunctionConfidenceBandPlotData from)
             {
                 this._fitDocumentIdentifier = from._fitDocumentIdentifier;
                 ChildCopyToMember(ref this._fitDocument, from._fitDocument);
                 this._fitElementIndex = from._fitElementIndex;
+                this._independentVariableIndex = from._independentVariableIndex;
+                this._independentVariableTransformation = from._independentVariableTransformation;
                 this._dependentVariableIndex = from._dependentVariableIndex;
+                this._dependentVariableTransformation = from._dependentVariableTransformation;
+                this._numberOfFitPoints = from._numberOfFitPoints;
+                this._sigmaSquare = from._sigmaSquare;
+
+                this.IsLowerBand = from.IsLowerBand;
+                this.IsPredictionBand = from.IsPredictionBand;
+                this._confidenceLevel = from._confidenceLevel;
+                this.CreateCachedMembers();
+                // covariance matrix must be cloned after CreateCachedMembers, because it's allocated there
+                this._covarianceMatrix = (double[,])from._covarianceMatrix.Clone();
                 return true;
             }
             return false;
@@ -281,7 +341,7 @@ namespace Altaxo.Graph.Plot.Data
 
         public override string ToString()
         {
-            return string.Format("NLFit {0} conf. band, FitElement:{1}, DependentVariable:{2}", IsLowerConfidenceBand ? "lower" : "upper", _fitElementIndex, _dependentVariableIndex);
+            return string.Format("NLFit {0} {1} band {2}%, FitElement: {3}, DependentVariable: {4}", IsLowerBand ? "lower" : "upper", IsPredictionBand ? "prediction" : "confidence", 100 * _confidenceLevel, _fitElementIndex, _dependentVariableIndex);
         }
 
         protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -338,6 +398,25 @@ namespace Altaxo.Graph.Plot.Data
             {
                 var fitEle = _fitDocument.FitEnsemble[FitElementIndex];
                 return fitEle.DependentVariables(DependentVariableIndex);
+            }
+        }
+
+        public double ConfidenceLevel
+        {
+            get
+            {
+                return _confidenceLevel;
+            }
+            set
+            {
+                if (!(value > 0 && value < 1))
+                    throw new ArgumentOutOfRangeException("Value must be > 0 and < 1", nameof(value));
+
+                if (!(_confidenceLevel == value))
+                {
+                    _confidenceLevel = value;
+                    CreateCachedMembers();
+                }
             }
         }
 
@@ -409,10 +488,15 @@ namespace Altaxo.Graph.Plot.Data
         /// <returns></returns>
         public override double Evaluate(double x)
         {
+            if (null != _independentVariableTransformation)
+                x = _independentVariableTransformation.Transform(x);
+
             var y = EvaluateFunctionValueAndJacobian(x, _cachedJacobian);
 
-            if (double.IsNaN(y) || double.IsInfinity(y))
+            if (double.IsNaN(y))
                 return y;
+            if (double.IsNaN(_cachedQuantileOfStudentsDistribution))
+                return double.NaN;
 
             // calculate derivation
 
@@ -427,8 +511,19 @@ namespace Altaxo.Graph.Plot.Data
                 jacCovJac += _cachedJacobian[iRow] * sum;
             }
 
+            // if this is a predition band, we must add sigmaSquare
+            if (IsPredictionBand)
+            {
+                jacCovJac += _sigmaSquare;
+            }
+
             var h = _cachedQuantileOfStudentsDistribution * Math.Sqrt(jacCovJac);
-            return IsLowerConfidenceBand ? y - h : y + h;
+            var result = IsLowerBand ? y - h : y + h;
+
+            if (null != _dependentVariableTransformation)
+                return _dependentVariableTransformation.Transform(result);
+            else
+                return result;
         }
 
         #endregion Function Evaluation

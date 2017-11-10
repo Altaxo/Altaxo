@@ -98,6 +98,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
         /// <summary>After the fit, this is the resulting sum of squares of the deviations.</summary>
         private double _resultingSumChiSquare;
 
+        /// <summary>The resulting sigma square, computed as SumChiSquare/(n-r)</summary>
+        private double _resultingSigmaSquare;
+
         /// <summary>
         /// Constructor of the adapter.
         /// </summary>
@@ -582,7 +585,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
             NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.EvaluateFitDifferences), _cachedVaryingParameters, differences, 1E-10, ref info);
 
             _resultingCovariances = new double[_cachedVaryingParameters.Length * _cachedVaryingParameters.Length];
-            NLFit.ComputeCovariances(new NLFit.LMFunction(this.EvaluateFitDifferences), _cachedVaryingParameters, NumberOfData, _cachedVaryingParameters.Length, _resultingCovariances, out _resultingSumChiSquare);
+            NLFit.ComputeCovariances(new NLFit.LMFunction(this.EvaluateFitDifferences), _cachedVaryingParameters, NumberOfData, _cachedVaryingParameters.Length, _resultingCovariances, out _resultingSumChiSquare, out _resultingSigmaSquare);
         }
 
         /// <summary>
@@ -608,7 +611,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
                 );
 
             _resultingCovariances = new double[_cachedVaryingParameters.Length * _cachedVaryingParameters.Length];
-            NLFit.ComputeCovariances(new NLFit.LMFunction(this.EvaluateFitDifferences), _cachedVaryingParameters, NumberOfData, _cachedVaryingParameters.Length, _resultingCovariances, out _resultingSumChiSquare);
+            NLFit.ComputeCovariances(new NLFit.LMFunction(this.EvaluateFitDifferences), _cachedVaryingParameters, NumberOfData, _cachedVaryingParameters.Length, _resultingCovariances, out _resultingSumChiSquare, out _resultingSigmaSquare);
         }
 
         public double ResultingChiSquare
@@ -616,6 +619,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
             get
             {
                 return _resultingSumChiSquare;
+            }
+        }
+
+        public double ResultingSigmaSquare
+        {
+            get
+            {
+                return _resultingSigmaSquare;
             }
         }
 
