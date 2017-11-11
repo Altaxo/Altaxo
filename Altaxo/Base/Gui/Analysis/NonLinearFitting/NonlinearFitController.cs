@@ -114,7 +114,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         private int _numberOfFitPoints;
         private double[] _covarianceMatrix; // length of covariance matrix is always a square number
 
-        private bool _showUnusedDependentVariables;
+        private bool _showUnusedDependentVariables = true;
         private bool _showConfidenceBands;
         private double _confidenceLevel = 0.95;
 
@@ -167,6 +167,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
                 _generationInterval = new Common.EquallySpacedInterval();
                 _generationIntervalController = new Common.EquallySpacedIntervalController();
                 _generationIntervalController.InitializeDocument(_generationInterval);
+
+                if (null != _activeLayer)
+                {
+                    _showConfidenceBands = HasConfidencePlotItems(_activeLayer);
+                }
             }
 
             if (_view != null)
@@ -500,6 +505,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
             {
                 CreateOrReplaceFunctionPlotItems(_activeLayer);
             }
+        }
+
+        private bool HasConfidencePlotItems(XYPlotLayer xylayer)
+        {
+            return TreeNodeExtensions.TakeFromHereToFirstLeaves((IGPlotItem)xylayer.PlotItems)
+                .OfType<XYFunctionPlotItem>()
+                .Where((fpi) => fpi.Data is XYNonlinearFitFunctionConfidenceBandPlotData).Any();
         }
 
         private void CreateOrReplaceFunctionPlotItems(XYPlotLayer xylayer)
