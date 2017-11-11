@@ -369,7 +369,11 @@ namespace Altaxo.Gui.Common.Drawing
 
 		private void EhColorSetManager_ListAdded()
 		{
-			UpdateTreeViewTreeNodes();
+            // can be called from any thread
+            if (Current.Gui.InvokeRequired())
+                Current.Gui.BeginExecute(UpdateTreeViewTreeNodes);
+            else
+    			UpdateTreeViewTreeNodes();
 		}
 
 		/// <summary>
