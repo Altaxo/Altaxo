@@ -110,7 +110,7 @@ namespace Altaxo.Gui.Common
 				itemsControl => true,
 				itemsControl => itemsControl.SelectedItems,
 				(itemsControl, obj) => itemsControl.SelectedItems.Contains(obj),
-				(itemsControl, item, isSelected) => ((MultiSelectTreeViewItem)itemsControl.ItemContainerGenerator.ContainerFromItem(item)).IsSelected = isSelected,
+				(itemsControl, item, isSelected) => ((dynamic)item).IsSelected = isSelected, // IsSelected is data bound to the TreeViewItem in two-way mode
 				itemsControl => null // GetOrientation returns null because TreeViewItems are neither oriented horizontally nor vertically
 				);
 		}
