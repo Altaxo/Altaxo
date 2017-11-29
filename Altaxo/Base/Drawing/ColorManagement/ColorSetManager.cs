@@ -257,7 +257,8 @@ namespace Altaxo.Drawing.ColorManagement
 			if (_builtinKnownColors.TryGetValue(color, out foundColor)) // if only the color value matches, then return the found color, even if it has another name than the deserialized color
 				return foundColor;
 
-			return new NamedColor(color, name); // if it is not a known color, then return the color without a color set as parent
+			// Note that name for a deserialized color can be null or empty. If this is the case, use the constructor without name
+			return string.IsNullOrEmpty(name) ? new NamedColor(color) : new NamedColor(color, name); // if it is not a known color, then return the color without a color set as parent
 		}
 
 		public NamedColor GetDeserializedColorFromBuiltinSet(AxoColor color, string colorName, IColorSet builtinColorSet)
