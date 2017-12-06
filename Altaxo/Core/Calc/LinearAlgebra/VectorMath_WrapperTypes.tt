@@ -532,6 +532,100 @@
 			return new RO<#= bigScalT #>ArrayWrapper(array, usedlength);
 		}
 
+			/// <summary>
+    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{<#= scalT #>}" /> is neccessary.
+    /// </summary>
+    private class RODouble_<#= bigScalT #>ArrayWrapper : IROVector<Double>
+    {
+      private int _length;
+      protected <#= scalT #>[] _x;
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x">The array to wrap. The array is used directly (without copying).</param>
+      public RODouble_<#= bigScalT #>ArrayWrapper(<#= scalT #>[] x)
+      {
+        _length = x.Length;
+        _x = x;
+      }
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="usedlength">The length used for the vector.</param>
+      public RODouble_<#= bigScalT #>ArrayWrapper(<#= scalT #>[] x, int usedlength)
+      {
+        if (usedlength > x.Length)
+          throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+        _length = Math.Max(0,usedlength);
+        _x = x;
+      }
+
+      /// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+      /// <value>The element at index i.</value>
+      public double this[int i]
+      {
+        get
+        {
+          return _x[i];
+        }
+      }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length
+      {
+        get
+        {
+          return _length;
+        }
+      } 
+
+     /// <summary>The number of elements of this vector.</summary>
+     public int Count
+      {
+        get
+        {
+          return _length;
+        }
+      }
+
+      public IEnumerator<double> GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return this[i];
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return (double)this[i];
+      }
+    }
+
+		/// <summary>
+		/// Wraps a <#= scalT #>[] array to get an <see cref="IROVector{Double}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{<#= scalT #>}" /> interface that wraps the provided array.</returns>
+		public static IROVector<Double> ToRODoubleVector(this <#= scalT #>[] array)
+		{
+			return null == array ? null : new RODouble_<#= bigScalT #>ArrayWrapper(array);
+		}
+
+		/// <summary>
+		/// Wraps a <#= scalT #>[] array till a given length to get an <see cref="IROVector{Double}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{<#= scalT #>}" /> interface that wraps the provided array.</returns>
+		public static IROVector<Double> ToRODoubleVector(this <#= scalT #>[] array, int usedlength)
+		{
+			return new RODouble_<#= bigScalT #>ArrayWrapper(array, usedlength);
+		}
+
 
 		  /// <summary>
     /// Serves as wrapper for a section of an array to plug-in where an <see cref="IROVector{<#= scalT #>}" /> is neccessary.

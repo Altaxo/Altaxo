@@ -529,6 +529,100 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new RODoubleArrayWrapper(array, usedlength);
 		}
 
+			/// <summary>
+    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{Double}" /> is neccessary.
+    /// </summary>
+    private class RODouble_DoubleArrayWrapper : IROVector<Double>
+    {
+      private int _length;
+      protected Double[] _x;
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x">The array to wrap. The array is used directly (without copying).</param>
+      public RODouble_DoubleArrayWrapper(Double[] x)
+      {
+        _length = x.Length;
+        _x = x;
+      }
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="usedlength">The length used for the vector.</param>
+      public RODouble_DoubleArrayWrapper(Double[] x, int usedlength)
+      {
+        if (usedlength > x.Length)
+          throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+        _length = Math.Max(0,usedlength);
+        _x = x;
+      }
+
+      /// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+      /// <value>The element at index i.</value>
+      public double this[int i]
+      {
+        get
+        {
+          return _x[i];
+        }
+      }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length
+      {
+        get
+        {
+          return _length;
+        }
+      } 
+
+     /// <summary>The number of elements of this vector.</summary>
+     public int Count
+      {
+        get
+        {
+          return _length;
+        }
+      }
+
+      public IEnumerator<double> GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return this[i];
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return (double)this[i];
+      }
+    }
+
+		/// <summary>
+		/// Wraps a Double[] array to get an <see cref="IROVector{Double}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{Double}" /> interface that wraps the provided array.</returns>
+		public static IROVector<Double> ToRODoubleVector(this Double[] array)
+		{
+			return null == array ? null : new RODouble_DoubleArrayWrapper(array);
+		}
+
+		/// <summary>
+		/// Wraps a Double[] array till a given length to get an <see cref="IROVector{Double}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{Double}" /> interface that wraps the provided array.</returns>
+		public static IROVector<Double> ToRODoubleVector(this Double[] array, int usedlength)
+		{
+			return new RODouble_DoubleArrayWrapper(array, usedlength);
+		}
+
 
 		  /// <summary>
     /// Serves as wrapper for a section of an array to plug-in where an <see cref="IROVector{Double}" /> is neccessary.
@@ -1580,6 +1674,100 @@ namespace Altaxo.Calc.LinearAlgebra
 		public static IROVector<Single> ToROVector(this Single[] array, int usedlength)
 		{
 			return new ROFloatArrayWrapper(array, usedlength);
+		}
+
+			/// <summary>
+    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{Single}" /> is neccessary.
+    /// </summary>
+    private class RODouble_FloatArrayWrapper : IROVector<Double>
+    {
+      private int _length;
+      protected Single[] _x;
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x">The array to wrap. The array is used directly (without copying).</param>
+      public RODouble_FloatArrayWrapper(Single[] x)
+      {
+        _length = x.Length;
+        _x = x;
+      }
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="usedlength">The length used for the vector.</param>
+      public RODouble_FloatArrayWrapper(Single[] x, int usedlength)
+      {
+        if (usedlength > x.Length)
+          throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+        _length = Math.Max(0,usedlength);
+        _x = x;
+      }
+
+      /// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+      /// <value>The element at index i.</value>
+      public double this[int i]
+      {
+        get
+        {
+          return _x[i];
+        }
+      }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length
+      {
+        get
+        {
+          return _length;
+        }
+      } 
+
+     /// <summary>The number of elements of this vector.</summary>
+     public int Count
+      {
+        get
+        {
+          return _length;
+        }
+      }
+
+      public IEnumerator<double> GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return this[i];
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return (double)this[i];
+      }
+    }
+
+		/// <summary>
+		/// Wraps a Single[] array to get an <see cref="IROVector{Double}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{Single}" /> interface that wraps the provided array.</returns>
+		public static IROVector<Double> ToRODoubleVector(this Single[] array)
+		{
+			return null == array ? null : new RODouble_FloatArrayWrapper(array);
+		}
+
+		/// <summary>
+		/// Wraps a Single[] array till a given length to get an <see cref="IROVector{Double}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{Single}" /> interface that wraps the provided array.</returns>
+		public static IROVector<Double> ToRODoubleVector(this Single[] array, int usedlength)
+		{
+			return new RODouble_FloatArrayWrapper(array, usedlength);
 		}
 
 
@@ -2635,6 +2823,100 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new ROIntArrayWrapper(array, usedlength);
 		}
 
+			/// <summary>
+    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{Int32}" /> is neccessary.
+    /// </summary>
+    private class RODouble_IntArrayWrapper : IROVector<Double>
+    {
+      private int _length;
+      protected Int32[] _x;
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x">The array to wrap. The array is used directly (without copying).</param>
+      public RODouble_IntArrayWrapper(Int32[] x)
+      {
+        _length = x.Length;
+        _x = x;
+      }
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="usedlength">The length used for the vector.</param>
+      public RODouble_IntArrayWrapper(Int32[] x, int usedlength)
+      {
+        if (usedlength > x.Length)
+          throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+        _length = Math.Max(0,usedlength);
+        _x = x;
+      }
+
+      /// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+      /// <value>The element at index i.</value>
+      public double this[int i]
+      {
+        get
+        {
+          return _x[i];
+        }
+      }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length
+      {
+        get
+        {
+          return _length;
+        }
+      } 
+
+     /// <summary>The number of elements of this vector.</summary>
+     public int Count
+      {
+        get
+        {
+          return _length;
+        }
+      }
+
+      public IEnumerator<double> GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return this[i];
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return (double)this[i];
+      }
+    }
+
+		/// <summary>
+		/// Wraps a Int32[] array to get an <see cref="IROVector{Double}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> interface that wraps the provided array.</returns>
+		public static IROVector<Double> ToRODoubleVector(this Int32[] array)
+		{
+			return null == array ? null : new RODouble_IntArrayWrapper(array);
+		}
+
+		/// <summary>
+		/// Wraps a Int32[] array till a given length to get an <see cref="IROVector{Double}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> interface that wraps the provided array.</returns>
+		public static IROVector<Double> ToRODoubleVector(this Int32[] array, int usedlength)
+		{
+			return new RODouble_IntArrayWrapper(array, usedlength);
+		}
+
 
 		  /// <summary>
     /// Serves as wrapper for a section of an array to plug-in where an <see cref="IROVector{Int32}" /> is neccessary.
@@ -3688,6 +3970,100 @@ namespace Altaxo.Calc.LinearAlgebra
 			return new ROShortArrayWrapper(array, usedlength);
 		}
 
+			/// <summary>
+    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{Int16}" /> is neccessary.
+    /// </summary>
+    private class RODouble_ShortArrayWrapper : IROVector<Double>
+    {
+      private int _length;
+      protected Int16[] _x;
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x">The array to wrap. The array is used directly (without copying).</param>
+      public RODouble_ShortArrayWrapper(Int16[] x)
+      {
+        _length = x.Length;
+        _x = x;
+      }
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="usedlength">The length used for the vector.</param>
+      public RODouble_ShortArrayWrapper(Int16[] x, int usedlength)
+      {
+        if (usedlength > x.Length)
+          throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+        _length = Math.Max(0,usedlength);
+        _x = x;
+      }
+
+      /// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+      /// <value>The element at index i.</value>
+      public double this[int i]
+      {
+        get
+        {
+          return _x[i];
+        }
+      }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length
+      {
+        get
+        {
+          return _length;
+        }
+      } 
+
+     /// <summary>The number of elements of this vector.</summary>
+     public int Count
+      {
+        get
+        {
+          return _length;
+        }
+      }
+
+      public IEnumerator<double> GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return this[i];
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return (double)this[i];
+      }
+    }
+
+		/// <summary>
+		/// Wraps a Int16[] array to get an <see cref="IROVector{Double}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> interface that wraps the provided array.</returns>
+		public static IROVector<Double> ToRODoubleVector(this Int16[] array)
+		{
+			return null == array ? null : new RODouble_ShortArrayWrapper(array);
+		}
+
+		/// <summary>
+		/// Wraps a Int16[] array till a given length to get an <see cref="IROVector{Double}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> interface that wraps the provided array.</returns>
+		public static IROVector<Double> ToRODoubleVector(this Int16[] array, int usedlength)
+		{
+			return new RODouble_ShortArrayWrapper(array, usedlength);
+		}
+
 
 		  /// <summary>
     /// Serves as wrapper for a section of an array to plug-in where an <see cref="IROVector{Int16}" /> is neccessary.
@@ -4739,6 +5115,100 @@ namespace Altaxo.Calc.LinearAlgebra
 		public static IROVector<SByte> ToROVector(this SByte[] array, int usedlength)
 		{
 			return new ROSByteArrayWrapper(array, usedlength);
+		}
+
+			/// <summary>
+    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{SByte}" /> is neccessary.
+    /// </summary>
+    private class RODouble_SByteArrayWrapper : IROVector<Double>
+    {
+      private int _length;
+      protected SByte[] _x;
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x">The array to wrap. The array is used directly (without copying).</param>
+      public RODouble_SByteArrayWrapper(SByte[] x)
+      {
+        _length = x.Length;
+        _x = x;
+      }
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="usedlength">The length used for the vector.</param>
+      public RODouble_SByteArrayWrapper(SByte[] x, int usedlength)
+      {
+        if (usedlength > x.Length)
+          throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+        _length = Math.Max(0,usedlength);
+        _x = x;
+      }
+
+      /// <summary>Gets the value at index i with 0 &lt;= i &lt;=Length-1.</summary>
+      /// <value>The element at index i.</value>
+      public double this[int i]
+      {
+        get
+        {
+          return _x[i];
+        }
+      }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length
+      {
+        get
+        {
+          return _length;
+        }
+      } 
+
+     /// <summary>The number of elements of this vector.</summary>
+     public int Count
+      {
+        get
+        {
+          return _length;
+        }
+      }
+
+      public IEnumerator<double> GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return this[i];
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        for (int i = 0; i < _length; ++i)
+          yield return (double)this[i];
+      }
+    }
+
+		/// <summary>
+		/// Wraps a SByte[] array to get an <see cref="IROVector{Double}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> interface that wraps the provided array.</returns>
+		public static IROVector<Double> ToRODoubleVector(this SByte[] array)
+		{
+			return null == array ? null : new RODouble_SByteArrayWrapper(array);
+		}
+
+		/// <summary>
+		/// Wraps a SByte[] array till a given length to get an <see cref="IROVector{Double}" />.
+		/// </summary>
+		/// <param name="array">The array to wrap.</param>
+		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
+		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> interface that wraps the provided array.</returns>
+		public static IROVector<Double> ToRODoubleVector(this SByte[] array, int usedlength)
+		{
+			return new RODouble_SByteArrayWrapper(array, usedlength);
 		}
 
 
