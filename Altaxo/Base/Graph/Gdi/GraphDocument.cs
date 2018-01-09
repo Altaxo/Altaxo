@@ -488,8 +488,7 @@ typeof(GraphDocument),
 			get { return _rootLayer; }
 			private set
 			{
-				_rootLayer = value;
-				_rootLayer.ParentObject = this;
+				ChildSetMember(ref _rootLayer, value);
 			}
 		}
 

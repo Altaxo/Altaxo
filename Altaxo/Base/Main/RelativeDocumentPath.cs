@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -209,8 +209,8 @@ namespace Altaxo.Main
 			var currStart = startnode;
 			var currEnd = endnode;
 
-			var startNodesList = new List<IDocumentLeafNode>(Altaxo.Collections.TreeNodeExtensions.TakeFromHereToRoot(startnode));
-			var endNodesList = new List<IDocumentLeafNode>(Altaxo.Collections.TreeNodeExtensions.TakeFromHereToRoot(endnode));
+			var startNodesList = new List<IDocumentLeafNode>(Collections.TreeNodeExtensions.TakeFromHereToRoot(startnode));
+			var endNodesList = new List<IDocumentLeafNode>(Collections.TreeNodeExtensions.TakeFromHereToRoot(endnode));
 
 			var commonNodes = new HashSet<IDocumentLeafNode>(startNodesList);
 			commonNodes.IntersectWith(new HashSet<IDocumentLeafNode>(endNodesList));

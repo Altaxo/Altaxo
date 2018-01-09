@@ -33,6 +33,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 	using Altaxo.Geometry;
 	using Altaxo.Graph.Gdi.Shapes;
 	using Altaxo.Gui.Common;
+	using Altaxo.Units;
+	using AUL = Altaxo.Units.Length;
 	using Gdi.Background;
 
 	/// <summary>
@@ -57,14 +59,14 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 		{
 			get
 			{
-				var x = _edPositionX.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
-				var y = _edPositionY.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
+				var x = _edPositionX.SelectedQuantity.AsValueIn(AUL.Point.Instance);
+				var y = _edPositionY.SelectedQuantity.AsValueIn(AUL.Point.Instance);
 				return new PointD2D(x, y);
 			}
 			set
 			{
-				_edPositionX.SelectedQuantity = new Units.DimensionfulQuantity(value.X, Units.Length.Point.Instance).AsQuantityIn(_edPositionX.UnitEnvironment.DefaultUnit);
-				_edPositionY.SelectedQuantity = new Units.DimensionfulQuantity(value.Y, Units.Length.Point.Instance).AsQuantityIn(_edPositionY.UnitEnvironment.DefaultUnit);
+				_edPositionX.SelectedQuantity = new DimensionfulQuantity(value.X, AUL.Point.Instance).AsQuantityIn(_edPositionX.UnitEnvironment.DefaultUnit);
+				_edPositionY.SelectedQuantity = new DimensionfulQuantity(value.Y, AUL.Point.Instance).AsQuantityIn(_edPositionY.UnitEnvironment.DefaultUnit);
 			}
 		}
 
@@ -231,18 +233,18 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 			get
 			{
 				var result = new Margin2D();
-				result.Left = _guiMarginLeft.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
-				result.Top = _guiMarginTop.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
-				result.Right = _guiMarginRight.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
-				result.Bottom = _guiMarginBottom.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
+				result.Left = _guiMarginLeft.SelectedQuantity.AsValueIn(AUL.Point.Instance);
+				result.Top = _guiMarginTop.SelectedQuantity.AsValueIn(AUL.Point.Instance);
+				result.Right = _guiMarginRight.SelectedQuantity.AsValueIn(AUL.Point.Instance);
+				result.Bottom = _guiMarginBottom.SelectedQuantity.AsValueIn(AUL.Point.Instance);
 				return result;
 			}
 			set
 			{
-				_guiMarginLeft.SelectedQuantity = new Units.DimensionfulQuantity(value.Left, Units.Length.Point.Instance).AsQuantityIn(_guiMarginLeft.UnitEnvironment.DefaultUnit);
-				_guiMarginTop.SelectedQuantity = new Units.DimensionfulQuantity(value.Top, Units.Length.Point.Instance).AsQuantityIn(_guiMarginTop.UnitEnvironment.DefaultUnit);
-				_guiMarginRight.SelectedQuantity = new Units.DimensionfulQuantity(value.Right, Units.Length.Point.Instance).AsQuantityIn(_guiMarginRight.UnitEnvironment.DefaultUnit);
-				_guiMarginBottom.SelectedQuantity = new Units.DimensionfulQuantity(value.Bottom, Units.Length.Point.Instance).AsQuantityIn(_guiMarginBottom.UnitEnvironment.DefaultUnit);
+				_guiMarginLeft.SelectedQuantity = new DimensionfulQuantity(value.Left, AUL.Point.Instance).AsQuantityIn(_guiMarginLeft.UnitEnvironment.DefaultUnit);
+				_guiMarginTop.SelectedQuantity = new DimensionfulQuantity(value.Top, AUL.Point.Instance).AsQuantityIn(_guiMarginTop.UnitEnvironment.DefaultUnit);
+				_guiMarginRight.SelectedQuantity = new DimensionfulQuantity(value.Right, AUL.Point.Instance).AsQuantityIn(_guiMarginRight.UnitEnvironment.DefaultUnit);
+				_guiMarginBottom.SelectedQuantity = new DimensionfulQuantity(value.Bottom, AUL.Point.Instance).AsQuantityIn(_guiMarginBottom.UnitEnvironment.DefaultUnit);
 			}
 		}
 	}

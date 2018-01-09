@@ -25,7 +25,6 @@
 using Altaxo.Data;
 using Altaxo.Gui.Scripting;
 using Altaxo.Scripting;
-using ICSharpCode.Core;
 using System;
 
 namespace Altaxo.Worksheet.Commands

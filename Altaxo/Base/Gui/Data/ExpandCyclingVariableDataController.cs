@@ -271,7 +271,7 @@ namespace Altaxo.Gui.Data
 				newDoc.EnsureExistenceOfIdentifier(identifier);
 				var columns = _doc.GetDataColumnProxies(identifier)
 											.Select(proxy => GetColumnInOtherTable(table, groupNumber, proxy)) // look up column in other table
-											.Where(col => col != null);																				// select all columns that are not null
+											.Where(col => col != null);                                       // select all columns that are not null
 
 				newDoc.SetDataColumns(identifier, columns);
 			}

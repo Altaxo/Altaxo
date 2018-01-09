@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 		/// <summary>
 		/// The parent graph controller.
 		/// </summary>
-		protected GraphControllerWpf _grac;
+		protected GraphController _grac;
 
 		protected double _MovementIncrement = 4;
 
@@ -55,7 +55,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 		/// </summary>
 		protected bool _showRootLayerPrintCoordinates;
 
-		public ReadXYCoordinatesMouseHandler(GraphControllerWpf grac)
+		public ReadXYCoordinatesMouseHandler(GraphController grac)
 		{
 			_grac = grac;
 

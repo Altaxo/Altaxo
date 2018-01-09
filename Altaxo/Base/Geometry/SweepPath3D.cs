@@ -94,13 +94,10 @@ namespace Altaxo.Drawing.D3D
 			}
 		}
 
-	
-
 		public bool IsTransitionFromIdxToNextIdxSharp(int idx)
 		{
 			return idx < _isSharpTransition.Count ? _isSharpTransition[idx] : false;
 		}
-
 
 		public double TotalLineLength
 		{

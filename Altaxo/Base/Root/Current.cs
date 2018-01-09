@@ -1,196 +1,414 @@
-#region Copyright
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-/////////////////////////////////////////////////////////////////////////////
-//    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with this program; if not, write to the Free Software
-//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//
-/////////////////////////////////////////////////////////////////////////////
-
-#endregion Copyright
-
+using Altaxo.Main.Services;
 using Altaxo.Gui.Common;
-using System;
+using System.ComponentModel.Design;
+using System.Threading.Tasks;
+using Altaxo.Gui.Workbench;
 
 namespace Altaxo
 {
-	/// <summary>
-	/// This class provides access to application wide unique objects.
-	/// </summary>
-	public static class Current
+	public partial class Current
 	{
-		//private static object sm_theApplication;
+		/// <summary>
+		/// Avoids instantiation of this class from the outside, but allows other Current classes inherit from this class and add new static methods.
+		/// </summary>
+		protected Current()
+		{
+		}
 
-		private static IWorkbench sm_theWorkbench;
+		/// <summary>
+		/// Occurs when a service was added or removed. Static classes that cache a service should invalidate their cached service member in response to this event.
+		/// Attention: Only static classes should subscribe to this event! (Or use a weak event handler in order to avoid memory leaks).
+		/// </summary>
+		public static event Action ServiceChanged;
 
-		private static Altaxo.Main.IProjectService sm_theProjectService;
+		// Cached services (if you add something, be sure to add it to InvalidateCachedServices too)
+		private static AddInItems.IAddInTree _addInTree;
 
-		private static Altaxo.Main.IPrintingService sm_thePrintingService;
+		private static Main.IComManager _comManager;
+		private static IGuiFactoryService _guiFactoryService;
+		private static IGuiTimerService _guiTimerService;
+		private static IInfoWarningErrorTextMessageService _infoTextMessageService;
+		private static ILoggingService _loggingService;
+		private static IMessageService _messageService;
+		private static ITextOutputService _outputService;
+		private static Main.IProjectService _projectService;
+		private static Main.Services.IPropertyService _propertyService;
+		private static Main.Services.IResourceService _resourceService;
+		private static IStatusBarService _statusBarService;
+		private static IDispatcherMessageLoop _dispatcher;
+		private static IWorkbench _workbench;
 
-		private static Altaxo.Main.Services.IOutputService sm_theOutputService = new Altaxo.Main.Services.OutputServiceTemporary();
+		private static void InvalidateCachedServices()
+		{
+			_addInTree = null;
+			_comManager = null;
+			_guiFactoryService = null;
+			_guiTimerService = null;
+			_infoTextMessageService = null;
+			_loggingService = null;
+			_outputService = null;
+			_messageService = null;
+			_outputService = null;
+			_projectService = null;
+			_propertyService = null;
+			_resourceService = null;
+			_statusBarService = null;
+			_dispatcher = null;
+			_workbench = null;
+		}
 
-		private static Altaxo.Main.Services.IDataDisplayService sm_theDataDisplayService;
+		#region Unspecified services
 
-		private static Altaxo.Main.Services.GUIFactoryService sm_theGUIFactoryService;
+		/// <summary>The service provider that is used when the "real" service provider is not already set.</summary>
+		public static readonly IServiceProvider fallbackServiceProvider = new FallbackServiceProvider();
 
-		private static Altaxo.Main.Services.IPropertyService sm_thePropertyService;
+		/// <summary>The service provider that is used. Initially set to the fallback service provider.</summary>
+		private static volatile IServiceProvider instance = fallbackServiceProvider;
 
-		private static Altaxo.Main.Services.IResourceService sm_theResourceService;
+		public static IServiceProvider FallbackServiceProvider { get { return fallbackServiceProvider; } }
 
-		private static Altaxo.Main.Services.IFitFunctionService sm_theFitFunctionService;
+		/// <summary>
+		/// Gets the main service container.
+		/// </summary>
+		public static IServiceContainer Services
+		{
+			protected get { return GetRequiredService<IServiceContainer>(); }
+			set
+			{
+				instance = value ?? throw new ArgumentNullException(nameof(value));
+			}
+		}
 
-		private static Altaxo.Main.Services.IHighResolutionClock _highResolutionClock;
+		public static void AddService<T>(T service)
+		{
+			if (instance is IServiceContainer container)
+			{
+				container.AddService(typeof(T), service);
+			}
 
-		private static Altaxo.Main.Services.ITimerQueue _timerQueue;
+			InvalidateCachedServices(); // Invalidate our own cached services
+			ServiceChanged?.Invoke();
+		}
 
-		private static Altaxo.Main.IComManager sm_ComManager;
+		public static void AddService<T, U>(T service)
+		{
+			if (instance is IServiceContainer container)
+			{
+				container.AddService(typeof(T), service);
+				container.AddService(typeof(U), service);
+			}
 
-		private static bool sm_theApplicationIsClosing;
+			InvalidateCachedServices(); // Invalidate our own cached services
+			ServiceChanged?.Invoke();
+		}
 
-		private static Guid _applicationInstanceGuid = Guid.NewGuid();
+		public static void AddService<T, U, V>(T service)
+		{
+			if (instance is IServiceContainer container)
+			{
+				container.AddService(typeof(T), service);
+				container.AddService(typeof(U), service);
+				container.AddService(typeof(V), service);
+			}
+
+			InvalidateCachedServices(); // Invalidate our own cached services
+			ServiceChanged?.Invoke();
+		}
+
+		public static void RemoveService<T>()
+		{
+			Services.RemoveService(typeof(T));
+			InvalidateCachedServices(); // Invalidate our own cached services
+			ServiceChanged?.Invoke();
+		}
+
+		public static void DisposeServicesAll()
+		{
+			(instance as IDisposable)?.Dispose();
+		}
+
+		/// <summary>
+		/// Retrieves the service of type <typeparamref name="T"/> from the provider.
+		/// If the service cannot be found, a <see cref="ServiceNotFoundException"/> will be thrown.
+		/// </summary>
+		public static T GetRequiredService<T>()
+		{
+			object service = instance.GetService(typeof(T));
+			if (service == null)
+				throw new ServiceNotFoundException(typeof(T));
+			return (T)service;
+		}
+
+		/// <summary>
+		/// Gets the required service. The service is primarily being searched with key <typeparamref name="T"/>. If it is not found with this key,
+		/// it is search with key <typeparamref name="U"/>, thus <typeparamref name="U"/> has to be a base class or an interface of type <typeparamref name="T"/>.
+		/// If the service is found with this second key <typeparamref name="U"/> and is of type <typeparamref name="T"/>,
+		/// the service will be register with the key <typeparamref name="T"/> in order to avoid further searching.
+		/// </summary>
+		/// <typeparam name="T">Type of the service to be searched.</typeparam>
+		/// <typeparam name="U">Base class type or interface type of type <typeparamref name="T"/>.</typeparam>
+		/// <returns>Service that is of type <typeparamref name="T"/>. If no such service is found, an exception is thrown.</returns>
+		/// <exception cref="ServiceNotFoundException">If a service of type <typeparamref name="T"/> was not found.</exception>
+		public static T GetRequiredService<T, U>() where T : U
+		{
+			object serviceObj = instance.GetService(typeof(T));
+			if (serviceObj is T serviceT)
+				return serviceT;
+			serviceObj = instance.GetService(typeof(U));
+			if (serviceObj is T serviceU)
+			{
+				AddService<T>(serviceU);
+				return serviceU;
+			}
+
+			throw new ServiceNotFoundException(typeof(T));
+		}
+
+		/// <summary>
+		/// Gets a service. Returns null if service is not found.
+		/// </summary>
+		public static T GetService<T>()
+		{
+			object service = instance.GetService(typeof(T));
+			return (T)service;
+		}
+
+		public static T GetService<T, U>() where T : U
+		{
+			object serviceObj = instance.GetService(typeof(T));
+			if (serviceObj is T serviceT)
+				return serviceT;
+			serviceObj = instance.GetService(typeof(U));
+			if (serviceObj is T serviceU)
+			{
+				AddService<T>(serviceU);
+				return serviceU;
+			}
+
+			return default(T);
+		}
+
+		/// <summary>
+		/// Returns a task that gets completed when the service is initialized.
+		///
+		/// This method does not try to initialize the service -- if no other code forces the service
+		/// to be initialized, the task will never complete.
+		/// </summary>
+		/// <remarks>
+		/// This method can be used to solve cyclic dependencies in service initialization.
+		/// </remarks>
+		public static Task<T> GetFutureService<T>() where T : class
+		{
+			return GetRequiredService<AltaxoServiceContainer>().GetFutureService<T>();
+		}
+
+		/// <summary>
+		/// Equivalent to <code>SD.Workbench.ActiveViewContent.GetService&lt;T&gt;()</code>,
+		/// but does not throw a NullReferenceException when ActiveViewContent is null.
+		/// (instead, null is returned).
+		/// </summary>
+		public static T GetActiveViewContentService<T>() where T : class
+		{
+			return (T)GetActiveViewContentService(typeof(T));
+		}
+
+		/// <summary>
+		/// Equivalent to <code>SD.Workbench.ActiveViewContent.GetService(type)</code>,
+		/// but does not throw a NullReferenceException when ActiveViewContent is null.
+		/// (instead, null is returned).
+		/// </summary>
+		public static object GetActiveViewContentService(Type type)
+		{
+			var workbench = instance.GetService(typeof(IWorkbench)) as IWorkbench;
+			if (workbench != null)
+			{
+				var activeViewContent = workbench.ActiveViewContent;
+				if (activeViewContent != null)
+				{
+					throw new NotImplementedException();
+					//return activeViewContent.GetService(type);
+				}
+			}
+			return null;
+		}
+
+		/// <inheritdoc see="IMessageService"/>
+		public static IMessageService MessageService
+		{
+			get
+			{
+				return _messageService ?? (_messageService = GetRequiredService<IMessageService>());
+			}
+		}
+
+		/// <inheritdoc see="IInfoWarningErrorTextMessageService"/>
+		public static IInfoWarningErrorTextMessageService InfoTextMessageService
+		{
+			get
+			{
+				return _infoTextMessageService ?? (_infoTextMessageService = GetRequiredService<IInfoWarningErrorTextMessageService>());
+			}
+		}
+
+		/// <inheritdoc see="IAnalyticsMonitor"/>
+		public static IAnalyticsMonitor AnalyticsMonitor
+		{
+			get { return GetRequiredService<IAnalyticsMonitor>(); }
+		}
+
+		/// <inheritdoc see="IAddInTree"/>
+		public static AddInItems.IAddInTree AddInTree
+		{
+			get { return _addInTree ?? (_addInTree = GetRequiredService<AddInItems.IAddInTree>()); }
+		}
+
+		#endregion Unspecified services
+
+		#region Gui factory service
+
+		public static IGuiFactoryService Gui
+		{
+			get
+			{
+				return _guiFactoryService ?? (_guiFactoryService = GetService<IGuiFactoryService>());
+			}
+		}
+
+		#endregion Gui factory service
+
+		#region SynchronizeInvoke
+
+		/// <summary>
+		/// Used to invoke calls in the context of the Gui thread.
+		/// </summary>
+		/// <value>
+		/// Object that can be used to invoke calls in the context of the Gui thread.
+		/// </value>
+		public static IDispatcherMessageLoop Dispatcher
+		{
+			get
+			{
+				return _dispatcher ?? (_dispatcher = GetRequiredService<IDispatcherMessageLoop>());
+			}
+		}
+
+		#endregion SynchronizeInvoke
+
+		#region ResourceService
+
+		public static Altaxo.Main.Services.IResourceService ResourceService
+		{
+			get
+			{
+				return _resourceService ?? (_resourceService = GetRequiredService<Altaxo.Main.Services.IResourceService>());
+			}
+		}
+
+		#endregion ResourceService
+
+		#region Property service
+
+		/// <summary>
+		/// Returns the property service, which is used to obtain application settings.
+		/// </summary>
+		public static IPropertyService PropertyService
+		{
+			get
+			{
+				return _propertyService ?? (_propertyService = GetRequiredService<IPropertyService>());
+			}
+		}
+
+		#endregion Property service
+
+		/// <summary>
+		/// Returns the console window, which can be used by your scripts for textual output.
+		/// </summary>
+		public static ITextOutputService Console
+		{
+			get
+			{
+				return _outputService ?? (_outputService = GetRequiredService<ITextOutputService>());
+			}
+		}
+
+		public static ILoggingService Log
+		{
+			get
+			{
+				return _loggingService ?? (_loggingService = GetRequiredService<ILoggingService>());
+			}
+		}
+
+		public static IStatusBarService StatusBar
+		{
+			get
+			{
+				return _statusBarService ?? (_statusBarService = GetRequiredService<IStatusBarService>());
+			}
+		}
+
+		public static IGuiTimerService GuiTimer
+		{
+			get
+			{
+				return _guiTimerService ?? (_guiTimerService = GetRequiredService<IGuiTimerService>());
+			}
+		}
+
+		#region Project service
+
+		/// <summary>
+		/// Returns the project service, which provides methods to add worksheet and graphs, or open and close the document.
+		/// </summary>
+		public static Main.IProjectService IProjectService
+		{
+			get
+			{
+				return _projectService ?? (_projectService = GetRequiredService<Main.IProjectService>());
+			}
+		}
+
+		#endregion Project service
+
+		#region Com Manager
+
+		public static Main.IComManager ComManager
+		{
+			get
+			{
+				return _comManager ?? (_comManager = GetService<Main.IComManager>());
+			}
+		}
+
+		#endregion Com Manager
+
+		#region Workbench
 
 		/// <summary>
 		/// Gets the main workbench.
 		/// </summary>
 		public static IWorkbench Workbench
 		{
-			get { return sm_theWorkbench; }
-		}
-
-		/// <summary>
-		/// Returns the project service, which provides methods to add worksheet and graphs, or open and close the document.
-		/// </summary>
-		public static Altaxo.Main.IProjectService ProjectService
-		{
-			get { return sm_theProjectService; }
-		}
-
-		/// <summary>
-		/// Returns the current altaxo project (the current document).
-		/// </summary>
-		public static Altaxo.AltaxoDocument Project
-		{
-			get { return sm_theProjectService.CurrentOpenProject; }
-		}
-
-		/// <summary>
-		/// Returns the printing service, which provides methods for page setup and printing.
-		/// </summary>
-		public static Altaxo.Main.IPrintingService PrintingService
-		{
-			get { return sm_thePrintingService; }
-		}
-
-		/// <summary>
-		/// Returns the console window, which can be used by your scripts for textual output.
-		/// </summary>
-		public static Altaxo.Main.Services.IOutputService Console
-		{
-			get { return sm_theOutputService; }
-		}
-
-		/// <summary>
-		/// Returns the Gui service, which can be used by your scripts to access the graphical user interface, displaying dialogs, message boxes, etc.
-		/// </summary>
-		public static Altaxo.Main.Services.GUIFactoryService Gui
-		{
-			get { return sm_theGUIFactoryService; }
-		}
-
-		/// <summary>
-		/// Returns the property service, which is used to obtain application settings.
-		/// </summary>
-		public static Altaxo.Main.Services.IPropertyService PropertyService
-		{
-			get { return sm_thePropertyService; }
-		}
-
-		/// <summary>
-		/// Returns the resource service, which is used to obtain resource strings.
-		/// </summary>
-		public static Altaxo.Main.Services.IResourceService ResourceService
-		{
-			get { return sm_theResourceService; }
-		}
-
-		/// <summary>
-		/// Returns the fit function service, which is used to obtain the file based user defined fit functions.
-		/// </summary>
-		public static Altaxo.Main.Services.IFitFunctionService FitFunctionService
-		{
-			get { return sm_theFitFunctionService; }
-		}
-
-		/// <summary>
-		/// Gets a high resolution clock that delivers relative values (TimeSpan values relative to the start of the clock). Those values are guaranteed to be continuously incresing, even
-		/// if the computer's clock time is changed backwards.
-		/// </summary>
-		/// <value>
-		/// The high resolution clock.
-		/// </value>
-		public static Altaxo.Main.Services.IHighResolutionClock HighResolutionClock
-		{
 			get
 			{
-				return _highResolutionClock;
+				return _workbench ?? (_workbench = GetRequiredService<IWorkbench>());
 			}
 		}
 
-		/// <summary>
-		/// Gets an application wide timer queue to add actions to be scheduled.
-		/// </summary>
-		/// <value>
-		/// The timer queue.
-		/// </value>
-		public static Altaxo.Main.Services.ITimerQueue TimerQueue
-		{
-			get
-			{
-				return _timerQueue;
-			}
-		}
+		#endregion Workbench
 
-		public static Altaxo.Main.IComManager ComManager
-		{
-			get { return sm_ComManager; }
-		}
+		#region ApplicationInstanceGuid
 
-		/// <summary>
-		/// Sets the Gui factory service.
-		/// </summary>
-		/// <param name="service">The instance of the Gui factory service to use in this application. Depends on the type of graphical user interface that is used by the application.</param>
-		public static void SetGUIFactoryService(Altaxo.Main.Services.GUIFactoryService service)
-		{
-			if (null == sm_theGUIFactoryService)
-				sm_theGUIFactoryService = service;
-			else
-				throw new ApplicationException("The service can not be re-set to another value, only initialized for the first time!");
-		}
-
-		/// <summary>
-		/// Returns a flag which is true if the application is about to be closed.
-		/// </summary>
-		public static bool ApplicationIsClosing
-		{
-			get { return sm_theApplicationIsClosing; }
-			set { sm_theApplicationIsClosing = value; }
-		}
+		private static Guid _applicationInstanceGuid = Guid.NewGuid();
 
 		/// <summary>
 		/// Gets a Guid that uniquely identifies the current application instance.
+		/// Needed for drag/drop operations to decide if a drag source is coming from the own instance or another one.
 		/// </summary>
 		/// <value>
 		/// The application instance unique identifier.
@@ -203,158 +421,6 @@ namespace Altaxo
 			}
 		}
 
-		/// <summary>
-		/// Sets the main workbench.
-		/// </summary>
-		/// <param name="workbench">The main workbench to use in this application.</param>
-		public static void SetWorkbench(IWorkbench workbench)
-		{
-			if (null == sm_theWorkbench)
-				sm_theWorkbench = workbench;
-			else
-				throw new ApplicationException("The workbench can not be re-set to another value, only initialized for the first time!");
-		}
-
-		/// <summary>
-		/// Sets the main project service.
-		/// </summary>
-		/// <param name="projectservice">The project service instance to use in this application.</param>
-		public static void SetProjectService(Altaxo.Main.IProjectService projectservice)
-		{
-			if (null == sm_theProjectService)
-				sm_theProjectService = projectservice;
-			else
-				throw new ApplicationException("The project service can not be re-set to another value, only initialized for the first time!");
-		}
-
-		/// <summary>
-		/// Sets the current printing service.
-		/// </summary>
-		/// <param name="printingservice">The instance of printing service to use in this application.</param>
-		public static void SetPrintingService(Altaxo.Main.IPrintingService printingservice)
-		{
-			if (null == sm_thePrintingService)
-				sm_thePrintingService = printingservice;
-			else
-				throw new ApplicationException("The printing service can not be re-set to another value, only initialized for the first time!");
-		}
-
-		/// <summary>
-		/// Sets the property service.
-		/// </summary>
-		/// <param name="service">The instance of property service to use in this application.</param>
-		public static void SetPropertyService(Altaxo.Main.Services.IPropertyService service)
-		{
-			if (null == sm_thePropertyService)
-				sm_thePropertyService = service;
-			else
-				throw new ApplicationException("The property service can not be re-set to another value, only initialized for the first time!");
-		}
-
-		/// <summary>
-		/// Sets the resource service.
-		/// </summary>
-		/// <param name="resourceservice">The instance of resource service to use in this application.</param>
-		public static void SetResourceService(Altaxo.Main.Services.IResourceService resourceservice)
-		{
-			if (null == sm_theResourceService)
-				sm_theResourceService = resourceservice;
-			else
-				throw new ApplicationException("The resource service can not be re-set to another value, only initialized for the first time!");
-		}
-
-		/// <summary>
-		/// Sets the fit function service.
-		/// </summary>
-		/// <param name="fitFunctionService">The instance of fit function service to use in this application.</param>
-		public static void SetFitFunctionService(Altaxo.Main.Services.IFitFunctionService fitFunctionService)
-		{
-			if (null == sm_theFitFunctionService)
-				sm_theFitFunctionService = fitFunctionService;
-			else
-				throw new ApplicationException("The fit function service can not be re-set to another value, only initialized for the first time!");
-		}
-
-		/// <summary>
-		/// Sets the current output service.
-		/// </summary>
-		/// <param name="outputservice">The instance of the output service to use in this application.</param>
-		public static Altaxo.Main.Services.IOutputService SetOutputService(Altaxo.Main.Services.IOutputService outputservice)
-		{
-			var oldOutputService = sm_theOutputService;
-
-			if (null == sm_theOutputService)
-			{
-				sm_theOutputService = outputservice;
-			}
-			else if (sm_theOutputService is Altaxo.Main.Services.OutputServiceTemporary)
-			{
-				var oldService = sm_theOutputService as Altaxo.Main.Services.OutputServiceTemporary;
-				sm_theOutputService = outputservice;
-				sm_theOutputService.Write(oldService.Text);
-			}
-			else
-			{
-				if (null == outputservice)
-					throw new ArgumentNullException(nameof(outputservice));
-
-				sm_theOutputService = outputservice;
-			}
-			return oldOutputService;
-		}
-
-		/// <summary>
-		/// Returns the data display window, which is used to show the data obtained from the data reader tool.
-		/// </summary>
-		public static Altaxo.Main.Services.IDataDisplayService DataDisplay
-		{
-			get { return sm_theDataDisplayService; }
-		}
-
-		/// <summary>
-		/// Sets the current data display service.
-		/// </summary>
-		/// <param name="service">The instance of the data display service to use in this application.</param>
-		public static void SetDataDisplayService(Altaxo.Main.Services.IDataDisplayService service)
-		{
-			if (null == sm_theDataDisplayService)
-				sm_theDataDisplayService = service;
-			else
-				throw new ApplicationException("The data display service can not be re-set to another value, only initialized for the first time!");
-		}
-
-		/// <summary>
-		/// Sets the high resolution clock.
-		/// </summary>
-		/// <param name="highResolutionClock">The high resolution clock.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// highResolutionClock
-		/// </exception>
-		public static void SetHighResolutionClock(Altaxo.Main.Services.IHighResolutionClock highResolutionClock)
-		{
-			if (null == highResolutionClock)
-				throw new ArgumentNullException("highResolutionClock");
-			_highResolutionClock = highResolutionClock;
-		}
-
-		/// <summary>
-		/// Sets the timer queue.
-		/// </summary>
-		/// <param name="timerQueue">The timer queue. The underlying clock of this queue must be the same clock as in <see cref="HighResolutionClock"/></param>
-		/// <exception cref="System.ArgumentNullException">
-		/// highResolutionClock
-		/// </exception>
-		public static void SetTimerQueue(Altaxo.Main.Services.ITimerQueue timerQueue)
-		{
-			if (null == timerQueue)
-				throw new ArgumentNullException("timerQueue");
-
-			_timerQueue = timerQueue;
-		}
-
-		public static void SetComManager(Altaxo.Main.IComManager value)
-		{
-			sm_ComManager = value;
-		}
+		#endregion ApplicationInstanceGuid
 	}
 }

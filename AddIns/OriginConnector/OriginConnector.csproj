@@ -91,6 +91,10 @@
     <Compile Include="WorksheetActions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Altaxo\Base.Presentation\AltaxoBase.Presentation.csproj">
+      <Project>{323d97e6-92a8-40b4-99c1-d64d4368dfc7}</Project>
+      <Name>AltaxoBase.Presentation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Altaxo\Base\AltaxoBase.csproj">
       <Project>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</Project>
       <Name>AltaxoBase</Name>
@@ -101,14 +105,9 @@
       <Name>AltaxoCore</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\Altaxo\SDGui\AltaxoSDGui.csproj">
+    <ProjectReference Include="..\..\Altaxo\Dom.Presentation\AltaxoDom.Presentation.csproj">
       <Project>{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}</Project>
-      <Name>AltaxoSDGui</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\ICSharpCode.Core\ICSharpCode.Core.csproj">
-      <Project>{35CEF10F-2D4C-45F2-9DD1-161E0FEC583C}</Project>
-      <Name>ICSharpCode.Core</Name>
+      <Name>AltaxoDom.Presentation</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

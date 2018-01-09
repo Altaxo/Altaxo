@@ -137,8 +137,6 @@ namespace Altaxo.Geometry
 			);
 		}
 
-
-
 		#region Append transformations
 
 		/// <summary>

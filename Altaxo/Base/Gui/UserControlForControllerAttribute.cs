@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -23,6 +23,9 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Gui
 {

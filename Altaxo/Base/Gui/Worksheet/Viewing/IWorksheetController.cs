@@ -23,9 +23,11 @@
 #endregion Copyright
 
 using Altaxo.Collections;
+using Altaxo.Geometry;
 using Altaxo.Worksheet;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -35,14 +37,57 @@ namespace Altaxo.Gui.Worksheet.Viewing
 	{
 		Altaxo.Gui.Worksheet.Viewing.IWorksheetController Controller { set; }
 
-		void TableAreaInvalidate();
+		void Cursor_SetToArrow();
 
-		string TableViewTitle { set; }
+		void Cursor_SetToResizeWestEast();
+
+		void TableArea_TriggerRedrawing();
+
+		bool TableArea_IsCaptured { set; }
+
+		PointD2D TableArea_Size { get; }
 
 		/// <summary>
 		/// Returns the control that should be focused initially.
 		/// </summary>
 		object GuiInitiallyFocusedElement { get; }
+
+		double TableViewHorzViewPortSize { set; }
+		double TableViewVertViewPortSize { set; }
+		double TableViewHorzScrollValue { set; }
+		double TableViewVertScrollValue { set; }
+		double TableViewHorzScrollMaximum { set; }
+		double TableViewVertScrollMaximum { set; }
+
+		#region Cell edit
+
+		event Action CellEdit_LostFocus;
+
+		event Action<AltaxoKeyboardKey, HandledEventArgs> CellEdit_PreviewKeyPressed;
+
+		event Action CellEdit_TextChanged;
+
+		int CellEdit_SelectionStart { get; set; }
+		int CellEdit_SelectionLength { get; set; }
+		string CellEdit_Text { get; set; }
+
+		void CellEdit_Cut();
+
+		void CellEdit_Copy();
+
+		void CellEdit_Paste();
+
+		void CellEdit_Clear();
+
+		void CellEdit_Hide();
+
+		void CellEdit_Show();
+
+		void CellEdit_SetTextAlignmentAndSelectAll(bool textAlignmentRight);
+
+		RectangleD2D CellEdit_Location { set; }
+
+		#endregion Cell edit
 	}
 
 	public interface IWorksheetController : IMVCANController
@@ -51,6 +96,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		/// This returns the Table that is managed by this controller.
 		/// </summary>
 		Altaxo.Data.DataTable DataTable { get; }
+
+		/// <summary>
+		/// Forces redraw of the table.
+		/// </summary>
+		void TableAreaInvalidate();
 
 		WorksheetLayout WorksheetLayout { get; }
 
@@ -94,11 +144,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		void ClearAllSelections();
 
-		/// <summary>
-		/// Forces a redraw of the table view.
-		/// </summary>
-		void TableAreaInvalidate();
-
 		bool EnableCut { get; }
 
 		bool EnableCopy { get; }
@@ -119,6 +164,6 @@ namespace Altaxo.Gui.Worksheet.Viewing
 
 		void SelectAll();
 
-		event EventHandler TitleNameChanged;
+		//event EventHandler TitleNameChanged;
 	}
 }

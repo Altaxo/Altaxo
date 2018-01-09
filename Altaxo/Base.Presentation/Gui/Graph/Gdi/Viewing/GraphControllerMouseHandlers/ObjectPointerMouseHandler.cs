@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
@@ -150,7 +151,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 		protected bool _wereObjectsMoved = false;
 
 		/// <summary>The graph controller this mouse handler belongs to.</summary>
-		protected GraphControllerWpf _grac;
+		protected GraphController _grac;
 
 		/// <summary>Locker to suppress changed events during moving of objects.</summary>
 		protected Altaxo.Main.ISuspendToken _graphDocumentChangedSuppressor;
@@ -178,7 +179,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
 		#endregion Members
 
-		public ObjectPointerMouseHandler(GraphControllerWpf grac)
+		public ObjectPointerMouseHandler(GraphController grac)
 		{
 			_grac = grac;
 			if (_grac != null)
@@ -431,7 +432,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 				{
 					if (null == _rectangleSelectionArea_GraphCoordinates)
 					{
-						_grac.CaptureMouse();
+						(_grac.ViewObject as IGraphView).CaptureMouseOnCanvas();
 					}
 
 					var pt1 = _grac.ConvertMouseToRootLayerCoordinates(_positionLastMouseDownInMouseCoordinates);
@@ -459,7 +460,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 				List<IHitTestObject> foundObjects;
 				_grac.FindGraphObjectInRootLayerRectangle(_rectangleSelectionArea_GraphCoordinates.Value, out foundObjects);
 				AddSelectedObjectsFromRectangularSelection(foundObjects);
-				_grac.ReleaseMouseCapture();
+				(_grac.ViewObject as IGraphView).ReleaseCaptureMouseOnCanvas();
 				_rectangleSelectionArea_GraphCoordinates = null;
 				_grac.RenderOverlay();
 			}

@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Calc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,12 +42,22 @@ namespace Altaxo.Units
 	public class SIPrefixList : ISIPrefixList
 	{
 		private Dictionary<string, SIPrefix> _shortCutDictionary;
+		private Dictionary<int, SIPrefix> _exponentDictionary;
+		private int[] _allExponentsSorted;
 
 		public SIPrefixList(IEnumerable<SIPrefix> from)
 		{
+			var prefixes = from.ToArray();
+			Array.Sort(prefixes, (a, b) => Comparer<int>.Default.Compare(a.Exponent, b.Exponent));
+
+			_allExponentsSorted = prefixes.Select(p => p.Exponent).ToArray();
 			_shortCutDictionary = new Dictionary<string, SIPrefix>();
-			foreach (var e in from)
+			_exponentDictionary = new Dictionary<int, SIPrefix>();
+			foreach (var e in prefixes)
+			{
 				_shortCutDictionary.Add(e.ShortCut, e);
+				_exponentDictionary.Add(e.Exponent, e);
+			}
 		}
 
 		public int Count
@@ -72,6 +83,28 @@ namespace Altaxo.Units
 				return result;
 			else
 				return null;
+		}
+
+		public (SIPrefix prefix, double remainingFactor) GetPrefixFromExponent(int exponent)
+		{
+			if (_exponentDictionary.TryGetValue(exponent, out SIPrefix result))
+			{
+				return (result, 1);
+			}
+
+			// if it is not in the dictionary, then it also not is in the array, thus the bitwise complement must always be positive
+			int idx = ~Array.BinarySearch(_allExponentsSorted, exponent);
+
+			if (idx >= _allExponentsSorted.Length)
+			{
+				result = _exponentDictionary[_allExponentsSorted[_allExponentsSorted.Length - 1]];
+			}
+			else
+			{
+				result = _exponentDictionary[_allExponentsSorted[idx]];
+			}
+
+			return (result, RMath.Pow(10, exponent - result.Exponent));
 		}
 
 		public IEnumerator<SIPrefix> GetEnumerator()

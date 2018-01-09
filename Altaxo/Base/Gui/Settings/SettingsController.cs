@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.AddInItems;
 using Altaxo.Collections;
 using System;
 using System.Collections.Generic;
@@ -57,5 +58,170 @@ namespace Altaxo.Gui.Settings
 		/// <summary>Sets the selected node in the topic view.</summary>
 		/// <param name="node">The node to select.</param>
 		void SetSelectedNode(NGTreeNode node);
+	}
+
+	[ExpectedTypeOfView(typeof(ISettingsView))]
+	public class SettingsController : IMVCANController
+	{
+		private ISettingsView _view;
+		private NGTreeNode _topics;
+		private NGTreeNode _currentNode;
+
+		private HashSet<NGTreeNode> _dirtyTopics = new HashSet<NGTreeNode>();
+
+		public SettingsController()
+		{
+			Initialize(true);
+		}
+
+		public bool InitializeDocument(params object[] args)
+		{
+			return true;
+		}
+
+		private void Initialize(bool initData)
+		{
+			if (initData)
+			{
+				var items = AddInTree.GetTreeNode("/Altaxo/Dialogs/SettingsDialog").BuildChildItems<IOptionPanelDescriptor>(null);
+				_topics = new NGTreeNode();
+				foreach (var item in items)
+					AddTopic(item, _topics.Nodes);
+			}
+
+			if (null != _view)
+			{
+				_view.InitializeTopics(_topics.Nodes);
+				EhTopicSelectionChanged(_topics);
+			}
+		}
+
+		private void AddTopic(IOptionPanelDescriptor desc, NGTreeNodeCollection nodecoll)
+		{
+			var newNode = new NGTreeNode(desc.Label);
+			newNode.Tag = desc;
+			if (null != desc.ChildOptionPanelDescriptors)
+			{
+				foreach (var child in desc.ChildOptionPanelDescriptors)
+					AddTopic(child, newNode.Nodes);
+			}
+			nodecoll.Add(newNode);
+		}
+
+		private void EhTopicSelectionChanged(NGTreeNode obj)
+		{
+			// if this node has a own control, use it, otherwise use the next child
+			var node = GetFirstNodeWithControl(obj);
+			string title = string.Empty;
+			object view = null;
+			if (node != null)
+			{
+				var desc = (IOptionPanelDescriptor)node.Tag;
+				var ctrl = desc.OptionPanel;
+				title = desc.Label;
+				view = ctrl.ViewObject;
+				_currentNode = node;
+			}
+
+			_view.InitializeTopicView(title, view);
+			_view.InitializeTopicViewDirtyIndicator(_dirtyTopics.Contains(_currentNode) ? 1 : 0);
+		}
+
+		private void EhCurrentTopicViewMadeDirty()
+		{
+			if (!_dirtyTopics.Contains(_currentNode))
+				_dirtyTopics.Add(_currentNode);
+		}
+
+		private NGTreeNode GetFirstNodeWithControl(NGTreeNode obj)
+		{
+			// if this node has a own control, use it, otherwise use the next child
+			var desc = (IOptionPanelDescriptor)obj.Tag;
+			if (desc != null && desc.OptionPanel != null)
+				return obj;
+
+			if (obj.HasChilds)
+			{
+				foreach (var child in obj.Nodes)
+				{
+					var result = GetFirstNodeWithControl(child);
+					if (null != result)
+						return result;
+				}
+			}
+			return null; // nothing found
+		}
+
+		public UseDocument UseDocumentCopy
+		{
+			set { }
+		}
+
+		public object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				if (null != _view)
+				{
+					_view.TopicSelectionChanged -= EhTopicSelectionChanged;
+					_view.CurrentTopicViewMadeDirty -= EhCurrentTopicViewMadeDirty;
+				}
+
+				_view = value as ISettingsView;
+
+				if (null != _view)
+				{
+					Initialize(false);
+					_view.TopicSelectionChanged += EhTopicSelectionChanged;
+					_view.CurrentTopicViewMadeDirty += EhCurrentTopicViewMadeDirty;
+				}
+			}
+		}
+
+		public object ModelObject
+		{
+			get { return null; }
+		}
+
+		public void Dispose()
+		{
+		}
+
+		public bool Apply(bool disposeController)
+		{
+			// we have to call apply for all dirty topics
+
+			foreach (var node in _dirtyTopics)
+			{
+				var desc = (IOptionPanelDescriptor)node.Tag;
+				var ctrl = desc.OptionPanel;
+				if (null != ctrl && !ctrl.Apply())
+				{
+					_currentNode = node;
+					_view.SetSelectedNode(_currentNode);
+					_view.InitializeTopicView(desc.Label, ctrl.ViewObject);
+					_view.InitializeTopicViewDirtyIndicator(2);
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Try to revert changes to the model, i.e. restores the original state of the model.
+		/// </summary>
+		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+		/// <returns>
+		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+		/// </returns>
+		public bool Revert(bool disposeController)
+		{
+			return false;
+		}
 	}
 }

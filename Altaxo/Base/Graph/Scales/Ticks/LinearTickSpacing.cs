@@ -537,8 +537,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 			protected set
 			{
-				_suppressedMajorTicks = value ?? new SuppressedTicks();
-				_suppressedMajorTicks.ParentObject = this;
+				ChildSetMember(ref _suppressedMajorTicks, value ?? new SuppressedTicks());
 			}
 		}
 
@@ -550,8 +549,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 			protected set
 			{
-				_suppressedMinorTicks = value ?? new SuppressedTicks();
-				_suppressedMinorTicks.ParentObject = this;
+				ChildSetMember(ref _suppressedMinorTicks, value ?? new SuppressedTicks());
 			}
 		}
 
@@ -563,8 +561,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 			protected set
 			{
-				_additionalMajorTicks = value ?? new AdditionalTicks();
-				_additionalMajorTicks.ParentObject = this;
+				ChildSetMember(ref _additionalMajorTicks, value ?? new AdditionalTicks());
 			}
 		}
 
@@ -576,8 +573,7 @@ namespace Altaxo.Graph.Scales.Ticks
 			}
 			protected set
 			{
-				_additionalMinorTicks = value ?? new AdditionalTicks();
-				_additionalMinorTicks.ParentObject = this;
+				ChildSetMember(ref _additionalMinorTicks, value ?? new AdditionalTicks());
 			}
 		}
 

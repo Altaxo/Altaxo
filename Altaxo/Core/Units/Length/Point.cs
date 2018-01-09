@@ -29,7 +29,8 @@ using System.Text;
 
 namespace Altaxo.Units.Length
 {
-	public class Point : IUnit
+	[UnitDescription("Length", 1, 0, 0, 0, 0, 0, 0)]
+	public class Point : UnitBase, IUnit
 	{
 		private static readonly Point _instance = new Point();
 

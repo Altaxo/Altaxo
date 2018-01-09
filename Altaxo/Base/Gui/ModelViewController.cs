@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -129,10 +129,24 @@ namespace Altaxo.Gui
 	}
 
 	/// <summary>
-	/// Wraps an <see cref="Altaxo.Gui.IMVCANController"/> instance in a wrapper class
+	/// Interface to a view that utilize a data context.
 	/// </summary>
-	public interface IMVCControllerWrapper
+	public interface IDataContextAwareView
 	{
-		Altaxo.Gui.IMVCANController MVCController { get; }
+		object DataContext { set; }
+	}
+
+	/// <summary>
+	/// Must be implemented by views that require a special shell window (other then the standard dialog window with OK, Cancel, Apply).
+	/// </summary>
+	public interface IViewRequiresSpecialShellWindow
+	{
+		/// <summary>
+		/// Gets the type of shell window required.
+		/// </summary>
+		/// <value>
+		/// The type of shell window required.
+		/// </value>
+		System.Type TypeOfShellWindowRequired { get; }
 	}
 }

@@ -43,8 +43,23 @@ namespace Altaxo.Units
 
 		public PrefixedUnit(SIPrefix prefix, IUnit unit)
 		{
-			_prefix = prefix;
-			_unit = unit;
+			if (unit is IPrefixedUnit punit)
+			{
+				if (punit.Unit is IPrefixedUnit)
+					throw new ArgumentException("Multiple nesting of IPrefixedUnit is not supported", nameof(unit));
+
+				(var newPrefix, var factor) = SIPrefix.FromMultiplication(prefix, punit.Prefix);
+				if (1 != factor)
+					throw new ArgumentException(string.Format("Can not combine prefix {0} with prefix {1} to a new prefix without additional factor", prefix.Name, punit.Prefix.Name));
+
+				_unit = punit.Unit;
+				_prefix = newPrefix;
+			}
+			else
+			{
+				_prefix = prefix;
+				_unit = unit;
+			}
 		}
 
 		public IUnit Unit { get { return _unit ?? Units.Dimensionless.Unity.Instance; } }

@@ -164,9 +164,9 @@ namespace Altaxo.Gui.Common.Drawing
 			var figure = new PathFigure();
 			figure.StartPoint = new Point(width, height * 0.875);
 			figure.Segments.Add(new PolyLineSegment(new Point[]
-      {
-        new Point(width / 2, height / 2),
-        new Point(width, height * 0.175) }, true));
+			{
+				new Point(width / 2, height / 2),
+				new Point(width, height * 0.175) }, true));
 			geometryDrawing.Geometry = new PathGeometry(new PathFigure[] { figure });
 			geometryDrawing.Pen = new Pen(Brushes.Black, lineWidth) { LineJoin = plj };
 			drawingGroup.Children.Add(geometryDrawing);

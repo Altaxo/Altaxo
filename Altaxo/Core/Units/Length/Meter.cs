@@ -29,6 +29,7 @@ using System.Text;
 
 namespace Altaxo.Units.Length
 {
+	[UnitDescription("Length", 1, 0, 0, 0, 0, 0, 0)]
 	public class Meter : SIUnit
 	{
 		private static readonly Meter _instance = new Meter();
@@ -36,7 +37,7 @@ namespace Altaxo.Units.Length
 		public static Meter Instance { get { return _instance; } }
 
 		private Meter()
-			: base(1, 0, 0, 0, 0, 0, 0)
+				: base(1, 0, 0, 0, 0, 0, 0)
 		{
 		}
 

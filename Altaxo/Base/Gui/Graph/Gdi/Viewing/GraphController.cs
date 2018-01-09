@@ -35,13 +35,16 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 	using Altaxo.Graph;
 	using Altaxo.Graph.Gdi;
 	using Altaxo.Graph.Gdi.Shapes;
+	using Altaxo.Gui.Workbench;
 	using Altaxo.Main;
 	using Altaxo.Serialization.Clipboard;
 	using Gdi;
 	using Geometry;
 
 	[ExpectedTypeOfView(typeof(IGraphView))]
-	public abstract class GraphController : IGraphController, IGraphViewEventSink, IDisposable
+	[UserControllerForObject(typeof(GraphViewLayout))]
+	[UserControllerForObject(typeof(GraphDocument))]
+	public partial class GraphController : AbstractViewContent, IGraphController, IGraphViewEventSink, IDisposable
 	{
 		// following default unit is point (1/72 inch)
 		/// <summary>For the graph elements all the units are in points. One point is 1/72 inch.</summary>
@@ -82,21 +85,34 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
 		#region Constructors
 
-		protected GraphController()
+		static GraphController()
+		{
+			_emptyReadOnlyList = new List<IHitTestObject>().AsReadOnly();
+
+			// register here editor methods
+			XYPlotLayerController.RegisterEditHandlers();
+			XYPlotLayer.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
+			TextGraphic.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
+			TextGraphic.TextGraphicsEditorMethod = new DoubleClickHandler(EhEditTextGraphics);
+		}
+
+		public GraphController()
 		{
 			InitTriggerBasedUpdate();
+			SetMemberVariablesToDefault();
 		}
 
 		/// <summary>
 		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
 		/// </summary>
 		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
-		protected GraphController(GraphDocument graphdoc)
+		public GraphController(GraphDocument graphdoc)
 		{
 			if (null == graphdoc)
 				throw new ArgumentNullException("Leaving the graphdoc null in constructor is not supported here");
 
 			InitTriggerBasedUpdate();
+			SetMemberVariablesToDefault();
 			InternalInitializeGraphDocument(graphdoc); // Using DataTable here wires the event chain also
 		}
 
@@ -108,13 +124,12 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 			{
 				InternalInitializeGraphDocument(args[0] as GraphDocument);
 			}
-			else if (args[0] is GraphViewLayout)
+			else if (args[0] is GraphViewLayout graphViewLayout)
 			{
-				var o = (GraphViewLayout)args[0];
-				_isAutoZoomActive = o.IsAutoZoomActive;
-				_zoomFactor = o.ZoomFactor;
-				_positionOfViewportsUpperLeftCornerInRootLayerCoordinates = o.PositionOfViewportsUpperLeftCornerInRootLayerCoordinates;
-				InternalInitializeGraphDocument(o.GraphDocument);
+				_isAutoZoomActive = graphViewLayout.IsAutoZoomActive;
+				_zoomFactor = graphViewLayout.ZoomFactor;
+				_positionOfViewportsUpperLeftCornerInRootLayerCoordinates = graphViewLayout.PositionOfViewportsUpperLeftCornerInRootLayerCoordinates;
+				InternalInitializeGraphDocument(graphViewLayout.GraphDocument);
 			}
 			else
 			{
@@ -547,7 +562,17 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		/// </summary>
 		public event EventHandler CurrentGraphToolChanged;
 
-		public abstract GraphToolType CurrentGraphTool { get; set; }
+		public GraphToolType CurrentGraphTool
+		{
+			get
+			{
+				return null == _view ? GraphToolType.None : _view.CurrentGraphTool;
+			}
+			set
+			{
+				_view.CurrentGraphTool = value;
+			}
+		}
 
 		#endregion Graph tools
 
@@ -580,8 +605,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 			// Ensure the current layer and plot numbers are valid
 			this.EnsureValidityOfCurrentLayerNumber();
 			this.EnsureValidityOfCurrentPlotNumber();
-
-			OnTitleNameChanged(EventArgs.Empty);
+			this.Title = _doc.Name;
 		}
 
 		private void InternalUninitializeGraphDocument()
@@ -603,7 +627,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 			get { return _doc; }
 		}
 
-		public object ModelObject
+		public override object ModelObject
 		{
 			get
 			{
@@ -729,7 +753,39 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 				_view.InvalidateCachedGraphBitmapAndRepaint();
 		}
 
-		public abstract object ViewObject { get; set; }
+		private void AttachView()
+		{
+			_view.Controller = this;
+		}
+
+		private void DetachView()
+		{
+			_view.Controller = null;
+		}
+
+		public override object ViewObject
+		{
+			get { return _view; }
+			set
+			{
+				if (!object.ReferenceEquals(_view, value))
+				{
+					if (null != _view)
+					{
+						DetachView();
+					}
+
+					_view = value as IGraphView;
+
+					if (null != _view)
+					{
+						Initialize(false);
+						AttachView();
+						_view.CurrentGraphTool = GraphToolType.ObjectPointer;
+					}
+				}
+			}
+		}
 
 		#endregion IGraphController Members
 
@@ -745,7 +801,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 			var eAsNOC = e as Altaxo.Main.NamedObjectCollectionChangedEventArgs;
 			if (null != eAsNOC && eAsNOC.WasItemRenamed)
 			{
-				Current.Gui.Execute(EhGraphDocumentNameChanged_Unsynchronized, (GraphDocument)sender, eAsNOC.OldName);
+				Current.Dispatcher.InvokeIfRequired(EhGraphDocumentNameChanged_Unsynchronized, (GraphDocument)sender, eAsNOC.OldName);
 				return;
 			}
 
@@ -771,7 +827,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		/// <param name="e">The event arguments.</param>
 		protected void EhGraph_SizeChanged(object sender, System.EventArgs e)
 		{
-			Current.Gui.BeginExecute(EhGraph_BoundsChanged_Unsynchronized);
+			Current.Dispatcher.InvokeAndForget(EhGraph_BoundsChanged_Unsynchronized);
 		}
 
 		protected void EhGraph_BoundsChanged_Unsynchronized()
@@ -791,7 +847,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		/// <param name="e">The event arguments.</param>
 		protected void EhGraph_LayerCollectionChanged(object sender, System.EventArgs e)
 		{
-			Current.Gui.BeginExecute(EhGraph_LayerCollectionChanged_Unsynchronized);
+			Current.Dispatcher.InvokeAndForget(EhGraph_LayerCollectionChanged_Unsynchronized);
 		}
 
 		protected void EhGraph_LayerCollectionChanged_Unsynchronized()
@@ -818,34 +874,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 			if (null != _view)
 				_view.GraphViewTitle = Doc.Name;
 
-			this.TitleName = Doc.Name;
-		}
-
-		/// <summary>
-		/// This is the whole name of the content, e.g. the file name or
-		/// the url depending on the type of the content.
-		/// </summary>
-		public string TitleName
-		{
-			get
-			{
-				return this.Doc.Name;
-			}
-			set
-			{
-				OnTitleNameChanged(EventArgs.Empty);
-			}
-		}
-
-		/// <summary>
-		/// Is called each time the name for the content has changed.
-		/// </summary>
-		public event EventHandler TitleNameChanged;
-
-		protected virtual void OnTitleNameChanged(System.EventArgs e)
-		{
-			if (null != TitleNameChanged)
-				TitleNameChanged(this, e);
+			this.Title = Doc.Name;
 		}
 
 		#endregion Event handlers from GraphDocument
@@ -923,7 +952,24 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
 		#region Arrange
 
-		public abstract IList<IHitTestObject> SelectedObjects { get; }
+		public IList<IHitTestObject> SelectedObjects
+		{
+			get
+			{
+				return _view?.SelectedObjects ?? _emptyReadOnlyList;
+			}
+		}
+
+		/// <summary>
+		/// Returns the number of selected objects into this graph.
+		/// </summary>
+		public int NumberOfSelectedObjects
+		{
+			get
+			{
+				return _view?.SelectedObjects.Count ?? 0;
+			}
+		}
 
 		/// <summary>
 		/// Gets the objects currently selected. The returned objects are not the <see cref="HitTestObject"/>s, but the hitted objects itself.
@@ -931,7 +977,16 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		/// <value>
 		/// The objects currently selected in the graph.
 		/// </value>
-		public abstract IEnumerable<object> SelectedRealObjects { get; }
+		public IEnumerable<object> SelectedRealObjects
+		{
+			get
+			{
+				if (null != _view)
+					return _view.SelectedObjects.Select(hitTestObject => hitTestObject.HittedObject);
+				else
+					return Enumerable.Empty<object>();
+			}
+		}
 
 		public delegate void ArrangeElement(IHitTestObject obj, RectangleF bounds, RectangleF masterbounds);
 

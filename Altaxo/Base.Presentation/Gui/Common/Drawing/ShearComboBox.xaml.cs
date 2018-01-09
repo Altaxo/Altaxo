@@ -32,6 +32,9 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+	using Altaxo.Units;
+	using Altaxo.Units.Dimensionless;
+
 	public partial class ShearComboBox : DimensionfulQuantityImageComboBox
 	{
 		private static Dictionary<double, ImageSource> _cachedImages = new Dictionary<double, ImageSource>();
@@ -40,7 +43,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		static ShearComboBox()
 		{
-			SelectedQuantityProperty.OverrideMetadata(typeof(ShearComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(0, Units.Dimensionless.Unity.Instance)));
+			SelectedQuantityProperty.OverrideMetadata(typeof(ShearComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(0, Unity.Instance)));
 		}
 
 		public ShearComboBox()
@@ -51,12 +54,12 @@ namespace Altaxo.Gui.Common.Drawing
 			InitializeComponent();
 
 			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Dimensionless.Unity.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
+				Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, Unity.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
 
 			_img.Source = GetImage(SelectedQuantityInSIUnits);
 		}
 
-		private static ValidationResult EhValidateQuantity(Units.DimensionfulQuantity quantity)
+		private static ValidationResult EhValidateQuantity(Altaxo.Units.DimensionfulQuantity quantity)
 		{
 			string error = null;
 			double val = quantity.AsValueInSIUnits;
@@ -81,7 +84,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override ImageSource GetItemImage(object item)
 		{
-			double val = ((Units.DimensionfulQuantity)item).AsValueInSIUnits;
+			double val = ((DimensionfulQuantity)item).AsValueInSIUnits;
 			ImageSource result;
 			if (!_cachedImages.TryGetValue(val, out result))
 				_cachedImages.Add(val, result = GetImage(val));

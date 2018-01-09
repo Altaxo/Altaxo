@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Units;
+using Altaxo.Units.Dimensionless;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,9 +34,9 @@ namespace Altaxo.Gui.Common
 	[ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
 	public class RelationValueInUnityController : ValueInSomeUnitControllerBase
 	{
-		protected override Units.IUnit UnitOfValue
+		protected override IUnit UnitOfValue
 		{
-			get { return Units.Dimensionless.Unity.Instance; }
+			get { return Unity.Instance; }
 		}
 
 		protected override QuantityWithUnitGuiEnvironment UnitEnvironment

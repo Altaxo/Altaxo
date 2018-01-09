@@ -25,6 +25,7 @@
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Units;
+using AUL = Altaxo.Units.Length;
 using System;
 
 namespace Altaxo.Gui.Graph.Graph3D
@@ -33,11 +34,11 @@ namespace Altaxo.Gui.Graph.Graph3D
 
 	public interface IItemLocationDirectView
 	{
-		void InitializeXPosition(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
+		void InitializeXPosition(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
 
-		void InitializeYPosition(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
+		void InitializeYPosition(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
 
-		void InitializeZPosition(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
+		void InitializeZPosition(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
 
 		void ShowSizeElements(bool isVisible, bool isEnabled);
 
@@ -47,23 +48,23 @@ namespace Altaxo.Gui.Graph.Graph3D
 
 		void ShowAnchorElements(bool isVisible, bool isEnabled);
 
-		void InitializeXSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
+		void InitializeXSize(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
 
-		void InitializeYSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
+		void InitializeYSize(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
 
-		void InitializeZSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
+		void InitializeZSize(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
 
-		Units.DimensionfulQuantity XPosition { get; }
+		DimensionfulQuantity XPosition { get; }
 
-		Units.DimensionfulQuantity YPosition { get; }
+		DimensionfulQuantity YPosition { get; }
 
-		Units.DimensionfulQuantity ZPosition { get; }
+		DimensionfulQuantity ZPosition { get; }
 
-		Units.DimensionfulQuantity XSize { get; }
+		DimensionfulQuantity XSize { get; }
 
-		Units.DimensionfulQuantity YSize { get; }
+		DimensionfulQuantity YSize { get; }
 
-		Units.DimensionfulQuantity ZSize { get; }
+		DimensionfulQuantity ZSize { get; }
 
 		double RotationX { get; set; }
 
@@ -126,9 +127,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 		private QuantityWithUnitGuiEnvironment _ySizeEnvironment, _yPositionEnvironment;
 		private QuantityWithUnitGuiEnvironment _zSizeEnvironment, _zPositionEnvironment;
 
-		private ChangeableRelativePercentUnit _percentLayerXSizeUnit = new ChangeableRelativePercentUnit("% Parent X-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
-		private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("% Parent Y-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
-		private ChangeableRelativePercentUnit _percentLayerZSizeUnit = new ChangeableRelativePercentUnit("% Parent Z-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
+		private ChangeableRelativePercentUnit _percentLayerXSizeUnit = new ChangeableRelativePercentUnit("% Parent X-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
+		private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("% Parent Y-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
+		private ChangeableRelativePercentUnit _percentLayerZSizeUnit = new ChangeableRelativePercentUnit("% Parent Z-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
 
 		protected bool _showPositionElements_Enabled = true, _showPositionElements_IsVisible = true;
 		protected bool _showSizeElements_Enabled = true, _showSizeElements_IsVisible = true;
@@ -147,9 +148,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 			if (initData)
 			{
 				_parentSize = _doc.ParentSize;
-				_percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentSize.X, Units.Length.Point.Instance);
-				_percentLayerYSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentSize.Y, Units.Length.Point.Instance);
-				_percentLayerZSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentSize.Z, Units.Length.Point.Instance);
+				_percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentSize.X, AUL.Point.Instance);
+				_percentLayerYSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentSize.Y, AUL.Point.Instance);
+				_percentLayerZSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentSize.Z, AUL.Point.Instance);
 
 				_xSizeEnvironment = new QuantityWithUnitGuiEnvironment(SizeEnvironment.Instance, new IUnit[] { _percentLayerXSizeUnit });
 				_ySizeEnvironment = new QuantityWithUnitGuiEnvironment(SizeEnvironment.Instance, new IUnit[] { _percentLayerYSizeUnit });
@@ -166,19 +167,19 @@ namespace Altaxo.Gui.Graph.Graph3D
 
 				if (!_doc.IsAutoSized)
 				{
-					var xSize = _doc.SizeX.IsAbsolute ? new DimensionfulQuantity(_doc.SizeX.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.SizeX.Value * 100, _percentLayerXSizeUnit);
+					var xSize = _doc.SizeX.IsAbsolute ? new DimensionfulQuantity(_doc.SizeX.Value, AUL.Point.Instance) : new DimensionfulQuantity(_doc.SizeX.Value * 100, _percentLayerXSizeUnit);
 					_view.InitializeXSize(xSize, _xSizeEnvironment);
-					var ySize = _doc.SizeY.IsAbsolute ? new DimensionfulQuantity(_doc.SizeY.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.SizeY.Value * 100, _percentLayerYSizeUnit);
+					var ySize = _doc.SizeY.IsAbsolute ? new DimensionfulQuantity(_doc.SizeY.Value, AUL.Point.Instance) : new DimensionfulQuantity(_doc.SizeY.Value * 100, _percentLayerYSizeUnit);
 					_view.InitializeYSize(ySize, _ySizeEnvironment);
-					var zSize = _doc.SizeZ.IsAbsolute ? new DimensionfulQuantity(_doc.SizeZ.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.SizeZ.Value * 100, _percentLayerZSizeUnit);
+					var zSize = _doc.SizeZ.IsAbsolute ? new DimensionfulQuantity(_doc.SizeZ.Value, AUL.Point.Instance) : new DimensionfulQuantity(_doc.SizeZ.Value * 100, _percentLayerZSizeUnit);
 					_view.InitializeZSize(zSize, _zSizeEnvironment);
 				}
 
-				var xPos = _doc.PositionX.IsAbsolute ? new DimensionfulQuantity(_doc.PositionX.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.PositionX.Value * 100, _percentLayerXSizeUnit);
+				var xPos = _doc.PositionX.IsAbsolute ? new DimensionfulQuantity(_doc.PositionX.Value, AUL.Point.Instance) : new DimensionfulQuantity(_doc.PositionX.Value * 100, _percentLayerXSizeUnit);
 				_view.InitializeXPosition(xPos, _xPositionEnvironment);
-				var yPos = _doc.PositionY.IsAbsolute ? new DimensionfulQuantity(_doc.PositionY.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.PositionY.Value * 100, _percentLayerYSizeUnit);
+				var yPos = _doc.PositionY.IsAbsolute ? new DimensionfulQuantity(_doc.PositionY.Value, AUL.Point.Instance) : new DimensionfulQuantity(_doc.PositionY.Value * 100, _percentLayerYSizeUnit);
 				_view.InitializeYPosition(yPos, _yPositionEnvironment);
-				var zPos = _doc.PositionZ.IsAbsolute ? new DimensionfulQuantity(_doc.PositionZ.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(_doc.PositionZ.Value * 100, _percentLayerZSizeUnit);
+				var zPos = _doc.PositionZ.IsAbsolute ? new DimensionfulQuantity(_doc.PositionZ.Value, AUL.Point.Instance) : new DimensionfulQuantity(_doc.PositionZ.Value * 100, _percentLayerZSizeUnit);
 				_view.InitializeZPosition(zPos, _zPositionEnvironment);
 
 				_view.RotationX = _doc.RotationX;
@@ -223,17 +224,17 @@ namespace Altaxo.Gui.Graph.Graph3D
 					if (object.ReferenceEquals(xSize.Unit, _percentLayerXSizeUnit))
 						_doc.SizeX = RADouble.NewRel(xSize.Value / 100);
 					else
-						_doc.SizeX = RADouble.NewAbs(xSize.AsValueIn(Units.Length.Point.Instance));
+						_doc.SizeX = RADouble.NewAbs(xSize.AsValueIn(AUL.Point.Instance));
 
 					if (object.ReferenceEquals(ySize.Unit, _percentLayerYSizeUnit))
 						_doc.SizeY = RADouble.NewRel(ySize.Value / 100);
 					else
-						_doc.SizeY = RADouble.NewAbs(ySize.AsValueIn(Units.Length.Point.Instance));
+						_doc.SizeY = RADouble.NewAbs(ySize.AsValueIn(AUL.Point.Instance));
 
 					if (object.ReferenceEquals(zSize.Unit, _percentLayerZSizeUnit))
 						_doc.SizeZ = RADouble.NewRel(zSize.Value / 100);
 					else
-						_doc.SizeZ = RADouble.NewAbs(zSize.AsValueIn(Units.Length.Point.Instance));
+						_doc.SizeZ = RADouble.NewAbs(zSize.AsValueIn(AUL.Point.Instance));
 				}
 
 				var xPos = _view.XPosition;
@@ -243,17 +244,17 @@ namespace Altaxo.Gui.Graph.Graph3D
 				if (object.ReferenceEquals(xPos.Unit, _percentLayerXSizeUnit))
 					_doc.PositionX = RADouble.NewRel(xPos.Value / 100);
 				else
-					_doc.PositionX = RADouble.NewAbs(xPos.AsValueIn(Units.Length.Point.Instance));
+					_doc.PositionX = RADouble.NewAbs(xPos.AsValueIn(AUL.Point.Instance));
 
 				if (object.ReferenceEquals(yPos.Unit, _percentLayerYSizeUnit))
 					_doc.PositionY = RADouble.NewRel(yPos.Value / 100);
 				else
-					_doc.PositionY = RADouble.NewAbs(yPos.AsValueIn(Units.Length.Point.Instance));
+					_doc.PositionY = RADouble.NewAbs(yPos.AsValueIn(AUL.Point.Instance));
 
 				if (object.ReferenceEquals(zPos.Unit, _percentLayerZSizeUnit))
 					_doc.PositionZ = RADouble.NewRel(zPos.Value / 100);
 				else
-					_doc.PositionZ = RADouble.NewAbs(zPos.AsValueIn(Units.Length.Point.Instance));
+					_doc.PositionZ = RADouble.NewAbs(zPos.AsValueIn(AUL.Point.Instance));
 
 				_doc.LocalAnchorX = _view.PivotX;
 				_doc.LocalAnchorY = _view.PivotY;
@@ -309,7 +310,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 				if (object.ReferenceEquals(xSize.Unit, _percentLayerXSizeUnit))
 					result = RADouble.NewRel(xSize.Value / 100);
 				else
-					result = RADouble.NewAbs(xSize.AsValueIn(Units.Length.Point.Instance));
+					result = RADouble.NewAbs(xSize.AsValueIn(AUL.Point.Instance));
 				actn(result);
 			}
 		}
@@ -327,7 +328,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 				if (object.ReferenceEquals(ySize.Unit, _percentLayerYSizeUnit))
 					result = RADouble.NewRel(ySize.Value / 100);
 				else
-					result = RADouble.NewAbs(ySize.AsValueIn(Units.Length.Point.Instance));
+					result = RADouble.NewAbs(ySize.AsValueIn(AUL.Point.Instance));
 				actn(result);
 			}
 		}
@@ -345,7 +346,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 				if (object.ReferenceEquals(zSize.Unit, _percentLayerYSizeUnit))
 					result = RADouble.NewRel(zSize.Value / 100);
 				else
-					result = RADouble.NewAbs(zSize.AsValueIn(Units.Length.Point.Instance));
+					result = RADouble.NewAbs(zSize.AsValueIn(AUL.Point.Instance));
 				actn(result);
 			}
 		}
@@ -425,13 +426,13 @@ namespace Altaxo.Gui.Graph.Graph3D
 				if (object.ReferenceEquals(xSize.Unit, _percentLayerXSizeUnit))
 					result = RADouble.NewRel(xSize.Value / 100);
 				else
-					result = RADouble.NewAbs(xSize.AsValueIn(Units.Length.Point.Instance));
+					result = RADouble.NewAbs(xSize.AsValueIn(AUL.Point.Instance));
 
 				return result;
 			}
 			set
 			{
-				var xSize = value.IsAbsolute ? new DimensionfulQuantity(value.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(value.Value * 100, _percentLayerXSizeUnit);
+				var xSize = value.IsAbsolute ? new DimensionfulQuantity(value.Value, AUL.Point.Instance) : new DimensionfulQuantity(value.Value * 100, _percentLayerXSizeUnit);
 				_view.InitializeXSize(xSize, _xSizeEnvironment);
 			}
 		}
@@ -446,13 +447,13 @@ namespace Altaxo.Gui.Graph.Graph3D
 				if (object.ReferenceEquals(ySize.Unit, _percentLayerXSizeUnit))
 					result = RADouble.NewRel(ySize.Value / 100);
 				else
-					result = RADouble.NewAbs(ySize.AsValueIn(Units.Length.Point.Instance));
+					result = RADouble.NewAbs(ySize.AsValueIn(AUL.Point.Instance));
 
 				return result;
 			}
 			set
 			{
-				var ySize = value.IsAbsolute ? new DimensionfulQuantity(value.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(value.Value * 100, _percentLayerYSizeUnit);
+				var ySize = value.IsAbsolute ? new DimensionfulQuantity(value.Value, AUL.Point.Instance) : new DimensionfulQuantity(value.Value * 100, _percentLayerYSizeUnit);
 				_view.InitializeYSize(ySize, _ySizeEnvironment);
 			}
 		}
@@ -467,13 +468,13 @@ namespace Altaxo.Gui.Graph.Graph3D
 				if (object.ReferenceEquals(zSize.Unit, _percentLayerXSizeUnit))
 					result = RADouble.NewRel(zSize.Value / 100);
 				else
-					result = RADouble.NewAbs(zSize.AsValueIn(Units.Length.Point.Instance));
+					result = RADouble.NewAbs(zSize.AsValueIn(AUL.Point.Instance));
 
 				return result;
 			}
 			set
 			{
-				var zSize = value.IsAbsolute ? new DimensionfulQuantity(value.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(value.Value * 100, _percentLayerYSizeUnit);
+				var zSize = value.IsAbsolute ? new DimensionfulQuantity(value.Value, AUL.Point.Instance) : new DimensionfulQuantity(value.Value * 100, _percentLayerYSizeUnit);
 				_view.InitializeYSize(zSize, _zSizeEnvironment);
 			}
 		}

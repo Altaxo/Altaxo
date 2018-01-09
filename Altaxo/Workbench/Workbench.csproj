@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E657514C-1C54-44AC-A279-A045BC02AA6E}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <RootNamespace>Altaxo</RootNamespace>
+    <AssemblyName>Workbench</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Gui\Common\CustomDialog.xaml.cs">
+      <DependentUpon>CustomDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\SaveErrorChooseDialog.xaml.cs">
+      <DependentUpon>SaveErrorChooseDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\SaveErrorInformDialog.xaml.cs">
+      <DependentUpon>SaveErrorInformDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\GuiFactoryServiceWpfWin.cs" />
+    <Compile Include="Gui\MenuCommands\HelpCommands.cs" />
+    <Compile Include="Gui\MenuCommands\OpenSettingsDirectory.cs" />
+    <Compile Include="Gui\MenuCommands\RecentFilesMenuBuilder.cs" />
+    <Compile Include="Gui\MenuCommands\RecentProjectsMenuBuilder.cs" />
+    <Compile Include="Gui\Pads\FileBrowser\FileBrowserControl.xaml.cs">
+      <DependentUpon>FileBrowserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Pads\FileBrowser\FileBrowserController.cs" />
+    <Compile Include="Gui\Pads\FileBrowser\FileFullNameToImageConverter.cs" />
+    <Compile Include="Gui\Pads\FileBrowser\FileListController.cs" />
+    <Compile Include="Gui\Pads\FileBrowser\FileSystemTreeController.cs" />
+    <Compile Include="Gui\Pads\FileBrowser\IndexToImageConverter.cs" />
+    <Compile Include="Gui\Startup\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Startup\SplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Gui\Startup\StartupMain.cs" />
+    <Compile Include="Gui\Startup\StartupArguments.cs" />
+    <Compile Include="Gui\Workbench\Converters\ActiveDocumentConverter.cs" />
+    <Compile Include="Gui\Workbench\AltaxoWorkbench.cs" />
+    <Compile Include="Gui\Workbench\Behaviors\DockingLayoutStringObserver.cs" />
+    <Compile Include="Gui\Workbench\Behaviors\FileDropCommand.cs" />
+    <Compile Include="Gui\Workbench\Behaviors\WorkbenchStateObserver.cs" />
+    <Compile Include="Gui\Workbench\Converters\DockManagerThemeConverter.cs" />
+    <Compile Include="Gui\Workbench\ExceptionBox.xaml.cs">
+      <DependentUpon>ExceptionBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Workbench\FileService.cs" />
+    <Compile Include="Gui\Workbench\FileServiceOpenedFile.cs" />
+    <Compile Include="Gui\Workbench\FullScreenEnabledWindow.cs" />
+    <Compile Include="Gui\Workbench\IDialogMessageService.cs" />
+    <Compile Include="Gui\Workbench\Behaviors\ToolBarTrayItemsSourceObserver.cs" />
+    <Compile Include="Gui\Workbench\Behaviors\IsActiveObserver.cs" />
+    <Compile Include="Gui\Workbench\LayoutUpdateStrategy.cs" />
+    <Compile Include="Gui\Workbench\MainWorkbenchWindow.xaml.cs">
+      <DependentUpon>MainWorkbenchWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Workbench\PanesStyleSelector.cs" />
+    <Compile Include="Gui\Workbench\PanesTemplateSelector.cs" />
+    <Compile Include="Gui\Workbench\RunWorkbenchException.cs" />
+    <Compile Include="Gui\Workbench\WorkbenchStartup.cs" />
+    <Compile Include="Gui\Workbench\WpfSynchronizeInvoke.cs" />
+    <Compile Include="Main\Services\MessageServiceImpl.cs" />
+    <Content Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Content>
+    <Compile Include="Properties\AssemblyInfo.autogenerated.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\AltaxoBitmap.resources" />
+    <EmbeddedResource Include="Resources\AltaxoString.resources" />
+    <EmbeddedResource Include="Resources\BitmapResources.resources" />
+    <EmbeddedResource Include="Resources\StringResources.resources" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Readme.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.Aero\Xceed.Wpf.AvalonDock.Themes.Aero.csproj">
+      <Project>{ba72cce0-a9fb-4995-b496-7fec5c87b85b}</Project>
+      <Name>Xceed.Wpf.AvalonDock.Themes.Aero</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.Metro\Xceed.Wpf.AvalonDock.Themes.Metro.csproj">
+      <Project>{89286eb4-b4a1-418c-839a-067b00f442d8}</Project>
+      <Name>Xceed.Wpf.AvalonDock.Themes.Metro</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.VS2010\Xceed.Wpf.AvalonDock.Themes.VS2010.csproj">
+      <Project>{b3fc3e21-5f2d-4581-aea2-59f671cffc21}</Project>
+      <Name>Xceed.Wpf.AvalonDock.Themes.VS2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Base.Presentation\AltaxoBase.Presentation.csproj">
+      <Project>{323D97E6-92A8-40B4-99C1-D64D4368DFC7}</Project>
+      <Name>AltaxoBase.Presentation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Base\AltaxoBase.csproj">
+      <Project>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</Project>
+      <Name>AltaxoBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\AltaxoCore.csproj">
+      <Project>{7045C197-9DA8-4FA4-886C-992ACADD838F}</Project>
+      <Name>AltaxoCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\AvalonDock\Xceed.Wpf.AvalonDock\Xceed.Wpf.AvalonDock.csproj">
+      <Project>{db81988f-e0f2-45a0-a1fd-8c37f3d35244}</Project>
+      <Name>Xceed.Wpf.AvalonDock</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WorkbenchBase\WorkbenchBase.csproj">
+      <Project>{34542e3e-74ac-4cd7-91d9-06e976fbf5a0}</Project>
+      <Name>WorkbenchBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WorkbenchCore\WorkbenchCore.csproj">
+      <Project>{64ff300e-4bd5-4616-9bc6-f4069e1527f6}</Project>
+      <Name>WorkbenchCore</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\SplashScreen.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Gui\Common\CustomDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\SaveErrorChooseDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\SaveErrorInformDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Pads\FileBrowser\FileBrowserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Startup\App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Workbench\ExceptionBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Workbench\MainWorkbenchWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
+  <Target Name="BeforeBuild">
+    <GitVersionFile TemplateFile="Properties\AssemblyInfo.cs" DestinationFile="Properties\AssemblyInfo.autogenerated.cs" SettingsFile="..\..\MSBuildVersioning.xml" />
+  </Target>
+</Project>

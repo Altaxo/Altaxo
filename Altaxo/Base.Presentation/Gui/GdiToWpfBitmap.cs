@@ -98,6 +98,7 @@ namespace Altaxo.Gui
 		/// <param name="height"></param>
 		public GdiToWpfBitmap(int width, int height)
 		{
+			Current.Dispatcher.VerifyAccess();
 			InternalAllocate(width, height);
 		}
 
@@ -112,6 +113,7 @@ namespace Altaxo.Gui
 		/// <param name="height"></param>
 		public void Resize(int width, int height)
 		{
+			Current.Dispatcher.VerifyAccess();
 			InternalDeallocate(true);
 			InternalAllocate(width, height);
 		}
@@ -212,6 +214,11 @@ namespace Altaxo.Gui
 			}
 		}
 
+		/// <summary>
+		/// Begins the GDI painting by creating a new Gdi graphics context that can be used for drawing. If finished,
+		/// <see cref="EndGdiPainting"/> must be called to invalidate the interop bitmap and to update the WpfBitmapSource.
+		/// </summary>
+		/// <returns></returns>
 		public System.Drawing.Graphics BeginGdiPainting()
 		{
 			return System.Drawing.Graphics.FromImage(_bmp);
@@ -219,8 +226,16 @@ namespace Altaxo.Gui
 
 		public void EndGdiPainting()
 		{
-			_interopBmp.Invalidate();
-			OnPropertyChanged("WpfBitmapSource");
+			Current.Dispatcher.InvokeIfRequired(
+					() =>
+					{
+						var bmp = _interopBmp;
+						if (null != bmp)
+						{
+							bmp.Invalidate();
+							OnPropertyChanged(nameof(WpfBitmapSource));
+						}
+					});
 		}
 
 		public System.Drawing.Rectangle GdiRectangle
@@ -251,8 +266,16 @@ namespace Altaxo.Gui
 		{
 			get
 			{
-				_interopBmp.Invalidate();
-				return (System.Windows.Media.Imaging.BitmapSource)_interopBmp.GetAsFrozen();
+				var bmp = _interopBmp;
+				if (null != bmp)
+				{
+					bmp.Invalidate();
+					return (System.Windows.Media.Imaging.BitmapSource)bmp.GetAsFrozen();
+				}
+				else
+				{
+					return null;
+				}
 			}
 		}
 

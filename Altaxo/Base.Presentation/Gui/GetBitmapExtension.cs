@@ -43,10 +43,10 @@ namespace Altaxo.Gui
 
 		public override object ProvideValue(IServiceProvider serviceProvider)
 		{
-			var instance = WpfResourceService.Instance;
-			if (null != instance)
-				return WpfResourceService.Instance.GetBitmapSource(_key);
-			else return _key;
+			if (PresentationResourceService.InstanceAvailable)
+				return PresentationResourceService.GetBitmapSource(_key);
+			else
+				return _key;
 		}
 	}
 }

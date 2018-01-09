@@ -90,7 +90,7 @@ namespace Altaxo.Worksheet
 
 		public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
 		{
-			return nRow.ToString();
+			return nRow.ToString(Altaxo.Settings.GuiCulture.Instance);
 		}
 
 		public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
@@ -104,7 +104,7 @@ namespace Altaxo.Worksheet
 			if (bSelected)
 				dc.DrawString("[" + nRow + "]", GdiFontManager.ToGdi(_textFont), _defaultSelectedTextBrush, cellRectangle, _textFormat);
 			else
-				dc.DrawString("[" + nRow + "]", GdiFontManager.ToGdi(_textFont), _textBrush, cellRectangle, _textFormat);
+				dc.DrawString("[" + nRow + "]", GdiFontManager.ToGdi(_textFont), TextBrush, cellRectangle, _textFormat);
 		}
 
 		public static Dictionary<System.Type, Action<RowHeaderStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<RowHeaderStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();

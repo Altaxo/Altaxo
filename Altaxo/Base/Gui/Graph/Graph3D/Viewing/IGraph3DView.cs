@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Geometry;
+using Altaxo.Graph.Graph3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,11 +58,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		/// <remarks>The view must not send back a event, if the current layer is changed by this property.
 		/// It should only send the CurrentLayerChanged event to the controller, if the _user_ changed the current layer.</remarks>
 		int[] CurrentLayer { set; }
-
-		/// <summary>
-		/// This sets the title of the graph view.
-		/// </summary>
-		string GraphViewTitle { set; }
 
 		/// <summary>
 		/// Returns the size in points (=1/72 inch) of the area, wherein the graph is painted.
@@ -123,5 +119,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		void SetOverlayGeometry(Altaxo.Graph.Graph3D.GraphicsContext.IOverlayContext3D overlayGeometry);
 
 		void FocusOnGraphPanel();
+
+		/// <summary>
+		/// Sets the panel cursor of the view.
+		/// </summary>
+		/// <param name="cursor">The cursor (must be of the appropriate Gui type).</param>
+		void SetPanelCursor(object cursor);
+
+		GraphToolType CurrentGraphTool { get; set; }
+
+		void RenderOverlay();
+
+		IList<IHitTestObject> SelectedObjects { get; }
 	}
 }

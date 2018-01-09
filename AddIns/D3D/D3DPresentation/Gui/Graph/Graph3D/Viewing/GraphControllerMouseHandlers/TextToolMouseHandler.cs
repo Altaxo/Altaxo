@@ -36,13 +36,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 	public class TextToolMouseHandler : MouseStateHandler
 	{
 		/// <summary>The graph controller this mouse handler belongs to.</summary>
-		private Graph3DControllerWpf _grac;
+		private Graph3DController _grac;
 
-		public TextToolMouseHandler(Graph3DControllerWpf grac)
+		public TextToolMouseHandler(Graph3DController grac)
 		{
 			_grac = grac;
-			if (_grac != null)
-				_grac.SetPanelCursor(Cursors.IBeam);
+			_grac?.View?.SetPanelCursor(Cursors.IBeam);
 		}
 
 		public override GraphToolType GraphToolType
@@ -78,7 +77,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 			tgo.ParentObject = _grac.ActiveLayer;
 
 			// deselect the text tool
-			_grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
+			_grac.CurrentGraphTool = GraphToolType.ObjectPointer;
 
 			object tgoo = tgo;
 			if (Current.Gui.ShowDialog(ref tgoo, "Text", false))

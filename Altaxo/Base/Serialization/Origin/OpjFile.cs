@@ -35,16 +35,16 @@ namespace Altaxo.Serialization.Origin
 		private const int MAX_COLUMNS = 255;
 		private const int MAX_LEVEL = 20;
 
-		private string filename;				//!< project file name
-		private int version;				//!< project version
-		private int nr_spreads;				//!< number of spreadsheets
-		private string[] spreadname = new string[MAX_SPREADS];		//!< spreadsheet names
-		private int[] nr_cols = new int[MAX_SPREADS];		//!< number of cols per spreadsheet
-		private int[][] nr_rows = new int[MAX_SPREADS][];	//!< number of rows per column of spreadsheet
-		private int[] maxrows = new int[MAX_SPREADS];		//!< max number of rows of spreadsheet
-		private double[][][] data = new double[MAX_SPREADS][][];	//!< data per column per spreadsheet
-		private string[][] colname = new string[MAX_SPREADS][];	//!< column names
-		private string[][] coltype = new string[MAX_SPREADS][];	//!< column types
+		private string filename;        //!< project file name
+		private int version;        //!< project version
+		private int nr_spreads;       //!< number of spreadsheets
+		private string[] spreadname = new string[MAX_SPREADS];    //!< spreadsheet names
+		private int[] nr_cols = new int[MAX_SPREADS];   //!< number of cols per spreadsheet
+		private int[][] nr_rows = new int[MAX_SPREADS][]; //!< number of rows per column of spreadsheet
+		private int[] maxrows = new int[MAX_SPREADS];   //!< max number of rows of spreadsheet
+		private double[][][] data = new double[MAX_SPREADS][][];  //!< data per column per spreadsheet
+		private string[][] colname = new string[MAX_SPREADS][]; //!< column names
+		private string[][] coltype = new string[MAX_SPREADS][]; //!< column types
 		private System.Text.Encoding enc = System.Text.Encoding.ASCII;
 
 		public OpjFile(string filename)
@@ -67,9 +67,9 @@ namespace Altaxo.Serialization.Origin
 				{
 					nr_rows[i][j] = 0;
 					colname[i][j] = ('A' + (char)j).ToString(); // new char[25];
-					//colname[i][j][0]=0x41+j;
-					//colname[i][j][1]=0;
-					//coltype[i][j] = new char[25];
+																											//colname[i][j][0]=0x41+j;
+																											//colname[i][j][1]=0;
+																											//coltype[i][j] = new char[25];
 					if (j == 0)
 						coltype[i][j] = "X";
 					else
@@ -194,15 +194,15 @@ namespace Altaxo.Serialization.Origin
 					string versionstring = enc.GetString(vers);
 					version = int.Parse(versionstring);
 
-					int FILEPRE = 0x3e;	// file header
-					int PRE = 0x62;		// pre column
-					int HEAD;		// column header
-					int NEW_COL;		// value for new column
-					int COL_SIZE;		// value for col size
-					// TODO : valuesize depends also on column type!
+					int FILEPRE = 0x3e; // file header
+					int PRE = 0x62;   // pre column
+					int HEAD;   // column header
+					int NEW_COL;    // value for new column
+					int COL_SIZE;   // value for col size
+													// TODO : valuesize depends also on column type!
 					int valuesize = 10;
 					if (version == 130)
-					{	// 4.1
+					{ // 4.1
 						version = 410;
 						FILEPRE = 0x1D;
 						HEAD = 0x20;
@@ -211,7 +211,7 @@ namespace Altaxo.Serialization.Origin
 						valuesize = 8;
 					}
 					else if (version == 210)
-					{	// 5.0
+					{ // 5.0
 						version = 410;
 						FILEPRE = 0x25;
 						HEAD = 0x20;
@@ -220,7 +220,7 @@ namespace Altaxo.Serialization.Origin
 						valuesize = 8;
 					}
 					else if (version == 2625)
-					{	// 6.0
+					{ // 6.0
 						version = 600;
 						FILEPRE = 0x2f;
 						HEAD = 0x22;
@@ -229,7 +229,7 @@ namespace Altaxo.Serialization.Origin
 						valuesize = 11;
 					}
 					else if (version == 2630)
-					{	// 6.0 SR4
+					{ // 6.0 SR4
 						version = 604;
 						FILEPRE = 0x2f;
 						HEAD = 0x22;
@@ -237,7 +237,7 @@ namespace Altaxo.Serialization.Origin
 						COL_SIZE = 0x1b;
 					}
 					else if (version == 2635)
-					{	// 6.1
+					{ // 6.1
 						version = 610;
 						FILEPRE = 0x3a;
 						HEAD = 0x22;
@@ -245,14 +245,14 @@ namespace Altaxo.Serialization.Origin
 						COL_SIZE = 0x1b;
 					}
 					else if (version == 2656)
-					{	// 7.0
+					{ // 7.0
 						version = 700;
 						HEAD = 0x23;
 						NEW_COL = 0x73;
 						COL_SIZE = 0x1c;
 					}
 					else if (version == 2769)
-					{	// 7.5
+					{ // 7.5
 						version = 750;
 						HEAD = 0x33;
 						NEW_COL = 0x83;
@@ -283,7 +283,7 @@ namespace Altaxo.Serialization.Origin
 						f.Read(name, 0, 25); //fread(&name,25,1,f);
 						string[] namestring = enc.GetString(name).Split(new char[] { '_', '\0' });
 						string sname = namestring[0]; //strtok(name,"_");	// spreadsheet name
-						string cname = namestring[1];	// column name
+						string cname = namestring[1]; // column name
 						if (nr_spreads == 0 || sname != spreadname[nr_spreads - 1])
 						{
 							//fprintf(debug,"		NEW SPREADSHEET\n");
@@ -313,7 +313,7 @@ namespace Altaxo.Serialization.Origin
 
 						////////////////////////////////////// DATA ////////////////////////////////////////////////
 						fstr.Seek(POS + PRE + HEAD, SeekOrigin.Begin); //fseek(f,POS+PRE+HEAD,SEEK_SET);
-						//fprintf(debug,"	[data @ 0x%X]\n",POS+PRE+HEAD);
+																													 //fprintf(debug,"	[data @ 0x%X]\n",POS+PRE+HEAD);
 						data[nr_spreads - 1][current_col - 1] = new double[nr]; // (double *) malloc(nr*sizeof(double));
 						byte[] valuebuffer = new byte[100];
 						for (int i = 0; i < nr; i++)
@@ -333,8 +333,8 @@ namespace Altaxo.Serialization.Origin
 						int pos = POS + PRE + DATA + HEAD + 0x05;
 						fstr.Seek(pos, SeekOrigin.Begin); //fseek(f,pos,SEEK_SET);
 						col_found = f.ReadInt32(); // fread(&col_found,4,1,f);
-						//fprintf(debug,"	[column found = 0x%X (0x%X : YES) (@ 0x%X)]\n",col_found,NEW_COL,pos);
-						//fflush(debug);
+																			 //fprintf(debug,"	[column found = 0x%X (0x%X : YES) (@ 0x%X)]\n",col_found,NEW_COL,pos);
+																			 //fflush(debug);
 
 						POS += (DATA + HEAD + PRE);
 					}
@@ -378,7 +378,7 @@ namespace Altaxo.Serialization.Origin
 						c = f.ReadByte(); //fread(&c,1,1,f);
 						int jump = 0;
 						while (c != 'O' && jump < MAX_LEVEL)
-						{	// no inf loop
+						{ // no inf loop
 							//fprintf(debug,"	TRY %d	\"O\"RIGIN not found ! : %c (@ 0x%X)",jump+1,c,POS+ORIGIN);
 							//fprintf(debug,"		POS=0x%X | ORIGIN = 0x%X\n",POS,ORIGIN);
 							POS += 0x1F2;
@@ -399,7 +399,7 @@ namespace Altaxo.Serialization.Origin
 						// check spreadsheet name
 						fstr.Seek(POS + 0x12, SeekOrigin.Begin); //fseek(f,POS + 0x12,SEEK_SET);
 						f.Read(name, 0, 25); //fread(&name,25,1,f);
-						// fprintf(debug,"		SPREADSHEET %d NAME : %s	(@ 0x%X) has %d columns\n",	i+1,name,POS + 0x12,nr_cols[i]);
+																 // fprintf(debug,"		SPREADSHEET %d NAME : %s	(@ 0x%X) has %d columns\n",	i+1,name,POS + 0x12,nr_cols[i]);
 
 						int ATYPE = 0;
 						LAYER = POS;
@@ -413,7 +413,7 @@ namespace Altaxo.Serialization.Origin
 							fstr.Seek(LAYER + 0x53, SeekOrigin.Begin);//fseek(f,LAYER+0x53, SEEK_SET);
 							c = f.ReadByte(); //fread(&c,1,1,f);
 							while (c != 'L' && jump < MAX_LEVEL)
-							{	// no inf loop; number of "set column value"
+							{ // no inf loop; number of "set column value"
 								LAYER += 0x99;
 								fstr.Seek(LAYER + 0x53, SeekOrigin.Begin); //fseek(f,LAYER+0x53, SEEK_SET);
 								c = f.ReadByte(); // fread(&c,1,1,f);

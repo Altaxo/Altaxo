@@ -29,7 +29,8 @@ using System.Text;
 
 namespace Altaxo.Units.Angle
 {
-	public class Pi : IUnit
+	[UnitDescription("Angular measure", 0, 0, 0, 0, 0, 0, 0)]
+	public class Pi : UnitBase, IUnit
 	{
 		private static readonly Pi _instance = new Pi();
 

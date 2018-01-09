@@ -102,7 +102,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			if (null != symbolGap)
 			{
 				float startx, starty, stopx, stopy;
-				for (i = 0; i < subLinePoints.Length-1; ++i)
+				for (i = 0; i < subLinePoints.Length - 1; ++i)
 				{
 					if (2 == (i % 3))
 						continue;
@@ -141,7 +141,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			}
 			else // no line symbol gap required, so we can use DrawLines to draw the lines
 			{
-				for (i = 0; i < subLinePoints.Length-2; i += 3)
+				for (i = 0; i < subLinePoints.Length - 2; i += 3)
 				{
 					gp.AddLine(subLinePoints[i].X, subLinePoints[i].Y, subLinePoints[i + 1].X, subLinePoints[i + 1].Y);
 					gp.AddLine(subLinePoints[i + 1].X, subLinePoints[i + 1].Y, subLinePoints[i + 2].X, subLinePoints[i + 2].Y);
@@ -192,7 +192,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 			int lastIdx;
 			PointF[] linePoints = Segment3Connection_GetSubPoints(allLinePointsShiftedAlready, range, layer, connectCircular, out lastIdx);
 
-
 			if (connectCircular)
 			{
 				gp.AddLines(linePoints);
@@ -221,9 +220,5 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				gp.CloseFigure();
 			}
 		}
-
-
-
-		
 	}
 }

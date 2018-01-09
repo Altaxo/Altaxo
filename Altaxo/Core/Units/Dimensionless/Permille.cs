@@ -29,7 +29,8 @@ using System.Text;
 
 namespace Altaxo.Units.Dimensionless
 {
-	public class Permille : IUnit
+	[UnitDescription("Relation", 0, 0, 0, 0, 0, 0, 0)]
+	public class Permille : UnitBase, IUnit
 	{
 		private static readonly Permille _instance = new Permille();
 

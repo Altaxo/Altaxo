@@ -62,23 +62,23 @@ namespace Altaxo.Graph.Gdi
 			/// The trial count down. Integer that is counted down with every trial to render the document. When the trial count down has
 			/// reached zero, no more rendering trials are allowed.
 			/// </summary>
-			int _trialCountDown = 16;
+			private int _trialCountDown = 16;
 
 			/// <summary>
 			/// The time when the first rendering exception occured. (null if no such exception occured).
 			/// </summary>
-			TimeSpan? _timeOfFirstRenderingException;
+			private TimeSpan? _timeOfFirstRenderingException;
 
 			/// <summary>
 			/// The maximum time span between now and the first rendering exception. If this time span exceeds the Time span designated here,
 			/// no further rendering trials are allowed.
 			/// </summary>
-			static readonly TimeSpan _maximumTrialTimeAllowed = TimeSpan.FromSeconds(30);
+			private static readonly TimeSpan _maximumTrialTimeAllowed = TimeSpan.FromSeconds(30);
 
 			/// <summary>
 			/// True if the last rendering was successful.
 			/// </summary>
-			bool _wasSuccessful;
+			private bool _wasSuccessful;
 
 			public override bool Equals(object obj)
 			{
@@ -203,7 +203,7 @@ namespace Altaxo.Graph.Gdi
 			_tasksWaiting = new ConcurrentTokenizedLinkedList<object, GraphDocumentRenderTask>();
 			_tasksRendering = new ConcurrentDictionary<GraphDocument, GraphDocumentRenderTask>();
 
-			var projService = Current.ProjectService;
+			var projService = Current.IProjectService;
 			projService.ProjectClosed += EhProjectClosed;
 			projService.ProjectOpened += EhProjectOpened;
 			_isEnabled = null != Current.Project;

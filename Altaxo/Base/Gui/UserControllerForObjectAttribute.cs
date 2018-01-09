@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -23,12 +23,16 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Altaxo.Gui
 {
 	/// <summary>
 	/// Can be used for a controller to denote which type can be controlled by this.
 	/// </summary>
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 	public class UserControllerForObjectAttribute : System.Attribute, IComparable, IClassForClassAttribute
 	{
 		private System.Type _type;

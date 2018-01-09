@@ -132,6 +132,8 @@ namespace Altaxo.CodeEditing.CompilationHandling
 			);
 			//.WithTopLevelBinderFlags(BinderFlags.IgnoreCorLibraryDuplicatedTypes),
 
+			// var arr = referenceAssemblies.Select(ass => MetadataReference.CreateFromFile(ass.Location)).ToArray();
+
 			var compilation = CSharpCompilation.Create(
 				assemblyName, // Assembly name
 				trees,

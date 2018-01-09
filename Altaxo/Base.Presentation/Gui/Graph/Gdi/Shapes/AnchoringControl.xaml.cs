@@ -34,6 +34,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
 	using Altaxo.Geometry;
 	using Altaxo.Units;
+	using AUL = Altaxo.Units.Length;
 
 	/// <summary>
 	/// Interaction logic for AnchoringControl.xaml
@@ -47,8 +48,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
 		private QuantityWithUnitGuiEnvironment _xSizeEnvironment, _ySizeEnvironment;
 
-		private ChangeableRelativePercentUnit _percentLayerXSizeUnit = new ChangeableRelativePercentUnit("% X-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
-		private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("% Y-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
+		private ChangeableRelativePercentUnit _percentLayerXSizeUnit = new ChangeableRelativePercentUnit("% X-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
+		private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("% Y-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
 
 		public AnchoringControl()
 		{
@@ -82,15 +83,15 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 			_pivotX = pivotX;
 			_pivotY = pivotY;
 
-			_percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(referenceSize.X, Units.Length.Point.Instance);
-			_percentLayerYSizeUnit.ReferenceQuantity = new DimensionfulQuantity(referenceSize.Y, Units.Length.Point.Instance);
+			_percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(referenceSize.X, AUL.Point.Instance);
+			_percentLayerYSizeUnit.ReferenceQuantity = new DimensionfulQuantity(referenceSize.Y, AUL.Point.Instance);
 			_xSizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerXSizeUnit);
 			_ySizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerYSizeUnit);
 
 			_guiPivotX.UnitEnvironment = _xSizeEnvironment;
 			_guiPivotY.UnitEnvironment = _ySizeEnvironment;
-			_guiPivotX.SelectedQuantity = _pivotX.IsAbsolute ? new Units.DimensionfulQuantity(_pivotX.Value, Units.Length.Point.Instance) : new Units.DimensionfulQuantity(_pivotX.Value * 100, _percentLayerXSizeUnit);
-			_guiPivotY.SelectedQuantity = _pivotY.IsAbsolute ? new Units.DimensionfulQuantity(_pivotY.Value, Units.Length.Point.Instance) : new Units.DimensionfulQuantity(_pivotY.Value * 100, _percentLayerYSizeUnit);
+			_guiPivotX.SelectedQuantity = _pivotX.IsAbsolute ? new DimensionfulQuantity(_pivotX.Value, AUL.Point.Instance) : new DimensionfulQuantity(_pivotX.Value * 100, _percentLayerXSizeUnit);
+			_guiPivotY.SelectedQuantity = _pivotY.IsAbsolute ? new DimensionfulQuantity(_pivotY.Value, AUL.Point.Instance) : new DimensionfulQuantity(_pivotY.Value * 100, _percentLayerYSizeUnit);
 
 			if (CanUseRadioGridView())
 			{
@@ -198,7 +199,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 			if (object.ReferenceEquals(quant.Unit, _percentLayerXSizeUnit))
 				_pivotX = RADouble.NewRel(quant.Value / 100);
 			else
-				_pivotX = RADouble.NewAbs(quant.AsValueIn(Units.Length.Point.Instance));
+				_pivotX = RADouble.NewAbs(quant.AsValueIn(AUL.Point.Instance));
 
 			SetVisibilityOfSwitchButton();
 		}
@@ -209,7 +210,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 			if (object.ReferenceEquals(quant.Unit, _percentLayerYSizeUnit))
 				_pivotY = RADouble.NewRel(quant.Value / 100);
 			else
-				_pivotY = RADouble.NewAbs(quant.AsValueIn(Units.Length.Point.Instance));
+				_pivotY = RADouble.NewAbs(quant.AsValueIn(AUL.Point.Instance));
 
 			SetVisibilityOfSwitchButton();
 		}

@@ -219,8 +219,8 @@ namespace Altaxo.Main
 		{
 			get
 			{
-				var rootNode = Altaxo.Main.AbsoluteDocumentPath.GetRootNode(this);
-				return Altaxo.Main.RelativeDocumentPath.GetRelativePathFromTo(rootNode, this).ToString();
+				var rootNode = AbsoluteDocumentPath.GetRootNode(this);
+				return RelativeDocumentPath.GetRelativePathFromTo(rootNode, this).ToString();
 			}
 		}
 

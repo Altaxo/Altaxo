@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Main;
+using Altaxo.Collections;
 using System;
 
 namespace Altaxo.Main
@@ -34,10 +36,10 @@ namespace Altaxo.Main
 		INamedObject,
 		Main.IChangedEventSource,
 		ISuspendableByToken,
-		Main.ITunnelingEventSource,
+		ITunnelingEventSource,
 		IDisposable,
 		// ICloneable,
-		Altaxo.Collections.ITreeNodeWithParent<IDocumentLeafNode>
+		ITreeNodeWithParent<IDocumentLeafNode>
 	//Altaxo.Collections.INodeWithParentNode<IDocumentNode>
 	{
 		/// <summary>

@@ -36,20 +36,13 @@ namespace Altaxo.Main.Services.ScriptCompilation
 	/// </summary>
 	public class ScriptCompilerService
 	{
-		private static IScriptCompilerService _instance = new ScriptCompilerServiceImpl();
+		private static CachedService<IScriptCompilerService, IScriptCompilerService> _instance = new CachedService<IScriptCompilerService, IScriptCompilerService>(true, null, null);
 
-		public static IScriptCompilerService Instance
-		{
-			get { return _instance; }
-			set
-			{
-				_instance = value ?? throw new ArgumentNullException(nameof(value));
-			}
-		}
+		protected static IScriptCompilerService Instance => _instance.Instance;
 
 		public IScriptCompilerSuccessfulResult GetCompilerResult(Assembly ass)
 		{
-			return _instance.GetCompilerResult(ass);
+			return Instance.GetCompilerResult(ass);
 		}
 
 		/// <summary>
@@ -81,7 +74,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
 		/// <returns>True if successfully compiles, otherwise false.</returns>
 		public static IScriptCompilerResult Compile(string[] scriptText)
 		{
-			return _instance.Compile(scriptText);
+			return Instance.Compile(scriptText);
 		}
 
 		#region internal classes

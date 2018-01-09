@@ -31,6 +31,8 @@ using System.Text;
 
 namespace Altaxo.Gui
 {
+	using Altaxo.Units.Angle;
+
 	public static class GuiAngleUnits
 	{
 		private static ReadOnlyCollection<IUnit> _instance;
@@ -39,9 +41,9 @@ namespace Altaxo.Gui
 		{
 			var instance = new List<IUnit>();
 
-			instance.Add(Units.Angle.Radian.Instance);
-			instance.Add(Units.Angle.Degree.Instance);
-			instance.Add(Units.Angle.Pi.Instance);
+			instance.Add(Radian.Instance);
+			instance.Add(Degree.Instance);
+			instance.Add(Pi.Instance);
 			_instance = instance.AsReadOnly();
 		}
 

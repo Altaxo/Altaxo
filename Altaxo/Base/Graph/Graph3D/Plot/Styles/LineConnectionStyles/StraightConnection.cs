@@ -100,7 +100,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles.LineConnectionStyles
 						int originalIndex = range.OffsetToOriginal + i;
 						var diff = linepts[i + 1] - linepts[i];
 						double gapAtStart = symbolGap(originalIndex);
-						double gapAtEnd = i != (range.Length-1) ? symbolGap(originalIndex + 1) : symbolGap(range.OffsetToOriginal);
+						double gapAtEnd = i != (range.Length - 1) ? symbolGap(originalIndex + 1) : symbolGap(range.OffsetToOriginal);
 						var relAtStart = 0.5 * gapAtStart / diff.Length; // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
 						var relAtEnd = 0.5 * gapAtEnd / diff.Length; // 0.5 because symbolGap is the full gap between two lines, thus between the symbol center and the beginning of the line it is only 1/2
 						if ((relAtStart + relAtEnd) < 1) // a line only appears if sum of the gaps  is smaller than 1

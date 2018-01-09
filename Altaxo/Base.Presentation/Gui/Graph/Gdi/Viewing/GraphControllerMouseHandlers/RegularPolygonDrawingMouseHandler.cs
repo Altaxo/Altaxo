@@ -32,7 +32,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 	/// </summary>
 	public class RegularPolygonDrawingMouseHandler : AbstractRectangularToolMouseHandler
 	{
-		public RegularPolygonDrawingMouseHandler(GraphControllerWpf grac)
+		public RegularPolygonDrawingMouseHandler(GraphController grac)
 			: base(grac)
 		{
 		}

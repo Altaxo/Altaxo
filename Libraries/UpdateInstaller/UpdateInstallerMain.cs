@@ -47,8 +47,6 @@ namespace Altaxo.Serialization.AutoUpdates
 		[STAThread]
 		private static void Main(string[] args)
 		{
-			// System.Diagnostics.Debugger.Launch();
-
 			try
 			{
 				// args[0]: the name of the event that must be signalled when the installer is ready to install

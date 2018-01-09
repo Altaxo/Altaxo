@@ -29,7 +29,8 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
-	public class Hour : IUnit
+	[UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
+	public class Hour : UnitBase, IUnit
 	{
 		public const double OneHourInSeconds = 3600;
 

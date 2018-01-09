@@ -104,7 +104,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 				float startx, starty, stopx, stopy;
 				for (i = 0; i < lastIdx; i += 2)
 				{
-
 					var diff = GdiExtensionMethods.Subtract(subLinePoints[i + 1], subLinePoints[i]);
 					var diffLength = GdiExtensionMethods.VectorLength(diff);
 
@@ -186,7 +185,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles
 
 			int lastIdx;
 			PointF[] linePoints = Segment2Connection_GetSubPoints(allLinePointsShiftedAlready, range, layer, connectCircular, out lastIdx);
-
 
 			if (connectCircular)
 			{

@@ -93,6 +93,21 @@ namespace Altaxo.Settings
 
 		#endregion Serialization
 
+		static CultureSettings()
+		{
+			PropertyKeyDocumentCulture = new PropertyKey<CultureSettings>(
+				"04A3950C-1AA0-4E66-A734-A278C51BD04B",
+				"Language\\DocumentCulture",
+				PropertyLevel.All,
+				typeof(object),
+				() => new CultureSettings(CultureSettingsAtStartup.StartupDocumentCultureInfo))
+			{ ApplicationAction = ApplyDocumentCulture };
+
+			PropertyKeyUICulture = new PropertyKey<CultureSettings>("AB6F72E7-2879-47F4-9F79-3D2A0F7C1C55", "Language\\UICulture", PropertyLevel.Application, () => new CultureSettings(CultureSettingsAtStartup.StartupUICultureInfo)) { ApplicationAction = ApplyDocumentCulture };
+
+			int InvariantCultureID = CultureInfo.InvariantCulture.LCID;
+		}
+
 		/// <summary>Initializes a new instance of the <see cref="CultureSettings"/> class with nothing initialized.</summary>
 		protected CultureSettings()
 		{
@@ -221,7 +236,7 @@ namespace Altaxo.Settings
 		public static void ApplyUICulture(CultureSettings culture)
 		{
 			// first we set the properties that Sharpdevelop awaits to change its language,
-			Current.PropertyService.Set("CoreProperties.UILanguage", culture.NeutralCultureName);
+			Current.PropertyService.SetValue("CoreProperties.UILanguage", culture.NeutralCultureName);
 			System.Threading.Thread.CurrentThread.CurrentUICulture = culture.Culture;
 			Altaxo.Serialization.GUIConversion.CultureSettings = culture.Culture;
 		}

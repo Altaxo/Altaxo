@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -560,7 +560,10 @@ namespace Altaxo.Main.Services
 			object target,
 			System.Type overrideObjectType)
 		{
-			if (!(IsSubClassOfOrImplements(attributeType, typeof(IClassForClassAttribute)))) throw new InvalidProgramException();
+			if (!IsSubClassOfOrImplements(attributeType, typeof(IClassForClassAttribute)))
+			{
+				throw new ArgumentException(string.Format("Parameter {0} ({1}) is not a subclass or implements {2}", nameof(attributeType), attributeType, nameof(IClassForClassAttribute)), nameof(attributeType));
+			}
 
 			System.Type myTargetType = overrideObjectType != null ? overrideObjectType : target.GetType();
 			return _classesHavingAttributeCollection[attributeType, myTargetType];

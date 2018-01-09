@@ -81,8 +81,7 @@
 
 		<CheckBox x:Name="_guiIgnoreMissingDataPoints" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Content="Ignore missing data points" ToolTip="If true, missing data points are treated as if not present." />
 
-		<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles"  Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Content="Independent on data shifting group styles"  />
-
+		<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles"  Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Content="Independent on data shifting group styles" />
 
 		<CheckBox x:Name="_guiIndependentScatterSymbol" Grid.Row="6"  Grid.Column="0" Content="Independent scatter symbol:" />
 		<local:ScatterSymbolComboBox x:Name="_cbSymbolShape"  Grid.Row="6" Grid.Column="2" SelectedItemChanged="EhScatterSymbolChanged" />

@@ -193,7 +193,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 			double lmax = Math.Log(y1);
 
 			double logy = FindDecreasingYEqualToZero(
-				 delegate(double x) // x is the natural logarithm of the effective value
+				 delegate (double x) // x is the natural logarithm of the effective value
 				 {
 					 double yss = Math.Exp(x / s);
 					 double ytt = Math.Exp(x / t);

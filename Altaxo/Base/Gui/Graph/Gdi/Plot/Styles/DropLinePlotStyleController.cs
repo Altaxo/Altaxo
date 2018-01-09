@@ -86,9 +86,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		bool IgnoreMissingDataPoints { get; set; }
 
-
 		bool IndependentOnShiftingGroupStyles { get; set; }
-
 
 		double GapAtStartOffset { get; set; }
 		double GapAtStartFactor { get; set; }

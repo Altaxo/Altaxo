@@ -21,6 +21,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 	using Altaxo.Graph.Graph3D.GraphicsContext;
 	using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Gui.Graph.Graph3D.Common;
+	using Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers;
 	using Graph.Graph3D.Viewing;
 	using System.Windows.Controls.Primitives;
 
@@ -44,6 +45,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 		private volatile bool _isGraphUpToDate;
 
+		/// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
+		protected MouseStateHandler _mouseState;
+
+		private static IList<IHitTestObject> _emptyReadOnlyList = new List<IHitTestObject>().AsReadOnly();
+
 		public Graph3DControl()
 		{
 			InitializeComponent();
@@ -59,11 +65,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			_renderer?.Dispose();
 		}
 
-		private Graph3DControllerWpf Controller
+		private Graph3DController Controller
 		{
 			get
 			{
-				return (Graph3DControllerWpf)_controller.Target;
+				return (Graph3DController)_controller.Target;
 			}
 		}
 
@@ -73,19 +79,125 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			{
 				var oldcontroller = _controller;
 				_controller = new WeakReference(value);
+				if (null != value)
+					_mouseState = new ObjectPointerMouseHandler(value);
 			}
+		}
+
+		public GraphToolType CurrentGraphTool
+		{
+			get
+			{
+				return null == _mouseState ? GraphToolType.None : _mouseState.GraphToolType;
+			}
+			set
+			{
+				GraphToolType oldType = CurrentGraphTool;
+				if (oldType != value)
+				{
+					switch (value)
+					{
+						case GraphToolType.None:
+							_mouseState = null;
+							break;
+
+						case GraphToolType.ObjectPointer:
+							_mouseState = new GraphControllerMouseHandlers.ObjectPointerMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.TextDrawing:
+							_mouseState = new GraphControllerMouseHandlers.TextToolMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.EllipseDrawing:
+							_mouseState = new GraphControllerMouseHandlers.EllipseDrawingMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.SingleLineDrawing:
+							_mouseState = new GraphControllerMouseHandlers.SingleLineDrawingMouseHandler(this.Controller);
+							break;
+
+						/*
+
+					case GraphToolType.ArrowLineDrawing:
+						_mouseState = new GraphControllerMouseHandlers.ArrowLineDrawingMouseHandler(this);
+						break;
+
+					case GraphToolType.CurlyBraceDrawing:
+						_mouseState = new GraphControllerMouseHandlers.CurlyBraceDrawingMouseHandler(this);
+						break;
+
+					case GraphToolType.ReadPlotItemData:
+						_mouseState = new GraphControllerMouseHandlers.ReadPlotItemDataMouseHandler(this);
+						break;
+
+					case GraphToolType.ReadXYCoordinates:
+						_mouseState = new GraphControllerMouseHandlers.ReadXYCoordinatesMouseHandler(this);
+						break;
+
+					case GraphToolType.RectangleDrawing:
+						_mouseState = new GraphControllerMouseHandlers.RectangleDrawingMouseHandler(this);
+						break;
+
+					case GraphToolType.RegularPolygonDrawing:
+						_mouseState = new GraphControllerMouseHandlers.RegularPolygonDrawingMouseHandler(this);
+						break;
+
+					case GraphToolType.ZoomAxes:
+						_mouseState = new GraphControllerMouseHandlers.ZoomAxesMouseHandler(this);
+						break;
+
+					case GraphToolType.OpenCardinalSplineDrawing:
+						_mouseState = new OpenCardinalSplineMouseHandler(this);
+						break;
+
+					case GraphToolType.ClosedCardinalSplineDrawing:
+						_mouseState = new ClosedCardinalSplineMouseHandler(this);
+						break;
+
+					case GraphToolType.EditGrid:
+						_mouseState = new EditGridMouseHandler(this);
+						break;
+
+						*/
+
+						default:
+							throw new NotImplementedException("Type not implemented: " + value.ToString());
+					} // end switch
+
+					FocusOnGraphPanel();
+
+					Controller?.EhView_CurrentGraphToolChanged();
+
+					TriggerRendering();
+				}
+			}
+		}
+
+		public IList<IHitTestObject> SelectedObjects
+		{
+			get
+			{
+				if (_mouseState is ObjectPointerMouseHandler)
+					return ((ObjectPointerMouseHandler)_mouseState).SelectedObjects;
+				else
+					return _emptyReadOnlyList;
+			}
+		}
+
+		public void RenderOverlay()
+		{
+			var g = GetGraphicContextForOverlay();
+			_mouseState.AfterPaint(g);
+			SetOverlayGeometry(g);
+			TriggerRendering();
 		}
 
 		#region Graph panel mouse and keyboard
 
 		private void EhGraphPanel_KeyDown(object sender, KeyEventArgs e)
 		{
-			var guiController = Controller;
-			if (null != guiController)
-			{
-				bool result = guiController.EhView_ProcessCmdKey(e);
-				e.Handled = result;
-			}
+			this._mouseState?.ProcessCmdKey(e);
 		}
 
 		private PointD3D GetMousePosition(MouseEventArgs e)
@@ -109,9 +221,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 		private void EhGraphPanel_MouseMove(object sender, MouseEventArgs e)
 		{
-			var guiController = Controller;
-			if (null != guiController)
-				guiController.EhView_GraphPanelMouseMove(GetMousePosition(e), e);
+			var position = GetMousePosition(e);
+			_mouseState.OnMouseMove(position, e);
+			Controller?.EhView_GraphPanelMouseMove(position, GuiHelper.GetMouseState(e));
 		}
 
 		private void EhGraphPanel_MouseDown(object sender, MouseButtonEventArgs e)
@@ -119,21 +231,23 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			var guiController = Controller;
 			Keyboard.Focus(_guiCanvas);
 			var pos = GetMousePosition(e);
+
+			_mouseState?.OnMouseDown(pos, e);
 			if (null != guiController)
 			{
-				guiController.EhView_GraphPanelMouseDown(pos, e);
+				guiController.EhView_GraphPanelMouseDown(pos, GuiHelper.ToAltaxo(e, _d3dCanvas), GuiHelper.ToAltaxo(Keyboard.Modifiers));
 				if (e.ClickCount >= 2 && e.LeftButton == MouseButtonState.Pressed)
-					guiController.EhView_GraphPanelMouseDoubleClick(pos, e);
+					_mouseState.OnDoubleClick(pos, e);
 				else if (e.ClickCount == 1 && e.LeftButton == MouseButtonState.Pressed)
-					guiController.EhView_GraphPanelMouseClick(pos, e);
+					_mouseState.OnClick(pos, e);
 			}
 		}
 
 		private void EhGraphPanel_MouseUp(object sender, MouseButtonEventArgs e)
 		{
-			var guiController = Controller;
-			if (null != guiController)
-				guiController.EhView_GraphPanelMouseUp(GetMousePosition(e), e);
+			var position = GetMousePosition(e);
+			_mouseState.OnMouseUp(position, e);
+			Controller?.EhView_GraphPanelMouseUp(position, GuiHelper.ToAltaxo(e, _d3dCanvas));
 		}
 
 		#endregion Graph panel mouse and keyboard
@@ -327,9 +441,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 		#endregion Command bindings
 
-		internal void SetPanelCursor(Cursor arrow)
+		public void SetPanelCursor(Cursor arrow)
 		{
 			_d3dCanvas.Cursor = arrow;
+		}
+
+		public void SetPanelCursor(object cursor)
+		{
+			_d3dCanvas.Cursor = (Cursor)cursor;
 		}
 
 		public void FocusOnGraphPanel()
@@ -369,7 +488,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		public void TriggerRendering()
 		{
 			if (_isGraphVisible && null != _renderer)
-				Current.Gui.Execute(_renderer.TriggerRendering);
+				Current.Dispatcher.InvokeIfRequired(_renderer.TriggerRendering);
 		}
 
 		public void SetSceneBackColor(Altaxo.Drawing.AxoColor sceneBackColor)

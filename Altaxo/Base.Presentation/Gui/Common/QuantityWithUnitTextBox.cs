@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Common
 		{
 			var binding = new Binding();
 			binding.Source = this;
-			binding.Path = new PropertyPath("SelectedQuantity");
+			binding.Path = new PropertyPath(nameof(SelectedQuantity));
 			binding.Mode = BindingMode.TwoWay;
 			binding.UpdateSourceTrigger = UpdateSourceTrigger.LostFocus;
 			_converter = new QuantityWithUnitConverter(this, SelectedQuantityProperty);
@@ -70,6 +70,8 @@ namespace Altaxo.Gui.Common
 		}
 
 		public bool AllowNaNValues { get { return _converter.AllowNaNValues; } set { _converter.AllowNaNValues = value; } }
+
+		public string RepresentationOfNaN { get { return _converter.RepresentationOfNaN; } set { _converter.RepresentationOfNaN = value; } }
 
 		public bool AllowInfiniteValues { get { return _converter.AllowInfiniteValues; } set { _converter.AllowInfiniteValues = value; } }
 
@@ -164,6 +166,10 @@ namespace Altaxo.Gui.Common
 
 		#region Dependency property
 
+		public static readonly DependencyProperty SelectedQuantityProperty =
+		DependencyProperty.Register("SelectedQuantity", typeof(DimensionfulQuantity), typeof(QuantityWithUnitTextBox),
+		new FrameworkPropertyMetadata(EhSelectedQuantityChanged));
+
 		/// <summary>
 		/// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
 		/// </summary>
@@ -172,10 +178,6 @@ namespace Altaxo.Gui.Common
 			get { var result = (DimensionfulQuantity)GetValue(SelectedQuantityProperty); return result; }
 			set { SetValue(SelectedQuantityProperty, value); }
 		}
-
-		public static readonly DependencyProperty SelectedQuantityProperty =
-				DependencyProperty.Register("SelectedQuantity", typeof(DimensionfulQuantity), typeof(QuantityWithUnitTextBox),
-				new FrameworkPropertyMetadata(EhSelectedQuantityChanged));
 
 		private static void EhSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		{
@@ -207,6 +209,12 @@ namespace Altaxo.Gui.Common
 
 		#endregion Dependency property
 
+		#region Dependency property UnitEnvironment
+
+		public static readonly DependencyProperty UnitEnvironmentProperty =
+				DependencyProperty.Register(nameof(UnitEnvironment), typeof(QuantityWithUnitGuiEnvironment), typeof(QuantityWithUnitTextBox),
+				 new FrameworkPropertyMetadata(EhUnitEnvironmentChanged));
+
 		/// <summary>
 		/// Sets the unit environment. The unit environment determines the units the user is able to enter.
 		/// </summary>
@@ -214,13 +222,23 @@ namespace Altaxo.Gui.Common
 		{
 			get
 			{
-				return _converter.UnitEnvironment;
+				return (QuantityWithUnitGuiEnvironment)GetValue(UnitEnvironmentProperty);
 			}
+
 			set
 			{
-				_converter.UnitEnvironment = value;
+				SetValue(UnitEnvironmentProperty, value);
 			}
 		}
+
+		private static void EhUnitEnvironmentChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+			var thiss = (QuantityWithUnitTextBox)obj;
+			if (null != args.NewValue)
+				thiss._converter.UnitEnvironment = (QuantityWithUnitGuiEnvironment)args.NewValue;
+		}
+
+		#endregion Dependency property UnitEnvironment
 
 		#region IDimensionfulQuantityView
 

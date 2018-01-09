@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Altaxo.Main
 {
@@ -34,6 +35,15 @@ namespace Altaxo.Main
 	/// </summary>
 	public interface IComManager
 	{
+		/// <summary>
+		/// Processes the startup arguments that are given in the command to start the application.
+		/// If the return value is true, we carry on and start the application.
+		/// If the return value is false, we terminate the application immediately.
+		/// </summary>
+		/// <param name="args">The startup arguments.</param>
+		/// <returns>True if the application startup should be proceeded; false if the application should exit immediately.</returns>
+		bool ProcessStartupArguments(params string[] args);
+
 		/// <summary>
 		/// Gets a value indicating whether the application was started with the -embedding argument.
 		/// </summary>

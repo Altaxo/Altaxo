@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		static ColorScaleComboBox()
 		{
-			SelectedQuantityProperty.OverrideMetadata(typeof(ColorScaleComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(1, Units.Dimensionless.Unity.Instance)));
+			SelectedQuantityProperty.OverrideMetadata(typeof(ColorScaleComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(1, Altaxo.Units.Dimensionless.Unity.Instance)));
 		}
 
 		public ColorScaleComboBox()
@@ -51,7 +52,7 @@ namespace Altaxo.Gui.Common.Drawing
 			InitializeComponent();
 
 			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Dimensionless.Unity.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
+				Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
 
 			_img.Source = GetImage(SelectedQuantityInSIUnits);
 		}
@@ -65,7 +66,7 @@ namespace Altaxo.Gui.Common.Drawing
 			_img.Height = h - 2 * hMargin;
 		}
 
-		private static ValidationResult EhValidateQuantity(Units.DimensionfulQuantity quantity)
+		private static ValidationResult EhValidateQuantity(DimensionfulQuantity quantity)
 		{
 			string error = null;
 			double val = quantity.AsValueInSIUnits;
@@ -94,7 +95,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override ImageSource GetItemImage(object item)
 		{
-			double val = ((Units.DimensionfulQuantity)item).AsValueInSIUnits;
+			double val = ((DimensionfulQuantity)item).AsValueInSIUnits;
 			ImageSource result;
 			if (!_cachedImages.TryGetValue(val, out result))
 				_cachedImages.Add(val, result = GetImage(val));

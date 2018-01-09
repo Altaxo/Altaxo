@@ -91,15 +91,13 @@
     <Compile Include="Gui\Graph\Graph3D\Viewing\Graph3DControl.xaml.cs">
       <DependentUpon>Graph3DControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Graph3D\Viewing\Graph3DControllerWpf.cs" />
     <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\MouseStateHandler.cs" />
     <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs" />
     <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs" />
     <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs" />
     <Compile Include="Gui\Graph\Graph3D\Viewing\GraphControllerMouseHandlers\TextToolMouseHandler.cs" />
-    <Compile Include="Gui\SharpDevelop\Graph3DDisplayBindingDoozer.cs" />
-    <Compile Include="Gui\SharpDevelop\Graph3DExportBindingDoozer.cs" />
-    <Compile Include="Gui\SharpDevelop\SDGraph3DViewContent.cs" />
+    <Compile Include="Main\Graph3DDisplayBindingDoozer.cs" />
+    <Compile Include="Main\Graph3DExportBindingDoozer.cs" />
     <Compile Include="Graph\Graph3D\Commands\EditCommands.cs" />
     <Compile Include="Graph\Graph3D\Commands\GraphLayerCommands.cs" />
     <Compile Include="Graph\Graph3D\Commands\GraphToolCommands.cs" />
@@ -123,6 +121,14 @@
     <Fx40File Include="Shaders\GammaCorrector.fx" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Altaxo\Dom\AltaxoDom.csproj">
+      <Project>{71636e05-f91f-4efe-a63a-5ba2d525071f}</Project>
+      <Name>AltaxoDom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Altaxo\Base.Presentation\AltaxoBase.Presentation.csproj">
+      <Project>{323d97e6-92a8-40b4-99c1-d64d4368dfc7}</Project>
+      <Name>AltaxoBase.Presentation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj">
       <Project>{ca928a5c-9673-4fbb-a60e-f91364cc9db5}</Project>
       <Name>AltaxoBase</Name>
@@ -133,24 +139,9 @@
       <Name>AltaxoCore</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Altaxo\SDGui\AltaxoSDGui.csproj">
+    <ProjectReference Include="..\..\..\Altaxo\Dom.Presentation\AltaxoDom.Presentation.csproj">
       <Project>{9ebab076-12f4-4549-9fd5-6d2b8b387b06}</Project>
-      <Name>AltaxoSDGui</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Libraries\ICSharpCode.Base\ICSharpCode.SharpDevelop.csproj">
-      <Project>{2748ad25-9c63-4e12-877b-4dce96fbed54}</Project>
-      <Name>ICSharpCode.SharpDevelop</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Libraries\ICSharpCode.Core\ICSharpCode.Core.csproj">
-      <Project>{35cef10f-2d4c-45f2-9dd1-161e0fec583c}</Project>
-      <Name>ICSharpCode.Core</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Libraries\ICSharpCode.Core.Presentation\ICSharpCode.Core.Presentation.csproj">
-      <Project>{7e4a7172-7ff5-48d0-b719-7cd959dd1ac9}</Project>
-      <Name>ICSharpCode.Core.Presentation</Name>
+      <Name>AltaxoDom.Presentation</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

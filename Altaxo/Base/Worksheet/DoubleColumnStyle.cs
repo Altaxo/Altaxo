@@ -75,18 +75,14 @@ namespace Altaxo.Worksheet
 		public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
 		{
 			double val = ((Altaxo.Data.DoubleColumn)data)[nRow];
-			return Double.IsNaN(val) ? "" : val.ToString();
+			return Double.IsNaN(val) ? "" : val.ToString(Altaxo.Settings.GuiCulture.Instance);
 		}
 
 		public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
 		{
-			double newval;
-			try
-			{
-				newval = s.Length == 0 ? Double.NaN : System.Convert.ToDouble(s);
-				((Altaxo.Data.DoubleColumn)data)[nRow] = newval;
-			}
-			catch (Exception) { }
+			if (!double.TryParse(s, System.Globalization.NumberStyles.Float, Altaxo.Settings.GuiCulture.Instance, out var result))
+				result = double.NaN;
+			((Altaxo.Data.DoubleColumn)data)[nRow] = result;
 		}
 
 		public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
@@ -98,7 +94,7 @@ namespace Altaxo.Worksheet
 			if (bSelected)
 				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), _defaultSelectedTextBrush, cellRectangle, _textFormat);
 			else
-				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), _textBrush, cellRectangle, _textFormat);
+				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), TextBrush, cellRectangle, _textFormat);
 		}
 
 		public static Dictionary<System.Type, Action<DoubleColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<DoubleColumnStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();

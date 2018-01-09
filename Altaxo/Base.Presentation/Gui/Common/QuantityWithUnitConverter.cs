@@ -25,6 +25,7 @@
 using Altaxo.Units;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -87,6 +88,14 @@ namespace Altaxo.Gui.Common
 			set { _allowNaN = value; }
 		}
 
+		private string _representationOfNaN;
+
+		public string RepresentationOfNaN
+		{
+			get { return _representationOfNaN; }
+			set { _representationOfNaN = value; }
+		}
+
 		/// <summary>
 		/// Empty constructor. You should set as soon as possible the <see cref="BindingExpression"/> to the binding expression between your QuantityWithUnit property and the
 		/// Text property of your TextBox, ComboBox, or other Gui element. Furthermore, the <see cref="UnitEnvironment"/> property should be set
@@ -94,6 +103,14 @@ namespace Altaxo.Gui.Common
 		/// </summary>
 		public QuantityWithUnitConverter()
 		{
+			try
+			{
+				_conversionCulture = Altaxo.Settings.GuiCulture.Instance;
+			}
+			catch (Exception)
+			{
+				_conversionCulture = System.Globalization.CultureInfo.CurrentUICulture;
+			}
 		}
 
 		/// <summary>
@@ -104,6 +121,15 @@ namespace Altaxo.Gui.Common
 		/// <param name="quantityGetSetProperty"></param>
 		public QuantityWithUnitConverter(FrameworkElement parent, DependencyProperty quantityGetSetProperty)
 		{
+			try
+			{
+				_conversionCulture = Altaxo.Settings.GuiCulture.Instance;
+			}
+			catch (Exception)
+			{
+				_conversionCulture = System.Globalization.CultureInfo.CurrentUICulture;
+			}
+
 			_parent = parent;
 			_quantityGetSetProperty = quantityGetSetProperty;
 		}
@@ -200,14 +226,21 @@ namespace Altaxo.Gui.Common
 			{
 				string result;
 
-				if (null != _unitEnvironment)
-					result = q.Value.ToString("G" + _unitEnvironment.NumberOfDisplayedDigits.ToString(), _conversionCulture); // bug: do not use culture parameter here, it is sometimes different from CurrentUICulture
-				else
-					result = q.Value.ToString(_conversionCulture);
+				if (double.IsNaN(q.Value) && null != _representationOfNaN) // is a NaN for which we have a representation
+				{
+					result = _representationOfNaN;
+				}
+				else // Not a NaN with a representation
+				{
+					if (null != _unitEnvironment)
+						result = q.Value.ToString("G" + _unitEnvironment.NumberOfDisplayedDigits.ToString(), _conversionCulture); // bug: do not use culture parameter here, it is sometimes different from CurrentUICulture
+					else
+						result = q.Value.ToString(_conversionCulture);
 
-				string end = q.Prefix.ShortCut + q.Unit.ShortCut;
-				if (!string.IsNullOrEmpty(end))
-					result += " " + end;
+					string end = q.Prefix.ShortCut + q.Unit.ShortCut;
+					if (!string.IsNullOrEmpty(end))
+						result += " " + end;
+				}
 
 				_lastConvertedQuantity = q;
 				_lastConvertedString = result;
@@ -268,8 +301,16 @@ namespace Altaxo.Gui.Common
 			SIPrefix prefix = null;
 			s = s.Trim();
 
+			if (_allowNaN && null != _representationOfNaN && s.Trim() == _representationOfNaN.Trim())
+			{
+				result = new DimensionfulQuantity(double.NaN, SIPrefix.None, _lastConvertedQuantity.HasValue ? _lastConvertedQuantity.Value.Unit : _unitEnvironment.DefaultUnit.Unit);
+				return ValidateSuccessfullyConvertedQuantity(result);
+			}
+
 			if (string.IsNullOrEmpty(s))
+			{
 				return new ValidationResult(false, "The text box is empty. You have to enter a valid numeric quantity");
+			}
 
 			foreach (IUnit u in _unitEnvironment.UnitsSortedByShortcutLengthDescending)
 			{

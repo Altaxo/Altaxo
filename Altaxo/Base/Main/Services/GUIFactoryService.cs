@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -28,18 +28,31 @@ using Altaxo.Gui.Common;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Drawing.Printing;
+using System.Threading;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Altaxo.Main.Services
 {
 	/// <summary>
 	/// Creates the appropriate GUI object for a given document type.
 	/// </summary>
-	public abstract class GUIFactoryService
+	public abstract class GUIFactoryService : IGuiFactoryService
 	{
 		/// <summary>
 		/// Gets the window handle of the main window;
 		/// </summary>
 		public abstract IntPtr MainWindowHandle { get; }
+
+		/// <summary>
+		/// Gets the main window as object. Depending on the Gui technology that is used, this is either a Wpf window, or something else.
+		/// </summary>
+		/// <value>
+		/// The main window.
+		/// </value>
+		public abstract object MainWindowObject { get; }
 
 		/// <summary>
 		/// Gets an <see cref="IMVCController" />  for a given document type.
@@ -87,7 +100,7 @@ namespace Altaxo.Main.Services
 
 			foreach (Type definedType in list.Types)
 			{
-				if (ReflectionService.IsSubClassOfOrImplements(definedType, typeof(IMVCANController)))
+				if (typeof(IMVCANController).IsAssignableFrom(definedType) && expectedControllerType.IsAssignableFrom(definedType))
 				{
 					IMVCANController mvcan = (IMVCANController)Activator.CreateInstance(definedType);
 					mvcan.UseDocumentCopy = copyDocument;
@@ -99,7 +112,7 @@ namespace Altaxo.Main.Services
 					result = ReflectionService.CreateInstanceFromList(list, new Type[] { expectedControllerType }, creationArgs);
 				}
 
-				if (result is IMVCController)
+				if (expectedControllerType.IsAssignableFrom(result?.GetType()))
 					break;
 			}
 
@@ -142,10 +155,10 @@ namespace Altaxo.Main.Services
 		/// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
 		public IMVCController GetControllerAndControl(object[] args, System.Type overrideArg0Type, System.Type expectedControllerType, UseDocument copyDocument)
 		{
-			if (!ReflectionService.IsSubClassOfOrImplements(expectedControllerType, typeof(IMVCController)))
+			if (!typeof(IMVCController).IsAssignableFrom(expectedControllerType))
 				throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
 
-			IMVCController controller = GetController(args, overrideArg0Type, typeof(IMVCController), copyDocument);
+			IMVCController controller = GetController(args, overrideArg0Type, expectedControllerType, copyDocument);
 			if (controller == null)
 				return null;
 
@@ -224,7 +237,7 @@ namespace Altaxo.Main.Services
 			if (null == viewattributes || viewattributes.Length == 0)
 				viewattributes = ct.GetCustomAttributes(typeof(ExpectedTypeOfViewAttribute), true);
 
-			bool isInvokeRequired = InvokeRequired();
+			bool isInvokeRequired = Current.Dispatcher.InvokeRequired;
 
 			if (viewattributes != null && viewattributes.Length > 0)
 			{
@@ -258,7 +271,7 @@ namespace Altaxo.Main.Services
 						// all seems ok, so we can try to create the control
 
 						if (isInvokeRequired)
-							Execute(CreateAndAttachControlOfType, controller, controltype);
+							Current.Dispatcher.InvokeIfRequired(CreateAndAttachControlOfType, controller, controltype);
 						else
 							CreateAndAttachControlOfType(controller, controltype);
 						return;
@@ -268,7 +281,7 @@ namespace Altaxo.Main.Services
 			else // Controller has no ExpectedTypeOfView attribute
 			{
 				if (isInvokeRequired)
-					Execute(CreateControlForControllerWithNoExpectedTypeOfViewAttribute, controller, guiControlType);
+					Current.Dispatcher.InvokeIfRequired(CreateControlForControllerWithNoExpectedTypeOfViewAttribute, controller, guiControlType);
 				else
 					CreateControlForControllerWithNoExpectedTypeOfViewAttribute(controller, guiControlType);
 			}
@@ -385,263 +398,15 @@ namespace Altaxo.Main.Services
 			}
 		}
 
-		public abstract bool InvokeRequired();
+		#region Commands
 
-		public abstract object Invoke(Delegate method, object[] args);
+		/// <inheritdoc/>
+		public abstract ICommand NewRelayCommand(Action execute, Func<bool> canExecute = null);
 
-		public abstract IAsyncResult BeginInvoke(Delegate act, object[] args);
+		/// <inheritdoc/>
+		public abstract ICommand NewRelayCommand(Action<object> execute, Predicate<object> canExecute = null);
 
-		/// <summary>
-		/// Evaluates a function synchronously with the Gui.
-		/// </summary>
-		/// <typeparam name="TResult">The type of function result.</typeparam>
-		/// <param name="function">The function to execute.</param>
-		/// <returns>The result of the function evaluation.</returns>
-		public TResult Evaluate<TResult>(Func<TResult> function)
-		{
-			if (InvokeRequired())
-				return (TResult)Invoke((Delegate)function, null);
-			else
-				return function();
-		}
-
-		/// <summary>
-		/// Evaluates a function synchronously with the Gui.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <typeparam name="TResult">The type of function result.</typeparam>
-		/// <param name="function">The function to execute.</param>
-		/// <param name="arg">The 1st function argument.</param>
-		/// <returns>The result of the function evaluation.</returns>
-		public TResult Evaluate<T, TResult>(Func<T, TResult> function, T arg)
-		{
-			if (InvokeRequired())
-				return (TResult)Invoke((Delegate)function, new object[] { arg });
-			else
-				return function(arg);
-		}
-
-		public TResult Evaluate<T1, T2, TResult>(Func<T1, T2, TResult> function, T1 arg1, T2 arg2)
-		{
-			if (InvokeRequired())
-				return (TResult)Invoke((Delegate)function, new object[] { arg1, arg2 });
-			else
-				return function(arg1, arg2);
-		}
-
-		public TResult Evaluate<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> function, T1 arg1, T2 arg2, T3 arg3)
-		{
-			if (InvokeRequired())
-				return (TResult)Invoke((Delegate)function, new object[] { arg1, arg2, arg3 });
-			else
-				return function(arg1, arg2, arg3);
-		}
-
-		public TResult Evaluate<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
-		{
-			if (InvokeRequired())
-				return (TResult)Invoke((Delegate)function, new object[] { arg1, arg2, arg3, arg4 });
-			else
-				return function(arg1, arg2, arg3, arg4);
-		}
-
-		public TResult Evaluate<T1, T2, T3, T4, T5, TResult>(Func<T1, T2, T3, T4, T5, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
-		{
-			if (InvokeRequired())
-				return (TResult)Invoke((Delegate)function, new object[] { arg1, arg2, arg3, arg4, arg5 });
-			else
-				return function(arg1, arg2, arg3, arg4, arg5);
-		}
-
-		public TResult Evaluate<T1, T2, T3, T4, T5, T6, TResult>(Func<T1, T2, T3, T4, T5, T6, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
-		{
-			if (InvokeRequired())
-				return (TResult)Invoke((Delegate)function, new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
-			else
-				return function(arg1, arg2, arg3, arg4, arg5, arg6);
-		}
-
-		public TResult Evaluate<T1, T2, T3, T4, T5, T6, T7, TResult>(Func<T1, T2, T3, T4, T5, T6, T7, TResult> function, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
-		{
-			if (InvokeRequired())
-				return (TResult)Invoke((Delegate)function, new object[] { arg1, arg2, arg3, arg4, arg5, arg6, arg7 });
-			else
-				return function(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
-		}
-
-		/// <summary>
-		/// Executes an action synchronously with the GUI.
-		/// </summary>
-		/// <param name="action">The action to execute.</param>
-		public void Execute(Action action)
-		{
-			if (InvokeRequired())
-				Invoke((Delegate)action, null);
-			else
-				action();
-		}
-
-		/// <summary>
-		/// Executes an action synchronously with the GUI.
-		/// </summary>
-		/// <param name="action">The action to execute.</param>
-		/// <param name="arg">The argument of the action.</param>
-		public void Execute<T>(Action<T> action, T arg)
-		{
-			if (InvokeRequired())
-				Invoke((Delegate)action, new object[] { arg });
-			else
-				action(arg);
-		}
-
-		/// <summary>
-		/// Executes an action synchronously with the GUI.
-		/// </summary>
-		/// <param name="action">The action to execute.</param>
-		/// <param name="arg1">The first argument of the action.</param>
-		/// <param name="arg2">The second argument of the action.</param>
-		public void Execute<T1, T2>(Action<T1, T2> action, T1 arg1, T2 arg2)
-		{
-			if (InvokeRequired())
-				Invoke((Delegate)action, new object[] { arg1, arg2 });
-			else
-				action(arg1, arg2);
-		}
-
-		/// <summary>
-		/// Executes an action synchronously with the GUI.
-		/// </summary>
-		/// <param name="action">The action to execute.</param>
-		/// <param name="arg1">The 1st argument of the action.</param>
-		/// <param name="arg2">The 2nd argument of the action.</param>
-		/// <param name="arg3">The 3rd argument of the action.</param>
-		public void Execute<T1, T2, T3>(Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3)
-		{
-			if (InvokeRequired())
-				Invoke((Delegate)action, new object[] { arg1, arg2, arg3 });
-			else
-				action(arg1, arg2, arg3);
-		}
-
-		/// <summary>
-		/// Executes an action synchronously with the GUI.
-		/// </summary>
-		/// <param name="action">The action to execute.</param>
-		/// <param name="arg1">The first argument of the action.</param>
-		/// <param name="arg2">The second argument of the action.</param>
-		/// <param name="arg3">The 3rd argument of the action.</param>
-		/// <param name="arg4">The 4th argument of the action.</param>
-		public void Execute<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
-		{
-			if (InvokeRequired())
-				Invoke((Delegate)action, new object[] { arg1, arg2, arg3, arg4 });
-			else
-				action(arg1, arg2, arg3, arg4);
-		}
-
-		/// <summary>
-		/// Executes an action synchronously with the Gui.
-		/// </summary>
-		/// <param name="action">The action to execute.</param>
-		/// <param name="arg1">The first argument of the action.</param>
-		/// <param name="arg2">The second argument of the action.</param>
-		/// <param name="arg3">The 3rd argument of the action.</param>
-		/// <param name="arg4">The 4th argument of the action.</param>
-		/// <param name="arg5">The 5th argument of the action.</param>
-		public void Execute<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
-		{
-			if (InvokeRequired())
-				Invoke((Delegate)action, new object[] { arg1, arg2, arg3, arg4, arg5 });
-			else
-				action(arg1, arg2, arg3, arg4, arg5);
-		}
-
-		/// <summary>
-		/// Executes an action synchronously with the Gui without waiting.
-		/// </summary>
-		/// <param name="action">The action to execute.</param>
-		public void BeginExecute(Action action)
-		{
-			if (InvokeRequired())
-				BeginInvoke((Delegate)action, null);
-			else
-				action();
-		}
-
-		/// <summary>
-		/// Executes an action synchronously with the Gui without waiting.
-		/// </summary>
-		/// <param name="action">The action to execute.</param>
-		/// <param name="arg">The argument of the action.</param>
-		public void BeginExecute<T>(Action<T> action, T arg)
-		{
-			if (InvokeRequired())
-				BeginInvoke((Delegate)action, new object[] { arg });
-			else
-				action(arg);
-		}
-
-		/// <summary>
-		/// Executes an action synchronously with the Gui without waiting.
-		/// </summary>
-		/// <param name="action">The action to execute.</param>
-		/// <param name="arg1">The first argument of the action.</param>
-		/// <param name="arg2">The second argument of the action.</param>
-		public void BeginExecute<T1, T2>(Action<T1, T2> action, T1 arg1, T2 arg2)
-		{
-			if (InvokeRequired())
-				BeginInvoke((Delegate)action, new object[] { arg1, arg2 });
-			else
-				action(arg1, arg2);
-		}
-
-		/// <summary>
-		/// Executes an action synchronously with the Gui without waiting.
-		/// </summary>
-		/// <param name="action">The action to execute.</param>
-		/// <param name="arg1">The 1st argument of the action.</param>
-		/// <param name="arg2">The 2nd argument of the action.</param>
-		/// <param name="arg3">The 3rd argument of the action.</param>
-		public void BeginExecute<T1, T2, T3>(Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3)
-		{
-			if (InvokeRequired())
-				BeginInvoke((Delegate)action, new object[] { arg1, arg2, arg3 });
-			else
-				action(arg1, arg2, arg3);
-		}
-
-		/// <summary>
-		/// Executes an action synchronously with the Gui without waiting.
-		/// </summary>
-		/// <param name="action">The action to execute.</param>
-		/// <param name="arg1">The first argument of the action.</param>
-		/// <param name="arg2">The second argument of the action.</param>
-		/// <param name="arg3">The 3rd argument of the action.</param>
-		/// <param name="arg4">The 4th argument of the action.</param>
-		public void BeginExecute<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
-		{
-			if (InvokeRequired())
-				BeginInvoke((Delegate)action, new object[] { arg1, arg2, arg3, arg4 });
-			else
-				action(arg1, arg2, arg3, arg4);
-		}
-
-		/// <summary>
-		/// Executes an action synchronously with the Gui without waiting.
-		/// </summary>
-		/// <param name="action">The action to execute.</param>
-		/// <param name="arg1">The first argument of the action.</param>
-		/// <param name="arg2">The second argument of the action.</param>
-		/// <param name="arg3">The 3rd argument of the action.</param>
-		/// <param name="arg4">The 4th argument of the action.</param>
-		/// <param name="arg5">The 5th argument of the action.</param>
-		public void BeginExecute<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
-		{
-			if (InvokeRequired())
-				BeginInvoke((Delegate)action, new object[] { arg1, arg2, arg3, arg4, arg5 });
-			else
-				action(arg1, arg2, arg3, arg4, arg5);
-		}
+		#endregion Commands
 
 		public bool ShowDialog(ref System.Enum arg, string title)
 		{
@@ -807,15 +572,6 @@ namespace Altaxo.Main.Services
 		/// <returns>True if the user answered with Yes, false if the user answered No, null if the user pressed Cancel.</returns>
 		public abstract bool? YesNoCancelMessageBox(string text, string caption, bool? defaultAnswer);
 
-		public bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.ThreadStart threadstart)
-		{
-			System.Threading.Thread t = new System.Threading.Thread(threadstart);
-			t.Start();
-			return ShowBackgroundCancelDialog(millisecondsDelay, monitor, t);
-		}
-
-		public abstract bool ShowBackgroundCancelDialog(int millisecondsDelay, IExternalDrivenBackgroundMonitor monitor, System.Threading.Thread thread);
-
 		/// <summary>
 		/// Gets a user friendly class name. See remarks for a detailed description how it is been obtained.
 		/// </summary>
@@ -976,6 +732,15 @@ namespace Altaxo.Main.Services
 		/// <param name="y">The y coordinate of the location where to show the context menu.</param>
 		/// <returns>The context menu. Returns Null if there is no registered context menu provider</returns>
 		public abstract void ShowContextMenu(object parent, object owner, string addInTreePath, double x, double y);
+
+		public virtual bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.ThreadStart threadstart, IExternalDrivenBackgroundMonitor monitor)
+		{
+			System.Threading.Thread t = new System.Threading.Thread(threadstart);
+			t.Start();
+			return ShowBackgroundCancelDialog(millisecondsDelay, t, monitor);
+		}
+
+		public abstract bool ShowBackgroundCancelDialog(int millisecondsDelay, Thread thread, IExternalDrivenBackgroundMonitor monitor);
 
 		public struct ScreenInformation
 		{

@@ -29,7 +29,8 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
-	public class Day : IUnit
+	[UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
+	public class Day : UnitBase, IUnit
 	{
 		public const double OneDayInSeconds = 24 * 3600;
 

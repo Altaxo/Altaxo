@@ -36,13 +36,13 @@ namespace Altaxo.Data
 		/// <summary>
 		/// ColumnScripts, key is the corresponding column, value is of type WorksheetColumnScript
 		/// </summary>
-		protected Dictionary<DataColumn, IColumnScriptText> _d = new Dictionary<DataColumn, IColumnScriptText>();
+		protected Dictionary<DataColumn, IColumnScriptText> _innerDict = new Dictionary<DataColumn, IColumnScriptText>();
 
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
-			if (null != _d)
+			if (null != _innerDict)
 			{
-				foreach (var item in _d)
+				foreach (var item in _innerDict)
 				{
 					yield return new Main.DocumentNodeAndName(item.Value, item.Key.Name);
 				}
@@ -51,13 +51,13 @@ namespace Altaxo.Data
 
 		protected override void Dispose(bool isDisposing)
 		{
-			var d = _d;
+			var d = _innerDict;
 			if (null != d && d.Count > 0)
 			{
-				_d = new Dictionary<DataColumn, IColumnScriptText>();
+				_innerDict = new Dictionary<DataColumn, IColumnScriptText>();
 
 				foreach (var item in d)
-					item.Value.Dispose();
+					item.Value?.Dispose();
 			}
 
 			base.Dispose(isDisposing);
@@ -67,27 +67,27 @@ namespace Altaxo.Data
 
 		public void Add(DataColumn key, IColumnScriptText value)
 		{
-			_d.Add(key, value);
+			_innerDict.Add(key, value);
 			value.ParentObject = this;
 			EhSelfChanged(EventArgs.Empty);
 		}
 
 		public bool ContainsKey(DataColumn key)
 		{
-			return _d.ContainsKey(key);
+			return _innerDict.ContainsKey(key);
 		}
 
 		public ICollection<DataColumn> Keys
 		{
-			get { return _d.Keys; }
+			get { return _innerDict.Keys; }
 		}
 
 		public bool Remove(DataColumn key)
 		{
 			IColumnScriptText oldValue;
-			if (_d.TryGetValue(key, out oldValue))
+			if (_innerDict.TryGetValue(key, out oldValue))
 			{
-				_d.Remove(key);
+				_innerDict.Remove(key);
 				oldValue.Dispose();
 				EhSelfChanged(EventArgs.Empty);
 				return true;
@@ -100,19 +100,19 @@ namespace Altaxo.Data
 
 		public bool TryGetValue(DataColumn key, out IColumnScriptText value)
 		{
-			return _d.TryGetValue(key, out value);
+			return _innerDict.TryGetValue(key, out value);
 		}
 
 		public ICollection<IColumnScriptText> Values
 		{
-			get { return _d.Values; }
+			get { return _innerDict.Values; }
 		}
 
 		public IColumnScriptText this[DataColumn key]
 		{
 			get
 			{
-				return _d[key];
+				return _innerDict[key];
 			}
 			set
 			{
@@ -120,12 +120,12 @@ namespace Altaxo.Data
 					throw new ArgumentNullException("value");
 
 				IColumnScriptText oldValue;
-				_d.TryGetValue(key, out oldValue);
+				_innerDict.TryGetValue(key, out oldValue);
 
 				if (object.ReferenceEquals(oldValue, value))
 					return;
 
-				_d[key] = value;
+				_innerDict[key] = value;
 				value.ParentObject = this;
 
 				if (null != oldValue)
@@ -140,8 +140,8 @@ namespace Altaxo.Data
 
 		public void Clear()
 		{
-			var d = _d;
-			_d = new Dictionary<DataColumn, IColumnScriptText>();
+			var d = _innerDict;
+			_innerDict = new Dictionary<DataColumn, IColumnScriptText>();
 
 			foreach (var item in d)
 			{
@@ -153,7 +153,7 @@ namespace Altaxo.Data
 
 		public bool Contains(KeyValuePair<DataColumn, IColumnScriptText> item)
 		{
-			return _d.ContainsKey(item.Key);
+			return _innerDict.ContainsKey(item.Key);
 		}
 
 		public void CopyTo(KeyValuePair<DataColumn, IColumnScriptText>[] array, int arrayIndex)
@@ -163,7 +163,7 @@ namespace Altaxo.Data
 
 		public int Count
 		{
-			get { return _d.Count; }
+			get { return _innerDict.Count; }
 		}
 
 		public bool IsReadOnly
@@ -178,12 +178,12 @@ namespace Altaxo.Data
 
 		public IEnumerator<KeyValuePair<DataColumn, IColumnScriptText>> GetEnumerator()
 		{
-			return _d.GetEnumerator();
+			return _innerDict.GetEnumerator();
 		}
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
-			return _d.GetEnumerator();
+			return _innerDict.GetEnumerator();
 		}
 
 		#endregion IDictionary<DataColumn, IColumnScriptText>

@@ -28,6 +28,6 @@ namespace Altaxo.Gui
 		/// <summary>
 		/// Always interaction with the user. This means that in any case for instance a dialog will be presented to the user.
 		/// </summary>
-		InteractAlways = 3 
+		InteractAlways = 3
 	}
 }

@@ -81,14 +81,11 @@ namespace Altaxo.Graph.Scales
 				s._cachedAxisSpan = s._cachedAxisEnd - s._cachedAxisOrg;
 				s._cachedOneByAxisSpan = 1 / s._cachedAxisSpan;
 
-				s._rescaling = (NumericScaleRescaleConditions)info.GetValue("Rescaling", s);
-				s._rescaling.ParentObject = s;
+				s.ChildSetMember(ref s._rescaling, (NumericScaleRescaleConditions)info.GetValue("Rescaling", s));
 
-				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
-				s._dataBounds.ParentObject = s;
+				s.ChildSetMember(ref s._dataBounds, (FiniteNumericalBoundaries)info.GetValue("Bounds", s));
 
-				s._tickSpacing = new Ticks.LinearTickSpacing();
-				s._tickSpacing.ParentObject = s;
+				s.ChildSetMember(ref s._tickSpacing, new Ticks.LinearTickSpacing());
 
 				s.EhChildChanged(s._dataBounds, EventArgs.Empty); // for this old version, rescaling is not fully serialized, thus we have to simulate a DataBoundChanged event to get _rescaling updated, and finally _tickSpacing updated
 
@@ -121,14 +118,11 @@ namespace Altaxo.Graph.Scales
 				s._cachedAxisSpan = s._cachedAxisEnd - s._cachedAxisOrg;
 				s._cachedOneByAxisSpan = 1 / s._cachedAxisSpan;
 
-				s._dataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds", s);
-				s._dataBounds.ParentObject = s;
+				s.ChildSetMember(ref s._dataBounds, (FiniteNumericalBoundaries)info.GetValue("Bounds", s));
 
-				s._rescaling = (NumericScaleRescaleConditions)info.GetValue("Rescaling", s);
-				s._rescaling.ParentObject = s;
+				s.ChildSetMember(ref s._rescaling, (NumericScaleRescaleConditions)info.GetValue("Rescaling", s));
 
-				s._tickSpacing = (Ticks.TickSpacing)info.GetValue("TickSpacing", s);
-				s._tickSpacing.ParentObject = s;
+				s.ChildSetMember(ref s._tickSpacing, (Ticks.TickSpacing)info.GetValue("TickSpacing", s));
 
 				s.UpdateTicksAndOrgEndUsingRescalingObject();
 

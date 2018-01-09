@@ -36,6 +36,7 @@ namespace Altaxo.Drawing
 	{
 		/// <summary>The even odd rule. Gdi: Alternate, SVG: evenodd.</summary>
 		EvenOdd = 0,
+
 		/// <summary>
 		/// The non zero rule: Gdi: Winding, SVG: nonzero
 		/// </summary>

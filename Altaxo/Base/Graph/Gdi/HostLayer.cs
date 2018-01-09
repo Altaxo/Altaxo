@@ -415,8 +415,8 @@ namespace Altaxo.Graph.Gdi
 
 				if (ChildSetMember(ref _location, value))
 				{
-					if (_location is ItemLocationDirect)
-						((ItemLocationDirect)_location).SetParentSize(_cachedParentLayerSize, false);
+					if (_location is ItemLocationDirect directLocation)
+						directLocation.SetParentSize(_cachedParentLayerSize, false);
 
 					// Note: there is no event link here to Changed event of new location instance,
 					// instead the event is and must be  handled in the EhChildChanged function of this layer

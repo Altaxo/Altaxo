@@ -44,11 +44,11 @@ namespace Altaxo.Gui.Graph
 
 		public QuantityWithUnitGuiEnvironment YPartitionEnvironment { set { _guiRowDefinitions.Environment = value; } }
 
-		public Units.DimensionfulQuantity DefaultXQuantity { set { _guiColumnDefinitions.DefaultQuantity = value; } }
+		public Altaxo.Units.DimensionfulQuantity DefaultXQuantity { set { _guiColumnDefinitions.DefaultQuantity = value; } }
 
-		public Units.DimensionfulQuantity DefaultYQuantity { set { _guiRowDefinitions.DefaultQuantity = value; } }
+		public Altaxo.Units.DimensionfulQuantity DefaultYQuantity { set { _guiRowDefinitions.DefaultQuantity = value; } }
 
-		public System.Collections.ObjectModel.ObservableCollection<Units.DimensionfulQuantity> ColumnCollection
+		public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> ColumnCollection
 		{
 			set
 			{
@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Graph
 			}
 		}
 
-		public System.Collections.ObjectModel.ObservableCollection<Units.DimensionfulQuantity> RowCollection
+		public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> RowCollection
 		{
 			set
 			{

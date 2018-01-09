@@ -142,7 +142,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 		#endregion Internal classes
 
 		/// <summary>The graph controller this mouse handler belongs to.</summary>
-		private Graph3DControllerWpf _grac;
+		private Graph3DController _grac;
 
 		/// <summary>List of selected HitTestObjects</summary>
 		protected List<IHitTestObject> _selectedObjects;
@@ -164,12 +164,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 		/// <summary>Locker to suppress changed events during moving of objects.</summary>
 		private Altaxo.Main.ISuspendToken _graphDocumentChangedSuppressor;
 
-		public ObjectPointerMouseHandler(Graph3DControllerWpf grac)
+		public ObjectPointerMouseHandler(Graph3DController grac)
 		{
 			_grac = grac;
 
-			if (_grac != null)
-				_grac.SetPanelCursor(Cursors.Arrow);
+			_grac?.View?.SetPanelCursor(Cursors.Arrow);
 
 			_selectedObjects = new List<IHitTestObject>();
 		}
@@ -290,7 +289,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 						bRepaint = true;
 					}
 
-					_grac.RenderOverlay();
+					_grac?.View?.RenderOverlay();
 				}
 			}
 		}
@@ -310,7 +309,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 				var graphCoord = new HitTestPointData(_grac.Doc.Camera.GetHitRayMatrix(position));
 				ActiveGrip.MoveGrip(graphCoord);
 				_wereObjectsMoved = true;
-				_grac.RenderOverlay();
+				_grac?.View?.RenderOverlay();
 			}
 			/*
 			else if (e.LeftButton == MouseButtonState.Pressed)
@@ -375,7 +374,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 			if (keyData == Key.Delete)
 			{
 				_grac.RemoveSelectedObjects();
-				_grac.RenderOverlay();
+				_grac.View?.RenderOverlay();
 				return true;
 			}
 
@@ -393,7 +392,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 			ActiveGrip = null;
 
 			if (bRepaint)
-				_grac.RenderOverlay();
+				_grac.View?.RenderOverlay();
 		}
 
 		private void AddSelectedObject(HitTestPointData hitPoint, IHitTestObject clickedObject)
@@ -415,7 +414,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 				DisplayedGrips[0].Activate(hitPoint, true);
 			}
 
-			_grac.RenderOverlay();
+			_grac.View?.RenderOverlay();
 		}
 
 		private IGripManipulationHandle[] GetGripsFromSelectedObjects()

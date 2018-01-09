@@ -101,9 +101,33 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		/// </summary>
 		object GuiInitiallyFocusedElement { get; }
 
-		void CaptureMouse();
+		void CaptureMouseOnCanvas();
 
-		void ReleaseMouseCapture();
+		void ReleaseCaptureMouseOnCanvas();
+
+		void FocusOnGraphPanel();
+
+		/// <summary>
+		/// Sets the panel cursor of the view.
+		/// </summary>
+		/// <param name="cursor">The cursor (must be of the appropriate Gui type).</param>
+		void SetPanelCursor(object cursor);
+
+		void EhRenderOverlayTriggered();
+
+		GraphToolType CurrentGraphTool { get; set; }
+
+		/// <summary>
+		/// Gets the selected objects (if mouse handler is the ObjectPointerMouseHandler). Otherwise, null or an empty list is returned.
+		/// </summary>
+		/// <value>
+		/// The selected objects.
+		/// </value>
+		IList<IHitTestObject> SelectedObjects { get; }
+
+		bool MouseState_IsOverlayPaintingRequired { get; }
+
+		void MouseState_AfterPaint(System.Drawing.Graphics g);
 	}
 
 	public interface IGraphViewEventSink

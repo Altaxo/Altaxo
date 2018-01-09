@@ -34,6 +34,9 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph
 {
+	using Altaxo.Units;
+	using AUL = Altaxo.Units.Length;
+
 	public class ObjectPositionAndSizeGlue : FrameworkElement
 	{
 		#region Input/Output
@@ -71,7 +74,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				if (null != _edPositionX)
-					return _edPositionX.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
+					return _edPositionX.SelectedQuantity.AsValueIn(AUL.Point.Instance);
 				else
 					return _positionX;
 			}
@@ -79,7 +82,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_positionX = value;
 				if (null != _edPositionX)
-					_edPositionX.SelectedQuantity = new Units.DimensionfulQuantity(value, Units.Length.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
+					_edPositionX.SelectedQuantity = new DimensionfulQuantity(value, AUL.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 		}
 
@@ -91,7 +94,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				if (null != _edPositionY)
-					return _edPositionY.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
+					return _edPositionY.SelectedQuantity.AsValueIn(AUL.Point.Instance);
 				else
 					return _positionY;
 			}
@@ -99,7 +102,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_positionY = value;
 				if (null != _edPositionY)
-					_edPositionY.SelectedQuantity = new Units.DimensionfulQuantity(value, Units.Length.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
+					_edPositionY.SelectedQuantity = new DimensionfulQuantity(value, AUL.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 		}
 
@@ -129,7 +132,7 @@ namespace Altaxo.Gui.Graph
 				if (_edPositionX != null)
 				{
 					_edPositionX.UnitEnvironment = PositionEnvironment.Instance;
-					_edPositionX.SelectedQuantity = new Units.DimensionfulQuantity(_positionX, Units.Length.Point.Instance);
+					_edPositionX.SelectedQuantity = new DimensionfulQuantity(_positionX, AUL.Point.Instance);
 				}
 			}
 		}
@@ -146,7 +149,7 @@ namespace Altaxo.Gui.Graph
 				if (_edPositionY != null)
 				{
 					_edPositionY.UnitEnvironment = PositionEnvironment.Instance;
-					_edPositionY.SelectedQuantity = new Units.DimensionfulQuantity(_positionY, Units.Length.Point.Instance);
+					_edPositionY.SelectedQuantity = new DimensionfulQuantity(_positionY, AUL.Point.Instance);
 				}
 			}
 		}
@@ -164,7 +167,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				if (null != _edSizeX)
-					return _edSizeX.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
+					return _edSizeX.SelectedQuantity.AsValueIn(AUL.Point.Instance);
 				else
 					return _sizeX;
 			}
@@ -172,7 +175,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_sizeX = value;
 				if (null != _edSizeX)
-					_edSizeX.SelectedQuantity = new Units.DimensionfulQuantity(value, Units.Length.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
+					_edSizeX.SelectedQuantity = new DimensionfulQuantity(value, AUL.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 		}
 
@@ -183,7 +186,7 @@ namespace Altaxo.Gui.Graph
 			get
 			{
 				if (null != _edSizeY)
-					return _edSizeY.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
+					return _edSizeY.SelectedQuantity.AsValueIn(AUL.Point.Instance);
 				else
 					return _sizeY;
 			}
@@ -191,7 +194,7 @@ namespace Altaxo.Gui.Graph
 			{
 				_sizeY = value;
 				if (null != _edSizeY)
-					_edSizeY.SelectedQuantity = new Units.DimensionfulQuantity(value, Units.Length.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
+					_edSizeY.SelectedQuantity = new DimensionfulQuantity(value, AUL.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 		}
 
@@ -221,7 +224,7 @@ namespace Altaxo.Gui.Graph
 				if (_edSizeX != null)
 				{
 					_edSizeX.UnitEnvironment = PositionEnvironment.Instance;
-					_edSizeX.SelectedQuantity = new Units.DimensionfulQuantity(_sizeX, Units.Length.Point.Instance);
+					_edSizeX.SelectedQuantity = new DimensionfulQuantity(_sizeX, AUL.Point.Instance);
 				}
 			}
 		}
@@ -236,7 +239,7 @@ namespace Altaxo.Gui.Graph
 				if (_edSizeY != null)
 				{
 					_edSizeY.UnitEnvironment = PositionEnvironment.Instance;
-					_edSizeY.SelectedQuantity = new Units.DimensionfulQuantity(_sizeY, Units.Length.Point.Instance);
+					_edSizeY.SelectedQuantity = new DimensionfulQuantity(_sizeY, AUL.Point.Instance);
 				}
 			}
 		}

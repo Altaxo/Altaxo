@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +31,9 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+	using Altaxo.Units;
+	using Altaxo.Units.Dimensionless;
+
 	/// <summary>
 	/// Interaction logic for MiterLimitComboBox.xaml
 	/// </summary>
@@ -43,7 +45,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		static MiterLimitComboBox()
 		{
-			SelectedQuantityProperty.OverrideMetadata(typeof(MiterLimitComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(10, Units.Dimensionless.Unity.Instance)));
+			SelectedQuantityProperty.OverrideMetadata(typeof(MiterLimitComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(10, Unity.Instance)));
 		}
 
 		public MiterLimitComboBox()
@@ -53,7 +55,7 @@ namespace Altaxo.Gui.Common.Drawing
 			InitializeComponent();
 
 			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Dimensionless.Unity.Instance)));
+				Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, Unity.Instance)));
 
 			_img.Source = GetImage(SelectedQuantityInSIUnits);
 		}
@@ -71,7 +73,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override ImageSource GetItemImage(object item)
 		{
-			double val = ((Units.DimensionfulQuantity)item).AsValueIn(Units.Dimensionless.Unity.Instance);
+			double val = ((DimensionfulQuantity)item).AsValueIn(Unity.Instance);
 			ImageSource result;
 			if (!_cachedImages.TryGetValue(val, out result))
 				_cachedImages.Add(val, result = GetImage(val));

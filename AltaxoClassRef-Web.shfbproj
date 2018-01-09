@@ -42,12 +42,15 @@
     <CopyrightHref>http://www.alice-dsl.net/dirklellinger/</CopyrightHref>
     <DocumentationSources>
       <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoCore.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoCore.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoSDGui.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoSDGui.xml" />
-    </DocumentationSources>
+<DocumentationSource sourceFile="rtDir\bin\AltaxoBase.xml" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoCore.dll" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoCore.xml" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoBase.Presentation.dll" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoBase.Presentation.xml" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoDom.dll" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoDom.xml" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoDom.Presentation.dll" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoDom.Presentation.xml" /></DocumentationSources>
     <WorkingPath>C:\Temp\SandCastleTemp\</WorkingPath>
     <MissingTags>AutoDocumentCtors, AutoDocumentDispose</MissingTags>
     <BuildLogFile>..\help\BuildLog_Web.txt</BuildLogFile>

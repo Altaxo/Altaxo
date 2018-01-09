@@ -36,7 +36,7 @@ namespace Altaxo.Graph.Scales
 	/// If the data are consistent with a sample from a normal distribution, the points should approximately form a straight line.</remarks>
 	public class CumulativeProbabilityScale : NumericalScale
 	{
-		static readonly double SquareRootOf2 = Math.Sqrt(2);
+		private static readonly double SquareRootOf2 = Math.Sqrt(2);
 
 		/// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
 		protected NumericalBoundaries _dataBounds;

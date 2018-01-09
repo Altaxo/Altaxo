@@ -210,7 +210,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
 			applyResult = true;
 
-		end_of_function:
+			end_of_function:
 			_applySuspend--;
 
 			return ApplyEnd(applyResult, disposeController);

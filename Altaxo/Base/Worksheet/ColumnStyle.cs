@@ -65,7 +65,7 @@ namespace Altaxo.Worksheet
 		protected FontX _textFont = _defaultTextFont;
 
 		protected bool _isTextBrushCustom;
-		protected BrushX _textBrush;
+		private BrushX _textBrush;
 
 		protected bool _isBackgroundBrushCustom;
 		protected BrushX _backgroundBrush;
@@ -216,11 +216,11 @@ namespace Altaxo.Worksheet
 		protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _cellPen)
-				yield return new Main.DocumentNodeAndName(_cellPen, "CellPen");
+				yield return new Main.DocumentNodeAndName(_cellPen, () => _cellPen = null, "CellPen");
 			if (null != _textBrush)
-				yield return new Main.DocumentNodeAndName(_textBrush, "TextBrush");
+				yield return new Main.DocumentNodeAndName(_textBrush, () => _textBrush = null, "TextBrush");
 			if (null != _backgroundBrush)
-				yield return new Main.DocumentNodeAndName(_backgroundBrush, "BackgroundBrush");
+				yield return new Main.DocumentNodeAndName(_backgroundBrush, () => _backgroundBrush = null, "BackgroundBrush");
 		}
 
 		public void ChangeTypeTo(ColumnStyleType type)
@@ -412,18 +412,10 @@ namespace Altaxo.Worksheet
 			}
 			set
 			{
-				if (value == null)
-					throw new ArgumentNullException();
-				if (object.ReferenceEquals(_textBrush, value))
-					return;
-
-				if (null != _textBrush)
-					_textBrush.Dispose();
-
-				_textBrush = value;
-
-				if (null != _textBrush)
-					_textBrush.ParentObject = this;
+				if (ChildSetMember(ref _textBrush, value ?? throw new ArgumentNullException(nameof(value))))
+				{
+					EhSelfChanged();
+				}
 			}
 		}
 

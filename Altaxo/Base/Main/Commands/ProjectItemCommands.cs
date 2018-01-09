@@ -252,13 +252,13 @@ namespace Altaxo.Main.Commands
 			{
 				var oldName = item.Name;
 				var newName = GetRelocatedName(oldName, list.BaseFolder, targetFolder);
-				var oldPath = AltaxoDocument.GetDocumentPathForProjectItem(item);
+				var oldPath = Current.Project.GetDocumentPathForProjectItem(item);
 
 				item.Name = newName;
 				Current.Project.AddItem(item);
 				if (list.TryToKeepInternalReferences.Value)
 				{
-					var newPath = AltaxoDocument.GetDocumentPathForProjectItem(item);
+					var newPath = Current.Project.GetDocumentPathForProjectItem(item);
 					relocationData.AddProjectItemReplacement(oldPath, newPath); // when trying to keep the references, we use the name the table gets after added to the collection (it can have changed during this operation).
 				}
 			}

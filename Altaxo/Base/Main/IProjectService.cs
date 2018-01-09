@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -64,7 +64,7 @@ namespace Altaxo.Main
 		/// <value>
 		/// The project.
 		/// </value>
-		public Altaxo.AltaxoDocument Project { get; private set; }
+		public IProject Project { get; private set; }
 
 		/// <summary>
 		/// Gets the kind of the project event.
@@ -83,7 +83,7 @@ namespace Altaxo.Main
 		/// <param name="project">The project which was changed.</param>
 		/// <param name="fileName">The file name of the project.</param>
 		/// <param name="eventKind">The kind of the event.</param>
-		public ProjectEventArgs(Altaxo.AltaxoDocument project, string fileName, ProjectEventKind eventKind)
+		public ProjectEventArgs(IProject project, string fileName, ProjectEventKind eventKind)
 		{
 			this.Project = project;
 			this.NewName = fileName;
@@ -112,8 +112,8 @@ namespace Altaxo.Main
 		/// <param name="renamedProject">The project renamed.</param>
 		/// <param name="oldName">The old name of the project.</param>
 		/// <param name="newName">The new name of the project.</param>
-		public ProjectRenamedEventArgs(Altaxo.AltaxoDocument renamedProject, string oldName, string newName)
-			: base(renamedProject, newName, ProjectEventKind.ProjectRenamed)
+		public ProjectRenamedEventArgs(IProject renamedProject, string oldName, string newName)
+				: base(renamedProject, newName, ProjectEventKind.ProjectRenamed)
 		{
 			this.OldName = oldName;
 		}
@@ -127,7 +127,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Getter / setter for the currently open project.
 		/// </summary>
-		Altaxo.AltaxoDocument CurrentOpenProject { get; }
+		IProject CurrentProject { get; }
 
 		/// <summary>
 		/// Gets the file name for the currently open project. Is null if the project has not got a file name for now.
@@ -137,7 +137,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Creates the very first document. Used internal into the autostart command.
 		/// </summary>
-		void CreateInitialDocument();
+		void CreateInitialProject();
 
 		/// <summary>
 		/// Opens a Altaxo project. If the current project is dirty, and <paramref name="withoutUserInteraction"/> is <c>false</c>, the user is ask to save the current project before.
@@ -153,7 +153,7 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="istream">The input stream.</param>
 		/// <returns>Null if the project was successfully loaded; or an error string otherwise.</returns>
-		string LoadProject(System.IO.Stream istream);
+		string LoadProjectFromStream(System.IO.Stream istream);
 
 		/// <summary>
 		/// Asks the user whether or not the project should be saved, and saves it in case the user answers with yes.
@@ -195,19 +195,13 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="forceClose">If <c>false</c> and the project is dirty, the user will be asked whether he really wants to close the project.
 		/// If <c>true</c>, the project is closed without user interaction.</param>
-		void CloseProject(bool forceClose);
+		/// <returns>True if the project was closed; false otherwise.</returns>
+		bool CloseProject(bool forceClose);
 
 		/// <summary>
 		/// Disposes the whole project and sets the current project to null.
 		/// </summary>
 		void DisposeProjectAndSetToNull();
-
-		/// <summary>
-		/// Saves the state of the main window into a zipped file.
-		/// </summary>
-		/// <param name="zippedStream">The file stream of the zip file.</param>
-		/// <param name="info">The serialization info used to serialize the state of the main window.</param>
-		void SaveWindowStateToZippedFile(Altaxo.Main.ICompressedFileContainerStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info);
 
 		/// <summary>
 		/// Returns true if the given document has at least one open view in the workbench.
@@ -233,133 +227,6 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="document">The document to open.</param>
 		void ShowDocumentView(object document);
-
-		/// <summary>
-		/// This function will delete a data table and close the corresponding views.
-		/// </summary>
-		/// <param name="table">The data table to delete.</param>
-		/// <param name="force">If true, the table is deleted without safety question,
-		/// if false, the user is ask before the table is deleted.</param>
-		void DeleteTable(Altaxo.Data.DataTable table, bool force);
-
-		/// <summary>
-		/// This function will delete a graph document and close all corresponding views.
-		/// </summary>
-		/// <param name="graph">The graph document to delete.</param>
-		/// <param name="force">If true, the graph document is deleted without safety question,
-		/// if false, the user is ask before the graph document is deleted.</param>
-		void DeleteGraphDocument(Graph.Gdi.GraphDocument graph, bool force);
-
-		/// <summary>
-		/// This function will delete a project document and close all corresponding views.
-		/// </summary>
-		/// <param name="document">The document (project item) to delete.</param>
-		/// <param name="force">If true, the document is deleted without safety question; otherwise, the user is ask before the graph document is deleted.</param>
-		void DeleteDocument(IProjectItem document, bool force);
-
-		/// <summary>
-		/// Creates a new table and the view content for the newly created table.
-		/// </summary>
-		/// <returns>The content controller for that table.</returns>
-		Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet();
-
-		/// <summary>
-		/// Creates a new table and the view content for the newly created table.
-		/// </summary>
-		/// <param name="folder">The folder where to create the worksheet. Set null for the root folder.</param>
-		/// <returns>The content controller for that table.</returns>
-		Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheetInFolder(string folder);
-
-		/// <summary>
-		/// Creates a view content for a table.
-		/// </summary>
-		/// <param name="table">The table which should be viewed.</param>
-		/// <returns>The view content for the provided table.</returns>
-		Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table);
-
-		/// <summary>
-		/// Creates a view content for a table.
-		/// </summary>
-		/// <param name="table">The table which should be viewed.</param>
-		/// <param name="layout">The layout for the table.</param>
-		/// <returns>The view content for the provided table.</returns>
-		Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table, Altaxo.Worksheet.WorksheetLayout layout);
-
-		/// <summary>
-		/// Opens a view that shows the table <code>table</code>. If no view for the table can be found,
-		/// a new default view is created for the table.
-		/// </summary>
-		/// <param name="table">The table for which a view must be found.</param>
-		/// <returns>The view content for the provided table.</returns>
-		/// <remarks>The returned object is usually a MVC controller that is the controller for that table.</remarks>
-		object OpenOrCreateWorksheetForTable(Altaxo.Data.DataTable table);
-
-		/// <summary>This will remove the Worksheet <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
-		/// <param name="ctrl">The Worksheet to remove.</param>
-		/// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
-		void RemoveWorksheet(Altaxo.Gui.Worksheet.Viewing.IWorksheetController ctrl);
-
-		/// <summary>
-		/// Creates a new graph document and the view for this newly created graph document.
-		/// </summary>
-		/// <returns>The view content for the newly created graph.</returns>
-		Altaxo.Gui.Graph.Gdi.Viewing.IGraphController CreateNewGraph();
-
-		/// <summary>
-		/// Creates a new graph document in a specified folder and the view for this newly created graph document.
-		/// </summary>
-		/// <param name="folderName">The folder where to create the new graph.</param>
-		/// <returns>The view content for the newly created graph.</returns>
-		Altaxo.Gui.Graph.Gdi.Viewing.IGraphController CreateNewGraphInFolder(string folderName);
-
-		/// <summary>
-		/// Creates a new graph document and the view for this newly created graph document.
-		/// </summary>
-		/// <param name="preferredName">The preferred name the new graph document should have.</param>
-		/// <returns>The view content for the newly created graph.</returns>
-		Altaxo.Gui.Graph.Gdi.Viewing.IGraphController CreateNewGraph(string preferredName);
-
-		/// <summary>
-		/// Creates a new view content for a graph document.
-		/// </summary>
-		/// <param name="graph">The graph document.</param>
-		/// <returns>The view content for the provided graph document.</returns>
-		Altaxo.Gui.Graph.Gdi.Viewing.IGraphController CreateNewGraph(Graph.Gdi.GraphDocument graph);
-
-		/// <summary>
-		/// Creates a new view content for a graph document.
-		/// </summary>
-		/// <param name="graph">The graph document.</param>
-		/// <returns>The view content for the provided graph document.</returns>
-		Altaxo.Gui.Graph.Graph3D.Viewing.IGraphController CreateNewGraph3D(Graph.Graph3D.GraphDocument graph);
-
-		/// <summary>
-		/// Opens a view that shows the graph <code>graph</code>. If no view for the graph can be found,
-		/// a new default view is created.
-		/// </summary>
-		/// <param name="graph">The graph for which a view must be found.</param>
-		/// <returns>The view content for the provided graph.</returns>
-		object OpenOrCreateGraphForGraphDocument(Graph.Gdi.GraphDocument graph);
-
-		/// <summary>
-		/// Opens a view that shows the document <paramref name="document"/>. If no view for the document can be found,
-		/// a new default view is created.
-		/// </summary>
-		/// <param name="document">The document for which a view must be found.</param>
-		/// <returns>The view content for the provided graph.</returns>
-		object OpenOrCreateViewContentForDocument(IProjectItem document);
-
-		/// <summary>This will remove the Graph <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
-		/// <param name="ctrl">The Graph to remove.</param>
-		/// <remarks>No exception is thrown if the Form frm is not a member of the workbench views collection.</remarks>
-		void RemoveGraph(Altaxo.Gui.Graph.Gdi.Viewing.IGraphController ctrl);
-
-		/// <summary>
-		/// Gets an exporter that can be used to export an image of the provided project item.
-		/// </summary>
-		/// <param name="item">The item to export, for instance an item of type <see cref="Altaxo.Graph.Gdi.GraphDocument"/> or <see cref="Altaxo.Graph.Graph3D.GraphDocument"/>.</param>
-		/// <returns>The image exporter class that can be used to export the item in graphical form, or null if no exporter could be found.</returns>
-		IProjectItemImageExporter GetProjectItemImageExporter(IProjectItem item);
 
 		/// <summary>
 		/// Fired when a project is opened or a new empty project is created.
@@ -394,14 +261,29 @@ namespace Altaxo.Main
 		/// <returns>
 		///   <c>true</c> if the specified extension is a project extension; otherwise, <c>false</c>.
 		/// </returns>
-		bool IsAltaxoProjectFileExtension(string extension);
+		bool IsProjectFileExtension(string extension);
 
 		/// <summary>
-		/// Gets all possible file extensions for Altaxo project files.
+		/// Gets all possible file extensions for acceptable project files.
 		/// </summary>
 		/// <value>
-		/// All possible file extensions for Altaxo project files.
+		/// All possible file extensions for acceptable project files.
 		/// </value>
-		IEnumerable<string> AltaxoProjectFileExtensions { get; }
+		IEnumerable<string> ProjectFileExtensions { get; }
+
+		/// <summary>
+		/// Gets the title that should be shown as the main window title.
+		/// </summary>
+		/// <returns>The title of the main window with respect to the current state.</returns>
+		string GetMainWindowTitle();
+
+		/// <summary>
+		/// Executes any neccessary actions immediately before running the main application. When calling this, the services and the workbench are already initialized.
+		/// The method can for instance load any files that are given in the command line.
+		/// </summary>
+		/// <param name="cmdArgs">The command line arguments (all of them, without preprocessing).</param>
+		/// <param name="cmdParameter">The command line arguments that are parameters (i.e. those arguments beginning with '-' or '/').</param>
+		/// <param name="cmdFiles">The command line arguments that are files (i.e. those arguments <b>not</b> beginning with '-' or '/').</param>
+		void ExecuteActionsImmediatelyBeforeRunningApplication(string[] cmdArgs, string[] cmdParameter, string[] cmdFiles);
 	}
 }

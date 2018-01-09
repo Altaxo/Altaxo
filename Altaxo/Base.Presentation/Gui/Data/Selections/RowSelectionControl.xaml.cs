@@ -132,105 +132,105 @@ namespace Altaxo.Gui.Data.Selections
 
 		#region AddNewSelection command
 
-		private RelayCommand _addNewSelectionCommand;
+		private ICommand _addNewSelectionCommand;
 
 		public ICommand AddNewSelectionCommand
 		{
 			get
 			{
 				if (this._addNewSelectionCommand == null)
-					this._addNewSelectionCommand = new RelayCommand(EhAddNewSelectionCommand);
+					this._addNewSelectionCommand = new RelayCommand<int>(EhAddNewSelectionCommand);
 				return this._addNewSelectionCommand;
 			}
 		}
 
-		private void EhAddNewSelectionCommand(object parameter)
+		private void EhAddNewSelectionCommand(int parameter)
 		{
-			CmdAddNewSelection?.Invoke((int)parameter);
+			CmdAddNewSelection?.Invoke(parameter);
 		}
 
 		#endregion AddNewSelection command
 
 		#region RemoveSelection command
 
-		private RelayCommand _removeSelectionCommand;
+		private ICommand _removeSelectionCommand;
 
 		public ICommand RemoveSelectionCommand
 		{
 			get
 			{
 				if (this._removeSelectionCommand == null)
-					this._removeSelectionCommand = new RelayCommand(EhRemoveSelectionCommand);
+					this._removeSelectionCommand = new RelayCommand<int>(EhRemoveSelectionCommand);
 				return this._removeSelectionCommand;
 			}
 		}
 
-		private void EhRemoveSelectionCommand(object parameter)
+		private void EhRemoveSelectionCommand(int parameter)
 		{
-			CmdRemoveSelection?.Invoke((int)parameter);
+			CmdRemoveSelection?.Invoke(parameter);
 		}
 
 		#endregion RemoveSelection command
 
 		#region IndentSelection command
 
-		private RelayCommand _indentSelectionCommand;
+		private ICommand _indentSelectionCommand;
 
 		public ICommand IndentSelectionCommand
 		{
 			get
 			{
 				if (this._indentSelectionCommand == null)
-					this._indentSelectionCommand = new RelayCommand(EhIndentSelectionCommand);
+					this._indentSelectionCommand = new RelayCommand<int>(EhIndentSelectionCommand);
 				return this._indentSelectionCommand;
 			}
 		}
 
-		private void EhIndentSelectionCommand(object parameter)
+		private void EhIndentSelectionCommand(int parameter)
 		{
-			CmdIndentSelection?.Invoke((int)parameter);
+			CmdIndentSelection?.Invoke(parameter);
 		}
 
 		#endregion IndentSelection command
 
 		#region UnindentSelection command
 
-		private RelayCommand _unindentSelectionCommand;
+		private ICommand _unindentSelectionCommand;
 
 		public ICommand UnindentSelectionCommand
 		{
 			get
 			{
 				if (this._unindentSelectionCommand == null)
-					this._unindentSelectionCommand = new RelayCommand(EhUnindentSelectionCommand);
+					this._unindentSelectionCommand = new RelayCommand<int>(EhUnindentSelectionCommand);
 				return this._unindentSelectionCommand;
 			}
 		}
 
-		private void EhUnindentSelectionCommand(object parameter)
+		private void EhUnindentSelectionCommand(int parameter)
 		{
-			CmdUnindentSelection?.Invoke((int)parameter);
+			CmdUnindentSelection?.Invoke(parameter);
 		}
 
 		#endregion UnindentSelection command
 
 		#region SelectionChanged command
 
-		private RelayCommand _selectionChangedCommand;
+		private ICommand _selectionChangedCommand;
 
 		public ICommand SelectionChangedCommand
 		{
 			get
 			{
 				if (this._selectionChangedCommand == null)
-					this._selectionChangedCommand = new RelayCommand(EhSelectionChanged);
+					this._selectionChangedCommand = new RelayCommand<int>(EhSelectionChanged);
 				return this._selectionChangedCommand;
 			}
 		}
 
-		private void EhSelectionChanged(object parameter)
+		private void EhSelectionChanged(int parameter)
 		{
-			int idx = (int)parameter;
+			int idx = parameter;
 
 			var control = (RowSelectionItemControl)_rowSelections[idx].GuiItem;
 

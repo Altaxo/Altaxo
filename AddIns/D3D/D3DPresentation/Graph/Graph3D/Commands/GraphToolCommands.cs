@@ -30,7 +30,6 @@ using Altaxo.Gui.Graph.Graph3D.Viewing;
 using Altaxo.Gui.Scripting;
 using Altaxo.Main;
 using Altaxo.Scripting;
-using ICSharpCode.Core;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -53,7 +52,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 			_graphToolType = toolType;
 			if (null != Current.Workbench)
 			{
-				Current.Workbench.ActiveWorkbenchWindowChanged += new EventHandler(this.EhWorkbenchContentChanged);
+				Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(this.EhWorkbenchContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler);
 				this.EhWorkbenchContentChanged(this, EventArgs.Empty);
 			}
 		}

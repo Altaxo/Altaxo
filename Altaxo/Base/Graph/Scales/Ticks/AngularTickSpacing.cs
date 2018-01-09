@@ -36,8 +36,8 @@ namespace Altaxo.Graph.Scales.Ticks
 		/// Denotes the possible dividers of 360° to form ticks.
 		/// </summary>
 		protected static readonly int[] _possibleDividers =
-      {
-        1,   // 360°
+			{
+				1,   // 360°
         2,   // 180°
         3,   // 120°
         4,   // 90°

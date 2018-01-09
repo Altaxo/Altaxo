@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -447,7 +447,7 @@ namespace Altaxo.Main
 				++depth;
 			}
 
-			if (maxDepth == int.MaxValue && node != null && !(node is AltaxoDocument))
+			if (maxDepth == int.MaxValue && node != null && !(node is IProject))
 			{
 				string msg = string.Format("Document {0} is not rooted. The path so far retrieved is {1}", node, list);
 				throw new InvalidOperationException(msg);

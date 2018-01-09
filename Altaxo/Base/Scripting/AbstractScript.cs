@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
+using System.Text;
 
 namespace Altaxo.Scripting
 {
@@ -309,6 +310,20 @@ namespace Altaxo.Scripting
 			get { return _errors; }
 		}
 
+		public string GetErrorsAsString()
+		{
+			var stb = new StringBuilder();
+
+			if (null != _errors)
+			{
+				foreach (var err in _errors)
+				{
+					stb.AppendFormat("Line {0}, Col {1} {2}: {3}\r\n", err.Line, err.Column, err.SeverityText, err.MessageText);
+				}
+			}
+			return stb.ToString();
+		}
+
 		public void ClearErrors()
 		{
 			_errors = ImmutableArray<ICompilerDiagnostic>.Empty;
@@ -549,7 +564,9 @@ namespace Altaxo.Scripting
 			if (_compilerResult != null)
 				return true;
 
-			return SetCompilerResult(ScriptCompilerService.Compile(new string[] { ScriptText }));
+			var scriptCompilerResult = ScriptCompilerService.Compile(new string[] { ScriptText });
+
+			return SetCompilerResult(scriptCompilerResult);
 		}
 
 		public virtual bool SetCompilerResult(IScriptCompilerResult result)

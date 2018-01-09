@@ -29,14 +29,18 @@ using System.Text;
 
 namespace Altaxo.Units.Angle
 {
+	[UnitDescription("Angular measure", 0, 0, 0, 0, 0, 0, 0)]
 	public class Radian : SIUnit
 	{
 		private static readonly Radian _instance = new Radian();
 
+		/// <summary>List with only the prefix <see cref="None"/>.</summary>
+		private static SIPrefixList _prefixList = new SIPrefixList(new SIPrefix[] { SIPrefix.None, SIPrefix.Micro, SIPrefix.Nano, SIPrefix.Pico });
+
 		public static Radian Instance { get { return _instance; } }
 
 		private Radian()
-			: base(0, 0, 0, 0, 0, 0, 0)
+				: base(0, 0, 0, 0, 0, 0, 0)
 		{
 		}
 
@@ -52,7 +56,7 @@ namespace Altaxo.Units.Angle
 
 		public override ISIPrefixList Prefixes
 		{
-			get { return SIPrefix.ListWithNonePrefixOnly; }
+			get { return _prefixList; }
 		}
 	}
 }

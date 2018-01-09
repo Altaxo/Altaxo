@@ -69,8 +69,7 @@
 		<ComboBox x:Name="_guiLineConnect" Grid.Column="2" Grid.Row="0" SelectionChanged="EhUseLineConnectChanged" />
 		<CheckBox x:Name="_guiConnectCircular" Grid.Column="2" Grid.Row="2" Content="Circular connection" />
 		<CheckBox x:Name="_guiIgnoreMissingPoints" Grid.Column="2" Grid.Row="6" Content="Ignore data gaps" />
-		<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles"  Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="4" Content="Independent on data shifting group styles"  />
-
+		<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles"  Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="4" Content="Independent on data shifting group styles" />
 
 		<Label Grid.Row="10" Grid.Column="0"  Content="Fill direction:" />
 		<ComboBox x:Name="_guiFillDirection" Grid.Row="10" Grid.Column="2" SelectionChanged="EhFillDirectionChanged" />

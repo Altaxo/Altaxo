@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -183,7 +184,7 @@ namespace Altaxo.Main.Properties
 		{
 			get
 			{
-				Altaxo.Main.Services.ReflectionService.ForceRegisteringOfAllPropertyKeys();
+				ReflectionService.ForceRegisteringOfAllPropertyKeys();
 				return _allRegisteredProperties.Values;
 			}
 		}

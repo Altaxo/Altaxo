@@ -29,6 +29,7 @@ using System.Text;
 
 namespace Altaxo.Units.Dimensionless
 {
+	[UnitDescription("Relation", 0, 0, 0, 0, 0, 0, 0)]
 	public class Unity : SIUnit
 	{
 		private static readonly Unity _instance = new Unity();
@@ -36,7 +37,7 @@ namespace Altaxo.Units.Dimensionless
 		public static Unity Instance { get { return _instance; } }
 
 		private Unity()
-			: base(0, 0, 0, 0, 0, 0, 0)
+				: base(0, 0, 0, 0, 0, 0, 0)
 		{
 		}
 

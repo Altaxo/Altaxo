@@ -29,38 +29,49 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Poly2Tri {
+namespace Poly2Tri
+{
 	/**
-	 * 
+	 *
 	 * @author Thomas Åhlén, thahlen@gmail.com
 	 *
 	 */
-	public class DTSweepContext : TriangulationContext {
-		// Inital triangle factor, seed triangle will extend 30% of 
+
+	public class DTSweepContext : TriangulationContext
+	{
+		// Inital triangle factor, seed triangle will extend 30% of
 		// PointSet width to both left and right.
 		private readonly float ALPHA = 0.3f;
 
-		public AdvancingFront     Front;
+		public AdvancingFront Front;
 		public TriangulationPoint Head { get; set; }
 		public TriangulationPoint Tail { get; set; }
 
-		public DTSweepBasin     Basin     = new DTSweepBasin();
+		public DTSweepBasin Basin = new DTSweepBasin();
 		public DTSweepEdgeEvent EdgeEvent = new DTSweepEdgeEvent();
 
 		private DTSweepPointComparator _comparator = new DTSweepPointComparator();
 
-		public DTSweepContext() {
+		public DTSweepContext()
+		{
 			Clear();
 		}
 
-		public override bool IsDebugEnabled { get {
-			return base.IsDebugEnabled;
-		} protected set {
-			if (value && DebugContext == null) DebugContext = new DTSweepDebugContext(this);
-			base.IsDebugEnabled = value;
-		}}
+		public override bool IsDebugEnabled
+		{
+			get
+			{
+				return base.IsDebugEnabled;
+			}
+			protected set
+			{
+				if (value && DebugContext == null) DebugContext = new DTSweepDebugContext(this);
+				base.IsDebugEnabled = value;
+			}
+		}
 
-		public void RemoveFromList( DelaunayTriangle triangle ) {
+		public void RemoveFromList(DelaunayTriangle triangle)
+		{
 			Triangles.Remove(triangle);
 			// TODO: remove all neighbor pointers to this triangle
 			//        for( int i=0; i<3; i++ )
@@ -73,45 +84,53 @@ namespace Poly2Tri {
 			//        triangle.clearNeighbors();
 		}
 
-		public void MeshClean( DelaunayTriangle triangle ) {
+		public void MeshClean(DelaunayTriangle triangle)
+		{
 			MeshCleanReq(triangle);
 		}
 
-		private void MeshCleanReq( DelaunayTriangle triangle ) {
-			if (triangle != null && !triangle.IsInterior) {
+		private void MeshCleanReq(DelaunayTriangle triangle)
+		{
+			if (triangle != null && !triangle.IsInterior)
+			{
 				triangle.IsInterior = true;
 				Triangulatable.AddTriangle(triangle);
 
 				for (int i = 0; i < 3; i++)
-				if (!triangle.EdgeIsConstrained[i])
-				{
-					MeshCleanReq(triangle.Neighbors[i]);
-				}
+					if (!triangle.EdgeIsConstrained[i])
+					{
+						MeshCleanReq(triangle.Neighbors[i]);
+					}
 			}
 		}
 
-		public override void Clear() {
+		public override void Clear()
+		{
 			base.Clear();
 			Triangles.Clear();
 		}
 
-		public void AddNode( AdvancingFrontNode node ) {
+		public void AddNode(AdvancingFrontNode node)
+		{
 			//        Console.WriteLine( "add:" + node.key + ":" + System.identityHashCode(node.key));
 			//        m_nodeTree.put( node.getKey(), node );
 			Front.AddNode(node);
 		}
 
-		public void RemoveNode( AdvancingFrontNode node ) {
+		public void RemoveNode(AdvancingFrontNode node)
+		{
 			//        Console.WriteLine( "remove:" + node.key + ":" + System.identityHashCode(node.key));
 			//        m_nodeTree.delete( node.getKey() );
 			Front.RemoveNode(node);
 		}
 
-		public AdvancingFrontNode LocateNode( TriangulationPoint point ) {
+		public AdvancingFrontNode LocateNode(TriangulationPoint point)
+		{
 			return Front.LocateNode(point);
 		}
 
-		public void CreateAdvancingFront() {
+		public void CreateAdvancingFront()
+		{
 			AdvancingFrontNode head, tail, middle;
 			// Initial triangle
 			DelaunayTriangle iTriangle = new DelaunayTriangle(Points[0], Tail, Head);
@@ -134,24 +153,22 @@ namespace Poly2Tri {
 			Front.Tail.Prev = middle;
 		}
 
-
-
-
-
 		/// <summary>
-		/// Try to map a node to all sides of this triangle that don't have 
+		/// Try to map a node to all sides of this triangle that don't have
 		/// a neighbor.
 		/// </summary>
-		public void MapTriangleToNodes( DelaunayTriangle t ) {
+		public void MapTriangleToNodes(DelaunayTriangle t)
+		{
 			for (int i = 0; i < 3; i++)
-			if (t.Neighbors[i] == null)
-			{
-				AdvancingFrontNode n = Front.LocatePoint(t.PointCWFrom(t.Points[i]));
-				if (n != null) n.Triangle = t;
-			}
+				if (t.Neighbors[i] == null)
+				{
+					AdvancingFrontNode n = Front.LocatePoint(t.PointCWFrom(t.Points[i]));
+					if (n != null) n.Triangle = t;
+				}
 		}
 
-		public override void PrepareTriangulation( Triangulatable t ) {
+		public override void PrepareTriangulation(Triangulatable t)
+		{
 			base.PrepareTriangulation(t);
 
 			double xmax, xmin;
@@ -161,7 +178,8 @@ namespace Poly2Tri {
 			ymax = ymin = Points[0].Y;
 
 			// Calculate bounds. Should be combined with the sorting
-			foreach (TriangulationPoint p in Points) {
+			foreach (TriangulationPoint p in Points)
+			{
 				if (p.X > xmax) xmax = p.X;
 				if (p.X < xmin) xmin = p.X;
 				if (p.Y > ymax) ymax = p.Y;
@@ -182,16 +200,17 @@ namespace Poly2Tri {
 			//        logger.info( "Triangulation setup [{}ms]", ( System.nanoTime() - time ) / 1e6 );
 		}
 
-
-		public void FinalizeTriangulation() {
+		public void FinalizeTriangulation()
+		{
 			Triangulatable.AddTriangles(Triangles);
 			Triangles.Clear();
 		}
 
-		public override TriangulationConstraint NewConstraint( TriangulationPoint a, TriangulationPoint b ) {
+		public override TriangulationConstraint NewConstraint(TriangulationPoint a, TriangulationPoint b)
+		{
 			return new DTSweepConstraint(a, b);
 		}
 
-		public override TriangulationAlgorithm Algorithm { get { return TriangulationAlgorithm.DTSweep; }}
+		public override TriangulationAlgorithm Algorithm { get { return TriangulationAlgorithm.DTSweep; } }
 	}
 }

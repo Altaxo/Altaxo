@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -81,6 +81,8 @@ namespace Altaxo.Collections
 			_tag = tag;
 		}
 
+		public virtual string Text0 { get { return SubItemText(0); } }
+
 		public virtual string Text1 { get { return SubItemText(1); } }
 
 		public virtual string Text2 { get { return SubItemText(2); } }
@@ -150,7 +152,7 @@ namespace Altaxo.Collections
 		}
 
 		public ListNodeList(IEnumerable<ListNode> from)
-			: base(from)
+				: base(from)
 		{
 		}
 
@@ -211,7 +213,7 @@ namespace Altaxo.Collections
 		}
 
 		public SelectableListNode(string text, object tag, bool isSelected)
-			: base(text, tag)
+				: base(text, tag)
 		{
 			this._isSelected = isSelected;
 		}
@@ -224,7 +226,7 @@ namespace Altaxo.Collections
 		}
 
 		public SelectableListNodeList(IEnumerable<SelectableListNode> from)
-			: base(from)
+				: base(from)
 		{
 		}
 
@@ -560,7 +562,7 @@ namespace Altaxo.Collections
 		}
 
 		public CheckableSelectableListNode(string text, object tag, bool isSelected, bool isChecked)
-			: base(text, tag, isSelected)
+				: base(text, tag, isSelected)
 		{
 			this._isChecked = isChecked;
 		}
@@ -573,7 +575,7 @@ namespace Altaxo.Collections
 		}
 
 		public CheckableSelectableListNodeList(IEnumerable<CheckableSelectableListNode> from)
-			: base(from)
+				: base(from)
 		{
 		}
 

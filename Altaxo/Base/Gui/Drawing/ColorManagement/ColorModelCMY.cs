@@ -32,39 +32,39 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-  public class ColorModelCMY : IColorModel
-  {
-    public AxoColor GetColorFor1DColorSurfaceFromRelativePosition(double relativePosition)
-    {
-      return AxoColor.FromAhsb(1, (float)(relativePosition), 1, 1);
-    }
+	public class ColorModelCMY : IColorModel
+	{
+		public AxoColor GetColorFor1DColorSurfaceFromRelativePosition(double relativePosition)
+		{
+			return AxoColor.FromAhsb(1, (float)(relativePosition), 1, 1);
+		}
 
-    public AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor c)
-    {
-      return AxoColor.FromAhsb(1, c.GetHue(), (float)(relativePosition.X), (float)(relativePosition.Y));
-    }
+		public AxoColor GetColorFor2DColorSurfaceFromRelativePosition(PointD2D relativePosition, AxoColor c)
+		{
+			return AxoColor.FromAhsb(1, c.GetHue(), (float)(relativePosition.X), (float)(relativePosition.Y));
+		}
 
-    public (double position1D, PointD2D position2D) GetRelativePositionsFor1Dand2DColorSurfaceFromColor(AxoColor color)
-    {
-      var (alpha, hue, saturation, brightness) = color.ToAhsb();
-      return (hue, new PointD2D(saturation, brightness));
-    }
+		public (double position1D, PointD2D position2D) GetRelativePositionsFor1Dand2DColorSurfaceFromColor(AxoColor color)
+		{
+			var (alpha, hue, saturation, brightness) = color.ToAhsb();
+			return (hue, new PointD2D(saturation, brightness));
+		}
 
-    public bool IsUsingByteComponents { get { return true; } }
+		public bool IsUsingByteComponents { get { return true; } }
 
-    public double[] GetComponentsForColor(AxoColor color)
-    {
-      return new double[] { 255 - color.R, 255 - color.G, 255 - color.B };
-    }
+		public double[] GetComponentsForColor(AxoColor color)
+		{
+			return new double[] { 255 - color.R, 255 - color.G, 255 - color.B };
+		}
 
-    public AxoColor GetColorFromComponents(double[] components)
-    {
-      return AxoColor.FromArgb(255, (byte)(255 - components[0]), (byte)(255 - components[1]), (byte)(255 - components[2]));
-    }
+		public AxoColor GetColorFromComponents(double[] components)
+		{
+			return AxoColor.FromArgb(255, (byte)(255 - components[0]), (byte)(255 - components[1]), (byte)(255 - components[2]));
+		}
 
-    public string[] GetNamesOfComponents()
-    {
-      return new string[] { "C", "M", "Y" };
-    }
-  }
+		public string[] GetNamesOfComponents()
+		{
+			return new string[] { "C", "M", "Y" };
+		}
+	}
 }

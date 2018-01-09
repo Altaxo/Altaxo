@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		static GradientFocusComboBox()
 		{
-			SelectedQuantityProperty.OverrideMetadata(typeof(GradientFocusComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(0.5, Units.Dimensionless.Unity.Instance)));
+			SelectedQuantityProperty.OverrideMetadata(typeof(GradientFocusComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(0.5, Altaxo.Units.Dimensionless.Unity.Instance)));
 		}
 
 		public GradientFocusComboBox()
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Common.Drawing
 			InitializeComponent();
 
 			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Dimensionless.Unity.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
+				Items.Add(new ImageComboBoxItem(this, new Altaxo.Units.DimensionfulQuantity(e, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
 
 			_img.Source = GetImage(SelectedQuantityInSIUnits);
 		}
@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Common.Drawing
 			_img.Height = h - 2 * hMargin;
 		}
 
-		private static ValidationResult EhValidateQuantity(Units.DimensionfulQuantity quantity)
+		private static ValidationResult EhValidateQuantity(Altaxo.Units.DimensionfulQuantity quantity)
 		{
 			string error = null;
 			double val = quantity.AsValueInSIUnits;
@@ -94,7 +94,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override ImageSource GetItemImage(object item)
 		{
-			double val = ((Units.DimensionfulQuantity)item).AsValueInSIUnits;
+			double val = ((Altaxo.Units.DimensionfulQuantity)item).AsValueInSIUnits;
 			ImageSource result;
 			if (!_cachedImages.TryGetValue(val, out result))
 				_cachedImages.Add(val, result = GetImage(val));

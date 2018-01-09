@@ -773,7 +773,7 @@ namespace Altaxo.Graph.Scales.Deprecated
 			double years = span.TotalDays / (4 * 365 + 1);
 			long yearexpo = 1;
 			long yearmantissa = 1;
-			for (;;)
+			for (; ; )
 			{
 				if (years <= 4)
 				{

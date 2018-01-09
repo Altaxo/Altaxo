@@ -18,7 +18,7 @@
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>
     </RootNamespace>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
@@ -146,190 +146,19 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Content Include="data\layouts\Debug.xml" />
-    <Content Include="data\layouts\Default.xml" />
-    <Content Include="data\layouts\LayoutConfig.xml" />
-    <Content Include="data\layouts\Plain.xml" />
     <Content Include="data\resources\fonts\_readme.txt" />
-    <Content Include="data\templates\file\VB\FileCategorySortOrder.xml" />
-    <Content Include="data\templates\project\AddInWritingHelp.txt" />
-    <Content Include="data\templates\project\CSharp\DefaultAssemblyInfo.cs" />
-    <Content Include="data\templates\file\CSharp\ConfigurationElement.cs" />
-    <Content Include="data\templates\file\CSharp\ConfigurationElementCollection.cs" />
-    <Content Include="data\templates\file\CSharp\ConfigurationSection.cs" />
-    <Content Include="data\templates\project\CSharp\WPFAssemblyInfo.cs" />
-    <Content Include="data\templates\file\CSharp\RecentFileElement.cs" />
-    <Content Include="data\templates\file\CSharp\RecentFilesCollection.cs" />
-    <Compile Include="HelpSetup.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="HelpTreeBuilder\AssemblyLoader.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="HelpTreeBuilder\ClassNodeBuilder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="HelpTreeBuilder\DelegateNodeBuilder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="HelpTreeBuilder\EnumNodeBuilder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="HelpTreeBuilder\Generator.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="HelpTreeBuilder\InterfaceNodeBuilder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="HelpTreeBuilder\ITypeNodeBuilder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="HelpTreeBuilder\StructNodeBuilder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="HelpTreeBuilder\TypeNodeFactory.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="HhcFileParser.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Main.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Content Include="data\resources\languages\catalonia.png" />
     <Content Include="data\resources\languages\turkey.png" />
     <Content Include="data\resources\mathml\font-configuration-1-math-roman.xml" />
     <Content Include="data\resources\mathml\font-configuration-2-cm-stretchy.xml" />
     <Content Include="data\resources\mathml\font-configuration-3-times-new-roman.xml" />
-    <Content Include="data\schemas\manifest.xsd">
-      <SubType>
-      </SubType>
-    </Content>
-    <Content Include="data\templates\file\CSharp\FileCategorySortOrder.xml" />
-    <Content Include="data\templates\project\CSharp\ProjectCategorySortOrder.xml" />
     <Content Include="data\resources\mathml\cm-roman.ttf" />
     <Content Include="data\resources\mathml\cm-stretchy.ttf" />
     <Content Include="data\resources\mathml\math-roman.ttf" />
-    <Content Include="data\templates\file\CSharp\CSharp.Interface.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.Web.WebControl.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.Web.WebForm.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.Web.WebService.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.WPFFlowDocument.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.WPFPage.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.WPFPageFunction.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.WPFResourceDictionary.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.WPFUserControl.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.WPFWindow.xft" />
-    <Content Include="data\templates\file\Misc\EmptyMsBuildFile.xft" />
-    <Content Include="data\templates\file\SharpDevelop\AddInOptions.xft" />
-    <Content Include="data\templates\project\CSharp\SharpDevelopAddin.xpt" />
-    <Content Include="data\templates\project\CSharp\SharpDevelopCustomToolTemplate.xft.xml" />
-    <Content Include="data\templates\project\CSharp\SharpDevelopMacro.xpt" />
-    <Content Include="data\templates\project\CSharp\WebpageProject.xpt" />
-    <Content Include="data\templates\project\CSharp\WPFApplication.xpt" />
-    <Content Include="data\templates\project\CSharp\WPFNavigationApplication.xpt" />
-    <Content Include="data\schemas\wixloc.xsd">
-      <SubType>
-      </SubType>
-    </Content>
-    <Content Include="data\templates\file\CSharp\CSharp.Struct.xft" />
-    <Content Include="data\templates\project\CSharp\NotifyIcon.xpt" />
-    <Content Include="data\templates\project\CSharp\SharedAddin.xpt" />
-    <Content Include="data\templates\project\CSharp\WebService.xpt" />
-    <Content Include="data\templates\file\CSharp\CSharp.ConfigurationElement.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.ConfigurationElementCollection.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.ConfigurationSection.xft" />
-    <Content Include="data\templates\project\CSharp\SharpDevelopCustomTool.xpt" />
-    <Content Include="data\templates\project\VB\DefaultAssemblyInfo.vb" />
-    <Content Include="data\templates\project\VB\MyWpfExtension.vb" />
-    <Content Include="data\templates\project\VB\ProjectCategorySortOrder.xml" />
-    <Content Include="data\templates\project\VB\SharpDevelopCustomToolTemplate.xft.xml" />
-    <Content Include="data\templates\project\VB\WPFAssemblyInfo.vb" />
     <Content Include="doc\Contributions\CodeProjectOpenLicense1.02.txt" />
-    <Content Include="data\templates\file\Misc\AppConfigFile.xft" />
     <None Include="app.config" />
-    <Content Include="data\schemas\complus.xsd">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="data\schemas\difxapp.xsd">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="data\schemas\firewall.xsd">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="data\schemas\gaming.xsd">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="data\schemas\iis.xsd">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="data\schemas\msmq.xsd">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="data\schemas\netfx.xsd">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="data\schemas\ps.xsd">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="data\schemas\sql.xsd">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="data\schemas\util.xsd">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="data\schemas\vs.xsd">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="data\templates\project\CSharp\SilverlightApplication.xpt" />
-    <Content Include="data\templates\file\CSharp\CSharp.Exception.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.RecentFilesCollection.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.Web.WebHandler.xft" />
-    <Content Include="data\templates\file\VB\VB.Empty.xft" />
-    <Content Include="data\templates\file\VB\VB.EmptyClass.xft" />
-    <Content Include="data\templates\file\VB\VB.Exception.xft" />
-    <Content Include="data\templates\file\VB\VB.Forms.Form.xft" />
-    <Content Include="data\templates\file\VB\VB.Forms.UserControl.xft" />
-    <Content Include="data\templates\file\VB\VB.Interface.xft" />
-    <Content Include="data\templates\file\VB\VB.Module.xft" />
-    <Content Include="data\templates\file\VB\VB.MyExtensionClass.xft" />
-    <Content Include="data\templates\file\VB\VB.Patterns.Singleton.xft" />
-    <Content Include="data\templates\file\VB\VB.Structure.xft" />
-    <Content Include="data\templates\file\VB\VB.UnitTest.xft" />
-    <Content Include="data\templates\file\VB\VB.Web.WebControl.xft" />
-    <Content Include="data\templates\file\VB\VB.Web.WebForm.xft" />
-    <Content Include="data\templates\file\VB\VB.Web.WebHandler.xft" />
-    <Content Include="data\templates\file\VB\VB.Web.WebService.xft" />
-    <Content Include="data\templates\file\VB\VB.WPFFlowDocument.xft" />
-    <Content Include="data\templates\file\VB\VB.WPFPage.xft" />
-    <Content Include="data\templates\file\VB\VB.WPFPageFunction.xft" />
-    <Content Include="data\templates\file\VB\VB.WPFResourceDictionary.xft" />
-    <Content Include="data\templates\file\VB\VB.WPFUserControl.xft" />
-    <Content Include="data\templates\file\VB\VB.WPFWindow.xft" />
-    <Content Include="data\templates\project\VB\ConsoleProject.xpt" />
-    <Content Include="data\templates\project\VB\ControlLibrary.xpt" />
-    <Content Include="data\templates\project\VB\EmptyProject.xpt" />
-    <Content Include="data\templates\project\VB\FormsProject.xpt" />
-    <Content Include="data\templates\project\VB\Library.xpt" />
-    <Content Include="data\templates\project\VB\NotifyIcon.xpt" />
-    <Content Include="data\templates\project\VB\Service.xpt" />
-    <Content Include="data\templates\project\VB\SharedAddin.xpt" />
-    <Content Include="data\templates\project\VB\SharpDevelopAddin.xpt" />
-    <Content Include="data\templates\project\VB\SharpDevelopCustomTool.xpt" />
-    <Content Include="data\templates\project\VB\SharpDevelopMacro.xpt" />
-    <Content Include="data\templates\project\VB\SilverlightApplication.xpt" />
-    <Content Include="data\templates\project\VB\WebpageProject.xpt" />
-    <Content Include="data\templates\project\VB\WebService.xpt" />
-    <Content Include="data\templates\project\VB\WPFApplication.xpt" />
-    <Content Include="data\templates\project\VB\WPFNavigationApplication.xpt" />
     <Content Include="doc\Contributions\Gongsolutions.Wpf.DragDrop-License.txt" />
     <Content Include="doc\readme.rtf" />
-    <Content Include="data\templates\project\Misc\BlankSolution.xpt" />
-    <None Include="HelpConverter.InstallState" />
-    <Content Include="data\templates\project\CSharp\NotifyIconResources.resx">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="data\templates\project\VB\NotifyIconResources.resx" />
     <Content Include="data\resources\StringResources.cz.resx" />
     <Content Include="data\resources\StringResources.de.resx" />
     <Content Include="data\resources\StringResources.es-mx.resx" />
@@ -349,22 +178,6 @@
     <Content Include="data\resources\StringResources.se.resx" />
     <Content Include="data\resources\StringResources.tr.resx" />
     <Content Include="data\resources\StringResources.zh.resx" />
-    <EmbeddedResource Include="HelpSetup.resx">
-      <DependentUpon>HelpSetup.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Content Include="data\ConversionStyleSheets\ShowXmlDocumentation.xsl" />
-    <Content Include="data\modes\C64CSharp.xshd" />
-    <Content Include="data\modes\CSharp-Mode-VSEnh.xshd" />
-    <Content Include="data\options\SharpDevelopControlLibrary.sdcl" />
-    <Content Include="data\options\SharpDevelopProperties.xml" />
-    <Content Include="data\options\SharpDevelop-templates.xml" />
-    <Content Include="data\options\SharpDevelop-tools.xml" />
-    <Content Include="data\options\StandardHeader.xml" />
-    <Content Include="data\options\TextLib\ASCIITable.xml" />
-    <Content Include="data\options\TextLib\CSharpDocumentationTags.xml" />
-    <Content Include="data\options\TextLib\Licenses.xml" />
-    <Content Include="data\options\TextLib\XSLT.xml" />
     <Content Include="data\resources\InstallerBitmaps\default-banner.bmp" />
     <Content Include="data\resources\InstallerBitmaps\default-dialog.bmp" />
     <Content Include="data\resources\InstallerBitmaps\exclamic.bmp" />
@@ -408,50 +221,6 @@
       <SubType>
       </SubType>
     </Content>
-    <Content Include="data\schemas\nant.xsd">
-      <SubType>
-      </SubType>
-    </Content>
-    <Content Include="data\schemas\readme.txt" />
-    <Content Include="data\schemas\W3C-License.html" />
-    <Content Include="data\schemas\wix.xsd">
-      <SubType>
-      </SubType>
-    </Content>
-    <Content Include="data\schemas\XMLSchema.xsd">
-      <SubType>
-      </SubType>
-    </Content>
-    <Content Include="data\schemas\xslt.xsd">
-      <SubType>
-      </SubType>
-    </Content>
-    <Content Include="data\templates\file\CSharp\CSharp.Empty.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.EmptyClass.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.Forms.Form.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.Forms.UserControl.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.Patterns.Singleton.xft" />
-    <Content Include="data\templates\file\CSharp\CSharp.UnitTest.xft" />
-    <Content Include="data\templates\file\Misc\EmptyHTMLFile.xft" />
-    <Content Include="data\templates\file\Misc\EmptyResourceFile.xft" />
-    <Content Include="data\templates\file\Misc\EmptyTextFile.xft" />
-    <Content Include="data\templates\file\Misc\EmptyXMLFile.xft" />
-    <Content Include="data\templates\file\SharpDevelop\ExampleMenuCommand.xft" />
-    <Content Include="data\templates\file\SharpDevelop\ExampleOptionPanel.xft" />
-    <Content Include="data\templates\file\SharpDevelop\ExamplePad.xft" />
-    <Content Include="data\templates\file\SharpDevelop\ExampleView.xft" />
-    <Content Include="data\templates\file\SharpDevelop\SimpleCommand.xft" />
-    <Content Include="data\templates\project\ComplexExample.xpt.test" />
-    <Content Include="data\templates\project\CSharp\ConsoleProject.xpt" />
-    <Content Include="data\templates\project\CSharp\ControlLibrary.xpt" />
-    <Content Include="data\templates\project\CSharp\EmptyProject.xpt" />
-    <Content Include="data\templates\project\CSharp\FormsProject.xpt" />
-    <Content Include="data\templates\project\CSharp\Library.xpt" />
-    <Content Include="data\templates\project\CSharp\Service.xpt" />
-    <Content Include="doc\BuiltWithSharpDevelop.png" />
-    <Content Include="doc\ChangeLog.xml" />
-    <Content Include="doc\CodingStyleGuide.pdf" />
-    <Content Include="doc\CodingStyleGuide.sxw" />
     <Content Include="doc\Contributions\Contributions.txt" />
     <Content Include="doc\Contributions\dnAnalytics-license.txt" />
     <Content Include="doc\Contributions\ExocortexDSP-license.txt" />
@@ -459,9 +228,7 @@
     <Content Include="doc\copyright.txt" />
     <Content Include="doc\help\AltaxoHelp.chm" />
     <Content Include="doc\help\AltaxoHelp.hhc" />
-    <Content Include="doc\help\HelpDescription.xml" />
     <Content Include="doc\license.txt" />
-    <Content Include="doc\SharpDevelopTODO.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -479,17 +246,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="data\options\WpfToolbox.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Libraries\SharpZipLib\src\ICSharpCode.SharpZLib.csproj">
-      <Project>{62C31D94-812C-430E-AB9B-7DCF84D93BAE}</Project>
-      <Name>ICSharpCode.SharpZLib</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

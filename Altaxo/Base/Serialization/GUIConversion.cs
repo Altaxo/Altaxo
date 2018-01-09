@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 
 namespace Altaxo.Serialization
@@ -34,7 +34,7 @@ namespace Altaxo.Serialization
 	/// Responsible for converting user input (dialogs and controls) into data and vice versa. The user preferences for locality are
 	/// used by this class.
 	/// </summary>
-	public static class GUIConversion
+	public static partial class GUIConversion
 	{
 		/// <summary>Settings how the data entered by the user should be interpreted and how the data should be presented in the user interface.</summary>
 		private static System.Globalization.CultureInfo _cultureSettings;
@@ -64,6 +64,69 @@ namespace Altaxo.Serialization
 					throw new ArgumentNullException("value");
 				_cultureSettings = value;
 			}
+		}
+
+		public static string ToNumberStringWithUnit(double number, string unit)
+		{
+			int l = (int)Math.Floor(Math.Log10(Math.Abs(number)) / 3);
+
+			string pre = null;
+			switch (l)
+			{
+				case -5:
+					pre = "a";
+					break;
+
+				case -4:
+					pre = "p";
+					break;
+
+				case -3:
+					pre = "n";
+					break;
+
+				case -2:
+					pre = "µ";
+					break;
+
+				case -1:
+					pre = "m";
+					break;
+
+				case 0:
+					pre = "";
+					break;
+
+				case 1:
+					pre = "K";
+					break;
+
+				case 2:
+					pre = "M";
+					break;
+
+				case 3:
+					pre = "G";
+					break;
+
+				case 4:
+					pre = "T";
+					break;
+			}
+
+			if (pre == null)
+				return number.ToString() + " " + unit;
+
+			double m = number / Math.Pow(10, 3 * l);
+			return m.ToString(_cultureSettings) + " " + pre + unit;
+		}
+
+		public static string ToNumberStringNullIfNaN(double val)
+		{
+			if (double.IsNaN(val))
+				return null;
+			else
+				return val.ToString(_cultureSettings);
 		}
 
 		#region DateTime
@@ -339,149 +402,6 @@ namespace Altaxo.Serialization
 
 		#endregion Integer
 
-		#region AltaxoVariant
-
-		public static string ToString(IEnumerable<AltaxoVariant> vals)
-		{
-			StringBuilder stb = new StringBuilder();
-			bool first = true;
-			foreach (AltaxoVariant v in vals)
-			{
-				if (first)
-					first = false;
-				else
-					stb.Append("; ");
-
-				stb.Append(v.ToString());
-			}
-			return stb.ToString();
-		}
-
-		public static bool TryParseMultipleAltaxoVariant(string s, out AltaxoVariant[] vals)
-		{
-			vals = null;
-			bool failed = false;
-			string[] parts = s.Split(new char[] { '\t', '\r', '\n', ';' }, StringSplitOptions.RemoveEmptyEntries);
-			AltaxoVariant[] result = new AltaxoVariant[parts.Length];
-
-			for (int i = 0; i < result.Length; i++)
-			{
-				DateTime dt;
-				double dd;
-				if (IsDouble(parts[i], out dd))
-				{
-					result[i] = dd;
-				}
-				else if (IsDateTime(parts[i], out dt))
-				{
-					result[i] = dt;
-				}
-				else
-				{
-					result[i] = parts[i];
-				}
-			}
-
-			if (failed)
-				return false;
-
-			vals = result;
-			return true;
-		}
-
-		#endregion AltaxoVariant
-
-		#region Length-Units (mm, cm, inch and so on)
-
-		private static LengthUnit _lastLengthUnitUsed = LengthUnit.Point;
-
-		public static LengthUnit LastUsedLengthUnit
-		{
-			get
-			{
-				return _lastLengthUnitUsed;
-			}
-			set
-			{
-				_lastLengthUnitUsed = value;
-			}
-		}
-
-		/// <summary>
-		/// Converts a value (unit: points) in a given unit and returns it as text together with the unit.
-		/// </summary>
-		/// <param name="value">Value of length in points.</param>
-		/// <param name="lastUnit">The unit to convert to.</param>
-		/// <returns>A text string: the value together with the unit.</returns>
-		public static string GetLengthMeasureText(double value, LengthUnit lastUnit)
-		{
-			double v = lastUnit.ConvertFrom(value, LengthUnit.Point);
-			return GUIConversion.ToString(v, "G5") + " " + lastUnit.Shortcut;
-		}
-
-		/// <summary>
-		/// Converts a value (unit: points) in the length unit last used and returns it as text together with the unit.
-		/// </summary>
-		/// <param name="value">Value of length in points.</param>
-		/// <returns>A text string: the value together with the unit.</returns>
-		public static string GetLengthMeasureText(double value)
-		{
-			return GetLengthMeasureText(value, LastUsedLengthUnit);
-		}
-
-		/// <summary>
-		/// Get a length value from a text string.
-		/// </summary>
-		/// <param name="txt">Text string. Consists of a number and optionally a unit.</param>
-		/// <param name="unit">Gives the default unit to use if the text string don't contain a unit.
-		/// On return, contains the unit actually used.</param>
-		/// <param name="value">On return, gives the actual length (unit:points).</param>
-		/// <returns>True if the conversion was successful, false otherwise.</returns>
-		public static bool GetLengthMeasureValue(
-			string txt,
-			ref LengthUnit unit,
-			ref double value)
-		{
-			txt = txt.Trim().ToLower();
-			LengthUnit tempUnit = unit;
-			foreach (string end in LengthUnit.Shortcuts)
-			{
-				if (txt.EndsWith(end))
-				{
-					tempUnit = LengthUnit.FromShortcut(end);
-					txt = txt.Substring(0, txt.Length - end.Length).TrimEnd();
-					break;
-				}
-			}
-
-			double v;
-			if (IsDouble(txt, out v))
-			{
-				value = LengthUnit.Point.ConvertFrom(v, tempUnit);
-				unit = tempUnit;
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		/// <summary>
-		/// Get a length value from a text string.
-		/// </summary>
-		/// <param name="txt">Text string. Consists of a number and optionally a unit.</param>
-		/// <param name="value">On return, gives the actual length (unit:points).</param>
-		/// <returns>True if the conversion was successful, false otherwise. The last used length unit is updated by this function.</returns>
-		public static bool GetLengthMeasureValue(
-			string txt,
-			ref double value)
-		{
-			return GetLengthMeasureValue(txt, ref _lastLengthUnitUsed, ref value);
-		}
-
-		#endregion Length-Units (mm, cm, inch and so on)
-
 		#region Percent-Units
 
 		/// <summary>
@@ -491,7 +411,7 @@ namespace Altaxo.Serialization
 		/// <returns>A text string: the value together with the unit.</returns>
 		public static string GetPercentMeasureText(double value)
 		{
-			return GUIConversion.ToString(value * 100, "G5") + " %";
+			return ToString(value * 100, "G5") + " %";
 		}
 
 		/// <summary>

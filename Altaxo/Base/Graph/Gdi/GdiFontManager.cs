@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Drawing;
+using Altaxo.Main.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -57,7 +58,9 @@ namespace Altaxo.Graph.Gdi
 		private static readonly string[] _genericSansSerifFamilyNames = new string[] { "Microsoft Sans Serif", "Liberation Sans", "Verdana", "Arial", "Helvetica" };
 
 		/// <summary>The instance used by the static methods of this class. Is not neccessarily of type <see cref="GdiFontManager"/>, but could also be a derived type.</summary>
-		protected static GdiFontManager _instance;
+		protected static CachedService<GdiFontManager, GdiFontManager> _instanceCached = new CachedService<GdiFontManager, GdiFontManager>(true, null, null);
+
+		protected static GdiFontManager _instance { get { return _instanceCached; } }
 
 		/// <summary>Corresponds the font's invariant description string with the Gdi+ font instance.
 		/// Key is the invariant description string, value is the Gdi font instance with the specific style and size.
@@ -82,34 +85,6 @@ namespace Altaxo.Graph.Gdi
 		#endregion Constants and members
 
 		#region Public static functions and properties
-
-		/// <summary>
-		/// Registers this instance with the <see cref="FontX"/> font system.
-		/// </summary>
-		public static void Register()
-		{
-			// when called, the instance of this class is set to a new instance of this class,
-			// which then registers this FontManager with FontX
-
-			if (null == _instance)
-				SetInstance(new GdiFontManager());
-		}
-
-		/// <summary>
-		/// Sets the instance of <see cref="GdiFontManager"/> here in this class (used by the static methods of this class).
-		/// </summary>
-		/// <param name="newInstance">The new instance.</param>
-		public static void SetInstance(GdiFontManager newInstance)
-		{
-			var oldInstance = _instance;
-
-			if (!object.ReferenceEquals(oldInstance, newInstance))
-			{
-				_instance = newInstance;
-
-				oldInstance?.Dispose();
-			}
-		}
 
 		/// <summary>
 		/// Gets the family name from a <see cref="FontX"/> instance. If this font family name does not exist, a generic sans serif font family name is returned instead.
@@ -456,25 +431,25 @@ namespace Altaxo.Graph.Gdi
 			return InternalGetGdiFontFromFamilyAndSizeAndStyle(gdiFontFamilyName, fontSize, fontStyle);
 		}
 
+		/// <summary>
+		/// Gives the index of the font style. Not taken into account are <see cref="FontStyle.Underline"/> and <see cref="FontStyle.Italic"/>.
+		/// These two flags are ignored.
+		/// </summary>
+		/// <param name="fontStyle">The font style.</param>
+		/// <returns></returns>
 		protected static int FontStyleToIndex(FontStyle fontStyle)
 		{
-			switch (fontStyle)
-			{
-				case FontStyle.Regular:
-					return IdxRegular;
+			bool isBold = fontStyle.HasFlag(FontStyle.Bold);
+			bool isItalic = fontStyle.HasFlag(FontStyle.Italic);
 
-				case FontStyle.Bold:
-					return IdxBold;
-
-				case FontStyle.Italic:
-					return IdxItalic;
-
-				case (FontStyle.Italic | FontStyle.Bold):
-					return IdxBoldItalic;
-
-				default:
-					throw new InvalidProgramException("This function should be called only with regular, bold, italic, and bold-italic");
-			}
+			if (isBold && isItalic)
+				return IdxBoldItalic;
+			else if (isItalic)
+				return IdxItalic;
+			else if (isBold)
+				return IdxBold;
+			else
+				return IdxRegular;
 		}
 
 		/// <summary>

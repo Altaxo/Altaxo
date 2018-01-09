@@ -28,6 +28,7 @@ using System.Collections.Generic;
 namespace Altaxo.Worksheet
 {
 	using Altaxo.Data;
+	using Altaxo.Main;
 
 	/// <summary>
 	/// Stores the layout of a table to be shown in a WorksheetView.
@@ -35,7 +36,8 @@ namespace Altaxo.Worksheet
 	public class WorksheetLayout
 		:
 		Main.SuspendableDocumentNodeWithSetOfEventArgs,
-		Main.IEventIndicatedDisposable
+		Main.IEventIndicatedDisposable,
+		Main.IProjectItemPresentationModel
 	{
 		#region Member variables
 
@@ -76,18 +78,18 @@ namespace Altaxo.Worksheet
 		/// <summary>
 		/// The style of the row header. This is the leftmost column that shows usually the row number.
 		/// </summary>
-		protected RowHeaderStyle _rowHeaderStyle; // holds the style of the row header (leftmost column of data grid)
+		private RowHeaderStyle _rowHeaderStyle; // holds the style of the row header (leftmost column of data grid)
 
 		/// <summary>
 		/// The style of the column header. This is the upmost row that shows the name of the columns.
 		/// </summary>
-		protected ColumnHeaderStyle _columnHeaderStyle; // the style of the column header (uppermost row of datagrid)
+		private ColumnHeaderStyle _columnHeaderStyle; // the style of the column header (uppermost row of datagrid)
 
 		/// <summary>
 		/// The style of the property column header. This is the leftmost column in the left of the property columns,
 		/// that shows the names of the property columns.
 		/// </summary>
-		protected ColumnHeaderStyle _propertyColumnHeaderStyle;
+		private ColumnHeaderStyle _propertyColumnHeaderStyle;
 
 		/// <summary>
 		/// The visibility of the property columns in the view. If true, the property columns are shown in the view.
@@ -147,9 +149,9 @@ namespace Altaxo.Worksheet
 
 				s._guid = System.Xml.XmlConvert.ToGuid(info.GetString("Guid"));
 				surr._pathToTable = (Main.AbsoluteDocumentPath)info.GetValue("Table", s);
-				s._rowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle", s);
-				s._columnHeaderStyle = (ColumnHeaderStyle)info.GetValue("ColumnHeaderStyle", s);
-				s._propertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle", s);
+				s.RowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle", s);
+				s.ColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("ColumnHeaderStyle", s);
+				s.PropertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle", s);
 
 				int count;
 				count = info.OpenArray(); // DefaultColumnStyles
@@ -157,7 +159,7 @@ namespace Altaxo.Worksheet
 				for (int i = 0; i < count; i++)
 				{
 					var defstyle = (ColumnStyle)info.GetValue("DefaultColumnStyle", s._dataColumnStyles);
-					s._dataColumnStyles.DefaultColumnStyles[defstyle.GetType()] = defstyle;
+					s._dataColumnStyles.SetDefaultColumnStyle(defstyle.GetType(), defstyle);
 				}
 				info.CloseArray(count);
 
@@ -232,7 +234,7 @@ namespace Altaxo.Worksheet
 				for (int i = 0; i < count; i++)
 				{
 					var defstyle = (ColumnStyle)info.GetValue("DefaultPropertyColumnStyle", s._propertyColumnStyles);
-					s._propertyColumnStyles.DefaultColumnStyles[defstyle.GetType()] = defstyle;
+					s._propertyColumnStyles.SetDefaultColumnStyle(defstyle.GetType(), defstyle);
 				}
 				info.CloseArray(count);
 			}
@@ -405,16 +407,28 @@ namespace Altaxo.Worksheet
 		public RowHeaderStyle RowHeaderStyle
 		{
 			get { return _rowHeaderStyle; }
+			protected set
+			{
+				ChildSetMember(ref _rowHeaderStyle, value ?? throw new ArgumentNullException(nameof(value)));
+			}
 		}
 
 		public ColumnHeaderStyle ColumnHeaderStyle
 		{
 			get { return _columnHeaderStyle; }
+			protected set
+			{
+				ChildSetMember(ref _columnHeaderStyle, value ?? throw new ArgumentNullException(nameof(value)));
+			}
 		}
 
 		public ColumnHeaderStyle PropertyColumnHeaderStyle
 		{
 			get { return _propertyColumnHeaderStyle; }
+			protected set
+			{
+				ChildSetMember(ref _propertyColumnHeaderStyle, value ?? throw new ArgumentNullException(nameof(value)));
+			}
 		}
 
 		public bool ShowPropertyColumns
@@ -439,6 +453,14 @@ namespace Altaxo.Worksheet
 			}
 		}
 
+		IProjectItem IProjectItemPresentationModel.Document
+		{
+			get
+			{
+				return _dataTable;
+			}
+		}
+
 		#endregion IDocumentNode Members
 
 		#region Document node functions
@@ -446,19 +468,19 @@ namespace Altaxo.Worksheet
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _columnHeaderStyle)
-				yield return new Main.DocumentNodeAndName(_columnHeaderStyle, "ColumnHeaderStyle");
+				yield return new Main.DocumentNodeAndName(_columnHeaderStyle, () => _columnHeaderStyle = null, "ColumnHeaderStyle");
 
 			if (null != _rowHeaderStyle)
-				yield return new Main.DocumentNodeAndName(_rowHeaderStyle, "RowHeaderStyle");
+				yield return new Main.DocumentNodeAndName(_rowHeaderStyle, () => _rowHeaderStyle = null, "RowHeaderStyle");
 
 			if (null != _propertyColumnHeaderStyle)
-				yield return new Main.DocumentNodeAndName(_propertyColumnHeaderStyle, "PropertyColumnHeaderStyle");
+				yield return new Main.DocumentNodeAndName(_propertyColumnHeaderStyle, () => _propertyColumnHeaderStyle = null, "PropertyColumnHeaderStyle");
 
 			if (null != _dataColumnStyles)
-				yield return new Main.DocumentNodeAndName(_dataColumnStyles, "DataColumnStyles");
+				yield return new Main.DocumentNodeAndName(_dataColumnStyles, () => _dataColumnStyles = null, "DataColumnStyles");
 
 			if (null != _propertyColumnStyles)
-				yield return new Main.DocumentNodeAndName(_propertyColumnStyles, "PropertyColumnStyles");
+				yield return new Main.DocumentNodeAndName(_propertyColumnStyles, () => _propertyColumnStyles = null, "PropertyColumnStyles");
 		}
 
 		#endregion Document node functions

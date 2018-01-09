@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
+using Altaxo.AddInItems;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Plot;
 using Altaxo.Gui.Graph.Graph3D.Viewing;
-using ICSharpCode.Core;
 
 using System;
 using System.Collections.Generic;
@@ -164,27 +164,28 @@ namespace Altaxo.Graph.Graph3D.Commands
 	{
 		public IEnumerable<object> BuildItems(Codon codon, object owner)
 		{
-			var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraph3DViewContent;
-			if (null == ctrl)
-				return null;
-			var activeLayer = ctrl.Controller.ActiveLayer as XYZPlotLayer;
-			if (null == activeLayer)
-				return null;
-
-			int actPA = ctrl.Controller.CurrentPlotNumber;
-			int len = activeLayer.PlotItems.Flattened.Length;
-			var items = new List<object>();
-			for (int i = 0; i < len; i++)
+			if (Current.Workbench.ActiveViewContent is Graph3DController ctrl)
 			{
-				IGPlotItem pa = activeLayer.PlotItems.Flattened[i];
-				var item = new System.Windows.Controls.MenuItem() { Header = pa.ToString() };
-				item.Click += EhWpfMenuItem_Clicked;
-				item.IsChecked = (i == actPA);
-				item.Tag = i;
-				items.Add(item);
-			}
+				var activeLayer = ctrl.ActiveLayer as XYZPlotLayer;
+				if (null == activeLayer)
+					return null;
 
-			return items;
+				int actPA = ctrl.CurrentPlotNumber;
+				int len = activeLayer.PlotItems.Flattened.Length;
+				var items = new List<object>();
+				for (int i = 0; i < len; i++)
+				{
+					IGPlotItem pa = activeLayer.PlotItems.Flattened[i];
+					var item = new System.Windows.Controls.MenuItem() { Header = pa.ToString() };
+					item.Click += EhWpfMenuItem_Clicked;
+					item.IsChecked = (i == actPA);
+					item.Tag = i;
+					items.Add(item);
+				}
+
+				return items;
+			}
+			return null;
 		}
 
 		private void EhWpfMenuItem_Clicked(object sender, System.Windows.RoutedEventArgs e)
@@ -192,28 +193,24 @@ namespace Altaxo.Graph.Graph3D.Commands
 			var dmi = (System.Windows.Controls.MenuItem)sender;
 			int plotItemNumber = (int)dmi.Tag;
 
-			var ctrl = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraph3DViewContent;
-			if (null == ctrl)
-				return;
-			var activeLayer = ctrl.Controller.ActiveLayer as XYZPlotLayer;
-			if (null == activeLayer)
-				return;
-
-			if (!dmi.IsChecked)
+			if (Current.Workbench.ActiveViewContent is Graph3DController ctrl && ctrl.ActiveLayer is XYZPlotLayer activeLayer)
 			{
-				// if the menu item was not checked before, check it now
-				// by making the plot association shown by the menu item
-				// the actual plot association
-				if (null != activeLayer && plotItemNumber < activeLayer.PlotItems.Flattened.Length)
+				if (!dmi.IsChecked)
 				{
-					dmi.IsChecked = true;
-					ctrl.Controller.CurrentPlotNumber = plotItemNumber;
+					// if the menu item was not checked before, check it now
+					// by making the plot association shown by the menu item
+					// the actual plot association
+					if (null != activeLayer && plotItemNumber < activeLayer.PlotItems.Flattened.Length)
+					{
+						dmi.IsChecked = true;
+						ctrl.CurrentPlotNumber = plotItemNumber;
+					}
 				}
-			}
-			else
-			{
-				IGPlotItem pa = activeLayer.PlotItems.Flattened[plotItemNumber];
-				Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()), true);
+				else
+				{
+					IGPlotItem pa = activeLayer.PlotItems.Flattened[plotItemNumber];
+					Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()), true);
+				}
 			}
 		}
 	}

@@ -31,176 +31,176 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
-    /// <summary>
-    /// Interaction logic for NonlinearFitControl.xaml
-    /// </summary>
-    [UserControlForController(typeof(INonlinearFitViewEventSink))]
-    public partial class NonlinearFitControl : UserControl, INonlinearFitView
-    {
-        public NonlinearFitControl()
-        {
-            InitializeComponent();
-        }
+	/// <summary>
+	/// Interaction logic for NonlinearFitControl.xaml
+	/// </summary>
+	[UserControlForController(typeof(INonlinearFitViewEventSink))]
+	public partial class NonlinearFitControl : UserControl, INonlinearFitView
+	{
+		public NonlinearFitControl()
+		{
+			InitializeComponent();
+		}
 
-        private void _btSelectFitFunc_Click(object sender, RoutedEventArgs e)
-        {
-            if (_controller != null)
-                _controller.EhView_SelectFitFunction();
-        }
+		private void _btSelectFitFunc_Click(object sender, RoutedEventArgs e)
+		{
+			if (_controller != null)
+				_controller.EhView_SelectFitFunction();
+		}
 
-        private void _btNew_Click(object sender, RoutedEventArgs e)
-        {
-            if (_controller != null)
-                _controller.EhView_NewFitFunction();
-        }
+		private void _btNew_Click(object sender, RoutedEventArgs e)
+		{
+			if (_controller != null)
+				_controller.EhView_NewFitFunction();
+		}
 
-        private void _tsbCopyParameter_Click(object sender, RoutedEventArgs e)
-        {
-            if (_controller != null)
-                _controller.EhView_CopyParameterNV();
-        }
+		private void _tsbCopyParameter_Click(object sender, RoutedEventArgs e)
+		{
+			if (_controller != null)
+				_controller.EhView_CopyParameterNV();
+		}
 
-        private void _tsbCopyParameterAll_Click(object sender, RoutedEventArgs e)
-        {
-            if (_controller != null)
-                _controller.EhView_CopyParameterNVV();
-        }
+		private void _tsbCopyParameterAll_Click(object sender, RoutedEventArgs e)
+		{
+			if (_controller != null)
+				_controller.EhView_CopyParameterNVV();
+		}
 
-        private void _tsbCopyParameterValueAsCDef_Click(object sender, RoutedEventArgs e)
-        {
-            if (_controller != null)
-                _controller.EhView_CopyParameterVAsCDef();
-        }
+		private void _tsbCopyParameterValueAsCDef_Click(object sender, RoutedEventArgs e)
+		{
+			if (_controller != null)
+				_controller.EhView_CopyParameterVAsCDef();
+		}
 
-        private void _tsbCopyParameterValue_Click(object sender, RoutedEventArgs e)
-        {
-            if (_controller != null)
-                _controller.EhView_CopyParameterV();
-        }
+		private void _tsbCopyParameterValue_Click(object sender, RoutedEventArgs e)
+		{
+			if (_controller != null)
+				_controller.EhView_CopyParameterV();
+		}
 
-        private void _tsbPasteParameterValue_Click(object sender, RoutedEventArgs e)
-        {
-            if (_controller != null)
-                _controller.EhView_PasteParameterV();
-        }
+		private void _tsbPasteParameterValue_Click(object sender, RoutedEventArgs e)
+		{
+			if (_controller != null)
+				_controller.EhView_PasteParameterV();
+		}
 
-        private void _btChiSqr_Click(object sender, RoutedEventArgs e)
-        {
-            if (_controller != null)
-                _controller.EhView_EvaluateChiSqr();
-        }
+		private void _btChiSqr_Click(object sender, RoutedEventArgs e)
+		{
+			if (_controller != null)
+				_controller.EhView_EvaluateChiSqr();
+		}
 
-        private void _btDoFit_Click(object sender, RoutedEventArgs e)
-        {
-            if (_controller != null)
-                _controller.EhView_DoFit();
-        }
+		private void _btDoFit_Click(object sender, RoutedEventArgs e)
+		{
+			if (_controller != null)
+				_controller.EhView_DoFit();
+		}
 
-        private void _btDoSimplex_Click(object sender, RoutedEventArgs e)
-        {
-            if (_controller != null)
-                _controller.EhView_DoSimplex();
-        }
+		private void _btDoSimplex_Click(object sender, RoutedEventArgs e)
+		{
+			if (_controller != null)
+				_controller.EhView_DoSimplex();
+		}
 
-        private void EhSimulate_GenerationMethodChanged(object sender, RoutedEventArgs e)
-        {
-            _ctrlEquallySpacedInterval.IsEnabled = true == _rbFromEquallySpacedInterval.IsChecked;
-        }
+		private void EhSimulate_GenerationMethodChanged(object sender, RoutedEventArgs e)
+		{
+			_ctrlEquallySpacedInterval.IsEnabled = true == _rbFromEquallySpacedInterval.IsChecked;
+		}
 
-        private void _btSimulate_Click(object sender, RoutedEventArgs e)
-        {
-            if (_controller != null)
-                _controller.EhView_DoSimulation(true == _rbFromEquallySpacedInterval.IsChecked, true == _chkUseUnusedDependentVarsAlso.IsChecked);
-        }
+		private void _btSimulate_Click(object sender, RoutedEventArgs e)
+		{
+			if (_controller != null)
+				_controller.EhView_DoSimulation(true == _rbFromEquallySpacedInterval.IsChecked, true == _chkUseUnusedDependentVarsAlso.IsChecked);
+		}
 
-        #region INonlinearFitView
+		#region INonlinearFitView
 
-        private INonlinearFitViewEventSink _controller;
+		private INonlinearFitViewEventSink _controller;
 
-        public INonlinearFitViewEventSink Controller
-        {
-            get
-            {
-                return _controller;
-            }
-            set
-            {
-                _controller = value;
-            }
-        }
+		public INonlinearFitViewEventSink Controller
+		{
+			get
+			{
+				return _controller;
+			}
+			set
+			{
+				_controller = value;
+			}
+		}
 
-        private UIElement _setParameterControl;
+		private UIElement _setParameterControl;
 
-        public void SetParameterControl(object control)
-        {
-            this._parameterControlHost.Child = null;
-            _setParameterControl = control as UIElement;
-            this._parameterControlHost.Child = _setParameterControl;
-        }
+		public void SetParameterControl(object control)
+		{
+			this._parameterControlHost.Child = null;
+			_setParameterControl = control as UIElement;
+			this._parameterControlHost.Child = _setParameterControl;
+		}
 
-        private UIElement _funcSelControl;
+		private UIElement _funcSelControl;
 
-        public void SetSelectFunctionControl(object control)
-        {
-            _funcSelControlHost.Child = null;
-            _funcSelControl = control as UIElement;
-            _funcSelControlHost.Child = _funcSelControl;
-        }
+		public void SetSelectFunctionControl(object control)
+		{
+			_funcSelControlHost.Child = null;
+			_funcSelControl = control as UIElement;
+			_funcSelControlHost.Child = _funcSelControl;
+		}
 
-        private UIElement _fitEnsembleControl;
+		private UIElement _fitEnsembleControl;
 
-        public void SetFitEnsembleControl(object control)
-        {
-            this._tpFitEnsemble.Content = null;
-            _fitEnsembleControl = control as UIElement;
-            this._tpFitEnsemble.Content = _fitEnsembleControl;
-        }
+		public void SetFitEnsembleControl(object control)
+		{
+			this._tpFitEnsemble.Content = null;
+			_fitEnsembleControl = control as UIElement;
+			this._tpFitEnsemble.Content = _fitEnsembleControl;
+		}
 
-        public void SetChiSquare(double chiSquare)
-        {
-            this._edChiSqr.Text = Altaxo.Serialization.GUIConversion.ToString(chiSquare);
-        }
+		public void SetChiSquare(double chiSquare)
+		{
+			this._edChiSqr.Text = Altaxo.Serialization.GUIConversion.ToString(chiSquare);
+		}
 
-        public void SwitchToFitEnsemblePage()
-        {
-            this._tabControl.SelectedItem = this._tpFitEnsemble;
-        }
+		public void SwitchToFitEnsemblePage()
+		{
+			this._tabControl.SelectedItem = this._tpFitEnsemble;
+		}
 
-        public object GetGenerationIntervalControl()
-        {
-            return _ctrlEquallySpacedInterval;
-        }
+		public object GetGenerationIntervalControl()
+		{
+			return _ctrlEquallySpacedInterval;
+		}
 
-        public bool ShowUnusedDependentVariables
-        {
-            get
-            {
-                return _guiShowUnusedDependentVar.IsChecked == true;
-            }
-            set
-            {
-                _guiShowUnusedDependentVar.IsChecked = value;
-            }
-        }
+		public bool ShowUnusedDependentVariables
+		{
+			get
+			{
+				return _guiShowUnusedDependentVar.IsChecked == true;
+			}
+			set
+			{
+				_guiShowUnusedDependentVar.IsChecked = value;
+			}
+		}
 
-        public bool ShowConfidenceBands
-        {
-            get { return _guiShowConfidenceBands.IsChecked == true; }
-            set
-            {
-                _guiShowConfidenceBands.IsChecked = value;
-            }
-        }
+		public bool ShowConfidenceBands
+		{
+			get { return _guiShowConfidenceBands.IsChecked == true; }
+			set
+			{
+				_guiShowConfidenceBands.IsChecked = value;
+			}
+		}
 
-        public double ConfidenceLevel
-        {
-            get { return _guiConfidenceLevel.SelectedQuantityAsValueInSIUnits; }
-            set
-            {
-                _guiConfidenceLevel.SelectedQuantityAsValueInSIUnits = value;
-            }
-        }
+		public double ConfidenceLevel
+		{
+			get { return _guiConfidenceLevel.SelectedQuantityAsValueInSIUnits; }
+			set
+			{
+				_guiConfidenceLevel.SelectedQuantityAsValueInSIUnits = value;
+			}
+		}
 
-        #endregion INonlinearFitView
-    }
+		#endregion INonlinearFitView
+	}
 }

@@ -44,16 +44,22 @@ namespace Altaxo.Main.Services
 		private Task _task;
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="TimerQueue"/> class. This
+		/// constructur needs the <see cref="IHighResolutionClock"/> service to be present.
+		/// </summary>
+		public TimerQueue()
+			: this(Current.GetRequiredService<IHighResolutionClock>())
+		{
+		}
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="TimerQueue"/> class.
 		/// </summary>
 		/// <param name="clock">The underlying high resolution clock.</param>
 		/// <exception cref="System.ArgumentNullException">Argument clock is null</exception>
 		public TimerQueue(IHighResolutionClock clock)
 		{
-			if (null == clock)
-				throw new ArgumentNullException("clock");
-
-			_clock = clock;
+			_clock = clock ?? throw new ArgumentNullException("clock");
 			_event = new AutoResetEvent(false);
 			_items = new ConcurrentTokenizedPriorityQueue<TimeSpan, Action<object, TimeSpan>, object>();
 			_task = Task.Factory.StartNew(Run, TaskCreationOptions.LongRunning);
@@ -134,7 +140,7 @@ namespace Altaxo.Main.Services
 		/// <param name="token">The token to identify the item.</param>
 		/// <param name="dueTime">On success,  contains the removed item.</param>
 		/// <returns><c>True</c> if the item could be sucessfully removed; <c>false</c> if the item was not in the queue.</returns>
-		public bool TryRemove(object token, out  TimeSpan dueTime)
+		public bool TryRemove(object token, out TimeSpan dueTime)
 		{
 			return _items.TryRemove(token, out dueTime);
 		}
@@ -151,7 +157,7 @@ namespace Altaxo.Main.Services
 
 		private void Run()
 		{
-			for (; !_isDisposed; )
+			for (; !_isDisposed;)
 			{
 				_event.WaitOne(); // wait for an enqueue event
 

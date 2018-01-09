@@ -312,7 +312,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 		{
 			{
 				char[] oneOfChars = new char[]    {'"','\\','/','b','f'
-                                                  ,'n','r','t'};
+																									,'n','r','t'};
 				optimizedCharset0 = new OptimizedCharset(null, oneOfChars);
 			}
 		}

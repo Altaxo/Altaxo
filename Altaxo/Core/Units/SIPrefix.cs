@@ -34,16 +34,20 @@ namespace Altaxo.Units
 		private string _name;
 		private string _shortCut;
 		private int _exponent;
-		private double _factor;
-		private double _divider;
+
+		private double _cachedFactor;
+		private double _cachedDivider;
 
 		private static List<SIPrefix> _instances;
 
 		/// <summary>List with all prefixes, including the prefix <see cref="None"/>.</summary>
-		private static SIPrefixList _allPrefixe;
+		private static SIPrefixList _allPrefixes;
 
 		/// <summary>List with only the prefix <see cref="None"/>.</summary>
 		private static SIPrefixList _nonePrefixList;
+
+		/// <summary>List with only the prefixes with an exponent as a multiple of 3..</summary>
+		private static SIPrefixList _multipleOf3Prefixes;
 
 		/// <summary>Dictionary of known prefixes, where the key is the exponent and the value is the known prefix.</summary>
 		private static Dictionary<int, SIPrefix> _prefixByExponent;
@@ -116,6 +120,10 @@ namespace Altaxo.Units
 
 		public static int MinShortCutLength { get { return 1; } }
 
+		public static SIPrefix SmallestPrefix { get { return _prefix_yocto; } }
+
+		public static SIPrefix LargestPrefix { get { return _prefix_yotta; } }
+
 		static SIPrefix()
 		{
 			_instances = new List<SIPrefix>();
@@ -142,7 +150,26 @@ namespace Altaxo.Units
 			_instances.Add(_prefix_yotta = new SIPrefix("yotta", "Y", 24));
 
 			_nonePrefixList = new SIPrefixList(new SIPrefix[] { _prefix_none });
-			_allPrefixe = new SIPrefixList(_instances);
+			_allPrefixes = new SIPrefixList(_instances);
+			_multipleOf3Prefixes = new SIPrefixList(new SIPrefix[] {
+								_prefix_yocto,
+								_prefix_zepto,
+								_prefix_atto,
+								_prefix_femto,
+								_prefix_pico,
+								_prefix_nano,
+								_prefix_micro,
+								_prefix_milli,
+								_prefix_none,
+								_prefix_kilo,
+								_prefix_mega,
+								_prefix_giga,
+								_prefix_tera,
+								_prefix_peta,
+								_prefix_exa,
+								_prefix_zetta,
+								_prefix_yotta
+						});
 
 			_prefixByExponent = new Dictionary<int, SIPrefix>();
 			foreach (var prefix in _instances)
@@ -156,7 +183,18 @@ namespace Altaxo.Units
 		{
 			get
 			{
-				return _allPrefixe;
+				return _allPrefixes;
+			}
+		}
+
+		/// <summary>
+		/// Returns a list with prefixes, for which the exponent is a multiple of 3, including the prefix <see cref="None"/>.
+		/// </summary>
+		public static ISIPrefixList LisOfPrefixesWithMultipleOf3Exponent
+		{
+			get
+			{
+				return _allPrefixes;
 			}
 		}
 
@@ -173,16 +211,11 @@ namespace Altaxo.Units
 
 		public static SIPrefix TryGetPrefixFromShortcut(string shortcut)
 		{
-			return _allPrefixe.TryGetPrefixFromShortCut(shortcut);
-		}
-
-		public ISIPrefixList Prefixes
-		{
-			get { return SIPrefix.ListWithNonePrefixOnly; }
+			return _allPrefixes.TryGetPrefixFromShortCut(shortcut);
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="SIPrefix"/> class. Do not use this constructor unless you don't find
+		/// Deserialization constructor. Initializes a new instance of the <see cref="SIPrefix"/> class. Do not use this constructor unless you don't find
 		/// the prefix in the list of known prefixes.
 		/// </summary>
 		/// <param name="name">The name of the prefix.</param>
@@ -193,32 +226,30 @@ namespace Altaxo.Units
 			_name = name;
 			_shortCut = shortCut;
 			_exponent = exponent;
-			_factor = Altaxo.Calc.RMath.Pow(10, exponent);
-			_divider = Altaxo.Calc.RMath.Pow(10, -exponent);
+			_cachedFactor = Altaxo.Calc.RMath.Pow(10, exponent);
+			_cachedDivider = Altaxo.Calc.RMath.Pow(10, -exponent);
 		}
 
-		/// <summary>
-		/// Full name of the prefix (in lower letters). Examples: nano, micro, giga, exa.
-		/// </summary>
+		public static (SIPrefix prefix, double remainingFactor) FromMultiplication(SIPrefix p1, SIPrefix p2)
+		{
+			return _allPrefixes.GetPrefixFromExponent(p1._exponent + p2._exponent);
+		}
+
+		public static (SIPrefix prefix, double remainingFactor) FromDivision(SIPrefix p1, SIPrefix p2)
+		{
+			return _allPrefixes.GetPrefixFromExponent(p1._exponent - p2._exponent);
+		}
+
 		public string Name
 		{
 			get { return _name; }
 		}
 
-		/// <summary>
-		/// Usual shortcut of this prefix. Example: M for Mega, or n for nano.
-		/// </summary>
 		public string ShortCut
 		{
 			get { return _shortCut; }
 		}
 
-		/// <summary>
-		/// Gets the exponent that is associated with this prefix.
-		/// </summary>
-		/// <value>
-		/// The exponent associated with this prefix.
-		/// </value>
 		public int Exponent
 		{
 			get { return _exponent; }
@@ -237,12 +268,12 @@ namespace Altaxo.Units
 
 		public double ToSIUnit(double x)
 		{
-			return _factor >= 1 ? x * _factor : x / _divider;
+			return _cachedFactor >= 1 ? x * _cachedFactor : x / _cachedDivider;
 		}
 
 		public double FromSIUnit(double x)
 		{
-			return _divider >= 1 ? x * _divider : x / _factor;
+			return _cachedDivider >= 1 ? x * _cachedDivider : x / _cachedFactor;
 		}
 
 		public bool CanApplySIPrefix
@@ -250,15 +281,10 @@ namespace Altaxo.Units
 			get { return false; }
 		}
 
-		public SIUnit SIUnit
-		{
-			get { return Units.Dimensionless.Unity.Instance; }
-		}
-
 		public bool Equals(SIPrefix other)
 		{
 			return other == null ? false :
-				this._exponent == other._exponent;
+					this._exponent == other._exponent;
 		}
 
 		public override bool Equals(object obj)
@@ -279,5 +305,19 @@ namespace Altaxo.Units
 			else
 				return this._exponent < other._exponent ? -1 : 1;
 		}
+
+		#region IUnit implementation
+
+		ISIPrefixList IUnit.Prefixes
+		{
+			get { return SIPrefix.ListWithNonePrefixOnly; }
+		}
+
+		SIUnit IUnit.SIUnit
+		{
+			get { return Units.Dimensionless.Unity.Instance; }
+		}
+
+		#endregion IUnit implementation
 	}
 }

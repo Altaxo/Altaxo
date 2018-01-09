@@ -32,7 +32,7 @@ using System.Text;
 namespace Altaxo.Gui.DataConnection
 {
 	public interface IEntireTableQueryView
-	{	/// <summary>Sets content of the tree view that shows the tables, views and stored procedures of a data base.</summary>
+	{ /// <summary>Sets content of the tree view that shows the tables, views and stored procedures of a data base.</summary>
 		/// <remarks>The image indices 0, 1, and 2 correspond to the nodes: Table , View, and Procedure.</remarks>
 		void SetTreeSource(NGTreeNode rootNode);
 

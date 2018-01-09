@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 	{
 		#region Member variables
 
-		protected GraphControllerWpf _grac;
+		protected GraphController _grac;
 
 		protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
 
@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
 		#endregion Member variables
 
-		public SingleLineDrawingMouseHandler(GraphControllerWpf view)
+		public SingleLineDrawingMouseHandler(GraphController view)
 		{
 			this._grac = view;
 

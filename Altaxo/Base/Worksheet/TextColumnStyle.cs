@@ -106,7 +106,7 @@ namespace Altaxo.Worksheet
 			if (bSelected)
 				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), _defaultSelectedTextBrush, cellRectangle, _textFormat);
 			else
-				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), _textBrush, cellRectangle, _textFormat);
+				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), TextBrush, cellRectangle, _textFormat);
 		}
 	} // end of class Altaxo.Worksheet.DateTimeColumnStyle
 }

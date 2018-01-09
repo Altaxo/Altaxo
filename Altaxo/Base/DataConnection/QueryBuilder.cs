@@ -54,15 +54,15 @@ namespace Altaxo.DataConnection
 
 		#region Members
 
-		private QueryFieldCollection _queryFields;	// used to build query
-		private OleDbSchema _schema;		// used to build query
-		private string _sql;			// generated sql
-		private int _tableCount;	// number of tables used
-		private bool _missingJoins;	// not all tables joined
-		private bool _groupBy;		// add GROUP BY clause
-		private int _top;			// top N records
-		private bool _distinct;		// distinct records
-		private GroupByExtension _gbExtension;	// cube/rollup/all
+		private QueryFieldCollection _queryFields;  // used to build query
+		private OleDbSchema _schema;    // used to build query
+		private string _sql;      // generated sql
+		private int _tableCount;  // number of tables used
+		private bool _missingJoins; // not all tables joined
+		private bool _groupBy;    // add GROUP BY clause
+		private int _top;     // top N records
+		private bool _distinct;   // distinct records
+		private GroupByExtension _gbExtension;  // cube/rollup/all
 		private bool _sqlIsDirty;    // SQL needs to be regenerated
 
 		#endregion Members

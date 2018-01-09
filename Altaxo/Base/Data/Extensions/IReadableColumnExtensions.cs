@@ -46,38 +46,38 @@ namespace Altaxo.Data
 			commonDataTable = null;
 			commonGroupNumber = null;
 
-				foreach(var col in columns)
-				{
-					IReadableColumn underlyingColumn = col;
+			foreach (var col in columns)
+			{
+				IReadableColumn underlyingColumn = col;
 
-					while (underlyingColumn is ITransformedReadableColumn)
+				while (underlyingColumn is ITransformedReadableColumn)
+				{
+					underlyingColumn = (underlyingColumn as ITransformedReadableColumn).UnderlyingReadableColumn;
+				}
+
+				if (underlyingColumn is DataColumn)
+				{
+					var colColl = DataColumnCollection.GetParentDataColumnCollectionOf((DataColumn)underlyingColumn);
+					var dataTable = DataTable.GetParentDataTableOf(colColl);
+					int? groupNumber = colColl?.GetColumnGroup((DataColumn)underlyingColumn);
+
+					if (null != dataTable)
 					{
-						underlyingColumn = (underlyingColumn as ITransformedReadableColumn).UnderlyingReadableColumn;
+						if (null == commonDataTable)
+							commonDataTable = dataTable;
+						else if (!object.ReferenceEquals(commonDataTable, dataTable))
+							dataTableIsNotUniform = true;
 					}
 
-					if (underlyingColumn is DataColumn)
+					if (null != groupNumber)
 					{
-						var colColl = DataColumnCollection.GetParentDataColumnCollectionOf((DataColumn)underlyingColumn);
-						var dataTable = DataTable.GetParentDataTableOf(colColl);
-						int? groupNumber = colColl?.GetColumnGroup((DataColumn)underlyingColumn);
-
-						if (null != dataTable)
-						{
-							if (null == commonDataTable)
-								commonDataTable = dataTable;
-							else if (!object.ReferenceEquals(commonDataTable, dataTable))
-								dataTableIsNotUniform = true;
-						}
-
-						if (null != groupNumber)
-						{
-							if (null == commonGroupNumber)
-								commonGroupNumber = groupNumber;
-							else if (!(commonGroupNumber == groupNumber))
-								groupNumberIsNotUniform = true;
-						}
+						if (null == commonGroupNumber)
+							commonGroupNumber = groupNumber;
+						else if (!(commonGroupNumber == groupNumber))
+							groupNumberIsNotUniform = true;
 					}
 				}
+			}
 		}
 	}
 }

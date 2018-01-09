@@ -29,12 +29,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Poly2Tri {
+namespace Poly2Tri
+{
 	/**
 	 * @author Thomas Åhlén, thahlen@gmail.com
 	 */
-	public class TriangulationUtil {
+
+	public class TriangulationUtil
+	{
 		public static double EPSILON = 1e-12;
+
 		/// <summary>
 		///   Requirements:
 		/// 1. a,b and c form a triangle.
@@ -45,9 +49,9 @@ namespace Poly2Tri {
 		///               / \
 		///              /   \
 		///            b/     \c
-		///            +-------+ 
-		///           /    B    \  
-		///          /           \ 
+		///            +-------+
+		///           /    B    \
+		///          /           \
 		/// </code>
 		///    Facts:
 		///  d has to be in area B to have a chance to be inside the circle formed by a,b and c
@@ -59,7 +63,8 @@ namespace Poly2Tri {
 		/// <param name="pc">triangle point</param>
 		/// <param name="pd">point opposite a</param>
 		/// <returns>true if d is inside circle, false if on circle edge</returns>
-		public static bool SmartIncircle( TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc, TriangulationPoint pd ) {
+		public static bool SmartIncircle(TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc, TriangulationPoint pd)
+		{
 			double pdx = pd.X;
 			double pdy = pd.Y;
 			double adx = pa.X - pdx;
@@ -94,7 +99,8 @@ namespace Poly2Tri {
 			return det > 0;
 		}
 
-		public static bool InScanArea( TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc, TriangulationPoint pd ) {
+		public static bool InScanArea(TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc, TriangulationPoint pd)
+		{
 			double pdx = pd.X;
 			double pdy = pd.Y;
 			double adx = pa.X - pdx;
@@ -106,7 +112,8 @@ namespace Poly2Tri {
 			double bdxady = bdx * ady;
 			double oabd = adxbdy - bdxady;
 			//        oabd = orient2d(pa,pb,pd);
-			if (oabd <= 0) {
+			if (oabd <= 0)
+			{
 				return false;
 			}
 
@@ -117,7 +124,8 @@ namespace Poly2Tri {
 			double adxcdy = adx * cdy;
 			double ocad = cdxady - adxcdy;
 			//      ocad = orient2d(pc,pa,pd);
-			if (ocad <= 0) {
+			if (ocad <= 0)
+			{
 				return false;
 			}
 			return true;
@@ -129,13 +137,17 @@ namespace Poly2Tri {
 		/// 0 if collinear
 		/// A[P1,P2,P3]  =  (x1*y2 - y1*x2) + (x2*y3 - y2*x3) + (x3*y1 - y3*x1)
 		///              =  (x1-x3)*(y2-y3) - (y1-y3)*(x2-x3)
-		public static Orientation Orient2d( TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc ) {
+		public static Orientation Orient2d(TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc)
+		{
 			double detleft = (pa.X - pc.X) * (pb.Y - pc.Y);
 			double detright = (pa.Y - pc.Y) * (pb.X - pc.X);
 			double val = detleft - detright;
-			if (val > -EPSILON && val < EPSILON) {
+			if (val > -EPSILON && val < EPSILON)
+			{
 				return Orientation.Collinear;
-			} else if (val > 0) {
+			}
+			else if (val > 0)
+			{
 				return Orientation.CCW;
 			}
 			return Orientation.CW;

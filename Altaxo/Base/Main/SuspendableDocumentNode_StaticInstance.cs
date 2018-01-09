@@ -62,7 +62,13 @@ namespace Altaxo.Main
 				throw new InvalidOperationException("This is a static instance of DocumentNode, intended for infrastructural purposes only.");
 			}
 
-			public bool IsSuspended { get { return false; } }
+			public bool IsSuspended
+			{
+				get
+				{
+					return false;
+				}
+			}
 
 			protected void OnChanged()
 			{
@@ -97,12 +103,11 @@ namespace Altaxo.Main
 
 			public IDocumentLeafNode ParentNode
 			{
-				get { throw new NotImplementedException(); }
+				get { return null; }
 			}
 
 			public void Dispose()
 			{
-				throw new NotImplementedException();
 			}
 
 			public event Action<object, object, TunnelingEventArgs> TunneledEvent;
@@ -124,7 +129,6 @@ namespace Altaxo.Main
 
 			public void SetDisposeInProgress()
 			{
-				throw new NotImplementedException();
 			}
 		}
 

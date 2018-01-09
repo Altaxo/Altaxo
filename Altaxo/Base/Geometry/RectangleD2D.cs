@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -350,8 +350,42 @@ namespace Altaxo.Geometry
 		{
 			get
 			{
-				double d = Calc.BasicFunctions.hypot(_w, _h, 0);
+				double d = Hypot(_w, _h);
 				return new RectangleD2D(_x + 0.5 * (_w - d), _y + 0.5 * (_h - d), d, d);
+			}
+		}
+
+		/// <summary>
+		/// The standard hypot() function for two arguments taking care of overflows and zerodivides.
+		/// </summary>
+		/// <param name="x">First argument.</param>
+		/// <param name="y">Second argument.</param>
+		/// <returns>Square root of the sum of x-square and y-square.</returns>
+		private static double Hypot(double x, double y)
+		{
+			double xabs = Math.Abs(x);
+			double yabs = Math.Abs(y);
+			double min, max;
+
+			if (xabs < yabs)
+			{
+				min = xabs;
+				max = yabs;
+			}
+			else
+			{
+				min = yabs;
+				max = xabs;
+			}
+
+			if (min == 0)
+			{
+				return max;
+			}
+
+			{
+				double u = min / max;
+				return max * Math.Sqrt(1 + u * u);
 			}
 		}
 	}

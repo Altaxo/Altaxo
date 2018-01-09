@@ -9,7 +9,7 @@ namespace Altaxo.Serialization.Xml
 	/// Contains serialization surrogate classes for serialization of basic types from the System namespace. These serialization surrogates are only needed when the type to serialize is unknown, for instance the entries in an untyped set.
 	/// Otherwise, it is preferable to use the special functions of <see cref="IXmlSerializationInfo"/> to serialize and of <see cref="IXmlDeserializationInfo"/> to deserialize those types.
 	/// </summary>
-	static class SerializationOfBasicTypes
+	internal static class SerializationOfBasicTypes
 	{
 		/// <summary>
 		/// 2015-06-30 Initial version

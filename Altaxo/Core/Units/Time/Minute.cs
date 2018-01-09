@@ -29,7 +29,8 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
-	public class Minute : IUnit
+	[UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
+	public class Minute : UnitBase, IUnit
 	{
 		public const double OneMinuteInSeconds = 60;
 

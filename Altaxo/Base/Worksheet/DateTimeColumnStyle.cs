@@ -74,14 +74,15 @@ namespace Altaxo.Worksheet
 		public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
 		{
 			DateTime val = ((Altaxo.Data.DateTimeColumn)data)[nRow];
-			return val == Altaxo.Data.DateTimeColumn.NullValue ? "" : val.ToString("o");
+			return val == Altaxo.Data.DateTimeColumn.NullValue ? "" : val.ToString("o", Altaxo.Settings.GuiCulture.Instance);
 		}
 
 		public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
 		{
-			DateTime newval = Altaxo.Data.DateTimeColumn.NullValue;
-			if (string.IsNullOrEmpty(s) || DateTime.TryParse(s, System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.RoundtripKind, out newval))
-				((Altaxo.Data.DateTimeColumn)data)[nRow] = newval;
+			if (!DateTime.TryParse(s, Altaxo.Settings.GuiCulture.Instance, System.Globalization.DateTimeStyles.RoundtripKind, out var newval))
+				newval = Altaxo.Data.DateTimeColumn.NullValue;
+
+			((Altaxo.Data.DateTimeColumn)data)[nRow] = newval;
 		}
 
 		public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
@@ -97,7 +98,7 @@ namespace Altaxo.Worksheet
 			if (bSelected)
 				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), _defaultSelectedTextBrush, cellRectangle, _textFormat);
 			else
-				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), _textBrush, cellRectangle, _textFormat);
+				dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), TextBrush, cellRectangle, _textFormat);
 		}
 
 		public static Dictionary<System.Type, Action<DateTimeColumnStyle, object, RectangleD2D, int, Altaxo.Data.DataColumn, bool>> RegisteredPaintMethods = new Dictionary<Type, Action<DateTimeColumnStyle, object, RectangleD2D, int, Data.DataColumn, bool>>();

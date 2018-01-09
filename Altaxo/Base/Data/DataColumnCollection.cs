@@ -457,20 +457,11 @@ namespace Altaxo.Data
 		/// </summary>
 		protected override void Dispose(bool isDisposing)
 		{
-			if (null != _parent)
+			if (!IsDisposed)
 			{
 				// first relase all column scripts
-				var columnScripts = _columnScripts;
+				_columnScripts?.Dispose();
 				_columnScripts = null;
-				if (null != columnScripts)
-				{
-					foreach (KeyValuePair<DataColumn, IColumnScriptText> d in columnScripts)
-					{
-						if (d.Value != null)
-							d.Value.Dispose();
-					}
-				}
-				columnScripts = null;
 
 				// release all owned Data columns
 				this._columnsByName.Clear();
@@ -480,9 +471,9 @@ namespace Altaxo.Data
 
 				_columnsByNumber.Clear();
 				this._numberOfRows = 0;
-
-				base.Dispose(isDisposing);
 			}
+
+			base.Dispose(isDisposing);
 		}
 
 		#endregion Constructors
@@ -2304,7 +2295,7 @@ namespace Altaxo.Data
 			string tryName;
 			if (_triedOutRegularNaming)
 			{
-				for (;;)
+				for (; ; )
 				{
 					tryName = ((uint)System.Guid.NewGuid().GetHashCode()).ToString("X8");
 					if (!_columnsByName.ContainsKey(tryName))
@@ -2353,7 +2344,7 @@ namespace Altaxo.Data
 			}
 
 			// if no success, append a hex string
-			for (;;)
+			for (; ; )
 			{
 				string tryName = sbase + ((uint)System.Guid.NewGuid().GetHashCode()).ToString("X8");
 				if (!_columnsByName.ContainsKey(tryName))

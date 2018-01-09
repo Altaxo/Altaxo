@@ -83,9 +83,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		bool IgnoreMissingDataPoints { get; set; }
 
-
 		bool IndependentOnShiftingGroupStyles { get; set; }
-
 
 		bool OverrideInset { get; set; }
 

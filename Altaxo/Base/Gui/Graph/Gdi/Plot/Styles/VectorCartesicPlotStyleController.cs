@@ -291,7 +291,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 				});
 		}
 
-
 		private void EhIndependentColorChanged()
 		{
 			if (null != _view)

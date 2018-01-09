@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -898,7 +899,7 @@ namespace Altaxo.Main
 		/// <returns>Enumeration of all document nodes starting with this node, up to the leaf nodes.</returns>
 		public IEnumerable<IDocumentLeafNode> EnumerateFromHereToLeaves()
 		{
-			return Altaxo.Collections.EnumerableExtensions.FlattenFromRootToLeaves<IDocumentLeafNode>(this, node => (node as SuspendableDocumentNode)?.GetDocumentNodeChildrenWithName().Select(item => item.DocumentNode));
+			return Collections.EnumerableExtensions.FlattenFromRootToLeaves<IDocumentLeafNode>(this, node => (node as SuspendableDocumentNode)?.GetDocumentNodeChildrenWithName().Select(item => item.DocumentNode));
 		}
 
 		#endregion Helper functions
@@ -916,21 +917,6 @@ namespace Altaxo.Main
 		#region Diagnostic support
 
 		/// <summary>
-		/// Gets the absolute path of the node for debugging purposes.
-		/// </summary>
-		/// <value>
-		/// The absolute path.
-		/// </value>
-		protected string Debug_AbsolutePath
-		{
-			get
-			{
-				var rootNode = Altaxo.Main.AbsoluteDocumentPath.GetRootNode(this);
-				return Altaxo.Main.RelativeDocumentPath.GetRelativePathFromTo(rootNode, this).ToString();
-			}
-		}
-
-		/// <summary>
 		/// Starting from the provided root node, this function reports any missing Pa Reports the parent child and disposed problems.
 		/// </summary>
 		/// <param name="node">The node to start with.</param>
@@ -942,7 +928,7 @@ namespace Altaxo.Main
 
 			if (node.IsDisposeInProgress)
 			{
-				Current.Console.WriteLine("Problem detected: Node {0} is already disposed!", Main.AbsoluteDocumentPath.GetAbsolutePath(node));
+				Current.InfoTextMessageService.WriteLine(MessageLevel.Error, "ReportParentChildAndDisposedProblems", "Problem detected: Node {0} is already disposed!", Main.AbsoluteDocumentPath.GetAbsolutePath(node));
 				problemsDetected = true;
 			}
 
@@ -953,13 +939,13 @@ namespace Altaxo.Main
 				{
 					if (entry.DocumentNode.ParentObject == null)
 					{
-						Current.Console.WriteLine("Problem detected: Child node {0} of parent {1} has no parent object set!", entry.Name, Main.AbsoluteDocumentPath.GetAbsolutePath(pnode));
+						Current.InfoTextMessageService.WriteLine(MessageLevel.Error, "ReportParentChildAndDisposedProblems", "Problem detected: Child node {0} of parent {1} has no parent object set!", entry.Name, Main.AbsoluteDocumentPath.GetAbsolutePath(pnode));
 						problemsDetected = true;
 						entry.DocumentNode.ParentObject = pnode; // fix this problem in order to continue with the dectection
 					}
 					else if (!object.ReferenceEquals(pnode, entry.DocumentNode.ParentObject))
 					{
-						Current.Console.WriteLine("Problem detected: Child node {0} of parent {1} has a wrong parent object set!", entry.Name, Main.AbsoluteDocumentPath.GetAbsolutePath(pnode));
+						Current.InfoTextMessageService.WriteLine(MessageLevel.Error, "ReportParentChildAndDisposedProblems", "Problem detected: Child node {0} of parent {1} has a wrong parent object set!", entry.Name, Main.AbsoluteDocumentPath.GetAbsolutePath(pnode));
 						problemsDetected = true;
 						entry.DocumentNode.ParentObject = pnode; // fix this problem in order to continue with the dectection
 					}
@@ -972,9 +958,9 @@ namespace Altaxo.Main
 			if (showFinalLineEvenWithNoProblems)
 			{
 				if (problemsDetected)
-					Current.Console.WriteLine("{0} Some problems in parent-child relationships were dectected (see above).", Altaxo.Serialization.GUIConversion.ToString(DateTime.Now));
+					Current.InfoTextMessageService.WriteLine(MessageLevel.Error, "ReportParentChildAndDisposedProblems", "{0} Some problems in parent-child relationships were dectected (see above).", Serialization.GUIConversion.ToString(DateTime.Now));
 				else
-					Current.Console.WriteLine("{0} No problems in parent-child relationships were dectected.", Altaxo.Serialization.GUIConversion.ToString(DateTime.Now));
+					Current.InfoTextMessageService.WriteLine(MessageLevel.Info, "ReportParentChildAndDisposedProblems", "{0} No problems in parent-child relationships were dectected.", Serialization.GUIConversion.ToString(DateTime.Now));
 			}
 
 			return problemsDetected;
@@ -987,25 +973,26 @@ namespace Altaxo.Main
 		/// <returns></returns>
 		public static bool ReportSuspendedNodesProblems(IDocumentLeafNode node)
 		{
-			var stb = new StringBuilder();
+			bool problemsDetected = false;
 
 			foreach (var child in Altaxo.Collections.TreeNodeExtensions.TakeFromFirstLeavesToHere(node))
 			{
 				if (child.IsSuspended)
 				{
-					stb.AppendFormat("Node {0} (type: {1}) is suspended!", AbsoluteDocumentPath.GetPathString(child, int.MaxValue), node.GetType());
+					Current.InfoTextMessageService.WriteLine(MessageLevel.Error, "ReportSuspendedNodesProblems", "Node {0} (type: {1}) is suspended!", AbsoluteDocumentPath.GetPathString(child, int.MaxValue), node.GetType());
 				}
 			}
 
-			if (stb.Length != 0)
+			if (problemsDetected)
 			{
-				Current.Console.WriteLine();
-				Current.Console.WriteLine("Some problems with suspended nodes were detected:");
-				Current.Console.WriteLine(stb.ToString());
-				return true;
+				Current.InfoTextMessageService.WriteLine(MessageLevel.Error, "ReportSuspendedNodesProblems", "Some problems with suspended nodes were detected (see messages above)");
+			}
+			else
+			{
+				Current.InfoTextMessageService.WriteLine(MessageLevel.Info, "ReportSuspendedNodesProblems", "No problems with suspended nodes detected.");
 			}
 
-			return false;
+			return problemsDetected;
 		}
 
 #if DEBUG && TRACEDOCUMENTNODES
@@ -1099,13 +1086,13 @@ namespace Altaxo.Main
 
 		public static bool ReportChildListProblems()
 		{
-			Current.Console.WriteLine("ReportChildListProblems: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
+			Current.InfoTextMessageService.WriteLine(MessageLevel.Error, "ReportChildListProblems", "This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
 			return false;
 		}
 
 		public static bool ReportWrongChildParentRelations()
 		{
-			Current.Console.WriteLine("ReportWrongChildParentRelations: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
+			Current.InfoTextMessageService.WriteLine(MessageLevel.Error, "ReportWrongChildParentRelations", "This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
 			return false;
 		}
 

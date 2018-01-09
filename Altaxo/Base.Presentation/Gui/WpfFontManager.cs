@@ -27,6 +27,7 @@ using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph.Graph3D;
+using Altaxo.Main.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -55,7 +56,10 @@ namespace Altaxo.Gui
 			System.Windows.Markup.XmlLanguage.GetLanguage(string.Empty),
 		};
 
-		protected static new WpfFontManager _instance;
+		/// <summary>The instance used by the static methods of this class. Is not neccessarily of type <see cref="WpfFontManager"/>, but could also be a derived type.</summary>
+		protected static new CachedService<WpfFontManager, WpfFontManager> _instanceCached = new CachedService<WpfFontManager, WpfFontManager>(true, null, null);
+
+		protected static new WpfFontManager _instance { get { return _instanceCached; } }
 
 		/// <summary>
 		/// Dictionary that relates the invariant description string (but without size information in it) to the Wpf typeface.
@@ -92,33 +96,6 @@ namespace Altaxo.Gui
 		#endregion Constants and members
 
 		#region Public static functions and properties
-
-		/// <summary>
-		/// Registers this instance with the <see cref="FontX"/> font system.
-		/// </summary>
-		public static new void Register()
-		{
-			// when called, the instance of this class is set to a new instance of this class,
-			// which then registers this FontManager with FontX
-
-			if (null == _instance)
-				SetInstance(new WpfFontManager());
-		}
-
-		/// <summary>
-		/// Sets the instance of <see cref="WpfFontManager"/> here in this class (used by the static methods of this class), as well as in the base class (<see cref="Altaxo.Graph.Gdi.GdiFontManager"/>).
-		/// </summary>
-		/// <param name="newInstance">The new instance.</param>
-		public static void SetInstance(WpfFontManager newInstance)
-		{
-			var oldInstance = _instance;
-
-			if (!object.ReferenceEquals(oldInstance, newInstance))
-			{
-				_instance = newInstance;
-				Altaxo.Graph.Gdi.GdiFontManager.SetInstance(_instance);
-			}
-		}
 
 		/// <summary>
 		/// Retrieves a Wpf <see cref="System.Windows.Media.Typeface"/> from a given <see cref="FontX"/> instance. Since a <see cref="System.Windows.Media.Typeface"/> doesn't contain

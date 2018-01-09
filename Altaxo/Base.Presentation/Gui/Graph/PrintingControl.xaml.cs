@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Units;
+using AUL = Altaxo.Units.Length;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
@@ -119,10 +121,10 @@ namespace Altaxo.Gui.Graph
 
 		public void InitializePaperMarginsInHundrethInch(double left, double right, double top, double bottom)
 		{
-			_guiMarginLeft.SelectedQuantity = new Units.DimensionfulQuantity(left, Units.SIPrefix.Centi, Units.Length.Inch.Instance).AsQuantityIn(_guiMarginLeft.UnitEnvironment.DefaultUnit);
-			_guiMarginRight.SelectedQuantity = new Units.DimensionfulQuantity(right, Units.SIPrefix.Centi, Units.Length.Inch.Instance).AsQuantityIn(_guiMarginRight.UnitEnvironment.DefaultUnit);
-			_guiMarginTop.SelectedQuantity = new Units.DimensionfulQuantity(top, Units.SIPrefix.Centi, Units.Length.Inch.Instance).AsQuantityIn(_guiMarginTop.UnitEnvironment.DefaultUnit);
-			_guiMarginBottom.SelectedQuantity = new Units.DimensionfulQuantity(bottom, Units.SIPrefix.Centi, Units.Length.Inch.Instance).AsQuantityIn(_guiMarginBottom.UnitEnvironment.DefaultUnit);
+			_guiMarginLeft.SelectedQuantity = new DimensionfulQuantity(left, SIPrefix.Centi, AUL.Inch.Instance).AsQuantityIn(_guiMarginLeft.UnitEnvironment.DefaultUnit);
+			_guiMarginRight.SelectedQuantity = new DimensionfulQuantity(right, SIPrefix.Centi, AUL.Inch.Instance).AsQuantityIn(_guiMarginRight.UnitEnvironment.DefaultUnit);
+			_guiMarginTop.SelectedQuantity = new DimensionfulQuantity(top, SIPrefix.Centi, AUL.Inch.Instance).AsQuantityIn(_guiMarginTop.UnitEnvironment.DefaultUnit);
+			_guiMarginBottom.SelectedQuantity = new DimensionfulQuantity(bottom, SIPrefix.Centi, AUL.Inch.Instance).AsQuantityIn(_guiMarginBottom.UnitEnvironment.DefaultUnit);
 		}
 
 		public void InitializeNumberOfCopies(int val)
@@ -235,7 +237,7 @@ namespace Altaxo.Gui.Graph
 				if (_printerStatusCancellationToken.IsCancellationRequested)
 					break;
 
-				Current.Gui.Execute(() =>
+				Current.Dispatcher.InvokeIfRequired(() =>
 					{
 						this._guiPrinterStatus.Content = status;
 						this._guiPrinterComment.Content = comment;
@@ -398,28 +400,28 @@ namespace Altaxo.Gui.Graph
 
 		private void EhMarginLeftChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var val = _guiMarginLeft.SelectedQuantity.AsQuantityIn(Units.SIPrefix.Centi, Units.Length.Inch.Instance).Value;
+			var val = _guiMarginLeft.SelectedQuantity.AsQuantityIn(SIPrefix.Centi, AUL.Inch.Instance).Value;
 			if (null != MarginLeftChanged)
 				MarginLeftChanged(val);
 		}
 
 		private void EhMarginRightChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var val = _guiMarginRight.SelectedQuantity.AsQuantityIn(Units.SIPrefix.Centi, Units.Length.Inch.Instance).Value;
+			var val = _guiMarginRight.SelectedQuantity.AsQuantityIn(SIPrefix.Centi, AUL.Inch.Instance).Value;
 			if (null != MarginRightChanged)
 				MarginRightChanged(val);
 		}
 
 		private void EhMarginTopChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var val = _guiMarginTop.SelectedQuantity.AsQuantityIn(Units.SIPrefix.Centi, Units.Length.Inch.Instance).Value;
+			var val = _guiMarginTop.SelectedQuantity.AsQuantityIn(SIPrefix.Centi, AUL.Inch.Instance).Value;
 			if (null != MarginTopChanged)
 				MarginTopChanged(val);
 		}
 
 		private void EhMarginBottomChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			var val = _guiMarginBottom.SelectedQuantity.AsQuantityIn(Units.SIPrefix.Centi, Units.Length.Inch.Instance).Value;
+			var val = _guiMarginBottom.SelectedQuantity.AsQuantityIn(SIPrefix.Centi, AUL.Inch.Instance).Value;
 			if (null != MarginBottomChanged)
 				MarginBottomChanged(val);
 		}

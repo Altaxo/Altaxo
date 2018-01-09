@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +66,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 			}
 			set
 			{
-				_guiCornerRadius.SelectedQuantity = new Units.DimensionfulQuantity(value, Altaxo.Units.Length.Point.Instance).AsQuantityIn(_guiCornerRadius.UnitEnvironment.DefaultUnit);
+				_guiCornerRadius.SelectedQuantity = new DimensionfulQuantity(value, Altaxo.Units.Length.Point.Instance).AsQuantityIn(_guiCornerRadius.UnitEnvironment.DefaultUnit);
 			}
 		}
 	}

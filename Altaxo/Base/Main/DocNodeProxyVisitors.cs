@@ -56,7 +56,7 @@ namespace Altaxo.Main
 		/// Thus the first item at index 0 in this list are the immediate replacements from the original path to the replaced path.
 		/// The second item at index 1 in the list are the replacements, where we have both the original path and the replace path without the topmost folder level.
 		/// The following items remove successivly the topmost folder level from both original path and replacement path
-		/// 
+		///
 		/// </summary>
 		private List<List<KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>>> _pathPartReplacementDictionary = new List<List<KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>>>();
 
@@ -122,6 +122,11 @@ namespace Altaxo.Main
 				throw new NullReferenceException("newItemPart");
 
 			int level = 0;
+
+			var currentProject = Current.IProjectService.CurrentProject;
+			if (null == currentProject)
+				return;
+
 			while (originalItemNamePart != newItemNamePart)
 			{
 				if (!(level < _pathPartReplacementDictionary.Count))
@@ -129,10 +134,10 @@ namespace Altaxo.Main
 					_pathPartReplacementDictionary.Add(new List<KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>>());
 				}
 
-				foreach (var itemType in AltaxoDocument.ProjectItemTypes)
+				foreach (var itemType in currentProject.ProjectItemTypes)
 				{
-					var orgPath = AltaxoDocument.GetRootPathForProjectItemType(itemType).Append(originalItemNamePart);
-					var newPath = AltaxoDocument.GetRootPathForProjectItemType(itemType).Append(newItemNamePart);
+					var orgPath = currentProject.GetRootPathForProjectItemType(itemType).Append(originalItemNamePart);
+					var newPath = currentProject.GetRootPathForProjectItemType(itemType).Append(newItemNamePart);
 					_pathPartReplacementDictionary[level].Add(new KeyValuePair<AbsoluteDocumentPath, AbsoluteDocumentPath>(orgPath, newPath));
 				}
 

@@ -19,12 +19,15 @@
     <Language>en-US</Language>
     <DocumentationSources>
       <DocumentationSource sourceFile="rtDir\bin\AltaxoCore.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoCore.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoBase.xml" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoSDGui.dll" />
-      <DocumentationSource sourceFile="rtDir\bin\AltaxoSDGui.xml" />
-    </DocumentationSources>
+<DocumentationSource sourceFile="rtDir\bin\AltaxoCore.xml" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoBase.dll" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoBase.xml" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoDom.dll" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoDom.xml" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoDom.Presentation.dll" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoDom.Presentation.xml" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoBase.Presentation.dll" />
+<DocumentationSource sourceFile="rtDir\bin\AltaxoBase.Presentation.xml" /></DocumentationSources>
     <HelpFileVersion>1.0.0.0</HelpFileVersion>
     <MaximumGroupParts>2</MaximumGroupParts>
     <NamespaceGrouping>True</NamespaceGrouping>

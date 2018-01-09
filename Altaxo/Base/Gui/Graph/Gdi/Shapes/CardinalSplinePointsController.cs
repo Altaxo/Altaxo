@@ -26,6 +26,7 @@ using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Units;
+using AUL = Altaxo.Units.Length;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -108,8 +109,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 			for (i = 0; i < len; i++)
 			{
 				list.Add(new PointD2D(
-					new DimensionfulQuantity(xcol[i], PositionEnvironment.Instance.DefaultUnit).AsValueIn(Units.Length.Point.Instance),
-					new DimensionfulQuantity(ycol[i], PositionEnvironment.Instance.DefaultUnit).AsValueIn(Units.Length.Point.Instance)
+					new DimensionfulQuantity(xcol[i], PositionEnvironment.Instance.DefaultUnit).AsValueIn(AUL.Point.Instance),
+					new DimensionfulQuantity(ycol[i], PositionEnvironment.Instance.DefaultUnit).AsValueIn(AUL.Point.Instance)
 					));
 			}
 
@@ -125,8 +126,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 			Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn();
 			for (int i = 0; i < points.Count; i++)
 			{
-				xcol[i] = new DimensionfulQuantity(points[i].X, Units.Length.Point.Instance).AsValueIn(PositionEnvironment.Instance.DefaultUnit);
-				ycol[i] = new DimensionfulQuantity(points[i].Y, Units.Length.Point.Instance).AsValueIn(PositionEnvironment.Instance.DefaultUnit);
+				xcol[i] = new DimensionfulQuantity(points[i].X, AUL.Point.Instance).AsValueIn(PositionEnvironment.Instance.DefaultUnit);
+				ycol[i] = new DimensionfulQuantity(points[i].Y, AUL.Point.Instance).AsValueIn(PositionEnvironment.Instance.DefaultUnit);
 			}
 
 			PutXYColumnsToClipboard(xcol, ycol);

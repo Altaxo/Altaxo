@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 	{
 		#region Member variables
 
-		protected GraphControllerWpf _grac;
+		protected GraphController _grac;
 
 		protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
 
@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
 		#endregion Member variables
 
-		public OpenCardinalSplineMouseHandler(GraphControllerWpf grac)
+		public OpenCardinalSplineMouseHandler(GraphController grac)
 		{
 			this._grac = grac;
 

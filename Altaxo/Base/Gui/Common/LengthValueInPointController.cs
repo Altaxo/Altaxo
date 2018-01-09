@@ -26,15 +26,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Common
 {
 	[ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
 	public class LengthValueInPointController : ValueInSomeUnitControllerBase
 	{
-		protected override Units.IUnit UnitOfValue
+		protected override IUnit UnitOfValue
 		{
-			get { return Units.Length.Point.Instance; }
+			get { return Altaxo.Units.Length.Point.Instance; }
 		}
 
 		protected override QuantityWithUnitGuiEnvironment UnitEnvironment

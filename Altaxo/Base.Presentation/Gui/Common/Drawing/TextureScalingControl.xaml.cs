@@ -31,6 +31,9 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+	using Altaxo.Units;
+	using AUL = Altaxo.Units.Length;
+
 	/// <summary>
 	/// Interaction logic for TextureScalingView.xaml
 	/// </summary>
@@ -153,11 +156,11 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			get
 			{
-				return _guiXSize.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
+				return _guiXSize.SelectedQuantity.AsValueIn(AUL.Point.Instance);
 			}
 			set
 			{
-				_guiXSize.SelectedQuantityAsValueInSIUnits = new Units.DimensionfulQuantity(value, Units.Length.Point.Instance).AsValueInSIUnits;
+				_guiXSize.SelectedQuantityAsValueInSIUnits = new DimensionfulQuantity(value, AUL.Point.Instance).AsValueInSIUnits;
 			}
 		}
 
@@ -165,11 +168,11 @@ namespace Altaxo.Gui.Common.Drawing
 		{
 			get
 			{
-				return _guiYSize.SelectedQuantity.AsValueIn(Units.Length.Point.Instance);
+				return _guiYSize.SelectedQuantity.AsValueIn(AUL.Point.Instance);
 			}
 			set
 			{
-				_guiYSize.SelectedQuantityAsValueInSIUnits = new Units.DimensionfulQuantity(value, Units.Length.Point.Instance).AsValueInSIUnits;
+				_guiYSize.SelectedQuantityAsValueInSIUnits = new DimensionfulQuantity(value, AUL.Point.Instance).AsValueInSIUnits;
 			}
 		}
 

@@ -179,8 +179,7 @@ namespace Altaxo.Worksheet
 
 					foreach (var entry in tmpDefaultColumnStyles)
 					{
-						if (entry.Value != null)
-							entry.Value.Dispose();
+						entry.Value?.Dispose();
 					}
 
 					foreach (var entry in tmpColumnStyles)
@@ -214,6 +213,16 @@ namespace Altaxo.Worksheet
 				if (c != null)
 					this.Remove(c); // do not use direct remove, as the event handler has to be detached also
 			}
+		}
+
+		public void SetDefaultColumnStyle(System.Type key, ColumnStyle value)
+		{
+			bool isOldStylePresent = _defaultColumnStyles.TryGetValue(key, out var oldStyle);
+			_defaultColumnStyles[key] = value;
+			value.ParentObject = this;
+
+			if (isOldStylePresent)
+				oldStyle?.Dispose();
 		}
 
 		internal Dictionary<System.Type, ColumnStyle> DefaultColumnStyles
@@ -302,15 +311,18 @@ namespace Altaxo.Worksheet
 			}
 			set
 			{
-				if (null == value)
-					throw new ArgumentNullException("value");
-
-				bool hadOldValue = _columnStyles.ContainsKey(key);
-				_columnStyles[key] = value;
+				bool hadOldValue = _columnStyles.TryGetValue(key, out var oldStyle);
+				_columnStyles[key] = value ?? throw new ArgumentNullException("value");
 				value.ParentObject = this;
 
-				if (!hadOldValue)
+				if (hadOldValue)
+				{
+					oldStyle?.Dispose();
+				}
+				else
+				{
 					AttachKey(key);
+				}
 			}
 		}
 

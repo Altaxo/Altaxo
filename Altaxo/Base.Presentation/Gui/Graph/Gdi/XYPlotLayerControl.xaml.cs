@@ -163,7 +163,7 @@ namespace Altaxo.Gui.Graph.Gdi
 					}
 				}
 
-			end_of_function:
+				end_of_function:
 				--_tabControl_SelectionChanged_Calls;
 			}
 		}

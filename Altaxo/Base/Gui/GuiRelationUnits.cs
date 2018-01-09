@@ -31,6 +31,8 @@ using System.Text;
 
 namespace Altaxo.Gui
 {
+	using Altaxo.Units.Dimensionless;
+
 	public static class GuiRelationUnits
 	{
 		private static ReadOnlyCollection<IUnit> _instance;
@@ -39,9 +41,9 @@ namespace Altaxo.Gui
 		{
 			var instance = new List<IUnit>();
 
-			instance.Add(Units.Dimensionless.Unity.Instance);
-			instance.Add(Units.Dimensionless.Percent.Instance);
-			instance.Add(Units.Dimensionless.Permille.Instance);
+			instance.Add(Unity.Instance);
+			instance.Add(Percent.Instance);
+			instance.Add(Permille.Instance);
 			_instance = instance.AsReadOnly();
 		}
 

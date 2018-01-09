@@ -17,6 +17,9 @@ using Altaxo.Geometry;
 
 namespace Altaxo.Gui.Graph.Graph2D
 {
+	using Altaxo.Units;
+	using AUL = Altaxo.Units.Length;
+
 	/// <summary>
 	/// Interaction logic for ResizeGraphControl.xaml
 	/// </summary>
@@ -31,7 +34,7 @@ namespace Altaxo.Gui.Graph.Graph2D
 
 		public bool IsNewRootLayerSizeChosen => _guiIsNewRootLayerSizeChosen.IsChecked == true;
 
-		public PointD2D NewRootLayerSize => new PointD2D(_guiNewRootLayerSizeX.SelectedQuantity.AsValueIn(Units.Length.Point.Instance), _guiNewRootLayerSizeY.SelectedQuantity.AsValueIn(Units.Length.Point.Instance));
+		public PointD2D NewRootLayerSize => new PointD2D(_guiNewRootLayerSizeX.SelectedQuantity.AsValueIn(AUL.Point.Instance), _guiNewRootLayerSizeY.SelectedQuantity.AsValueIn(AUL.Point.Instance));
 
 		public bool IsNewStandardFontFamilyChosen => _guiIsNewStandardFontFamilyChosen.IsChecked == true;
 
@@ -57,8 +60,8 @@ namespace Altaxo.Gui.Graph.Graph2D
 
 		public void SetOldRootLayerSize(PointD2D size)
 		{
-			_guiNewRootLayerSizeX.SelectedQuantity = new Units.DimensionfulQuantity(size.X, Units.Length.Point.Instance).AsQuantityIn(_guiNewRootLayerSizeX.UnitEnvironment.DefaultUnit);
-			_guiNewRootLayerSizeY.SelectedQuantity = new Units.DimensionfulQuantity(size.Y, Units.Length.Point.Instance).AsQuantityIn(_guiNewRootLayerSizeY.UnitEnvironment.DefaultUnit);
+			_guiNewRootLayerSizeX.SelectedQuantity = new DimensionfulQuantity(size.X, AUL.Point.Instance).AsQuantityIn(_guiNewRootLayerSizeX.UnitEnvironment.DefaultUnit);
+			_guiNewRootLayerSizeY.SelectedQuantity = new DimensionfulQuantity(size.Y, AUL.Point.Instance).AsQuantityIn(_guiNewRootLayerSizeY.UnitEnvironment.DefaultUnit);
 		}
 
 		public void SetOldStandardFont(string font)

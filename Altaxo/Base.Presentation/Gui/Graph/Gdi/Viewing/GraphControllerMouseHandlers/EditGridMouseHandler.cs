@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 		/// <summary>The line width of the grid lines in points (1/72 inch) on the screen.</summary>
 		private const double GridLineWidth_InPoints = 1;
 
-		protected GraphControllerWpf _grac;
+		protected GraphController _grac;
 
 		/// <summary>The catch distance in root layer units. (Distance in which the mouse catches the grid line to move).</summary>
 		protected double _catchDistance_RLC;
@@ -91,7 +91,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 		/// </summary>
 		/// <param name="view">The view.</param>
 		/// <exception cref="System.ArgumentNullException">view</exception>
-		public EditGridMouseHandler(GraphControllerWpf view)
+		public EditGridMouseHandler(GraphController view)
 		{
 			if (null == view)
 				throw new ArgumentNullException("view");

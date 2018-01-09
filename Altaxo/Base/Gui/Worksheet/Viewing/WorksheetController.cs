@@ -23,243 +23,229 @@
 #endregion Copyright
 
 using Altaxo.Collections;
+using Altaxo.Gui.Workbench;
 using Altaxo.Main;
 using Altaxo.Worksheet;
 using System;
 
 namespace Altaxo.Gui.Worksheet.Viewing
 {
-	[UserControllerForObject(typeof(Altaxo.Worksheet.WorksheetLayout))]
-	[ExpectedTypeOfView(typeof(IWorksheetView))]
-	public abstract class WorksheetController : IWorksheetController, IDisposable
-	{
-		/// <summary>Holds the data table cached from the layout.</summary>
-		protected Altaxo.Data.DataTable _table;
+    [UserControllerForObject(typeof(WorksheetLayout))]
+    [UserControllerForObject(typeof(WorksheetViewLayout))]
+    [ExpectedTypeOfView(typeof(IWorksheetView))]
+    public partial class WorksheetController : AbstractViewContent, IWorksheetController, IDisposable
+    {
+        /// <summary>Holds the data table cached from the layout.</summary>
+        protected Altaxo.Data.DataTable _table;
 
-		protected Altaxo.Worksheet.WorksheetLayout _worksheetLayout;
+        protected Altaxo.Worksheet.WorksheetLayout _worksheetLayout;
 
-		/// <summary>Fired if the title name changed.</summary>
-		public event EventHandler TitleNameChanged;
+        public WeakEventHandler _weakTableNameChangedHandler;
 
-		public WeakEventHandler _weakTableNameChangedHandler;
+        private IWorksheetView _view;
 
-		#region Constructors
+        #region Constructors
 
-		/// <summary>Deserialization constructor.</summary>
-		public WorksheetController()
-		{
-		}
+        /// <summary>Deserialization constructor.</summary>
+        public WorksheetController()
+        {
+            SetMemberVariablesToDefault();
+        }
 
-		/// <summary>
-		/// Creates a WorksheetController which shows the table data using the specified <paramref name="layout"/>.
-		/// </summary>
-		/// <param name="layout">The worksheet layout.</param>
-		public WorksheetController(Altaxo.Worksheet.WorksheetLayout layout)
-		{
-			if (null == layout)
-				throw new ArgumentNullException("Leaving the layout null in constructor is not supported here");
+        /// <summary>
+        /// Creates a WorksheetController which shows the table data using the specified <paramref name="layout"/>.
+        /// </summary>
+        /// <param name="layout">The worksheet layout.</param>
+        public WorksheetController(Altaxo.Worksheet.WorksheetLayout layout)
+        {
+            SetMemberVariablesToDefault();
+            this.WorksheetLayout = layout ?? throw new ArgumentNullException("Leaving the layout null in constructor is not supported here");
+        }
 
-			this.WorksheetLayout = layout;
-		}
+        public bool InitializeDocument(params object[] args)
+        {
+            if (null == args || args.Length == 0)
+                return false;
+            if (args[0] is WorksheetLayout)
+                this.WorksheetLayout = (WorksheetLayout)args[0];
+            else if (args[0] is WorksheetViewLayout)
+                this.WorksheetLayout = ((WorksheetViewLayout)args[0]).WorksheetLayout;
+            else
+                return false;
 
-		public bool InitializeDocument(params object[] args)
-		{
-			if (null == args || args.Length == 0)
-				return false;
-			if (args[0] is WorksheetLayout)
-				this.WorksheetLayout = (WorksheetLayout)args[0];
-			else if (args[0] is WorksheetViewLayout)
-				this.WorksheetLayout = ((WorksheetViewLayout)args[0]).WorksheetLayout;
-			else
-				return false;
+            return true;
+        }
 
-			return true;
-		}
+        public UseDocument UseDocumentCopy
+        {
+            set { }
+        }
 
-		public UseDocument UseDocumentCopy
-		{
-			set { }
-		}
+        protected virtual void InternalInitializeWorksheetLayout(WorksheetLayout value)
+        {
+            if (null != _worksheetLayout)
+                throw new ApplicationException("This controller is already controlling a layout");
+            if (null != _table)
+                throw new ApplicationException("This controller is already controlling a table");
+            if (null == value)
+                throw new ArgumentNullException("value");
+            if (null == value.DataTable)
+                throw new ApplicationException("The DataTable of the WorksheetLayout is null");
 
-		protected virtual void InternalInitializeWorksheetLayout(WorksheetLayout value)
-		{
-			if (null != _worksheetLayout)
-				throw new ApplicationException("This controller is already controlling a layout");
-			if (null != _table)
-				throw new ApplicationException("This controller is already controlling a table");
-			if (null == value)
-				throw new ArgumentNullException("value");
-			if (null == value.DataTable)
-				throw new ApplicationException("The DataTable of the WorksheetLayout is null");
+            _worksheetLayout = value;
+            _table = _worksheetLayout.DataTable;
+            var table = _table; // use local variable for anonymous method below
+            _table.Changed += (_weakTableNameChangedHandler = new WeakEventHandler(this.EhTableNameChanged, x => table.Changed -= x));
+            Title = _table.Name;
 
-			_worksheetLayout = value;
-			_table = _worksheetLayout.DataTable;
-			var table = _table; // use local variable for anonymous method below
-			_table.Changed += (_weakTableNameChangedHandler = new WeakEventHandler(this.EhTableNameChanged, x => table.Changed -= x));
-			OnTitleNameChanged();
-		}
+            var dataColumns = _table.DataColumns;
+            dataColumns.Changed += (_weakEventHandlerDataColumnChanged = new WeakEventHandler(this.EhTableDataChanged, x => dataColumns.Changed -= x));
+            var propColumns = _table.PropCols;
+            propColumns.Changed += (_weakEventHandlerPropertyColumnChanged = new WeakEventHandler(this.EhPropertyDataChanged, x => propColumns.Changed -= x));
 
-		public virtual void Dispose()
-		{
-			var view = ViewObject;
-			this.ViewObject = null;
-			if (view is IDisposable)
-				((IDisposable)view).Dispose();
+            this.SetCachedNumberOfDataColumns();
+            this.SetCachedNumberOfDataRows();
+            this.SetCachedNumberOfPropertyColumns();
+        }
 
-			if (null != _table)
-			{
-				_weakTableNameChangedHandler.Remove();
-			}
+        public override void Dispose()
+        {
+            var view = _view;
+            this.ViewObject = null;
+            HideCellEditControl();
+            if (view is IDisposable)
+                ((IDisposable)view).Dispose();
 
-			_table = null;
-			_worksheetLayout = null; // removes also the event handler(s)
-		}
+            if (null != _table)
+            {
+                _weakTableNameChangedHandler.Remove();
+                _weakEventHandlerDataColumnChanged.Remove();
+                _weakEventHandlerPropertyColumnChanged.Remove();
+            }
 
-		#endregion Constructors
+            _table = null;
+            _worksheetLayout = null; // removes also the event handler(s)
+        }
 
-		#region IWorksheetController Members
+        #endregion Constructors
 
-		public Altaxo.Data.DataTable DataTable
-		{
-			get
-			{
-				return this._table;
-			}
-		}
+        #region IWorksheetController Members
 
-		public WorksheetLayout WorksheetLayout
-		{
-			get { return _worksheetLayout; }
+        public Altaxo.Data.DataTable DataTable
+        {
+            get
+            {
+                return this._table;
+            }
+        }
 
-			set
-			{
-				InternalInitializeWorksheetLayout(value);
-			}
-		}
+        public void TableAreaInvalidate()
+        {
+            _view?.TableArea_TriggerRedrawing();
+        }
 
-		public abstract IndexSelection SelectedDataColumns { get; }
+        public WorksheetLayout WorksheetLayout
+        {
+            get { return _worksheetLayout; }
 
-		public abstract IndexSelection SelectedDataRows { get; }
+            set
+            {
+                InternalInitializeWorksheetLayout(value);
+            }
+        }
 
-		public abstract IndexSelection SelectedPropertyColumns { get; }
+        public void EhTableNameChanged(object sender, EventArgs e)
+        {
+            if (e is Altaxo.Main.NamedObjectCollectionChangedEventArgs eAsCCEA && object.ReferenceEquals(eAsCCEA.Item, _table))
+            {
+                if (eAsCCEA.WasItemRenamed)
+                {
+                    var owner = (INameOwner)eAsCCEA.Item;
+                    this.Title = owner.Name;
+                }
+            }
+        }
 
-		public abstract IndexSelection SelectedPropertyRows { get; }
+        #endregion IWorksheetController Members
 
-		public abstract bool ArePropertyCellsSelected { get; }
+        #region IMVCController Members
 
-		public abstract bool AreDataCellsSelected { get; }
+        private void AttachView()
+        {
+            _view.Controller = this;
+            _view.CellEdit_PreviewKeyPressed += EhCellEditControl_PreviewKeyDown;
+            _view.CellEdit_LostFocus += EhCellEditControl_LostFocus;
+            _view.CellEdit_TextChanged += EhCellEditControl_TextChanged;
+        }
 
-		public abstract bool AreColumnsOrRowsSelected { get; }
+        private void DetachView()
+        {
+            _view.CellEdit_PreviewKeyPressed -= EhCellEditControl_PreviewKeyDown;
+            _view.CellEdit_LostFocus -= EhCellEditControl_LostFocus;
+            _view.CellEdit_TextChanged -= EhCellEditControl_TextChanged;
+            _view.Controller = null;
+        }
 
-		public abstract void ClearAllSelections();
+        public override object ViewObject
+        {
+            get
+            {
+                return _view;
+            }
+            set
+            {
+                if (!object.ReferenceEquals(_view, value))
+                {
+                    if (null != _view)
+                    {
+                        DetachView();
+                    }
 
-		public abstract void TableAreaInvalidate();
+                    _view = value as IWorksheetView;
 
-		public abstract bool EnableCut { get; }
+                    if (null != _view)
+                    {
+                        AttachView();
 
-		public abstract bool EnableCopy { get; }
+                        // Werte für gerade vorliegende Scrollpositionen und Scrollmaxima zum (neuen) View senden
+                        this.VertScrollMaximum = this._scrollVertMax;
+                        this.HorzScrollMaximum = this._scrollHorzMax;
 
-		public abstract bool EnablePaste { get; }
+                        this.VertScrollPos = this._scrollVertPos;
+                        this.HorzScrollPos = this._scrollHorzPos;
 
-		public abstract bool EnableDelete { get; }
+                        // Simulate a SizeChanged event
+                        this.EhView_TableAreaSizeChanged(new EventArgs());
+                    }
+                }
+            }
+        }
 
-		public abstract bool EnableSelectAll { get; }
+        public override object ModelObject
+        {
+            get
+            {
+                return new WorksheetViewLayout(_worksheetLayout);
+            }
+        }
 
-		public abstract void Cut();
+        public bool Apply(bool disposeController)
+        {
+            return true;
+        }
 
-		public abstract void Copy();
+        /// <summary>
+        /// Try to revert changes to the model, i.e. restores the original state of the model.
+        /// </summary>
+        /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
+        /// <returns>
+        ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
+        /// </returns>
+        public bool Revert(bool disposeController)
+        {
+            return false;
+        }
 
-		public abstract void Paste();
-
-		public abstract void Delete();
-
-		public abstract void SelectAll();
-
-		private void OnTitleNameChanged()
-		{
-			if (null != TitleNameChanged)
-				TitleNameChanged(this, EventArgs.Empty);
-		}
-
-		private void EhTitleNameChanged(object sender, EventArgs e)
-		{
-			Current.Gui.Execute(EhTitleNameChanged_Unsynchronized, sender, e);
-		}
-
-		private void EhTitleNameChanged_Unsynchronized(object sender, EventArgs e)
-		{
-			if (null != TitleNameChanged)
-				TitleNameChanged(this, e);
-		}
-
-		public void EhTableNameChanged(object sender, EventArgs e)
-		{
-			var eAsCCEA = e as Altaxo.Main.NamedObjectCollectionChangedEventArgs;
-			if (null != eAsCCEA && object.ReferenceEquals(eAsCCEA.Item, _table))
-			{
-				if (eAsCCEA.WasItemRenamed)
-				{
-					Current.Gui.Execute(EhTableNameChanged_Unsynchronized, (INameOwner)eAsCCEA.Item, eAsCCEA.OldName);
-				}
-			}
-		}
-
-		private void EhTableNameChanged_Unsynchronized(INameOwner sender, string oldName)
-		{
-			var view = ViewObject as IWorksheetView;
-			if (view != null)
-				view.TableViewTitle = _table.Name;
-
-			this.TitleName = _table.Name;
-		}
-
-		/// <summary>
-		/// This is the whole name of the content, e.g. the file name or
-		/// the url depending on the type of the content.
-		/// </summary>
-		public string TitleName
-		{
-			get
-			{
-				return _table.Name;
-			}
-			set
-			{
-				OnTitleNameChanged();
-			}
-		}
-
-		#endregion IWorksheetController Members
-
-		#region IMVCController Members
-
-		public abstract object ViewObject { get; set; }
-
-		public object ModelObject
-		{
-			get
-			{
-				return new WorksheetViewLayout(_worksheetLayout);
-			}
-		}
-
-		#endregion IMVCController Members
-
-		public bool Apply(bool disposeController)
-		{
-			return true;
-		}
-
-		/// <summary>
-		/// Try to revert changes to the model, i.e. restores the original state of the model.
-		/// </summary>
-		/// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-		/// <returns>
-		///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-		/// </returns>
-		public bool Revert(bool disposeController)
-		{
-			return false;
-		}
-	}
+        #endregion IMVCController Members
+    }
 }

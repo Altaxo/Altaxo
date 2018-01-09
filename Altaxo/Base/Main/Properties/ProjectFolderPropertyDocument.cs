@@ -236,12 +236,13 @@ namespace Altaxo.Main.Properties
 		/// </value>
 		public PropertyBag PropertyBag
 		{
-			get { return _propertyBag; }
+			get
+			{
+				return _propertyBag;
+			}
 			protected set
 			{
-				_propertyBag = value;
-				if (null != _propertyBag)
-					_propertyBag.ParentObject = this;
+				ChildSetMember(ref _propertyBag, value);
 			}
 		}
 
@@ -264,7 +265,7 @@ namespace Altaxo.Main.Properties
 		protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
 		{
 			if (null != _propertyBag)
-				yield return new Main.DocumentNodeAndName(_propertyBag, "PropertyBag");
+				yield return new Main.DocumentNodeAndName(_propertyBag, () => _propertyBag = null, "PropertyBag");
 		}
 
 		/// <summary>

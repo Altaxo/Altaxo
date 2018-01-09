@@ -373,7 +373,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 						GridPlane p = _doc.GridPlanes.Contains(_currentPlaneID) ? _doc.GridPlanes[_currentPlaneID] : new GridPlane(_currentPlaneID);
 						GridPlaneController ctrl = new GridPlaneController() { UseDocumentCopy = UseDocument.Directly };
 						ctrl.InitializeDocument(p);
-						Current.Gui.FindAndAttachControlUsingGuiTemplate(ctrl, _view);
+						Current.Gui.FindAndAttachControlTo(ctrl);
 						_GridStyleController.Add(_currentPlaneID, ctrl);
 					}
 					_currentController = _GridStyleController[_currentPlaneID];

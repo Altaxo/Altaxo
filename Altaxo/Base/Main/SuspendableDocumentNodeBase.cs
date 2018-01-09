@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Main.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,9 +122,7 @@ namespace Altaxo.Main
 		/// </summary>
 		protected virtual void OnChanged(EventArgs e)
 		{
-			var ev = Changed;
-			if (null != ev)
-				ev(this, e);
+			Changed?.Invoke(this, e);
 		}
 
 		/// <summary>
@@ -370,6 +369,19 @@ namespace Altaxo.Main
 		/// </summary>
 		~SuspendableDocumentNodeBase()
 		{
+#if DEBUG && TRACEDOCUMENTNODES
+			if (!IsDisposed && null != _parent)
+			{
+				string msg;
+				if (null == this._releasedBy)
+					msg = string.Format("Error: not disposed DocumentNode {2}\r\n{0}, constructed\r\n\tby {1}", this.GetType().FullName, this._constructedBy, this.Debug_AbsolutePath);
+				else
+					msg = string.Format("Error: not disposed DocumentNode {3}\r\n{0}, constructed\r\n\tby {1}\r\nreleased by\r\n\t{2}", this.GetType().FullName, this._constructedBy, this._releasedBy, this.Debug_AbsolutePath);
+
+				System.Diagnostics.Debug.WriteLine(msg); // we may not have console in this moment, as such failures arise often while closing the application
+			}
+#endif
+
 			Dispose(false);
 		}
 
@@ -556,6 +568,21 @@ namespace Altaxo.Main
 
 		#region Diagnostic support
 
+		/// <summary>
+		/// Gets the absolute path of the node for debugging purposes.
+		/// </summary>
+		/// <value>
+		/// The absolute path.
+		/// </value>
+		protected string Debug_AbsolutePath
+		{
+			get
+			{
+				var rootNode = AbsoluteDocumentPath.GetRootNode(this);
+				return RelativeDocumentPath.GetRelativePathFromTo(rootNode, this).ToString();
+			}
+		}
+
 #if DEBUG && TRACEDOCUMENTNODES
 
 		protected static LinkedList<WeakReference> _allDocumentNodes = new LinkedList<WeakReference>();
@@ -620,7 +647,7 @@ namespace Altaxo.Main
 
 #if DEBUG && TRACEDOCUMENTNODES
 
-			/// <summary>
+		/// <summary>
 		/// Reports not connected document nodes, i.e. child nodes having no parent.
 		/// </summary>
 		/// <param name="showStatistics">If set to <c>true</c> a line with statistic information is printed into Altaxo's console.</param>
@@ -676,7 +703,7 @@ namespace Altaxo.Main
 		public static bool ReportNotConnectedDocumentNodes(bool showStatistics)
 		{
 			GC.Collect();
-			Current.Console.WriteLine("ReportNotConnectedDocumentNodes: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
+			Current.InfoTextMessageService.WriteLine(MessageLevel.Error, "ReportNotConnectedDocumentNodes", "ReportNotConnectedDocumentNodes: This functionality is available only in DEBUG mode with TRACEDOCUMENTNODES defined in AltaxoBase");
 			return false;
 		}
 

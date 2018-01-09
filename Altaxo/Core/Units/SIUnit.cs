@@ -30,9 +30,9 @@ using System.Text;
 namespace Altaxo.Units
 {
 	/// <summary>
-	/// Represents a SI unit.
+	/// Represents an SI (Système international) unit.
 	/// </summary>
-	public abstract class SIUnit : IUnit, IEquatable<SIUnit>, IEquatable<IUnit>
+	public class SIUnit : IUnit, IEquatable<SIUnit>, IEquatable<IUnit>
 	{
 		private sbyte _metre;
 		private sbyte _kilogram;
@@ -68,49 +68,38 @@ namespace Altaxo.Units
 			_candela = candela;
 		}
 
-		/// <summary>
-		/// Multiplies this unit by another unit <paramref name="b"/>.
-		/// </summary>
-		/// <param name="b">Other unit.</param>
-		private void Multiply(SIUnit b)
+		public static SIUnit operator *(SIUnit x, SIUnit y)
 		{
-			this._metre += b._metre;
-			this._kilogram += b._kilogram;
-			this._second += b._second;
-			this._ampere += b._ampere;
-			this._kelvin += b._kelvin;
-			this._mole += b._mole;
-			this._candela += b._candela;
+			checked
+			{
+				var metre = (sbyte)(x._metre + y._metre);
+				var kilogram = (sbyte)(x._kilogram + y._kilogram);
+				var second = (sbyte)(x._second + y._second);
+				var ampere = (sbyte)(x._ampere + y._ampere);
+				var kelvin = (sbyte)(x._kelvin + y._kelvin);
+				var mole = (sbyte)(x._mole + y._mole);
+				var candela = (sbyte)(x._candela + y._candela);
+				return new SIUnit(metre, kilogram, second, ampere, kelvin, mole, candela);
+			}
 		}
 
-		/// <summary>Divides this unit by another unit <paramref name="b"/>.</summary>
-		/// <param name="b">Other unit.</param>
-		private void DivideBy(SIUnit b)
+		public static SIUnit operator /(SIUnit x, SIUnit y)
 		{
-			this._metre -= b._metre;
-			this._kilogram -= b._kilogram;
-			this._second -= b._second;
-			this._ampere -= b._ampere;
-			this._kelvin -= b._kelvin;
-			this._mole -= b._mole;
-			this._candela -= b._candela;
+			checked
+			{
+				var metre = (sbyte)(x._metre - y._metre);
+				var kilogram = (sbyte)(x._kilogram - y._kilogram);
+				var second = (sbyte)(x._second - y._second);
+				var ampere = (sbyte)(x._ampere - y._ampere);
+				var kelvin = (sbyte)(x._kelvin - y._kelvin);
+				var mole = (sbyte)(x._mole - y._mole);
+				var candela = (sbyte)(x._candela - y._candela);
+				return new SIUnit(metre, kilogram, second, ampere, kelvin, mole, candela);
+			}
 		}
 
-		/// <summary>
-		/// Takes the inverse of this unit.
-		/// </summary>
-		private void Invert()
-		{
-			this._metre = (sbyte)-this._metre;
-			this._kilogram = (sbyte)-this._kilogram;
-			this._second = (sbyte)-this._second;
-			this._ampere = (sbyte)-this._ampere;
-			this._kelvin = (sbyte)-this._kelvin;
-			this._mole = (sbyte)-this._mole;
-			this._candela = (sbyte)-this._candela;
-		}
-
-		/// <summary>Compares this unit with another unit <paramref name="b"/> and returns <c>true</c> when both are equal.</summary>
+		/// <summary>Compares this unit with another unit <paramref name="b"/> and returns <c>true</c> when both are equal. Two SI units are considered equal if the exponents
+		/// are equal, independently of the unit name. This means e.g. that J (Joule), Nm, and Ws are considered equal. If you want to compare the name too, use <see cref="Equals(IUnit)"/></summary>.
 		/// <param name="b">The other unit.</param>
 		/// <returns><c>True</c> when both units are equal.</returns>
 		public bool Equals(SIUnit b)
@@ -125,13 +114,36 @@ namespace Altaxo.Units
 			this._candela == b._candela;
 		}
 
-		/// <summary>Compares this unit with another unit <paramref name="obj"/> and returns <c>true</c> when both are equal.</summary>
+		public static bool operator ==(SIUnit a, SIUnit b)
+		{
+			return a?.Equals(b) ?? false;
+		}
+
+		public static bool operator ==(SIUnit a, IUnit b)
+		{
+			return a?.Equals(b) ?? false;
+		}
+
+		public static bool operator !=(SIUnit a, SIUnit b)
+		{
+			return !(a == b);
+		}
+
+		public static bool operator !=(SIUnit a, IUnit b)
+		{
+			return !(a == b);
+		}
+
+		/// <summary>Compares this unit with another unit <paramref name="obj"/> and returns <c>true</c> if both are equal.
+		/// To be equal, the other unit has to be (i) a SI unit, and (ii) the same name. Thus, J (Joule) and Nm (Newtonmeter) are not considered equal.</summary>
 		/// <param name="obj">The other unit.</param>
 		/// <returns><c>True</c> when both units are equal.</returns>
 		public bool Equals(IUnit obj)
 		{
-			SIUnit b = obj as SIUnit;
-			return null == b ? false : Equals(b);
+			if (!(obj is SIUnit other))
+				return false;
+
+			return this.GetType() == other.GetType();
 		}
 
 		/// <summary>Determines whether the specified <see cref="System.Object"/> is equal to this instance.</summary>
@@ -139,8 +151,10 @@ namespace Altaxo.Units
 		/// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.</returns>
 		public override bool Equals(object obj)
 		{
-			SIUnit b = obj as SIUnit;
-			return null == b ? false : Equals(b);
+			if (!(obj is IUnit other))
+				return false;
+
+			return Equals(other);
 		}
 
 		/// <summary>Returns a hash code for this instance.</summary>
@@ -148,25 +162,114 @@ namespace Altaxo.Units
 		public override int GetHashCode()
 		{
 			return
-				_metre << 24 +
-				_kilogram << 20 +
-				_second << 16 +
-				_ampere << 12 +
-				_kelvin << 8 +
-				_mole << 4 +
-				_candela;
+					_metre << 24 +
+					_kilogram << 20 +
+					_second << 16 +
+					_ampere << 12 +
+					_kelvin << 8 +
+					_mole << 4 +
+					_candela;
 		}
 
 		/// <summary>Full name of the unit.</summary>
-		public abstract string Name
+		public virtual string Name
 		{
-			get;
+			get
+			{
+				var stb = new StringBuilder();
+				var invCult = System.Globalization.CultureInfo.InvariantCulture;
+
+				if (_metre != 0)
+				{
+					if (stb.Length != 0)
+						stb.Append(" ");
+					stb.Append("m");
+					if (_metre != 1)
+					{
+						stb.Append("^");
+						stb.Append(_metre.ToString(invCult));
+					}
+				}
+
+				if (_kilogram != 0)
+				{
+					if (stb.Length != 0)
+						stb.Append(" ");
+					stb.Append("kg");
+					if (_kilogram != 1)
+					{
+						stb.Append("^");
+						stb.Append(_kilogram.ToString(invCult));
+					}
+				}
+
+				if (_second != 0)
+				{
+					if (stb.Length != 0)
+						stb.Append(" ");
+					stb.Append("s");
+					if (_second != 1)
+					{
+						stb.Append("^");
+						stb.Append(_second.ToString(invCult));
+					}
+				}
+
+				if (_ampere != 0)
+				{
+					if (stb.Length != 0)
+						stb.Append(" ");
+					stb.Append("A");
+					if (_ampere != 1)
+					{
+						stb.Append("^");
+						stb.Append(_ampere.ToString(invCult));
+					}
+				}
+
+				if (_kelvin != 0)
+				{
+					if (stb.Length != 0)
+						stb.Append(" ");
+					stb.Append("K");
+					if (_kelvin != 1)
+					{
+						stb.Append("^");
+						stb.Append(_kelvin.ToString(invCult));
+					}
+				}
+
+				if (_mole != 0)
+				{
+					if (stb.Length != 0)
+						stb.Append(" ");
+					stb.Append("mol");
+					if (_mole != 1)
+					{
+						stb.Append("^");
+						stb.Append(_mole.ToString(invCult));
+					}
+				}
+
+				if (_candela != 0)
+				{
+					if (stb.Length != 0)
+						stb.Append(" ");
+					stb.Append("cd");
+					if (_candela != 1)
+					{
+						stb.Append("^");
+						stb.Append(_candela.ToString(invCult));
+					}
+				}
+				return stb.ToString();
+			}
 		}
 
 		/// <summary>Usual shortcut of the unit.</summary>
-		public abstract string ShortCut
+		public virtual string ShortCut
 		{
-			get;
+			get { return Name; }
 		}
 
 		/// <summary>Converts <paramref name="x"/> to the corresponding SI unit.</summary>
@@ -186,9 +289,12 @@ namespace Altaxo.Units
 		}
 
 		/// <summary>Returns a list of possible prefixes for this unit (like µ, m, k, M, G..).</summary>
-		public abstract ISIPrefixList Prefixes
+		public virtual ISIPrefixList Prefixes
 		{
-			get;
+			get
+			{
+				return SIPrefix.ListWithNonePrefixOnly;
+			}
 		}
 
 		/// <summary>Returns the corresponding SI unit. Since this instance already represents a SI unit, the returned value is this instance itself.</summary>

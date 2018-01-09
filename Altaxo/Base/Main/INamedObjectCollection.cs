@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -117,6 +117,16 @@ namespace Altaxo.Main
 		/// <param name="childNode">The child node.</param>
 		/// <param name="oldParent">The old parent of the child node.</param>
 		void EhChild_ParentChanged(Main.INameOwner childNode, IDocumentNode oldParent);
+
+		/// <summary>
+		/// Helper function called by a child of this collection to handle renaming of this child.
+		/// </summary>
+		/// <param name="child">The child's instance.</param>
+		/// <param name="newName">The proposed new name of the child. The parent can modify this proposed name if another item with the same name is already contained in this collection.</param>
+		/// <param name="setName">Action to set the name to the provided value. This function should <b>only</b> set the name field, but not raise any events etc.</param>
+		/// <param name="raiseOnNameChanged">Action to raise the NameChanged event on the child.</param>
+		/// <exception cref="ArgumentNullException">New name is null.</exception>
+		void RenameChild(INameOwner child, string newName, Action<string> setName, Action<string> raiseOnNameChanged);
 	}
 
 	public class NamedObjectCollectionChangedEventArgs : Main.SelfAccumulateableEventArgs

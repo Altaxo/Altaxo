@@ -29,7 +29,8 @@ using System.Text;
 
 namespace Altaxo.Units.Angle
 {
-	public class Degree : IUnit
+	[UnitDescription("Angular measure", 0, 0, 0, 0, 0, 0, 0)]
+	public class Degree : UnitBase, IUnit
 	{
 		private static readonly Degree _instance = new Degree();
 

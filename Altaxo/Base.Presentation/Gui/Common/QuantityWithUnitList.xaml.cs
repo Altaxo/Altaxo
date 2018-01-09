@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,7 +38,7 @@ namespace Altaxo.Gui.Common
 	/// </summary>
 	public partial class QuantityWithUnitList : UserControl
 	{
-		private ObservableCollection<Units.DimensionfulQuantity> _dataSource;
+		private ObservableCollection<DimensionfulQuantity> _dataSource;
 
 		public QuantityWithUnitList()
 		{
@@ -58,7 +59,7 @@ namespace Altaxo.Gui.Common
 		/// <value>
 		/// The default quantity.
 		/// </value>
-		public Units.DimensionfulQuantity DefaultQuantity { set; protected get; }
+		public DimensionfulQuantity DefaultQuantity { set; protected get; }
 
 		/// <summary>
 		/// Gets or sets the items source, i.e. a collection of <see cref="Altaxo.Units.DimensionfulQuantity"/>
@@ -66,7 +67,7 @@ namespace Altaxo.Gui.Common
 		/// <value>
 		/// The items source.
 		/// </value>
-		public ObservableCollection<Units.DimensionfulQuantity> ItemsSource
+		public ObservableCollection<DimensionfulQuantity> ItemsSource
 		{
 			get
 			{

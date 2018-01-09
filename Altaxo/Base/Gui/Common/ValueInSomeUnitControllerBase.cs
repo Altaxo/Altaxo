@@ -29,12 +29,14 @@ using System.Text;
 
 namespace Altaxo.Gui.Common
 {
+	using Altaxo.Units;
+
 	/// <summary>
 	/// Interface to show a length value. The use can input the value in any unit, but for the interface the value must be transfered in units of point (1/72 inch).
 	/// </summary>
 	public interface IDimensionfulQuantityView
 	{
-		Units.DimensionfulQuantity SelectedQuantity { get; set; }
+		DimensionfulQuantity SelectedQuantity { get; set; }
 
 		event Action SelectedQuantityChanged;
 
@@ -44,7 +46,7 @@ namespace Altaxo.Gui.Common
 	[ExpectedTypeOfView(typeof(IDimensionfulQuantityView))]
 	public abstract class ValueInSomeUnitControllerBase : MVCANDControllerEditImmutableDocBase<double, IDimensionfulQuantityView>
 	{
-		protected abstract Units.IUnit UnitOfValue { get; }
+		protected abstract IUnit UnitOfValue { get; }
 
 		protected abstract QuantityWithUnitGuiEnvironment UnitEnvironment { get; }
 
@@ -60,7 +62,7 @@ namespace Altaxo.Gui.Common
 			if (null != _view)
 			{
 				_view.UnitEnvironment = this.UnitEnvironment;
-				_view.SelectedQuantity = new Units.DimensionfulQuantity(_doc, UnitOfValue).AsQuantityIn(this.UnitEnvironment.DefaultUnit);
+				_view.SelectedQuantity = new DimensionfulQuantity(_doc, UnitOfValue).AsQuantityIn(this.UnitEnvironment.DefaultUnit);
 			}
 		}
 

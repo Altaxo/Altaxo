@@ -39,7 +39,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 	using Altaxo.Graph.Graph3D.Camera;
 	using Altaxo.Graph.Graph3D.GraphicsContext;
 	using Altaxo.Graph.Graph3D.GuiModels;
+	using Altaxo.Graph.Graph3D.Plot;
 	using Altaxo.Graph.Graph3D.Shapes;
+	using Altaxo.Gui.Workbench;
 
 	//using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
 	using Altaxo.Main;
@@ -48,13 +50,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 	using System.Collections;
 	using System.Drawing;
 
-	public abstract class Graph3DController : IDisposable, IMVCANController, IGraphController
+	[UserControllerForObject(typeof(GraphDocument))]
+	[ExpectedTypeOfView(typeof(IGraph3DView))]
+	public class Graph3DController : AbstractViewContent, IDisposable, IMVCANController, IGraphController, IClipboardHandler
 	{
-		/// <summary>
-		/// Is called each time the name for the content has changed.
-		/// </summary>
-		public event EventHandler TitleNameChanged;
-
 		public event EventHandler CurrentGraphToolChanged;
 
 		public IGraph3DView _view;
@@ -93,7 +92,38 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		/// </summary>
 		private RootLayerMarkersVisibility _cachedResultingRootLayerMarkersVisibility;
 
+		/// <summary>
+		/// The camera as it was when the middle mouse button was pressed. A value != null indicates that the middle button is currently pressed.
+		/// This value is used to rotate the camera when the middle mouse button is pressed and the mouse is moved.
+		/// </summary>
+		protected CameraBase _middleButtonPressed_InitialCamera;
+
+		/// <summary>
+		/// The position of the mouse as it was when the middle mouse button was pressed. This value is valid only if the field <see cref="_middleButtonPressed_InitialCamera"/> is not null.
+		/// </summary>
+		protected PointD3D _middleButtonPressed_InitialPosition;
+
+		protected enum MiddelButtonAction { RotateCamera, MoveCamera, ZoomCamera }
+
+		/// <summary>
+		/// The action that is executed if the middle mouse button is pressed and the mouse is moved. This value is only valid if if the field <see cref="_middleButtonPressed_InitialCamera"/> is not null.
+		/// </summary>
+		protected MiddelButtonAction _middleButtonCurrentAction;
+
+		protected static IList<IHitTestObject> _emptyReadOnlyList;
+
 		#region Constructors
+
+		static Graph3DController()
+		{
+			_emptyReadOnlyList = new List<IHitTestObject>().AsReadOnly();
+
+			// register here editor methods
+			XYPlotLayerController.RegisterEditHandlers();
+			XYZPlotLayer.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
+			TextGraphic.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
+			TextGraphic.TextGraphicsEditorMethod = new DoubleClickHandler(EhEditTextGraphics);
+		}
 
 		protected Graph3DController()
 		{
@@ -104,7 +134,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
 		/// </summary>
 		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
-		protected Graph3DController(GraphDocument graphdoc)
+		public Graph3DController(GraphDocument graphdoc)
 		{
 			if (null == graphdoc)
 				throw new ArgumentNullException("Leaving the graphdoc null in constructor is not supported here");
@@ -232,7 +262,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			this.EnsureValidityOfCurrentLayerNumber();
 			this.EnsureValidityOfCurrentPlotNumber();
 
-			OnTitleNameChanged(EventArgs.Empty);
+			this.Title = _doc.Name;
 		}
 
 		private void InternalUninitializeGraphDocument()
@@ -249,7 +279,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			_doc = null;
 		}
 
-		public object ModelObject
+		public override object ModelObject
 		{
 			get
 			{
@@ -257,7 +287,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			}
 		}
 
-		public virtual object ViewObject
+		public override object ViewObject
 		{
 			get
 			{
@@ -279,13 +309,24 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			}
 		}
 
+		public IGraph3DView View
+		{
+			get
+			{
+				return _view;
+			}
+		}
+
 		/// <summary>
 		/// Gets the selected objects. This property must be overriden in derived classes
 		/// </summary>
 		/// <value>
 		/// The selected objects.
 		/// </value>
-		public virtual IList<IHitTestObject> SelectedObjects { get; }
+		public virtual IList<IHitTestObject> SelectedObjects
+		{
+			get { return _view?.SelectedObjects ?? _emptyReadOnlyList; }
+		}
 
 		public void Dispose()
 		{
@@ -1003,7 +1044,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			var eAsNOC = e as Altaxo.Main.NamedObjectCollectionChangedEventArgs;
 			if (null != eAsNOC && eAsNOC.WasItemRenamed)
 			{
-				Current.Gui.Execute(EhGraphDocumentNameChanged_Unsynchronized, (GraphDocument)sender, eAsNOC.OldName);
+				Current.Dispatcher.InvokeIfRequired(EhGraphDocumentNameChanged_Unsynchronized, (GraphDocument)sender, eAsNOC.OldName);
 				return;
 			}
 			else if (e is CameraChangedEventArgs) // Only the camera has changed, there is no need to rebuild the geometry
@@ -1066,7 +1107,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		/// <param name="e">The event arguments.</param>
 		protected void EhGraph_SizeChanged(object sender, System.EventArgs e)
 		{
-			Current.Gui.BeginExecute(EhGraph_BoundsChanged_Unsynchronized);
+			Current.Dispatcher.InvokeAndForget(EhGraph_BoundsChanged_Unsynchronized);
 		}
 
 		protected void EhGraph_BoundsChanged_Unsynchronized()
@@ -1087,7 +1128,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		/// <param name="e">The event arguments.</param>
 		protected void EhGraph_LayerCollectionChanged(object sender, System.EventArgs e)
 		{
-			Current.Gui.BeginExecute(EhGraph_LayerCollectionChanged_Unsynchronized);
+			Current.Dispatcher.InvokeAndForget(EhGraph_LayerCollectionChanged_Unsynchronized);
 		}
 
 		protected void EhGraph_LayerCollectionChanged_Unsynchronized()
@@ -1111,10 +1152,55 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 		private void EhGraphDocumentNameChanged_Unsynchronized(INameOwner sender, string oldName)
 		{
-			if (null != _view)
-				_view.GraphViewTitle = Doc.Name;
+			this.Title = Doc.Name;
+		}
 
-			this.TitleName = Doc.Name;
+		/// <summary>
+		/// Handles the double click event onto a plot item.
+		/// </summary>
+		/// <param name="hit">Object containing information about the double clicked object.</param>
+		/// <returns>True if the object should be deleted, false otherwise.</returns>
+		protected static bool EhEditPlotItem(IHitTestObject hit)
+		{
+			XYZPlotLayer actLayer = hit.ParentLayer as XYZPlotLayer;
+			IGPlotItem pa = (IGPlotItem)hit.HittedObject;
+
+			Current.Gui.ShowDialog(new object[] { pa }, string.Format("#{0}: {1}", pa.Name, pa.ToString()), true);
+
+			return false;
+		}
+
+		/// <summary>
+		/// Handles the double click event onto a plot item.
+		/// </summary>
+		/// <param name="hit">Object containing information about the double clicked object.</param>
+		/// <returns>True if the object should be deleted, false otherwise.</returns>
+		protected static bool EhEditTextGraphics(IHitTestObject hit)
+		{
+			var layer = hit.ParentLayer;
+			TextGraphic tg = (TextGraphic)hit.HittedObject;
+
+			bool shouldDeleted = false;
+
+			object tgoo = tg;
+			if (Current.Gui.ShowDialog(ref tgoo, "Edit text", true))
+			{
+				tg = (TextGraphic)tgoo;
+				if (tg == null || tg.Empty)
+				{
+					if (null != hit.Remove)
+						shouldDeleted = hit.Remove(hit);
+					else
+						shouldDeleted = false;
+				}
+				else
+				{
+					if (tg.ParentObject is IChildChangedEventSink)
+						((IChildChangedEventSink)tg.ParentObject).EhChildChanged(tg, EventArgs.Empty);
+				}
+			}
+
+			return shouldDeleted;
 		}
 
 		/// <summary>
@@ -1161,28 +1247,98 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 				CurrentGraphToolChanged(this, EventArgs.Empty);
 		}
 
-		public abstract GraphToolType CurrentGraphTool { get; set; }
-
 		/// <summary>
-		/// This is the whole name of the content, e.g. the file name or
-		/// the url depending on the type of the content.
+		/// Handles the mouse down event onto the graph in the controller class.
 		/// </summary>
-		public string TitleName
+		/// <param name="position">Mouse position. X and Y components are the current relative mouse coordinates, the Z component is the screen's aspect ratio.</param>
+		/// <param name="e">MouseEventArgs.</param>
+		public virtual void EhView_GraphPanelMouseDown(PointD3D position, AltaxoMouseEventArgs e, AltaxoKeyboardModifierKeys modifierKeys)
 		{
-			get
+			bool isSHIFTpressed = modifierKeys.HasFlag(AltaxoKeyboardModifierKeys.Shift);
+			bool isCTRLpressed = modifierKeys.HasFlag(AltaxoKeyboardModifierKeys.Control);
+			if (e.Button == AltaxoMouseButtons.Middle)
 			{
-				return this.Doc.Name;
-			}
-			set
-			{
-				OnTitleNameChanged(EventArgs.Empty);
+				_middleButtonPressed_InitialPosition = position;
+				_middleButtonPressed_InitialCamera = _doc.Camera;
+				if (!isSHIFTpressed && !isCTRLpressed)
+					_middleButtonCurrentAction = MiddelButtonAction.RotateCamera;
+				else if (isSHIFTpressed && !isCTRLpressed)
+					_middleButtonCurrentAction = MiddelButtonAction.MoveCamera;
+				else if (!isSHIFTpressed && isCTRLpressed)
+					_middleButtonCurrentAction = MiddelButtonAction.ZoomCamera;
+				else
+					_middleButtonPressed_InitialCamera = null; // if inconsistent keys, then no action at all
 			}
 		}
 
-		protected virtual void OnTitleNameChanged(System.EventArgs e)
+		/// <summary>
+		/// Handles the mouse up event onto the graph in the controller class.
+		/// </summary>
+		/// <param name="position">Mouse position. X and Y components are the current relative mouse coordinates, the Z component is the screen's aspect ratio.</param>
+		/// <param name="e">MouseEventArgs.</param>
+		public virtual void EhView_GraphPanelMouseUp(PointD3D position, AltaxoMouseEventArgs e)
 		{
-			if (null != TitleNameChanged)
-				TitleNameChanged(this, e);
+			if (e.Button == AltaxoMouseButtons.Middle)
+			{
+				_middleButtonPressed_InitialCamera = null;
+			}
+		}
+
+		/// <summary>
+		/// Handles the mouse move event onto the graph in the controller class.
+		/// </summary>
+		/// <param name="position">Mouse position.</param>
+		/// <param name="e">MouseEventArgs.</param>
+		public virtual void EhView_GraphPanelMouseMove(PointD3D position, AltaxoMouseButtons mouseButtonState)
+		{
+			if (!(mouseButtonState.HasFlag(AltaxoMouseButtons.Middle))) // if middle button is released
+			{
+				_middleButtonPressed_InitialCamera = null;
+			}
+			else if (null != _middleButtonPressed_InitialCamera)
+			{
+				switch (_middleButtonCurrentAction)
+				{
+					case MiddelButtonAction.RotateCamera:
+						{
+							double dx = position.X - _middleButtonPressed_InitialPosition.X;
+							double dy = position.Y - _middleButtonPressed_InitialPosition.Y;
+							//Doc.Camera = CameraRotateDegrees(_middleButtonPressed_InitialCamera, dx * 540, -dy * 540);
+							Doc.Camera = ModelRotateDegrees(_middleButtonPressed_InitialCamera, _doc.RootLayer.Size, dx * 540, -dy * 540);
+						}
+						break;
+
+					case MiddelButtonAction.MoveCamera:
+						{
+							double dx = position.X - _middleButtonPressed_InitialPosition.X;
+							double dy = position.Y - _middleButtonPressed_InitialPosition.Y;
+							Doc.Camera = CameraMoveRelative(_middleButtonPressed_InitialCamera, dx, dy);
+						}
+						break;
+
+					case MiddelButtonAction.ZoomCamera:
+						{
+							double dy = position.Y - _middleButtonPressed_InitialPosition.Y;
+							Doc.Camera = CameraZoomByMouseWheel(_middleButtonPressed_InitialCamera, 0.5, 0.5, position.Z, (dy * 5));
+						}
+						break;
+				}
+			}
+		}
+
+		public GraphToolType CurrentGraphTool
+		{
+			get
+			{
+				return _view?.CurrentGraphTool ?? GraphToolType.None;
+			}
+			set
+			{
+				if (null != _view)
+				{
+					_view.CurrentGraphTool = value;
+				}
+			}
 		}
 
 		#endregion Event handlers from GraphDocument
@@ -1717,5 +1873,67 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		}
 
 		#endregion Object arrangement
+
+		#region IClipboardHandler Members
+
+		public bool EnableCut
+		{
+			get { return true; }
+		}
+
+		public bool EnableCopy
+		{
+			get { return true; }
+		}
+
+		public bool EnablePaste
+		{
+			get { return true; }
+		}
+
+		public bool EnableDelete
+		{
+			get { return true; }
+		}
+
+		public bool EnableSelectAll
+		{
+			get { return false; }
+		}
+
+		public void Cut()
+		{
+			CutSelectedObjectsToClipboard();
+		}
+
+		public void Copy()
+		{
+			CopySelectedObjectsToClipboard();
+		}
+
+		public void Paste()
+		{
+			PasteObjectsFromClipboard();
+		}
+
+		public void Delete()
+		{
+			if (SelectedObjects.Count > 0)
+			{
+				RemoveSelectedObjects();
+			}
+			else
+			{
+				throw new NotImplementedException("Please implement according to next line");
+				// nothing is selected, we assume that the user wants to delete the worksheet itself
+				//Current.ProjectService.DeleteGraphDocument(_controller.Doc, false);
+			}
+		}
+
+		public void SelectAll()
+		{
+		}
+
+		#endregion IClipboardHandler Members
 	}
 }

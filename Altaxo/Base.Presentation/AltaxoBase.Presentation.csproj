@@ -1043,6 +1043,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Main\Services\InfoWarningErrorMessageView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Main\Services\OutputView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Pads\LightingPad\LightingControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\ProjectBrowser\CopyItemsToMultipleFoldersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1086,6 +1098,14 @@
     <Page Include="Gui\Settings\SettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Units\UnitEnvironmentControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Units\UserDefinedUnitEnvironmentControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\Worksheet\PlotCommonColumnsControl.xaml">
       <SubType>Designer</SubType>
@@ -1175,10 +1195,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Scripting\ScriptControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Gui\Scripting\ScriptExecutionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1231,6 +1247,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Themes\Aero.NormalColor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1256,6 +1276,19 @@
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\ItemsControlExtensions.cs" />
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\TypeUtilities.cs" />
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\VisualTreeExtensions.cs" />
+    <Compile Include="Gui\AddInItems\CommandWrapper.cs" />
+    <Compile Include="Gui\AddInItems\ConditionalSeparator.cs" />
+    <Compile Include="Gui\AddInItems\Menu\AbstractMenuCommand.cs" />
+    <Compile Include="Gui\AddInItems\Menu\ContextMenuBuilder.cs" />
+    <Compile Include="Gui\AddInItems\Menu\CoreMenuItem.cs" />
+    <Compile Include="Gui\AddInItems\Menu\MenuCheckBox.cs" />
+    <Compile Include="Gui\AddInItems\Menu\MenuCommand.cs" />
+    <Compile Include="Gui\AddInItems\Menu\MenuService.cs" />
+    <Compile Include="Gui\AddInItems\ToolBar\ToolBarButton.cs" />
+    <Compile Include="Gui\AddInItems\ToolBar\ToolBarCheckBox.cs" />
+    <Compile Include="Gui\AddInItems\ToolBar\ToolBarDropDownButton.cs" />
+    <Compile Include="Gui\AddInItems\ToolBar\ToolBarService.cs" />
+    <Compile Include="Gui\AddInItems\ToolBar\ToolBarSplitButton.cs" />
     <Compile Include="Gui\Analysis\Statistics\HistogramCreationControl.xaml.cs">
       <DependentUpon>HistogramCreationControl.xaml</DependentUpon>
     </Compile>
@@ -1265,8 +1298,28 @@
     <Compile Include="Gui\Analysis\Statistics\LinearBinningControl.xaml.cs">
       <DependentUpon>LinearBinningControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Behaviors\DoubleClickTriggersCommand.cs" />
+    <Compile Include="Gui\Behaviors\EventTriggersCommand.cs" />
+    <Compile Include="Gui\Behaviors\SelectedItemsExBehavior.cs" />
+    <Compile Include="Gui\BindingProxy.cs" />
     <Compile Include="Gui\Common\Converters\BindingConverter.cs" />
     <Compile Include="Gui\Common\Converters\InverseBooleanConverter.cs" />
+    <Compile Include="Gui\Common\Converters\IsCollapsedToVisibilityConverter.cs" />
+    <Compile Include="Gui\Common\Converters\NotBoolConverter.cs" />
+    <Compile Include="Gui\Common\Converters\ResourceImageConverter.cs" />
+    <Compile Include="Gui\Common\Converters\StringParserConverter.cs" />
+    <Compile Include="Gui\Common\DropDownButton.cs" />
+    <Compile Include="Gui\Common\GetBitmapExtension.cs" />
+    <Compile Include="Gui\Common\GlobalStyles.cs" />
+    <Compile Include="Gui\Common\GridViewColumnAutoSize.cs" />
+    <Compile Include="Gui\Common\IOptionBindingContainer.cs" />
+    <Compile Include="Gui\Common\NativeMethods.cs" />
+    <Compile Include="Gui\Common\OptionBinding.cs" />
+    <Compile Include="Gui\Common\RestrictDesiredSize.cs" />
+    <Compile Include="Gui\Common\RestrictDesiredSizeWrapPanel.cs" />
+    <Compile Include="Gui\Common\SortableGridViewColumn.cs" />
+    <Compile Include="Gui\Common\SplitButton.cs" />
+    <Compile Include="Gui\Common\WpfTreeNavigation.cs" />
     <Compile Include="Gui\Data\Selections\IncludeSingleTextValueControl.xaml.cs">
       <DependentUpon>IncludeSingleTextValueControl.xaml</DependentUpon>
     </Compile>
@@ -1331,6 +1384,7 @@
     <Compile Include="Gui\Drawing\DashPatternManagement\InnerDashPatternComboBox.xaml.cs">
       <DependentUpon>InnerDashPatternComboBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\ExtensionMethods.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Styles\DropLinePlotStyleControl.xaml.cs">
       <DependentUpon>DropLinePlotStyleControl.xaml</DependentUpon>
     </Compile>
@@ -2012,8 +2066,14 @@
       <DependentUpon>ShapeGroupControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\GuiChangeLocker.cs" />
+    <Compile Include="Gui\GuiHelper_Altaxo_Geometry.cs" />
+    <Compile Include="Gui\GuiHelper_System_Drawing.cs" />
+    <Compile Include="Gui\GuiHelper_Controls.cs" />
     <Compile Include="Gui\IndexToImageConverter.cs" />
-    <Compile Include="Gui\IWpfResourceService.cs" />
+    <Compile Include="Gui\IStatusUpdate.cs" />
+    <Compile Include="Gui\LanguageChangeWeakEventManager.cs" />
+    <Compile Include="Gui\LanguageDependentExtension.cs" />
+    <Compile Include="Gui\LocalizeExtension.cs" />
     <Compile Include="Gui\Main\AddBasicPropertyValueControl.xaml.cs">
       <DependentUpon>AddBasicPropertyValueControl.xaml</DependentUpon>
     </Compile>
@@ -2026,7 +2086,17 @@
     <Compile Include="Gui\Main\PropertyBagControl.xaml.cs">
       <DependentUpon>PropertyBagControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Main\Services\InfoWarningErrorMessageView.xaml.cs">
+      <DependentUpon>InfoWarningErrorMessageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Main\Services\OutputView.xaml.cs">
+      <DependentUpon>OutputView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Pads\LightingPad\LightingControl.xaml.cs">
+      <DependentUpon>LightingControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\PathGeometryHelper.cs" />
+    <Compile Include="Gui\PresentationResourceService.cs" />
     <Compile Include="Gui\ProjectBrowser\CopyItemsToMultipleFoldersControl.xaml.cs">
       <DependentUpon>CopyItemsToMultipleFoldersControl.xaml</DependentUpon>
     </Compile>
@@ -2060,6 +2130,14 @@
     <Compile Include="Gui\Settings\SettingsControl.xaml.cs">
       <DependentUpon>SettingsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\StringParseExtension.cs" />
+    <Compile Include="Gui\Units\UnitEnvironmentControl.xaml.cs">
+      <DependentUpon>UnitEnvironmentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Units\UserDefinedUnitEnvironmentControl.xaml.cs">
+      <DependentUpon>UserDefinedUnitEnvironmentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Workbench\StatusBar.cs" />
     <Compile Include="Gui\Worksheet\PlotCommonColumnsControl.xaml.cs">
       <DependentUpon>PlotCommonColumnsControl.xaml</DependentUpon>
     </Compile>
@@ -2117,7 +2195,6 @@
     <Compile Include="Gui\Graph\Gdi\Viewing\GraphViewWpf.xaml.cs">
       <DependentUpon>GraphViewWpf.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerWpf.cs" />
     <Compile Include="Gui\Graph\Gdi\Plot\Groups\WaterfallTransformControl.xaml.cs">
       <DependentUpon>WaterfallTransformControl.xaml</DependentUpon>
     </Compile>
@@ -2142,9 +2219,6 @@
     <Compile Include="Gui\GuiHelper.cs" />
     <Compile Include="Gui\Scripting\FitFunctionScriptControl.xaml.cs">
       <DependentUpon>FitFunctionScriptControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Scripting\ScriptControl.xaml.cs">
-      <DependentUpon>ScriptControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Scripting\ScriptExecutionDialog.xaml.cs">
       <DependentUpon>ScriptExecutionDialog.xaml</DependentUpon>
@@ -2181,12 +2255,16 @@
       <DependentUpon>DataTableTransposeOptionsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Worksheet\Viewing\ColumnStylePaintingWpf.cs" />
-    <Compile Include="Gui\Worksheet\Viewing\WorksheetControllerWpf.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetPaintingWpf.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetViewWpf.xaml.cs">
       <DependentUpon>WorksheetViewWpf.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\WpfFontManager.cs" />
+    <Compile Include="Main\Services\DispatcherMessageLoop.cs" />
+    <Compile Include="Main\Services\DispatcherTimerService.cs" />
+    <Compile Include="Main\Services\FakeMessageLoop.cs" />
+    <Compile Include="Main\Services\Files\RecentOpen.cs" />
+    <Compile Include="Main\Services\IDispatcherMessageLoopWpf.cs" />
     <Compile Include="Properties\AssemblyInfo.autogenerated.cs" />
     <Resource Include="GongSolutions.Wpf.DragDrop\Icons\EffectCopy.png" />
     <Resource Include="GongSolutions.Wpf.DragDrop\Icons\EffectLink.png" />

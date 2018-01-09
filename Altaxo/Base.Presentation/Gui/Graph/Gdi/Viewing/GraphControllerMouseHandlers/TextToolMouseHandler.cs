@@ -36,9 +36,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 	/// </summary>
 	public class TextToolMouseHandler : MouseStateHandler
 	{
-		private GraphControllerWpf _grac;
+		private GraphController _grac;
 
-		public TextToolMouseHandler(GraphControllerWpf grac)
+		public TextToolMouseHandler(GraphController grac)
 		{
 			_grac = grac;
 			if (_grac != null)

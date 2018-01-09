@@ -9,7 +9,7 @@
 	<Runtime>
 		<Import assembly=":AltaxoBase" />
 		<Import assembly=":AltaxoBase.Presentation" />
-		<Import assembly=":AltaxoSDGui" />
+		<Import assembly=":AltaxoDom" />
 		<Import assembly="D3DPresentation.dll">
 			<Doozer name="Graph3DDisplayBinding" class="Altaxo.Main.Graph3DDisplayBindingDoozer" />
 			<Doozer name="Graph3DExportBinding" class="Altaxo.Main.Graph3DExportBindingDoozer" />
@@ -18,7 +18,7 @@
 
 	<Path name = "/Altaxo/Workbench/MainMenu/File">
 
-		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraph3DViewContent" action="Exclude">
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController" action="Exclude">
 			<MenuItem id="SaveGraph3DAsTemplate"
 								insertbefore="SaveWindowSeparator"
 								label="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate}"
@@ -41,7 +41,7 @@
 	</Path>
 
 	<Path name = "/Altaxo/Workbench/MainMenu/Edit">
-		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraph3DViewContent" action="Exclude">
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController" action="Exclude">
 			<MenuItem id="Graph3DCopyPage"
 								label="${res:XML.MainMenu.EditMenu.CopyPage}"
 								icon="Icons.16x16.NewDocumentIcon"
@@ -56,7 +56,7 @@
 	</Path>
 
 	<Path name = "/Altaxo/Workbench/MainMenu/Plot">
-		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDWorksheetViewContent" action="Exclude">
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">
 			<Condition name ="SelectedDataColumns" selected="*" action="Disable">
 				<MenuItem id="Plot3DMenu" label="${res:XML.MainMenu.Plot3DMenu}"  type="Menu">
 					<MenuItem id="PlotSurface3D" label="Plot3DSurface" icon="Icons.16x16.PlotLine"
@@ -97,7 +97,7 @@
 	</Path>
 
 	<Path name = "/Altaxo/Workbench/ToolBar/Standard">
-		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraph3DViewContent" action="Exclude">
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController" action="Exclude">
 			<ToolbarItem id="Graph3DRescaleAxes" icon="Icons.16x16.RescaleAxes" tooltip="${res:XML.MainMenu.GraphMenu.RescaleAxes.Description}"
 								class="Altaxo.Graph.Graph3D.Commands.RescaleAxes" />
 			<ToolbarItem id="ViewFront" icon="Icons.16x16.ViewFront" tooltip="${res:XML.MainMenu.Graph3DMenu.ViewFront.Description}"
@@ -187,10 +187,10 @@
 							class="Altaxo.Graph.Graph3D.Commands.DeleteActiveLayer" />
 	</Path>
 
-	<Path name = "/SharpDevelop/Workbench/OpenFileTab/ContextMenu">
+	<Path name = "/Altaxo/Workbench/OpenFileTab/ContextMenu">
 
 		<!-- Graph menu -->
-		<Condition name = "WindowActive" activewindow="Altaxo.Gui.SharpDevelop.SDGraph3DViewContent" action="Exclude">
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController" action="Exclude">
 			<MenuItem id="Rename"
  								insertbefore="CloseSeparator"
 								label="${res:XML.MainMenu.GraphMenu.Rename}"
@@ -229,7 +229,7 @@
 	<Path name = "/Altaxo/Workbench/ProjectItemDisplayBindings">
 		<Graph3DDisplayBinding id = "Graph3D"
 										ProjectItemClass = "Altaxo.Graph.Graph3D.GraphDocument"
-										ViewContentClass  = "Altaxo.Gui.SharpDevelop.SDGraph3DViewContent" />
+										ViewContentClass  = "Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController" />
 	</Path>
 
 	<Path name = "/Altaxo/Workbench/ProjectItemExportBindings">

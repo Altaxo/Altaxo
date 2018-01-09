@@ -354,13 +354,9 @@ namespace Altaxo.Graph.Gdi
 			}
 			protected set
 			{
-				AxisStyleCollection oldvalue = _axisStyles;
-				_axisStyles = value;
-				value.ParentObject = this;
-				value.UpdateCoordinateSystem(this.CoordinateSystem);
-
-				if (!object.ReferenceEquals(oldvalue, value))
+				if (ChildSetMember(ref _axisStyles, value))
 				{
+					value.UpdateCoordinateSystem(this.CoordinateSystem);
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}

@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 			}
 			set
 			{
-				_guiTension.SelectedQuantity = new Units.DimensionfulQuantity(value, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(_guiTension.UnitEnvironment.DefaultUnit);
+				_guiTension.SelectedQuantity = new DimensionfulQuantity(value, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(_guiTension.UnitEnvironment.DefaultUnit);
 			}
 		}
 

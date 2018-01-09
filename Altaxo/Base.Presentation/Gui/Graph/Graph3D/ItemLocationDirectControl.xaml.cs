@@ -44,19 +44,19 @@ namespace Altaxo.Gui.Graph.Graph3D
 			InitializeComponent();
 		}
 
-		public void InitializeXPosition(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+		public void InitializeXPosition(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
 		{
 			_guiPositionX.UnitEnvironment = env;
 			_guiPositionX.SelectedQuantity = x;
 		}
 
-		public void InitializeYPosition(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+		public void InitializeYPosition(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
 		{
 			_guiPositionY.UnitEnvironment = env;
 			_guiPositionY.SelectedQuantity = x;
 		}
 
-		public void InitializeZPosition(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+		public void InitializeZPosition(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
 		{
 			_guiPositionZ.UnitEnvironment = env;
 			_guiPositionZ.SelectedQuantity = x;
@@ -116,50 +116,50 @@ namespace Altaxo.Gui.Graph.Graph3D
 			_guiParentAnchor.IsEnabled = isEnabled;
 		}
 
-		public void InitializeXSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+		public void InitializeXSize(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
 		{
 			_guiSizeX.UnitEnvironment = env;
 			_guiSizeX.SelectedQuantity = x;
 		}
 
-		public void InitializeYSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+		public void InitializeYSize(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
 		{
 			_guiSizeY.UnitEnvironment = env;
 			_guiSizeY.SelectedQuantity = x;
 		}
 
-		public void InitializeZSize(Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
+		public void InitializeZSize(Altaxo.Units.DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env)
 		{
 			_guiSizeZ.UnitEnvironment = env;
 			_guiSizeZ.SelectedQuantity = x;
 		}
 
-		public Units.DimensionfulQuantity XPosition
+		public Altaxo.Units.DimensionfulQuantity XPosition
 		{
 			get { return _guiPositionX.SelectedQuantity; }
 		}
 
-		public Units.DimensionfulQuantity YPosition
+		public Altaxo.Units.DimensionfulQuantity YPosition
 		{
 			get { return _guiPositionY.SelectedQuantity; }
 		}
 
-		public Units.DimensionfulQuantity ZPosition
+		public Altaxo.Units.DimensionfulQuantity ZPosition
 		{
 			get { return _guiPositionZ.SelectedQuantity; }
 		}
 
-		public Units.DimensionfulQuantity XSize
+		public Altaxo.Units.DimensionfulQuantity XSize
 		{
 			get { return _guiSizeX.SelectedQuantity; }
 		}
 
-		public Units.DimensionfulQuantity YSize
+		public Altaxo.Units.DimensionfulQuantity YSize
 		{
 			get { return _guiSizeY.SelectedQuantity; }
 		}
 
-		public Units.DimensionfulQuantity ZSize
+		public Altaxo.Units.DimensionfulQuantity ZSize
 		{
 			get { return _guiSizeZ.SelectedQuantity; }
 		}

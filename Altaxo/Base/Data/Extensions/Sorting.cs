@@ -152,8 +152,8 @@ namespace Altaxo.Data
 
 			HeapSort(
 				elementsToSort.Count,
-				delegate(int i, int j) { return elementsToSort[destinationIndexArray[i]].CompareTo(elementsToSort[destinationIndexArray[j]]); },
-				delegate(int i, int j) { int ti = destinationIndexArray[i]; destinationIndexArray[i] = destinationIndexArray[j]; destinationIndexArray[j] = ti; }
+				delegate (int i, int j) { return elementsToSort[destinationIndexArray[i]].CompareTo(elementsToSort[destinationIndexArray[j]]); },
+				delegate (int i, int j) { int ti = destinationIndexArray[i]; destinationIndexArray[i] = destinationIndexArray[j]; destinationIndexArray[j] = ti; }
 			);
 
 			return destinationIndexArray;

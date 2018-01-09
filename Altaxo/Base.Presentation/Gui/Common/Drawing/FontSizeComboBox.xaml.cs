@@ -31,6 +31,9 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+	using Altaxo.Units;
+	using AUL = Altaxo.Units.Length;
+
 	/// <summary>
 	/// Interaction logic for FontSizeComboBox.xaml
 	/// </summary>
@@ -46,7 +49,7 @@ namespace Altaxo.Gui.Common.Drawing
 			InitializeComponent();
 
 			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Length.Point.Instance)));
+				Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, AUL.Point.Instance)));
 
 			_img.Source = GetImage(SelectedQuantityAsValueInPoints);
 		}
@@ -64,7 +67,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override ImageSource GetItemImage(object item)
 		{
-			double val = ((Units.DimensionfulQuantity)item).AsValueIn(Units.Length.Point.Instance);
+			double val = ((DimensionfulQuantity)item).AsValueIn(AUL.Point.Instance);
 
 			ImageSource result;
 			if (!_cachedImages.TryGetValue(val, out result))

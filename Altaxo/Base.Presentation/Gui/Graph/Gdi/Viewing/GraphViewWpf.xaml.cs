@@ -38,6 +38,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 {
 	using Altaxo.Geometry;
 	using Altaxo.Graph;
+	using Altaxo.Graph.Gdi;
 
 	/// <summary>
 	/// Interaction logic for GraphView.xaml
@@ -64,6 +65,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		private volatile bool _isGraphUpToDate;
 
 		private CachedGraphImage _cachedGraphImage;
+
+		/// <summary>A instance of a mouse handler class that currently handles the mouse events. Is mirrored from
+		/// the controller to here.</summary>
+		protected GraphControllerMouseHandlers.MouseStateHandler _mouseState;
 
 		private class CachedGraphImage
 		{
@@ -126,12 +131,118 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 			_controller = new WeakReference(null);
 		}
 
-		private Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerWpf Controller
+		private Altaxo.Gui.Graph.Gdi.Viewing.GraphController Controller
 		{
 			get
 			{
-				return (GraphControllerWpf)_controller.Target;
+				return (GraphController)_controller.Target;
 			}
+		}
+
+		public GraphToolType CurrentGraphTool
+		{
+			get
+			{
+				return null == _mouseState ? GraphToolType.None : _mouseState.GraphToolType;
+			}
+			set
+			{
+				GraphToolType oldType = CurrentGraphTool;
+				if (oldType != value)
+				{
+					switch (value)
+					{
+						case GraphToolType.None:
+							_mouseState = null;
+							break;
+
+						case GraphToolType.ArrowLineDrawing:
+							_mouseState = new GraphControllerMouseHandlers.ArrowLineDrawingMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.CurlyBraceDrawing:
+							_mouseState = new GraphControllerMouseHandlers.CurlyBraceDrawingMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.EllipseDrawing:
+							_mouseState = new GraphControllerMouseHandlers.EllipseDrawingMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.ObjectPointer:
+							_mouseState = new GraphControllerMouseHandlers.ObjectPointerMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.ReadPlotItemData:
+							_mouseState = new GraphControllerMouseHandlers.ReadPlotItemDataMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.ReadXYCoordinates:
+							_mouseState = new GraphControllerMouseHandlers.ReadXYCoordinatesMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.RectangleDrawing:
+							_mouseState = new GraphControllerMouseHandlers.RectangleDrawingMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.RegularPolygonDrawing:
+							_mouseState = new GraphControllerMouseHandlers.RegularPolygonDrawingMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.SingleLineDrawing:
+							_mouseState = new GraphControllerMouseHandlers.SingleLineDrawingMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.TextDrawing:
+							_mouseState = new GraphControllerMouseHandlers.TextToolMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.ZoomAxes:
+							_mouseState = new GraphControllerMouseHandlers.ZoomAxesMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.OpenCardinalSplineDrawing:
+							_mouseState = new GraphControllerMouseHandlers.OpenCardinalSplineMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.ClosedCardinalSplineDrawing:
+							_mouseState = new GraphControllerMouseHandlers.ClosedCardinalSplineMouseHandler(this.Controller);
+							break;
+
+						case GraphToolType.EditGrid:
+							_mouseState = new GraphControllerMouseHandlers.EditGridMouseHandler(this.Controller);
+							break;
+
+						default:
+							throw new NotImplementedException("Type not implemented: " + value.ToString());
+					} // end switch
+
+					this.FocusOnGraphPanel();
+
+					Controller?.EhView_CurrentGraphToolChanged();
+
+					this.EhGraphToolChanged();
+				}
+			}
+		}
+
+		private static IList<IHitTestObject> _emptyReadOnlyList = new List<IHitTestObject>().AsReadOnly();
+
+		public IList<IHitTestObject> SelectedObjects
+		{
+			get
+			{
+				if (_mouseState is GraphControllerMouseHandlers.ObjectPointerMouseHandler opmh)
+					return opmh.SelectedObjects;
+				else
+					return _emptyReadOnlyList;
+			}
+		}
+
+		public bool MouseState_IsOverlayPaintingRequired { get { return _mouseState?.IsOverlayPaintingRequired ?? false; } }
+
+		public void MouseState_AfterPaint(System.Drawing.Graphics g)
+		{
+			_mouseState?.AfterPaint(g);
 		}
 
 		public void FocusOnGraphPanel()
@@ -143,6 +254,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		public void SetPanelCursor(Cursor cursor)
 		{
 			_guiCanvas.Cursor = cursor;
+		}
+
+		public void SetPanelCursor(object cursor)
+		{
+			_guiCanvas.Cursor = (Cursor)cursor;
 		}
 
 		/// <summary>
@@ -166,9 +282,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
 		private void EhGraphPanel_MouseMove(object sender, MouseEventArgs e)
 		{
-			var guiController = Controller;
-			if (null != guiController)
-				guiController.EhView_GraphPanelMouseMove(GetMousePosition(e), e);
+			_mouseState.OnMouseMove(GetMousePosition(e), e);
 		}
 
 		private void EhGraphPanel_MouseDown(object sender, MouseButtonEventArgs e)
@@ -178,19 +292,17 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 			var pos = GetMousePosition(e);
 			if (null != guiController)
 			{
-				guiController.EhView_GraphPanelMouseDown(pos, e);
+				_mouseState.OnMouseDown(pos, e);
 				if (e.ClickCount >= 2 && e.LeftButton == MouseButtonState.Pressed)
-					guiController.EhView_GraphPanelMouseDoubleClick(pos, e);
+					_mouseState.OnDoubleClick(pos, e);
 				else if (e.ClickCount == 1 && e.LeftButton == MouseButtonState.Pressed)
-					guiController.EhView_GraphPanelMouseClick(pos, e);
+					_mouseState.OnClick(pos, e);
 			}
 		}
 
 		private void EhGraphPanel_MouseUp(object sender, MouseButtonEventArgs e)
 		{
-			var guiController = Controller;
-			if (null != guiController)
-				guiController.EhView_GraphPanelMouseUp(GetMousePosition(e), e);
+			_mouseState.OnMouseUp(GetMousePosition(e), e);
 		}
 
 		private void EhGraphPanel_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -198,19 +310,16 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 			var guiController = Controller;
 			if (null != guiController)
 			{
-				guiController.EhView_GraphPanelMouseWheel(GetMousePosition(e), e);
+				HandledEventArgs eHand = new HandledEventArgs();
+				guiController.EhView_GraphPanelMouseWheel(GuiHelper.ToAltaxo(e, _guiCanvas), GuiHelper.ToAltaxo(Keyboard.Modifiers), eHand);
+				e.Handled = eHand.Handled;
 				ShowCachedGraphImage();
 			}
 		}
 
 		private void EhGraphPanel_KeyDown(object sender, KeyEventArgs e)
 		{
-			var guiController = Controller;
-			if (null != guiController)
-			{
-				bool result = guiController.EhView_ProcessCmdKey(e);
-				e.Handled = result;
-			}
+			e.Handled = _mouseState?.ProcessCmdKey(e) ?? false;
 		}
 
 		#region Altaxo.Gui.Graph.Viewing.IGraphView
@@ -353,7 +462,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 			Altaxo.Graph.Gdi.GraphDocumentRenderManager.Instance.AddTask(
 				controller,
 				controller.Doc,
-				(graphDocument, token) =>
+(Action<GraphDocument, object>)((graphDocument, token) =>
 				{
 					if (graphDocument.IsDisposeInProgress)
 						return;
@@ -364,7 +473,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 					{
 						GdiToWpfBitmap bmp;
 						if (!_gdiWpfBitmapManager.TryTake(size, out bmp))
-							Current.Gui.Execute(() => bmp = new GdiToWpfBitmap(size.Width, size.Height));
+							Current.Dispatcher.InvokeIfRequired((Action)(() => bmp = new GdiToWpfBitmap((int)size.Width, (int)size.Height)));
 
 						var grfx = GetGraphicsContextFromWpfGdiBitmap(bmp);
 						controller.ScaleForPaintingGraphDocument(grfx);
@@ -373,7 +482,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 						if (!graphDocument.IsDisposeInProgress)
 							graphDocument.Paint(grfx, false);
 
-						Current.Gui.Execute(() =>
+						Current.Dispatcher.InvokeIfRequired((Action)(() =>
 						{
 							var bmpSource = bmp.WpfBitmapSource;
 							cachedGraphImage.CachedGraphImageSource = bmpSource;
@@ -382,15 +491,15 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 							_isGraphUpToDate = true;
 							grfx.Dispose();
 
-							var overlay = GetImageSourceByRenderingOverlay(controller, bmp, cachedGraphImage);
+							var overlay = GetImageSourceByRenderingOverlay((GraphController)controller, (GdiToWpfBitmap)bmp, (CachedGraphImage)cachedGraphImage);
 							_graphOverlay.Source = overlay;
 							cachedGraphImage.CachedOverlayImageSource = overlay;
-							_gdiWpfBitmapManager.Add(bmp.GdiSize, bmp);
+							_gdiWpfBitmapManager.Add((System.Drawing.Size)bmp.GdiSize, (GdiToWpfBitmap)bmp);
 
 							ShowCachedGraphImage();
-						});
+						}));
 					}
-				}
+				})
 				);
 		}
 
@@ -405,7 +514,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		/// <summary>
 		/// Called from the controller when the overlay changed and should be rendered anew.
 		/// </summary>
-		internal void EhRenderOverlayTriggered()
+		public void EhRenderOverlayTriggered()
 		{
 			RenderOverlayAndShowImmediately();
 		}
@@ -432,7 +541,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
 				GdiToWpfBitmap bmp;
 				if (!_gdiWpfBitmapManager.TryTake(size, out bmp))
-					Current.Gui.Execute(() => bmp = new GdiToWpfBitmap(size.Width, size.Height));
+					Current.Dispatcher.InvokeIfRequired(() => bmp = new GdiToWpfBitmap(size.Width, size.Height));
 
 				try
 				{
@@ -452,7 +561,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		/// Renders the overlay (the drawing that designates selected rectangles, handles and so on) immediately in the current thread.
 		/// Attention: if there is no cached bitmap, a new bitmap is created, but this must be done in the Gui context, so this can lead to deadlocks.
 		/// </summary>
-		private static ImageSource GetImageSourceByRenderingOverlay(GraphControllerWpf controller, GdiToWpfBitmap bmp, CachedGraphImage cachedGraphImage)
+		private static ImageSource GetImageSourceByRenderingOverlay(GraphController controller, GdiToWpfBitmap bmp, CachedGraphImage cachedGraphImage)
 		{
 			if (controller.IsOverlayPaintingRequired)
 			{
@@ -714,12 +823,12 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 			return glyphs;
 		}
 
-		void IGraphView.CaptureMouse()
+		void IGraphView.CaptureMouseOnCanvas()
 		{
 			this._guiCanvas.CaptureMouse();
 		}
 
-		void IGraphView.ReleaseMouseCapture()
+		void IGraphView.ReleaseCaptureMouseOnCanvas()
 		{
 			this._guiCanvas.ReleaseMouseCapture();
 		}

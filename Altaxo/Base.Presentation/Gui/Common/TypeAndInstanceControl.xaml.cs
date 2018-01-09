@@ -69,5 +69,5 @@ namespace Altaxo.Gui.Common
 		public event EventHandler TypeChoiceChanged;
 	}
 
-		#endregion ITypeAndInstanceView
+	#endregion ITypeAndInstanceView
 }

@@ -334,7 +334,7 @@ namespace Altaxo.Scripting
 			var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
 			System.Threading.Thread t = new System.Threading.Thread(() => ExecuteWithSuspendedNotifications(myColumn, reporter));
 			t.Start();
-			return Current.Gui.ShowBackgroundCancelDialog(1000, reporter, t);
+			return Current.Gui.ShowBackgroundCancelDialog(1000, t, reporter);
 		}
 	} // end of class DataColumnScript
 }

@@ -216,7 +216,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		/// </summary>
 		private int _supposedGroupNumber;
 
-
 		public override bool InitializeDocument(params object[] args)
 		{
 			if (args.Length >= 2 && (args[1] is DataTable))

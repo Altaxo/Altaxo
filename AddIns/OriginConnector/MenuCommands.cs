@@ -23,7 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Addins.OriginConnector;
-using ICSharpCode.Core;
+using Altaxo.Gui.AddInItems;
 using System;
 using System.Collections.Generic;
 using System.Linq;

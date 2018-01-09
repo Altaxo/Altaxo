@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="Altaxo.Gui.Main.Services.InfoWarningErrorMessageView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:local="clr-namespace:Altaxo.Gui.Main.Services"
+	 MinHeight="100">
+    <UserControl.Resources>
+        <local:MessageLevelToBrushConverter x:Key="levelConverter" />
+        <Style TargetType="ListViewItem">
+            <Setter Property="Background" Value="{Binding Path=Level, Converter={StaticResource levelConverter}}" />
+        </Style>
+    </UserControl.Resources>
+    <Grid  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <ListView Name="_listView" SizeChanged="EhListView_SizeChanged" ItemsSource="{Binding MessageItems}">
+            <ListView.ContextMenu>
+                <ContextMenu Opened="EhContextMenuOpened">
+                    <MenuItem x:Name="_menuItemRecentLast" Header="Most recent message is at end of the list" IsCheckable="True" Command="{Binding CommandReverseMessageOrder}" CommandParameter="true">
+                    </MenuItem>
+                    <MenuItem x:Name="_menuItemRecentFirst" Header="Most recent message is at top of the list" IsCheckable="True" Command="{Binding CommandReverseMessageOrder}" CommandParameter="false">
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="Clear all messages" Command="{Binding CommandClearAllMessages}"></MenuItem>
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn x:Name="_col0" Header="Time" DisplayMemberBinding="{Binding Time}" />
+                    <GridViewColumn x:Name="_col1" Header="Source" DisplayMemberBinding="{Binding Source}" />
+                    <GridViewColumn x:Name="_col2" Header="Level" DisplayMemberBinding="{Binding Level}" />
+                    <GridViewColumn x:Name="_col3" Header="Message">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock TextWrapping="Wrap">
+                                    <TextBlock.Text>
+                                        <Binding Path="Message" />
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>

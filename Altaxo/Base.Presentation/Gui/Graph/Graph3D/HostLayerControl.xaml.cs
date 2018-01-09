@@ -133,7 +133,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 					}
 				}
 
-			end_of_function:
+				end_of_function:
 				--_tabControl_SelectionChanged_Calls;
 			}
 		}

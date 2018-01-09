@@ -71,27 +71,106 @@ namespace Altaxo.Gui
 		/// </summary>
 		public event EventHandler DefaultUnitChanged;
 
+		#region Serialization
+
+		/// <summary>
+		/// 2017-09-26 Initial version
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(QuantityWithUnitGuiEnvironment), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (QuantityWithUnitGuiEnvironment)obj;
+
+				{
+					info.CreateArray("FixedUnits", s._fixedUnits.Count());
+					foreach (var unit in s._fixedUnits)
+						info.AddValue("e", unit);
+					info.CommitArray();
+				}
+
+				{
+					info.CreateArray("AdditionalUnits", s._additionalUnits.Count);
+					foreach (var unit in s._additionalUnits)
+						info.AddValue("e", unit);
+					info.CommitArray();
+				}
+
+				info.AddValue("DefaultUnit", s._defaultUnit);
+
+				info.AddValue("NumberOfDisplayedDigits", s._numberOfDisplayedDigits);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				IUnit[] fixedUnits;
+				IUnit[] additionalUnits;
+
+				{
+					var count = info.OpenArray("FixedUnits");
+					fixedUnits = new IUnit[count];
+					for (int i = 0; i < count; ++i)
+					{
+						fixedUnits[i] = (IUnit)info.GetValue("e", null);
+					}
+					info.CloseArray(count);
+				}
+
+				{
+					var count = info.OpenArray("AdditionalUnits");
+					additionalUnits = new IUnit[count];
+					for (int i = 0; i < count; ++i)
+					{
+						additionalUnits[i] = (IUnit)info.GetValue("e", null);
+					}
+					info.CloseArray(count);
+				}
+
+				var defaultUnit = (IPrefixedUnit)info.GetValue("DefaultUnit", null);
+
+				int displayDigits = info.GetInt32("NumberOfDisplayedDigits");
+
+				return new QuantityWithUnitGuiEnvironment(fixedUnits, additionalUnits)
+				{
+					NumberOfDisplayedDigits = displayDigits,
+					DefaultUnit = defaultUnit
+				};
+			}
+		}
+
+		#endregion Serialization
+
 		public QuantityWithUnitGuiEnvironment()
-			: this(null)
+				: this(null)
 		{
 		}
 
-		public QuantityWithUnitGuiEnvironment(IList<IUnit> fixedUnits)
-			: this(fixedUnits, new IUnit[] { })
+		public QuantityWithUnitGuiEnvironment(IEnumerable<IUnit> fixedUnits)
+				: this(fixedUnits, new IUnit[] { })
 		{
 		}
 
-		public QuantityWithUnitGuiEnvironment(IList<IUnit> fixedUnits, IUnit additionalUnit)
-			: this(fixedUnits, new IUnit[] { additionalUnit })
+		public QuantityWithUnitGuiEnvironment(IEnumerable<IUnit> fixedUnits, IUnit additionalUnit)
+				: this(fixedUnits, new IUnit[] { additionalUnit })
 		{
 		}
 
-		public QuantityWithUnitGuiEnvironment(IList<IUnit> fixedUnits, IEnumerable<IUnit> additionalUnits)
+		public QuantityWithUnitGuiEnvironment(IEnumerable<IUnit> fixedUnits, IEnumerable<IUnit> additionalUnits)
 		{
-			_fixedUnits = fixedUnits ?? _emptyUnitList;
+			if (null != fixedUnits)
+				_fixedUnits = fixedUnits.ToArray();
+			else
+				_fixedUnits = _emptyUnitList;
+
 			_additionalUnits = new ObservableCollection<IUnit>(additionalUnits);
 			CreateUnitListSortedByShortcutLengthDescending();
 			_additionalUnits.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(EhAdditionalUnits_CollectionChanged);
+
+			if (null != fixedUnits?.FirstOrDefault())
+				DefaultUnit = new PrefixedUnit(SIPrefix.None, fixedUnits.FirstOrDefault());
+			else if (0 < _additionalUnits.Count)
+				DefaultUnit = new PrefixedUnit(SIPrefix.None, _additionalUnits[0]);
 		}
 
 		public QuantityWithUnitGuiEnvironment(QuantityWithUnitGuiEnvironment from, IEnumerable<IUnit> additionalUnits)
@@ -212,5 +291,56 @@ namespace Altaxo.Gui
 			else
 				return null;
 		}
+
+		#region Conversion from string to unit
+
+		/// <summary>
+		/// Tries to get a prefixed unit from a shortcut, considering all units in this environment.
+		/// </summary>
+		/// <param name="shortCut">The shortcut. Can be a compound of prefix and unit, e.g. 'mA'. An empty string is converted to <see cref="Altaxo.Units.Dimensionless.Unity.Instance"/></param>
+		/// <param name="result">If successfully, the resulting prefixed unit.</param>
+		/// <returns>True if the conversion was successful; false otherwise.</returns>
+		/// <exception cref="ArgumentNullException">s</exception>
+		public bool TryGetPrefixedUnitFromShortcut(string shortCut, out IPrefixedUnit result)
+		{
+			if (null == shortCut)
+				throw new ArgumentNullException(nameof(shortCut));
+
+			shortCut = shortCut.Trim();
+
+			if ("" == shortCut) // If string is empty, we consider this as a dimensionless unit "Unity"
+			{
+				result = new PrefixedUnit(SIPrefix.None, Altaxo.Units.Dimensionless.Unity.Instance);
+				return true;
+			}
+
+			SIPrefix prefix = null;
+			foreach (IUnit u in this.UnitsSortedByShortcutLengthDescending) // for each unit
+			{
+				if (string.IsNullOrEmpty(u.ShortCut) || (!shortCut.EndsWith(u.ShortCut)))
+					continue;
+
+				var prefixString = shortCut.Substring(0, shortCut.Length - u.ShortCut.Length);
+
+				if (prefixString.Length == 0) // if prefixString is empty, then it is the unit without prefix
+				{
+					result = new PrefixedUnit(SIPrefix.None, u);
+					return true;
+				}
+
+				prefix = SIPrefix.TryGetPrefixFromShortcut(prefixString);
+
+				if (null != prefix) // we found a prefix, thus we can return prefix + unit
+				{
+					result = new PrefixedUnit(prefix, u);
+					return true;
+				}
+			}
+
+			result = null;
+			return false;
+		}
+
+		#endregion Conversion from string to unit
 	}
 }

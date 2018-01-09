@@ -74,7 +74,7 @@ namespace Altaxo.Graph.Procedures
 			var fitController = (Gui.IMVCANController)Current.Gui.GetControllerAndControl(new object[] { fitDocument, fitDocumentIdentifier, activeLayer }, typeof(Gui.IMVCANController));
 
 			// before showing the fit dialog, deselect all objects selected
-			if(!ctrl.SelectedObjects.IsReadOnly) // with some graph tools, this is a read-only collection, which can not be cleared
+			if (!ctrl.SelectedObjects.IsReadOnly) // with some graph tools, this is a read-only collection, which can not be cleared
 				ctrl.SelectedObjects.Clear();
 
 			if (true == Current.Gui.ShowDialog(fitController, "Non-linear fitting"))

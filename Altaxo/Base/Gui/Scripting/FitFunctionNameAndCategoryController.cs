@@ -77,10 +77,10 @@ namespace Altaxo.Gui.Scripting
 				_controllerShouldSaveInUserData.DescriptionText = "Save in user fit functions directory?";
 
 				_innerController = new MultiChildController(new ControlViewElement[]{
-        new ControlViewElement( null, _controllerName, _controllerName.ViewObject),
-        new ControlViewElement( null, _controllerCategory, _controllerCategory.ViewObject),
-        new ControlViewElement( null, _controllerDescription, _controllerDescription.ViewObject),
-        new ControlViewElement( null, _controllerShouldSaveInUserData, _controllerShouldSaveInUserData.ViewObject) },
+				new ControlViewElement( null, _controllerName, _controllerName.ViewObject),
+				new ControlViewElement( null, _controllerCategory, _controllerCategory.ViewObject),
+				new ControlViewElement( null, _controllerDescription, _controllerDescription.ViewObject),
+				new ControlViewElement( null, _controllerShouldSaveInUserData, _controllerShouldSaveInUserData.ViewObject) },
 					false);
 			}
 		}

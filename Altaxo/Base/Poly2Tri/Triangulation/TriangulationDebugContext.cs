@@ -29,11 +29,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Poly2Tri {
-	public abstract class TriangulationDebugContext {
+namespace Poly2Tri
+{
+	public abstract class TriangulationDebugContext
+	{
 		protected TriangulationContext _tcx;
 
-		public TriangulationDebugContext(TriangulationContext tcx) {
+		public TriangulationDebugContext(TriangulationContext tcx)
+		{
 			_tcx = tcx;
 		}
 

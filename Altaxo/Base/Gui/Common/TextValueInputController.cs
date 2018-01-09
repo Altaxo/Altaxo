@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -29,55 +29,55 @@ namespace Altaxo.Gui.Common
 	[ExpectedTypeOfView(typeof(ISingleValueView))]
 	public class TextValueInputController : IMVCAController
 	{
-		private ISingleValueView m_View;
+		private ISingleValueView _view;
 		private string _captionText;
 
-		private string m_InitialContents;
-		private string m_Contents;
+		private string _initialContents;
+		private string _contents;
 		private bool _isContentsValid = true;
 
-		private IStringValidator m_Validator;
+		private IStringValidator _validator;
 
 		public TextValueInputController(string initialcontents, string description)
 		{
-			m_InitialContents = initialcontents;
-			m_Contents = initialcontents;
+			_initialContents = initialcontents;
+			_contents = initialcontents;
 			_captionText = description;
 		}
 
 		private void Initialize()
 		{
-			if (m_View != null)
+			if (_view != null)
 			{
-				m_View.DescriptionText = _captionText;
-				m_View.ValueText = m_InitialContents;
+				_view.DescriptionText = _captionText;
+				_view.ValueText = _initialContents;
 			}
 		}
 
 		private ISingleValueView View
 		{
-			get { return m_View; }
+			get { return _view; }
 			set
 			{
-				if (m_View != null)
-					m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
+				if (_view != null)
+					_view.ValueText_Validating -= this.EhView_ValidatingValue1;
 
-				m_View = value;
+				_view = value;
 				Initialize();
 
-				if (m_View != null)
-					m_View.ValueText_Validating += this.EhView_ValidatingValue1;
+				if (_view != null)
+					_view.ValueText_Validating += this.EhView_ValidatingValue1;
 			}
 		}
 
 		public string InputText
 		{
-			get { return m_Contents; }
+			get { return _contents; }
 		}
 
 		public IStringValidator Validator
 		{
-			set { m_Validator = value; }
+			set { _validator = value; }
 		}
 
 		#region ISingleValueFormController Members
@@ -85,10 +85,10 @@ namespace Altaxo.Gui.Common
 		public void EhView_ValidatingValue1(ValidationEventArgs<string> e)
 		{
 			_isContentsValid = true;
-			m_Contents = e.ValueToValidate;
-			if (m_Validator != null)
+			_contents = e.ValueToValidate;
+			if (_validator != null)
 			{
-				string err = m_Validator.Validate(m_Contents);
+				string err = _validator.Validate(_contents);
 				if (null != err)
 				{
 					_isContentsValid = false;
@@ -98,7 +98,7 @@ namespace Altaxo.Gui.Common
 			}
 			else // if no validating handler, use some default validation
 			{
-				if (null == m_Contents || 0 == m_Contents.Length)
+				if (null == _contents || 0 == _contents.Length)
 				{
 					_isContentsValid = false;
 					e.AddError("You have to enter a value!");
@@ -157,25 +157,25 @@ namespace Altaxo.Gui.Common
 		{
 			get
 			{
-				return m_View;
+				return _view;
 			}
 			set
 			{
-				if (m_View != null)
-					m_View.ValueText_Validating -= this.EhView_ValidatingValue1;
+				if (_view != null)
+					_view.ValueText_Validating -= this.EhView_ValidatingValue1;
 
-				m_View = value as ISingleValueView;
-				if (m_View != null)
+				_view = value as ISingleValueView;
+				if (_view != null)
 				{
 					Initialize();
-					m_View.ValueText_Validating += this.EhView_ValidatingValue1;
+					_view.ValueText_Validating += this.EhView_ValidatingValue1;
 				}
 			}
 		}
 
 		public object ModelObject
 		{
-			get { return m_InitialContents; }
+			get { return _initialContents; }
 		}
 
 		public void Dispose()
@@ -189,7 +189,7 @@ namespace Altaxo.Gui.Common
 		public bool Apply(bool disposeController)
 		{
 			if (_isContentsValid)
-				m_InitialContents = m_Contents;
+				_initialContents = _contents;
 			return _isContentsValid;
 		}
 

@@ -288,7 +288,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 						hasChanged |= InternalSet(ref _plotColumnToolTip, string.Format("The column {0} is a data column with another parent data table: {1}", _nameOfUnderlyingDataColumn, parentTable.Name));
 						hasChanged |= InternalSet(ref _plotColumnBoxState, PlotColumnControlState.Warning);
 					}
-					else if(!(parentTable.DataColumns.GetColumnGroup(dcolumn) ==_supposedGroupNumber))
+					else if (!(parentTable.DataColumns.GetColumnGroup(dcolumn) == _supposedGroupNumber))
 					{
 						string columnName = parentTable.DataColumns.GetColumnName(dcolumn);
 						hasChanged |= InternalSet(ref _nameOfUnderlyingDataColumn, columnName);

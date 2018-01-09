@@ -232,7 +232,14 @@ namespace Altaxo.Scripting
 				}
 				else
 				{
-					throw new InvalidOperationException("The script object is null");
+					if (null != _errors && _errors.Count > 0)
+					{
+						throw new InvalidOperationException("The script object is null because of compilation errors:\r\n"+GetErrorsAsString());
+					}
+					else
+					{
+						throw new InvalidOperationException("The script object is null");
+					}
 				}
 			}
 
@@ -313,7 +320,7 @@ namespace Altaxo.Scripting
 			var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
 			System.Threading.Thread t = new System.Threading.Thread(() => ExecuteWithSuspendedNotifications(myTable, reporter));
 			t.Start();
-			return Current.Gui.ShowBackgroundCancelDialog(1000, reporter, t);
+			return Current.Gui.ShowBackgroundCancelDialog(1000, t, reporter);
 		}
 	} // end of class TableScript
 }

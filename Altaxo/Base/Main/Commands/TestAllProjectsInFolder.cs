@@ -64,12 +64,12 @@ namespace Altaxo.Main.Commands
 	{
 		#region Internal class Reporter
 
-		public class Reporter : Altaxo.Main.Services.OutputServiceBase
+		public class Reporter : Altaxo.Main.Services.TextOutputServiceBase
 		{
 			private System.IO.StreamWriter _wr;
-			private Altaxo.Main.Services.IOutputService _previousOutputService;
+			private Altaxo.Main.Services.ITextOutputService _previousOutputService;
 
-			public Reporter(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.IOutputService previousOutputService)
+			public Reporter(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ITextOutputService previousOutputService)
 			{
 				_previousOutputService = previousOutputService;
 
@@ -175,7 +175,7 @@ namespace Altaxo.Main.Commands
 			if (Current.Project.IsDirty)
 			{
 				var e = new System.ComponentModel.CancelEventArgs();
-				Current.ProjectService.AskForSavingOfProject(e);
+				Current.IProjectService.AskForSavingOfProject(e);
 				if (e.Cancel)
 					return;
 			}
@@ -185,17 +185,21 @@ namespace Altaxo.Main.Commands
 				return;
 
 			var monitor = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
-			Current.Gui.ShowBackgroundCancelDialog(10, monitor, () => InternalVerifyOpeningOfDocumentsWithoutExceptionStart(testOptions, monitor));
+			Current.Gui.ShowBackgroundCancelDialog(10, () => InternalVerifyOpeningOfDocumentsWithoutExceptionStart(testOptions, monitor), monitor);
 		}
 
 		private static void InternalVerifyOpeningOfDocumentsWithoutExceptionStart(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor)
 		{
 			var reporter = new Reporter(testOptions, Current.Console);
-			var oldOutputService = Current.SetOutputService(reporter);
+			var oldOutputService = Current.GetService<Services.ITextOutputService>();
+			Current.RemoveService<Services.ITextOutputService>();
+			Current.AddService<Services.ITextOutputService>(reporter);
+			if (!object.ReferenceEquals(Current.Console, reporter))
+				throw new InvalidProgramException("Current console now should be the reporter! Please debug.");
 
 			var test = new TestAllProjectsInFolder(reporter, testOptions);
 
-			Current.ProjectService.ProjectChanged += test.EhProjectChanged;
+			Current.IProjectService.ProjectChanged += test.EhProjectChanged;
 
 			try
 			{
@@ -208,11 +212,13 @@ namespace Altaxo.Main.Commands
 			}
 			finally
 			{
-				Current.ProjectService.ProjectChanged += test.EhProjectChanged;
+				Current.IProjectService.ProjectChanged += test.EhProjectChanged;
 
 				reporter.WriteLine("----------------------- End of test ------------------------------------------");
 				reporter.Close();
-				Current.SetOutputService(oldOutputService);
+
+				Current.RemoveService<Services.ITextOutputService>();
+				Current.AddService<Services.ITextOutputService>(oldOutputService);
 			}
 		}
 
@@ -251,7 +257,7 @@ namespace Altaxo.Main.Commands
 						"Currently opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
 					++numberOfProjectsTested;
-					Current.Gui.Execute(Current.ProjectService.OpenProject, filename, true);
+					Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, filename, true);
 
 					monitor.ReportProgress(string.Format(
 						"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
@@ -298,7 +304,7 @@ namespace Altaxo.Main.Commands
 							"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
 							"Currently saving: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
-						Current.Gui.Execute(Current.ProjectService.SaveProject, tempFileName);
+						Current.Dispatcher.InvokeIfRequired(Current.IProjectService.SaveProject, tempFileName);
 
 						monitor.ReportProgress(string.Format(
 							"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
@@ -316,7 +322,7 @@ namespace Altaxo.Main.Commands
 					// Close the project now
 					try
 					{
-						Current.Gui.Execute(Current.ProjectService.CloseProject, true);
+						Current.Dispatcher.InvokeIfRequired(() => Current.IProjectService.CloseProject(true));
 						System.Threading.Thread.Sleep(1000);
 					}
 					catch (Exception ex)
@@ -333,7 +339,7 @@ namespace Altaxo.Main.Commands
 							"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
 							"Currently re-opening: {4}", numberOfProjectsTested - numberOfProjectsFailedToLoad, numberOfProjectsFailedToLoad, numberOfProjectsTested, totalFilesToTest, filename), numberOfProjectsTested / totalFilesToTest);
 
-						Current.Gui.Execute(Current.ProjectService.OpenProject, tempFileName, true);
+						Current.Dispatcher.InvokeIfRequired(Current.IProjectService.OpenProject, tempFileName, true);
 
 						monitor.ReportProgress(string.Format(
 							"Successfully loaded: {0}, failed to load: {1}, total: {2}/{3} projects.\r\n" +
@@ -372,7 +378,7 @@ namespace Altaxo.Main.Commands
 					// Close the project now
 					try
 					{
-						Current.Gui.Execute(Current.ProjectService.CloseProject, true);
+						Current.Dispatcher.InvokeIfRequired(() => Current.IProjectService.CloseProject(true));
 						System.Threading.Thread.Sleep(1000);
 					}
 					catch (Exception ex)
@@ -396,7 +402,7 @@ namespace Altaxo.Main.Commands
 				{
 					try
 					{
-						Current.Gui.Execute(Current.ProjectService.CloseProject, true);
+						Current.Dispatcher.InvokeIfRequired(() => Current.IProjectService.CloseProject(true));
 						System.Threading.Thread.Sleep(1000);
 					}
 					catch (Exception ex)

@@ -26,6 +26,7 @@ using Altaxo.Main;
 using Altaxo.Serialization;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Runtime.Serialization;
 
 namespace Altaxo
@@ -36,7 +37,8 @@ namespace Altaxo
 	public class AltaxoDocument
 		:
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
-		Main.INamedObjectCollection
+		Main.INamedObjectCollection,
+		Main.IProject
 	{
 		/// <summary>Collection of all data tables in this document.</summary>
 		protected Altaxo.Data.DataTableCollection _dataTables = null; // The root of all the data
@@ -67,12 +69,12 @@ namespace Altaxo
 		[NonSerialized]
 		protected bool _isDirty = false;
 
-		public event EventHandler DirtyChanged;
+		public event EventHandler IsDirtyChanged;
 
 		public AltaxoDocument()
 		{
 			_dataTables = new Altaxo.Data.DataTableCollection(this);
-			var commonDictionaryForGraphs = new SortedDictionary<string, IProjectItem>();
+			var commonDictionaryForGraphs = new SortedDictionary<string, Graph.GraphDocumentBase>();
 
 			_graphs = new Graph.Gdi.GraphDocumentCollection(this, commonDictionaryForGraphs);
 			_graphs3D = new Graph.Graph3D.GraphDocumentCollection(this, commonDictionaryForGraphs);
@@ -85,7 +87,7 @@ namespace Altaxo
 
 		#region Serialization
 
-		public void SaveToZippedFile(ICompressedFileContainerStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
+		public void SaveToZippedFile(ZipArchive zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
 		{
 			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
 			int compressionLevel = 1;
@@ -96,13 +98,16 @@ namespace Altaxo
 			{
 				try
 				{
-					zippedStream.StartFile("Tables/" + table.Name + ".xml", compressionLevel);
-					//ZipEntry ZipEntry = new ZipEntry("Tables/"+table.Name+".xml");
-					//zippedStream.PutNextEntry(ZipEntry);
-					//zippedStream.SetLevel(0);
-					info.BeginWriting(zippedStream.Stream);
-					info.AddValue("Table", table);
-					info.EndWriting();
+					var zipEntry = zippedStream.CreateEntry("Tables/" + table.Name + ".xml");
+					using (var zs = zipEntry.Open())
+					{
+						//ZipEntry ZipEntry = new ZipEntry("Tables/"+table.Name+".xml");
+						//zippedStream.PutNextEntry(ZipEntry);
+						//zippedStream.SetLevel(0);
+						info.BeginWriting(zs);
+						info.AddValue("Table", table);
+						info.EndWriting();
+					}
 				}
 				catch (Exception exc)
 				{
@@ -115,13 +120,16 @@ namespace Altaxo
 			{
 				try
 				{
-					zippedStream.StartFile("Graphs/" + graph.Name + ".xml", compressionLevel);
-					//ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
-					//zippedStream.PutNextEntry(ZipEntry);
-					//zippedStream.SetLevel(0);
-					info.BeginWriting(zippedStream.Stream);
-					info.AddValue("Graph", graph);
-					info.EndWriting();
+					var zipEntry = zippedStream.CreateEntry("Graphs/" + graph.Name + ".xml");
+					using (var zs = zipEntry.Open())
+					{
+						//ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
+						//zippedStream.PutNextEntry(ZipEntry);
+						//zippedStream.SetLevel(0);
+						info.BeginWriting(zs);
+						info.AddValue("Graph", graph);
+						info.EndWriting();
+					}
 				}
 				catch (Exception exc)
 				{
@@ -134,13 +142,16 @@ namespace Altaxo
 			{
 				try
 				{
-					zippedStream.StartFile("Graphs3D/" + graph.Name + ".xml", compressionLevel);
-					//ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
-					//zippedStream.PutNextEntry(ZipEntry);
-					//zippedStream.SetLevel(0);
-					info.BeginWriting(zippedStream.Stream);
-					info.AddValue("Graph", graph);
-					info.EndWriting();
+					var zipEntry = zippedStream.CreateEntry("Graphs3D/" + graph.Name + ".xml");
+					using (var zs = zipEntry.Open())
+					{
+						//ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
+						//zippedStream.PutNextEntry(ZipEntry);
+						//zippedStream.SetLevel(0);
+						info.BeginWriting(zs);
+						info.AddValue("Graph", graph);
+						info.EndWriting();
+					}
 				}
 				catch (Exception exc)
 				{
@@ -156,13 +167,16 @@ namespace Altaxo
 
 				try
 				{
-					zippedStream.StartFile("TableLayouts/" + layout.Name + ".xml", compressionLevel);
-					//ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
-					//zippedStream.PutNextEntry(ZipEntry);
-					//zippedStream.SetLevel(0);
-					info.BeginWriting(zippedStream.Stream);
-					info.AddValue("WorksheetLayout", layout);
-					info.EndWriting();
+					var zipEntry = zippedStream.CreateEntry("TableLayouts/" + layout.Name + ".xml");
+					using (var zs = zipEntry.Open())
+					{
+						//ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
+						//zippedStream.PutNextEntry(ZipEntry);
+						//zippedStream.SetLevel(0);
+						info.BeginWriting(zs);
+						info.AddValue("WorksheetLayout", layout);
+						info.EndWriting();
+					}
 				}
 				catch (Exception exc)
 				{
@@ -175,121 +189,146 @@ namespace Altaxo
 			{
 				try
 				{
-					zippedStream.StartFile("FitFunctionScripts/" + fit.CreationTime.ToString() + ".xml", compressionLevel);
+					var zipEntry = zippedStream.CreateEntry("FitFunctionScripts/" + fit.CreationTime.ToString() + ".xml");
 					//ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
 					//zippedStream.PutNextEntry(ZipEntry);
 					//zippedStream.SetLevel(0);
-					info.BeginWriting(zippedStream.Stream);
-					info.AddValue("FitFunctionScript", fit);
-					info.EndWriting();
+					using (var zs = zipEntry.Open())
+					{
+						info.BeginWriting(zs);
+						info.AddValue("FitFunctionScript", fit);
+						info.EndWriting();
+					}
 				}
 				catch (Exception exc)
 				{
 					errorText.Append(exc.ToString());
 				}
 			}
-
-			// 5th, we save all folder properties
-			foreach (var folderProperty in this._projectFolderProperties)
 			{
-				try
+				// 5th, we save all folder properties
+				foreach (var folderProperty in this._projectFolderProperties)
 				{
-					zippedStream.StartFile("FolderProperties/" + folderProperty.Name + ".xml", compressionLevel);
-					//ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
-					//zippedStream.PutNextEntry(ZipEntry);
-					//zippedStream.SetLevel(0);
-					info.BeginWriting(zippedStream.Stream);
-					info.AddValue("FolderProperty", folderProperty);
-					info.EndWriting();
-				}
-				catch (Exception exc)
-				{
-					errorText.Append(exc.ToString());
+					try
+					{
+						var zipEntry = zippedStream.CreateEntry("FolderProperties/" + folderProperty.Name + ".xml");
+						//ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
+						//zippedStream.PutNextEntry(ZipEntry);
+						//zippedStream.SetLevel(0);
+						using (var zs = zipEntry.Open())
+						{
+							info.BeginWriting(zs);
+							info.AddValue("FolderProperty", folderProperty);
+							info.EndWriting();
+						}
+					}
+					catch (Exception exc)
+					{
+						errorText.Append(exc.ToString());
+					}
 				}
 			}
 
-			// nun noch den DocumentIdentifier abspeichern
-			zippedStream.StartFile("DocumentInformation.xml", compressionLevel);
-			info.BeginWriting(zippedStream.Stream);
-			info.AddValue("DocumentInformation", _documentInformation);
-			info.EndWriting();
-
+			{
+				// nun noch den DocumentIdentifier abspeichern
+				var zipEntry = zippedStream.CreateEntry("DocumentInformation.xml");
+				using (var zs = zipEntry.Open())
+				{
+					info.BeginWriting(zs);
+					info.AddValue("DocumentInformation", _documentInformation);
+					info.EndWriting();
+				}
+			}
 			//  Current.Console.WriteLine("Saving took {0} sec.", (DateTime.UtcNow - time1).TotalSeconds);
 
 			if (errorText.Length != 0)
 				throw new ApplicationException(errorText.ToString());
 		}
 
-		public void RestoreFromZippedFile(ICompressedFileContainer zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info)
+		public void RestoreFromZippedFile(ZipArchive zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info)
 		{
 			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
 
-			foreach (IFileContainerItem zipEntry in zipFile)
+			foreach (var zipEntry in zipFile.Entries)
 			{
 				try
 				{
-					if (!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Tables/"))
+					if (zipEntry.FullName.StartsWith("Tables/"))
 					{
-						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
-						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("Table", null);
-						if (readedobject is Altaxo.Data.DataTable)
-							this._dataTables.Add((Altaxo.Data.DataTable)readedobject);
-						info.EndReading();
+						using (var zipinpstream = zipEntry.Open())
+						{
+							info.BeginReading(zipinpstream);
+							object readedobject = info.GetValue("Table", null);
+							if (readedobject is Altaxo.Data.DataTable)
+								this._dataTables.Add((Altaxo.Data.DataTable)readedobject);
+							info.EndReading();
+						}
 					}
-					else if (!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Graphs/"))
+					else if (zipEntry.FullName.StartsWith("Graphs/"))
 					{
-						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
-						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("Graph", null);
-						if (readedobject is Graph.Gdi.GraphDocument)
-							this._graphs.Add((Graph.Gdi.GraphDocument)readedobject);
-						info.EndReading();
+						using (var zipinpstream = zipEntry.Open())
+						{
+							info.BeginReading(zipinpstream);
+							object readedobject = info.GetValue("Graph", null);
+							if (readedobject is Graph.Gdi.GraphDocument)
+								this._graphs.Add((Graph.Gdi.GraphDocument)readedobject);
+							info.EndReading();
+						}
 					}
-					else if (!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Graphs3D/"))
+					else if (zipEntry.FullName.StartsWith("Graphs3D/"))
 					{
-						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
-						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("Graph", null);
-						if (readedobject is Graph.Graph3D.GraphDocument)
-							this._graphs3D.Add((Graph.Graph3D.GraphDocument)readedobject);
-						info.EndReading();
+						using (var zipinpstream = zipEntry.Open())
+						{
+							info.BeginReading(zipinpstream);
+							object readedobject = info.GetValue("Graph", null);
+							if (readedobject is Graph.Graph3D.GraphDocument)
+								this._graphs3D.Add((Graph.Graph3D.GraphDocument)readedobject);
+							info.EndReading();
+						}
 					}
-					else if (!zipEntry.IsDirectory && zipEntry.Name.StartsWith("TableLayouts/"))
+					else if (zipEntry.FullName.StartsWith("TableLayouts/"))
 					{
-						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
-						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("WorksheetLayout", null);
-						if (readedobject is Altaxo.Worksheet.WorksheetLayout)
-							this._tableLayouts.Add((Altaxo.Worksheet.WorksheetLayout)readedobject);
-						info.EndReading();
+						using (var zipinpstream = zipEntry.Open())
+						{
+							info.BeginReading(zipinpstream);
+							object readedobject = info.GetValue("WorksheetLayout", null);
+							if (readedobject is Altaxo.Worksheet.WorksheetLayout)
+								this._tableLayouts.Add((Altaxo.Worksheet.WorksheetLayout)readedobject);
+							info.EndReading();
+						}
 					}
-					else if (!zipEntry.IsDirectory && zipEntry.Name.StartsWith("FitFunctionScripts/"))
+					else if (zipEntry.FullName.StartsWith("FitFunctionScripts/"))
 					{
-						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
-						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("FitFunctionScript", null);
-						if (readedobject is Altaxo.Scripting.FitFunctionScript)
-							this._fitFunctionScripts.Add((Altaxo.Scripting.FitFunctionScript)readedobject);
-						info.EndReading();
+						using (var zipinpstream = zipEntry.Open())
+						{
+							info.BeginReading(zipinpstream);
+							object readedobject = info.GetValue("FitFunctionScript", null);
+							if (readedobject is Altaxo.Scripting.FitFunctionScript)
+								this._fitFunctionScripts.Add((Altaxo.Scripting.FitFunctionScript)readedobject);
+							info.EndReading();
+						}
 					}
-					else if (!zipEntry.IsDirectory && zipEntry.Name.StartsWith("FolderProperties/"))
+					else if (zipEntry.FullName.StartsWith("FolderProperties/"))
 					{
-						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
-						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("FolderProperty", null);
-						if (readedobject is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
-							this._projectFolderProperties.Add((Altaxo.Main.Properties.ProjectFolderPropertyDocument)readedobject);
-						info.EndReading();
+						using (var zipinpstream = zipEntry.Open())
+						{
+							info.BeginReading(zipinpstream);
+							object readedobject = info.GetValue("FolderProperty", null);
+							if (readedobject is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+								this._projectFolderProperties.Add((Altaxo.Main.Properties.ProjectFolderPropertyDocument)readedobject);
+							info.EndReading();
+						}
 					}
-					else if (!zipEntry.IsDirectory && zipEntry.Name == "DocumentInformation.xml")
+					else if (zipEntry.FullName == "DocumentInformation.xml")
 					{
-						System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
-						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("DocumentInformation", null);
-						if (readedobject is DocumentInformation)
-							this._documentInformation = (DocumentInformation)readedobject;
-						info.EndReading();
+						using (var zipinpstream = zipEntry.Open())
+						{
+							info.BeginReading(zipinpstream);
+							object readedobject = info.GetValue("DocumentInformation", null);
+							if (readedobject is DocumentInformation)
+								this._documentInformation = (DocumentInformation)readedobject;
+							info.EndReading();
+						}
 					}
 				}
 				catch (Exception exc)
@@ -371,8 +410,8 @@ namespace Altaxo
 
 		protected virtual void OnDirtyChanged()
 		{
-			if (null != DirtyChanged)
-				DirtyChanged(this, EventArgs.Empty);
+			if (null != IsDirtyChanged)
+				IsDirtyChanged(this, EventArgs.Empty);
 		}
 
 		public bool IsDirty
@@ -532,7 +571,7 @@ namespace Altaxo
 		/// <value>
 		/// The project item types.
 		/// </value>
-		public static IEnumerable<System.Type> ProjectItemTypes
+		public IEnumerable<System.Type> ProjectItemTypes
 		{
 			get
 			{
@@ -548,7 +587,7 @@ namespace Altaxo
 		/// </summary>
 		/// <param name="type">The type of project item.</param>
 		/// <returns>The root path of this type of item.</returns>
-		public static AbsoluteDocumentPath GetRootPathForProjectItemType(System.Type type)
+		public AbsoluteDocumentPath GetRootPathForProjectItemType(System.Type type)
 		{
 			if (type == typeof(Altaxo.Data.DataTable))
 				return AbsoluteDocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
@@ -568,7 +607,7 @@ namespace Altaxo
 		/// <param name="item">The item.</param>
 		/// <returns>The document part for the project item, deduces from its type and its name.</returns>
 		/// <exception cref="System.ArgumentNullException">item</exception>
-		public static AbsoluteDocumentPath GetDocumentPathForProjectItem(IProjectItem item)
+		public AbsoluteDocumentPath GetDocumentPathForProjectItem(IProjectItem item)
 		{
 			if (null == item)
 				throw new ArgumentNullException("item");
@@ -681,18 +720,18 @@ namespace Altaxo
 			else if (null != (graphGdi = item as Altaxo.Graph.Gdi.GraphDocument))
 			{
 				if (graphGdi.Name == null || graphGdi.Name == string.Empty)
-					graphGdi.Name = Current.Project.GraphDocumentCollection.FindNewName();
+					graphGdi.Name = Current.Project.GraphDocumentCollection.FindNewItemName();
 				else if (Current.Project.GraphDocumentCollection.Contains(graphGdi.Name))
-					graphGdi.Name = Current.Project.GraphDocumentCollection.FindNewName(graphGdi.Name);
+					graphGdi.Name = Current.Project.GraphDocumentCollection.FindNewItemName(graphGdi.Name);
 
 				this.GraphDocumentCollection.Add((Altaxo.Graph.Gdi.GraphDocument)item);
 			}
 			else if (null != (graph3D = item as Altaxo.Graph.Graph3D.GraphDocument))
 			{
 				if (graph3D.Name == null || graph3D.Name == string.Empty)
-					graph3D.Name = Current.Project.Graph3DDocumentCollection.FindNewName();
+					graph3D.Name = Current.Project.Graph3DDocumentCollection.FindNewItemName();
 				else if (Current.Project.Graph3DDocumentCollection.Contains(graph3D.Name))
-					graph3D.Name = Current.Project.Graph3DDocumentCollection.FindNewName(graph3D.Name);
+					graph3D.Name = Current.Project.Graph3DDocumentCollection.FindNewItemName(graph3D.Name);
 
 				this.Graph3DDocumentCollection.Add((Altaxo.Graph.Graph3D.GraphDocument)item);
 			}

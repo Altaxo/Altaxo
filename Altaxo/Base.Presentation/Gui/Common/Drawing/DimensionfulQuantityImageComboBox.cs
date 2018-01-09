@@ -154,7 +154,7 @@ namespace Altaxo.Gui.Common.Drawing
 				if (null == UnitEnvironment)
 					throw new InvalidOperationException("The value can not be set because the unit environment is not initialized yet");
 
-				var quant = new Units.DimensionfulQuantity(value, UnitEnvironment.DefaultUnit.Unit.SIUnit);
+				var quant = new DimensionfulQuantity(value, UnitEnvironment.DefaultUnit.Unit.SIUnit);
 				quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
 				SelectedQuantity = quant;
 			}

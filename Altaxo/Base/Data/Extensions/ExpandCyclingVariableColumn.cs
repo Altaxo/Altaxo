@@ -315,7 +315,7 @@ namespace Altaxo.Data
 				destTable.DataSource = dataSource;
 
 				Current.Project.DataTableCollection.Add(destTable);
-				Current.ProjectService.ShowDocumentView(destTable);
+				Current.IProjectService.ShowDocumentView(destTable);
 			}
 		}
 

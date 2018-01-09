@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,15 +62,17 @@ namespace Altaxo.Gui
 		public AltaxoMouseButtons Button { get; set; }
 
 		/// <summary>Gets the number of times the mouse button was pressed and released. </summary>
-		private int Clicks { get; set; }
+		public int Clicks { get; set; }
 
 		/// <summary>Gets a signed count of the number of detents the mouse wheel has rotated. A detent is one notch of the mouse wheel. </summary>
-		private int Delta { get; set; }
+		public int Delta { get; set; }
 
 		/// <summary>Gets the x-coordinate of the mouse during the generating mouse event.</summary>
-		private double X { get; set; }
+		public double X { get; set; }
 
 		/// <summary>Gets the y-coordinate of the mouse during the generating mouse event. </summary>
-		private double Y { get; set; }
+		public double Y { get; set; }
+
+		public PointD2D Position { get { return new PointD2D(X, Y); } set { X = value.X; Y = value.Y; } }
 	}
 }

@@ -39,8 +39,10 @@ namespace Altaxo.Gui
 
 			foreach (var name in imageResourceNames)
 			{
-				var bitmapSource = WpfResourceService.Instance.GetBitmapSource(name);
-				_imageList.Add(bitmapSource);
+				if (PresentationResourceService.InstanceAvailable)
+					_imageList.Add(PresentationResourceService.GetBitmapSource(name));
+				else
+					_imageList.Add(null);
 			}
 		}
 

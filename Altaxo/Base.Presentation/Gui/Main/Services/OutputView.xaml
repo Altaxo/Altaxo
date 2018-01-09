@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="Altaxo.Gui.Main.Services.OutputView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <TextBox Name="_view">
+            <TextBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Name="_menuTextAppendEnabled" Header="Enabled" IsCheckable="True" IsChecked="False" Click="EhMenuTextAppendEnabled1" />
+                </ContextMenu>
+            </TextBox.ContextMenu>
+        </TextBox>
+    </Grid>
+</UserControl>

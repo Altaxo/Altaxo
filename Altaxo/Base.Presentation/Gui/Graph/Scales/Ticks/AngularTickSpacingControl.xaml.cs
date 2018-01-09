@@ -81,5 +81,5 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 		public event EventHandler MajorTicksChanged;
 	}
 
-		#endregion IAngularTickSpacingView
+	#endregion IAngularTickSpacingView
 }

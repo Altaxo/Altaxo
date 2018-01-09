@@ -196,8 +196,7 @@ namespace Altaxo.Graph.Gdi.Plot
 				}
 				info.CloseArray(count);
 
-				s._plotGroupStyles = (PlotGroupStyleCollection)info.GetValue("GroupStyles", s);
-				if (null != s._plotGroupStyles) s._plotGroupStyles.ParentObject = s;
+				s.ChildSetMember(ref s._plotGroupStyles, (PlotGroupStyleCollection)info.GetValue("GroupStyles", s));
 
 				return s;
 			}

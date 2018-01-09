@@ -29,7 +29,8 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
-	public class Week : IUnit
+	[UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
+	public class Week : UnitBase, IUnit
 	{
 		public const double OneWeekInSeconds = 7 * 24 * 3600;
 

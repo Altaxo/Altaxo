@@ -210,7 +210,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 			set { this._guiIndependentOnShiftingGroupStyles.IsChecked = value; }
 		}
 
-
 		#endregion IXYPlotScatterStyleView
 
 		private void EhIndependentColorChanged(object sender, RoutedEventArgs e)

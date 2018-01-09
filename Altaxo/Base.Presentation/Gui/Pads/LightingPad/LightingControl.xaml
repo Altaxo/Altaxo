@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="Altaxo.Gui.Pads.LightingPad.LightingControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Altaxo.Gui.Pads.LightingPad"
+						 xmlns:light="clr-namespace:Altaxo.Gui.Graph.Graph3D.Lighting"
+             mc:Ignorable="d">
+	<ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+		<Grid Margin="4,0,4,0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Expander Header="Ambient" Grid.Row="0" IsExpanded="True" Background="AliceBlue">
+				<light:HemisphericAmbientLightControl x:Name="_guiAmbientControl" ValueChanged="EhValueChanged" />
+			</Expander>
+			<Expander Header="Light1" Grid.Row="2" Background="BlanchedAlmond">
+				<light:DiscreteLightControl x:Name="_guiDiscreteLight0" SelectedValueChanged="EhDiscreteLightChanged" />
+			</Expander>
+			<Expander Header="Light2" Grid.Row="4" Background="AliceBlue">
+				<light:DiscreteLightControl x:Name="_guiDiscreteLight1"  SelectedValueChanged="EhDiscreteLightChanged" />
+			</Expander>
+			<Expander Header="Light3" Grid.Row="6" Background="BlanchedAlmond">
+				<light:DiscreteLightControl x:Name="_guiDiscreteLight2"  SelectedValueChanged="EhDiscreteLightChanged" />
+			</Expander>
+			<Expander Header="Light4" Grid.Row="8" Background="AliceBlue">
+				<light:DiscreteLightControl x:Name="_guiDiscreteLight3" SelectedValueChanged="EhDiscreteLightChanged" />
+			</Expander>
+		</Grid>
+	</ScrollViewer>
+</UserControl>

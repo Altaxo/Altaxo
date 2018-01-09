@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -491,7 +491,7 @@ namespace Altaxo.Main
 				var docNode = InternalDocumentNode;
 				ClearDocNode();
 
-				if (!(sender is AltaxoDocument)) // if the whole document is disposed, there is no point in trying to watch something
+				if (!(sender is IProject)) // if the whole project is disposed, there is no point in trying to watch something
 				{
 					// note Dispose is designed to let the hierarchy from child to parent (root) valid, but not from root to child!
 					// thus trying to get an actual document path here is in must cases unsuccessfull. We have to rely on our stored path, and that it was always updated!
@@ -585,11 +585,11 @@ namespace Altaxo.Main
 		{
 			get
 			{
-				var currentProject = Current.Project;
-				if (null == currentProject) // probably we are loading the AltaxoDocument now, and it is not set yet
+				var currentProject = Current.IProjectService.CurrentProject;
+				if (null == currentProject) // probably we are loading the project now, and it is not set yet
 				{
 					var rootNode = AbsoluteDocumentPath.GetRootNode(this);
-					currentProject = rootNode as AltaxoDocument;
+					currentProject = rootNode as IProject;
 
 					if (null == currentProject)
 					{

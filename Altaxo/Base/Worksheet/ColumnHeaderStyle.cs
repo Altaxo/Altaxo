@@ -120,9 +120,9 @@ namespace Altaxo.Worksheet
 			}
 			else
 			{
-				dc.DrawString(columnnumber, gdiTextFont, _textBrush, numRectangle, _leftUpperTextFormat);
-				dc.DrawString(kindandgroup, gdiTextFont, _textBrush, numRectangle, _rightUpperTextFormat);
-				dc.DrawString(data.Name, gdiTextFont, _textBrush, nameRectangle, _textFormat);
+				dc.DrawString(columnnumber, gdiTextFont, TextBrush, numRectangle, _leftUpperTextFormat);
+				dc.DrawString(kindandgroup, gdiTextFont, TextBrush, numRectangle, _rightUpperTextFormat);
+				dc.DrawString(data.Name, gdiTextFont, TextBrush, nameRectangle, _textFormat);
 			}
 		}
 

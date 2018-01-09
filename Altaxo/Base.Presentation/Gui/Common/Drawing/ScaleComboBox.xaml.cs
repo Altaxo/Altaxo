@@ -32,6 +32,9 @@ using System.Windows.Media;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+	using Altaxo.Units;
+	using Altaxo.Units.Dimensionless;
+
 	public partial class ScaleComboBox : DimensionfulQuantityImageComboBox
 	{
 		/// <summary>The items here were stored for the x scale only.</summary>
@@ -46,7 +49,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		static ScaleComboBox()
 		{
-			SelectedQuantityProperty.OverrideMetadata(typeof(ScaleComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(1, Units.Dimensionless.Unity.Instance)));
+			SelectedQuantityProperty.OverrideMetadata(typeof(ScaleComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(1, Unity.Instance)));
 		}
 
 		public ScaleComboBox()
@@ -57,12 +60,12 @@ namespace Altaxo.Gui.Common.Drawing
 			InitializeComponent();
 
 			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Dimensionless.Unity.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
+				Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, Unity.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
 
 			_img.Source = GetImage(SelectedQuantityInSIUnits, _isForYScale);
 		}
 
-		private static ValidationResult EhValidateQuantity(Units.DimensionfulQuantity quantity)
+		private static ValidationResult EhValidateQuantity(Altaxo.Units.DimensionfulQuantity quantity)
 		{
 			string error = null;
 			double val = quantity.Value;
@@ -97,7 +100,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override ImageSource GetItemImage(object item)
 		{
-			double value = ((Units.DimensionfulQuantity)item).AsValueInSIUnits;
+			double value = ((DimensionfulQuantity)item).AsValueInSIUnits;
 			ImageSource result;
 			if (_isForYScale)
 			{

@@ -123,15 +123,15 @@ namespace GongSolutions.Wpf.DragDrop.Utilities
 				throw new ArgumentException("The provided items control type is not derived from ItemsControl.");
 
 			var info = new ItemsControlInformation
-					{
-						ItemsControlType = itemsControlType,
-						ItemContainerType = itemsContainerType,
-						CanSelectMultipleItems = CanSelectMultipleItems,
-						GetSelectedItems = GetSelectedItems,
-						GetIsItemSelected = GetIsItemSelected,
-						SetIsItemSelected = SetIsItemSelected,
-						GetOrientation = GetOrientation
-					};
+			{
+				ItemsControlType = itemsControlType,
+				ItemContainerType = itemsContainerType,
+				CanSelectMultipleItems = CanSelectMultipleItems,
+				GetSelectedItems = GetSelectedItems,
+				GetIsItemSelected = GetIsItemSelected,
+				SetIsItemSelected = SetIsItemSelected,
+				GetOrientation = GetOrientation
+			};
 
 			if (!_itemsControlRegistrationDict.ContainsKey(itemsControlType))
 			{

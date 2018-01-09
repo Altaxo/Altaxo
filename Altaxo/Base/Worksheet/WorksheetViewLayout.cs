@@ -34,7 +34,7 @@ namespace Altaxo.Worksheet
 	/// Stores information how a worksheet is shown in the view. Currently, this instance stores a link to the <see cref="WorksheetLayout"/> that defines the colors and the widths of the table columns.
 	/// Later, it is planned to additionally store here the positions of horizontal and vertical scroll values in order to be able to restore those settings.
 	/// </summary>
-	public class WorksheetViewLayout : IProjectItemViewModel
+	public class WorksheetViewLayout : IProjectItemPresentationModel
 	{
 		private WorksheetLayout _worksheetLayout;
 
@@ -122,7 +122,7 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-		IProjectItem IProjectItemViewModel.ProjectItem
+		IProjectItem IProjectItemPresentationModel.Document
 		{
 			get
 			{

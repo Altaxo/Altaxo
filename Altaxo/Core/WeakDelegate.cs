@@ -68,24 +68,32 @@ namespace Altaxo
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the target.
+		/// Gets all delegates that are still alive (and removes the dead targets by the way).
+		/// If set, it removes the present targets and replaces them with the provided target(s).
+		/// </summary>
+		/// <value>
+		/// The target.
+		/// </value>
 		public TDelegate Target
 		{
 			get
 			{
 				Delegate combinedTarget = null;
-				foreach (MethodTarget mt in _targets.ToArray())
+				foreach (MethodTarget methodTarget in _targets.ToArray())
 				{
-					var wr = mt.Reference;
-					// Static target || alive instance target
-					if (null == wr || null != wr.Target)
+					var weakReference = methodTarget.Reference;
+					//     Static target      ||    alive instance target
+					if (null == weakReference || null != weakReference.Target)
 					{
-						var newDelegate = Delegate.CreateDelegate(typeof(TDelegate), wr?.Target, mt.Method);
+						var newDelegate = Delegate.CreateDelegate(typeof(TDelegate), weakReference?.Target, methodTarget.Method);
 
 						combinedTarget = Delegate.Combine(combinedTarget, newDelegate);
 					}
-					else
+					else // Target is already garbage collected
 					{
-						_targets.Remove(mt);
+						_targets.Remove(methodTarget); // thus remove it
 					}
 				}
 

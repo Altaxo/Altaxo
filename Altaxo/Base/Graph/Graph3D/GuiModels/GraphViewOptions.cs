@@ -34,7 +34,7 @@ namespace Altaxo.Graph.Graph3D.GuiModels
 	/// <summary>
 	/// Stores information about how a graph is shown in the graph view.
 	/// </summary>
-	public class GraphViewOptions : IProjectItemViewModel
+	public class GraphViewOptions : IProjectItemPresentationModel
 	{
 		private Altaxo.Graph.Graph3D.GraphDocument _graphDocument;
 
@@ -111,7 +111,7 @@ namespace Altaxo.Graph.Graph3D.GuiModels
 
 		public RootLayerMarkersVisibility? RootLayerMarkersVisibility { get { return _rootLayerMarkersVisibility; } }
 
-		IProjectItem IProjectItemViewModel.ProjectItem
+		IProjectItem IProjectItemPresentationModel.Document
 		{
 			get
 			{

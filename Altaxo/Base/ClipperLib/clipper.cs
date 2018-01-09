@@ -775,7 +775,7 @@ namespace ClipperLib
 		private TEdge FindNextLocMin(TEdge E)
 		{
 			TEdge E2;
-			for (;;)
+			for (; ; )
 			{
 				while (E.Bot != E.Prev.Bot || E.Curr == E.Top) E = E.Next;
 				if (E.Dx != horizontal && E.Prev.Dx != horizontal) break;
@@ -940,7 +940,7 @@ namespace ClipperLib
 
 			//2. Remove duplicate vertices, and (when closed) collinear edges ...
 			TEdge E = eStart, eLoopStop = eStart;
-			for (;;)
+			for (; ; )
 			{
 				//nb: allows matching start and end points when not Closed ...
 				if (E.Curr == E.Next.Curr && (Closed || E.Next != eStart))
@@ -1006,7 +1006,7 @@ namespace ClipperLib
 				locMin.RightBound = E;
 				locMin.RightBound.Side = EdgeSide.esRight;
 				locMin.RightBound.WindDelta = 0;
-				for (;;)
+				for (; ; )
 				{
 					if (E.Bot.X != E.Prev.Top.X) ReverseHorizontal(E);
 					if (E.Next.OutIdx == Skip) break;
@@ -1026,7 +1026,7 @@ namespace ClipperLib
 			//open paths have matching start and end points ...
 			if (E.Prev.Bot == E.Prev.Top) E = E.Next;
 
-			for (;;)
+			for (; ; )
 			{
 				E = FindNextLocMin(E);
 				if (E == EMin) break;
@@ -2856,7 +2856,7 @@ namespace ClipperLib
 			}
 
 			OutPt op1 = null;
-			for (;;) //loop through consec. horizontal edges
+			for (; ; ) //loop through consec. horizontal edges
 			{
 				bool IsLastHorz = (horzEdge == eLastHorz);
 				TEdge e = GetNextInAEL(horzEdge, dir);
@@ -3568,7 +3568,7 @@ namespace ClipperLib
 			outRec.BottomPt = null;
 			OutPt pp = outRec.Pts;
 			bool preserveCol = PreserveCollinear || StrictlySimple;
-			for (;;)
+			for (; ; )
 			{
 				if (pp.Prev == pp || pp.Prev == pp.Next)
 				{

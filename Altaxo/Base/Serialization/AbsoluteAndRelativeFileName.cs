@@ -156,7 +156,7 @@ namespace Altaxo.Serialization
 			if (File.Exists(_absoluteFileName))
 				return _absoluteFileName;
 
-			var projectFile = Current.ProjectService.CurrentProjectFileName;
+			var projectFile = Current.IProjectService.CurrentProjectFileName;
 
 			if (string.IsNullOrEmpty(projectFile))
 				return null;
@@ -215,7 +215,7 @@ namespace Altaxo.Serialization
 		/// <returns><c>True</c> if the relative file name could be calculated (if the project has a name, and the project file is in the same volume as the absolute file name). Otherwise , <c>false</c> is returned.</returns>
 		private bool TrySetRelativeFileName()
 		{
-			string projectFile = Current.ProjectService.CurrentProjectFileName;
+			string projectFile = Current.IProjectService.CurrentProjectFileName;
 
 			if (null == projectFile)
 			{

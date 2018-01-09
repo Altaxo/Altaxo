@@ -184,8 +184,6 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 		/// </summary>
 		public virtual bool IsZConstant { get { return true; } }
 
-
-
 		#region Helper functions
 
 		/// <summary>
@@ -219,6 +217,6 @@ namespace Altaxo.Graph.Gdi.Plot.Data
 			return result;
 		}
 
-		#endregion
+		#endregion Helper functions
 	}
 }

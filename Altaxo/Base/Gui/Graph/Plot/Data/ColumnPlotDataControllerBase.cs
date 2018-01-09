@@ -577,8 +577,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 					_doc.GroupNumber = resultingGroupNumber.Value;
 			}
 
-
-
 			return ApplyEnd(true, disposeController);
 		}
 
@@ -942,7 +940,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			}
 
 			_matchingTables = fittingTables2;
-			Current.Gui.BeginExecute(() => _view?.MatchingTables_Initialize(_matchingTables));
+			Current.Dispatcher.InvokeAndForget(() => _view?.MatchingTables_Initialize(_matchingTables));
 		}
 
 		private IEnumerable<Tuple<DataTable, int>> GetTablesWithGroupThatFitExistingPlotColumns(System.Threading.CancellationToken token)

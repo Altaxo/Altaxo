@@ -48,7 +48,10 @@ namespace Altaxo.Units
 			var prefix = (SIPrefix)info.GetValue("Prefix", parent);
 			var unit = (IUnit)info.GetValue("Unit", parent);
 
-			return new DimensionfulQuantity(value, prefix, unit);
+			if (null == unit)
+				return DimensionfulQuantity.Empty;
+			else
+				return new DimensionfulQuantity(value, prefix, unit);
 		}
 	}
 }

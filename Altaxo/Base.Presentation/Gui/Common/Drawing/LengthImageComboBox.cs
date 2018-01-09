@@ -31,19 +31,22 @@ using System.Windows;
 
 namespace Altaxo.Gui.Common.Drawing
 {
+	using Altaxo.Units;
+	using AUL = Altaxo.Units.Length;
+
 	public class LengthImageComboBox : DimensionfulQuantityImageComboBox
 	{
 		static LengthImageComboBox()
 		{
-			SelectedQuantityProperty.OverrideMetadata(typeof(LengthImageComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, Units.Length.Point.Instance)));
+			SelectedQuantityProperty.OverrideMetadata(typeof(LengthImageComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, AUL.Point.Instance)));
 		}
 
 		public double SelectedQuantityAsValueInPoints
 		{
-			get { return SelectedQuantity.AsValueIn(Units.Length.Point.Instance); }
+			get { return SelectedQuantity.AsValueIn(AUL.Point.Instance); }
 			set
 			{
-				var quant = new Units.DimensionfulQuantity(value, Units.Length.Point.Instance);
+				var quant = new DimensionfulQuantity(value, AUL.Point.Instance);
 				if (null != UnitEnvironment)
 					quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
 				SelectedQuantity = quant;

@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Units;
+using Altaxo.Units.Angle;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		static RotationComboBox()
 		{
-			SelectedQuantityProperty.OverrideMetadata(typeof(RotationComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, Units.Angle.Degree.Instance)));
+			SelectedQuantityProperty.OverrideMetadata(typeof(RotationComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, Degree.Instance)));
 		}
 
 		public RotationComboBox()
@@ -49,17 +50,17 @@ namespace Altaxo.Gui.Common.Drawing
 			InitializeComponent();
 
 			foreach (var e in _initialValues)
-				Items.Add(new ImageComboBoxItem(this, new Units.DimensionfulQuantity(e, Units.Angle.Degree.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
+				Items.Add(new ImageComboBoxItem(this, new DimensionfulQuantity(e, Degree.Instance).AsQuantityIn(UnitEnvironment.DefaultUnit)));
 
 			_img.Source = GetImage(SelectedQuantityAsValueInDegrees);
 		}
 
 		public double SelectedQuantityAsValueInDegrees
 		{
-			get { return SelectedQuantity.AsValueIn(Units.Angle.Degree.Instance); }
+			get { return SelectedQuantity.AsValueIn(Degree.Instance); }
 			set
 			{
-				var quant = new Units.DimensionfulQuantity(value, Units.Angle.Degree.Instance);
+				var quant = new DimensionfulQuantity(value, Degree.Instance);
 				if (null != UnitEnvironment)
 					quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
 				SelectedQuantity = quant;
@@ -79,7 +80,7 @@ namespace Altaxo.Gui.Common.Drawing
 
 		public override ImageSource GetItemImage(object item)
 		{
-			double val = ((Units.DimensionfulQuantity)item).AsValueIn(Units.Angle.Degree.Instance);
+			double val = ((DimensionfulQuantity)item).AsValueIn(Degree.Instance);
 			ImageSource result;
 			if (!_cachedImages.TryGetValue(val, out result))
 				_cachedImages.Add(val, result = GetImage(val));

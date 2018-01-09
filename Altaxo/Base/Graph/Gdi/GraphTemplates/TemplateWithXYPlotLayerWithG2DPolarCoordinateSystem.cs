@@ -128,7 +128,7 @@ namespace Altaxo.Graph.Gdi.GraphTemplates
 			if (string.IsNullOrEmpty(preferredGraphName))
 			{
 				string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(anyNameInSameFolder, "GRAPH");
-				graph.Name = Current.Project.GraphDocumentCollection.FindNewName(newnamebase);
+				graph.Name = Current.Project.GraphDocumentCollection.FindNewItemName(newnamebase);
 			}
 			else
 			{

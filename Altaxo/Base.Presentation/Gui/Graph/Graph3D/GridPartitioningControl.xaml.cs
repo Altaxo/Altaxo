@@ -46,13 +46,13 @@ namespace Altaxo.Gui.Graph.Graph3D
 
 		public QuantityWithUnitGuiEnvironment ZPartitionEnvironment { set { _guiZDefinitions.Environment = value; } }
 
-		public Units.DimensionfulQuantity DefaultXQuantity { set { _guiXDefinitions.DefaultQuantity = value; } }
+		public Altaxo.Units.DimensionfulQuantity DefaultXQuantity { set { _guiXDefinitions.DefaultQuantity = value; } }
 
-		public Units.DimensionfulQuantity DefaultYQuantity { set { _guiYDefinitions.DefaultQuantity = value; } }
+		public Altaxo.Units.DimensionfulQuantity DefaultYQuantity { set { _guiYDefinitions.DefaultQuantity = value; } }
 
-		public Units.DimensionfulQuantity DefaultZQuantity { set { _guiZDefinitions.DefaultQuantity = value; } }
+		public Altaxo.Units.DimensionfulQuantity DefaultZQuantity { set { _guiZDefinitions.DefaultQuantity = value; } }
 
-		public System.Collections.ObjectModel.ObservableCollection<Units.DimensionfulQuantity> XPartitionValues
+		public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> XPartitionValues
 		{
 			set
 			{
@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 			}
 		}
 
-		public System.Collections.ObjectModel.ObservableCollection<Units.DimensionfulQuantity> YPartitionValues
+		public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> YPartitionValues
 		{
 			set
 			{
@@ -68,7 +68,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 			}
 		}
 
-		public System.Collections.ObjectModel.ObservableCollection<Units.DimensionfulQuantity> ZPartitionValues
+		public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> ZPartitionValues
 		{
 			set
 			{

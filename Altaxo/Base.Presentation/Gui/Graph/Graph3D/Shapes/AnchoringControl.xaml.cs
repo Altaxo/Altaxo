@@ -34,6 +34,7 @@ using System.Windows.Controls;
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
 	using Altaxo.Units;
+	using AUL = Altaxo.Units.Length;
 
 	/// <summary>
 	/// Interaction logic for AnchoringControl.xaml
@@ -47,9 +48,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
 		private QuantityWithUnitGuiEnvironment _xSizeEnvironment, _ySizeEnvironment, _zSizeEnvironment;
 
-		private ChangeableRelativePercentUnit _percentLayerXSizeUnit = new ChangeableRelativePercentUnit("% X-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
-		private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("% Y-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
-		private ChangeableRelativePercentUnit _percentLayerZSizeUnit = new ChangeableRelativePercentUnit("% Z-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
+		private ChangeableRelativePercentUnit _percentLayerXSizeUnit = new ChangeableRelativePercentUnit("% X-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
+		private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("% Y-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
+		private ChangeableRelativePercentUnit _percentLayerZSizeUnit = new ChangeableRelativePercentUnit("% Z-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
 
 		public AnchoringControl()
 		{
@@ -92,9 +93,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 			_pivots[1] = pivotY;
 			_pivots[2] = pivotZ;
 
-			_percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(referenceSize.X, Units.Length.Point.Instance);
-			_percentLayerYSizeUnit.ReferenceQuantity = new DimensionfulQuantity(referenceSize.Y, Units.Length.Point.Instance);
-			_percentLayerZSizeUnit.ReferenceQuantity = new DimensionfulQuantity(referenceSize.Z, Units.Length.Point.Instance);
+			_percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(referenceSize.X, AUL.Point.Instance);
+			_percentLayerYSizeUnit.ReferenceQuantity = new DimensionfulQuantity(referenceSize.Y, AUL.Point.Instance);
+			_percentLayerZSizeUnit.ReferenceQuantity = new DimensionfulQuantity(referenceSize.Z, AUL.Point.Instance);
 			_xSizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerXSizeUnit);
 			_ySizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerYSizeUnit);
 			_zSizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerZSizeUnit);
@@ -102,9 +103,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 			_guiPivotX.UnitEnvironment = _xSizeEnvironment;
 			_guiPivotY.UnitEnvironment = _ySizeEnvironment;
 			_guiPivotZ.UnitEnvironment = _zSizeEnvironment;
-			_guiPivotX.SelectedQuantity = _pivots[0].IsAbsolute ? new Units.DimensionfulQuantity(_pivots[0].Value, Units.Length.Point.Instance) : new Units.DimensionfulQuantity(_pivots[0].Value * 100, _percentLayerXSizeUnit);
-			_guiPivotY.SelectedQuantity = _pivots[1].IsAbsolute ? new Units.DimensionfulQuantity(_pivots[1].Value, Units.Length.Point.Instance) : new Units.DimensionfulQuantity(_pivots[1].Value * 100, _percentLayerYSizeUnit);
-			_guiPivotZ.SelectedQuantity = _pivots[2].IsAbsolute ? new Units.DimensionfulQuantity(_pivots[2].Value, Units.Length.Point.Instance) : new Units.DimensionfulQuantity(_pivots[2].Value * 100, _percentLayerZSizeUnit);
+			_guiPivotX.SelectedQuantity = _pivots[0].IsAbsolute ? new DimensionfulQuantity(_pivots[0].Value, AUL.Point.Instance) : new DimensionfulQuantity(_pivots[0].Value * 100, _percentLayerXSizeUnit);
+			_guiPivotY.SelectedQuantity = _pivots[1].IsAbsolute ? new DimensionfulQuantity(_pivots[1].Value, AUL.Point.Instance) : new DimensionfulQuantity(_pivots[1].Value * 100, _percentLayerYSizeUnit);
+			_guiPivotZ.SelectedQuantity = _pivots[2].IsAbsolute ? new DimensionfulQuantity(_pivots[2].Value, AUL.Point.Instance) : new DimensionfulQuantity(_pivots[2].Value * 100, _percentLayerZSizeUnit);
 
 			if (CanUseRadioGridView())
 			{
@@ -229,7 +230,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 			if (object.ReferenceEquals(quant.Unit, _percentLayerXSizeUnit))
 				_pivots[0] = RADouble.NewRel(quant.Value / 100);
 			else
-				_pivots[0] = RADouble.NewAbs(quant.AsValueIn(Units.Length.Point.Instance));
+				_pivots[0] = RADouble.NewAbs(quant.AsValueIn(AUL.Point.Instance));
 
 			SetVisibilityOfSwitchButton();
 		}
@@ -240,7 +241,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 			if (object.ReferenceEquals(quant.Unit, _percentLayerYSizeUnit))
 				_pivots[1] = RADouble.NewRel(quant.Value / 100);
 			else
-				_pivots[1] = RADouble.NewAbs(quant.AsValueIn(Units.Length.Point.Instance));
+				_pivots[1] = RADouble.NewAbs(quant.AsValueIn(AUL.Point.Instance));
 
 			SetVisibilityOfSwitchButton();
 		}
@@ -251,7 +252,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 			if (object.ReferenceEquals(quant.Unit, _percentLayerZSizeUnit))
 				_pivots[2] = RADouble.NewRel(quant.Value / 100);
 			else
-				_pivots[2] = RADouble.NewAbs(quant.AsValueIn(Units.Length.Point.Instance));
+				_pivots[2] = RADouble.NewAbs(quant.AsValueIn(AUL.Point.Instance));
 
 			SetVisibilityOfSwitchButton();
 		}

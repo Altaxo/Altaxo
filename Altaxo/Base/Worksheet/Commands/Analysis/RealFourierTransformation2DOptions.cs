@@ -234,7 +234,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 		public double? ReplacementValueForInfiniteMatrixElements { get { return _replacementValueForInfiniteMatrixElements; } set { SetMemberAndRaiseSelfChanged(ref _replacementValueForInfiniteMatrixElements, value); } }
 
-		public int? DataPretreatmentCorrectionOrder { get { return _dataPretreatmentCorrectionOrder; } set { SetMemberAndRaiseSelfChanged(ref  _dataPretreatmentCorrectionOrder, value); } }
+		public int? DataPretreatmentCorrectionOrder { get { return _dataPretreatmentCorrectionOrder; } set { SetMemberAndRaiseSelfChanged(ref _dataPretreatmentCorrectionOrder, value); } }
 
 		public Altaxo.Calc.Fourier.Windows.IWindows2D FourierWindow
 		{

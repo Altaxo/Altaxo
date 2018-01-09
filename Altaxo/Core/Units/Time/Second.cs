@@ -29,6 +29,7 @@ using System.Text;
 
 namespace Altaxo.Units.Time
 {
+	[UnitDescription("Time", 0, 0, 1, 0, 0, 0, 0)]
 	public class Second : SIUnit
 	{
 		private static readonly Second _instance = new Second();
@@ -36,7 +37,7 @@ namespace Altaxo.Units.Time
 		public static Second Instance { get { return _instance; } }
 
 		private Second()
-			: base(0, 0, 1, 0, 0, 0, 0)
+				: base(0, 0, 1, 0, 0, 0, 0)
 		{
 		}
 

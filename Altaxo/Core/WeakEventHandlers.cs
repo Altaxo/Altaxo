@@ -583,7 +583,7 @@ namespace Altaxo
 
 	#endregion WeakActionHandler<T1,T2> (for an Action with two generic arguments)
 
-	#region WeakActionHandler<T1,T2> (for an Action with two generic arguments)
+	#region WeakActionHandler<T1,T2,T3> (for an Action with three generic arguments)
 
 	/// <summary>
 	/// Mediates an action event with two arguments, holding only a weak reference to the event sink.
@@ -677,5 +677,5 @@ namespace Altaxo
 		}
 	}
 
-	#endregion WeakActionHandler<T1,T2> (for an Action with two generic arguments)
+	#endregion WeakActionHandler<T1,T2,T3> (for an Action with three generic arguments)
 }

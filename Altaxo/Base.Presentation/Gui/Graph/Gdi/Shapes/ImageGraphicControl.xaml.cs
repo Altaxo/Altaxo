@@ -33,6 +33,9 @@ using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
+	using Altaxo.Units;
+	using AUL = Altaxo.Units.Length;
+
 	/// <summary>
 	/// Interaction logic for ImageGraphicControl.xaml
 	/// </summary>
@@ -47,8 +50,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 		{
 			set
 			{
-				_guiSrcSizeX.SelectedQuantity = new Units.DimensionfulQuantity(value.X, Units.Length.Point.Instance).AsQuantityIn(_guiSrcSizeX.UnitEnvironment.DefaultUnit);
-				_guiSrcSizeY.SelectedQuantity = new Units.DimensionfulQuantity(value.Y, Units.Length.Point.Instance).AsQuantityIn(_guiSrcSizeY.UnitEnvironment.DefaultUnit);
+				_guiSrcSizeX.SelectedQuantity = new DimensionfulQuantity(value.X, AUL.Point.Instance).AsQuantityIn(_guiSrcSizeX.UnitEnvironment.DefaultUnit);
+				_guiSrcSizeY.SelectedQuantity = new DimensionfulQuantity(value.Y, AUL.Point.Instance).AsQuantityIn(_guiSrcSizeY.UnitEnvironment.DefaultUnit);
 			}
 		}
 

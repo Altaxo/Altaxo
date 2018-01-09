@@ -11,7 +11,7 @@ namespace Altaxo.Geometry
 	public static class CardinalSplineToBezierSegmentConverter
 	{
 		// see also source of wine at: http://source.winehq.org/source/dlls/gdiplus/graphicspath.c#L445
-		// 
+		//
 
 		/// <summary>
 		/// Calculates Bezier points from cardinal spline endpoints.
@@ -21,9 +21,9 @@ namespace Altaxo.Geometry
 		/// <param name="tension">The tension.</param>
 		/// <returns></returns>
 		/// <remarks>Original name in Wine sources: calc_curve_bezier_endp</remarks>
-		static PointD2D Calc_Curve_Bezier_Endpoint(PointD2D end, PointD2D adj, double tension)
+		private static PointD2D Calc_Curve_Bezier_Endpoint(PointD2D end, PointD2D adj, double tension)
 		{
-			// tangent at endpoints is the line from the endpoint to the adjacent point 
+			// tangent at endpoints is the line from the endpoint to the adjacent point
 			return new PointD2D(
 			(tension * (adj.X - end.X) + end.X),
 			(tension * (adj.Y - end.Y) + end.Y));
@@ -38,7 +38,7 @@ namespace Altaxo.Geometry
 		/// <param name="p1">The Bezier control point that controls the slope towards the point <paramref name="pts"/>[i+1].</param>
 		/// <param name="p2">The Bezier control point that controls the slope outwards from the point <paramref name="pts"/>[i+1].</param>
 		/// <remarks>Original name in Wine source: calc_curve_bezier</remarks>
-		static void Calc_Curve_Bezier(PointD2D[] pts, int i, double tension, out PointD2D p1, out PointD2D p2)
+		private static void Calc_Curve_Bezier(PointD2D[] pts, int i, double tension, out PointD2D p1, out PointD2D p2)
 		{
 			/* calculate tangent */
 			var diff = pts[2 + i] - pts[i];
@@ -58,7 +58,7 @@ namespace Altaxo.Geometry
 		/// <param name="p1">The Bezier control point that controls the slope towards the point <paramref name="pts1"/>.</param>
 		/// <param name="p2">The Bezier control point that controls the slope outwards from the point <paramref name="pts1"/>.</param>
 		/// <remarks>This function is not in the original Wine sources. It is introduced here for optimization to avoid allocation of a new array when converting closed cardinal spline curves.</remarks>
-		static void Calc_Curve_Bezier(PointD2D pts0, PointD2D pts1, PointD2D pts2, double tension, out PointD2D p1, out PointD2D p2)
+		private static void Calc_Curve_Bezier(PointD2D pts0, PointD2D pts1, PointD2D pts2, double tension, out PointD2D p1, out PointD2D p2)
 		{
 			/* calculate tangent */
 			var diff = pts2 - pts0;
@@ -67,7 +67,6 @@ namespace Altaxo.Geometry
 			p1 = pts1 - tension * diff;
 			p2 = pts1 + tension * diff;
 		}
-
 
 		/// <summary>
 		/// Converts an open cardinal spline, given by the points in <paramref name="points"/>, to Bezier segments.
@@ -106,8 +105,6 @@ namespace Altaxo.Geometry
 
 			return pt;
 		}
-
-
 
 		/// <summary>
 		/// Converts a closed cardinal spline, given by the points in <paramref name="points"/>, to Bezier segments.
@@ -149,11 +146,8 @@ namespace Altaxo.Geometry
 			pt[0] = points[0];
 			pt[1] = p2;
 
-
-
 			return pt;
 		}
-
 
 		/// <summary>
 		/// Shortens a Bezier segment and returns the Bezier points of the shortened segment.
@@ -206,14 +200,9 @@ namespace Altaxo.Geometry
 			var segmentStart = segmentIndex * 3;
 			if (pivot.DistanceSquaredTo(points[segmentStart + 3]) >= dsqr) // normal case: segment end point is further away than required
 			{
-
 			}
 
-
 			return double.NaN;
-
-
-
 		}
 
 		public static PointD2D[] ShortenBezierSegmentsByDistanceFromEndPoints(PointD2D[] points, double distanceFromStart, double distanceFromEnd)

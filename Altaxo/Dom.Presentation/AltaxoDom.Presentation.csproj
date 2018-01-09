@@ -1,0 +1,356 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>AltaxoDom.Presentation</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Altaxo</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo</DefineConstants>
+    <DocumentationFile>..\..\rtDir\bin\AltaxoDom.Presentation.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;ModifiedForAltaxo</DefineConstants>
+    <DocumentationFile>..\..\rtDir\bin\AltaxoDom.Presentation.xml</DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;ModifiedForAltaxo; COMLOGGING</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DocumentationFile>..\..\rtDir\bin\AltaxoDom.Presentation.xml</DocumentationFile>
+    <FileAlignment>4096</FileAlignment>
+    <NoWarn>1591</NoWarn>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\AltaxoSDGui.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
+    <DefineConstants>TRACE;ModifiedForAltaxo</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\AltaxoSDGui.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <DocumentationFile>..\..\rtDir\bin\AltaxoDom.Presentation.xml</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dom\AltaxoDom.csproj">
+      <Project>{71636e05-f91f-4efe-a63a-5ba2d525071f}</Project>
+      <Name>AltaxoDom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HelpViewer\AltaxoHelpViewer.csproj">
+      <Project>{8953c478-8a41-4bd2-9bbd-99bfbe638b73}</Project>
+      <Name>AltaxoHelpViewer</Name>
+    </ProjectReference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\AssembliesOnly\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Management">
+      <Name>System.Management</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\Base.Presentation\AltaxoBase.Presentation.csproj">
+      <Project>{323D97E6-92A8-40B4-99C1-D64D4368DFC7}</Project>
+      <Name>AltaxoBase.Presentation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Base\AltaxoBase.csproj">
+      <Project>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</Project>
+      <Name>AltaxoBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeEditing\AltaxoCodeEditing.csproj">
+      <Project>{3e93faf9-d791-4f48-b925-623257b6fcbe}</Project>
+      <Name>AltaxoCodeEditing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\AltaxoCore.csproj">
+      <Name>AltaxoCore</Name>
+      <Project>{7045C197-9DA8-4FA4-886C-992ACADD838F}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Com\DebugStreamWrapper.cs" />
+    <Compile Include="Properties\AssemblyInfo.autogenerated.cs" />
+    <Compile Include="Com\AltaxoComApplicationAdapter.cs" />
+    <Compile Include="Com\AltaxoComManager.cs" />
+    <Compile Include="Com\ClassFactoryBase.cs" />
+    <Compile Include="Com\ClassFactory_GraphDocumentEmbeddedComObject.cs" />
+    <Compile Include="Com\ClassFactory_ProjectFileComObject.cs" />
+    <Compile Include="Com\ComDebug.cs" />
+    <Compile Include="Com\ComManager.cs" />
+    <Compile Include="Com\ComStreamWrapper.cs" />
+    <Compile Include="Com\DataObjectBase.cs" />
+    <Compile Include="Com\DataObjectHelper.cs" />
+    <Compile Include="Com\EmbeddedGraphDocumentRenderingHelper.cs" />
+    <Compile Include="Com\EnumFormatEtc.cs" />
+    <Compile Include="Com\GarbageCollector.cs" />
+    <Compile Include="Com\GraphDocumentDataObject.cs" />
+    <Compile Include="Com\GraphDocumentEmbeddedComObject.cs" />
+    <Compile Include="Com\GraphDocumentLinkedComObject.cs" />
+    <Compile Include="Com\GuiThreadStack.cs" />
+    <Compile Include="Com\ManagedDataAdviseHolder.cs" />
+    <Compile Include="Com\ManagedEnumBase.cs" />
+    <Compile Include="Com\ManagedOleAdviseHolderFM.cs" />
+    <Compile Include="Com\ManagedOleAdviseHolderUO.cs" />
+    <Compile Include="Com\OleObjectBase.cs" />
+    <Compile Include="Com\ProjectFileComObject.cs" />
+    <Compile Include="Com\ReferenceCountedObject.cs" />
+    <Compile Include="Com\RegistryHelper.cs" />
+    <Compile Include="Com\RunningObjectTableHelper.cs" />
+    <Compile Include="Gui\Common\CustomDialog.xaml.cs">
+      <DependentUpon>CustomDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\SaveErrorInformDialog.xaml.cs">
+      <DependentUpon>SaveErrorInformDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Common\SaveErrorChooseDialog.xaml.cs">
+      <DependentUpon>SaveErrorChooseDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Pads\DataDisplay\DataDisplayView.cs" />
+    <Compile Include="Gui\Pads\Notes\NotesControl.cs" />
+    <Compile Include="Gui\Pads\Output\OutputWindowControl.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\IndexToImageConverter.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\TreeView_DragHandler.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\ListView_DragHandler.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\TreeView_DropHandler.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\ListView_DropHandler.cs" />
+    <Compile Include="Main\GraphExportBindingDoozer.cs" />
+    <Compile Include="Main\IProjectItemExportBindingDescriptor.cs" />
+    <Compile Include="Main\Services\RoslynScriptCompilerService.cs" />
+    <Compile Include="Main\MenuCommands\EmbeddedObjectModeEvaluator.cs" />
+    <Compile Include="Main\MenuCommands\TableDataSourcePresentCondition.cs" />
+    <Compile Include="Main\IProjectItemDisplayBindingDescriptor.cs" />
+    <Content Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Content>
+    <Compile Include="Gui\Pads\FileBrowser\FileFullNameToImageConverter.cs" />
+    <Compile Include="Gui\Pads\FileBrowser\FileBrowserControl.xaml.cs">
+      <DependentUpon>FileBrowserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Pads\FileBrowser\IndexToImageConverter.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\ListItemCommands.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\TreeItemCommands.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.xaml.cs">
+      <DependentUpon>ProjectBrowseControl.xaml</DependentUpon>
+    </Compile>
+    <Content Include="AltaxoCore.addin">
+      <SubType>Designer</SubType>
+    </Content>
+    <Compile Include="Gui\Scripting\SDPureScriptControlWpf.xaml.cs">
+      <DependentUpon>SDPureScriptControlWpf.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Main\ColorSetDoozer.cs" />
+    <Compile Include="Main\NamedColorDoozer.cs" />
+    <Compile Include="Main\MenuCommands\AutostartCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\ClipboardContentCondition.cs" />
+    <Compile Include="Main\MenuCommands\FileCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\GraphCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\GraphLayerCommands.cs" />
+    <Compile Include="Main\MenuCommands\HelpCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\ScriptEditorCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\PLSPlotCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\SelectedColumnCondition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\ToolCommands.cs" />
+    <Compile Include="Main\MenuCommands\WindowCommands.cs" />
+    <Compile Include="Main\MenuCommands\WorksheetCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\ProjectService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\TextureDoozer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Gui\Common\CustomDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\SaveErrorInformDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Common\SaveErrorChooseDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\Pads\FileBrowser\FileBrowserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Pads\ProjectBrowser\ProjectBrowseControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Scripting\SDPureScriptControlWpf.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\AltaxoBitmap.resources" />
+    <EmbeddedResource Include="Resources\AltaxoString.resources" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Gui\SharpDevelop\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
+  <Target Name="BeforeBuild">
+    <GitVersionFile TemplateFile="Properties\AssemblyInfo.cs" DestinationFile="Properties\AssemblyInfo.autogenerated.cs" SettingsFile="..\..\MSBuildVersioning.xml" />
+  </Target>
+  <PropertyGroup>
+    <PreBuildEvent>if not exist $(SolutionDir)rtDir\AddIns mkdir $(SolutionDir)rtDir\AddIns
+copy $(ProjectDir)AltaxoCore.addin $(SolutionDir)rtDir\AddIns
+del $(SolutionDir)rtDir\AddIns\ICSharpCode.SharpDevelop.addin</PreBuildEvent>
+    <PostBuildEvent>if not exist $(SolutionDir)rtDir\data\resources mkdir $(SolutionDir)rtDir\data\resources
+copy $(ProjectDir)Resources\*.resources $(SolutionDir)rtDir\data\resources</PostBuildEvent>
+  </PropertyGroup>
+</Project>

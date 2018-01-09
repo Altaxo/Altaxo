@@ -25,6 +25,7 @@
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Units;
+using AUL = Altaxo.Units.Length;
 using System;
 using System.Collections.ObjectModel;
 
@@ -39,36 +40,36 @@ namespace Altaxo.Gui.Graph.Graph3D
 		QuantityWithUnitGuiEnvironment ZPartitionEnvironment { set; }
 
 		/// <summary>Sets the default x quantity, i.e. the quantity that is used if the user inserts a new item in the XPartition.</summary>
-		Units.DimensionfulQuantity DefaultXQuantity { set; }
+		DimensionfulQuantity DefaultXQuantity { set; }
 
 		/// <summary>Sets the default y quantity, i.e. the quantity that is used if the user inserts a new item in the YPartition.</summary>
-		Units.DimensionfulQuantity DefaultYQuantity { set; }
+		DimensionfulQuantity DefaultYQuantity { set; }
 
 		/// <summary>Sets the default z quantity, i.e. the quantity that is used if the user inserts a new item in the YPartition.</summary>
-		Units.DimensionfulQuantity DefaultZQuantity { set; }
+		DimensionfulQuantity DefaultZQuantity { set; }
 
-		ObservableCollection<Units.DimensionfulQuantity> XPartitionValues { set; }
+		ObservableCollection<DimensionfulQuantity> XPartitionValues { set; }
 
-		ObservableCollection<Units.DimensionfulQuantity> YPartitionValues { set; }
+		ObservableCollection<DimensionfulQuantity> YPartitionValues { set; }
 
-		ObservableCollection<Units.DimensionfulQuantity> ZPartitionValues { set; }
+		ObservableCollection<DimensionfulQuantity> ZPartitionValues { set; }
 	}
 
 	[ExpectedTypeOfView(typeof(IGridPartitioningView))]
 	[UserControllerForObject(typeof(GridPartitioning))]
 	public class GridPartitioningController : MVCANControllerEditOriginalDocBase<GridPartitioning, IGridPartitioningView>
 	{
-		private ObservableCollection<Units.DimensionfulQuantity> _xPartitionValues;
-		private ObservableCollection<Units.DimensionfulQuantity> _yPartitionValues;
-		private ObservableCollection<Units.DimensionfulQuantity> _zPartitionValues;
+		private ObservableCollection<DimensionfulQuantity> _xPartitionValues;
+		private ObservableCollection<DimensionfulQuantity> _yPartitionValues;
+		private ObservableCollection<DimensionfulQuantity> _zPartitionValues;
 
 		private QuantityWithUnitGuiEnvironment _xSizeEnvironment;
 		private QuantityWithUnitGuiEnvironment _ySizeEnvironment;
 		private QuantityWithUnitGuiEnvironment _zSizeEnvironment;
 
-		private ChangeableRelativePercentUnit _percentLayerXSizeUnit = new ChangeableRelativePercentUnit("Relative X-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
-		private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("Relative Y-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
-		private ChangeableRelativePercentUnit _percentLayerZSizeUnit = new ChangeableRelativePercentUnit("Relative Z-Size", "%", new DimensionfulQuantity(1, Units.Length.Point.Instance));
+		private ChangeableRelativePercentUnit _percentLayerXSizeUnit = new ChangeableRelativePercentUnit("Relative X-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
+		private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("Relative Y-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
+		private ChangeableRelativePercentUnit _percentLayerZSizeUnit = new ChangeableRelativePercentUnit("Relative Z-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
 
 		private VectorD3D _parentLayerSize;
 
@@ -115,25 +116,25 @@ namespace Altaxo.Gui.Graph.Graph3D
 
 			if (initData)
 			{
-				_percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentLayerSize.X, Units.Length.Point.Instance);
-				_percentLayerYSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentLayerSize.Y, Units.Length.Point.Instance);
-				_percentLayerZSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentLayerSize.Z, Units.Length.Point.Instance);
+				_percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentLayerSize.X, AUL.Point.Instance);
+				_percentLayerYSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentLayerSize.Y, AUL.Point.Instance);
+				_percentLayerZSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentLayerSize.Z, AUL.Point.Instance);
 				_xSizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerXSizeUnit);
 				_ySizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerYSizeUnit);
 				_zSizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerZSizeUnit);
 
-				_xPartitionValues = new ObservableCollection<Units.DimensionfulQuantity>();
-				_yPartitionValues = new ObservableCollection<Units.DimensionfulQuantity>();
-				_zPartitionValues = new ObservableCollection<Units.DimensionfulQuantity>();
+				_xPartitionValues = new ObservableCollection<DimensionfulQuantity>();
+				_yPartitionValues = new ObservableCollection<DimensionfulQuantity>();
+				_zPartitionValues = new ObservableCollection<DimensionfulQuantity>();
 
 				foreach (var xp in _doc.XPartitioning)
-					_xPartitionValues.Add(xp.IsAbsolute ? new DimensionfulQuantity(xp.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(xp.Value * 100, _percentLayerXSizeUnit));
+					_xPartitionValues.Add(xp.IsAbsolute ? new DimensionfulQuantity(xp.Value, AUL.Point.Instance) : new DimensionfulQuantity(xp.Value * 100, _percentLayerXSizeUnit));
 
 				foreach (var yp in _doc.YPartitioning)
-					_yPartitionValues.Add(yp.IsAbsolute ? new DimensionfulQuantity(yp.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(yp.Value * 100, _percentLayerYSizeUnit));
+					_yPartitionValues.Add(yp.IsAbsolute ? new DimensionfulQuantity(yp.Value, AUL.Point.Instance) : new DimensionfulQuantity(yp.Value * 100, _percentLayerYSizeUnit));
 
 				foreach (var zp in _doc.ZPartitioning)
-					_zPartitionValues.Add(zp.IsAbsolute ? new DimensionfulQuantity(zp.Value, Units.Length.Point.Instance) : new DimensionfulQuantity(zp.Value * 100, _percentLayerZSizeUnit));
+					_zPartitionValues.Add(zp.IsAbsolute ? new DimensionfulQuantity(zp.Value, AUL.Point.Instance) : new DimensionfulQuantity(zp.Value * 100, _percentLayerZSizeUnit));
 			}
 			if (null != _view)
 			{
@@ -161,7 +162,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 				if (object.ReferenceEquals(val.Unit, _percentLayerXSizeUnit))
 					_doc.XPartitioning.Add(RADouble.NewRel(val.Value / 100));
 				else
-					_doc.XPartitioning.Add(RADouble.NewAbs(val.AsValueIn(Units.Length.Point.Instance)));
+					_doc.XPartitioning.Add(RADouble.NewAbs(val.AsValueIn(AUL.Point.Instance)));
 			}
 
 			foreach (var val in _yPartitionValues)
@@ -169,7 +170,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 				if (object.ReferenceEquals(val.Unit, _percentLayerYSizeUnit))
 					_doc.YPartitioning.Add(RADouble.NewRel(val.Value / 100));
 				else
-					_doc.YPartitioning.Add(RADouble.NewAbs(val.AsValueIn(Units.Length.Point.Instance)));
+					_doc.YPartitioning.Add(RADouble.NewAbs(val.AsValueIn(AUL.Point.Instance)));
 			}
 
 			foreach (var val in _zPartitionValues)
@@ -177,7 +178,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 				if (object.ReferenceEquals(val.Unit, _percentLayerZSizeUnit))
 					_doc.ZPartitioning.Add(RADouble.NewRel(val.Value / 100));
 				else
-					_doc.ZPartitioning.Add(RADouble.NewAbs(val.AsValueIn(Units.Length.Point.Instance)));
+					_doc.ZPartitioning.Add(RADouble.NewAbs(val.AsValueIn(AUL.Point.Instance)));
 			}
 
 			return ApplyEnd(true, disposeController);

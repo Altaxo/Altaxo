@@ -70,10 +70,8 @@ namespace Altaxo.Graph.Plot.Groups
 		/// <summary>The number of items in x-direction in a bar cluster.</summary>
 		private int _cachedNumberOfItemsX;
 
-
 		/// <summary>The running number of the item which is processed in the Step() call.</summary>
 		private int _cachedCurrentItemIndex;
-
 
 		#region Serialization
 
@@ -198,9 +196,9 @@ namespace Altaxo.Graph.Plot.Groups
 		/// <param name="numberOfItemsX">The number of items in x-direction.</param>
 		private void PartitionItems(int totalNumberOfItems, out int numberOfItemsX)
 		{
-
 			numberOfItemsX = totalNumberOfItems;
 		}
+
 		/// <summary>
 		/// Sets the positions <see cref="_logicalItemOffsetX"/>  according to the <see cref="_cachedCurrentItemIndex"/>.
 		/// </summary>

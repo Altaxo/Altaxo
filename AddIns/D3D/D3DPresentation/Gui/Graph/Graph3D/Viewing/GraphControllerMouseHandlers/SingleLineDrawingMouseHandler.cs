@@ -37,7 +37,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 	{
 		#region Member variables
 
-		protected Graph3DControllerWpf _grac;
+		protected Graph3DController _grac;
 
 		protected GraphToolType NextMouseHandlerType = GraphToolType.ObjectPointer;
 
@@ -47,12 +47,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 
 		#endregion Member variables
 
-		public SingleLineDrawingMouseHandler(Graph3DControllerWpf view)
+		public SingleLineDrawingMouseHandler(Graph3DController grac)
 		{
-			this._grac = view;
+			this._grac = grac;
 
-			if (_grac != null)
-				_grac.SetPanelCursor(Cursors.Pen);
+			_grac?.View?.SetPanelCursor(Cursors.Pen);
 		}
 
 		public override GraphToolType GraphToolType
@@ -88,7 +87,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 			{
 				FinishDrawing();
 				_currentPoint = 0;
-				_grac.SetGraphToolFromInternal(NextMouseHandlerType);
+				_grac.CurrentGraphTool = NextMouseHandlerType;
 			}
 		}
 
@@ -104,7 +103,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 				_positionCurrentMouseInActiveLayerCoordinates = hitPointOnLayerPlaneInLayerCoordinates;
 				ModifyCurrentMousePrintAreaCoordinate();
 
-				_grac.RenderOverlay();
+				_grac.View?.RenderOverlay();
 			}
 		}
 
@@ -171,7 +170,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing.GraphControllerMouseHandlers
 			LineShape go = new LineShape(_Points[0], _Points[1], _grac.Doc.GetPropertyContext());
 
 			// deselect the text tool
-			_grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
+			_grac.CurrentGraphTool = GraphToolType.ObjectPointer;
 			_grac.ActiveLayer.GraphObjects.Add(go);
 		}
 	}

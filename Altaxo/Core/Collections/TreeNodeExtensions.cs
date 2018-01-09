@@ -948,15 +948,15 @@ namespace Altaxo.Collections
 		}
 
 		/// <summary>
-		/// Returns the firstsanchestor of this node that has the type M.
+		/// Returns the firsts ancestor of this node that has the type M.
 		/// </summary>
 		/// <typeparam name="M">The type to search for.</typeparam>
 		/// <typeparam name="T">Type of the node.</typeparam>
 		/// <param name="node">The node. The first node being considered is the parent node of this node.</param>
 		/// <returns></returns>
-		public static M FirstAnchestorImplementing<M, T>(this T node)
-			where T : INodeWithParentNode<T>
-			where M : class
+		public static M FirstAncestorImplementing<M, T>(this T node)
+				where T : INodeWithParentNode<T>
+				where M : class
 		{
 			if (node.ParentNode != null)
 			{

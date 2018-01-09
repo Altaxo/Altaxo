@@ -31,8 +31,10 @@
 
 using System.Collections.Generic;
 
-namespace Poly2Tri {
-	public abstract class TriangulationContext {
+namespace Poly2Tri
+{
+	public abstract class TriangulationContext
+	{
 		public TriangulationDebugContext DebugContext { get; protected set; }
 
 		public readonly List<DelaunayTriangle> Triangles = new List<DelaunayTriangle>();
@@ -42,13 +44,15 @@ namespace Poly2Tri {
 
 		public int StepCount { get; private set; }
 
-		public void Done() {
+		public void Done()
+		{
 			StepCount++;
 		}
 
 		public abstract TriangulationAlgorithm Algorithm { get; }
 
-		public virtual void PrepareTriangulation(Triangulatable t) {
+		public virtual void PrepareTriangulation(Triangulatable t)
+		{
 			Triangulatable = t;
 			TriangulationMode = t.TriangulationMode;
 			t.Prepare(this);
@@ -56,9 +60,12 @@ namespace Poly2Tri {
 
 		public abstract TriangulationConstraint NewConstraint(TriangulationPoint a, TriangulationPoint b);
 
-		public void Update(string message) {}
+		public void Update(string message)
+		{
+		}
 
-		public virtual void Clear() {
+		public virtual void Clear()
+		{
 			Points.Clear();
 			if (DebugContext != null) DebugContext.Clear();
 			StepCount = 0;

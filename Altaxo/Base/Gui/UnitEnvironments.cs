@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Main.Properties;
+using Altaxo.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,12 +61,12 @@ namespace Altaxo.Gui
 			Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
 		}
 
-		public static readonly PropertyKey<Units.IPrefixedUnit> PropertyKeyDefaultUnit =
-			new PropertyKey<Units.IPrefixedUnit>(
+		public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
+			new PropertyKey<IPrefixedUnit>(
 			"3D70027C-2582-4112-BD72-BF2CAC395939",
 			"Units\\DefaultRelationUnit",
 			PropertyLevel.Application,
-			() => new Units.PrefixedUnit(Units.SIPrefix.None, Altaxo.Units.Dimensionless.Unity.Instance));
+			() => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Dimensionless.Unity.Instance));
 	}
 
 	public static class AngleEnvironment
@@ -97,12 +98,12 @@ namespace Altaxo.Gui
 			Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
 		}
 
-		public static readonly PropertyKey<Units.IPrefixedUnit> PropertyKeyDefaultUnit =
-			new PropertyKey<Units.IPrefixedUnit>(
+		public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
+			new PropertyKey<IPrefixedUnit>(
 			"CB04CD5A-2A34-451A-A5FA-00C9C9C000A0",
 			"Units\\DefaultAngleUnit",
 			PropertyLevel.Application,
-			() => new Units.PrefixedUnit(Units.SIPrefix.None, Altaxo.Units.Angle.Degree.Instance));
+			() => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Angle.Degree.Instance));
 	}
 
 	public static class PositionEnvironment
@@ -134,12 +135,12 @@ namespace Altaxo.Gui
 			Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
 		}
 
-		public static readonly PropertyKey<Units.IPrefixedUnit> PropertyKeyDefaultUnit =
-		new PropertyKey<Units.IPrefixedUnit>(
+		public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
+		new PropertyKey<IPrefixedUnit>(
 		"8979E39B-5D9C-4C50-966D-5B64EEEB97F2",
 		"Units\\DefaultPositionUnit",
 		PropertyLevel.Application,
-		() => new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance));
+		() => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
 	}
 
 	public static class SizeEnvironment
@@ -171,12 +172,12 @@ namespace Altaxo.Gui
 			Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
 		}
 
-		public static readonly PropertyKey<Units.IPrefixedUnit> PropertyKeyDefaultUnit =
-		new PropertyKey<Units.IPrefixedUnit>(
+		public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
+		new PropertyKey<IPrefixedUnit>(
 		"30AC5D99-A5B8-4358-A978-4DC530B7E601",
 		"Units\\DefaultSizeUnit",
 		PropertyLevel.Application,
-		() => new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance));
+		() => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
 	}
 
 	public static class FontSizeEnvironment
@@ -208,12 +209,12 @@ namespace Altaxo.Gui
 			Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
 		}
 
-		public static readonly PropertyKey<Units.IPrefixedUnit> PropertyKeyDefaultUnit =
-		new PropertyKey<Units.IPrefixedUnit>(
+		public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
+		new PropertyKey<IPrefixedUnit>(
 		"A4C55ABB-3499-4A01-B10E-E5CB91679B7E",
 		"Units\\DefaultFontSizeUnit",
 		PropertyLevel.Application,
-		() => new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance));
+		() => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
 	}
 
 	public static class LineCapSizeEnvironment
@@ -245,12 +246,12 @@ namespace Altaxo.Gui
 			Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
 		}
 
-		public static readonly PropertyKey<Units.IPrefixedUnit> PropertyKeyDefaultUnit =
-		new PropertyKey<Units.IPrefixedUnit>(
+		public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
+		new PropertyKey<IPrefixedUnit>(
 		"0091F3B2-8996-42A6-8426-60E9919ABCC4",
 		"Units\\DefaultLineCapSizeUnit",
 		PropertyLevel.Application,
-		() => new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance));
+		() => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
 	}
 
 	public static class LineThicknessEnvironment
@@ -282,12 +283,12 @@ namespace Altaxo.Gui
 			Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
 		}
 
-		public static readonly PropertyKey<Units.IPrefixedUnit> PropertyKeyDefaultUnit =
-		new PropertyKey<Units.IPrefixedUnit>(
+		public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
+		new PropertyKey<IPrefixedUnit>(
 		"5160F793-463A-484A-9E1B-67B22482C56C",
 		"Units\\DefaultLineThicknessUnit",
 		PropertyLevel.Application,
-		() => new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance));
+		() => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
 	}
 
 	public static class MiterLimitEnvironment
@@ -319,12 +320,12 @@ namespace Altaxo.Gui
 			Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
 		}
 
-		public static readonly PropertyKey<Units.IPrefixedUnit> PropertyKeyDefaultUnit =
-		new PropertyKey<Units.IPrefixedUnit>(
+		public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
+		new PropertyKey<IPrefixedUnit>(
 		"C04AA492-9328-4D07-985D-57A20A708495",
 		"Units\\DefaultMiterLimitUnit",
 		PropertyLevel.Application,
-		() => new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance));
+		() => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
 	}
 
 	public static class PaperMarginEnvironment
@@ -356,12 +357,12 @@ namespace Altaxo.Gui
 			Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
 		}
 
-		public static readonly PropertyKey<Units.IPrefixedUnit> PropertyKeyDefaultUnit =
-		new PropertyKey<Units.IPrefixedUnit>(
+		public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
+		new PropertyKey<IPrefixedUnit>(
 		"F0D18F89-F159-4DC9-B20B-ACDFC14EF1D1",
 		"Units\\DefaultPaperMarginUnit",
 		PropertyLevel.Application,
-		() => new Units.PrefixedUnit(Units.SIPrefix.None, Units.Length.Point.Instance));
+		() => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
 	}
 
 	public static class TimeEnvironment
@@ -393,11 +394,11 @@ namespace Altaxo.Gui
 			Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
 		}
 
-		public static readonly PropertyKey<Units.IPrefixedUnit> PropertyKeyDefaultUnit =
-		new PropertyKey<Units.IPrefixedUnit>(
+		public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
+		new PropertyKey<IPrefixedUnit>(
 		"4F742DC7-60DE-4FAB-ABF7-F72E489E6A6E",
 		"Units\\DefaultTimeUnit",
 		PropertyLevel.Application,
-		() => new Units.PrefixedUnit(Units.SIPrefix.None, Units.Time.Second.Instance));
+		() => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Time.Second.Instance));
 	}
 }

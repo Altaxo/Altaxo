@@ -25,12 +25,12 @@
 using Altaxo.Collections;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Plot.Data;
+using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Graph3D.Viewing;
 using Altaxo.Gui.Scripting;
 using Altaxo.Main;
 using Altaxo.Scripting;
-using ICSharpCode.Core;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -50,12 +50,8 @@ namespace Altaxo.Graph.Graph3D.Commands
 		/// </summary>
 		public override void Run()
 		{
-			Altaxo.Gui.SharpDevelop.SDGraph3DViewContent ctrl
-					= Current.Workbench.ActiveViewContent
-					as Altaxo.Gui.SharpDevelop.SDGraph3DViewContent;
-
-			if (null != ctrl)
-				Run((Graph3DController)ctrl.MVCController);
+			if (Current.Workbench.ActiveViewContent is Graph3DController ctrl)
+				Run(ctrl);
 		}
 
 		/// <summary>
@@ -382,7 +378,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 		{
 			GraphDocument newDoc = new GraphDocument(ctrl.Doc);
 			string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.Doc.Name, "GRAPH");
-			newDoc.Name = Current.Project.GraphDocumentCollection.FindNewName(newnamebase);
+			newDoc.Name = Current.Project.GraphDocumentCollection.FindNewItemName(newnamebase);
 			Current.Project.Graph3DDocumentCollection.Add(newDoc);
 			Current.ProjectService.CreateNewGraph3D(newDoc);
 		}
@@ -423,10 +419,9 @@ namespace Altaxo.Graph.Graph3D.Commands
 		{
 			get
 			{
-				if (null != Current.Workbench && null != Current.Workbench.ActiveViewContent)
+				if (Current.Workbench.ActiveViewContent is Graph3DController ctrl)
 				{
-					var ct = Current.Workbench.ActiveViewContent as Altaxo.Gui.SharpDevelop.SDGraph3DViewContent;
-					return ct == null ? null : ct.Controller;
+					return ctrl;
 				}
 				else
 					return null;
@@ -480,7 +475,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 			_cameraTypeForThisCommand = cameraTypeForThisCommand;
 			if (null != Current.Workbench)
 			{
-				Current.Workbench.ActiveWorkbenchWindowChanged += new EventHandler(this.EhWorkbenchContentChanged);
+				Current.Workbench.ActiveViewContentChanged += new WeakEventHandler(this.EhWorkbenchContentChanged, handler => Current.Workbench.ActiveViewContentChanged -= handler);
 				this.EhWorkbenchContentChanged(this, EventArgs.Empty);
 			}
 		}

@@ -183,7 +183,7 @@ namespace Altaxo.Gui.Common
 				return;
 
 			DependencyObject parent = this;
-			for (;;)
+			for (; ; )
 			{
 				_itemsControl = GetDependencyObjectFromVisualTree(parent, typeof(ItemsControl)) as ItemsControl;
 				if (!(_itemsControl != null))

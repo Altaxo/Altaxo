@@ -141,7 +141,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
 		bool IgnoreMissingDataPoints { get; set; }
 
-
 		bool IndependentOnShiftingGroupStyles { get; set; }
 
 		string LabelFormatString { get; set; }

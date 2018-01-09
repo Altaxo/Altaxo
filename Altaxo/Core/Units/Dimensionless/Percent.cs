@@ -29,7 +29,8 @@ using System.Text;
 
 namespace Altaxo.Units.Dimensionless
 {
-	public class Percent : IUnit
+	[UnitDescription("Relation", 0, 0, 0, 0, 0, 0, 0)]
+	public class Percent : UnitBase, IUnit
 	{
 		private static readonly Percent _instance = new Percent();
 

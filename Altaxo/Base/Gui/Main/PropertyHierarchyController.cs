@@ -212,7 +212,7 @@ namespace Altaxo.Gui.Main
 					var node = new MyListNode(entry.Value, new Tuple<string, string, IPropertyBag>(entry.Key, entry.Value, bag))
 					{
 						Text1S = value == null ? "n.a." : value.GetType().Name,
-						Text2S = value == null ? "null" : value.ToString(),
+						Text2S = value == null ? "null" : value.ToString().Replace('\n', '_').Replace('\r', '_'),
 						Text3S = bagInfo.Name
 					};
 

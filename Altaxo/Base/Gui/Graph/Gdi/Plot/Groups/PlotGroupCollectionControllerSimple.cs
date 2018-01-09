@@ -127,7 +127,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 				if (serial && linestyle)
 					_doc.Add(new ScatterSymbolGroupStyle() { IsStepEnabled = true }, typeof(DashPatternGroupStyle));
 				else if (serial && color)
-					_doc.Add(new ScatterSymbolGroupStyle() { IsStepEnabled = true}, typeof(ColorGroupStyle));
+					_doc.Add(new ScatterSymbolGroupStyle() { IsStepEnabled = true }, typeof(ColorGroupStyle));
 				else
 					_doc.Add(new ScatterSymbolGroupStyle() { IsStepEnabled = true });
 			}

@@ -89,12 +89,12 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 					throw new ArgumentNullException(nameof(value));
 
 				if (null != _instance)
-					Current.ProjectService.ProjectClosed -= _instance.EhProjectClosed;
+					Current.IProjectService.ProjectClosed -= _instance.EhProjectClosed;
 
 				_instance = value;
 
 				if (null != _instance)
-					Current.ProjectService.ProjectClosed += _instance.EhProjectClosed;
+					Current.IProjectService.ProjectClosed += _instance.EhProjectClosed;
 			}
 		}
 

@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Main
 	[ExpectedTypeOfView(typeof(IAddBasicPropertyValueView))]
 	public class AddBasicPropertyValueController : MVCANControllerEditOriginalDocBase<AddBasicPropertyValueData, IAddBasicPropertyValueView>
 	{
-		SelectableListNodeList _propertyTypes;
+		private SelectableListNodeList _propertyTypes;
 
 		protected override void Initialize(bool initData)
 		{
@@ -74,7 +74,7 @@ namespace Altaxo.Gui.Main
 			}
 		}
 
-		void ShowPropertyValue()
+		private void ShowPropertyValue()
 		{
 			if ((_doc.PropertyValue is string) || (null == _doc.PropertyValue))
 			{

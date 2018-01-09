@@ -885,7 +885,7 @@ namespace Altaxo.Main.PegParser
 
 		public bool OptRepeat(Matcher toRepeat)
 		{
-			for (;;)
+			for (; ; )
 			{
 				int pos0 = pos_;
 				if (!toRepeat())

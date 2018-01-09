@@ -512,7 +512,7 @@ namespace Altaxo.Gui.Drawing
 		{
 			if (_currentItems_IsDirty)
 			{
-				for (;;)
+				for (; ; )
 				{
 					bool? hasToBeStored = Current.Gui.YesNoCancelMessageBox("You selected a new list, but your current list is not stored yet, and all changes would be discarded. Would you like to store your current list now?", "Attention - list not stored!", null);
 

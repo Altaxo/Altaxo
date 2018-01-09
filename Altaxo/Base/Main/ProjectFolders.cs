@@ -359,7 +359,7 @@ namespace Altaxo.Main
 					}
 					else
 					{
-						((Graph.Gdi.GraphDocument)item).Name = AltaxoDocument.GraphDocumentCollection.FindNewName(newName);
+						((Graph.Gdi.GraphDocument)item).Name = AltaxoDocument.GraphDocumentCollection.FindNewItemName(newName);
 					}
 				}
 				else if (item is Graph.Graph3D.GraphDocument)
@@ -370,7 +370,7 @@ namespace Altaxo.Main
 					}
 					else
 					{
-						((Graph.Graph3D.GraphDocument)item).Name = AltaxoDocument.GraphDocumentCollection.FindNewName(newName);
+						((Graph.Graph3D.GraphDocument)item).Name = AltaxoDocument.GraphDocumentCollection.FindNewItemName(newName);
 					}
 				}
 				else if (item is Main.Properties.ProjectFolderPropertyDocument)
@@ -742,7 +742,7 @@ namespace Altaxo.Main
 					var graph = (Altaxo.Graph.Gdi.GraphDocument)item;
 					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
 					if (Current.Project.GraphDocumentCollection.Contains(newName))
-						newName = Current.Project.GraphDocumentCollection.FindNewName(newName);
+						newName = Current.Project.GraphDocumentCollection.FindNewItemName(newName);
 					graph.Name = newName;
 				}
 				else if (item is Altaxo.Graph.Graph3D.GraphDocument)
@@ -750,7 +750,7 @@ namespace Altaxo.Main
 					var graph = (Altaxo.Graph.Graph3D.GraphDocument)item;
 					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
 					if (Current.Project.Graph3DDocumentCollection.Contains(newName))
-						newName = Current.Project.Graph3DDocumentCollection.FindNewName(newName);
+						newName = Current.Project.Graph3DDocumentCollection.FindNewItemName(newName);
 					graph.Name = newName;
 				}
 				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
@@ -802,7 +802,7 @@ namespace Altaxo.Main
 					var graph = (Altaxo.Graph.Gdi.GraphDocument)item;
 					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
 					if (Current.Project.GraphDocumentCollection.Contains(newName))
-						newName = Current.Project.GraphDocumentCollection.FindNewName(newName);
+						newName = Current.Project.GraphDocumentCollection.FindNewItemName(newName);
 					graph.Name = newName;
 				}
 				else if (item is Altaxo.Graph.Graph3D.GraphDocument)
@@ -810,7 +810,7 @@ namespace Altaxo.Main
 					var graph = (Altaxo.Graph.Graph3D.GraphDocument)item;
 					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
 					if (Current.Project.Graph3DDocumentCollection.Contains(newName))
-						newName = Current.Project.Graph3DDocumentCollection.FindNewName(newName);
+						newName = Current.Project.Graph3DDocumentCollection.FindNewItemName(newName);
 					graph.Name = newName;
 				}
 				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)

@@ -23,21 +23,21 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo
 {
-	public static class Program
+	/// <summary>
+	/// This Class is the Core main class, it starts the program.
+	/// </summary>
+	internal class StartupMain
 	{
 		/// <summary>
-		/// The main entry point for the application.
+		/// Starts Altaxo
 		/// </summary>
-		[STAThread]
-		private static void Main(string[] args)
+		[STAThread()]
+		public static void Main(string[] args)
 		{
-			Altaxo.Gui.Startup.AltaxoStartupMain.Main(args);
+			Altaxo.Gui.Startup.StartupMain.Main(args);
 		}
 	}
 }
