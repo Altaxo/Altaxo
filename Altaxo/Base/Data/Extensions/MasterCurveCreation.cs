@@ -93,6 +93,14 @@ namespace Altaxo.Data
 			/// Determines the method to best fit the data into the master curve.
 			/// </summary>
 			public OptimizationMethod OptimizationMethod { get; set; }
+
+			/// <summary>
+			/// Gets or sets a function that creates the interpolation function.
+			/// </summary>
+			/// <value>
+			/// The creation function for the interpolation function. Per default this is set to a function that creates a <see cref="LinearInterpolation"/>
+			/// </value>
+			public Func<IInterpolationFunction> InterpolationFunctionCreation { get; set; } = new Func<IInterpolationFunction>(() => new LinearInterpolation());
 		}
 
 		/// <summary>
@@ -155,7 +163,15 @@ namespace Altaxo.Data
 			/// </summary>
 			public void Initialize()
 			{
-				Interpolation = new LinearInterpolation();
+				Initialize(() => new LinearInterpolation());
+			}
+
+			/// <summary>
+			/// Initialized the instance.
+			/// </summary>
+			public void Initialize(Func<IInterpolationFunction> interpolationFunctionCreation)
+			{
+				Interpolation = interpolationFunctionCreation();
 				InterpolationMinimumX = double.MaxValue;
 				InterpolationMaximumX = double.MinValue;
 				InterpolationValues = new SortedList<double, double>();
@@ -305,7 +321,7 @@ namespace Altaxo.Data
 			var currentColumns = new CurrentColumnInformation[options.ColumnGroups.Count];
 			for (int nColumnGroup = 0; nColumnGroup < interpolations.Length; nColumnGroup++)
 			{
-				interpolations[nColumnGroup].Initialize();
+				interpolations[nColumnGroup].Initialize(options.InterpolationFunctionCreation);
 
 				var yCol = columnGroups[nColumnGroup][indexOfReferenceColumnInColumnGroup];
 				var table = DataColumnCollection.GetParentDataColumnCollectionOf(yCol);
