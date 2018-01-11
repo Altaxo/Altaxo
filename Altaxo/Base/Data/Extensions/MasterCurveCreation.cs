@@ -94,13 +94,42 @@ namespace Altaxo.Data
 			/// </summary>
 			public OptimizationMethod OptimizationMethod { get; set; }
 
+			protected Func<IInterpolationFunction> _interpolationFunctionCreation = new Func<IInterpolationFunction>(() => new LinearInterpolation());
+
 			/// <summary>
 			/// Gets or sets a function that creates the interpolation function.
 			/// </summary>
 			/// <value>
 			/// The creation function for the interpolation function. Per default this is set to a function that creates a <see cref="LinearInterpolation"/>
 			/// </value>
-			public Func<IInterpolationFunction> InterpolationFunctionCreation { get; set; } = new Func<IInterpolationFunction>(() => new LinearInterpolation());
+			public Func<IInterpolationFunction> InterpolationFunctionCreation
+			{
+				get { return _interpolationFunctionCreation; }
+				set { _interpolationFunctionCreation = value ?? throw new ArgumentNullException(nameof(value)); }
+			}
+
+			protected int _numberOfIterations = 1;
+
+			/// <summary>
+			/// Gets or sets the number of iterations. Must be greater than or equal to 1.
+			/// This number determines how many rounds the master curve is fitted. Increasing this value will in most cases
+			/// increase the quality of the fit.
+			/// </summary>
+			/// <value>
+			/// The number of iterations for master curve creation.
+			/// </value>
+			/// <exception cref="ArgumentOutOfRangeException">value - Must be a number >= 1</exception>
+			public int NumberOfIterations
+			{
+				get { return _numberOfIterations; }
+				set
+				{
+					if (!(value >= 1))
+						throw new ArgumentOutOfRangeException(nameof(value), "Must be a number >= 1");
+
+					_numberOfIterations = value;
+				}
+			}
 		}
 
 		/// <summary>
@@ -153,10 +182,10 @@ namespace Altaxo.Data
 			public IList<double> XValues { get { return InterpolationValues.Keys; } }
 
 			/// <summary>List of all y values of the points that are used for the interpolation.</summary>
-			public IList<double> YValues { get { return InterpolationValues.Values; } }
+			public IList<(double, int)> YValues { get { return InterpolationValues.Values; } }
 
 			/// <summary>List of all points used for the interpolation, sorted by the x values. Keys are the x-Values, values are the y-values.</summary>
-			private SortedList<double, double> InterpolationValues;
+			private SortedList<double, (double y, int indexOfCurve)> InterpolationValues;
 
 			/// <summary>
 			/// Initialized the instance.
@@ -174,18 +203,25 @@ namespace Altaxo.Data
 				Interpolation = interpolationFunctionCreation();
 				InterpolationMinimumX = double.MaxValue;
 				InterpolationMaximumX = double.MinValue;
-				InterpolationValues = new SortedList<double, double>();
+				InterpolationValues = new SortedList<double, (double, int)>();
 			}
 
 			/// <summary>
 			/// Adds values to the interpolation.
 			/// </summary>
 			/// <param name="shift">Shift value used to modify the x values.</param>
+			/// <param name="indexOfCurve">Index of the curve in the group of curves.</param>
 			/// <param name="x">Column of x values.</param>
 			/// <param name="y">Column of y values.</param>
 			/// <param name="options">Options for creating the master curve.</param>
-			public void AddXYColumnToInterpolation(double shift, DoubleColumn x, DoubleColumn y, Options options)
+			public void AddXYColumnToInterpolation(double shift, int indexOfCurve, DoubleColumn x, DoubleColumn y, Options options)
 			{
+				// first, Remove all points with indexOfCurve
+				for (int i = InterpolationValues.Count - 1; i >= 0; --i)
+					if (InterpolationValues.Values[i].indexOfCurve == indexOfCurve)
+						InterpolationValues.RemoveAt(i);
+
+				// now add the new values
 				int count = Math.Min(x.Count, y.Count);
 
 				bool doLogX = options.LogarithmizeXForInterpolation;
@@ -221,7 +257,7 @@ namespace Altaxo.Data
 							else
 								xv *= (1 + 2 * DoubleConstants.DBL_EPSILON);
 						}
-						InterpolationValues.Add(xv, yv);
+						InterpolationValues.Add(xv, (yv, indexOfCurve));
 						j++;
 					}
 				}
@@ -230,7 +266,7 @@ namespace Altaxo.Data
 				InterpolationMaximumX = maxX;
 				InterpolationMinimumX = minX;
 				Interpolation.Interpolate(
-					new WrapperIListToIRoVector(InterpolationValues.Keys), new WrapperIListToIRoVector(InterpolationValues.Values));
+					new WrapperIListToIRoVectorK(InterpolationValues.Keys), new WrapperIListToIRoVectorV(InterpolationValues.Values));
 			}
 
 			#region Wrapper class
@@ -238,11 +274,11 @@ namespace Altaxo.Data
 			/// <summary>
 			/// Wraps an IList of double values to an IROVector
 			/// </summary>
-			private class WrapperIListToIRoVector : Altaxo.Calc.LinearAlgebra.IROVector<double>
+			private class WrapperIListToIRoVectorK : Altaxo.Calc.LinearAlgebra.IROVector<double>
 			{
 				private IList<double> _list;
 
-				public WrapperIListToIRoVector(IList<double> list)
+				public WrapperIListToIRoVectorK(IList<double> list)
 				{
 					_list = list;
 				}
@@ -266,6 +302,56 @@ namespace Altaxo.Data
 				public double this[int i]
 				{
 					get { return _list[i]; }
+				}
+
+				public IEnumerator<double> GetEnumerator()
+				{
+					var len = Length;
+					for (int i = 0; i < len; ++i)
+						yield return this[i];
+				}
+
+				IEnumerator IEnumerable.GetEnumerator()
+				{
+					var len = Length;
+					for (int i = 0; i < len; ++i)
+						yield return this[i];
+				}
+
+				#endregion INumericSequence Members
+			}
+
+			/// <summary>
+			/// Wraps an IList of double values to an IROVector
+			/// </summary>
+			private class WrapperIListToIRoVectorV : Altaxo.Calc.LinearAlgebra.IROVector<double>
+			{
+				private IList<(double, int)> _list;
+
+				public WrapperIListToIRoVectorV(IList<(double, int)> list)
+				{
+					_list = list;
+				}
+
+				#region IROVector Members
+
+				public int Length
+				{
+					get { return _list.Count; }
+				}
+
+				public int Count
+				{
+					get { return _list.Count; }
+				}
+
+				#endregion IROVector Members
+
+				#region INumericSequence Members
+
+				public double this[int i]
+				{
+					get { return _list[i].Item1; }
 				}
 
 				public IEnumerator<double> GetEnumerator()
@@ -327,129 +413,133 @@ namespace Altaxo.Data
 				var table = DataColumnCollection.GetParentDataColumnCollectionOf(yCol);
 				var xCol = (DoubleColumn)table.FindXColumnOf(yCol);
 
-				interpolations[nColumnGroup].AddXYColumnToInterpolation(0, xCol, yCol, options);
+				interpolations[nColumnGroup].AddXYColumnToInterpolation(0, indexOfReferenceColumnInColumnGroup, xCol, yCol, options);
 			}
 
 			// now take the other columns, and shift them with respect to the interpolation
 			// in each shift group we have a list of columns, the first of those columns is initially processed with a shift of 1
 			// but subsequent columns are then processed with an initial shift factor which is set to the previously calculated shift factor.
 			var shiftGroups = new List<List<int>>();
-			var shiftGroup = new List<int>();
-			for (int i = indexOfReferenceColumnInColumnGroup + 1; i < maxColumns; i++)
-				shiftGroup.Add(i);
-			shiftGroups.Add(shiftGroup);
-			shiftGroup = new List<int>();
-			for (int i = indexOfReferenceColumnInColumnGroup - 1; i >= 0; i--)
-				shiftGroup.Add(i);
-			shiftGroups.Add(shiftGroup);
-
-			foreach (var columnsToProcess in shiftGroups)
 			{
-				double initialShift = 0;
-
-				foreach (int nIndexOfColumnInColumnGroup in columnsToProcess)
+				var shiftGroup = new List<int>();
+				for (int i = indexOfReferenceColumnInColumnGroup + 1; i < maxColumns; i++)
+					shiftGroup.Add(i);
+				shiftGroups.Add(shiftGroup);
+				shiftGroup = new List<int>();
+				for (int i = indexOfReferenceColumnInColumnGroup - 1; i >= 0; i--)
+					shiftGroup.Add(i);
+				shiftGroups.Add(shiftGroup);
+			}
+			for (int iteration = 0; iteration < options.NumberOfIterations; ++iteration)
+			{
+				foreach (var shiftGroup in shiftGroups)
 				{
-					double globalMinShift = double.MaxValue;
-					double globalMaxShift = double.MinValue;
-					for (int nColumnGroup = 0; nColumnGroup < interpolations.Length; nColumnGroup++)
+					double initialShift = 0;
+
+					foreach (int indexOfCurveInShiftGroup in shiftGroup)
 					{
-						var yCol = columnGroups[nColumnGroup][nIndexOfColumnInColumnGroup];
-						var table = DataColumnCollection.GetParentDataColumnCollectionOf(yCol);
-						var xCol = (DoubleColumn)table.FindXColumnOf(yCol);
-						currentColumns[nColumnGroup].CurrentXCol = xCol;
-						currentColumns[nColumnGroup].CurrentYCol = yCol;
-
-						double xmin, xmax;
-						GetMinMaxOfFirstColumnForValidSecondColumn(xCol, yCol, options.LogarithmizeXForInterpolation, options.LogarithmizeYForInterpolation, out xmin, out xmax);
-
-						double localMaxShift;
-						double localMinShift;
-
-						if (options.LogarithmizeXForInterpolation)
-						{
-							localMaxShift = interpolations[nColumnGroup].InterpolationMaximumX - xmin;
-							localMinShift = interpolations[nColumnGroup].InterpolationMinimumX - xmax;
-						}
-						else
-						{
-							localMaxShift = interpolations[nColumnGroup].InterpolationMaximumX / xmin;
-							localMinShift = interpolations[nColumnGroup].InterpolationMinimumX / xmax;
-						}
-						globalMinShift = Math.Min(globalMinShift, localMinShift);
-						globalMaxShift = Math.Max(globalMaxShift, localMaxShift);
-					}
-
-					// we reduce the maximum possible shifts a little in order to get at least one point overlapping
-					double diff = (globalMaxShift - globalMinShift) / 100;
-					globalMaxShift = globalMaxShift - diff;
-					globalMinShift = globalMinShift + diff;
-
-					double currentShiftFactor = initialShift;
-					switch (options.OptimizationMethod)
-					{
-						case OptimizationMethod.OptimizeSignedDifference:
-							{
-								currentShiftFactor =
-								QuickRootFinding.ByBrentsAlgorithm(
-									shiftFactor => GetMeanSignedPenalty(interpolations, currentColumns, shiftFactor, options), globalMinShift, globalMaxShift);
-							}
-							break;
-
-						case OptimizationMethod.OptimizeSquaredDifference:
-							{
-								Func<double, double> optFunc = delegate (double shift)
-								{
-									double res = GetMeanSquaredPenalty(interpolations, currentColumns, shift, options);
-									//Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
-									return res;
-								};
-
-								var optimizationMethod = new StupidLineSearch(new Simple1DCostFunction(optFunc));
-								var vec = new Calc.LinearAlgebra.DoubleVector(1);
-								vec[0] = initialShift;
-								var dir = new Calc.LinearAlgebra.DoubleVector(1);
-								dir[0] = 1;
-								double initialStep = 0.05;
-								var result = optimizationMethod.Search(vec, dir, initialStep);
-								currentShiftFactor = result[0];
-								// currentShiftFactor = optimizationMethod.SolutionVector[0];
-							}
-							break;
-
-						case OptimizationMethod.OptimizeSquaredDifferenceByBruteForce:
-							{
-								Func<double, double> optFunc = delegate (double shift)
-								{
-									double res = GetMeanSquaredPenalty(interpolations, currentColumns, shift, options);
-									//Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
-									return res;
-								};
-								var optimizationMethod = new BruteForceLineSearch(new Simple1DCostFunction(optFunc));
-								var vec = new Calc.LinearAlgebra.DoubleVector(1);
-								vec[0] = globalMinShift;
-								var dir = new Calc.LinearAlgebra.DoubleVector(1);
-								dir[0] = globalMaxShift - globalMinShift;
-								double initialStep = 1;
-								var result = optimizationMethod.Search(vec, dir, initialStep);
-								currentShiftFactor = result[0];
-							}
-							break;
-
-						default:
-							throw new NotImplementedException("OptimizationMethod not implemented: " + options.OptimizationMethod.ToString());
-					}
-
-					if (currentShiftFactor.IsFinite())
-					{
-						options.ResultingShifts[nIndexOfColumnInColumnGroup] = currentShiftFactor;
-
+						double globalMinShift = double.MaxValue;
+						double globalMaxShift = double.MinValue;
 						for (int nColumnGroup = 0; nColumnGroup < interpolations.Length; nColumnGroup++)
 						{
-							// now build up a new interpolation, where the shifted data is taken into account
-							interpolations[nColumnGroup].AddXYColumnToInterpolation(currentShiftFactor, currentColumns[nColumnGroup].CurrentXCol, currentColumns[nColumnGroup].CurrentYCol, options);
+							var yCol = columnGroups[nColumnGroup][indexOfCurveInShiftGroup];
+							var table = DataColumnCollection.GetParentDataColumnCollectionOf(yCol);
+							var xCol = (DoubleColumn)table.FindXColumnOf(yCol);
+							currentColumns[nColumnGroup].CurrentXCol = xCol;
+							currentColumns[nColumnGroup].CurrentYCol = yCol;
+
+							double xmin, xmax;
+							GetMinMaxOfFirstColumnForValidSecondColumn(xCol, yCol, options.LogarithmizeXForInterpolation, options.LogarithmizeYForInterpolation, out xmin, out xmax);
+
+							double localMaxShift;
+							double localMinShift;
+
+							if (options.LogarithmizeXForInterpolation)
+							{
+								localMaxShift = interpolations[nColumnGroup].InterpolationMaximumX - xmin;
+								localMinShift = interpolations[nColumnGroup].InterpolationMinimumX - xmax;
+							}
+							else
+							{
+								localMaxShift = interpolations[nColumnGroup].InterpolationMaximumX / xmin;
+								localMinShift = interpolations[nColumnGroup].InterpolationMinimumX / xmax;
+							}
+							globalMinShift = Math.Min(globalMinShift, localMinShift);
+							globalMaxShift = Math.Max(globalMaxShift, localMaxShift);
 						}
 
-						initialShift = currentShiftFactor;
+						// we reduce the maximum possible shifts a little in order to get at least one point overlapping
+						double diff = (globalMaxShift - globalMinShift) / 100;
+						globalMaxShift = globalMaxShift - diff;
+						globalMinShift = globalMinShift + diff;
+
+						double currentShiftFactor = initialShift;
+						switch (options.OptimizationMethod)
+						{
+							case OptimizationMethod.OptimizeSignedDifference:
+								{
+									currentShiftFactor =
+									QuickRootFinding.ByBrentsAlgorithm(
+										shiftFactor => GetMeanSignedPenalty(interpolations, currentColumns, shiftFactor, options), globalMinShift, globalMaxShift);
+								}
+								break;
+
+							case OptimizationMethod.OptimizeSquaredDifference:
+								{
+									Func<double, double> optFunc = delegate (double shift)
+									{
+										double res = GetMeanSquaredPenalty(interpolations, currentColumns, shift, options);
+										//Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
+										return res;
+									};
+
+									var optimizationMethod = new StupidLineSearch(new Simple1DCostFunction(optFunc));
+									var vec = new Calc.LinearAlgebra.DoubleVector(1);
+									vec[0] = initialShift;
+									var dir = new Calc.LinearAlgebra.DoubleVector(1);
+									dir[0] = 1;
+									double initialStep = 0.05;
+									var result = optimizationMethod.Search(vec, dir, initialStep);
+									currentShiftFactor = result[0];
+									// currentShiftFactor = optimizationMethod.SolutionVector[0];
+								}
+								break;
+
+							case OptimizationMethod.OptimizeSquaredDifferenceByBruteForce:
+								{
+									Func<double, double> optFunc = delegate (double shift)
+									{
+										double res = GetMeanSquaredPenalty(interpolations, currentColumns, shift, options);
+										//Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
+										return res;
+									};
+									var optimizationMethod = new BruteForceLineSearch(new Simple1DCostFunction(optFunc));
+									var vec = new Calc.LinearAlgebra.DoubleVector(1);
+									vec[0] = globalMinShift;
+									var dir = new Calc.LinearAlgebra.DoubleVector(1);
+									dir[0] = globalMaxShift - globalMinShift;
+									double initialStep = 1;
+									var result = optimizationMethod.Search(vec, dir, initialStep);
+									currentShiftFactor = result[0];
+								}
+								break;
+
+							default:
+								throw new NotImplementedException("OptimizationMethod not implemented: " + options.OptimizationMethod.ToString());
+						}
+
+						if (currentShiftFactor.IsFinite())
+						{
+							options.ResultingShifts[indexOfCurveInShiftGroup] = currentShiftFactor;
+
+							for (int nColumnGroup = 0; nColumnGroup < interpolations.Length; nColumnGroup++)
+							{
+								// now build up a new interpolation, where the shifted data is taken into account
+								interpolations[nColumnGroup].AddXYColumnToInterpolation(currentShiftFactor, indexOfCurveInShiftGroup, currentColumns[nColumnGroup].CurrentXCol, currentColumns[nColumnGroup].CurrentYCol, options);
+							}
+
+							initialShift = currentShiftFactor;
+						}
 					}
 				}
 			}
