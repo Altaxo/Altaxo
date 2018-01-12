@@ -216,6 +216,7 @@ namespace Altaxo.Gui.Startup
 #endif
 
 			Current.Log.Info(string.Format("Starting {0}...", startupArguments.ApplicationName));
+			Altaxo.Main.Services.IAutoUpdateInstallationService updateInstaller = null;
 			try
 			{
 				var startupSettings = new StartupSettings(startupArguments.ApplicationName, startupArguments.StartupArgs, startupArguments.RequestedFileList, startupArguments.ParameterList);
@@ -266,7 +267,12 @@ namespace Altaxo.Gui.Startup
 					}
 				}
 
-				// TODO Autoupdates disabled here. if (Altaxo.Serialization.AutoUpdates.UpdateInstallerStarter.Run(true, AltaxoStartupMain.CommandLineArgs)) return;
+				updateInstaller = Altaxo.Current.GetService<Altaxo.Main.Services.IAutoUpdateInstallationService>();
+				if (null != updateInstaller)
+				{
+					if (updateInstaller.Run(true, startupArguments.StartupArgs))
+						return;
+				}
 
 				// Start Com
 				var comManager = Altaxo.Current.GetService<Altaxo.Main.IComManager>();
@@ -293,7 +299,7 @@ namespace Altaxo.Gui.Startup
 				Current.Log.Info("Leaving RunApplication()");
 			}
 
-			// TODO Autoupdates disabled here.   Altaxo.Serialization.AutoUpdates.UpdateInstallerStarter.Run(false, null);
+			updateInstaller?.Run(false, null);
 		}
 
 		private static bool LoadFilesInPreviousInstance(string[] fileList)

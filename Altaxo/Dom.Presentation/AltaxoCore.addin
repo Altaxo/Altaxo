@@ -71,6 +71,8 @@
 						 class="Altaxo.Main.Services.RecentOpen" />
 		<Service id="Altaxo.Main.Services.IShutdownService"
 						 class="Altaxo.Gui.Workbench.ShutdownService" />
+		<Service id="Altaxo.Main.Services.IAutoUpdateInstallationService"
+						 class="Altaxo.Serialization.AutoUpdates.UpdateInstallerStarter" />
 		<Service id="Altaxo.Main.Services.IGuiTimerService"
 						 class="Altaxo.Main.Services.DispatcherTimerService" />
 		<Service id="Altaxo.Main.Services.IStatusBarService"
