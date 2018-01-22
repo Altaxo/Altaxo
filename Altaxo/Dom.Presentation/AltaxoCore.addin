@@ -869,6 +869,117 @@
 		</Condition>
 	</Path>
 
+	<Path name = "/Altaxo/Workbench/OpenFileTab/ContextMenu">
+
+		<!-- Graph menu -->
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Gdi.Viewing.GraphController" action="Exclude">
+			<MenuItem id="Rename"
+								label="${res:XML.MainMenu.GraphMenu.Rename}"
+								description="${res:XML.MainMenu.GraphMenu.Rename.Description}"
+								class="Altaxo.Graph.Commands.GraphRename" />
+
+			<MenuItem id="MoveToFolder"
+								label="${res:XML.MainMenu.GraphMenu.MoveToFolder}"
+								description="${res:XML.MainMenu.GraphMenu.MoveToFolder.Description}"
+								class="Altaxo.Graph.Commands.GraphMoveToFolder" />
+
+			<MenuItem id="Duplicate"
+								label="${res:XML.MainMenu.GraphMenu.Duplicate}"
+								icon="Icons.16x16.Duplicate"
+								description="${res:XML.MainMenu.GraphMenu.Duplicate.Description}"
+								class="Altaxo.Graph.Commands.DuplicateGraph" />
+
+			<MenuItem id="SaveGraphAsTemplate"
+									label="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate}"
+									icon="Icons.16x16.NewDocumentIcon"
+									description="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate.Description}"
+									class="Altaxo.Graph.Commands.SaveGraphAsTemplate" />
+
+			<MenuItem id="EditGraphProperties"
+									label="${res:XML.MainMenu.FileMenu.EditGraphProperties}"
+									icon="Icons.16x16.PropertyBag"
+									description="${res:XML.MainMenu.FileMenu.EditGraphProperties.Description}"
+									class="Altaxo.Graph.Commands.GraphShowProperties" />
+		</Condition>
+		<!-- Worksheet menu -->
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">
+
+			<MenuItem id="Rename"
+								label="${res:XML.MainMenu.WorksheetMenu.Rename}"
+								description="${res:XML.MainMenu.WorksheetMenu.Rename.Description}"
+								class="Altaxo.Worksheet.Commands.WorksheetRename" />
+
+			<MenuItem id="MoveToFolder"
+								label="${res:XML.MainMenu.WorksheetMenu.MoveToFolder}"
+								description="${res:XML.MainMenu.WorksheetMenu.MoveToFolder.Description}"
+								class="Altaxo.Worksheet.Commands.WorksheetMoveTo" />
+
+			<MenuItem id="Duplicate"
+								label="${res:XML.MainMenu.WorksheetMenu.Duplicate}"
+								description="${res:XML.MainMenu.WorksheetMenu.Duplicate.Description}"
+								class="Altaxo.Worksheet.Commands.WorksheetDuplicate" />
+
+			<MenuItem id="AddDataColumns"
+								label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}"
+								description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}"
+								class="Altaxo.Worksheet.Commands.AddDataColumns" />
+
+			<MenuItem id="Transpose"
+								label="${res:XML.MainMenu.WorksheetMenu.Transpose}"
+								description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}"
+								class="Altaxo.Worksheet.Commands.WorksheetTranspose" />
+
+			<MenuItem id="TableScript"
+								label="${res:XML.MainMenu.WorksheetMenu.TableScript}"
+								description="${res:XML.MainMenu.WorksheetMenu.TableScript.Description}"
+								class="Altaxo.Worksheet.Commands.OpenTableScriptDialog" />
+
+			<MenuItem id="ExtractTableData"
+								label="${res:XML.MainMenu.WorksheetMenu.ExtractTableData}"
+								description="${res:XML.MainMenu.WorksheetMenu.ExtractTableData.Description}"
+								class="Altaxo.Worksheet.Commands.OpenExtractTableDataScriptDialog" />
+
+			<MenuItem id="SaveWorksheetAs"
+								label="${res:XML.MainMenu.FileMenu.SaveWorksheetAs}"
+								icon="Icons.16x16.SaveIcon"
+								description="${res:XML.MainMenu.FileMenu.SaveWorksheetAs.Description}"
+								class="Altaxo.Worksheet.Commands.SaveAs" />
+
+			<MenuItem id="SaveWorksheetAsTemplate"
+								label="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate}"
+								icon="Icons.16x16.SaveIcon"
+								description="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate.Description}"
+								class="Altaxo.Worksheet.Commands.SaveAsTemplate" />
+
+			<MenuItem id="EditTableProperties"
+								label="${res:XML.MainMenu.FileMenu.EditTableProperties}"
+								icon="Icons.16x16.PropertyBag"
+								description="${res:XML.MainMenu.FileMenu.EditTableProperties.Description}"
+								class="Altaxo.Worksheet.Commands.TableShowProperties" />
+		</Condition>
+
+		<MenuItem id = "CloseSeparator" type = "Separator" />
+
+		<MenuItem id = "Close"
+							label = "${res:OpenFileTabEventHandler.ContextMenu.Close}"
+							icon  = "Icons.16x16.CloseFileIcon"
+							class = "Altaxo.Gui.Workbench.Commands.CloseFileTab" />
+
+		<MenuItem id    = "CloseAll"
+							icon  = "Icons.16x16.CloseAllDocuments"
+							label = "${res:XML.MainMenu.FileMenu.CloseAll}"
+							class = "Altaxo.Gui.Workbench.Commands.CloseAllWindows" />
+
+		<MenuItem id    = "CloseAllButThis"
+							label = "${res:OpenFileTabEventHandler.ContextMenu.CloseAllButThis}"
+							class = "Altaxo.Gui.Workbench.Commands.CloseAllButThisFileTab" />
+
+		<MenuItem id="Delete"
+							icon="Icons.16x16.DeleteIcon"
+							label="${res:XML.MainMenu.EditMenu.Delete}"
+							command="Delete" />
+	</Path>
+
 	<Path name = "/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu">
 		<Condition name="SelectedDataColumns" selected="one" action="Disable">
 			<MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}"
@@ -1155,155 +1266,16 @@
 								extensions = "*.*" />
 	</Path>
 
-	<!-- ModifiedForAltaxo context menu of worksheet and graph tabs -->
-	<Path name = "/Altaxo/Workbench/OpenFileTab/ContextMenu">
-
-		<!-- Graph menu -->
-		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Gdi.Viewing.GraphController" action="Exclude">
-			<MenuItem id="Rename"
-								label="${res:XML.MainMenu.GraphMenu.Rename}"
-								description="${res:XML.MainMenu.GraphMenu.Rename.Description}"
-								class="Altaxo.Graph.Commands.GraphRename" />
-
-			<MenuItem id="MoveToFolder"
-								label="${res:XML.MainMenu.GraphMenu.MoveToFolder}"
-								description="${res:XML.MainMenu.GraphMenu.MoveToFolder.Description}"
-								class="Altaxo.Graph.Commands.GraphMoveToFolder" />
-
-			<MenuItem id="Duplicate"
-								label="${res:XML.MainMenu.GraphMenu.Duplicate}"
-								icon="Icons.16x16.Duplicate"
-								description="${res:XML.MainMenu.GraphMenu.Duplicate.Description}"
-								class="Altaxo.Graph.Commands.DuplicateGraph" />
-
-			<MenuItem id="SaveGraphAsTemplate"
-									label="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate}"
-									icon="Icons.16x16.NewDocumentIcon"
-									description="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate.Description}"
-									class="Altaxo.Graph.Commands.SaveGraphAsTemplate" />
-
-			<MenuItem id="EditGraphProperties"
-									label="${res:XML.MainMenu.FileMenu.EditGraphProperties}"
-									icon="Icons.16x16.PropertyBag"
-									description="${res:XML.MainMenu.FileMenu.EditGraphProperties.Description}"
-									class="Altaxo.Graph.Commands.GraphShowProperties" />
-		</Condition>
-		<!-- Worksheet menu -->
-		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">
-
-			<MenuItem id="Rename"
-								label="${res:XML.MainMenu.WorksheetMenu.Rename}"
-								description="${res:XML.MainMenu.WorksheetMenu.Rename.Description}"
-								class="Altaxo.Worksheet.Commands.WorksheetRename" />
-
-			<MenuItem id="MoveToFolder"
-								label="${res:XML.MainMenu.WorksheetMenu.MoveToFolder}"
-								description="${res:XML.MainMenu.WorksheetMenu.MoveToFolder.Description}"
-								class="Altaxo.Worksheet.Commands.WorksheetMoveToFolder" />
-
-			<MenuItem id="Duplicate" label="${res:XML.MainMenu.WorksheetMenu.Duplicate}" description="${res:XML.MainMenu.WorksheetMenu.Duplicate.Description}"
-				class="Altaxo.Worksheet.Commands.WorksheetDuplicate" />
-			<MenuItem id="AddDataColumns" label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}"
-					class="Altaxo.Worksheet.Commands.AddDataColumns" />
-			<MenuItem id="Transpose" label="${res:XML.MainMenu.WorksheetMenu.Transpose}" description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}"
-				class="Altaxo.Worksheet.Commands.WorksheetTranspose" />
-			<MenuItem id="TableScript" label="${res:XML.MainMenu.WorksheetMenu.TableScript}" description="${res:XML.MainMenu.WorksheetMenu.TableScript.Description}"
-				class="Altaxo.Worksheet.Commands.OpenTableScriptDialog" />
-			<MenuItem id="ExtractTableData" label="${res:XML.MainMenu.WorksheetMenu.ExtractTableData}" description="${res:XML.MainMenu.WorksheetMenu.ExtractTableData.Description}"
-				class="Altaxo.Worksheet.Commands.OpenExtractTableDataScriptDialog" />
-
-			<MenuItem id="SaveWorksheetAs" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAs}" icon="Icons.16x16.SaveIcon"
-	description="${res:XML.MainMenu.FileMenu.SaveWorksheetAs.Description}" class="Altaxo.Worksheet.Commands.SaveAs" />
-			<MenuItem id="SaveWorksheetAsTemplate" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate}"
-				icon="Icons.16x16.SaveIcon" description="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate.Description}"
-				class="Altaxo.Worksheet.Commands.SaveAsTemplate" />
-
-			<MenuItem id="EditTableProperties"
-									label="${res:XML.MainMenu.FileMenu.EditTableProperties}"
-									icon="Icons.16x16.PropertyBag"
-									description="${res:XML.MainMenu.FileMenu.EditTableProperties.Description}"
-									class="Altaxo.Worksheet.Commands.TableShowProperties" />
-		</Condition>
-
-		<MenuItem id = "CloseSeparator" type = "Separator" />
-
-		<MenuItem id = "Close"
-					label = "${res:OpenFileTabEventHandler.ContextMenu.Close}"
-					icon  = "Icons.16x16.CloseFileIcon"
-					class = "ICSharpCode.SharpDevelop.Commands.CloseFileTab" />
-		<MenuItem id    = "CloseAll"
-							icon  = "Icons.16x16.CloseAllDocuments"
-							label = "${res:XML.MainMenu.FileMenu.CloseAll}"
-							class = "ICSharpCode.SharpDevelop.Commands.CloseAllWindows" />
-		<MenuItem id    = "CloseAllButThis"
-							label = "${res:OpenFileTabEventHandler.ContextMenu.CloseAllButThis}"
-							class = "ICSharpCode.SharpDevelop.Commands.CloseAllButThisFileTab" />
-
-		<MenuItem id="Delete"
-							icon="Icons.16x16.DeleteIcon"
-							label="${res:XML.MainMenu.EditMenu.Delete}"
-							command="Delete" />
-	</Path>
-
-	<Path name="/SharpDevelop/Services/ParserService/SingleFileGacReferences">
-		<String id = "AltaxoCore" text ="AltaxoCore" />
-		<String id = "AltaxoBase" text ="AltaxoBase" />
-		<String id = "AltaxoDom" text ="AltaxoDom" />
-		<String id = "AltaxoDom.Presentation" text ="AltaxoDom.Presentation" />
-		<String id = "System.Data" text = "System.Data" />
-		<String id = "System.Drawing" text = "System.Drawing" />
-		<String id = "System.Windows.Forms" text = "System.Windows.Forms" />
-		<String id = "System.Xml" text = "System.Xml" />
-		<String id = "ICSharpCode.SharpZipLib" text ="ICSharpCode.SharpZipLib" />
-	</Path>
-
-	<Path name = "/SharpDevelop/ViewContent/Browser/Toolbar">
-		<ToolbarItem id      = "Back"
-								 icon    = "Icons.16x16.BrowserBefore"
-								 tooltip = "${res:AddIns.HtmlHelp2.Back}"
-								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.GoBack" />
-
-		<ToolbarItem id      = "Forward"
-								 icon    = "Icons.16x16.BrowserAfter"
-								 tooltip = "${res:AddIns.HtmlHelp2.Forward}"
-								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.GoForward" />
-
-		<ToolbarItem id      = "Stop"
-								 icon    = "Icons.16x16.BrowserCancel"
-								 tooltip = "${res:AddIns.HtmlHelp2.Stop}"
-								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.Stop" />
-
-		<ToolbarItem id      = "Refresh"
-								 icon    = "Icons.16x16.BrowserRefresh"
-								 tooltip = "${res:AddIns.HtmlHelp2.Refresh}"
-								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.Refresh" />
-
-		<ToolbarItem id = "Separator" type  = "Separator" />
-
-		<ToolbarItem id      = "GoHome"
-								 icon    = "Icons.16x16.BrowserHome"
-								 tooltip = "${res:AddIns.HtmlHelp2.Homepage}"
-								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.GoHome" />
-
-		<ToolbarItem id      = "GoSearch"
-								 icon    = "Icons.16x16.FindIcon"
-								 tooltip = "${res:AddIns.HtmlHelp2.Search}"
-								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.GoSearch" />
-
-		<ToolbarItem id      = "URLComboBox"
-								 type    = "ComboBox"
-								 tooltip = "${res:AddIns.HtmlHelp2.EnterURL}"
-								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.UrlComboBox" />
-
-		<ToolbarItem id      = "NewWindow"
-								 icon    = "Icons.16x16.BrowserWindow"
-								 tooltip = "${res:AddIns.HtmlHelp2.NewWindow}"
-								 class   = "ICSharpCode.SharpDevelop.BrowserDisplayBinding.NewWindow" />
-	</Path>
-
 	<Path name = "/Altaxo/Workbench/ProjectItemExportBindings">
 		<GraphExportBinding id = "GraphGdiExport"
 										ProjectItemClass = "Altaxo.Graph.Gdi.GraphDocument, AltaxoBase"
 										ExporterClass  = "Altaxo.Graph.Gdi.GraphDocumentImageExporter, AltaxoBase" />
+	</Path>
+
+	<Path name="/Altaxo/CodeEditing/AdditionalAssemblyReferences">
+		<!-- Please specify here additional assemblies to be loaded that are referenced by Altaxo scripts
+				 The assmbly name must be fully specified
+		<String id = "System.Data" text = "System.Data, ... version information depending what framework Altaxo is currently using ..." />
+		-->
 	</Path>
 </AddIn>

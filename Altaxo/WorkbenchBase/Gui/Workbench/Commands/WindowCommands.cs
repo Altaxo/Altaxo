@@ -22,74 +22,78 @@ using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Gui.Workbench.Commands
 {
-    public class SelectNextWindow : AbstractMenuCommand
-    {
-        public override void Run()
-        {
-            var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
+	public class SelectNextWindow : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 
-            if (workbench.ActiveViewContent == null ||
-                         workbench.ViewContentCollection.Count == 0)
-            {
-                return;
-            }
-            int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
-            workbench.ViewContentCollection[(index + 1) % workbench.ViewContentCollection.Count].IsSelected = true;
-        }
-    }
+			if (workbench.ActiveViewContent == null ||
+									 workbench.ViewContentCollection.Count == 0)
+			{
+				return;
+			}
+			int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
+			workbench.ViewContentCollection[(index + 1) % workbench.ViewContentCollection.Count].IsSelected = true;
+		}
+	}
 
-    public class SelectPrevWindow : AbstractMenuCommand
-    {
-        public override void Run()
-        {
-            var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
-            if (workbench.ActiveViewContent == null ||
-                    workbench.ViewContentCollection.Count == 0)
-            {
-                return;
-            }
-            int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
-            workbench.ViewContentCollection[(index + workbench.ViewContentCollection.Count - 1) % workbench.ViewContentCollection.Count].IsSelected = true;
-        }
-    }
+	public class SelectPrevWindow : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
+			if (workbench.ActiveViewContent == null ||
+							workbench.ViewContentCollection.Count == 0)
+			{
+				return;
+			}
+			int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
+			workbench.ViewContentCollection[(index + workbench.ViewContentCollection.Count - 1) % workbench.ViewContentCollection.Count].IsSelected = true;
+		}
+	}
 
-    public class CloseAllWindows : AbstractMenuCommand
-    {
-        public override void Run()
-        {
-            var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
-            workbench.CloseAllViews();
-        }
-    }
+	public class CloseAllWindows : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
+			workbench.CloseAllViews();
+		}
+	}
 
-    public class CloseFileTab : AbstractMenuCommand
-    {
-        public override void Run()
-        {
-            var window = Owner as IWorkbenchWindow;
-            if (window != null)
-            {
-                window.CloseWindow(false);
-            }
-        }
-    }
+	public class CloseFileTab : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
+			var thisWindow = workbench.ActiveViewContent;
 
-    public class CloseAllButThisFileTab : AbstractMenuCommand
-    {
-        public override void Run()
-        {
-            var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
+			if (thisWindow != null)
+			{
+				workbench.CloseContent(thisWindow);
+			}
+		}
+	}
 
-            var thisWindow = Owner as IViewContent;
-            for (int i = workbench.ViewContentCollection.Count - 1; i >= 0; --i)
-            {
-                var window = workbench.ViewContentCollection[i];
-                if (window != thisWindow)
-                {
-                    if (!window.CloseCommand.CanExecute(false))
-                        break;
-                }
-            }
-        }
-    }
+	public class CloseAllButThisFileTab : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
+			var thisWindow = workbench.ActiveViewContent;
+
+			if (null != thisWindow)
+			{
+				for (int i = workbench.ViewContentCollection.Count - 1; i >= 0; --i)
+				{
+					var window = workbench.ViewContentCollection[i];
+					if (window != thisWindow)
+					{
+						workbench.CloseContent(window);
+					}
+				}
+			}
+		}
+	}
 }

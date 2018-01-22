@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.AddInItems;
 using Altaxo.CodeEditing.CompilationHandling;
 using Altaxo.CodeEditing.ExternalHelp;
 using Altaxo.Main.Services;
@@ -64,13 +65,31 @@ namespace Altaxo.Gui.Scripting
 		{
 			_factory = new CodeEditing.CodeTextEditorFactory();
 
-			_additionalReferencedAssemblies = new Assembly[]
+			var additionalReferencedAssemblies = new HashSet<Assembly>()
 			{
 				typeof(Altaxo.Calc.RMath).Assembly, // Core
 				typeof(Altaxo.Data.DataTable).Assembly, // Base
 				typeof(Altaxo.Gui.GuiHelper).Assembly, // Presentation
 				typeof(SDPureScriptControlWpf).Assembly // SDGui
 			};
+
+			IList<string> additionalUserAssemblyNames = AddInTree.BuildItems<string>("/Altaxo/CodeEditing/AdditionalAssemblyReferences", null, false);
+
+			foreach (var additionalUserAssemblyName in additionalUserAssemblyNames)
+			{
+				Assembly additionalAssembly = null;
+				try
+				{
+					additionalAssembly = Assembly.Load(additionalUserAssemblyName);
+					additionalReferencedAssemblies.Add(additionalAssembly);
+				}
+				catch (Exception ex)
+				{
+					Current.MessageService.ShowWarningFormatted("Assembly with name '{0}' that was given in {1} could not be loaded. Error: {2}", additionalUserAssemblyName, "/Altaxo/CodeEditing/AdditionalAssemblyReferences", ex.Message);
+				}
+			}
+
+			_additionalReferencedAssemblies = additionalReferencedAssemblies.ToArray();
 
 			_isFrameworkVersion47Installed = Altaxo.Serialization.AutoUpdates.NetFrameworkVersionDetermination.IsVersion47Installed();
 		}
