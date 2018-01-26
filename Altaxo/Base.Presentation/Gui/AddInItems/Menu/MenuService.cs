@@ -286,7 +286,10 @@ namespace Altaxo.Gui.AddInItems
 					return item;
 
 				case "Builder":
-					IMenuItemBuilder builder = codon.AddIn.CreateObject(codon.Properties["class"]) as IMenuItemBuilder;
+					var builderObj = codon.AddIn.CreateObject(codon.Properties["class"]);
+					var builder = builderObj as IMenuItemBuilder;
+					if (builderObj == null)
+						throw new NotSupportedException("Menu item builder " + codon.Properties["class"] + " is unkown. Please check if class name is misspelled.");
 					if (builder == null)
 						throw new NotSupportedException("Menu item builder " + codon.Properties["class"] + " does not implement IMenuItemBuilder");
 					return new MenuItemBuilderPlaceholder(builder, descriptor.Codon, descriptor.Parameter);
