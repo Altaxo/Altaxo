@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Gui;
 using Altaxo.Gui.AddInItems;
 using System;
 using System.Collections;
@@ -183,36 +184,36 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class OpenAllWorksheets : AbstractMenuCommand
+	public class OpenAllWorksheets : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			WindowCommands.OpenNonOpenGraphsAndTables(false, true,
 				new WindowCommands.GraphTableCreationDateComparer());
 		}
 	}
 
-	public class OpenAllGraphs : AbstractMenuCommand
+	public class OpenAllGraphs : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			WindowCommands.OpenNonOpenGraphsAndTables(true, false,
 				new WindowCommands.GraphTableCreationDateComparer());
 		}
 	}
 
-	public class OpenAllWorksheetsAndGraphs : AbstractMenuCommand
+	public class OpenAllWorksheetsAndGraphs : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			WindowCommands.OpenNonOpenGraphsAndTables(true, true,
 				new WindowCommands.GraphTableCreationDateComparer());
 		}
 	}
 
-	public class SortGraphTablesByTypeAndName : AbstractMenuCommand
+	public class SortGraphTablesByTypeAndName : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			WindowCommands.CloseAllGraphsAndTables();
 			WindowCommands.OpenNonOpenGraphsAndTables(true, true,
@@ -223,9 +224,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class SortGraphTablesByTypeAndCreationTime : AbstractMenuCommand
+	public class SortGraphTablesByTypeAndCreationTime : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			WindowCommands.CloseAllGraphsAndTables();
 			WindowCommands.OpenNonOpenGraphsAndTables(true, true,
@@ -236,9 +237,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class SortGraphTablesByCreationTime : AbstractMenuCommand
+	public class SortGraphTablesByCreationTime : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			WindowCommands.CloseAllGraphsAndTables();
 			WindowCommands.OpenNonOpenGraphsAndTables(true, true,
@@ -246,9 +247,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class SortGraphTablesByName : AbstractMenuCommand
+	public class SortGraphTablesByName : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			WindowCommands.CloseAllGraphsAndTables();
 			WindowCommands.OpenNonOpenGraphsAndTables(true, true,
@@ -256,9 +257,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class ToggleFullscreenCommand : AbstractMenuCommand
+	public class ToggleFullscreenCommand : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			Current.Workbench.FullScreen = !Current.Workbench.FullScreen;
 		}

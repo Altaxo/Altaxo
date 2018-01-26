@@ -28,8 +28,8 @@ namespace Altaxo.Gui.Workbench.Commands
 	/// <summary>
 	/// Command to open web sites.
 	/// </summary>
-	/// <seealso cref="Altaxo.Gui.AddInItems.AbstractMenuCommand" />
-	public class LinkCommand : AbstractMenuCommand
+	/// <seealso cref="Altaxo.Gui.SimpleCommand" />
+	public class LinkCommand : SimpleCommand
 	{
 		private string site;
 
@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Workbench.Commands
 			this.site = site;
 		}
 
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			if (site.StartsWith("home://"))
 			{

@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Addins.OriginConnector;
+using Altaxo.Gui;
 using Altaxo.Gui.AddInItems;
 using System;
 using System.Collections.Generic;
@@ -62,9 +63,9 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-	public class GetAllTablesFromOrigin : AbstractMenuCommand
+	public class GetAllTablesFromOrigin : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			var conn = new OriginConnection();
 			conn.Connect(true);
@@ -121,9 +122,9 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-	public class PushAllTablesToOrigin : AbstractMenuCommand
+	public class PushAllTablesToOrigin : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			var conn = new OriginConnection();
 			conn.Connect(true);

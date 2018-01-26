@@ -25,10 +25,12 @@
 using Altaxo.Collections;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Plot.Data;
+using Altaxo.Gui;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Graph3D.Viewing;
 using Altaxo.Gui.Scripting;
+using Altaxo.Gui.Workbench;
 using Altaxo.Main;
 using Altaxo.Scripting;
 using System;
@@ -42,15 +44,18 @@ namespace Altaxo.Graph.Graph3D.Commands
 	/// <summary>
 	/// Provides a abstract class for issuing commands that apply to worksheet controllers.
 	/// </summary>
-	public abstract class AbstractGraph3DControllerCommand : AbstractMenuCommand
+	public abstract class AbstractGraph3DControllerCommand : SimpleCommand
 	{
 		/// <summary>
 		/// Determines the currently active worksheet and issues the command to that worksheet by calling
 		/// Run with the worksheet as a parameter.
 		/// </summary>
-		public override void Run()
+		public override void Execute(object parameter)
 		{
-			if (Current.Workbench.ActiveViewContent is Graph3DController ctrl)
+			if (!(parameter is IViewContent activeViewContent))
+				activeViewContent = Current.Workbench.ActiveViewContent;
+
+			if (activeViewContent is Graph3DController ctrl)
 				Run(ctrl);
 		}
 
@@ -242,9 +247,9 @@ namespace Altaxo.Graph.Graph3D.Commands
 		}
 	}
 
-	public class SetCopyPageOptions : AbstractMenuCommand
+	public class SetCopyPageOptions : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			object resultobj = Gdi.ClipboardRenderingOptions.CopyPageOptions;
 			if (Current.Gui.ShowDialog(ref resultobj, "Set copy page options"))

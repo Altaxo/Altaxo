@@ -876,29 +876,34 @@
 			<MenuItem id="Rename"
 								label="${res:XML.MainMenu.GraphMenu.Rename}"
 								description="${res:XML.MainMenu.GraphMenu.Rename.Description}"
+								usedatacontext ="true"
 								class="Altaxo.Graph.Commands.GraphRename" />
 
 			<MenuItem id="MoveToFolder"
 								label="${res:XML.MainMenu.GraphMenu.MoveToFolder}"
 								description="${res:XML.MainMenu.GraphMenu.MoveToFolder.Description}"
+								usedatacontext ="true"
 								class="Altaxo.Graph.Commands.GraphMoveToFolder" />
 
 			<MenuItem id="Duplicate"
 								label="${res:XML.MainMenu.GraphMenu.Duplicate}"
 								icon="Icons.16x16.Duplicate"
 								description="${res:XML.MainMenu.GraphMenu.Duplicate.Description}"
+								usedatacontext ="true"
 								class="Altaxo.Graph.Commands.DuplicateGraph" />
 
 			<MenuItem id="SaveGraphAsTemplate"
 									label="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate}"
 									icon="Icons.16x16.NewDocumentIcon"
 									description="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate.Description}"
+									usedatacontext ="true"
 									class="Altaxo.Graph.Commands.SaveGraphAsTemplate" />
 
 			<MenuItem id="EditGraphProperties"
 									label="${res:XML.MainMenu.FileMenu.EditGraphProperties}"
 									icon="Icons.16x16.PropertyBag"
 									description="${res:XML.MainMenu.FileMenu.EditGraphProperties.Description}"
+								usedatacontext ="true"
 									class="Altaxo.Graph.Commands.GraphShowProperties" />
 		</Condition>
 		<!-- Worksheet menu -->
@@ -907,54 +912,64 @@
 			<MenuItem id="Rename"
 								label="${res:XML.MainMenu.WorksheetMenu.Rename}"
 								description="${res:XML.MainMenu.WorksheetMenu.Rename.Description}"
+								usedatacontext ="true"
 								class="Altaxo.Worksheet.Commands.WorksheetRename" />
 
 			<MenuItem id="MoveToFolder"
 								label="${res:XML.MainMenu.WorksheetMenu.MoveToFolder}"
 								description="${res:XML.MainMenu.WorksheetMenu.MoveToFolder.Description}"
+								usedatacontext ="true"
 								class="Altaxo.Worksheet.Commands.WorksheetMoveTo" />
 
 			<MenuItem id="Duplicate"
 								label="${res:XML.MainMenu.WorksheetMenu.Duplicate}"
 								description="${res:XML.MainMenu.WorksheetMenu.Duplicate.Description}"
+								usedatacontext ="true"
 								class="Altaxo.Worksheet.Commands.WorksheetDuplicate" />
 
 			<MenuItem id="AddDataColumns"
 								label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}"
 								description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}"
+								usedatacontext ="true"
 								class="Altaxo.Worksheet.Commands.AddDataColumns" />
 
 			<MenuItem id="Transpose"
 								label="${res:XML.MainMenu.WorksheetMenu.Transpose}"
 								description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}"
+								usedatacontext ="true"
 								class="Altaxo.Worksheet.Commands.WorksheetTranspose" />
 
 			<MenuItem id="TableScript"
 								label="${res:XML.MainMenu.WorksheetMenu.TableScript}"
 								description="${res:XML.MainMenu.WorksheetMenu.TableScript.Description}"
+								usedatacontext ="true"
 								class="Altaxo.Worksheet.Commands.OpenTableScriptDialog" />
 
 			<MenuItem id="ExtractTableData"
 								label="${res:XML.MainMenu.WorksheetMenu.ExtractTableData}"
 								description="${res:XML.MainMenu.WorksheetMenu.ExtractTableData.Description}"
+								usedatacontext ="true"
 								class="Altaxo.Worksheet.Commands.OpenExtractTableDataScriptDialog" />
 
 			<MenuItem id="SaveWorksheetAs"
 								label="${res:XML.MainMenu.FileMenu.SaveWorksheetAs}"
 								icon="Icons.16x16.SaveIcon"
 								description="${res:XML.MainMenu.FileMenu.SaveWorksheetAs.Description}"
+								usedatacontext ="true"
 								class="Altaxo.Worksheet.Commands.SaveAs" />
 
 			<MenuItem id="SaveWorksheetAsTemplate"
 								label="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate}"
 								icon="Icons.16x16.SaveIcon"
 								description="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate.Description}"
+								usedatacontext ="true"
 								class="Altaxo.Worksheet.Commands.SaveAsTemplate" />
 
 			<MenuItem id="EditTableProperties"
 								label="${res:XML.MainMenu.FileMenu.EditTableProperties}"
 								icon="Icons.16x16.PropertyBag"
 								description="${res:XML.MainMenu.FileMenu.EditTableProperties.Description}"
+								usedatacontext ="true"
 								class="Altaxo.Worksheet.Commands.TableShowProperties" />
 		</Condition>
 
@@ -969,6 +984,7 @@
 		<MenuItem id    = "CloseAll"
 							icon  = "Icons.16x16.CloseAllDocuments"
 							label = "${res:XML.MainMenu.FileMenu.CloseAll}"
+							usedatacontext ="true"
 							class = "Altaxo.Gui.Workbench.Commands.CloseAllWindows" />
 
 		<MenuItem id    = "CloseAllButThis"
@@ -979,6 +995,7 @@
 		<MenuItem id="Delete"
 							icon="Icons.16x16.DeleteIcon"
 							label="${res:XML.MainMenu.EditMenu.Delete}"
+							usedatacontext ="true"
 							command="Delete" />
 	</Path>
 

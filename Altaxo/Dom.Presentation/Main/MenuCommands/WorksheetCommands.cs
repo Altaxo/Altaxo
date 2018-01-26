@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,8 +23,10 @@
 #endregion Copyright
 
 using Altaxo.Data;
+using Altaxo.Gui;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Scripting;
+using Altaxo.Gui.Workbench;
 using Altaxo.Scripting;
 using System;
 
@@ -35,15 +37,18 @@ namespace Altaxo.Worksheet.Commands
 	/// <summary>
 	/// Provides a abstract class for issuing commands that apply to worksheet controllers.
 	/// </summary>
-	public abstract class AbstractWorksheetControllerCommand : AbstractMenuCommand
+	public abstract class AbstractWorksheetControllerCommand : SimpleCommand
 	{
 		/// <summary>
 		/// Determines the currently active worksheet and issues the command to that worksheet by calling
 		/// Run with the worksheet as a parameter.
 		/// </summary>
-		public override void Run()
+		public override void Execute(object parameter)
 		{
-			if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+			if (!(parameter is IViewContent activeViewContent))
+				activeViewContent = Current.Workbench.ActiveViewContent;
+
+			if (activeViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
 				Run(ctrl);
 		}
 

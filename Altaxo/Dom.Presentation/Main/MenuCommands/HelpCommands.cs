@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Drawing;
+using Altaxo.Gui;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Main.Services;
 using System;
@@ -31,9 +32,9 @@ using System.Windows.Forms;
 
 namespace Altaxo.Main.Commands
 {
-	public class ShowAltaxoProgramHelp : AbstractMenuCommand
+	public class ShowAltaxoProgramHelp : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			string fileName = FileUtility.ApplicationRootPath +
 				Path.DirectorySeparatorChar + "doc" +
@@ -46,9 +47,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class ShowAltaxoClassHelp : AbstractMenuCommand
+	public class ShowAltaxoClassHelp : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			string fileName = FileUtility.ApplicationRootPath +
 				Path.DirectorySeparatorChar + "doc" +
@@ -69,9 +70,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class DevelopmentTest : AbstractMenuCommand
+	public class DevelopmentTest : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			Run6();
 		}
@@ -115,9 +116,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class ReportParentChildProblemsInDocument : AbstractMenuCommand
+	public class ReportParentChildProblemsInDocument : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			GC.Collect();
 			Altaxo.Main.SuspendableDocumentNode.ReportParentChildAndDisposedProblems(Current.Project, true);
@@ -125,9 +126,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class OpenDownloadDirectory : AbstractMenuCommand
+	public class OpenDownloadDirectory : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			var dir1 = Altaxo.Serialization.AutoUpdates.PackageInfo.GetDownloadDirectory(false);
 			var dir2 = Altaxo.Serialization.AutoUpdates.PackageInfo.GetDownloadDirectory(true);
@@ -157,9 +158,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class OpenSettingsDirectory : AbstractMenuCommand
+	public class OpenSettingsDirectory : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Altaxo");
 
@@ -183,9 +184,9 @@ namespace Altaxo.Main.Commands
 	/// <summary>
 	/// This command opens the project directory (i.e. the directory where the current project is stored) in Windows explorer.
 	/// </summary>
-	public class OpenProjectDirectory : AbstractMenuCommand
+	public class OpenProjectDirectory : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			if (string.IsNullOrEmpty(Current.IProjectService.CurrentProjectFileName))
 			{

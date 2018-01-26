@@ -235,15 +235,15 @@ namespace Altaxo.Main.Commands
 
 			if (viewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController)
 			{
-				new Altaxo.Worksheet.Commands.WorksheetDuplicate().Run();
+				new Altaxo.Worksheet.Commands.WorksheetDuplicate().Execute(parameter);
 			}
 			else if (viewContent is Altaxo.Gui.Graph.Gdi.Viewing.GraphController)
 			{
-				new Altaxo.Graph.Commands.DuplicateGraph().Run();
+				new Altaxo.Graph.Commands.DuplicateGraph().Execute(parameter);
 			}
 			else if (viewContent is Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController)
 			{
-				new Altaxo.Graph.Commands.DuplicateGraph().Run();
+				new Altaxo.Graph.Commands.DuplicateGraph().Execute(parameter);
 			}
 			else if (!(viewContent is null))
 			{

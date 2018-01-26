@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Gui;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Graph.Gdi.Viewing;
 using System;
@@ -30,59 +31,59 @@ using System.Text;
 
 namespace Altaxo.Main.Commands
 {
-	public class AddTemporaryUserAssembly : AbstractMenuCommand
+	public class AddTemporaryUserAssembly : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			Settings.Scripting.ReferencedAssembliesCommands.ShowAddTemporaryAssemblyDialog();
 		}
 	}
 
-	public class TestProjectLoading : AbstractMenuCommand
+	public class TestProjectLoading : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			Altaxo.Main.Commands.TestAllProjectsInFolder.ShowDialogToVerifyOpeningOfDocumentsWithoutException();
 		}
 	}
 
-	public class ShowOptions : AbstractMenuCommand
+	public class ShowOptions : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			var ctrl = new Altaxo.Gui.Settings.SettingsController();
 			Current.Gui.ShowDialog(ctrl, "Altaxo settings", false);
 		}
 	}
 
-	public class ShowUserSettings : AbstractMenuCommand
+	public class ShowUserSettings : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			var ph = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBagsStartingFromUserSettings());
 			Current.Gui.ShowDialog(new object[] { ph }, "Edit user settings", false);
 		}
 	}
 
-	public class RegisterApplicationForCom : AbstractMenuCommand
+	public class RegisterApplicationForCom : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			Current.ComManager.RegisterApplicationForCom();
 		}
 	}
 
-	public class UnregisterApplicationForCom : AbstractMenuCommand
+	public class UnregisterApplicationForCom : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			Current.ComManager.UnregisterApplicationForCom();
 		}
 	}
 
-	public class CopyDocumentAsComObjectToClipboard : AbstractMenuCommand
+	public class CopyDocumentAsComObjectToClipboard : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			{
 				if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Graph.Gdi.Viewing.GraphController ctrl)
