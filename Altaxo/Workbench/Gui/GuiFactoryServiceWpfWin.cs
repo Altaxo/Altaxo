@@ -543,5 +543,19 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
 		}
 
 		#endregion Context menu
+
+		#region Commands
+
+		public override void RegisterRequerySuggestedHandler(EventHandler handler)
+		{
+			CommandManager.RequerySuggested += handler;
+		}
+
+		public override void UnregisterRequerySuggestedHandler(EventHandler handler)
+		{
+			CommandManager.RequerySuggested -= handler;
+		}
+
+		#endregion Commands
 	}
 }

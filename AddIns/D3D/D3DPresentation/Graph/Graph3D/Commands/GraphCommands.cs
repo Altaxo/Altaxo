@@ -418,7 +418,7 @@ namespace Altaxo.Graph.Graph3D.Commands
 	/// <summary>
 	/// Provides a abstract class for issuing commands that apply to worksheet controllers.
 	/// </summary>
-	public abstract class AbstractCheckableGraphControllerCommand : AbstractCheckableMenuCommand, System.ComponentModel.INotifyPropertyChanged
+	public abstract class AbstractCheckableGraphControllerCommand : SimpleCheckableCommand, System.ComponentModel.INotifyPropertyChanged
 	{
 		public Graph3DController Controller
 		{
@@ -436,9 +436,9 @@ namespace Altaxo.Graph.Graph3D.Commands
 		/// <summary>
 		/// This function is never be called, since this is a CheckableMenuCommand.
 		/// </summary>
-		public override void Run()
+		public override void Execute(object parameter)
 		{
-			base.Run();
+			base.Execute(parameter);
 		}
 
 		public override bool IsChecked

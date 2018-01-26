@@ -255,6 +255,7 @@
     <Compile Include="Gui\Pads\LightingPad\LightingController.cs" />
     <Compile Include="Gui\Settings\IOptionPanelDescriptor.cs" />
     <Compile Include="Gui\Settings\OptionPanelBase.cs" />
+    <Compile Include="Gui\SimpleCheckableCommand.cs" />
     <Compile Include="Gui\Workbench\IWorkbenchContent.cs" />
     <Compile Include="Gui\Workbench\StartupSettings.cs" />
     <Compile Include="Gui\Workbench\WorkbenchState.cs" />

@@ -1278,7 +1278,6 @@
     <Compile Include="GongSolutions.Wpf.DragDrop\Utilities\VisualTreeExtensions.cs" />
     <Compile Include="Gui\AddInItems\CommandWrapper.cs" />
     <Compile Include="Gui\AddInItems\ConditionalSeparator.cs" />
-    <Compile Include="Gui\AddInItems\Menu\AbstractMenuCommand.cs" />
     <Compile Include="Gui\AddInItems\Menu\ContextMenuBuilder.cs" />
     <Compile Include="Gui\AddInItems\Menu\CoreMenuItem.cs" />
     <Compile Include="Gui\AddInItems\Menu\MenuCheckBox.cs" />

@@ -191,6 +191,20 @@ namespace Altaxo.Main.Services
 		/// <returns>A command that can be used, e.g. for binding to the Gui.</returns>
 		ICommand NewRelayCommand(Action<object> execute, Predicate<object> canExecute = null);
 
+		/// <summary>
+		/// Registers a handler that will be called back if something in the Gui has changed so that
+		/// a requery of CanExecute() functions might be neccessary. This handler will be bound weak to the event.
+		/// Unregister by using <see cref="UnregisterRequerySuggestedHandler(EventHandler)"/>.
+		/// </summary>
+		/// <param name="handler">The handler.</param>
+		void RegisterRequerySuggestedHandler(EventHandler handler);
+
+		/// <summary>
+		/// Unregisters the handler that was registered with <see cref="RegisterRequerySuggestedHandler(EventHandler)"/>.
+		/// </summary>
+		/// <param name="handler">The handler.</param>
+		void UnregisterRequerySuggestedHandler(EventHandler handler);
+
 		#endregion Commands
 	}
 }

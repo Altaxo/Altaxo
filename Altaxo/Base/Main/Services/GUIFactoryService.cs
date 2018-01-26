@@ -406,6 +406,12 @@ namespace Altaxo.Main.Services
 		/// <inheritdoc/>
 		public abstract ICommand NewRelayCommand(Action<object> execute, Predicate<object> canExecute = null);
 
+		/// <inheritdoc/>
+		public abstract void RegisterRequerySuggestedHandler(EventHandler handler);
+
+		/// <inheritdoc/>
+		public abstract void UnregisterRequerySuggestedHandler(EventHandler handler);
+
 		#endregion Commands
 
 		public bool ShowDialog(ref System.Enum arg, string title)
