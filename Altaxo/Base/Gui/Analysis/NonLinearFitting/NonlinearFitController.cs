@@ -85,6 +85,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 		void EhView_CopyParameterNVV();
 
+		void EhView_CopyParameterNCM();
+
+		void EhView_CopyParameterNSVCVInOneRow();
+
 		void EhView_PasteParameterV();
 
 		void EhView_DoSimulation(bool useInterval, bool generateUnusedVarsAlso);
@@ -170,7 +174,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
 				if (null != _activeLayer)
 				{
-					_showConfidenceBands = HasConfidencePlotItems(_activeLayer);
+					var (hasConfidenceItems, confidenceLevel) = HasConfidencePlotItems(_activeLayer);
+					_showConfidenceBands = hasConfidenceItems;
+					if (hasConfidenceItems)
+						_confidenceLevel = confidenceLevel;
 				}
 			}
 
@@ -507,11 +514,20 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 			}
 		}
 
-		private bool HasConfidencePlotItems(XYPlotLayer xylayer)
+		private (bool hasItems, double confidenceLevel) HasConfidencePlotItems(XYPlotLayer xylayer)
 		{
-			return TreeNodeExtensions.TakeFromHereToFirstLeaves((IGPlotItem)xylayer.PlotItems)
+			var cbdata = TreeNodeExtensions.TakeFromHereToFirstLeaves((IGPlotItem)xylayer.PlotItems)
 					.OfType<XYFunctionPlotItem>()
-					.Where((fpi) => fpi.Data is XYNonlinearFitFunctionConfidenceBandPlotData).Any();
+					.Where((fpi) => fpi.Data is XYNonlinearFitFunctionConfidenceBandPlotData).FirstOrDefault();
+
+			if (cbdata != null)
+			{
+				return (true, ((XYNonlinearFitFunctionConfidenceBandPlotData)cbdata.Data).ConfidenceLevel);
+			}
+			else
+			{
+				return (false, 0);
+			}
 		}
 
 		private void CreateOrReplaceFunctionPlotItems(XYPlotLayer xylayer)
@@ -1001,6 +1017,97 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
 				tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
 				tb.DataColumns.Add(var, "Variance", Altaxo.Data.ColumnKind.V, 0);
+				Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
+						tb, new Altaxo.Collections.AscendingIntegerCollection(),
+						new Altaxo.Collections.AscendingIntegerCollection(),
+						new Altaxo.Collections.AscendingIntegerCollection(),
+						dao);
+				Current.Gui.SetClipboardDataObject(dao, true);
+			}
+			else
+			{
+				Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+			}
+		}
+
+		public void EhView_CopyParameterNCM()
+		{
+			if (null == _covarianceMatrix)
+			{
+				Current.Gui.ErrorMessageBox("First, please do make a fit to get the covariances, then try again!");
+				return;
+			}
+
+			if (true == this._parameterController.Apply(false))
+			{
+				var dao = Current.Gui.GetNewClipboardDataObject();
+				Altaxo.Data.TextColumn txt = new Altaxo.Data.TextColumn();
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+				Altaxo.Data.DoubleColumn[] var = new DoubleColumn[_doc.CurrentParameters.Count];
+				for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+					var[i] = new DoubleColumn();
+
+				for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+				{
+					txt[i] = _doc.CurrentParameters[i].Name;
+					col[i] = _doc.CurrentParameters[i].Parameter;
+					for (int j = 0; j < _doc.CurrentParameters.Count; j++)
+						var[j][i] = _covarianceMatrix[i * _doc.CurrentParameters.Count + j];
+				}
+
+				Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+				tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
+				tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
+				for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+					tb.DataColumns.Add(var[i], "CV_" + _doc.CurrentParameters[i].Name, Altaxo.Data.ColumnKind.V, 0);
+
+				// amdend sigma_square and N
+				int nRow = _doc.CurrentParameters.Count;
+				txt[nRow] = "SigmaSquare";
+				col[nRow] = _sigmaSquare;
+				++nRow;
+				txt[nRow] = "N";
+				col[nRow] = _numberOfFitPoints;
+
+				Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
+						tb, new Altaxo.Collections.AscendingIntegerCollection(),
+						new Altaxo.Collections.AscendingIntegerCollection(),
+						new Altaxo.Collections.AscendingIntegerCollection(),
+						dao);
+				Current.Gui.SetClipboardDataObject(dao, true);
+			}
+			else
+			{
+				Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+			}
+		}
+
+		public void EhView_CopyParameterNSVCVInOneRow()
+		{
+			if (null == _covarianceMatrix)
+			{
+				Current.Gui.ErrorMessageBox("First, please do make a fit to get the covariances, then try again!");
+				return;
+			}
+
+			if (true == this._parameterController.Apply(false))
+			{
+				var dao = Current.Gui.GetNewClipboardDataObject();
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+				int nRow = 0;
+
+				col[nRow++] = _numberOfFitPoints;
+				col[nRow++] = _sigmaSquare;
+
+				for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+				{
+					col[nRow++] = _doc.CurrentParameters[i].Parameter;
+					for (int j = 0; j < _doc.CurrentParameters.Count; j++)
+						col[nRow++] = _covarianceMatrix[i * _doc.CurrentParameters.Count + j];
+				}
+
+				Altaxo.Data.DataTable tb = new Altaxo.Data.DataTable();
+				tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
 				Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
 						tb, new Altaxo.Collections.AscendingIntegerCollection(),
 						new Altaxo.Collections.AscendingIntegerCollection(),

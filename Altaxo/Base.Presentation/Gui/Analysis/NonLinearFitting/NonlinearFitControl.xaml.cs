@@ -66,6 +66,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 				_controller.EhView_CopyParameterNVV();
 		}
 
+		private void _tsbCopyParameterWithCVM_Click(object sender, RoutedEventArgs e)
+		{
+			_controller?.EhView_CopyParameterNCM();
+		}
+
+		private void _tsbCopyParameterNSVCVInOneRow_Click(object sender, RoutedEventArgs e)
+		{
+			_controller?.EhView_CopyParameterNSVCVInOneRow();
+		}
+
 		private void _tsbCopyParameterValueAsCDef_Click(object sender, RoutedEventArgs e)
 		{
 			if (_controller != null)
