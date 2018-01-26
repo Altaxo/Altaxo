@@ -98,7 +98,10 @@ namespace Xceed.Wpf.AvalonDock.Controls
                 {
                     DropDownContextMenu.PlacementTarget = null;
                     DropDownContextMenu.Placement = PlacementMode.MousePoint;
-                    DropDownContextMenu.DataContext = DropDownContextMenuDataContext;
+					          if (DropDownContextMenuDataContext is LayoutItem layoutItem)
+						          DropDownContextMenu.DataContext = layoutItem.Model;
+					          else
+										  DropDownContextMenu.DataContext = DropDownContextMenuDataContext;
                     DropDownContextMenu.IsOpen = true;
                    // e.Handled = true;
                 }
