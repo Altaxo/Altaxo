@@ -145,7 +145,7 @@ namespace Altaxo.Worksheet.Commands
 							}
 							else
 							{
-								unpairedPositiveError = new ErrorBarYPlotStyle(context);
+								unpairedPositiveError = new ErrorBarYPlotStyle(context) { UseCommonErrorColumn = false };
 								unpairedPositiveError.PositiveErrorColumn = col as INumericColumn;
 								ps.Add(unpairedPositiveError);
 							}
@@ -159,7 +159,7 @@ namespace Altaxo.Worksheet.Commands
 							}
 							else
 							{
-								unpairedNegativeError = new ErrorBarYPlotStyle(context);
+								unpairedNegativeError = new ErrorBarYPlotStyle(context) { UseCommonErrorColumn = false };
 								unpairedNegativeError.NegativeErrorColumn = col as INumericColumn;
 								ps.Add(unpairedNegativeError);
 							}
