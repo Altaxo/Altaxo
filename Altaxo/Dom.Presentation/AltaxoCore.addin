@@ -963,6 +963,7 @@
 		<MenuItem id = "Close"
 							label = "${res:OpenFileTabEventHandler.ContextMenu.Close}"
 							icon  = "Icons.16x16.CloseFileIcon"
+							usedatacontext ="true"
 							class = "Altaxo.Gui.Workbench.Commands.CloseFileTab" />
 
 		<MenuItem id    = "CloseAll"
@@ -972,6 +973,7 @@
 
 		<MenuItem id    = "CloseAllButThis"
 							label = "${res:OpenFileTabEventHandler.ContextMenu.CloseAllButThis}"
+							usedatacontext ="true"
 							class = "Altaxo.Gui.Workbench.Commands.CloseAllButThisFileTab" />
 
 		<MenuItem id="Delete"

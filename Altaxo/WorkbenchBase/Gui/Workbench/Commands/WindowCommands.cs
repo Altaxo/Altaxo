@@ -22,52 +22,55 @@ using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Gui.Workbench.Commands
 {
-	public class SelectNextWindow : AbstractMenuCommand
+	public class SelectNextWindow : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 
-			if (workbench.ActiveViewContent == null ||
-									 workbench.ViewContentCollection.Count == 0)
+			if (!(parameter is IViewContent thisWindow))
+				thisWindow = workbench.ActiveViewContent;
+
+			if (null != thisWindow)
 			{
-				return;
+				int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
+				workbench.ViewContentCollection[(index + 1) % workbench.ViewContentCollection.Count].IsSelected = true;
 			}
-			int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
-			workbench.ViewContentCollection[(index + 1) % workbench.ViewContentCollection.Count].IsSelected = true;
 		}
 	}
 
-	public class SelectPrevWindow : AbstractMenuCommand
+	public class SelectPrevWindow : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
-			if (workbench.ActiveViewContent == null ||
-							workbench.ViewContentCollection.Count == 0)
+			if (!(parameter is IViewContent thisWindow))
+				thisWindow = workbench.ActiveViewContent;
+
+			if (null != thisWindow)
 			{
-				return;
+				int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
+				workbench.ViewContentCollection[(index + workbench.ViewContentCollection.Count - 1) % workbench.ViewContentCollection.Count].IsSelected = true;
 			}
-			int index = workbench.ViewContentCollection.IndexOf(workbench.ActiveViewContent);
-			workbench.ViewContentCollection[(index + workbench.ViewContentCollection.Count - 1) % workbench.ViewContentCollection.Count].IsSelected = true;
 		}
 	}
 
-	public class CloseAllWindows : AbstractMenuCommand
+	public class CloseAllWindows : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object _)
 		{
 			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
 			workbench.CloseAllViews();
 		}
 	}
 
-	public class CloseFileTab : AbstractMenuCommand
+	public class CloseFileTab : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
-			var thisWindow = workbench.ActiveViewContent;
+			if (!(parameter is IViewContent thisWindow))
+				thisWindow = workbench.ActiveViewContent;
 
 			if (thisWindow != null)
 			{
@@ -76,12 +79,14 @@ namespace Altaxo.Gui.Workbench.Commands
 		}
 	}
 
-	public class CloseAllButThisFileTab : AbstractMenuCommand
+	public class CloseAllButThisFileTab : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
-			var thisWindow = workbench.ActiveViewContent;
+
+			if (!(parameter is IViewContent thisWindow))
+				thisWindow = workbench.ActiveViewContent;
 
 			if (null != thisWindow)
 			{

@@ -34,7 +34,20 @@ namespace Altaxo.Gui.AddInItems
 		{
 			this.ActivationMethod = activationMethod;
 			this.Command = CommandWrapper.CreateLazyCommand(codon, conditions);
-			this.CommandParameter = caller;
+			//this.CommandParameter = caller;
+
+			if ("true" == codon.Properties["usedatacontext"]?.ToLowerInvariant())
+			{
+				var myBinding = new System.Windows.Data.Binding(nameof(DataContext))
+				{
+					Source = this
+				};
+				this.SetBinding(System.Windows.Controls.MenuItem.CommandParameterProperty, myBinding);
+			}
+			else
+			{
+				this.CommandParameter = caller;
+			}
 
 			if (!string.IsNullOrEmpty(codon.Properties["shortcut"]))
 			{
