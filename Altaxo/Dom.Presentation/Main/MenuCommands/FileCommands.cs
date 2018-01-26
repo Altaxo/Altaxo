@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -28,69 +28,37 @@ namespace Altaxo.Main.Commands
 {
 	using Altaxo.AddInItems;
 	using Altaxo.Data;
+	using Altaxo.Gui;
 	using Altaxo.Gui.AddInItems;
 	using Altaxo.Main.Services;
 	using System.Collections.Generic;
 
-	/// <summary>
-	/// Loader for altaxo project files
-	/// </summary>
-	public class LoadProject
+	public class CreateNewWorksheet : SimpleCommand
 	{
-		public void Load(string fileName)
-		{
-			Current.IProjectService.OpenProject(fileName, false);
-		}
-	}
-
-	/// <summary>
-	/// Loader for altaxo project files
-	/// </summary>
-	public class LoadWorksheet
-	{
-		public void Load(string fileName)
-		{
-			CreateNewWorksheetOrGraphFromFile.OpenWorksheetOrGraph(fileName);
-		}
-	}
-
-	/// <summary>
-	/// Loader for altaxo project files
-	/// </summary>
-	public class LoadGraph
-	{
-		public void Load(string fileName)
-		{
-			CreateNewWorksheetOrGraphFromFile.OpenWorksheetOrGraph(fileName);
-		}
-	}
-
-	public class CreateNewWorksheet : AbstractMenuCommand
-	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			Current.ProjectService.CreateNewWorksheet();
 		}
 	}
 
-	public class CreateNewStandardWorksheet : AbstractMenuCommand
+	public class CreateNewStandardWorksheet : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			var controller = Current.ProjectService.CreateNewWorksheet();
 			controller.DataTable.AddStandardColumns();
 		}
 	}
 
-	public class CreateNewGraph : AbstractMenuCommand
+	public class CreateNewGraph : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			Current.ProjectService.CreateNewGraph();
 		}
 	}
 
-	public class CreateNewWorksheetOrGraphFromFile : AbstractMenuCommand
+	public class CreateNewWorksheetOrGraphFromFile : SimpleCommand
 	{
 		public static void OpenWorksheetOrGraph(string filename)
 		{
@@ -133,7 +101,7 @@ namespace Altaxo.Main.Commands
 			}
 		}
 
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			var openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
 
@@ -148,9 +116,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class FileOpen : AbstractMenuCommand
+	public class FileOpen : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			if (Current.Project.IsDirty)
 			{
@@ -181,17 +149,17 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class FileSaveAs : AbstractMenuCommand
+	public class FileSaveAs : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			Current.IProjectService.SaveProjectAs();
 		}
 	}
 
-	public class FileSave : AbstractMenuCommand
+	public class FileSave : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			if (Current.IProjectService.CurrentProjectFileName != null)
 				Current.IProjectService.SaveProject();
@@ -204,17 +172,17 @@ namespace Altaxo.Main.Commands
 	/// This command is used if in embedded object mode. It saves the current project to a file,
 	/// but don't set the current file name of the project (in project service). Furthermore, the title in the title bar is not influenced by the saving.
 	/// </summary>
-	public class FileSaveCopyAs : AbstractMenuCommand
+	public class FileSaveCopyAs : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			Current.IProjectService.SaveProjectCopyAs();
 		}
 	}
 
-	public class FileImportAscii : AbstractMenuCommand
+	public class FileImportAscii : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController controller)
 			{
@@ -227,9 +195,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class FileImportAsciiWithOptions : AbstractMenuCommand
+	public class FileImportAsciiWithOptions : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController controller)
 			{
@@ -242,78 +210,42 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class CloseProject : AbstractMenuCommand
+	public class CloseProject : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			Current.IProjectService.CloseProject(false);
 		}
 	}
 
-	/// <summary>
-	/// Taken from Commands.MenuItemBuilders. See last line for change.
-	/// </summary>
-	public class RecentProjectsMenuBuilder : IMenuItemBuilder
+	public class FileExit : SimpleCommand
 	{
-		public IEnumerable<object> BuildItems(Codon codon, object owner)
-		{
-			var recentOpen = Current.GetRequiredService<IRecentOpen>();
-
-			if (recentOpen.RecentProjects.Count > 0)
-			{
-				var items = new System.Windows.Controls.MenuItem[recentOpen.RecentProjects.Count];
-
-				for (int i = 0; i < recentOpen.RecentProjects.Count; ++i)
-				{
-					// variable inside loop, so that anonymous method refers to correct recent file
-					string recentProjectFile = recentOpen.RecentProjects[i];
-					string acceleratorKeyPrefix = i < 10 ? "_" + ((i + 1) % 10) + " " : "";
-					items[i] = new System.Windows.Controls.MenuItem()
-					{
-						Header = acceleratorKeyPrefix + recentProjectFile
-					};
-					items[i].Click += delegate
-					{
-						Current.IProjectService.OpenProject(recentProjectFile, false);
-					};
-				}
-				return items;
-			}
-			else
-			{
-				return new[] { new System.Windows.Controls.MenuItem {
-						Header = StringParser.Parse("${res:Dialog.Componnents.RichMenuItem.NoRecentFilesString}"),
-						IsEnabled = false
-					} };
-			}
-		}
-	}
-
-	public class FileExit : AbstractMenuCommand
-	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			((System.Windows.Window)Current.Workbench.ViewObject).Close();
 		}
 	}
 
-	public class Duplicate : AbstractMenuCommand
+	public class Duplicate : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
-			if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController)
+			if (!(parameter is Gui.Workbench.IViewContent viewContent))
+				viewContent = Current.Workbench.ActiveViewContent;
+
+			if (viewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController)
 			{
 				new Altaxo.Worksheet.Commands.WorksheetDuplicate().Run();
 			}
-			else if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Graph.Gdi.Viewing.GraphController)
+			else if (viewContent is Altaxo.Gui.Graph.Gdi.Viewing.GraphController)
 			{
 				new Altaxo.Graph.Commands.DuplicateGraph().Run();
 			}
-			else if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController)
+			else if (viewContent is Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController)
 			{
 				new Altaxo.Graph.Commands.DuplicateGraph().Run();
 			}
-			else if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Workbench.AbstractViewContent viewContent)
+			else if (!(viewContent is null))
 			{
 				var viewModel = viewContent.ModelObject as IProjectItemPresentationModel;
 				var doc = viewModel?.Document ?? viewContent.ModelObject as IProjectItem;
@@ -329,9 +261,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class NewDocumentIdentifier : AbstractMenuCommand
+	public class NewDocumentIdentifier : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			object oldId = Current.Project.DocumentIdentifier;
 			if (Current.Gui.ShowDialog(ref oldId, "Enter new document identifier", false))
@@ -347,9 +279,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class HelpAboutAltaxo : AbstractMenuCommand
+	public class HelpAboutAltaxo : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			var ctrl = new Altaxo.Gui.Common.HelpAboutControl();
 
@@ -357,9 +289,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class FileImportOriginOpj : AbstractMenuCommand
+	public class FileImportOriginOpj : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			var openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
 			{
@@ -378,9 +310,9 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
-	public class NewInstanceScript : AbstractMenuCommand
+	public class NewInstanceScript : SimpleCommand
 	{
-		public override void Run()
+		public override void Execute(object parameter)
 		{
 			Altaxo.Scripting.IScriptText script = null; // or load it from somewhere
 
