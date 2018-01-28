@@ -273,7 +273,7 @@ namespace Altaxo.Gui.AddInItems
 					var item = new CoreMenuItem(codon, descriptor.Parameter, descriptor.Conditions)
 					{
 						ItemsSource = new object[1],
-						SetEnabled = true
+						_setEnabled = true
 					};
 					var subItems = CreateUnexpandedMenuItems(context, descriptor.SubItems);
 					item.SubmenuOpened += (sender, args) =>

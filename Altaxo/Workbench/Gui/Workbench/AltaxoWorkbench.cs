@@ -191,7 +191,7 @@ namespace Altaxo.Gui.Workbench
 			ToolBarTrayItemsSource = ToolBarService.CreateToolBars(_mainWindow, this, appNamePrefix + toolBarPathPostFix);
 
 			// Initialize context menu of document tabs
-			DocumentContextMenuItemsSource = MenuService.CreateMenuItems((System.Windows.UIElement)_mainWindow, this, appNamePrefix + documentContextMenuPathPostFix, activationMethod: "MainMenu", immediatelyExpandMenuBuildersForShortcuts: true);
+			DocumentContextMenuItemsSource = MenuService.CreateMenuItems((System.Windows.UIElement)_mainWindow, this, appNamePrefix + documentContextMenuPathPostFix, activationMethod: "ContextMenu", immediatelyExpandMenuBuildersForShortcuts: true);
 
 			// Initialize pads (tool windows)
 			var padDescriptors = AddInTree.BuildItems<PadDescriptor>(appNamePrefix + padContentPathPostFix, this, false);

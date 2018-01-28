@@ -38,11 +38,14 @@ namespace Altaxo.Gui.AddInItems
 
 			if ("true" == codon.Properties["usedatacontext"]?.ToLowerInvariant())
 			{
+				_useDataContext = true;
+
 				var myBinding = new System.Windows.Data.Binding(nameof(DataContext))
 				{
 					Source = this
 				};
 				this.SetBinding(System.Windows.Controls.MenuItem.CommandParameterProperty, myBinding);
+				// this.DataContextChanged += (s,e) => UpdateStatus(); // we can abstain from using this as long as the workbench calls UpdateStatus for all menus (especially the workbench's context menu)
 			}
 			else
 			{
@@ -88,10 +91,10 @@ namespace Altaxo.Gui.AddInItems
 
 		private string GetFeatureName()
 		{
-			string commandName = codon.Properties["command"];
+			string commandName = _codon.Properties["command"];
 			if (string.IsNullOrEmpty(commandName))
 			{
-				return codon.Properties["class"];
+				return _codon.Properties["class"];
 			}
 			else
 			{

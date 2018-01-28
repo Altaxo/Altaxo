@@ -69,7 +69,6 @@
     <Compile Include="Gui\Workbench\PadDoozer.cs" />
     <Compile Include="Gui\Workbench\ViewContentEventArgs.cs" />
     <Compile Include="Gui\Workbench\ViewContentServiceAttribute.cs" />
-    <Compile Include="Gui\Workbench\WorkbenchExtensions.cs" />
     <Compile Include="Main\AtomicBoolean.cs" />
     <Compile Include="Main\CompositeDisposable.cs" />
     <Compile Include="Main\CustomThreadPoolTaskScheduler.cs" />

@@ -39,6 +39,17 @@ namespace Altaxo.Worksheet.Commands
 	/// </summary>
 	public abstract class AbstractWorksheetControllerCommand : SimpleCommand
 	{
+		/// <summary>Determines if the command can be executed.</summary>
+		/// <param name="parameter">The parameter (context of the command).</param>
+		/// <returns>True if either the <paramref name="parameter"/> or the ActiveViewContent of the workbench is a <see cref="Altaxo.Gui.Worksheet.Viewing.WorksheetController"/>.
+		/// </returns>
+		public override bool CanExecute(object parameter)
+		{
+			if (!(parameter is IViewContent viewContent))
+				viewContent = Current.Workbench.ActiveViewContent;
+			return viewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController;
+		}
+
 		/// <summary>
 		/// Determines the currently active worksheet and issues the command to that worksheet by calling
 		/// Run with the worksheet as a parameter.

@@ -29,6 +29,17 @@ namespace Altaxo.Gui.AddInItems
 {
 	public sealed class CommandWrapper : ICommand
 	{
+		private bool _commandCreated;
+		private ICommand _addInCommand;
+		private readonly IReadOnlyCollection<ICondition> _conditions;
+		private readonly Codon _codon;
+
+		/// <summary>
+		/// Maintains a weak collection of CanExecute handlers as long as there is no command created. When creating the command
+		/// the CanExecute handler of this collection are bound to the command, and this collection is set to null.
+		/// </summary>
+		private WeakCollection<EventHandler> _canExecuteChangedHandlersToRegisterOnCommand;
+
 		/// <summary>
 		/// A delegate that is set by the host application, and gets executed to create link commands.
 		/// </summary>
@@ -77,11 +88,10 @@ namespace Altaxo.Gui.AddInItems
 
 		public static ICommand Unwrap(ICommand command)
 		{
-			CommandWrapper w = command as CommandWrapper;
-			if (w != null)
+			if (command is CommandWrapper w)
 			{
 				w.EnsureCommandCreated();
-				return w.addInCommand;
+				return w._addInCommand;
 			}
 			else
 			{
@@ -142,44 +152,35 @@ namespace Altaxo.Gui.AddInItems
 			return null;
 		}
 
-		private bool commandCreated;
-		private ICommand addInCommand;
-		private readonly IReadOnlyCollection<ICondition> conditions;
-		private readonly Codon codon;
-
 		private CommandWrapper(Codon codon, IReadOnlyCollection<ICondition> conditions)
 		{
-			if (conditions == null)
-				throw new ArgumentNullException("conditions");
-			this.codon = codon;
-			this.conditions = conditions;
-			this.canExecuteChangedHandlersToRegisterOnCommand = new WeakCollection<EventHandler>();
+			this._codon = codon;
+			this._conditions = conditions ?? throw new ArgumentNullException(nameof(conditions));
+			this._canExecuteChangedHandlersToRegisterOnCommand = new WeakCollection<EventHandler>();
 		}
 
 		private CommandWrapper(ICommand command, IReadOnlyCollection<ICondition> conditions)
 		{
-			if (conditions == null)
-				throw new ArgumentNullException("conditions");
-			this.addInCommand = command;
-			this.conditions = conditions;
-			this.commandCreated = true;
+			this._addInCommand = command;
+			this._conditions = conditions ?? throw new ArgumentNullException(nameof(conditions));
+			this._commandCreated = true;
 		}
 
 		private void EnsureCommandCreated()
 		{
-			if (!commandCreated)
+			if (!_commandCreated)
 			{
-				commandCreated = true;
-				addInCommand = CreateCommand(codon);
-				if (canExecuteChangedHandlersToRegisterOnCommand != null)
+				_commandCreated = true;
+				_addInCommand = CreateCommand(_codon);
+				if (_canExecuteChangedHandlersToRegisterOnCommand != null)
 				{
-					var handlers = canExecuteChangedHandlersToRegisterOnCommand.ToArray();
-					canExecuteChangedHandlersToRegisterOnCommand = null;
+					var handlers = _canExecuteChangedHandlersToRegisterOnCommand.ToArray();
+					_canExecuteChangedHandlersToRegisterOnCommand = null;
 
 					foreach (var handler in handlers)
 					{
-						if (addInCommand != null)
-							addInCommand.CanExecuteChanged += handler;
+						if (_addInCommand != null)
+							_addInCommand.CanExecuteChanged += handler;
 						// Creating the command potentially changes the CanExecute state, so we should raise the event handlers once:
 						handler(this, EventArgs.Empty);
 					}
@@ -187,34 +188,31 @@ namespace Altaxo.Gui.AddInItems
 			}
 		}
 
-		// maintain weak reference semantics for CanExecuteChanged
-		private WeakCollection<EventHandler> canExecuteChangedHandlersToRegisterOnCommand;
-
 		public event EventHandler CanExecuteChanged
 		{
 			add
 			{
 				if (value == null)
 					return;
-				if (conditions.Count > 0 && RegisterConditionRequerySuggestedHandler != null)
+				if (_conditions.Count > 0 && RegisterConditionRequerySuggestedHandler != null)
 					RegisterConditionRequerySuggestedHandler(value);
 
-				if (addInCommand != null)
-					addInCommand.CanExecuteChanged += value;
-				else if (canExecuteChangedHandlersToRegisterOnCommand != null)
-					canExecuteChangedHandlersToRegisterOnCommand.Add(value);
+				if (_addInCommand != null)
+					_addInCommand.CanExecuteChanged += value;
+				else if (_canExecuteChangedHandlersToRegisterOnCommand != null)
+					_canExecuteChangedHandlersToRegisterOnCommand.Add(value);
 			}
 			remove
 			{
 				if (value == null)
 					return;
-				if (conditions.Count > 0 && UnregisterConditionRequerySuggestedHandler != null)
+				if (_conditions.Count > 0 && UnregisterConditionRequerySuggestedHandler != null)
 					UnregisterConditionRequerySuggestedHandler(value);
 
-				if (addInCommand != null)
-					addInCommand.CanExecuteChanged -= value;
-				else if (canExecuteChangedHandlersToRegisterOnCommand != null)
-					canExecuteChangedHandlersToRegisterOnCommand.Remove(value);
+				if (_addInCommand != null)
+					_addInCommand.CanExecuteChanged -= value;
+				else if (_canExecuteChangedHandlersToRegisterOnCommand != null)
+					_canExecuteChangedHandlersToRegisterOnCommand.Remove(value);
 			}
 		}
 
@@ -223,17 +221,17 @@ namespace Altaxo.Gui.AddInItems
 			EnsureCommandCreated();
 			if (CanExecute(parameter))
 			{
-				addInCommand.Execute(parameter);
+				_addInCommand.Execute(parameter);
 			}
 		}
 
 		public bool CanExecute(object parameter)
 		{
-			if (Condition.GetFailedAction(conditions, parameter) != ConditionFailedAction.Nothing)
+			if (Condition.GetFailedAction(_conditions, parameter) != ConditionFailedAction.Nothing)
 				return false;
-			if (!commandCreated)
+			if (!_commandCreated)
 				return true;
-			return addInCommand != null && addInCommand.CanExecute(parameter);
+			return _addInCommand != null && _addInCommand.CanExecute(parameter);
 		}
 	}
 }
