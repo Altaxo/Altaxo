@@ -534,6 +534,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData)
 		{
+			if (null == pdata)
+				throw new ArgumentNullException(nameof(pdata));
+
 			PlotRangeList rangeList = pdata.RangeList;
 			var ptArray = pdata.PlotPointsInAbsoluteLayerCoordinates;
 

@@ -452,6 +452,9 @@ info.CommitArray();
 
 		public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData prevItemData, Processed2DPlotData nextItemData)
 		{
+			if (null == pdata)
+				throw new ArgumentNullException(nameof(pdata));
+
 			for (int i = _innerList.Count - 1; i >= 0; i--)
 			{
 				this[i].Paint(g, layer, pdata, prevItemData, nextItemData);

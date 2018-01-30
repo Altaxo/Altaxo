@@ -206,7 +206,7 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <param name="nextPlotData">Plot data of the next plot item.</param>
 		public virtual void Paint(Graphics g, IPlotArea layer, Processed2DPlotData plotdata, Processed2DPlotData prevPlotData, Processed2DPlotData nextPlotData)
 		{
-			_cachedPlotDataUsedForPainting = plotdata;
+			_cachedPlotDataUsedForPainting = plotdata ?? throw new ArgumentNullException(nameof(plotdata));
 
 			if (null != this._plotStyles)
 			{

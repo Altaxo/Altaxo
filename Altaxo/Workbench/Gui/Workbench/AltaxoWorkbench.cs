@@ -743,6 +743,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 			if (switchToOpenedView)
 			{
 				content.IsSelected = true;
+				content.IsActive = true;
 			}
 		}
 

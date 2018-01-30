@@ -205,7 +205,7 @@ namespace Altaxo.Graph.Graph3D.Plot
 		/// <param name="nextPlotData">Plot data of the next plot item.</param>
 		public virtual void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData plotdata, Processed3DPlotData prevPlotData, Processed3DPlotData nextPlotData)
 		{
-			_cachedPlotDataUsedForPainting = plotdata;
+			_cachedPlotDataUsedForPainting = plotdata ?? throw new ArgumentNullException(nameof(plotdata));
 
 			if (null != this._plotStyles)
 			{

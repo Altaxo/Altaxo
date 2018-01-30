@@ -206,6 +206,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 		/// <returns>If the parameter <paramref name="vArray"/> was not null, then that <paramref name="vArray"/> is returned. Otherwise the newly allocated array is returned.</returns>
 		public static AltaxoVariant[] AddUp(AltaxoVariant[] vArray, Processed3DPlotData pdata)
 		{
+			if (null == pdata)
+				throw new ArgumentNullException(nameof(pdata));
+
 			if (vArray == null)
 			{
 				vArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
@@ -253,6 +256,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 
 					G3DPlotItem gpi = pi as G3DPlotItem;
 					Processed3DPlotData pdata = plotDataDict[gpi];
+					if (null == pdata)
+						continue;
+
 					vArray = AddUp(vArray, pdata);
 
 					if (idx > 0) // this is not the first item
@@ -308,7 +314,10 @@ namespace Altaxo.Graph.Graph3D.Plot.Groups
 			if (coll[indexOfChild] is G3DPlotItem)
 			{
 				var gpi = coll[indexOfChild] as G3DPlotItem;
-				gpi.Paint(g, layer, plotDataDict[gpi], prevPlotData, nextPlotData);
+				var pdata = plotDataDict[gpi];
+				if (null != pdata)
+
+					gpi.Paint(g, layer, pdata, prevPlotData, nextPlotData);
 			}
 			else
 			{

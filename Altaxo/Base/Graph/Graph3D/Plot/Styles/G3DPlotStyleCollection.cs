@@ -377,6 +377,9 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 
 		public void Paint(IGraphicsContext3D g, IPlotArea layer, Processed3DPlotData pdata, Processed3DPlotData prevItemData, Processed3DPlotData nextItemData)
 		{
+			if (null == pdata)
+				throw new ArgumentNullException(nameof(pdata));
+
 			for (int i = _innerList.Count - 1; i >= 0; i--)
 			{
 				this[i].Paint(g, layer, pdata, prevItemData, nextItemData);

@@ -197,6 +197,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 		/// <returns>If the parameter <paramref name="yArray"/> was not null, then that <paramref name="yArray"/> is returned. Otherwise the newly allocated array is returned.</returns>
 		public static AltaxoVariant[] AddUp(AltaxoVariant[] yArray, Processed2DPlotData pdata)
 		{
+			if (null == pdata)
+				throw new ArgumentNullException(nameof(pdata));
+
 			if (yArray == null)
 			{
 				yArray = new AltaxoVariant[pdata.RangeList.PlotPointCount];
@@ -244,6 +247,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 
 					G2DPlotItem gpi = pi as G2DPlotItem;
 					Processed2DPlotData pdata = plotDataDict[gpi];
+					if (null == pdata)
+						continue;
+
 					yArray = AddUp(yArray, pdata);
 
 					if (idx > 0) // this is not the first item
@@ -298,7 +304,9 @@ namespace Altaxo.Graph.Gdi.Plot.Groups
 			if (coll[indexOfChild] is G2DPlotItem)
 			{
 				var gpi = coll[indexOfChild] as G2DPlotItem;
-				gpi.Paint(g, layer, plotDataDict[gpi], prevPlotData, nextPlotData);
+				var pdata = plotDataDict[gpi];
+				if (null != pdata)
+					gpi.Paint(g, layer, pdata, prevPlotData, nextPlotData);
 			}
 			else
 			{
