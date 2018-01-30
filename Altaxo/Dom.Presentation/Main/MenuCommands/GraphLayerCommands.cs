@@ -26,6 +26,7 @@ using Altaxo.AddInItems;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Gui.Graph.Gdi.Viewing;
+using Altaxo.Serialization.Clipboard;
 using System;
 using System.Collections.Generic;
 
@@ -152,6 +153,87 @@ namespace Altaxo.Graph.Commands
 			ctrl.EnsureValidityOfCurrentLayerNumber();
 			ctrl.Doc.ShowMoveLayerToPositionDialog(ctrl.CurrentLayerNumber);
 		}
+	}
+
+	/// <summary>
+	/// Copies the plot contents of the active layer to the clipboard.
+	/// </summary>
+	public class CopyActiveLayerContents : AbstractGraphControllerCommand
+	{
+		/// <inheritdoc />
+		public override void Run(GraphController ctrl)
+		{
+			ctrl.EnsureValidityOfCurrentLayerNumber();
+			var currentLayerNumber = ctrl.CurrentLayerNumber;
+			var plotLayer = ctrl.ActiveLayer as XYPlotLayer;
+
+			if (null != plotLayer)
+			{
+				var clonedItems = plotLayer.PlotItems.Clone();
+				ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml", clonedItems);
+			}
+			else
+			{
+				Current.Gui.ErrorMessageBox("'Can only copy plot content from an XYPlotLayer. Please select another layer.", "Operation not possible");
+			}
+		}
+	}
+
+	/// <summary>
+	/// Copies the plot contents of the active layer to the clipboard. The abstract property <see cref="PasteExclusively"/>
+	/// determines whether the old content is deleted before pasting.
+	/// </summary>
+	public abstract class PasteLayerContentsBase : AbstractGraphControllerCommand
+	{
+		public abstract bool PasteExclusively { get; }
+
+		/// <inheritdoc />
+		public override void Run(GraphController ctrl)
+		{
+			ctrl.EnsureValidityOfCurrentLayerNumber();
+			var currentLayerNumber = ctrl.CurrentLayerNumber;
+			var plotLayer = ctrl.ActiveLayer as XYPlotLayer;
+
+			if (null != plotLayer)
+			{
+				object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
+				// if at this point obj is a memory stream, you probably have forgotten the deserialization constructor of the class you expect to deserialize here
+				if (o is PlotItemCollection coll)
+				{
+					if (PasteExclusively)
+					{
+						plotLayer.PlotItems.ClearPlotItems();
+					}
+
+					foreach (IGPlotItem item in coll) // it is neccessary to add the items to the doc first, because otherwise they don't have names
+					{
+						var clonedItem = (IGPlotItem)item.Clone();
+						plotLayer.PlotItems.Add(clonedItem); // cloning neccessary because coll will be disposed afterwards, which would destroy all items
+					}
+				}
+			}
+			else
+			{
+				Current.Gui.ErrorMessageBox("'Can only paste plot content to an XYPlotLayer. Please select another layer.", "Operation not possible");
+			}
+		}
+	}
+
+	/// <summary>
+	/// Copies the plot contents of the active layer to the clipboard. The old content is deleted before pasting the new content.
+	/// </summary>
+	public class PasteLayerContentsExclusively : PasteLayerContentsBase
+	{
+		public override bool PasteExclusively => true;
+	}
+
+	/// <summary>
+	/// Copies the plot contents of the active layer to the clipboard. The old content is not deleted, and the new content
+	/// is added behind the old content.
+	/// </summary>
+	public class PasteLayerContentsAdditionally : PasteLayerContentsBase
+	{
+		public override bool PasteExclusively => false;
 	}
 
 	/// <summary>

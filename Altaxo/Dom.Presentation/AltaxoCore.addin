@@ -1105,9 +1105,11 @@
 		</MenuItem>
 		<MenuItem id="Edit" label="${res:XML.MainMenu.LayerMenu.EditActiveLayer}" description="${res:XML.MainMenu.LayerMenu.EditActiveLayer.Description}"
 							class="Altaxo.Graph.Commands.EditActiveLayer" />
-		<MenuItem id="Copy" label="${res:XML.MainMenu.LayerMenu.CopyActiveLayer}" description="${res:XML.MainMenu.LayerMenu.CopyActiveLayer.Description}"
+		<MenuItem id="CopyLayer" label="${res:XML.MainMenu.LayerMenu.CopyActiveLayer}" description="${res:XML.MainMenu.LayerMenu.CopyActiveLayer.Description}"
 							class="Altaxo.Graph.Commands.CopyActiveLayer" />
-		<Condition name="Clipboard" content="Altaxo.Graph.GraphLayerAsXml" action="Disable">
+		<MenuItem id="CopyContents" label="${res:XML.MainMenu.LayerMenu.CopyActiveLayerContents}" description="${res:XML.MainMenu.LayerMenu.CopyActiveLayerContents.Description}"
+							class="Altaxo.Graph.Commands.CopyActiveLayerContents" />
+		<Condition name="Clipboard" content="Altaxo.Graph.GraphLayerAsXml" action="Exclude">
 			<MenuItem id="PasteNew" label="${res:XML.MainMenu.LayerMenu.PasteNewLayer}" description="${res:XML.MainMenu.LayerMenu.PasteNewLayer.Description}"
 							class="Altaxo.Graph.Commands.PasteAsNewLayer" />
 			<MenuItem id="PasteNewBefore" label="${res:XML.MainMenu.LayerMenu.PasteNewLayerBefore}" description="${res:XML.MainMenu.LayerMenu.PasteNewLayerBefore.Description}"
@@ -1119,8 +1121,14 @@
 			<MenuItem id="PasteHere" label="${res:XML.MainMenu.LayerMenu.PasteInActiveLayer}" description="${res:XML.MainMenu.LayerMenu.PasteInActiveLayer.Description}"
 								class="Altaxo.Graph.Commands.PasteInActiveLayer" />
 		</Condition>
+		<Condition name="Clipboard" content="Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml" action="Exclude">
+			<MenuItem id="PasteLayerContentsAdditionally" label="${res:XML.MainMenu.LayerMenu.PasteLayerContentsAdditionally}" description="${res:XML.MainMenu.LayerMenu.PasteLayerContentsAdditionally.Description}"
+							class="Altaxo.Graph.Commands.PasteLayerContentsAdditionally" />
+			<MenuItem id="PasteLayerContentsExclusively" label="${res:XML.MainMenu.LayerMenu.PasteLayerContentsExclusively}" description="${res:XML.MainMenu.LayerMenu.PasteLayerContentsExclusively.Description}"
+							class="Altaxo.Graph.Commands.PasteLayerContentsExclusively" />
+		</Condition>
 		<MenuItem id="Move" label="${res:XML.MainMenu.LayerMenu.MoveActiveLayer}" description="${res:XML.MainMenu.LayerMenu.MoveActiveLayer.Description}"
-							class="Altaxo.Graph.Commands.MoveActiveLayer" />
+						class="Altaxo.Graph.Commands.MoveActiveLayer" />
 		<MenuItem id="Delete" label="${res:XML.MainMenu.LayerMenu.DeleteActiveLayer}" description="${res:XML.MainMenu.LayerMenu.DeleteActiveLayer.Description}"
 							class="Altaxo.Graph.Commands.DeleteActiveLayer" />
 	</Path>
