@@ -39,6 +39,7 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
@@ -46,7 +47,7 @@
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 				<Label Grid.Row="1" Content="File(s):" />
-				<ListBox x:Name="_guiFileNames" Grid.Row="2" Grid.RowSpan="4" SelectionMode="Extended"  MouseDoubleClick="EhFileNamesMouseDoubleClick">
+				<ListBox x:Name="_guiFileNames" Grid.Row="2" Grid.RowSpan="5" SelectionMode="Extended"  MouseDoubleClick="EhFileNamesMouseDoubleClick">
 					<ListBox.ContextMenu>
 						<ContextMenu>
 							<MenuItem Header="Sort files ascending" Click="EhSortFileNamesAscending" />
@@ -71,7 +72,14 @@
 						<Path Style="{StaticResource AddCrossPathStyle}" />
 					</Viewbox>
 				</Button>
-				<Button Grid.Row="5" Grid.Column="2" Click="EhRemoveFileName" Margin="2" ToolTip="Click to remove selected items">
+
+				<Button Grid.Row="5" Grid.Column="2"  Click="EhNewFileNameExclusively"  Margin="2" ToolTip="Click to remove old files and add new file(s)">
+					<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+						<Path Style="{StaticResource RightArrowPathStyle}" />
+					</Viewbox>
+				</Button>
+
+				<Button Grid.Row="6" Grid.Column="2" Click="EhRemoveFileName" Margin="2" ToolTip="Click to remove selected items">
 					<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 						<Path Style="{StaticResource RemoveCrossPathStyle}" />
 					</Viewbox>

@@ -49,6 +49,8 @@ namespace Altaxo.Gui.Worksheet
 
 		event Action AddNewFileName;
 
+		event Action NewFileNameExclusively;
+
 		event Action SortFileNamesAscending;
 	}
 
@@ -128,6 +130,7 @@ namespace Altaxo.Gui.Worksheet
 			_view.MoveUpSelectedFileName += EhMoveUpFileName;
 			_view.MoveDownSelectedFileName += EhMoveDownFileName;
 			_view.AddNewFileName += EhAddNewFileName;
+			_view.NewFileNameExclusively += EhNewFileNameExclusively;
 			_view.SortFileNamesAscending += EhSortFileNamesAscending;
 		}
 
@@ -138,6 +141,8 @@ namespace Altaxo.Gui.Worksheet
 			_view.MoveUpSelectedFileName -= EhMoveUpFileName;
 			_view.MoveDownSelectedFileName -= EhMoveDownFileName;
 			_view.AddNewFileName -= EhAddNewFileName;
+			_view.NewFileNameExclusively -= EhNewFileNameExclusively;
+
 			_view.SortFileNamesAscending -= EhSortFileNamesAscending;
 
 			base.DetachView();
@@ -217,7 +222,7 @@ namespace Altaxo.Gui.Worksheet
 			}
 		}
 
-		private void EhAddNewFileName()
+		private void EhAddNewFileName(bool addExclusively)
 		{
 			var node = _fileNames.Count > 0 ? _fileNames[_fileNames.Count - 1] : null;
 			var options = new OpenFileOptions();
@@ -228,9 +233,24 @@ namespace Altaxo.Gui.Worksheet
 			options.Multiselect = true;
 			if (Current.Gui.ShowOpenFileDialog(options))
 			{
+				if (addExclusively)
+				{
+					_fileNames.Clear();
+				}
+
 				foreach (var filename in options.FileNames)
 					_fileNames.Add(new SelectableListNode(filename, filename, false));
 			}
+		}
+
+		private void EhAddNewFileName()
+		{
+			EhAddNewFileName(false);
+		}
+
+		private void EhNewFileNameExclusively()
+		{
+			EhAddNewFileName(true);
 		}
 
 		private void EhSortFileNamesAscending()
