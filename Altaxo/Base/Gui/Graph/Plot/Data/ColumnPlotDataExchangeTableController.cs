@@ -110,12 +110,20 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			return true;
 		}
 
-		public static void ShowChangeTableForSelectedItemsDialog(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems)
+		/// <summary>
+		/// Shows a dialog that allows to change the underlying data table for the provided plot items.
+		/// </summary>
+		/// <param name="plotItems">The plot items.</param>
+		/// <returns>True if the dialog was shown and for at least one plot item the underlying table was exchanged; otherwise false.</returns>
+		public static bool ShowChangeTableForSelectedItemsDialog(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems)
 		{
+			if (!CanChangeTableForPlotItems(plotItems))
+				return false;
+
 			// get all selected plot items with IColumnPlotData
 			var firstSelectedPlotItem = plotItems.FirstOrDefault();
 			if (null == firstSelectedPlotItem)
-				return;
+				return false;
 
 			var exchangeTableData = new ColumnPlotDataExchangeTableData
 			{
@@ -126,30 +134,41 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 			object exchangeTableDataObject = exchangeTableData;
 			if (!Current.Gui.ShowDialog(ref exchangeTableDataObject, "Select new table for plot items"))
-				return;
+				return false;
 
 			exchangeTableData = (ColumnPlotDataExchangeTableData)exchangeTableDataObject;
 
 			if (object.ReferenceEquals(exchangeTableData.OriginalTable, exchangeTableData.NewTable))
-				return; // nothing to do
+				return false; // nothing to do
 
 			// apply the new table
 
 			exchangeTableData.ChangeTableForPlotItems(plotItems);
+
+			return true;
 		}
 
+		/// <summary>
+		/// Changes the underlying table for the provided plot items, using the new data table in <see cref="NewTable"/>.
+		/// </summary>
+		/// <param name="plotItems">The plot items for which to change the underlying data table.</param>
 		public void ChangeTableForPlotItems(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems)
 		{
-			ChangeTableForPlotItems(plotItems, this.OriginalTable, this.NewTable);
+			ChangeTableForPlotItems(plotItems, this.NewTable);
 		}
 
-		public static void ChangeTableForPlotItems(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems, DataTable originalTable, DataTable newTable)
+		/// <summary>
+		/// Changes the underlying table for the provided plot items.
+		/// </summary>
+		/// <param name="plotItems">The plot items for which to change the underlying data table.</param>
+		/// <param name="newTable">The new table.</param>
+		public static void ChangeTableForPlotItems(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems, DataTable newTable)
 		{
 			// collect all column names from those plot items
 			foreach (var node in plotItems)
 			{
 				var data = (IColumnPlotData)node.DataObject;
-				if (!object.ReferenceEquals(originalTable, data.DataTable))
+				if (object.ReferenceEquals(newTable, data.DataTable))
 					continue;
 
 				foreach (var columnInfo in data.DataRowSelection.GetAdditionallyUsedColumns())
@@ -201,6 +220,12 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			}
 		}
 
+		/// <summary>
+		/// Collects the column names from the provided plot items and organizes them in groups (see <see cref="ColumnNames"/>), one group for each plot item. See remarks for why to organize in groups.
+		/// </summary>
+		/// <param name="plotItems">The plot items to collect from.</param>
+		/// <remarks>The names have to be organized in groups. The reason is that each plot item should use columns from a single group number only.
+		/// Thus in order to determine whether a table can be used to replace the old table of all plot items, we need to know which column names belong together.</remarks>
 		public void CollectColumnNamesFromPlotItems(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems)
 		{
 			// collect all column names from those plot items
@@ -254,12 +279,18 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			}
 		}
 
+		/// <summary>
+		/// Gets an empty column information enumeration.
+		/// </summary>
+		/// <value>
+		/// The empty column information enumeration.
+		/// </value>
 		private static IEnumerable<(
-		string ColumnLabel, // Column label
-		IReadableColumn Column, // the column as it was at the time of this call
-		string ColumnName, // the name of the column (last part of the column proxies document path)
-		Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
-		)> EmptyColumnInfoEnumeration
+				string ColumnLabel, // Column label
+				IReadableColumn Column, // the column as it was at the time of this call
+				string ColumnName, // the name of the column (last part of the column proxies document path)
+				Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+				)> EmptyColumnInfoEnumeration
 		{
 			get
 			{
