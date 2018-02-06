@@ -38,17 +38,8 @@ namespace Altaxo.Graph.Gdi.Plot
 	/// <summary>
 	/// Interface for a plottable item.
 	/// </summary>
-	public interface IGPlotItem : Main.ICopyFrom, Main.IChangedEventSource, Main.IDocumentLeafNode, ITreeListNodeWithParent<IGPlotItem>
+	public interface IGPlotItem : Altaxo.Graph.Plot.IGPlotItem, ITreeListNodeWithParent<IGPlotItem>
 	{
-		/// <summary>
-		/// The name of the plot. It can be of different length. An argument of zero or less
-		/// returns the shortest possible name, higher values return more verbose names.
-		/// </summary>
-		/// <param name="level">The naming level, 0 returns the shortest possible name, 1 or more returns more
-		/// verbose names.</param>
-		/// <returns>The name of the plot.</returns>
-		string GetName(int level);
-
 		/// <summary>
 		/// The name of the plot. The style how to find the name is determined by the style argument. The possible
 		/// styles depend on the type of plot item.
@@ -138,12 +129,5 @@ namespace Altaxo.Graph.Gdi.Plot
 		/// <param name="hitpoint">The point where the mouse is pressed.</param>
 		/// <returns>Null if no hit, or a <see cref="IHitTestObject" /> if there was a hit.</returns>
 		IHitTestObject HitTest(IPlotArea layer, PointD2D hitpoint);
-
-		/// <summary>
-		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
-		/// to change a plot so that the plot items refer to another table.
-		/// </summary>
-		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
-		void VisitDocumentReferences(DocNodeProxyReporter Report);
 	}
 }

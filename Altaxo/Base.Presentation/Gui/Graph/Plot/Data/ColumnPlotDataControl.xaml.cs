@@ -121,12 +121,12 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		private List<List<SingleColumnControl>> _columnControls;
 
 		public void PlotColumns_Initialize(
-			IEnumerable<Tuple< // list of all groups
-			string, // Caption for each group of columns
-			IEnumerable<Tuple< // list of column definitions
-				PlotColumnTag, // tag to identify the column and group
-				string>
-			>>> groups)
+			IEnumerable<( // list of all groups
+			string GroupName, // Caption for each group of columns
+			IEnumerable<( // list of column definitions
+				PlotColumnTag PlotColumnTag, // tag to identify the column and group
+				string ColumnLabel)
+			>)> groups)
 		{
 			_guiTargetColumnsStack.Children.Clear();
 			_columnControls = new List<List<SingleColumnControl>>();

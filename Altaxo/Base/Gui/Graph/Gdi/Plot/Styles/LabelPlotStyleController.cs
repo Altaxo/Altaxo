@@ -374,9 +374,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		/// Item2 is the column itself,
 		/// Item3 is the column name (last part of the full path to the column), and
 		/// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
-		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>> GetDataColumnsExternallyControlled()
+		public IEnumerable<(string ColumnLabel, IReadableColumn Column, string ColumnName, Action<IReadableColumn, DataTable, int> ColumnSetAction)> GetDataColumnsExternallyControlled()
 		{
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
+			yield return (
 				"LabelColumn", // label to be shown
 				_doc.LabelColumn,
 				_doc.LabelColumnDataColumnName,
@@ -386,7 +386,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 					this._supposedParentDataTable = table;
 					this._supposedGroupNumber = group;
 					InitializeLabelColumnText();
-				});
+				}
+			);
 		}
 
 		#region Color management

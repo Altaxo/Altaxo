@@ -707,6 +707,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\Plot\Data\ColumnPlotDataExchangeTableControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\Plot\Data\XYNonlinearFitFunctionPlotDataControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1830,6 +1834,9 @@
       <DependentUpon>PenAllPropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\D3D\PenControlsGlue.cs" />
+    <Compile Include="Gui\Graph\Plot\Data\ColumnPlotDataExchangeTableControl.xaml.cs">
+      <DependentUpon>ColumnPlotDataExchangeTableControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\Plot\Data\DefaultSeverityColumnColors.cs" />
     <Compile Include="Gui\Graph\Plot\Data\XYNonlinearFitFunctionPlotDataControl.xaml.cs">
       <DependentUpon>XYNonlinearFitFunctionPlotDataControl.xaml</DependentUpon>

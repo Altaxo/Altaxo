@@ -31,6 +31,7 @@ using System.Text;
 namespace Altaxo.Settings
 {
 	using Altaxo.Main.Properties;
+	using System.ComponentModel;
 
 	/// <summary>
 	/// Manages the settings for a culture, i.e. number and DateTime formats etc.
@@ -262,7 +263,7 @@ namespace Altaxo.Settings
 		{
 			get
 			{
-				if (Current.PropertyService == null)
+				if (LicenseManager.UsageMode == LicenseUsageMode.Designtime || Current.PropertyService == null)
 					return System.Globalization.CultureInfo.CurrentUICulture;
 				else
 					return Current.PropertyService.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyUICulture, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin).Culture ?? System.Globalization.CultureInfo.CurrentUICulture;

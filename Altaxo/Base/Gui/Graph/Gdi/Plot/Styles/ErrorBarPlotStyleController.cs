@@ -299,11 +299,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 		/// Item2 is the column itself,
 		/// Item3 is the column name (last part of the full path to the column), and
 		/// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
-		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>> GetDataColumnsExternallyControlled()
+		public IEnumerable<(string ColumnLabel, IReadableColumn Column, string ColumnName, Action<IReadableColumn, DataTable, int> ColumnSetAction)> GetDataColumnsExternallyControlled()
 		{
 			if (_doc.UseCommonErrorColumn)
 			{
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
+				yield return (
 			"CommonError", // label to be shown
 			_doc.CommonErrorColumn,
 			_doc.CommonErrorColumnDataColumnName,
@@ -313,11 +313,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 				this._supposedParentDataTable = table;
 				this._supposedGroupNumber = group;
 				InitializeCommonErrorColumnText();
-			});
+			}
+				);
 			}
 			else
 			{
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
+				yield return (
 					"PositiveError", // label to be shown
 					_doc.PositiveErrorColumn,
 					_doc.PositiveErrorColumnDataColumnName,
@@ -327,9 +328,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 						this._supposedParentDataTable = table;
 						this._supposedGroupNumber = group;
 						this.InitializePositiveErrorColumnText();
-					});
+					}
+				);
 
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
+				yield return (
 					"NegativeError", // label to be shown
 					_doc.NegativeErrorColumn,
 					_doc.NegativeErrorColumnDataColumnName,
@@ -339,7 +341,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 						this._supposedParentDataTable = table;
 						this._supposedGroupNumber = group;
 						this.InitializeNegativeErrorColumnText();
-					});
+					}
+				);
 			}
 		}
 

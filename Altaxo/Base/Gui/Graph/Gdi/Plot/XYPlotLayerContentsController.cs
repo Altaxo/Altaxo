@@ -32,12 +32,15 @@ using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
+using Altaxo.Gui.Graph.Plot.Data;
+using Altaxo.Main;
 using Altaxo.Serialization.Clipboard;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Input;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot
 {
@@ -98,7 +101,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 		void AvailableItems_DragCancelled();
 	}
 
-	public interface IXYPlotLayerContentsView
+	public interface IXYPlotLayerContentsView : IDataContextAwareView
 	{
 		/// <summary>
 		/// Get/sets the controller of this view.
@@ -147,6 +150,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 		private NGTreeNode _availableItemsRootNode;
 		private SelectableListNodeList _dataClippingChoices;
 
+		public ICommand CommandChangeTableForSelectedItems { get; protected set; }
+
 		private bool _showRange = false;
 
 		public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
@@ -170,6 +175,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 			// now fill the tree view  with all plot associations currently inside
 			if (initData)
 			{
+				CommandChangeTableForSelectedItems = new RelayCommand(EhChangeTableForSelectedItems, EhCanChangeTableForSelectedItems);
 				_plotItemsRootNode = new NGTreeNode() { IsExpanded = true };
 				_plotItemsTree = _plotItemsRootNode.Nodes;
 				_availableItemsRootNode = new NGTreeNode();
@@ -239,11 +245,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 		{
 			base.AttachView();
 			_view.Controller = this;
+			_view.DataContext = this;
 		}
 
 		protected override void DetachView()
 		{
 			_view.Controller = null;
+			_view.DataContext = null;
 			base.DetachView();
 		}
 
@@ -805,6 +813,30 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 			return result;
 		}
 
+		private bool EhCanChangeTableForSelectedItems()
+		{
+			return ColumnPlotDataExchangeTableData.CanChangeTableForPlotItems(
+
+			PlotItemsSelected.Where(n => n.Tag is Altaxo.Graph.Plot.IGPlotItem item && item.DataObject is IColumnPlotData)
+				.Select(n => (Altaxo.Graph.Plot.IGPlotItem)(n.Tag)));
+		}
+
+		private void EhChangeTableForSelectedItems()
+		{
+			// get all selected plot items with IColumnPlotData
+			var selectedNodes = PlotItemsSelected.Where(n => n.Tag is Altaxo.Graph.Plot.IGPlotItem item && item.DataObject is IColumnPlotData);
+			var selectedPlotItems = selectedNodes.Select(n => (Altaxo.Graph.Plot.IGPlotItem)(n.Tag));
+
+			ColumnPlotDataExchangeTableData.ShowChangeTableForSelectedItemsDialog(selectedPlotItems);
+
+			// update the text for the items here
+
+			foreach (var selNode in selectedNodes)
+			{
+				selNode.Text = GetNameOfItem((IGPlotItem)selNode.Tag);
+			}
+		}
+
 		public void PlotItem_Open()
 		{
 			var selNodes = PlotItemsSelected;
@@ -1151,6 +1183,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 			{
 				throw new NotImplementedException();
 			}
+
+			public IDocumentLeafNode DataObject { get { return null; } }
+
+			public IDocumentLeafNode StyleObject { get { return null; } }
 
 			public bool CopyFrom(object obj)
 			{

@@ -80,6 +80,17 @@ namespace Altaxo.Data.Selections
 			return this.GetType() == obj?.GetType();
 		}
 
+		/// <inheritdoc/>
+		public IEnumerable<(
+			string ColumnLabel, // Column label
+			IReadableColumn Column, // the column as it was at the time of this call
+			string ColumnName, // the name of the column (last part of the column proxies document path)
+			Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+			)> GetAdditionallyUsedColumns()
+		{
+			yield break;
+		}
+
 		/// <summary>
 		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
 		/// to change a plot so that the plot items refer to another table.

@@ -1127,22 +1127,22 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 		/// </summary>
 		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
 		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
-		public IEnumerable<Tuple<
-			string, // Column label
-			IReadableColumn, // the column as it was at the time of this call
-			string, // the name of the column (last part of the column proxies document path)
-			Action<IReadableColumn> // action to set the column during Apply of the controller
-			>> GetAdditionallyUsedColumns()
+		public IEnumerable<(
+			string ColumnLabel, // Column label
+			IReadableColumn Column, // the column as it was at the time of this call
+			string ColumnName, // the name of the column (last part of the column proxies document path)
+			Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
+			)> GetAdditionallyUsedColumns()
 		{
 			if (_useCommonErrorColumn)
 			{
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(CommonErrorColumn), CommonErrorColumn, _commonErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => CommonErrorColumn = col as INumericColumn);
+				yield return (nameof(CommonErrorColumn), CommonErrorColumn, _commonErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => CommonErrorColumn = col as INumericColumn);
 			}
 			else
 			{
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(PositiveErrorColumn), PositiveErrorColumn, _positiveErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => PositiveErrorColumn = col as INumericColumn);
+				yield return (nameof(PositiveErrorColumn), PositiveErrorColumn, _positiveErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => PositiveErrorColumn = col as INumericColumn);
 
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn>>(nameof(NegativeErrorColumn), NegativeErrorColumn, _negativeErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => NegativeErrorColumn = col as INumericColumn);
+				yield return (nameof(NegativeErrorColumn), NegativeErrorColumn, _negativeErrorColumn?.DocumentPath?.LastPartOrDefault, (col) => NegativeErrorColumn = col as INumericColumn);
 			}
 		}
 

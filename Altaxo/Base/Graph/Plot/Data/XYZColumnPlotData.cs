@@ -505,15 +505,16 @@ namespace Altaxo.Graph.Plot.Data
 		/// </summary>
 		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
 		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
-		public IEnumerable<Tuple<string, // Name of the column group, e.g. "X-Y-Data"
-		IEnumerable<Tuple<
-	string, // Column label
-	IReadableColumn, // the column as it was at the time of this call
-	string, // the name of the column (last part of the column proxies document path)
-	Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller
-	>>>> GetAdditionallyUsedColumns()
+		public IEnumerable<(string NameOfColumnGroup, // Name of the column group, e.g. "X-Y-Data"
+									IEnumerable<(
+										string ColumnLabel, // Column label
+										IReadableColumn Column, // the column as it was at the time of this call
+										string ColumnName, // the name of the column (last part of the column proxies document path)
+										Action<IReadableColumn, DataTable, int> SetColumnAction // action to set the column during Apply of the controller (Arguments are column, table and group number)
+										)> columnInfos
+								)> GetAdditionallyUsedColumns()
 		{
-			yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>>>("#0: X-Y-Z-Data", GetColumns());
+			yield return ("#0: X-Y-Z-Data", GetColumns());
 		}
 
 		/// <summary>
@@ -521,16 +522,16 @@ namespace Altaxo.Graph.Plot.Data
 		/// </summary>
 		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
 		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
-		private IEnumerable<Tuple<
-			string, // Column label
-			IReadableColumn, // the column as it was at the time of this call
-			string, // the name of the column (last part of the column proxies document path)
-			Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller
-			>> GetColumns()
+		private IEnumerable<(
+	string ColumnLabel, // Column label
+	IReadableColumn Column, // the column as it was at the time of this call
+	string ColumnName, // the name of the column (last part of the column proxies document path)
+	Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller (Arguments are column, table and group number)
+	)> GetColumns()
 		{
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>("X", XColumn, _xColumn?.DocumentPath?.LastPartOrDefault, (col, table, group) => { XColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>("Y", YColumn, _yColumn?.DocumentPath?.LastPartOrDefault, (col, table, group) => { YColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>("Z", ZColumn, _zColumn?.DocumentPath?.LastPartOrDefault, (col, table, group) => { ZColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
+			yield return ("X", XColumn, _xColumn?.DocumentPath?.LastPartOrDefault, (col, table, group) => { XColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
+			yield return ("Y", YColumn, _yColumn?.DocumentPath?.LastPartOrDefault, (col, table, group) => { YColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
+			yield return ("Z", ZColumn, _zColumn?.DocumentPath?.LastPartOrDefault, (col, table, group) => { ZColumn = col; if (null != table) { DataTable = table; GroupNumber = group; } });
 		}
 
 		/// <summary>

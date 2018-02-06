@@ -409,6 +409,16 @@ namespace Altaxo.Graph.Gdi.Plot
 		#region IG2DPlotItem Members
 
 		/// <summary>
+		/// Returns null, because a plot item collection does not have a data object for itself.
+		/// </summary>
+		public IDocumentLeafNode DataObject { get { return null; } }
+
+		/// <summary>
+		/// Returns null, because this plot item collection does not have a style object for itself.
+		/// </summary>
+		public IDocumentLeafNode StyleObject { get { return null; } }
+
+		/// <summary>
 		/// Collects all possible group styles that can be applied to this plot item in
 		/// styles.
 		/// </summary>

@@ -407,26 +407,25 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		/// </summary>
 		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
 		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
-		public IEnumerable<Tuple<
-															string, // Name of the column group, e.g. "X-Y-Data"
-															IEnumerable<Tuple<
-																								string, // Column label
-																								IReadableColumn, // the column as it was at the time of this call
-																								string, // the name of the column (last part of the column proxies document path)
-																								Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller
-																								>>>>
-			GetAdditionallyUsedColumns()
+		public IEnumerable<(string NameOfColumnGroup, // Name of the column group, e.g. "X-Y-Data"
+									IEnumerable<(
+										string ColumnLabel, // Column label
+										IReadableColumn Column, // the column as it was at the time of this call
+										string ColumnName, // the name of the column (last part of the column proxies document path)
+										Action<IReadableColumn, DataTable, int> SetColumnAction // action to set the column during Apply of the controller (Arguments are column, table and group number)
+										)> columnInfos
+								)> GetAdditionallyUsedColumns()
 		{
-			yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>>>("Independent variables", GetIndependentVariables());
-			yield return new Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>>>("Dependent variables", GetDependentVariables());
+			yield return ("Independent variables", GetIndependentVariables());
+			yield return ("Dependent variables", GetDependentVariables());
 		}
 
-		private IEnumerable<Tuple<
-															string, // Column label
-															IReadableColumn, // the column as it was at the time of this call
-															string, // the name of the column (last part of the column proxies document path)
-															Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller
-															>>
+		private IEnumerable<(
+	string ColumnLabel, // Column label
+	IReadableColumn Column, // the column as it was at the time of this call
+	string ColumnName, // the name of the column (last part of the column proxies document path)
+	Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller (Arguments are column, table and group number)
+	)>
 			GetIndependentVariables()
 		{
 			for (int i = 0; i < NumberOfIndependentVariables; ++i)
@@ -434,7 +433,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				int k = i;
 
 				string nameOfVariable = null != this.FitFunction && i < this.FitFunction.NumberOfIndependentVariables ? this.FitFunction.IndependentVariableName(i) : string.Empty;
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
+				yield return (
 					nameOfVariable,
 					_independentVariables[k]?.Document,
 					_independentVariables[k]?.DocumentPath?.LastPartOrDefault,
@@ -447,16 +446,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
 							SetIndependentVariable(k, col);
 						}
 					}
-					);
+				);
 			}
 		}
 
-		private IEnumerable<Tuple<
-															string, // Column label
-															IReadableColumn, // the column as it was at the time of this call
-															string, // the name of the column (last part of the column proxies document path)
-															Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller
-															>>
+		private IEnumerable<(
+	string ColumnLabel, // Column label
+	IReadableColumn Column, // the column as it was at the time of this call
+	string ColumnName, // the name of the column (last part of the column proxies document path)
+	Action<IReadableColumn, DataTable, int> // action to set the column during Apply of the controller (Arguments are column, table and group number)
+	)>
 			GetDependentVariables()
 		{
 			for (int i = 0; i < NumberOfDependentVariables; ++i)
@@ -464,7 +463,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 				int k = i;
 
 				string nameOfVariable = null != this.FitFunction && k < this.FitFunction.NumberOfDependentVariables ? this.FitFunction.DependentVariableName(k) : string.Empty;
-				yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
+				yield return (
 					nameOfVariable,
 					_dependentVariables[k]?.Document,
 					_dependentVariables[k]?.DocumentPath?.LastPartOrDefault,
@@ -477,7 +476,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 							SetDependentVariable(k, col);
 						}
 					}
-					);
+				);
 			}
 		}
 

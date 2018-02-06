@@ -101,6 +101,7 @@
 					<MenuItem Command="Cut" Header="Cut items" />
 					<MenuItem Command="Paste" Header="Paste items" />
 					<MenuItem Command="Delete" Header="Delete items" />
+					<MenuItem Header="Change table for selected items" Command="{Binding CommandChangeTableForSelectedItems}" ToolTip="Exchange the table that is common to all the selected plot items." />
 				</ContextMenu>
 			</axogc:MultiSelectTreeView.ContextMenu>
 			<axogc:MultiSelectTreeView.CommandBindings>

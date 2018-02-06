@@ -37,7 +37,7 @@ using System.Threading.Tasks;
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
 {
 	/// <summary>
-	/// Summary description for LineScatterPlotDataController.
+	/// Controller for the plot data of an <see cref="XYColumnPlotData"/> instance.
 	/// </summary>
 	[UserControllerForObject(typeof(XYColumnPlotData))]
 	[ExpectedTypeOfView(typeof(IColumnPlotDataView))]

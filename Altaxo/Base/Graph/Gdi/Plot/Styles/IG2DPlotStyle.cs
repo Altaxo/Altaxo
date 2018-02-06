@@ -34,11 +34,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 	using Altaxo.Data;
 	using Groups;
 
-	public interface IG2DPlotStyle :
-		Main.ICopyFrom,
-		Main.IChangedEventSource,
-		Main.IChildChangedEventSink,
-		Main.IDocumentLeafNode
+	public interface IG2DPlotStyle : Altaxo.Graph.Plot.Styles.IGPlotStyle
 	{
 		/// <summary>
 		/// Adds all plot group styles that are not already in the externalGroups collection, and that
@@ -92,45 +88,11 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 		RectangleF PaintSymbol(System.Drawing.Graphics g, System.Drawing.RectangleF bounds);
 
 		/// <summary>
-		/// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
-		/// to change a plot so that the plot items refer to another table.
-		/// </summary>
-		/// <param name="Report">Function that reports the found <see cref="DocNodeProxy"/> instances to the visitor.</param>
-		void VisitDocumentReferences(DocNodeProxyReporter Report);
-
-		/// <summary>
-		/// Gets the columns used additionally by this style, e.g. the label column for a label plot style, or the error columns for an error bar plot style.
-		/// </summary>
-		/// <returns>An enumeration of tuples. Each tuple consist of the column name, as it should be used to identify the column in the data dialog. The second item of this
-		/// tuple is a function that returns the column proxy for this column, in order to get the underlying column or to set the underlying column.</returns>
-		IEnumerable<Tuple<
-			string, // Column label
-			IReadableColumn, // the column as it was at the time of this call
-			string, // the name of the column (last part of the column proxies document path)
-			Action<IReadableColumn> // action to set the column during Apply of the controller
-			>> GetAdditionallyUsedColumns();
-
-		/// <summary>
 		/// Prepares the scale(s) of the plot style. This is intended to be used with plot styles which
 		/// have an internal scale, for instance <see cref="Gdi.Plot.Styles.ColumnDrivenColorPlotStyle"/> or
 		/// <see cref="Gdi.Plot.Styles.ColumnDrivenSymbolSizePlotStyle"/>, which should act on this call with updating their internal scale.
 		/// </summary>
 		/// <param name="layer">The parent layer.</param>
 		void PrepareScales(IPlotArea layer);
-
-		/// <summary>
-		/// Copies from a template style, but either with or without data references. If the choice is without data references, data references, as for instance in <see cref="ErrorBarYPlotStyle"/>, are left alone, i.e. have the same value as before this call.
-		/// </summary>
-		/// <param name="from">The style to copy from.</param>
-		/// <param name="copyWithDataReferences">If true, data references are copyied from the template style to this style. If false, the data references of this style are left as they are.</param>
-		/// <returns>True if any properties could be copied from the template style; otherwise, false.</returns>
-		bool CopyFrom(object from, bool copyWithDataReferences);
-
-		/// <summary>
-		/// Clones the style, but either with or without data references. Thus, if <paramref name="copyWithDataReferences"/> is false, data references, as for instance in <see cref="ErrorBarYPlotStyle"/>, are left empty in the cloned instance.
-		/// </summary>
-		/// <param name="copyWithDataReferences">If true, data references are cloned to the new instance. If false, data references in the cloned instance are empty.</param>
-		/// <returns>Cloned instance, but either with cloned data references or with empty data references, depending on <paramref name="copyWithDataReferences"/>.</returns>
-		object Clone(bool copyWithDataReferences);
 	}
 }

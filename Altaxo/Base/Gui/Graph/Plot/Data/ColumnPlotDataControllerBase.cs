@@ -81,13 +81,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		/// one plot style that needs data columns.
 		/// </summary>
 		/// <param name="groups">The groups.</param>
-		void PlotColumns_Initialize(
-			IEnumerable<Tuple< // list of all groups
-			string, // Caption for each group of columns
-			IEnumerable<Tuple< // list of column definitions
-				PlotColumnTag, // tag to identify the column and group
-				string> // Label of the column
-			>>> groups);
+		void PlotColumns_Initialize(IEnumerable<(
+			string GroupName, // group name
+		IEnumerable<( // list of column definitions
+				PlotColumnTag PlotColumnTag, // tag to identify the column and group
+				string ColumnLabel)>)> groups);
 
 		/// <summary>
 		/// Updates the information for one plot item column
@@ -180,7 +178,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		/// (iiii) an action to set the column if a value has been assigned to, or if the column was changed.
 		/// </param>
 		void SetAdditionalPlotColumns(
-			IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>>>> additionalColumns
+			IEnumerable<(string ColumnGroupNumberAndName, IEnumerable<(string ColumnLabel, IReadableColumn Column, string ColumnName, Action<IReadableColumn, DataTable, int> ColumnSetAction)> ColumnInfos)> additionalColumns
 			);
 	}
 
@@ -349,7 +347,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		/// <summary>All types of available column transformations.</summary>
 		protected SelectableListNodeList _availableTransformations = new SelectableListNodeList();
 
-		/// <summary>Tuples from tables and group numbers, for which the columns in that group contain all that column names which are currently plot columns in our controller.</summary>
+		/// <summary>ValueTuples from tables and group numbers, for which the columns in that group contain all that column names which are currently plot columns in our controller.</summary>
 		protected SelectableListNodeList _matchingTables = new SelectableListNodeList();
 
 		protected SortedSet<int> _groupNumbersAll;
@@ -697,36 +695,30 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		#region PlotColumnInformation helper functions
 
-		private IEnumerable<Tuple<
-			string, // group name
-		IEnumerable<Tuple< // list of column definitions
-				PlotColumnTag, // tag to identify the column and group
-				string>>>>
+		private IEnumerable<(
+			string GroupName, // group name
+		IEnumerable<( // list of column definitions
+				PlotColumnTag PlotColumnTag, // tag to identify the column and group
+				string ColumnLabel)>)>
 			GetEnumerationForAllGroupsOfPlotColumns(List<GroupInfo> columnInfos)
 		{
 			for (int i = 0; i < columnInfos.Count; ++i)
 			{
 				var infoList = columnInfos[i];
-				yield return new Tuple<string, IEnumerable<Tuple<PlotColumnTag, string>>>(
-					infoList.GroupName,
-					GetEnumerationForOneGroupOfPlotColumns(infoList.Columns, i));
+				yield return (infoList.GroupName, GetEnumerationForOneGroupOfPlotColumns(infoList.Columns, i));
 			}
 		}
 
-		private IEnumerable<Tuple< // list of column definitions
-			PlotColumnTag, // tag to identify the column and group
-			string // Label for the column,
-			>>
+		private IEnumerable<( // list of column definitions
+			PlotColumnTag PlotColumnTag, // tag to identify the column and group
+			string ColumnLabel // Label for the column,
+			)>
 		GetEnumerationForOneGroupOfPlotColumns(List<PlotColumnInformationInternal> columnInfos, int groupNumber)
 		{
 			for (int i = 0; i < columnInfos.Count; ++i)
 			{
 				var info = columnInfos[i];
-				yield return new Tuple<PlotColumnTag, string>(
-					new PlotColumnTag(groupNumber, i),
-					info.Label
-
-					);
+				yield return (new PlotColumnTag(groupNumber, i), info.Label);
 			}
 		}
 
@@ -896,7 +888,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			if (null == node)
 				return; // no node selected
 
-			var tag = (Tuple<DataTable, int>)node.Tag;
+			var tag = ((DataTable, int))node.Tag;
 
 			if (object.ReferenceEquals(_doc.DataTable, tag.Item1) && _doc.GroupNumber == tag.Item2) // then nothing will change
 				return;
@@ -934,16 +926,16 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			foreach (var entry in GetTablesWithGroupThatFitExistingPlotColumns(token))
 			{
 				fittingTables2.Add(new SelectableListNode(
-					entry.Item1.Name + " (Group " + entry.Item2.ToString() + ")",
+					entry.dataTable.Name + " (Group " + entry.groupNumber.ToString() + ")",
 					entry,
-					object.ReferenceEquals(entry.Item1, _doc.DataTable)));
+					object.ReferenceEquals(entry.dataTable, _doc.DataTable)));
 			}
 
 			_matchingTables = fittingTables2;
 			Current.Dispatcher.InvokeAndForget(() => _view?.MatchingTables_Initialize(_matchingTables));
 		}
 
-		private IEnumerable<Tuple<DataTable, int>> GetTablesWithGroupThatFitExistingPlotColumns(System.Threading.CancellationToken token)
+		private IEnumerable<(DataTable dataTable, int groupNumber)> GetTablesWithGroupThatFitExistingPlotColumns(System.Threading.CancellationToken token)
 		{
 			HashSet<string> columnNamesThatMustFit = new HashSet<string>();
 
@@ -961,36 +953,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 				}
 			}
 
-			if (token.IsCancellationRequested)
-				yield break;
-
-			if (columnNamesThatMustFit.Count == 0)
-				yield break; // we decide here that when there is no column that must fit, we return no table, because then we can use the all available tables combobox anyway.
-
-			// now we iterate through all tables to find tables which can fullfil our criterium
-
-			foreach (var table in Current.Project.DataTableCollection)
-			{
-				var groupNumbersAll = table.DataColumns.GetGroupNumbersAll();
-
-				foreach (var groupNumber in groupNumbersAll)
-				{
-					if (token.IsCancellationRequested)
-						yield break;
-
-					var columnNamesExisting = new HashSet<string>(columnNamesThatMustFit); // make a copy of this
-
-					// and now eliminate all columns that also exist in this table
-					foreach (var name in table.DataColumns.GetNamesOfColumnsWithGroupNumber(groupNumber))
-					{
-						if (columnNamesExisting.Remove(name) && columnNamesExisting.Count == 0)
-						{
-							yield return new Tuple<DataTable, int>(table, groupNumber); // Count is null, so this is a fitting table
-							break;
-						}
-					}
-				}
-			}
+			return ColumnPlotDataExchangeTableController.GetTablesWithGroupThatFitExistingPlotColumns(columnNamesThatMustFit, token);
 		}
 
 		#endregion MatchingDataTables
@@ -1494,7 +1457,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		/// (iii) the name of the column (only if it is a data column; otherwise empty)
 		/// (iiii) an action to set the column if a value has been assigned to, or if the column was changed
 		/// can be used to get or set the underlying column.</param>
-		public void SetAdditionalPlotColumns(IEnumerable<Tuple<string, IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>>>> additionalColumns)
+		public void SetAdditionalPlotColumns(IEnumerable<(string ColumnGroupNumberAndName, IEnumerable<(string ColumnLabel, IReadableColumn Column, string ColumnName, Action<IReadableColumn, DataTable, int> ColumnSetAction)> ColumnInfos)> additionalColumns)
 		{
 			int groupNumber = 1;
 			foreach (var group in additionalColumns)
@@ -1503,20 +1466,20 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 				if (!(groupNumber < _columnGroup.Count))
 				{
-					_columnGroup.Add(new GroupInfo() { GroupName = group.Item1 });
+					_columnGroup.Add(new GroupInfo() { GroupName = group.ColumnGroupNumberAndName });
 				}
 				else
 				{
-					_columnGroup[groupNumber].GroupName = group.Item1;
+					_columnGroup[groupNumber].GroupName = group.ColumnGroupNumberAndName;
 					_columnGroup[groupNumber].Columns.Clear();
 				}
 
-				foreach (var col in group.Item2)
+				foreach (var col in group.ColumnInfos)
 				{
-					var columnInfo = new PlotColumnInformationInternal(col.Item2, col.Item3)
+					var columnInfo = new PlotColumnInformationInternal(col.Column, col.ColumnName)
 					{
-						Label = col.Item1,
-						ColumnSetter = col.Item4
+						Label = col.ColumnLabel,
+						ColumnSetter = col.ColumnSetAction
 					};
 
 					columnInfo.Update(_doc.DataTable, _doc.GroupNumber);

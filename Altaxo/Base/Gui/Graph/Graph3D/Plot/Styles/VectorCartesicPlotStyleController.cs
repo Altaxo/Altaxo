@@ -293,9 +293,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 		/// Item2 is the column itself,
 		/// Item3 is the column name (last part of the full path to the column), and
 		/// Item4 is an action which sets the column (and by the way the supposed data table the column belongs to.</returns>
-		public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>> GetDataColumnsExternallyControlled()
+		public IEnumerable<(string ColumnLabel, IReadableColumn Column, string ColumnName, Action<IReadableColumn, DataTable, int> ColumnSetAction)> GetDataColumnsExternallyControlled()
 		{
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
+			yield return (
 				"X", // label to be shown
 				_doc.ColumnX,
 				_doc.ColumnXDataColumnName,
@@ -305,9 +305,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 					this._supposedParentDataTable = table;
 					this._supposedGroupNumber = group;
 					InitializeColumnXText();
-				});
+				}
+			);
 
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
+			yield return (
 				"Y", // label to be shown
 				_doc.ColumnY,
 				_doc.ColumnYDataColumnName,
@@ -317,9 +318,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 					this._supposedParentDataTable = table;
 					this._supposedGroupNumber = group;
 					InitializeColumnYText();
-				});
+				}
+			);
 
-			yield return new Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>(
+			yield return (
 				"Z", // label to be shown
 				_doc.ColumnZ,
 				_doc.ColumnZDataColumnName,
@@ -329,7 +331,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 					this._supposedParentDataTable = table;
 					this._supposedGroupNumber = group;
 					InitializeColumnZText();
-				});
+				}
+			);
 		}
 
 		private void EhIndependentColorChanged()
