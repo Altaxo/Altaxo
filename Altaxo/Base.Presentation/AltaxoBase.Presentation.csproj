@@ -707,6 +707,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Gui\Graph\Plot\Data\ColumnPlotDataExchangeColumnsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Gui\Graph\Plot\Data\ColumnPlotDataExchangeTableControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1834,6 +1838,9 @@
       <DependentUpon>PenAllPropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Drawing\D3D\PenControlsGlue.cs" />
+    <Compile Include="Gui\Graph\Plot\Data\ColumnPlotDataExchangeColumnsControl.xaml.cs">
+      <DependentUpon>ColumnPlotDataExchangeColumnsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Graph\Plot\Data\ColumnPlotDataExchangeTableControl.xaml.cs">
       <DependentUpon>ColumnPlotDataExchangeTableControl.xaml</DependentUpon>
     </Compile>

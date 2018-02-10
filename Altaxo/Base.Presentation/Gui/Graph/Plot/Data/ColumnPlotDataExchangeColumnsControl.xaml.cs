@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 	/// <summary>
 	/// Interaction logic for ColumnPlotDataControl.xaml
 	/// </summary>
-	public partial class ColumnPlotDataControl : UserControl, IColumnPlotDataView
+	public partial class ColumnPlotDataExchangeColumnsControl : UserControl, IColumnPlotDataExchangeColumnsView
 	{
 		public event Action SelectedTableChanged;
 
@@ -104,18 +104,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		private ItemsControl _guiAvailableTableColumnsCurrentlyActive;
 
-		public ColumnPlotDataControl()
+		public ColumnPlotDataExchangeColumnsControl()
 		{
 			InitializeComponent();
-		}
-
-		private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
-		{
-			if (null != SelectedTableChanged)
-			{
-				GuiHelper.SynchronizeSelectionFromGui(this._cbTables);
-				SelectedTableChanged?.Invoke();
-			}
 		}
 
 		private List<List<SingleColumnControl>> _columnControls;
@@ -167,23 +158,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			sgc.SetSeverityLevel((int)state);
 		}
 
-		public void ShowTransformationSinglePrependAppendPopup(PlotColumnTag tag)
-		{
-			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
-			sgc.ShowTransformationSinglePrependAppendPopup(true);
-		}
-
 		#region IXYColumnPlotDataView
-
-		public void AvailableTables_Initialize(SelectableListNodeList items)
-		{
-			GuiHelper.Initialize(_cbTables, items);
-		}
-
-		public void MatchingTables_Initialize(SelectableListNodeList items)
-		{
-			GuiHelper.InitializeDeselectable(_guiMatchingTables, items);
-		}
 
 		public void AvailableTableColumns_Initialize(NGTreeNodeCollection nodes)
 		{
@@ -224,16 +199,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			}
 		}
 
-		public void OtherAvailableColumns_Initialize(SelectableListNodeList items)
-		{
-			GuiHelper.Initialize(_guiOtherAvailableColumns, items);
-		}
-
-		public void AvailableTransformations_Initialize(SelectableListNodeList items)
-		{
-			GuiHelper.Initialize(_guiAvailableTransformations, items);
-		}
-
 		#endregion IXYColumnPlotDataView
 
 		private void EhGroupNumber_Changed(object sender, RoutedPropertyChangedEventArgs<int> e)
@@ -264,9 +229,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		public class AvailableDataColumns_DragSource : IDragSource
 		{
-			private ColumnPlotDataControl _parentControl;
+			private ColumnPlotDataExchangeColumnsControl _parentControl;
 
-			public AvailableDataColumns_DragSource(ColumnPlotDataControl ctrl)
+			public AvailableDataColumns_DragSource(ColumnPlotDataExchangeColumnsControl ctrl)
 			{
 				_parentControl = ctrl;
 			}
@@ -303,116 +268,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		#endregion AvailableDataColumns_DragHander
 
-		#region OtherAvailableColumns_DragHander
-
-		private IDragSource _otherAvailableColumnsDragSource;
-
-		public IDragSource OtherAvailableColumnsDragSource
-		{
-			get
-			{
-				if (null == _otherAvailableColumnsDragSource)
-					_otherAvailableColumnsDragSource = new OtherAvailableColumns_DragSource(this);
-				return _otherAvailableColumnsDragSource;
-			}
-		}
-
-		public class OtherAvailableColumns_DragSource : IDragSource
-		{
-			private ColumnPlotDataControl _parentControl;
-
-			public OtherAvailableColumns_DragSource(ColumnPlotDataControl ctrl)
-			{
-				_parentControl = ctrl;
-			}
-
-			public bool CanStartDrag(IDragInfo dragInfo)
-			{
-				var result = _parentControl.OtherAvailableItems_CanStartDrag?.Invoke(_parentControl._guiOtherAvailableColumns.SelectedItems);
-				return result.HasValue ? result.Value : false;
-			}
-
-			public void StartDrag(IDragInfo dragInfo)
-			{
-				GuiHelper.SynchronizeSelectionFromGui(_parentControl._guiOtherAvailableColumns);
-				var result = _parentControl.OtherAvailableItems_StartDrag?.Invoke(dragInfo.SourceItems);
-				if (null != result)
-				{
-					dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
-					dragInfo.Data = result.Value.Data;
-				}
-			}
-
-			public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
-			{
-				bool isCopy, isMove;
-				GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
-				_parentControl.OtherAvailableItems_DragEnded?.Invoke(isCopy, isMove);
-			}
-
-			public void DragCancelled()
-			{
-				_parentControl.OtherAvailableItems_DragCancelled?.Invoke();
-			}
-		}
-
-		#endregion OtherAvailableColumns_DragHander
-
-		#region AvailableTransformations_DragHander
-
-		private IDragSource _availableTransformationsDragSource;
-
-		public IDragSource AvailableTransformationsDragSource
-		{
-			get
-			{
-				if (null == _availableTransformationsDragSource)
-					_availableTransformationsDragSource = new AvailableTransformations_DragSource(this);
-				return _availableTransformationsDragSource;
-			}
-		}
-
-		public class AvailableTransformations_DragSource : IDragSource
-		{
-			private ColumnPlotDataControl _parentControl;
-
-			public AvailableTransformations_DragSource(ColumnPlotDataControl ctrl)
-			{
-				_parentControl = ctrl;
-			}
-
-			public bool CanStartDrag(IDragInfo dragInfo)
-			{
-				var result = _parentControl.AvailableTransformations_CanStartDrag?.Invoke(_parentControl._guiAvailableTransformations.SelectedItems);
-				return result.HasValue ? result.Value : false;
-			}
-
-			public void StartDrag(IDragInfo dragInfo)
-			{
-				GuiHelper.SynchronizeSelectionFromGui(_parentControl._guiAvailableTransformations);
-				var result = _parentControl.AvailableTransformations_StartDrag?.Invoke(dragInfo.SourceItems);
-				if (null != result)
-				{
-					dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(result.Value.CanCopy, result.Value.CanMove);
-					dragInfo.Data = result.Value.Data;
-				}
-			}
-
-			public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
-			{
-				bool isCopy, isMove;
-				GuiHelper.ConvertDragDropEffectToCopyMove(effects, out isCopy, out isMove);
-				_parentControl.AvailableTransformations_DragEnded?.Invoke(isCopy, isMove);
-			}
-
-			public void DragCancelled()
-			{
-				_parentControl.AvailableTransformations_DragCancelled?.Invoke();
-			}
-		}
-
-		#endregion AvailableTransformations_DragHander
-
 		#region Column text boxes drop handler
 
 		private IDropTarget _columTextBoxes_DropTarget;
@@ -429,9 +284,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		public class ColumTextBoxes_DropTarget : IDropTarget
 		{
-			private ColumnPlotDataControl _parentControl;
+			private ColumnPlotDataExchangeColumnsControl _parentControl;
 
-			public ColumTextBoxes_DropTarget(ColumnPlotDataControl ctrl)
+			public ColumTextBoxes_DropTarget(ColumnPlotDataExchangeColumnsControl ctrl)
 			{
 				_parentControl = ctrl;
 			}
@@ -518,16 +373,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			{
 				PlotItemColumn_AddTo?.Invoke(parameter as PlotColumnTag);
 			}
-			else if (object.ReferenceEquals(itemsControl, _guiOtherAvailableColumns))
-			{
-				GuiHelper.SynchronizeSelectionFromGui(_guiOtherAvailableColumns);
-				OtherAvailableColumn_AddTo?.Invoke(parameter as PlotColumnTag);
-			}
-			if (object.ReferenceEquals(itemsControl, _guiAvailableTransformations))
-			{
-				GuiHelper.SynchronizeSelectionFromGui(_guiAvailableTransformations);
-				Transformation_AddTo?.Invoke(parameter as PlotColumnTag);
-			}
 		}
 
 		#endregion ColumnAddTo command
@@ -574,130 +419,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 		#endregion ColumnErase command
 
-		#region TransformationEdit command
-
-		private RelayCommand _transformationEditCommand;
-
-		public ICommand TransformationEditCommand
-		{
-			get
-			{
-				if (this._transformationEditCommand == null)
-					this._transformationEditCommand = new RelayCommand(EhTransformation_EditCommand);
-				return this._transformationEditCommand;
-			}
-		}
-
-		private void EhTransformation_EditCommand(object parameter)
-		{
-			Transformation_Edit?.Invoke(parameter as PlotColumnTag);
-		}
-
-		#endregion TransformationEdit command
-
-		#region TransformationErase command
-
-		private RelayCommand _transformationEraseCommand;
-
-		public ICommand TransformationEraseCommand
-		{
-			get
-			{
-				if (this._transformationEraseCommand == null)
-					this._transformationEraseCommand = new RelayCommand(EhTransformation_EraseCommand);
-				return this._transformationEraseCommand;
-			}
-		}
-
-		private void EhTransformation_EraseCommand(object parameter)
-		{
-			Transformation_Erase?.Invoke(parameter as PlotColumnTag);
-		}
-
-		#endregion TransformationErase command
-
-		#region TransformationAddAsSingle command
-
-		private RelayCommand _transformationAddAsSingleCommand;
-
-		public ICommand TransformationAddAsSingleCommand
-		{
-			get
-			{
-				if (this._transformationAddAsSingleCommand == null)
-					this._transformationAddAsSingleCommand = new RelayCommand(EhTransformationAddAsSingleCommand);
-				return _transformationAddAsSingleCommand;
-			}
-		}
-
-		private void EhTransformationAddAsSingleCommand(object parameter)
-		{
-			var tag = (PlotColumnTag)parameter;
-			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
-			sgc.ShowTransformationSinglePrependAppendPopup(false);
-
-			Transformation_AddAsSingle?.Invoke(tag);
-		}
-
-		#endregion TransformationAddAsSingle command
-
-		#region TransformationAddAsPrepending command
-
-		private RelayCommand _transformationAddAsPrependingCommand;
-
-		public ICommand TransformationAddAsPrependingCommand
-		{
-			get
-			{
-				if (this._transformationAddAsPrependingCommand == null)
-					this._transformationAddAsPrependingCommand = new RelayCommand(EhTransformationAddAsPrependingCommand);
-				return _transformationAddAsPrependingCommand;
-			}
-		}
-
-		private void EhTransformationAddAsPrependingCommand(object parameter)
-		{
-			var tag = (PlotColumnTag)parameter;
-			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
-			sgc.ShowTransformationSinglePrependAppendPopup(false);
-
-			Transformation_AddAsPrepending?.Invoke(tag);
-		}
-
-		#endregion TransformationAddAsPrepending command
-
-		#region TransformationAddAsAppending command
-
-		private RelayCommand _transformationAddAsAppendingCommand;
-
-		public ICommand TransformationAddAsAppendingCommand
-		{
-			get
-			{
-				if (this._transformationAddAsAppendingCommand == null)
-					this._transformationAddAsAppendingCommand = new RelayCommand(EhTransformationAddAsAppendingCommand);
-				return _transformationAddAsAppendingCommand;
-			}
-		}
-
-		public object RowSelectionGuiControl
-		{
-			set
-			{
-				_guiPlotRange.Content = value;
-			}
-		}
-
-		private void EhTransformationAddAsAppendingCommand(object parameter)
-		{
-			var tag = (PlotColumnTag)parameter;
-			var sgc = _columnControls[tag.GroupNumber][tag.ColumnNumber];
-			sgc.ShowTransformationSinglePrependAppendPopup(false);
-			Transformation_AddAsAppending?.Invoke(tag);
-		}
-
-		#endregion TransformationAddAsAppending command
-
 		#endregion Column text boxes commands
 
 		private ItemsControl _lastItemsControlActivated;
@@ -712,18 +433,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			if (true == (bool)e.NewValue)
 			{
 				if (
-					object.ReferenceEquals(_guiAvailableTableColumnsCurrentlyActive, sender) ||
-					object.ReferenceEquals(_guiOtherAvailableColumns, sender) ||
-					object.ReferenceEquals(_guiAvailableTransformations, sender)
+					object.ReferenceEquals(_guiAvailableTableColumnsCurrentlyActive, sender)
+
 					)
 					_lastItemsControlActivated = (ItemsControl)sender;
 			}
-		}
-
-		private void EhMatchingTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
-		{
-			GuiHelper.SynchronizeSelectionFromGui(_guiMatchingTables);
-			SelectedMatchingTableChanged?.Invoke();
 		}
 	}
 }

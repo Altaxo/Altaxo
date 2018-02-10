@@ -152,11 +152,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>if not exist $(SolutionDir)rtDir\AddIns mkdir $(SolutionDir)rtDir\AddIns
-copy $(ProjectDir)AltaxoCore.addin $(SolutionDir)rtDir\AddIns
-del $(SolutionDir)rtDir\AddIns\ICSharpCode.SharpDevelop.addin
-</PreBuildEvent>
-    <PostBuildEvent>del $(SolutionDir)rtDir\AddIns\ICSharpCode.SharpDevelop.addin</PostBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />
   <Target Name="BeforeBuild">

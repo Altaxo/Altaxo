@@ -136,6 +136,23 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		}
 
 		/// <summary>
+		/// Warning! This function is intended for use with <see cref="ColumnPlotDataExchangeColumnsController"/> only, because there we only have column names, but no real columns.
+		/// For all other controllers, use <see cref="UnderlyingColumn"/>, because in this case, you have a table at hand, where the column belongs to.
+		/// Sets the name of underlying data column, and update the <see cref="_plotColumnBoxText"/>.
+		/// </summary>
+		/// <value>
+		/// The name of underlying data column.
+		/// </value>
+		public void UpdateWithNameOfUnderlyingDataColumn(string nameOfColumn)
+		{
+			_nameOfUnderlyingDataColumn = nameOfColumn;
+			_underlyingColumn = null;
+			_plotColumnBoxText = nameOfColumn;
+
+			_isDirty = true;
+		}
+
+		/// <summary>
 		/// The column transformation.
 		/// </summary>
 		public IVariantToVariantTransformation Transformation

@@ -53,255 +53,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		event Action SelectedTableChanged;
 
 		event Action SelectedMatchingTableChanged;
-	}
 
-	/// <summary>
-	/// Model used to exchange the data table in multiple plot items concurrently.
-	/// </summary>
-	public class ColumnPlotDataExchangeTableData : ICloneable
-	{
-		/// <summary>
-		/// Gets the column names currently used by the plot items. The list contains tuples, consisting of the
-		/// name of the plot item, and the list of column names this plot items uses.
-		/// </summary>
-		public List<(string itemName, List<string> columnNames)> ColumnNames { get; } = new List<(string itemName, List<string> columnNames)>();
-
-		/// <summary>
-		/// Gets or sets the original table used by the plot items.
-		/// </summary>
-		public DataTable OriginalTable { get; set; }
-
-		/// <summary>
-		/// Gets or sets the table, that should become the new data table of the plot items.
-		/// </summary>
-		/// <value>
-		/// The new table.
-		/// </value>
-		public DataTable NewTable { get; set; }
-
-		/// <inheritdoc/>
-		public object Clone()
-		{
-			return this.MemberwiseClone();
-		}
-
-		/// <summary>
-		/// Determines whether it is possible to change the underlying table for the specified plot items.
-		/// The table can be changed if all plot items have exactly the same underlying table.
-		/// </summary>
-		/// <param name="plotItems">The plot items.</param>
-		/// <returns>
-		///   <c>true</c> if this instance [can change table for plot items] the specified plot items; otherwise, <c>false</c>.
-		/// </returns>
-		public static bool CanChangeTableForPlotItems(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems)
-		{
-			var firstSelectedPlotItem = plotItems.FirstOrDefault();
-			if (null == firstSelectedPlotItem)
-				return false;
-
-			var table = ((IColumnPlotData)firstSelectedPlotItem.DataObject).DataTable;
-
-			foreach (var node in plotItems)
-			{
-				if (!object.ReferenceEquals(table, ((IColumnPlotData)node.DataObject).DataTable))
-					return false;
-			}
-
-			return true;
-		}
-
-		/// <summary>
-		/// Shows a dialog that allows to change the underlying data table for the provided plot items.
-		/// </summary>
-		/// <param name="plotItems">The plot items.</param>
-		/// <returns>True if the dialog was shown and for at least one plot item the underlying table was exchanged; otherwise false.</returns>
-		public static bool ShowChangeTableForSelectedItemsDialog(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems)
-		{
-			if (!CanChangeTableForPlotItems(plotItems))
-				return false;
-
-			// get all selected plot items with IColumnPlotData
-			var firstSelectedPlotItem = plotItems.FirstOrDefault();
-			if (null == firstSelectedPlotItem)
-				return false;
-
-			var exchangeTableData = new ColumnPlotDataExchangeTableData
-			{
-				OriginalTable = ((IColumnPlotData)firstSelectedPlotItem.DataObject).DataTable
-			};
-
-			exchangeTableData.CollectColumnNamesFromPlotItems(plotItems);
-
-			object exchangeTableDataObject = exchangeTableData;
-			if (!Current.Gui.ShowDialog(ref exchangeTableDataObject, "Select new table for plot items"))
-				return false;
-
-			exchangeTableData = (ColumnPlotDataExchangeTableData)exchangeTableDataObject;
-
-			if (object.ReferenceEquals(exchangeTableData.OriginalTable, exchangeTableData.NewTable))
-				return false; // nothing to do
-
-			// apply the new table
-
-			exchangeTableData.ChangeTableForPlotItems(plotItems);
-
-			return true;
-		}
-
-		/// <summary>
-		/// Changes the underlying table for the provided plot items, using the new data table in <see cref="NewTable"/>.
-		/// </summary>
-		/// <param name="plotItems">The plot items for which to change the underlying data table.</param>
-		public void ChangeTableForPlotItems(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems)
-		{
-			ChangeTableForPlotItems(plotItems, this.NewTable);
-		}
-
-		/// <summary>
-		/// Changes the underlying table for the provided plot items.
-		/// </summary>
-		/// <param name="plotItems">The plot items for which to change the underlying data table.</param>
-		/// <param name="newTable">The new table.</param>
-		public static void ChangeTableForPlotItems(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems, DataTable newTable)
-		{
-			// collect all column names from those plot items
-			foreach (var node in plotItems)
-			{
-				var data = (IColumnPlotData)node.DataObject;
-				if (object.ReferenceEquals(newTable, data.DataTable))
-					continue;
-
-				foreach (var columnInfo in data.DataRowSelection.GetAdditionallyUsedColumns())
-				{
-					if (columnInfo.Column is DataColumn && newTable.DataColumns.Contains(columnInfo.ColumnName))
-						columnInfo.ColumnSetAction(newTable.DataColumns[columnInfo.ColumnName]);
-				}
-
-				// first the data
-				// now the data itself
-				foreach (var t in data.GetAdditionallyUsedColumns())
-				{
-					foreach (var columnInfo in t.columnInfos)
-					{
-						if (columnInfo.Column is DataColumn && newTable.DataColumns.Contains(columnInfo.ColumnName))
-						{
-							var newDataCol = newTable.DataColumns[columnInfo.ColumnName];
-							int newGroup = newTable.DataColumns.GetColumnGroup(newDataCol);
-							columnInfo.SetColumnAction(newDataCol, newTable, newGroup);
-						}
-					}
-				}
-
-				// and now to the styles
-
-				if (node.StyleObject is IEnumerable<Altaxo.Graph.Plot.Styles.IGPlotStyle> styleEn)
-				{
-					foreach (var style in styleEn)
-					{
-						foreach (var columnInfo in style.GetAdditionallyUsedColumns() ?? EmptyColumnInfoEnumeration)
-						{
-							if (columnInfo.Column is DataColumn && newTable.DataColumns.Contains(columnInfo.ColumnName))
-							{
-								columnInfo.ColumnSetAction(newTable.DataColumns[columnInfo.ColumnName]);
-							}
-						}
-					}
-				}
-				else if (node.StyleObject is Altaxo.Graph.Plot.Styles.IGPlotStyle style)
-				{
-					foreach (var columnInfo in style.GetAdditionallyUsedColumns() ?? EmptyColumnInfoEnumeration)
-					{
-						if (columnInfo.Column is DataColumn && newTable.DataColumns.Contains(columnInfo.ColumnName))
-						{
-							columnInfo.ColumnSetAction(newTable.DataColumns[columnInfo.ColumnName]);
-						}
-					}
-				}
-			}
-		}
-
-		/// <summary>
-		/// Collects the column names from the provided plot items and organizes them in groups (see <see cref="ColumnNames"/>), one group for each plot item. See remarks for why to organize in groups.
-		/// </summary>
-		/// <param name="plotItems">The plot items to collect from.</param>
-		/// <remarks>The names have to be organized in groups. The reason is that each plot item should use columns from a single group number only.
-		/// Thus in order to determine whether a table can be used to replace the old table of all plot items, we need to know which column names belong together.</remarks>
-		public void CollectColumnNamesFromPlotItems(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems)
-		{
-			// collect all column names from those plot items
-			foreach (var plotItem in plotItems)
-			{
-				var data = (IColumnPlotData)plotItem.DataObject;
-				if (!object.ReferenceEquals(OriginalTable, data.DataTable))
-					continue;
-
-				var columnNames = new List<string>();
-				ColumnNames.Add((plotItem.ToString(), columnNames));
-
-				// collect from the plot item's row selection
-				foreach (var columnInfo in data.DataRowSelection.GetAdditionallyUsedColumns())
-				{
-					if (columnInfo.Column is DataColumn)
-						columnNames.Add(columnInfo.ColumnName);
-				}
-
-				// now collect from the data itself
-				foreach (var t in data.GetAdditionallyUsedColumns())
-				{
-					foreach (var columnInfo in t.columnInfos)
-					{
-						if (columnInfo.Column is DataColumn)
-							columnNames.Add(columnInfo.ColumnName);
-					}
-				}
-
-				// and now from the style
-
-				if (plotItem.StyleObject is IEnumerable<Altaxo.Graph.Plot.Styles.IGPlotStyle> styleEn)
-				{
-					foreach (var style in styleEn)
-					{
-						foreach (var columnInfo in style.GetAdditionallyUsedColumns() ?? EmptyColumnInfoEnumeration)
-						{
-							if (columnInfo.Column is DataColumn)
-								columnNames.Add(columnInfo.ColumnName);
-						}
-					}
-				}
-				else if (plotItem.StyleObject is Altaxo.Graph.Plot.Styles.IGPlotStyle style)
-				{
-					foreach (var columnInfo in style.GetAdditionallyUsedColumns() ?? EmptyColumnInfoEnumeration)
-					{
-						if (columnInfo.Column is DataColumn)
-							columnNames.Add(columnInfo.ColumnName);
-					}
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets an empty column information enumeration.
-		/// </summary>
-		/// <value>
-		/// The empty column information enumeration.
-		/// </value>
-		private static IEnumerable<(
-				string ColumnLabel, // Column label
-				IReadableColumn Column, // the column as it was at the time of this call
-				string ColumnName, // the name of the column (last part of the column proxies document path)
-				Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
-				)> EmptyColumnInfoEnumeration
-		{
-			get
-			{
-				return Enumerable.Empty<(
-			string ColumnLabel, // Column label
-			IReadableColumn Column, // the column as it was at the time of this call
-			string ColumnName, // the name of the column (last part of the column proxies document path)
-			Action<IReadableColumn> ColumnSetAction // action to set the column during Apply of the controller
-			)>();
-			}
-		}
+		void Diagnostics_Initialize(int numberOfPlotItems, int numberOfSuccessfullyChangedColumns, int numberOfUnsuccessfullyChangedColumns);
 	}
 
 	#endregion Interfaces
@@ -386,6 +139,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 			{
 				_view.AvailableTables_Initialize(_availableTables);
 				_view.MatchingTables_Initialize(_matchingTables);
+				_view.Diagnostics_Initialize(0, 0, 0);
 			}
 		}
 
@@ -425,6 +179,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 				return;
 
 			_doc.NewTable = tg;
+			UpdateDiagnostics();
 		}
 
 		#endregion AvailableDataTables
@@ -448,6 +203,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 				return;
 
 			_doc.NewTable = (DataTable)tag;
+			UpdateDiagnostics();
 
 			_availableTables.SetSelection((nd) => object.ReferenceEquals(nd.Tag, _doc.NewTable));
 			_view?.AvailableTables_Initialize(_availableTables);
@@ -554,5 +310,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		}
 
 		#endregion MatchingDataTables
+
+		private void UpdateDiagnostics()
+		{
+			(int NumberOfPlotItemsChanged, int NumberOfSuccessFullyChangedColumns, int NumberOfUnsuccessfullyChangedColumns) = _doc.TestChangeTableForPlotItems();
+			_view?.Diagnostics_Initialize(NumberOfPlotItemsChanged, NumberOfSuccessFullyChangedColumns, NumberOfUnsuccessfullyChangedColumns);
+		}
 	}
 }

@@ -151,6 +151,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 		private SelectableListNodeList _dataClippingChoices;
 
 		public ICommand CommandChangeTableForSelectedItems { get; protected set; }
+		public ICommand CommandChangeColumnsForSelectedItems { get; protected set; }
 
 		private bool _showRange = false;
 
@@ -176,6 +177,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 			if (initData)
 			{
 				CommandChangeTableForSelectedItems = new RelayCommand(EhChangeTableForSelectedItems, EhCanChangeTableForSelectedItems);
+				CommandChangeColumnsForSelectedItems = new RelayCommand(EhChangeColumnsForSelectedItems, EhCanChangeColumnsForSelectedItems);
+
 				_plotItemsRootNode = new NGTreeNode() { IsExpanded = true };
 				_plotItemsTree = _plotItemsRootNode.Nodes;
 				_availableItemsRootNode = new NGTreeNode();
@@ -828,6 +831,30 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 			var selectedPlotItems = selectedNodes.Select(n => (Altaxo.Graph.Plot.IGPlotItem)(n.Tag));
 
 			ColumnPlotDataExchangeTableData.ShowChangeTableForSelectedItemsDialog(selectedPlotItems);
+
+			// update the text for the items here
+
+			foreach (var selNode in selectedNodes)
+			{
+				selNode.Text = GetNameOfItem((IGPlotItem)selNode.Tag);
+			}
+		}
+
+		private bool EhCanChangeColumnsForSelectedItems()
+		{
+			return ColumnPlotDataExchangeColumnsData.CanChangeCommonColumnsForPlotItems(
+
+			PlotItemsSelected.Where(n => n.Tag is Altaxo.Graph.Plot.IGPlotItem item && item.DataObject is IColumnPlotData)
+				.Select(n => (Altaxo.Graph.Plot.IGPlotItem)(n.Tag)));
+		}
+
+		private void EhChangeColumnsForSelectedItems()
+		{
+			// get all selected plot items with IColumnPlotData
+			var selectedNodes = PlotItemsSelected.Where(n => n.Tag is Altaxo.Graph.Plot.IGPlotItem item && item.DataObject is IColumnPlotData);
+			var selectedPlotItems = selectedNodes.Select(n => (Altaxo.Graph.Plot.IGPlotItem)(n.Tag));
+
+			ColumnPlotDataExchangeColumnsData.ShowChangeColumnsForSelectedItemsDialog(selectedPlotItems);
 
 			// update the text for the items here
 

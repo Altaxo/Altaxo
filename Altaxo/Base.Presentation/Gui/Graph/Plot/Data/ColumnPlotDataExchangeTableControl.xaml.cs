@@ -81,5 +81,38 @@ namespace Altaxo.Gui.Graph.Plot.Data
 		{
 			GuiHelper.InitializeDeselectable(_guiMatchingTables, items);
 		}
+
+		public void Diagnostics_Initialize(int numberOfPlotItems, int numberOfSuccessfullyChangedColumns, int numberOfUnsuccessfullyChangedColumns)
+		{
+			string text1, text2, text3;
+
+			if (0 == numberOfPlotItems)
+				text1 = "- No plot items with exchanged tables";
+			else if (1 == numberOfPlotItems)
+				text1 = "- One plot item with an exchanged table";
+			else
+				text1 = string.Format(Altaxo.Settings.GuiCulture.Instance, "- {0} plot items with exchanged tables", numberOfPlotItems);
+
+			if (0 == numberOfSuccessfullyChangedColumns)
+				text2 = null;
+			else if (1 == numberOfSuccessfullyChangedColumns)
+				text2 = "- One successfully changed column";
+			else
+				text2 = string.Format(Altaxo.Settings.GuiCulture.Instance, "- {0} successfully changed columns", numberOfSuccessfullyChangedColumns);
+
+			if (0 == numberOfUnsuccessfullyChangedColumns)
+				text3 = null;
+			else if (1 == numberOfUnsuccessfullyChangedColumns)
+				text3 = "- One column could not be replaced!";
+			else
+				text3 = string.Format(Altaxo.Settings.GuiCulture.Instance, "- {0} columns could not be replaced!", numberOfUnsuccessfullyChangedColumns);
+
+			_guiDiagnosticsNumberOfPlotItems.Text = text1;
+			_guiDiagnosticsNumberOfSuccessfullyChangedColumns.Text = text2;
+			_guiDiagnosticsNumberOfUnsuccessfullyChangedColumns.Text = text3;
+
+			_guiDiagnosticsNumberOfSuccessfullyChangedColumns.Visibility = text2 == null ? Visibility.Hidden : Visibility.Visible;
+			_guiDiagnosticsNumberOfUnsuccessfullyChangedColumns.Visibility = text3 == null ? Visibility.Hidden : Visibility.Visible;
+		}
 	}
 }

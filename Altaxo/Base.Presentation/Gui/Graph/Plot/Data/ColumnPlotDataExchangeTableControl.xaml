@@ -31,10 +31,12 @@
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="3*" />
+			<RowDefinition Height="4" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
@@ -49,5 +51,13 @@
 			<Label Content="Tables with matching columns:" />
 			<ComboBox x:Name="_guiMatchingTables" SelectionChanged="EhMatchingTables_SelectionChangeCommit" ToolTip="Choose among those tables only, which contain columns with names like the plot columns below." />
 		</StackPanel>
+
+		<GroupBox Grid.Row="2" Grid.ColumnSpan="5" Header="Diagnostics:" Padding="4">
+			<StackPanel Orientation="Vertical">
+				<TextBlock x:Name="_guiDiagnosticsNumberOfPlotItems" Text="- x plot items changed" />
+				<TextBlock x:Name="_guiDiagnosticsNumberOfSuccessfullyChangedColumns" Text="- x columns successfully exchanged"   Background="LightGreen" />
+				<TextBlock x:Name="_guiDiagnosticsNumberOfUnsuccessfullyChangedColumns" Text="- x columns failed to exchange"  Background="LightPink" />
+			</StackPanel>
+		</GroupBox>
 	</Grid>
 </UserControl>

@@ -6,6 +6,7 @@
 						 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axog="clr-namespace:Altaxo.Gui"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Thickness x:Key="ButtonMargin">8</Thickness>
@@ -102,6 +103,7 @@
 					<MenuItem Command="Paste" Header="Paste items" />
 					<MenuItem Command="Delete" Header="Delete items" />
 					<MenuItem Header="Change table for selected items" Command="{Binding CommandChangeTableForSelectedItems}" ToolTip="Exchange the table that is common to all the selected plot items." />
+					<MenuItem Header="Change columns for selected items" Command="{Binding CommandChangeColumnsForSelectedItems}" ToolTip="Exchange one or more columns with names common to all the selected plot items." />
 				</ContextMenu>
 			</axogc:MultiSelectTreeView.ContextMenu>
 			<axogc:MultiSelectTreeView.CommandBindings>

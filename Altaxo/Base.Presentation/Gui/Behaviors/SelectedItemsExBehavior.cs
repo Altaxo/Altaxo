@@ -21,8 +21,8 @@ namespace Altaxo.Gui.Behaviors
 	/// <code>
 	/// &lt;ListBox ....
 	/// local:SelectedItemsExBehavior.IsEnabled="True"
-	//  local:SelectedItemsExBehavior.SelectedItemsEx="{Binding SelectedItems, Mode=OneWayToSource}"
-	//  local:SelectedItemsExBehavior.SelectionChangedCommand="{Binding SelectionChangedCommand}"
+	///  local:SelectedItemsExBehavior.SelectedItemsEx="{Binding SelectedItems, Mode=OneWayToSource}"
+	///  local:SelectedItemsExBehavior.SelectionChangedCommand="{Binding SelectionChangedCommand}"
 	/// </code>
 	/// </example>
 	public static class SelectedItemsExBehavior

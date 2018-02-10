@@ -249,10 +249,14 @@
     <Compile Include="Analysis\Statistics\Histograms\IBinning.cs" />
     <Compile Include="Analysis\Statistics\Histograms\LinearBinning.cs" />
     <Compile Include="Analysis\Statistics\Histograms\LogarithmicBinning.cs" />
+    <Compile Include="Graph\Plot\Data\ColumnPlotDataExchangeColumnsData.cs" />
+    <Compile Include="Graph\Plot\Data\ColumnPlotDataExchangeDataBase.cs" />
     <Compile Include="Graph\Plot\IGPlotItem.cs" />
     <Compile Include="Graph\Plot\Styles\IGPlotStyle.cs" />
     <Compile Include="Gui\Graph\Gdi\Viewing\GraphControllerWpf.cs" />
+    <Compile Include="Gui\Graph\Plot\Data\ColumnPlotDataExchangeColumnsController.cs" />
     <Compile Include="Gui\Graph\Plot\Data\ColumnPlotDataExchangeTableController.cs" />
+    <Compile Include="Graph\Plot\Data\ColumnPlotDataExchangeTableData.cs" />
     <Compile Include="Gui\IClipboardHandler.cs" />
     <Compile Include="Gui\KeyboardRelated.cs" />
     <Compile Include="Gui\Pads\LightingPad\LightingController.cs" />

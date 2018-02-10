@@ -346,7 +346,7 @@
   <PropertyGroup>
     <PreBuildEvent>if not exist $(SolutionDir)rtDir\AddIns mkdir $(SolutionDir)rtDir\AddIns
 copy $(ProjectDir)AltaxoCore.addin $(SolutionDir)rtDir\AddIns
-del $(SolutionDir)rtDir\AddIns\ICSharpCode.SharpDevelop.addin</PreBuildEvent>
+</PreBuildEvent>
     <PostBuildEvent>if not exist $(SolutionDir)rtDir\data\resources mkdir $(SolutionDir)rtDir\data\resources
 copy $(ProjectDir)Resources\*.resources $(SolutionDir)rtDir\data\resources</PostBuildEvent>
   </PropertyGroup>
