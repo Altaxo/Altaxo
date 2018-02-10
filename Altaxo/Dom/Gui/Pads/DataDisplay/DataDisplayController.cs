@@ -90,15 +90,24 @@ namespace Altaxo.Gui.Pads.DataDisplay
 
 		private void InternalWrite(string text)
 		{
-			var activeWin = Current.Workbench.ActiveContent;
-
 			_view.Text = text;
 
-			this.IsActive = true;
-			this.IsVisible = true;
-			this.IsSelected = true;
+			if (!(IsSelected && IsVisible))
+			{
+				var ww = Current.Workbench.ActiveContent;
 
-			Current.Workbench.ShowView(activeWin);
+				// bring this pad to front
+				this.IsActive = true;
+				this.IsSelected = true;
+				this.IsVisible = true;
+
+				// afterwards, bring originally view content to view
+				if (ww is IViewContent)
+				{
+					ww.IsActive = true;
+					ww.IsSelected = true;
+				}
+			}
 		}
 
 		#region IDataDisplayService Members

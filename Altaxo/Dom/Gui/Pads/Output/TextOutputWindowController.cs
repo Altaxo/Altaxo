@@ -128,11 +128,11 @@ namespace Altaxo.Gui.Pads.Output
 
 		#region IOutputService Members
 
-		private void Write_Unsynchronized(string text)
+		private void Write_GuiThreadOnly(string text)
 		{
 			_view?.AppendText(text);
 
-			if (!IsVisible)
+			if (!(IsSelected && IsVisible))
 			{
 				var ww = Current.Workbench.ActiveContent;
 
@@ -152,7 +152,7 @@ namespace Altaxo.Gui.Pads.Output
 
 		public void Write(string text)
 		{
-			Current.Dispatcher.InvokeIfRequired(Write_Unsynchronized, text);
+			Current.Dispatcher.InvokeIfRequired(Write_GuiThreadOnly, text);
 		}
 
 		public void WriteLine()
