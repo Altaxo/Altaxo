@@ -27,6 +27,7 @@ using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 
 namespace Altaxo.Main.Services.ScriptCompilation
@@ -271,7 +272,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
 				// parameters.OutputAssembly = this.ScriptName;
 
 				// Add available assemblies including the application itself
-				foreach (string loc in Settings.Scripting.ReferencedAssemblies.AllLocations)
+				foreach (string loc in Settings.Scripting.ReferencedAssemblies.All.Select(ass => ass.Location))
 					parameters.ReferencedAssemblies.Add(loc);
 
 				CompilerResults results;

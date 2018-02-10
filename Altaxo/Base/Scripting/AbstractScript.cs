@@ -427,7 +427,7 @@ namespace Altaxo.Scripting
 				{
 					_scriptText = this.CodeHeader + this.CodeStart + this.CodeUserDefault + this.CodeEnd + this.CodeTail;
 				}
-				return Main.Services.ScriptCompilation.ScriptCompilerService.ComputeScriptTextHash(_scriptText);
+				return ScriptCompilerService.ComputeScriptTextHash(new string[] { _scriptText });
 			}
 		}
 

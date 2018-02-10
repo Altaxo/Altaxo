@@ -47,14 +47,11 @@ namespace Altaxo.Gui.Scripting
 	public partial class SDPureScriptControlWpf : UserControl, IScriptView, IViewRequiresSpecialShellWindow
 	{
 		protected static CodeEditing.CodeTextEditorFactory _factory;
-		protected static Assembly[] _additionalReferencedAssemblies;
 		private Altaxo.Gui.CodeEditing.CodeEditorWithDiagnostics _codeView;
 
 		protected static AppDomain _helpViewerAppDomain;
 		protected static Altaxo.Gui.HelpViewing.HelpViewerStarter _helpViewerStarter;
 		protected static Thread _helpViewerMainThread;
-
-		protected static bool _isFrameworkVersion47Installed; // If .NET Framework 4.7 is installed, we must not include System.ValueTuple in the list of referenced DLLs.
 
 		/// <summary>
 		/// Not used here because this is handled by the view.
@@ -64,34 +61,6 @@ namespace Altaxo.Gui.Scripting
 		static SDPureScriptControlWpf()
 		{
 			_factory = new CodeEditing.CodeTextEditorFactory();
-
-			var additionalReferencedAssemblies = new HashSet<Assembly>()
-			{
-				typeof(Altaxo.Calc.RMath).Assembly, // Core
-				typeof(Altaxo.Data.DataTable).Assembly, // Base
-				typeof(Altaxo.Gui.GuiHelper).Assembly, // Presentation
-				typeof(SDPureScriptControlWpf).Assembly // SDGui
-			};
-
-			IList<string> additionalUserAssemblyNames = AddInTree.BuildItems<string>("/Altaxo/CodeEditing/AdditionalAssemblyReferences", null, false);
-
-			foreach (var additionalUserAssemblyName in additionalUserAssemblyNames)
-			{
-				Assembly additionalAssembly = null;
-				try
-				{
-					additionalAssembly = Assembly.Load(additionalUserAssemblyName);
-					additionalReferencedAssemblies.Add(additionalAssembly);
-				}
-				catch (Exception ex)
-				{
-					Current.MessageService.ShowWarningFormatted("Assembly with name '{0}' that was given in {1} could not be loaded. Error: {2}", additionalUserAssemblyName, "/Altaxo/CodeEditing/AdditionalAssemblyReferences", ex.Message);
-				}
-			}
-
-			_additionalReferencedAssemblies = additionalReferencedAssemblies.ToArray();
-
-			_isFrameworkVersion47Installed = Altaxo.Serialization.AutoUpdates.NetFrameworkVersionDetermination.IsVersion47Installed();
 		}
 
 		public SDPureScriptControlWpf()
@@ -103,13 +72,7 @@ namespace Altaxo.Gui.Scripting
 
 		private static IEnumerable<Assembly> GetReferencedAssemblies()
 		{
-			var referencedAssemblies = Altaxo.Settings.Scripting.ReferencedAssemblies.All;
-			if (_isFrameworkVersion47Installed)
-			{
-				referencedAssemblies = Altaxo.Settings.Scripting.ReferencedAssemblies.All.Where(ass => !(ass.GetName().Name.ToUpperInvariant().StartsWith("SYSTEM.VALUETUPLE")));
-			}
-
-			return referencedAssemblies;
+			return Altaxo.Settings.Scripting.ReferencedAssemblies.All;
 		}
 
 		private void InitializeEditor(string initialText, string scriptName)
@@ -131,7 +94,7 @@ namespace Altaxo.Gui.Scripting
 
 		private static void EhExternalHelpRequired(ExternalHelpItem helpItem)
 		{
-			if (null == helpItem.GetOneOfTheseAssembliesOrNull(_additionalReferencedAssemblies))
+			if (null == helpItem.GetOneOfTheseAssembliesOrNull(Altaxo.Settings.Scripting.ReferencedAssemblies.AssembliesIncludedInClassReference))
 			{
 				ShowMicrosoftClassReferenceHelp(helpItem);
 			}
@@ -140,7 +103,7 @@ namespace Altaxo.Gui.Scripting
 				string chmFileName = FileUtility.ApplicationRootPath +
 					Path.DirectorySeparatorChar + "doc" +
 					Path.DirectorySeparatorChar + "help" +
-					Path.DirectorySeparatorChar + "AltaxoClassRef.chm";
+					Path.DirectorySeparatorChar + StringParser.Parse("${AppName}ClassRef.chm");
 				if (System.IO.File.Exists(chmFileName))
 				{
 					string topic = "html/" + helpItem.DocumentationReferenceIdentifier + ".htm";

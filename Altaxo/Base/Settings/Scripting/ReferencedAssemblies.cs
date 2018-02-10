@@ -22,8 +22,10 @@
 
 #endregion Copyright
 
+using Altaxo.AddInItems;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -37,9 +39,18 @@ namespace Altaxo.Settings.Scripting
 	/// </summary>
 	public static class ReferencedAssemblies
 	{
+		/// <summary>
+		/// Gets a value indicating whether a .Net framework version >= 4.7  is installed.
+		/// When it is, the DLL System.ValueTuple.dll must not be included in the list of referenced assemblies, because it is built-in then.
+		/// </summary>
+		public static bool IsFrameworkVersion47Installed { get; private set; } = Altaxo.Serialization.AutoUpdates.NetFrameworkVersionDetermination.IsVersion47Installed();
+
 		private static List<Assembly> _startupAssemblies = new List<Assembly>();
 		private static List<Assembly> _userAssemblies = new List<Assembly>();
 		private static List<Assembly> _userTemporaryAssemblies = new List<Assembly>();
+		private static List<Assembly> _additionalReferencedAssemblies = new List<Assembly>();
+		private static List<Assembly> _assemblyIncludedInClassReference;
+
 		public static AssemblyAddedEventHandler AssemblyAdded;
 
 		static ReferencedAssemblies()
@@ -71,6 +82,41 @@ namespace Altaxo.Settings.Scripting
 					_startupAssemblies.Add(asm);
 				}
 			}
+
+			// try to load some assemblies given in the .addin file(s)
+			// TODO the following code does not work properly, make it work!
+			string addInPath = Altaxo.Main.Services.StringParser.Parse("/${AppName}/CodeEditing/AdditionalAssemblyReferences");
+			IList<string> additionalUserAssemblyNames = AddInTree.BuildItems<string>(addInPath, null, false);
+			var additionalReferencedAssemblies = new HashSet<Assembly>();
+			foreach (var additionalUserAssemblyName in additionalUserAssemblyNames)
+			{
+				Assembly additionalAssembly = null;
+				try
+				{
+					additionalAssembly = Assembly.Load(additionalUserAssemblyName);
+					additionalReferencedAssemblies.Add(additionalAssembly);
+				}
+				catch (Exception ex)
+				{
+					Current.MessageService.ShowWarningFormatted("Assembly with name '{0}' that was given in {1} could not be loaded. Error: {2}", additionalUserAssemblyName, "/Altaxo/CodeEditing/AdditionalAssemblyReferences", ex.Message);
+				}
+			}
+
+			_additionalReferencedAssemblies = new List<Assembly>(additionalReferencedAssemblies);
+
+			// try to load the assemblies that are covered by the class reference file
+			addInPath = Altaxo.Main.Services.StringParser.Parse("/${AppName}/CodeEditing/AssembliesIncludedInClassReference");
+			IList<string> namesOfAssembliesIncludedInClassReference = AddInTree.BuildItems<string>(addInPath, null, false);
+			var hash = new HashSet<string>(namesOfAssembliesIncludedInClassReference.Select(s => s.ToUpperInvariant()));
+
+			var list = new List<Assembly>();
+			foreach (var ass in All)
+			{
+				if (hash.Contains(ass.GetName().Name.ToUpperInvariant()))
+					list.Add(ass);
+			}
+
+			_assemblyIncludedInClassReference = list;
 		}
 
 		private static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
@@ -108,38 +154,30 @@ namespace Altaxo.Settings.Scripting
 				AssemblyAdded(asm);
 		}
 
+		/// <summary>
+		/// Gets all assemblies that should be referenced when compiling a script.
+		/// </summary>
 		public static IEnumerable<Assembly> All
 		{
 			get
 			{
 				List<Assembly> list = new List<Assembly>();
 
-				list.AddRange(_startupAssemblies);
+				if (IsFrameworkVersion47Installed)
+				{
+					// Do not include System.ValueTuple.dll in the list of referenced assemblies if .NetFrameworkVersion is > 4.7, because it is intrinsically there
+					list.AddRange(_startupAssemblies.Where(ass => !(ass.GetName().Name.ToUpperInvariant().StartsWith("SYSTEM.VALUETUPLE"))));
+				}
+				else
+				{
+					list.AddRange(_startupAssemblies);
+				}
+
 				list.AddRange(_userTemporaryAssemblies);
 
-				// now the user assemblies
-				//        foreach (Assembly asm in _userAssemblies)
-				//        yield return asm;
+				list.AddRange(_additionalReferencedAssemblies);
 
-				// now the temporary user assemblies
-				// foreach (Assembly asm in _userTemporaryAssemblies)
-				// yield return asm;
 				return list;
-			}
-		}
-
-		public static IEnumerable<string> AllLocations
-		{
-			get
-			{
-				foreach (Assembly ass in _startupAssemblies)
-					yield return ass.Location;
-
-				foreach (Assembly ass in _userAssemblies)
-					yield return ass.Location;
-
-				foreach (Assembly ass in _userTemporaryAssemblies)
-					yield return ass.Location;
 			}
 		}
 
@@ -174,6 +212,18 @@ namespace Altaxo.Settings.Scripting
 				_userTemporaryAssemblies[idx] = asm;
 
 			OnAssemblyAdded(asm);
+		}
+
+		/// <summary>
+		/// Gets the assemblies that are included in the class reference help file. This enumeration can be used to decide
+		/// whether to look for help in the class reference help file or in the Microsoft library help.
+		/// </summary>
+		public static IEnumerable<Assembly> AssembliesIncludedInClassReference
+		{
+			get
+			{
+				return _assemblyIncludedInClassReference;
+			}
 		}
 	}
 }

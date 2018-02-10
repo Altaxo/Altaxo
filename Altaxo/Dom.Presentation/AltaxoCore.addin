@@ -1299,6 +1299,16 @@
 										ExporterClass  = "Altaxo.Graph.Gdi.GraphDocumentImageExporter, AltaxoBase" />
 	</Path>
 
+	<Path name="/Altaxo/CodeEditing/AssembliesIncludedInClassReference">
+		<!-- Please specify here all assemblies that are included in the class reference file (AltaxoClassReference.chm)
+				 By the data here it is decided, whether to display code editing help from the class reference or from the Microsoft library documentations" -->
+		<String id = "0" text = "AltaxoCore" />
+		<String id = "1" text = "AltaxoBase" />
+		<String id = "2" text = "AltaxoBase.Presentation" />
+		<String id = "3" text = "AltaxoDom" />
+		<String id = "4" text = "AltaxoDom.Presentation" />
+	</Path>
+
 	<Path name="/Altaxo/CodeEditing/AdditionalAssemblyReferences">
 		<!-- Please specify here additional assemblies to be loaded that are referenced by Altaxo scripts
 				 The assmbly name must be fully specified
