@@ -1,4 +1,4 @@
-// DeflaterOutputStream.cs
+﻿// DeflaterOutputStream.cs
 //
 // Copyright (C) 2001 Mike Krueger
 //
@@ -320,7 +320,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			if (_aesRnd == null)
 				_aesRnd = new RNGCryptoServiceProvider();
 			_aesRnd.GetBytes(salt);
-			int blockSize = entry.AESKeySize / 8;	// bits to bytes
+			int blockSize = entry.AESKeySize / 8; // bits to bytes
 
 			cryptoTransform_ = new ZipAESTransform(rawPassword, salt, blockSize, true);
 			pwdVerifier = ((ZipAESTransform)cryptoTransform_).PwdVerifier;

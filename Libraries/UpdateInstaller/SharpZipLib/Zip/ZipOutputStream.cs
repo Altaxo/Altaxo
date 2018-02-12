@@ -1,4 +1,4 @@
-// ZipOutputStream.cs
+﻿// ZipOutputStream.cs
 //
 // Copyright (C) 2001 Mike Krueger
 // Copyright (C) 2004 John Reilly
@@ -380,7 +380,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				{
 					crcPatchPos = baseOutputStream_.Position;
 				}
-				WriteLeInt(0);	// Crc
+				WriteLeInt(0);  // Crc
 
 				if (patchEntryHeader)
 				{
@@ -395,8 +395,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 				}
 				else
 				{
-					WriteLeInt(0);	// Compressed size
-					WriteLeInt(0);	// Uncompressed size
+					WriteLeInt(0);  // Compressed size
+					WriteLeInt(0);  // Uncompressed size
 				}
 			}
 
@@ -491,7 +491,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 #endif
 				{
 					if (entry.Crc < 0)
-					{			// so testing Zip will says its ok
+					{     // so testing Zip will says its ok
 						WriteEncryptionHeader(entry.DosTime << 16);
 					}
 					else
@@ -659,9 +659,9 @@ namespace ICSharpCode.SharpZipLib.Zip
 			extraData.StartNewEntry();
 			// Pack AES extra data field see http://www.winzip.com/aes_info.htm
 			//extraData.AddLeShort(7);							// Data size (currently 7)
-			extraData.AddLeShort(VENDOR_VERSION);				// 2 = AE-2
-			extraData.AddLeShort(VENDOR_ID);					// "AE"
-			extraData.AddData(entry.AESEncryptionStrength);		//  1 = 128, 2 = 192, 3 = 256
+			extraData.AddLeShort(VENDOR_VERSION);       // 2 = AE-2
+			extraData.AddLeShort(VENDOR_ID);          // "AE"
+			extraData.AddData(entry.AESEncryptionStrength);   //  1 = 128, 2 = 192, 3 = 256
 			extraData.AddLeShort((int)entry.CompressionMethod); // The actual compression method used to compress the file
 			extraData.AddNewEntry(0x9901);
 		}
@@ -887,9 +887,9 @@ namespace ICSharpCode.SharpZipLib.Zip
 				WriteLeShort(name.Length);
 				WriteLeShort(extra.Length);
 				WriteLeShort(entryComment.Length);
-				WriteLeShort(0);	// disk number
-				WriteLeShort(0);	// internal file attributes
-				// external file attributes
+				WriteLeShort(0);  // disk number
+				WriteLeShort(0);  // internal file attributes
+													// external file attributes
 
 				if (entry.ExternalFileAttributes != -1)
 				{

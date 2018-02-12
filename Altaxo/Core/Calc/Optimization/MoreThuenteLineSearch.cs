@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
@@ -357,9 +357,9 @@ namespace Altaxo.Calc.Optimization
 						stpf = stpq;
 				else
 					if (System.Math.Abs(stp - stpc) > System.Math.Abs(stp - stpq))
-						stpf = stpc;
-					else
-						stpf = stpq;
+					stpf = stpc;
+				else
+					stpf = stpq;
 
 				// FOURTH CASE. A LOWER FUNCTION VALUE, DERIVATIVES OF THE
 				// SAME SIGN, AND THE MAGNITUDE OF THE DERIVATIVE DOES

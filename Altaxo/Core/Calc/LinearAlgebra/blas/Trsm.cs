@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Copyright (c) 2003-2004, dnAnalytics. All rights reserved.
@@ -115,4 +115,4 @@ namespace Altaxo.Calc.LinearAlgebra.Blas
     private static extern void dna_blas_ztrsm( Order order, Side side, UpLo uplo, Transpose transA, Diag diag, int m,int n, ref Complex alpha, [In]Complex[] A, int lda, [In,Out]Complex[] B, int ldb );
   }
 }
-#endif 
+#endif

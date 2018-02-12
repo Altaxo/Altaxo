@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -652,10 +652,10 @@ namespace Altaxo.Calc.Probability
 			}
 
 			object tempStorage = null;
-			if (BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha, ref tempStorage, DefaultPrecision) - p; }, 0, ref x0, ref x1))
+			if (BracketRootByExtensionOnly(delegate (double x) { return CDF(x, alpha, ref tempStorage, DefaultPrecision) - p; }, 0, ref x0, ref x1))
 			{
 				double root;
-				if (null == QuickRootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha, ref tempStorage, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+				if (null == QuickRootFinding.ByBrentsAlgorithm(delegate (double x) { return CDF(x, alpha, ref tempStorage, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
 					return root;
 			}
 			return double.NaN;
@@ -681,10 +681,10 @@ namespace Altaxo.Calc.Probability
 			}
 
 			object tempStorage = null;
-			if (QuickRootFinding.BracketRootByExtensionOnly(delegate(double x) { return CCDF(x, alpha, ref tempStorage, DefaultPrecision) - q; }, 0, ref x0, ref x1))
+			if (QuickRootFinding.BracketRootByExtensionOnly(delegate (double x) { return CCDF(x, alpha, ref tempStorage, DefaultPrecision) - q; }, 0, ref x0, ref x1))
 			{
 				double root;
-				if (null == QuickRootFinding.ByBrentsAlgorithm(delegate(double x) { return CCDF(x, alpha, ref tempStorage, DefaultPrecision) - q; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+				if (null == QuickRootFinding.ByBrentsAlgorithm(delegate (double x) { return CCDF(x, alpha, ref tempStorage, DefaultPrecision) - q; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
 					return root;
 			}
 			return double.NaN;

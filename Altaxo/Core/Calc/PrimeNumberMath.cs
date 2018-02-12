@@ -984,7 +984,7 @@ namespace Altaxo.Calc
 					checked // aware of overflows in multiply
 					{
 						long r = 1;
-						for (;;)
+						for (; ; )
 						{
 							if (xValid && yValid && xL.Current.PrimeNumber == yL.Current.PrimeNumber)
 							{

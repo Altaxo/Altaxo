@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -254,7 +254,7 @@ namespace Altaxo.Calc.Integration
 
       */
 
-		private struct iu_params { public double a; public Func<double, double> f; } ;
+		private struct iu_params { public double a; public Func<double, double> f; };
 
 		//static double iu_transform (double t, void *params);
 
@@ -277,7 +277,7 @@ namespace Altaxo.Calc.Integration
 			//f_transform.function = &iu_transform;
 			//f_transform.params = &transform_params;
 
-			Func<double, double> f_transform = delegate(double t) { return iu_transform(t, transform_params); };
+			Func<double, double> f_transform = delegate (double t) { return iu_transform(t, transform_params); };
 
 			GSL_ERROR status = qags(f_transform, 0.0, 1.0,
 										 epsabs, epsrel, limit,

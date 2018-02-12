@@ -1,4 +1,4 @@
-#region Translated by Jose Antonio De Santiago-Castillo.
+﻿#region Translated by Jose Antonio De Santiago-Castillo.
 
 //Translated by Jose Antonio De Santiago-Castillo.
 //E-mail:JAntonioDeSantiago@gmail.com
@@ -98,7 +98,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				IP[N + o_ip] = -IP[N + o_ip];
 				A[M + K * NDIM + o_a] = A[K + K * NDIM + o_a];
 				A[K + K * NDIM + o_a] = T;
-			LABEL20:;
+				LABEL20:;
 				if (T == 0.0E0) goto LABEL80;
 				T = 1.0E0 / T;
 				for (I = KP1; I <= N; I++)
@@ -115,13 +115,13 @@ namespace Altaxo.Calc.Ode.Radau5
 					{
 						A[I + J * NDIM + o_a] += A[I + K * NDIM + o_a] * T;
 					}
-				LABEL45:;
+					LABEL45:;
 				}
 			}
-		LABEL70: K = N;
+			LABEL70: K = N;
 			if (A[N + N * NDIM + o_a] == 0.0E0) goto LABEL80;
 			return;
-		LABEL80: IER = K;
+			LABEL80: IER = K;
 			IP[N + o_ip] = 0;
 			return;
 			// C----------------------- END OF SUBROUTINE DEC -------------------------
@@ -216,7 +216,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					B[I + o_b] += A[I + K * NDIM + o_a] * T;
 				}
 			}
-		LABEL50: B[1 + o_b] /= A[1 + 1 * NDIM + o_a];
+			LABEL50: B[1 + o_b] /= A[1 + 1 * NDIM + o_a];
 			return;
 			// C----------------------- END OF SUBROUTINE SOL -------------------------
 
@@ -317,7 +317,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				IP[N + o_ip] = -IP[N + o_ip];
 				A[M + K * NDIM + o_a] = A[K + K * NDIM + o_a];
 				A[K + K * NDIM + o_a] = T;
-			LABEL20:;
+				LABEL20:;
 				if (T == 0.0E0) goto LABEL80;
 				T = 1.0E0 / T;
 				for (I = KP1; I <= NA; I++)
@@ -334,13 +334,13 @@ namespace Altaxo.Calc.Ode.Radau5
 					{
 						A[I + J * NDIM + o_a] += A[I + K * NDIM + o_a] * T;
 					}
-				LABEL45:;
+					LABEL45:;
 				}
 			}
-		LABEL70: K = N;
+			LABEL70: K = N;
 			if (A[N + N * NDIM + o_a] == 0.0E0) goto LABEL80;
 			return;
-		LABEL80: IER = K;
+			LABEL80: IER = K;
 			IP[N + o_ip] = 0;
 			return;
 			// C----------------------- END OF SUBROUTINE DECH ------------------------
@@ -440,7 +440,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					B[I + o_b] += A[I + K * NDIM + o_a] * T;
 				}
 			}
-		LABEL50: B[1 + o_b] /= A[1 + 1 * NDIM + o_a];
+			LABEL50: B[1 + o_b] /= A[1 + 1 * NDIM + o_a];
 			return;
 			// C----------------------- END OF SUBROUTINE SOLH ------------------------
 
@@ -544,7 +544,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				AI[M + K * NDIM + o_ai] = AI[K + K * NDIM + o_ai];
 				AR[K + K * NDIM + o_ar] = TR;
 				AI[K + K * NDIM + o_ai] = TI;
-			LABEL20:;
+				LABEL20:;
 				if (Math.Abs(TR) + Math.Abs(TI) == 0.0E0) goto LABEL80;
 				DEN = TR * TR + TI * TI;
 				TR /= DEN;
@@ -608,13 +608,13 @@ namespace Altaxo.Calc.Ode.Radau5
 						AR[I + AR_J] += PRODR;
 						AI[I + AI_J] += PRODI;
 					}
-				LABEL48:;
+					LABEL48:;
 				}
 			}
-		LABEL70: K = N;
+			LABEL70: K = N;
 			if (Math.Abs(AR[N + N * NDIM + o_ar]) + Math.Abs(AI[N + N * NDIM + o_ai]) == 0.0E0) goto LABEL80;
 			return;
-		LABEL80: IER = K;
+			LABEL80: IER = K;
 			IP[N + o_ip] = 0;
 			return;
 			// C----------------------- END OF SUBROUTINE DECC ------------------------
@@ -729,7 +729,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					BI[I + o_bi] += PRODI;
 				}
 			}
-		LABEL50:;
+			LABEL50:;
 			DEN = AR[1 + 1 * NDIM + o_ar] * AR[1 + 1 * NDIM + o_ar] + AI[1 + 1 * NDIM + o_ai] * AI[1 + 1 * NDIM + o_ai];
 			PRODR = BR[1 + o_br] * AR[1 + 1 * NDIM + o_ar] + BI[1 + o_bi] * AI[1 + 1 * NDIM + o_ai];
 			PRODI = BI[1 + o_bi] * AR[1 + 1 * NDIM + o_ar] - BR[1 + o_br] * AI[1 + 1 * NDIM + o_ai];
@@ -846,7 +846,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				AI[M + K * NDIM + o_ai] = AI[K + K * NDIM + o_ai];
 				AR[K + K * NDIM + o_ar] = TR;
 				AI[K + K * NDIM + o_ai] = TI;
-			LABEL20:;
+				LABEL20:;
 				if (Math.Abs(TR) + Math.Abs(TI) == 0.0E0) goto LABEL80;
 				DEN = TR * TR + TI * TI;
 				TR /= DEN;
@@ -910,13 +910,13 @@ namespace Altaxo.Calc.Ode.Radau5
 						AR[I + AR_J] += PRODR;
 						AI[I + AI_J] += PRODI;
 					}
-				LABEL48:;
+					LABEL48:;
 				}
 			}
-		LABEL70: K = N;
+			LABEL70: K = N;
 			if (Math.Abs(AR[N + N * NDIM + o_ar]) + Math.Abs(AI[N + N * NDIM + o_ai]) == 0.0E0) goto LABEL80;
 			return;
-		LABEL80: IER = K;
+			LABEL80: IER = K;
 			IP[N + o_ip] = 0;
 			return;
 			// C----------------------- END OF SUBROUTINE DECHC -----------------------
@@ -1015,7 +1015,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					BI[I + o_bi] += PRODI;
 				}
 			}
-		LABEL25:;
+			LABEL25:;
 			for (KB = 1; KB <= NM1; KB++)
 			{
 				KM1 = N - KB;
@@ -1037,7 +1037,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					BI[I + o_bi] += PRODI;
 				}
 			}
-		LABEL50:;
+			LABEL50:;
 			DEN = AR[1 + 1 * NDIM + o_ar] * AR[1 + 1 * NDIM + o_ar] + AI[1 + 1 * NDIM + o_ai] * AI[1 + 1 * NDIM + o_ai];
 			PRODR = BR[1 + o_br] * AR[1 + 1 * NDIM + o_ar] + BI[1 + o_bi] * AI[1 + 1 * NDIM + o_ai];
 			PRODI = BI[1 + o_bi] * AR[1 + 1 * NDIM + o_ar] - BR[1 + o_br] * AI[1 + 1 * NDIM + o_ai];
@@ -1158,7 +1158,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					A[I + J * NDIM + o_a] = 0.0E0;
 				}
 			}
-		LABEL7: NM1 = N - 1;
+			LABEL7: NM1 = N - 1;
 			for (K = 1; K <= NM1; K++)
 			{
 				KP1 = K + 1;
@@ -1174,7 +1174,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				IP[N + o_ip] = -IP[N + o_ip];
 				A[M + K * NDIM + o_a] = A[MD + K * NDIM + o_a];
 				A[MD + K * NDIM + o_a] = T;
-			LABEL20:;
+				LABEL20:;
 				if (T == 0.0E0) goto LABEL80;
 				T = 1.0E0 / T;
 				for (I = MD1; I <= MDL; I++)
@@ -1192,7 +1192,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					if (M == MM) goto LABEL35;
 					A[M + J * NDIM + o_a] = A[MM + J * NDIM + o_a];
 					A[MM + J * NDIM + o_a] = T;
-				LABEL35:;
+					LABEL35:;
 					if (T == 0.0E0) goto LABEL45;
 					JK = J - K;
 					for (I = MD1; I <= MDL; I++)
@@ -1200,14 +1200,14 @@ namespace Altaxo.Calc.Ode.Radau5
 						IJK = I - JK;
 						A[IJK + J * NDIM + o_a] += A[I + K * NDIM + o_a] * T;
 					}
-				LABEL45:;
+					LABEL45:;
 				}
-			LABEL55:;
+				LABEL55:;
 			}
-		LABEL70: K = N;
+			LABEL70: K = N;
 			if (A[MD + N * NDIM + o_a] == 0.0E0) goto LABEL80;
 			return;
-		LABEL80: IER = K;
+			LABEL80: IER = K;
 			IP[N + o_ip] = 0;
 			return;
 			// C----------------------- END OF SUBROUTINE DECB ------------------------
@@ -1311,7 +1311,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					B[IMD + o_b] += A[I + K * NDIM + o_a] * T;
 				}
 			}
-		LABEL25:;
+			LABEL25:;
 			for (KB = 1; KB <= NM1; KB++)
 			{
 				K = N + 1 - KB;
@@ -1325,7 +1325,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					B[IMD + o_b] += A[I + K * NDIM + o_a] * T;
 				}
 			}
-		LABEL50: B[1 + o_b] /= A[MD + 1 * NDIM + o_a];
+			LABEL50: B[1 + o_b] /= A[MD + 1 * NDIM + o_a];
 			return;
 			// C----------------------- END OF SUBROUTINE SOLB ------------------------
 
@@ -1434,7 +1434,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					AI[I + AI_J] = 0.0E0;
 				}
 			}
-		LABEL7: NM1 = N - 1;
+			LABEL7: NM1 = N - 1;
 			for (K = 1; K <= NM1; K++)
 			{
 				KP1 = K + 1;
@@ -1453,7 +1453,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				AI[M + K * NDIM + o_ai] = AI[MD + K * NDIM + o_ai];
 				AR[MD + K * NDIM + o_ar] = TR;
 				AI[MD + K * NDIM + o_ai] = TI;
-			LABEL20:
+				LABEL20:
 				if (Math.Abs(TR) + Math.Abs(TI) == 0.0E0) goto LABEL80;
 				DEN = TR * TR + TI * TI;
 				TR /= DEN;
@@ -1481,7 +1481,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					AI[M + J * NDIM + o_ai] = AI[MM + J * NDIM + o_ai];
 					AR[MM + J * NDIM + o_ar] = TR;
 					AI[MM + J * NDIM + o_ai] = TI;
-				LABEL35:;
+					LABEL35:;
 					if (Math.Abs(TR) + Math.Abs(TI) == 0.0E0) goto LABEL48;
 					JK = J - K;
 					if (TI == 0.0E0)
@@ -1522,14 +1522,14 @@ namespace Altaxo.Calc.Ode.Radau5
 						AR[IJK + J * NDIM + o_ar] += PRODR;
 						AI[IJK + J * NDIM + o_ai] += PRODI;
 					}
-				LABEL48:;
+					LABEL48:;
 				}
-			LABEL55:;
+				LABEL55:;
 			}
-		LABEL70: K = N;
+			LABEL70: K = N;
 			if (Math.Abs(AR[MD + N * NDIM + o_ar]) + Math.Abs(AI[MD + N * NDIM + o_ai]) == 0.0E0) goto LABEL80;
 			return;
-		LABEL80: IER = K;
+			LABEL80: IER = K;
 			IP[N + o_ip] = 0;
 			return;
 			// C----------------------- END OF SUBROUTINE DECBC ------------------------
@@ -1632,7 +1632,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					BI[IMD + o_bi] += PRODI;
 				}
 			}
-		LABEL25:;
+			LABEL25:;
 			for (KB = 1; KB <= NM1; KB++)
 			{
 				K = N + 1 - KB;
@@ -1661,7 +1661,7 @@ namespace Altaxo.Calc.Ode.Radau5
 			PRODI = BI[1 + o_bi] * AR[MD + 1 * NDIM + o_ar] - BR[1 + o_br] * AI[MD + 1 * NDIM + o_ai];
 			BR[1 + o_br] = PRODR / DEN;
 			BI[1 + o_bi] = PRODI / DEN;
-		LABEL50:;
+			LABEL50:;
 			return;
 			// C----------------------- END OF SUBROUTINE SOLBC ------------------------
 
@@ -1786,7 +1786,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					if (Math.Abs(A[J + MM1 * NM + o_a]) <= Math.Abs(X)) goto LABEL100;
 					X = A[J + A_MM1];
 					I = J;
-				LABEL100:;
+					LABEL100:;
 				}
 				// C
 				INT[M + o_int] = I;
@@ -1807,8 +1807,8 @@ namespace Altaxo.Calc.Ode.Radau5
 					A[J + A_I] = A[J + A_M];
 					A[J + A_M] = Y;
 				}
-			// C    :::::::::: end interchange ::::::::::
-			LABEL130:
+				// C    :::::::::: end interchange ::::::::::
+				LABEL130:
 				if (X == 0.0E0) goto LABEL180;
 				MP1 = M + 1;
 				// C
@@ -1829,14 +1829,14 @@ namespace Altaxo.Calc.Ode.Radau5
 					{
 						A[J + M * NM + o_a] += Y * A[J + I * NM + o_a];
 					}
-				// C
-				LABEL160:;
+					// C
+					LABEL160:;
 				}
-			// C
-			LABEL180:;
+				// C
+				LABEL180:;
 			}
-		// C
-		LABEL200: return;
+			// C
+			LABEL200: return;
 			// C    :::::::::: last card of elmhes ::::::::::
 
 			#endregion Body

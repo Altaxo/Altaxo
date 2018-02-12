@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -65,7 +65,7 @@ namespace Altaxo.Calc
 		GSL_ETOLX = 30,  /* cannot reach the specified tolerance in X */
 		GSL_ETOLG = 31,  /* cannot reach the specified tolerance in gradient */
 		GSL_EOF = 32   /* end of file */
-	} ;
+	};
 
 	public class GSL_ERROR
 	{

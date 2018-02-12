@@ -68,7 +68,7 @@ namespace Altaxo.Calc.Ode
 			var sp = new double[2];
 
 			var pulseit = pulse.SolveTo(20).GetEnumerator();
-			for (;;)
+			for (; ; )
 			{
 				if (!pulseit.MoveNext())
 					break;

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -55,7 +55,7 @@ namespace Altaxo.Calc
 
 			double sum = term1;
 
-			for (;;)
+			for (; ; )
 			{
 				++k;
 				z_pow_minusBetaK *= z_pow_minusBeta;
@@ -103,7 +103,7 @@ namespace Altaxo.Calc
 			double sum = curr;
 			double prev = curr;
 
-			for (;;)
+			for (; ; )
 			{
 				++k;
 				z_pow_minusBetaK *= z_pow_minusBeta;
@@ -170,7 +170,7 @@ namespace Altaxo.Calc
 			double sum = curr;
 			double prev = curr;
 
-			for (;;)
+			for (; ; )
 			{
 				k2m1fac *= (k + k) * (k + k + 1);
 				++k;
@@ -231,7 +231,7 @@ namespace Altaxo.Calc
 			double sum = curr;
 			double prev = curr;
 
-			for (;;)
+			for (; ; )
 			{
 				k2m1fac *= (k + k) * (k + k + 1);
 				++k;
@@ -295,7 +295,7 @@ namespace Altaxo.Calc
 			double sum = curr;
 			double prev = curr;
 
-			for (;;)
+			for (; ; )
 			{
 				++k;
 				z_pow_minusBetaK *= z_pow_minusBeta;
@@ -350,7 +350,7 @@ namespace Altaxo.Calc
 
 			double sum = term1;
 
-			for (;;)
+			for (; ; )
 			{
 				++k;
 				z_pow_minusBetaK *= z_pow_minusBeta;
@@ -406,7 +406,7 @@ namespace Altaxo.Calc
 			double sum = curr;
 			double prev = curr;
 
-			for (;;)
+			for (; ; )
 			{
 				k2m2fac *= (k + k) * (k + k - 1);
 				++k;
@@ -461,7 +461,7 @@ namespace Altaxo.Calc
 
 			double prev = curr;
 
-			for (;;)
+			for (; ; )
 			{
 				k2m2fac *= (k + k) * (k + k - 1);
 				++k;

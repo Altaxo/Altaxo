@@ -1,4 +1,4 @@
-// InflaterDynHeader.cs
+﻿// InflaterDynHeader.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This file was translated from java, it was part of the GNU Classpath
@@ -68,7 +68,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 
 		public bool Decode(StreamManipulator input)
 		{
-		decode_loop:
+			decode_loop:
 			for (; ; )
 			{
 				switch (mode)

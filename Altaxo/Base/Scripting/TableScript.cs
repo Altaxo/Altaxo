@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -234,7 +234,7 @@ namespace Altaxo.Scripting
 				{
 					if (null != _errors && _errors.Count > 0)
 					{
-						throw new InvalidOperationException("The script object is null because of compilation errors:\r\n"+GetErrorsAsString());
+						throw new InvalidOperationException("The script object is null because of compilation errors:\r\n" + GetErrorsAsString());
 					}
 					else
 					{

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -364,12 +364,12 @@ namespace Altaxo.Calc.Integration
 
 			goto return_error;
 
-		compute_result:
+			compute_result:
 
 			result = area;
 			abserr = total_error;
 
-		return_error:
+			return_error:
 
 			if (error_type > 2)
 				error_type--;

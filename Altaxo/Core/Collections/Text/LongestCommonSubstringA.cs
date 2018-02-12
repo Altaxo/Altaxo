@@ -227,7 +227,7 @@ namespace Altaxo.Collections.Text
 					_lastLcp[L[currentIdx].Lcp] = L[currentIdx].Next;
 				}
 
-			// if text_item is the beginning of an interval
+				// if text_item is the beginning of an interval
 				else if (currentIdx == L[_lastLcp[textlcp]].IntervalBegin)
 				{
 					create_interval(L[currentIdx].IntervalEnd, L[currentIdx].Previous, L[L[currentIdx].IntervalEnd].Lcp, L[L[currentIdx].IntervalEnd].IntervalSize);

@@ -1,4 +1,4 @@
-// ZipFile.cs
+﻿// ZipFile.cs
 //
 // Copyright (C) 2001 Mike Krueger
 // Copyright (C) 2004 John Reilly
@@ -1189,7 +1189,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 
 				if (testHeader)
 				{
-					if ((extractVersion <= 63) &&	// Ignore later versions as we dont know about them..
+					if ((extractVersion <= 63) && // Ignore later versions as we dont know about them..
 							(extractVersion != 10) &&
 							(extractVersion != 11) &&
 							(extractVersion != 20) &&
@@ -2283,8 +2283,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 			WriteLEShort(centralExtraData.Length);
 			WriteLEShort(entry.Comment != null ? entry.Comment.Length : 0);
 
-			WriteLEShort(0);	// disk number
-			WriteLEShort(0);	// internal file attributes
+			WriteLEShort(0);  // disk number
+			WriteLEShort(0);  // internal file attributes
 
 			// External file attributes...
 			if (entry.ExternalFileAttributes != -1)
@@ -2754,7 +2754,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 					// WinZip produces a warning on these entries:
 					// "caution: value of lrec.csize (compressed size) changed from ..."
 					destinationPosition +=
-						(sourcePosition - entryDataOffset) + NameLengthOffset +	// Header size
+						(sourcePosition - entryDataOffset) + NameLengthOffset + // Header size
 						update.Entry.CompressedSize + GetDescriptorSize(update);
 			}
 			else
@@ -3628,7 +3628,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 					//
 					byte[] pwdVerifyRead = new byte[2];
 					baseStream.Read(pwdVerifyRead, 0, 2);
-					int blockSize = entry.AESKeySize / 8;	// bits to bytes
+					int blockSize = entry.AESKeySize / 8; // bits to bytes
 
 					ZipAESTransform decryptor = new ZipAESTransform(rawPassword_, saltBytes, blockSize, false);
 					byte[] pwdVerifyCalc = decryptor.PwdVerifier;

@@ -852,7 +852,7 @@ namespace Altaxo.Calc.Ode
 			var resultArray = new double[n];
 			var roWrapper = VectorMath.ToROVector(resultArray);
 
-			for (;;)
+			for (; ; )
 			{
 				EvaluateInternally(null, out var time, resultArray);
 

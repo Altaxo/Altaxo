@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -255,7 +255,7 @@ namespace Altaxo.Calc.Integration
 			//  f_transform.function = &i_transform;
 			//  f_transform.params = f;
 
-			Func<double, double> f_transform = delegate(double t) { return i_transform(t, f); };
+			Func<double, double> f_transform = delegate (double t) { return i_transform(t, f); };
 
 			GSL_ERROR status = qags(f_transform, 0.0, 1.0,
 										 epsabs, epsrel, limit,

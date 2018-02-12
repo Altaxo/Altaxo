@@ -1,4 +1,4 @@
-#region Copyright
+ï»¿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -173,7 +173,7 @@ namespace Altaxo.Calc.Probability
 			if (algorithmGD)
 			{
 				const double
-					// coefficients a(k) for q = q0+(t*t/2)*sum(a(k)*v**k)
+								// coefficients a(k) for q = q0+(t*t/2)*sum(a(k)*v**k)
 								a1 = 0.3333333,
 								a2 = -0.250003,
 								a3 = 0.2000062,
@@ -181,7 +181,7 @@ namespace Altaxo.Calc.Probability
 								a5 = 0.1423657,
 								a6 = -0.1367177,
 								a7 = 0.1233795,
-					// coefficients e(k) for exp(q)-1 = sum(e(k)*q**k)
+								// coefficients e(k) for exp(q)-1 = sum(e(k)*q**k)
 								e1 = 1.0,
 								e2 = 0.4999897,
 								e3 = 0.166829,
@@ -218,7 +218,7 @@ namespace Altaxo.Calc.Probability
 					if (Math.Log(1.0 - u) <= q) return gamdis / _invTheta;
 				}
 
-			loop:
+				loop:
 
 				// stdandard exponential deviate
 				double e = exponentialDistribution.NextDouble(); // original this->ExponentialDistribution::operator()();
@@ -466,7 +466,7 @@ namespace Altaxo.Calc.Probability
 
 #if false
 /*
- * Copyright © 2006 Stefan Troschütz (stefan@troschuetz.de)
+ * Copyright Â© 2006 Stefan TroschÃ¼tz (stefan@troschuetz.de)
  *
  * This file is part of Troschuetz.Random Class Library.
  *

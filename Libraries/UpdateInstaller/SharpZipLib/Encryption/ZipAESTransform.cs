@@ -1,4 +1,4 @@
-//
+﻿//
 // ZipAESTransform.cs
 //
 // Copyright 2009 David Pierson
@@ -80,7 +80,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
 		///
 		public ZipAESTransform(string key, byte[] saltBytes, int blockSize, bool writeMode)
 		{
-			if (blockSize != 16 && blockSize != 32)	// 24 valid for AES but not supported by Winzip
+			if (blockSize != 16 && blockSize != 32) // 24 valid for AES but not supported by Winzip
 				throw new Exception("Invalid blocksize " + blockSize + ". Must be 16 or 32.");
 			if (saltBytes.Length != blockSize / 2)
 				throw new Exception("Invalid salt len. Must be " + blockSize / 2 + " for blocksize " + blockSize);
@@ -92,7 +92,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
 			// Performs the equivalent of derive_key in Dr Brian Gladman's pwd2key.c
 			Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(key, saltBytes, KEY_ROUNDS);
 			RijndaelManaged rm = new RijndaelManaged();
-			rm.Mode = CipherMode.ECB;			// No feedback from cipher for CTR mode
+			rm.Mode = CipherMode.ECB;     // No feedback from cipher for CTR mode
 			_counterNonce = new byte[_blockSize];
 			byte[] byteKey1 = pdb.GetBytes(_blockSize);
 			byte[] byteKey2 = pdb.GetBytes(_blockSize);

@@ -1,5 +1,5 @@
-/*
- * Copyright © 2006 Stefan Troschütz (stefan@troschuetz.de)
+ï»¿/*
+ * Copyright Â© 2006 Stefan TroschÃ¼tz (stefan@troschuetz.de)
  *
  * This file is part of Troschuetz.Random Class Library.
  *
@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Probability
 		/// Represents coefficients for the Lanczos approximation of the Gamma function.
 		/// </summary>
 		private static readonly double[] LanczosCoefficients = new double[] { 1.000000000190015, 76.18009172947146,
-            -86.50532032941677, 24.01409824083091, -1.231739572450155, 1.208650973866179e-3, -5.395239384953e-6 };
+						-86.50532032941677, 24.01409824083091, -1.231739572450155, 1.208650973866179e-3, -5.395239384953e-6 };
 
 		#endregion class fields
 

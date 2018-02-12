@@ -353,7 +353,7 @@ namespace Altaxo.Calc.Interpolation
 				wwv //[wk_dim1 * 7]
 				);
 
-			for (;;)
+			for (; ; )
 			{
 				spfit(n, xx, avh, df, r1, out p, out q, out gf1, avar, stat, yy, c1, c2, c3,
 					wwr, //[wk_offset]
@@ -371,7 +371,7 @@ namespace Altaxo.Calc.Interpolation
 
 			r3 = ratio * r2;
 
-			for (;;)
+			for (; ; )
 			{
 				spfit(n, xx, avh, df, r3, out p, out q, out gf3, avar, stat, yy, c1, c2, c3,
 					wwr, // [wk_offset]

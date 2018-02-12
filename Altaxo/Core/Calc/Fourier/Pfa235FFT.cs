@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -287,12 +287,12 @@ namespace Altaxo.Calc.Fourier
 			for (int l = 1; l <= 3; l++)
 			{
 				k = 0;
-			L10:
+				L10:
 				if (n % ifac != 0) goto L20;
 				++k;
 				n /= ifac;
 				goto L10;
-			L20:
+				L20:
 				pqr[l - 1] = k;
 				ifac += l;
 			}
@@ -605,7 +605,7 @@ int FFT (complex<FLOAT> c[], int isign)
 				throw new ArithmeticException("powii: exponent must be non-negative");
 			int g = 1;
 
-		iterate:
+			iterate:
 
 			if (0 != (n & 1))
 				g *= x; // n is odd
@@ -878,11 +878,11 @@ int FFT (complex<FLOAT> c[], int isign)
 					// -----( end of loop on nonzero k )
 					la <<= 2;
 				}
-			// -----( end of loop on type I radix-4 passes)
+				// -----( end of loop on type I radix-4 passes)
 
 				//  central radix-2 pass
-			//  --------------------
-			L200:
+				//  --------------------
+				L200:
 				if (m2 == 0) goto L300;
 
 				jstep = n * inc / (la << 1);
@@ -1029,8 +1029,8 @@ int FFT (complex<FLOAT> c[], int isign)
 				goto L400;
 
 				//  central radix-8 pass
-			//  --------------------
-			L300:
+				//  --------------------
+				L300:
 				if (m8 == 0) goto L400;
 				jstep = n * inc / (la << 3);
 				jstepl = jstep - ninc;
@@ -1403,8 +1403,8 @@ int FFT (complex<FLOAT> c[], int isign)
 				la <<= 3;
 
 				//  loop on type II radix-4 passes
-			//  ------------------------------
-			L400:
+				//  ------------------------------
+				L400:
 				mu = inq % 4;
 				if (isign == -1) mu = 4 - mu;
 				ss = 1.0;
@@ -1888,9 +1888,9 @@ int FFT (complex<FLOAT> c[], int isign)
 					// -----( end of loop over values of k )
 					la <<= 2;
 				}
-			// -----( end of loop on type II radix-4 passes )
-			// -----( nvex transforms completed)
-			L490:
+				// -----( end of loop on type II radix-4 passes )
+				// -----( nvex transforms completed)
+				L490:
 				istart += nvex * jump;
 			}
 			// -----( end of loop on blocks of transforms )
@@ -2428,9 +2428,9 @@ int FFT (complex<FLOAT> c[], int isign)
 					// -----( end of loop over values of k )
 					la *= 3;
 				}
-			// -----( end of loop on type II radix-3 passes )
-			// -----( nvex transforms completed)
-			L490:
+				// -----( end of loop on type II radix-3 passes )
+				// -----( nvex transforms completed)
+				L490:
 				istart += nvex * jump;
 			}
 			// -----( end of loop on blocks of transforms )
@@ -3401,9 +3401,9 @@ int FFT (complex<FLOAT> c[], int isign)
 					// -----( end of loop over values of k )
 					la *= 5;
 				}
-			// -----( end of loop on type II radix-5 passes )
-			// -----( nvex transforms completed)
-			L490:
+				// -----( end of loop on type II radix-5 passes )
+				// -----( nvex transforms completed)
+				L490:
 				istart += nvex * jump;
 			}
 			// -----( end of loop on blocks of transforms )
@@ -3454,12 +3454,12 @@ int FFT (complex<FLOAT> c[], int isign)
 			for (ll = 1; ll <= 3; ++ll)
 			{
 				kk = 0;
-			L10:
+				L10:
 				if (nn % ifac != 0) goto L20;
 				++kk;
 				nn /= ifac;
 				goto L10;
-			L20:
+				L20:
 				nj[ll - 1] = kk;
 				ifac += ll;
 			}
@@ -3581,12 +3581,12 @@ int FFT (complex<FLOAT> c[], int isign)
 			for (int ll = 1; ll <= 3; ++ll)
 			{
 				kk = 0;
-			L10:
+				L10:
 				if (nn % ifac != 0) goto L20;
 				++kk;
 				nn /= ifac;
 				goto L10;
-			L20:
+				L20:
 				nj[ll - 1] = kk;
 				ifac += ll;
 			}

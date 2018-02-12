@@ -28,229 +28,229 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench
 {
-    /// <summary>
-    /// Manages the list files opened by view contents so that multiple view contents opening the same file can synchronize.
-    /// Also provides events that can be used to listen to file operations performed in the IDE.
-    /// </summary>
-    [GlobalService("FileService")]
-    public interface IFileService
-    {
-        #region Options
+	/// <summary>
+	/// Manages the list files opened by view contents so that multiple view contents opening the same file can synchronize.
+	/// Also provides events that can be used to listen to file operations performed in the IDE.
+	/// </summary>
+	[GlobalService("FileService")]
+	public interface IFileService
+	{
+		#region Options
 
-        IRecentOpen RecentOpen { get; }
+		IRecentOpen RecentOpen { get; }
 
-        bool DeleteToRecycleBin { get; set; }
-        bool SaveUsingTemporaryFile { get; set; }
+		bool DeleteToRecycleBin { get; set; }
+		bool SaveUsingTemporaryFile { get; set; }
 
-        /// <summary>
-        /// Gets the default file encoding.
-        /// This property is thread-safe.
-        /// </summary>
-        Encoding DefaultFileEncoding { get; }
+		/// <summary>
+		/// Gets the default file encoding.
+		/// This property is thread-safe.
+		/// </summary>
+		Encoding DefaultFileEncoding { get; }
 
-        EncodingInfo DefaultFileEncodingInfo { get; set; }
+		EncodingInfo DefaultFileEncodingInfo { get; set; }
 
-        IReadOnlyList<EncodingInfo> AllEncodings { get; }
+		IReadOnlyList<EncodingInfo> AllEncodings { get; }
 
-        #endregion Options
+		#endregion Options
 
-        #region BrowseForFolder
+		#region BrowseForFolder
 
-        /// <summary>
-        /// Shows a 'browse for folder' dialog.
-        /// </summary>
-        /// <param name="description">Description shown in the dialog.</param>
-        /// <param name="selectedPath">Optional: Initially selected folder.</param>
-        /// <returns>The selected folder; or <c>null</c> if the user cancelled the dialog.</returns>
-        string BrowseForFolder(string description, string selectedPath = null);
+		/// <summary>
+		/// Shows a 'browse for folder' dialog.
+		/// </summary>
+		/// <param name="description">Description shown in the dialog.</param>
+		/// <param name="selectedPath">Optional: Initially selected folder.</param>
+		/// <returns>The selected folder; or <c>null</c> if the user cancelled the dialog.</returns>
+		string BrowseForFolder(string description, string selectedPath = null);
 
-        #endregion BrowseForFolder
+		#endregion BrowseForFolder
 
-        #region OpenedFiles
+		#region OpenedFiles
 
-        /// <summary>
-        /// Gets a collection containing all currently opened files.
-        /// The returned collection is a read-only copy of the currently opened files -
-        /// it will not reflect future changes of the list of opened files.
-        /// </summary>
-        IReadOnlyList<OpenedFile> OpenedFiles { get; }
+		/// <summary>
+		/// Gets a collection containing all currently opened files.
+		/// The returned collection is a read-only copy of the currently opened files -
+		/// it will not reflect future changes of the list of opened files.
+		/// </summary>
+		IReadOnlyList<OpenedFile> OpenedFiles { get; }
 
-        /// <summary>
-        /// Gets an opened file, or returns null if the file is not opened.
-        /// </summary>
-        OpenedFile GetOpenedFile(FileName fileName);
+		/// <summary>
+		/// Gets an opened file, or returns null if the file is not opened.
+		/// </summary>
+		OpenedFile GetOpenedFile(FileName fileName);
 
-        /// <summary>
-        /// Gets an opened file, or returns null if the file is not opened.
-        /// </summary>
-        OpenedFile GetOpenedFile(string fileName);
+		/// <summary>
+		/// Gets an opened file, or returns null if the file is not opened.
+		/// </summary>
+		OpenedFile GetOpenedFile(string fileName);
 
-        /// <summary>
-        /// Gets or creates an opened file.
-        /// Warning: the opened file will be a file without any views attached.
-        /// Make sure to attach a view to it, or call CloseIfAllViewsClosed on the OpenedFile to
-        /// unload the OpenedFile instance if no views were attached to it.
-        /// </summary>
-        OpenedFile GetOrCreateOpenedFile(FileName fileName);
+		/// <summary>
+		/// Gets or creates an opened file.
+		/// Warning: the opened file will be a file without any views attached.
+		/// Make sure to attach a view to it, or call CloseIfAllViewsClosed on the OpenedFile to
+		/// unload the OpenedFile instance if no views were attached to it.
+		/// </summary>
+		OpenedFile GetOrCreateOpenedFile(FileName fileName);
 
-        /// <summary>
-        /// Gets or creates an opened file.
-        /// Warning: the opened file will be a file without any views attached.
-        /// Make sure to attach a view to it, or call CloseIfAllViewsClosed on the OpenedFile to
-        /// unload the OpenedFile instance if no views were attached to it.
-        /// </summary>
-        OpenedFile GetOrCreateOpenedFile(string fileName);
+		/// <summary>
+		/// Gets or creates an opened file.
+		/// Warning: the opened file will be a file without any views attached.
+		/// Make sure to attach a view to it, or call CloseIfAllViewsClosed on the OpenedFile to
+		/// unload the OpenedFile instance if no views were attached to it.
+		/// </summary>
+		OpenedFile GetOrCreateOpenedFile(string fileName);
 
-        /// <summary>
-        /// Creates a new untitled OpenedFile.
-        /// </summary>
-        OpenedFile CreateUntitledOpenedFile(string defaultName, byte[] content);
+		/// <summary>
+		/// Creates a new untitled OpenedFile.
+		/// </summary>
+		OpenedFile CreateUntitledOpenedFile(string defaultName, byte[] content);
 
-        #endregion OpenedFiles
+		#endregion OpenedFiles
 
-        #region CheckFileName
+		#region CheckFileName
 
-        /// <summary>
-        /// Checks if the path is valid <b>and shows a MessageBox if it is not valid</b>.
-        /// Do not use in non-UI methods.
-        /// </summary>
-        /// <seealso cref="FileUtility.IsValidPath"/>
-        bool CheckFileName(string path);
+		/// <summary>
+		/// Checks if the path is valid <b>and shows a MessageBox if it is not valid</b>.
+		/// Do not use in non-UI methods.
+		/// </summary>
+		/// <seealso cref="FileUtility.IsValidPath"/>
+		bool CheckFileName(string path);
 
-        /// <summary>
-        /// Checks that a single directory entry (file or subdirectory) name is valid
-        ///  <b>and shows a MessageBox if it is not valid</b>.
-        /// </summary>
-        /// <param name="name">A single file name not the full path</param>
-        /// <seealso cref="FileUtility.IsValidDirectoryEntryName"/>
-        bool CheckDirectoryEntryName(string name);
+		/// <summary>
+		/// Checks that a single directory entry (file or subdirectory) name is valid
+		///  <b>and shows a MessageBox if it is not valid</b>.
+		/// </summary>
+		/// <param name="name">A single file name not the full path</param>
+		/// <seealso cref="FileUtility.IsValidDirectoryEntryName"/>
+		bool CheckDirectoryEntryName(string name);
 
-        #endregion CheckFileName
+		#endregion CheckFileName
 
-        #region OpenFile (ViewContent)
+		#region OpenFile (ViewContent)
 
-        /// <summary>
-        /// Gets whether the file is open in a view content.
-        /// </summary>
-        bool IsOpen(FileName fileName);
+		/// <summary>
+		/// Gets whether the file is open in a view content.
+		/// </summary>
+		bool IsOpen(FileName fileName);
 
-        /// <summary>
-        /// Opens a view content for the specified file
-        /// or returns the existing view content for the file if it is already open.
-        /// </summary>
-        /// <param name="fileName">The name of the file to open.</param>
-        /// <param name="switchToOpenedView">Specifies whether to switch to the view for the specified file.</param>
-        /// <returns>The existing or opened <see cref="IViewContent"/> for the specified file.</returns>
-        IFileViewContent OpenFile(FileName fileName, bool switchToOpenedView = true);
+		/// <summary>
+		/// Opens a view content for the specified file
+		/// or returns the existing view content for the file if it is already open.
+		/// </summary>
+		/// <param name="fileName">The name of the file to open.</param>
+		/// <param name="switchToOpenedView">Specifies whether to switch to the view for the specified file.</param>
+		/// <returns>The existing or opened <see cref="IViewContent"/> for the specified file.</returns>
+		IFileViewContent OpenFile(FileName fileName, bool switchToOpenedView = true);
 
-        /// <summary>
-        /// Opens a view content for the specified file using the specified display binding.
-        /// </summary>
-        /// <param name="fileName">The name of the file to open.</param>
-        /// <param name="displayBinding">The display binding to use for opening the file.</param>
-        /// <param name="switchToOpenedView">Specifies whether to switch to the view for the specified file.</param>
-        /// <returns>The existing or opened <see cref="IViewContent"/> for the specified file.</returns>
-        IFileViewContent OpenFileWith(FileName fileName, IDisplayBinding displayBinding, bool switchToOpenedView = true);
+		/// <summary>
+		/// Opens a view content for the specified file using the specified display binding.
+		/// </summary>
+		/// <param name="fileName">The name of the file to open.</param>
+		/// <param name="displayBinding">The display binding to use for opening the file.</param>
+		/// <param name="switchToOpenedView">Specifies whether to switch to the view for the specified file.</param>
+		/// <returns>The existing or opened <see cref="IViewContent"/> for the specified file.</returns>
+		IFileViewContent OpenFileWith(FileName fileName, IDisplayBinding displayBinding, bool switchToOpenedView = true);
 
-        /// <summary>
-        /// Shows the 'Open With' dialog, allowing the user to pick a display binding for opening the specified files.
-        /// </summary>
-        IEnumerable<IFileViewContent> ShowOpenWithDialog(IEnumerable<FileName> fileNames, bool switchToOpenedView = true);
+		/// <summary>
+		/// Shows the 'Open With' dialog, allowing the user to pick a display binding for opening the specified files.
+		/// </summary>
+		IEnumerable<IFileViewContent> ShowOpenWithDialog(IEnumerable<FileName> fileNames, bool switchToOpenedView = true);
 
-        /// <summary>
-        /// Opens a new unsaved file.
-        /// </summary>
-        /// <param name="defaultName">The (unsaved) name of the to open</param>
-        /// <param name="content">Content of the file to create</param>
-        IFileViewContent NewFile(string defaultName, string content);
+		/// <summary>
+		/// Opens a new unsaved file.
+		/// </summary>
+		/// <param name="defaultName">The (unsaved) name of the to open</param>
+		/// <param name="content">Content of the file to create</param>
+		IFileViewContent NewFile(string defaultName, string content);
 
-        /// <summary>
-        /// Opens a new unsaved file.
-        /// </summary>
-        /// <param name="defaultName">The (unsaved) name of the to open</param>
-        /// <param name="content">Content of the file to create</param>
-        IFileViewContent NewFile(string defaultName, byte[] content);
+		/// <summary>
+		/// Opens a new unsaved file.
+		/// </summary>
+		/// <param name="defaultName">The (unsaved) name of the to open</param>
+		/// <param name="content">Content of the file to create</param>
+		IFileViewContent NewFile(string defaultName, byte[] content);
 
-        /// <summary>
-        /// Gets a list of the names of the files that are open as primary files
-        /// in view contents.
-        /// </summary>
-        IReadOnlyList<FileName> OpenPrimaryFiles { get; }
+		/// <summary>
+		/// Gets a list of the names of the files that are open as primary files
+		/// in view contents.
+		/// </summary>
+		IReadOnlyList<FileName> OpenPrimaryFiles { get; }
 
-        /// <summary>
-        /// Gets the IViewContent for a fileName. Returns null if the file is not opened currently.
-        /// </summary>
-        IFileViewContent GetOpenFile(FileName fileName);
+		/// <summary>
+		/// Gets the IViewContent for a fileName. Returns null if the file is not opened currently.
+		/// </summary>
+		IFileViewContent GetOpenFile(FileName fileName);
 
-        /// <summary>
-        /// Opens the specified file and jumps to the specified file position.
-        /// Line and column start counting at 1.
-        /// </summary>
-        IFileViewContent JumpToFilePosition(FileName fileName, int line, int column);
+		/// <summary>
+		/// Opens the specified file and jumps to the specified file position.
+		/// Line and column start counting at 1.
+		/// </summary>
+		IFileViewContent JumpToFilePosition(FileName fileName, int line, int column);
 
-        #endregion OpenFile (ViewContent)
+		#endregion OpenFile (ViewContent)
 
-        #region Remove/Rename/Copy
+		#region Remove/Rename/Copy
 
-        /// <summary>
-        /// Removes a file, raising the appropriate events. This method may show message boxes.
-        /// </summary>
-        void RemoveFile(string fileName, bool isDirectory);
+		/// <summary>
+		/// Removes a file, raising the appropriate events. This method may show message boxes.
+		/// </summary>
+		void RemoveFile(string fileName, bool isDirectory);
 
-        /// <summary>
-        /// Renames or moves a file, raising the appropriate events. This method may show message boxes.
-        /// </summary>
-        bool RenameFile(string oldName, string newName, bool isDirectory);
+		/// <summary>
+		/// Renames or moves a file, raising the appropriate events. This method may show message boxes.
+		/// </summary>
+		bool RenameFile(string oldName, string newName, bool isDirectory);
 
-        /// <summary>
-        /// Copies a file, raising the appropriate events. This method may show message boxes.
-        /// </summary>
-        bool CopyFile(string oldName, string newName, bool isDirectory, bool overwrite);
+		/// <summary>
+		/// Copies a file, raising the appropriate events. This method may show message boxes.
+		/// </summary>
+		bool CopyFile(string oldName, string newName, bool isDirectory, bool overwrite);
 
-        event EventHandler<FileRenamingEventArgs> FileRenaming;
+		event EventHandler<FileRenamingEventArgs> FileRenaming;
 
-        event EventHandler<FileRenameEventArgs> FileRenamed;
+		event EventHandler<FileRenameEventArgs> FileRenamed;
 
-        event EventHandler<FileRenamingEventArgs> FileCopying;
+		event EventHandler<FileRenamingEventArgs> FileCopying;
 
-        event EventHandler<FileRenameEventArgs> FileCopied;
+		event EventHandler<FileRenameEventArgs> FileCopied;
 
-        event EventHandler<FileCancelEventArgs> FileRemoving;
+		event EventHandler<FileCancelEventArgs> FileRemoving;
 
-        event EventHandler<FileEventArgs> FileRemoved;
+		event EventHandler<FileEventArgs> FileRemoved;
 
-        #endregion Remove/Rename/Copy
+		#endregion Remove/Rename/Copy
 
-        #region FileCreated/Replaced
+		#region FileCreated/Replaced
 
-        /// <summary>
-        /// Fires the event handlers for a file being created.
-        /// </summary>
-        /// <param name="fileName">The name of the file being created. This should be a fully qualified path.</param>
-        /// <param name="isDirectory">Set to true if this is a directory</param>
-        /// <returns>True if the operation can proceed, false if an event handler cancelled the operation.</returns>
-        bool FireFileReplacing(string fileName, bool isDirectory);
+		/// <summary>
+		/// Fires the event handlers for a file being created.
+		/// </summary>
+		/// <param name="fileName">The name of the file being created. This should be a fully qualified path.</param>
+		/// <param name="isDirectory">Set to true if this is a directory</param>
+		/// <returns>True if the operation can proceed, false if an event handler cancelled the operation.</returns>
+		bool FireFileReplacing(string fileName, bool isDirectory);
 
-        /// <summary>
-        /// Fires the event handlers for a file being replaced.
-        /// </summary>
-        /// <param name="fileName">The name of the file being created. This should be a fully qualified path.</param>
-        /// <param name="isDirectory">Set to true if this is a directory</param>
-        void FireFileReplaced(string fileName, bool isDirectory);
+		/// <summary>
+		/// Fires the event handlers for a file being replaced.
+		/// </summary>
+		/// <param name="fileName">The name of the file being created. This should be a fully qualified path.</param>
+		/// <param name="isDirectory">Set to true if this is a directory</param>
+		void FireFileReplaced(string fileName, bool isDirectory);
 
-        /// <summary>
-        /// Fires the event handlers for a file being created.
-        /// </summary>
-        /// <param name="fileName">The name of the file being created. This should be a fully qualified path.</param>
-        /// <param name="isDirectory">Set to true if this is a directory</param>
-        void FireFileCreated(string fileName, bool isDirectory);
+		/// <summary>
+		/// Fires the event handlers for a file being created.
+		/// </summary>
+		/// <param name="fileName">The name of the file being created. This should be a fully qualified path.</param>
+		/// <param name="isDirectory">Set to true if this is a directory</param>
+		void FireFileCreated(string fileName, bool isDirectory);
 
-        event EventHandler<FileEventArgs> FileCreated;
+		event EventHandler<FileEventArgs> FileCreated;
 
-        event EventHandler<FileCancelEventArgs> FileReplacing;
+		event EventHandler<FileCancelEventArgs> FileReplacing;
 
-        event EventHandler<FileEventArgs> FileReplaced;
+		event EventHandler<FileEventArgs> FileReplaced;
 
-        #endregion FileCreated/Replaced
-    }
+		#endregion FileCreated/Replaced
+	}
 }

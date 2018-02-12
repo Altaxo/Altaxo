@@ -32,11 +32,11 @@ namespace Altaxo.Addins.OriginConnector
 {
 	public class OriginConnection : IDisposable
 	{
-		private Origin.IOApplication _originApp;				// the Origin object reference
+		private Origin.IOApplication _originApp;        // the Origin object reference
 
 		private string _originSaveProjectFileName;
 
-		private const int nWorksheetOriginType = 2;		// 2 internally in Origin indicates worksheet window
+		private const int nWorksheetOriginType = 2;   // 2 internally in Origin indicates worksheet window
 
 		public Origin.IOApplication Application
 		{
@@ -75,9 +75,9 @@ namespace Altaxo.Addins.OriginConnector
 
 			if (bConnected)
 			{
-				ShowOriginWindow(true);		// show or not Origin window
+				ShowOriginWindow(true);   // show or not Origin window
 
-				_originSaveProjectFileName = GetSaveAsFileName();	// init file name for saving
+				_originSaveProjectFileName = GetSaveAsFileName(); // init file name for saving
 			}
 			else
 			{

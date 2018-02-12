@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -393,7 +393,7 @@ namespace Altaxo.Calc.Integration
 				fn_params.function = f;
 				fn_params.singularity = c;
 
-				Func<double, double> weighted_function = delegate(double t) { return fn_cauchy(t, fn_params); };
+				Func<double, double> weighted_function = delegate (double t) { return fn_cauchy(t, fn_params); };
 
 				QK15.Integration(weighted_function, a, b, out result, out abserr,
 															out resabs, out resasc);

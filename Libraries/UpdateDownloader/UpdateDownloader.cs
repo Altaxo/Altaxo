@@ -122,7 +122,7 @@ namespace Altaxo.Serialization.AutoUpdates
 						webClient.DownloadFileCompleted += EhDownloadOfPackageFileCompleted;
 						_isDownloadOfPackageCompleted = false;
 						webClient.DownloadFileAsync(new Uri(packageUrl), packageFileName);// download the package asynchronously to get progress messages
-						for (; !_isDownloadOfPackageCompleted; )
+						for (; !_isDownloadOfPackageCompleted;)
 						{
 							System.Threading.Thread.Sleep(250);
 						}

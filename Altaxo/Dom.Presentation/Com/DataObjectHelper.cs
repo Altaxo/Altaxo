@@ -446,7 +446,7 @@ namespace Altaxo.Com
 			uint size = 0;
 			byte[] buffer = null;
 
-			for (;;)
+			for (; ; )
 			{
 				// Convert the EMF records to WMF records.
 				// Determine the size of the buffer that will receive the converted records (first loop), and then fill the buffer (second loop).

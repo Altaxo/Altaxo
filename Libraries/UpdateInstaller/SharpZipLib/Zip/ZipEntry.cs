@@ -1,4 +1,4 @@
-// ZipEntry.cs
+﻿// ZipEntry.cs
 //
 // Copyright (C) 2001 Mike Krueger
 // Copyright (C) 2004 John Reilly
@@ -619,7 +619,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 					int result = 10;
 					if (AESKeySize > 0)
 					{
-						result = ZipConstants.VERSION_AES;			// Ver 5.1 = AES
+						result = ZipConstants.VERSION_AES;      // Ver 5.1 = AES
 					}
 					else if (CentralHeaderRequiresZip64)
 					{
@@ -982,7 +982,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				// the strength (1 or 3) is in the entry header
 				switch (_aesEncryptionStrength)
 				{
-					case 0: return 0;	// Not AES
+					case 0: return 0; // Not AES
 					case 1: return 128;
 					case 2: return 192; // Not used by WinZip
 					case 3: return 256;
@@ -1162,17 +1162,17 @@ namespace ICSharpCode.SharpZipLib.Zip
 			if (extraData.Find(0x9901))
 			{
 				// Set version and flag for Zipfile.CreateAndInitDecryptionStream
-				versionToExtract = ZipConstants.VERSION_AES;			// Ver 5.1 = AES see "Version" getter
-				// Set StrongEncryption flag for ZipFile.CreateAndInitDecryptionStream
+				versionToExtract = ZipConstants.VERSION_AES;      // Ver 5.1 = AES see "Version" getter
+																													// Set StrongEncryption flag for ZipFile.CreateAndInitDecryptionStream
 				Flags = Flags | (int)GeneralBitFlags.StrongEncryption;
 				//
 				// Unpack AES extra data field see http://www.winzip.com/aes_info.htm
-				int length = extraData.ValueLength;			// Data size currently 7
+				int length = extraData.ValueLength;     // Data size currently 7
 				if (length < 7)
 					throw new ZipException("AES Extra Data Length " + length + " invalid.");
-				int ver = extraData.ReadShort();			// Version number (1=AE-1 2=AE-2)
-				int vendorId = extraData.ReadShort();		// 2-character vendor ID 0x4541 = "AE"
-				int encrStrength = extraData.ReadByte();	// encryption strength 1 = 128 2 = 192 3 = 256
+				int ver = extraData.ReadShort();      // Version number (1=AE-1 2=AE-2)
+				int vendorId = extraData.ReadShort();   // 2-character vendor ID 0x4541 = "AE"
+				int encrStrength = extraData.ReadByte();  // encryption strength 1 = 128 2 = 192 3 = 256
 				int actualCompress = extraData.ReadShort(); // The actual compression method used to compress the file
 				_aesVer = ver;
 				_aesEncryptionStrength = encrStrength;
@@ -1358,8 +1358,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 		private Known known;
 		private int externalFileAttributes = -1;     // contains external attributes (O/S dependant)
 
-		private ushort versionMadeBy;					// Contains host system and version information
-		// only relevant for central header entries
+		private ushort versionMadeBy;         // Contains host system and version information
+																					// only relevant for central header entries
 
 		private string name;
 		private ulong size;
@@ -1380,8 +1380,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 		private bool forceZip64_;
 		private byte cryptoCheckValue_;
 #if !NET_1_1 && !NETCF_2_0
-		private int _aesVer;							// Version number (2 = AE-2 ?). Assigned but not used.
-		private int _aesEncryptionStrength;				// Encryption strength 1 = 128 2 = 192 3 = 256
+		private int _aesVer;              // Version number (2 = AE-2 ?). Assigned but not used.
+		private int _aesEncryptionStrength;       // Encryption strength 1 = 128 2 = 192 3 = 256
 #endif
 
 		#endregion Instance Fields

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -1046,12 +1046,12 @@ qelg(out double result, out double abserr)
 
 			goto return_error;
 
-		compute_result:
+			compute_result:
 
 			result = workspace.sum_results();
 			abserr = errsum;
 
-		return_error:
+			return_error:
 
 			if (error_type > 2)
 				error_type--;

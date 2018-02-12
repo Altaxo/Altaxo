@@ -20,56 +20,56 @@ using System;
 
 namespace Altaxo.Gui.Workbench
 {
-    /// <summary>
-    /// A simple view content that does not use any files and simply displays a fixed control.
-    /// </summary>
-    public class SimpleViewContent : AbstractViewContent
-    {
-        private object _view;
+	/// <summary>
+	/// A simple view content that does not use any files and simply displays a fixed control.
+	/// </summary>
+	public class SimpleViewContent : AbstractViewContent
+	{
+		private object _view;
 
-        public override object ViewObject
-        {
-            get
-            {
-                return _view;
-            }
-            set
-            {
-                _view = value;
-                OnPropertyChanged(nameof(ViewObject));
-            }
-        }
+		public override object ViewObject
+		{
+			get
+			{
+				return _view;
+			}
+			set
+			{
+				_view = value;
+				OnPropertyChanged(nameof(ViewObject));
+			}
+		}
 
-        public SimpleViewContent(object view)
-        {
-            this._view = view ?? throw new ArgumentNullException(nameof(view));
-        }
+		public SimpleViewContent(object view)
+		{
+			this._view = view ?? throw new ArgumentNullException(nameof(view));
+		}
 
-        // make this method public
-        /// <inheritdoc/>
-        public new void SetLocalizedTitle(string text)
-        {
-            base.SetLocalizedTitle(text);
-        }
+		// make this method public
+		/// <inheritdoc/>
+		public new void SetLocalizedTitle(string text)
+		{
+			base.SetLocalizedTitle(text);
+		}
 
-        public new string TitleName
-        {
-            get { return base.Title; }
-            set { base.Title = value; } // make setter public
-        }
+		public new string TitleName
+		{
+			get { return base.Title; }
+			set { base.Title = value; } // make setter public
+		}
 
-        /// <summary>
-        /// This instance has no model object, thus null is returned.
-        /// </summary>
-        /// <value>
-        /// The model object.
-        /// </value>
-        public override object ModelObject
-        {
-            get
-            {
-                return null;
-            }
-        }
-    }
+		/// <summary>
+		/// This instance has no model object, thus null is returned.
+		/// </summary>
+		/// <value>
+		/// The model object.
+		/// </value>
+		public override object ModelObject
+		{
+			get
+			{
+				return null;
+			}
+		}
+	}
 }

@@ -26,127 +26,127 @@ using System.Windows.Media.Imaging;
 
 namespace Altaxo.Gui
 {
-    /// <summary>
-    /// Creates WPF BitmapSource objects from images in the ResourceService.
-    /// </summary>
-    public static class PresentationResourceService
-    {
-        private static readonly Dictionary<string, BitmapSource> _bitmapCache = new Dictionary<string, BitmapSource>();
-        private static readonly IResourceService _resourceService;
+	/// <summary>
+	/// Creates WPF BitmapSource objects from images in the ResourceService.
+	/// </summary>
+	public static class PresentationResourceService
+	{
+		private static readonly Dictionary<string, BitmapSource> _bitmapCache = new Dictionary<string, BitmapSource>();
+		private static readonly IResourceService _resourceService;
 
-        static PresentationResourceService()
-        {
-            _resourceService = Altaxo.Current.GetRequiredService<IResourceService>();
-            _resourceService.LanguageChanged += OnLanguageChanged;
-        }
+		static PresentationResourceService()
+		{
+			_resourceService = Altaxo.Current.GetRequiredService<IResourceService>();
+			_resourceService.LanguageChanged += OnLanguageChanged;
+		}
 
-        /// <summary>
-        /// Gets a value indicating whether a instance  of the resource service is available. This maybe is
-        /// not the case if we are in Wpf design mode.
-        /// </summary>
-        /// <value>
-        /// <c>True</c> if a resource service instance is available; otherwise, <c>false</c>.
-        /// </value>
-        public static bool InstanceAvailable
-        {
-            get { return null != _resourceService; }
-        }
+		/// <summary>
+		/// Gets a value indicating whether a instance  of the resource service is available. This maybe is
+		/// not the case if we are in Wpf design mode.
+		/// </summary>
+		/// <value>
+		/// <c>True</c> if a resource service instance is available; otherwise, <c>false</c>.
+		/// </value>
+		public static bool InstanceAvailable
+		{
+			get { return null != _resourceService; }
+		}
 
-        private static void OnLanguageChanged(object sender, EventArgs e)
-        {
-            lock (_bitmapCache)
-            {
-                _bitmapCache.Clear();
-            }
-        }
+		private static void OnLanguageChanged(object sender, EventArgs e)
+		{
+			lock (_bitmapCache)
+			{
+				_bitmapCache.Clear();
+			}
+		}
 
-        /// <summary>
-        /// Creates a new System.Windows.Controls.Image object containing the image with the
-        /// specified resource name.
-        /// </summary>
-        /// <param name="name">
-        /// The name of the requested bitmap.
-        /// </param>
-        /// <exception cref="ResourceNotFoundException">
-        /// Is thrown when the GlobalResource manager can't find a requested resource.
-        /// </exception>
-        [Obsolete("Use SD.ResourceService.GetImage(name).CreateImage() instead, or just create the image manually")]
-        public static System.Windows.Controls.Image GetImage(string name)
-        {
-            return new System.Windows.Controls.Image
-            {
-                Source = GetBitmapSource(name)
-            };
-        }
+		/// <summary>
+		/// Creates a new System.Windows.Controls.Image object containing the image with the
+		/// specified resource name.
+		/// </summary>
+		/// <param name="name">
+		/// The name of the requested bitmap.
+		/// </param>
+		/// <exception cref="ResourceNotFoundException">
+		/// Is thrown when the GlobalResource manager can't find a requested resource.
+		/// </exception>
+		[Obsolete("Use SD.ResourceService.GetImage(name).CreateImage() instead, or just create the image manually")]
+		public static System.Windows.Controls.Image GetImage(string name)
+		{
+			return new System.Windows.Controls.Image
+			{
+				Source = GetBitmapSource(name)
+			};
+		}
 
-        public static BitmapSource IconToBitmapSource(System.Drawing.Icon icon)
-        {
-            using (var stream = new System.IO.MemoryStream())
-            {
-                icon.Save(stream);
-                stream.Seek(0, System.IO.SeekOrigin.Begin);
-                return BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
-            }
-        }
+		public static BitmapSource IconToBitmapSource(System.Drawing.Icon icon)
+		{
+			using (var stream = new System.IO.MemoryStream())
+			{
+				icon.Save(stream);
+				stream.Seek(0, System.IO.SeekOrigin.Begin);
+				return BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+			}
+		}
 
-        /// <summary>
-        /// Returns a BitmapSource from the resource database, it handles localization
-        /// transparent for the user.
-        /// </summary>
-        /// <param name="name">
-        /// The name of the requested bitmap.
-        /// </param>
-        /// <exception cref="ResourceNotFoundException">
-        /// Is thrown when the GlobalResource manager can't find a requested resource.
-        /// </exception>
-        public static BitmapSource GetBitmapSource(string name)
-        {
-            if (_resourceService == null)
-            {
-                throw new InvalidProgramException(string.Format("Member {0} is null. Did you start the resource service?", nameof(_resourceService)));
-            }
+		/// <summary>
+		/// Returns a BitmapSource from the resource database, it handles localization
+		/// transparent for the user.
+		/// </summary>
+		/// <param name="name">
+		/// The name of the requested bitmap.
+		/// </param>
+		/// <exception cref="ResourceNotFoundException">
+		/// Is thrown when the GlobalResource manager can't find a requested resource.
+		/// </exception>
+		public static BitmapSource GetBitmapSource(string name)
+		{
+			if (_resourceService == null)
+			{
+				throw new InvalidProgramException(string.Format("Member {0} is null. Did you start the resource service?", nameof(_resourceService)));
+			}
 
-            lock (_bitmapCache)
-            {
-                BitmapSource bs;
-                if (_bitmapCache.TryGetValue(name, out bs))
-                    return bs;
+			lock (_bitmapCache)
+			{
+				BitmapSource bs;
+				if (_bitmapCache.TryGetValue(name, out bs))
+					return bs;
 
-                var imageObject = _resourceService.GetImageResource(name);
+				var imageObject = _resourceService.GetImageResource(name);
 
-                if (imageObject is System.Drawing.Icon icon)
-                {
-                    var bi = IconToBitmapSource(icon);
-                    bi.Freeze();
-                    _bitmapCache[name] = bi;
-                    return bi;
-                }
+				if (imageObject is System.Drawing.Icon icon)
+				{
+					var bi = IconToBitmapSource(icon);
+					bi.Freeze();
+					_bitmapCache[name] = bi;
+					return bi;
+				}
 
-                if (imageObject is System.Drawing.Bitmap bmp)
-                {
-                    IntPtr hBitmap = bmp.GetHbitmap();
-                    try
-                    {
-                        bs = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero,
-                                                                                                             Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                        bs.Freeze();
-                        _bitmapCache[name] = bs;
-                    }
-                    finally
-                    {
-                        NativeMethods.DeleteObject(hBitmap);
-                    }
-                    return bs;
-                }
-                else if (imageObject != null)
-                {
-                    throw new ResourceNotFoundException(string.Format("Resource of type {0} can not be converted in a Wpf image source", imageObject.GetType()));
-                }
-                else
-                {
-                    throw new ResourceNotFoundException(name);
-                }
-            }
-        }
-    }
+				if (imageObject is System.Drawing.Bitmap bmp)
+				{
+					IntPtr hBitmap = bmp.GetHbitmap();
+					try
+					{
+						bs = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero,
+																																																 Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+						bs.Freeze();
+						_bitmapCache[name] = bs;
+					}
+					finally
+					{
+						NativeMethods.DeleteObject(hBitmap);
+					}
+					return bs;
+				}
+				else if (imageObject != null)
+				{
+					throw new ResourceNotFoundException(string.Format("Resource of type {0} can not be converted in a Wpf image source", imageObject.GetType()));
+				}
+				else
+				{
+					throw new ResourceNotFoundException(name);
+				}
+			}
+		}
+	}
 }

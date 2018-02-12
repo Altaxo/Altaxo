@@ -1,4 +1,5 @@
 ﻿#region Copyright
+
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2011 Dr. Dirk Lellinger
@@ -18,7 +19,8 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
-#endregion
+
+#endregion Copyright
 
 using System;
 using System.Collections.Generic;
@@ -27,28 +29,27 @@ using System.Text;
 
 namespace Altaxo.Addins.OriginConnector
 {
-  public enum OriginObjectType
-  {
-    None = 0, // Name is not defined.  
-    Dataset = 1,
-    Worksheet = 2,
-    GraphWindow = 3,
-    NumericVariable = 4,
-    Matrix = 5,
-    Tool = 7,
-    Macro = 8,
-    NotesWindow = 9,
-  }
+	public enum OriginObjectType
+	{
+		None = 0, // Name is not defined.
+		Dataset = 1,
+		Worksheet = 2,
+		GraphWindow = 3,
+		NumericVariable = 4,
+		Matrix = 5,
+		Tool = 7,
+		Macro = 8,
+		NotesWindow = 9,
+	}
 
-  public enum OriginColumnType
-  {
-    Y = 1,
-    Disregard = 2,
-    YError = 3,
-    X = 4,
-    Label = 5,
-    Z = 6,
-    XError = 7
-  }
-
+	public enum OriginColumnType
+	{
+		Y = 1,
+		Disregard = 2,
+		YError = 3,
+		X = 4,
+		Label = 5,
+		Z = 6,
+		XError = 7
+	}
 }

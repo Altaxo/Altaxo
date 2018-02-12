@@ -220,7 +220,7 @@ namespace Altaxo.Collections.Text
 					_lastLcp[nodeToRemove.Lcp] = nodeToRemove.Next;
 				}
 
-			// if text_item is the beginning of an interval
+				// if text_item is the beginning of an interval
 				else if (nodeToRemove == _lastLcp[textlcp].IntervalBegin)
 				{
 					create_interval(nodeToRemove.IntervalEnd, nodeToRemove.Previous, nodeToRemove.IntervalEnd.Lcp, nodeToRemove.IntervalEnd.IntervalSize);

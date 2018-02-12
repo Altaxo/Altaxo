@@ -22,92 +22,92 @@ using System.Linq;
 
 namespace Altaxo.Gui.Workbench
 {
-    /// <summary>
-    /// Tests if any open window has a specified window state.
-    /// </summary>
-    public class OpenWindowStateConditionEvaluator : IConditionEvaluator
-    {
-        private WindowState windowState = WindowState.None;
-        private WindowState nowindowState = WindowState.None;
+	/// <summary>
+	/// Tests if any open window has a specified window state.
+	/// </summary>
+	public class OpenWindowStateConditionEvaluator : IConditionEvaluator
+	{
+		private WindowState windowState = WindowState.None;
+		private WindowState nowindowState = WindowState.None;
 
-        private bool IsStateOk(IFileViewContent viewContent)
-        {
-            if (viewContent == null)
-            {
-                return false;
-            }
-            // use IWorkbenchWindow instead of IViewContent because maybe window info is needed in the future (for example: sub view content info.)
-            bool isWindowStateOk = false;
-            if (windowState != WindowState.None)
-            {
-                if ((windowState & WindowState.Dirty) > 0)
-                {
-                    isWindowStateOk |= viewContent.IsDirty;
-                }
-                if ((windowState & WindowState.Untitled) > 0)
-                {
-                    isWindowStateOk |= IsUntitled(viewContent);
-                }
-                if ((windowState & WindowState.ViewOnly) > 0)
-                {
-                    isWindowStateOk |= viewContent.IsViewOnly;
-                }
-            }
-            else
-            {
-                isWindowStateOk = true;
-            }
+		private bool IsStateOk(IFileViewContent viewContent)
+		{
+			if (viewContent == null)
+			{
+				return false;
+			}
+			// use IWorkbenchWindow instead of IViewContent because maybe window info is needed in the future (for example: sub view content info.)
+			bool isWindowStateOk = false;
+			if (windowState != WindowState.None)
+			{
+				if ((windowState & WindowState.Dirty) > 0)
+				{
+					isWindowStateOk |= viewContent.IsDirty;
+				}
+				if ((windowState & WindowState.Untitled) > 0)
+				{
+					isWindowStateOk |= IsUntitled(viewContent);
+				}
+				if ((windowState & WindowState.ViewOnly) > 0)
+				{
+					isWindowStateOk |= viewContent.IsViewOnly;
+				}
+			}
+			else
+			{
+				isWindowStateOk = true;
+			}
 
-            if (nowindowState != WindowState.None)
-            {
-                if ((nowindowState & WindowState.Dirty) > 0)
-                {
-                    isWindowStateOk &= !viewContent.IsDirty;
-                }
+			if (nowindowState != WindowState.None)
+			{
+				if ((nowindowState & WindowState.Dirty) > 0)
+				{
+					isWindowStateOk &= !viewContent.IsDirty;
+				}
 
-                if ((nowindowState & WindowState.Untitled) > 0)
-                {
-                    isWindowStateOk &= !IsUntitled(viewContent);
-                }
+				if ((nowindowState & WindowState.Untitled) > 0)
+				{
+					isWindowStateOk &= !IsUntitled(viewContent);
+				}
 
-                if ((nowindowState & WindowState.ViewOnly) > 0)
-                {
-                    isWindowStateOk &= !viewContent.IsViewOnly;
-                }
-            }
-            return isWindowStateOk;
-        }
+				if ((nowindowState & WindowState.ViewOnly) > 0)
+				{
+					isWindowStateOk &= !viewContent.IsViewOnly;
+				}
+			}
+			return isWindowStateOk;
+		}
 
-        private static bool IsUntitled(IFileViewContent viewContent)
-        {
-            OpenedFile file = viewContent.PrimaryFile;
-            if (file == null)
-                return false;
-            else
-                return file.IsUntitled;
-        }
+		private static bool IsUntitled(IFileViewContent viewContent)
+		{
+			OpenedFile file = viewContent.PrimaryFile;
+			if (file == null)
+				return false;
+			else
+				return file.IsUntitled;
+		}
 
-        public bool IsValid(object caller, Condition condition)
-        {
-            var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
+		public bool IsValid(object caller, Condition condition)
+		{
+			var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
 
-            if (workbench == null)
-            {
-                return false;
-            }
+			if (workbench == null)
+			{
+				return false;
+			}
 
-            windowState = condition.Properties.Get("openwindowstate", WindowState.None);
-            nowindowState = condition.Properties.Get("noopenwindowstate", WindowState.None);
+			windowState = condition.Properties.Get("openwindowstate", WindowState.None);
+			nowindowState = condition.Properties.Get("noopenwindowstate", WindowState.None);
 
-            foreach (var view in workbench.ViewContentCollection.OfType<IFileViewContent>())
-            {
-                if (IsStateOk(view))
-                {
-                    return true;
-                }
-            }
+			foreach (var view in workbench.ViewContentCollection.OfType<IFileViewContent>())
+			{
+				if (IsStateOk(view))
+				{
+					return true;
+				}
+			}
 
-            return false;
-        }
-    }
+			return false;
+		}
+	}
 }

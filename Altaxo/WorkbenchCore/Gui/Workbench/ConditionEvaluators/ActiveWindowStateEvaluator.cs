@@ -26,88 +26,88 @@ using Altaxo.AddInItems;
 
 namespace Altaxo.Gui.Workbench
 {
-    [Flags]
-    public enum WindowState
-    {
-        None = 0,
-        Untitled = 1,
-        Dirty = 2,
-        ViewOnly = 4
-    }
+	[Flags]
+	public enum WindowState
+	{
+		None = 0,
+		Untitled = 1,
+		Dirty = 2,
+		ViewOnly = 4
+	}
 
-    /// <summary>
-    /// Tests the window state of the active workbench window.
-    /// </summary>
-    public class ActiveWindowStateConditionEvaluator : IConditionEvaluator
-    {
-        public bool IsValid(object caller, Condition condition)
-        {
-            var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
+	/// <summary>
+	/// Tests the window state of the active workbench window.
+	/// </summary>
+	public class ActiveWindowStateConditionEvaluator : IConditionEvaluator
+	{
+		public bool IsValid(object caller, Condition condition)
+		{
+			var workbench = Altaxo.Current.GetService<Workbench.IWorkbenchEx>();
 
-            var activeWorkbenchWindow = workbench.ActiveViewContent;
-            if (activeWorkbenchWindow == null)
-            {
-                return false;
-            }
+			var activeWorkbenchWindow = workbench.ActiveViewContent;
+			if (activeWorkbenchWindow == null)
+			{
+				return false;
+			}
 
-            WindowState windowState = condition.Properties.Get("windowstate", WindowState.None);
-            WindowState nowindowState = condition.Properties.Get("nowindowstate", WindowState.None);
+			WindowState windowState = condition.Properties.Get("windowstate", WindowState.None);
+			WindowState nowindowState = condition.Properties.Get("nowindowstate", WindowState.None);
 
-            bool isWindowStateOk = false;
-            if (windowState != WindowState.None)
-            {
-                if ((windowState & WindowState.Dirty) > 0)
-                {
-                    isWindowStateOk |= activeWorkbenchWindow.IsDirty;
-                }
-                if ((windowState & WindowState.Untitled) > 0)
-                {
-                    isWindowStateOk |= IsUntitled(activeWorkbenchWindow as IFileViewContent);
-                }
-                if ((windowState & WindowState.ViewOnly) > 0)
-                {
-                    isWindowStateOk |= IsViewOnly(activeWorkbenchWindow);
-                }
-            }
-            else
-            {
-                isWindowStateOk = true;
-            }
+			bool isWindowStateOk = false;
+			if (windowState != WindowState.None)
+			{
+				if ((windowState & WindowState.Dirty) > 0)
+				{
+					isWindowStateOk |= activeWorkbenchWindow.IsDirty;
+				}
+				if ((windowState & WindowState.Untitled) > 0)
+				{
+					isWindowStateOk |= IsUntitled(activeWorkbenchWindow as IFileViewContent);
+				}
+				if ((windowState & WindowState.ViewOnly) > 0)
+				{
+					isWindowStateOk |= IsViewOnly(activeWorkbenchWindow);
+				}
+			}
+			else
+			{
+				isWindowStateOk = true;
+			}
 
-            if (nowindowState != WindowState.None)
-            {
-                if ((nowindowState & WindowState.Dirty) > 0)
-                {
-                    isWindowStateOk &= !activeWorkbenchWindow.IsDirty;
-                }
+			if (nowindowState != WindowState.None)
+			{
+				if ((nowindowState & WindowState.Dirty) > 0)
+				{
+					isWindowStateOk &= !activeWorkbenchWindow.IsDirty;
+				}
 
-                if ((nowindowState & WindowState.Untitled) > 0)
-                {
-                    isWindowStateOk &= !IsUntitled(activeWorkbenchWindow as IFileViewContent);
-                }
+				if ((nowindowState & WindowState.Untitled) > 0)
+				{
+					isWindowStateOk &= !IsUntitled(activeWorkbenchWindow as IFileViewContent);
+				}
 
-                if ((nowindowState & WindowState.ViewOnly) > 0)
-                {
-                    isWindowStateOk &= !IsViewOnly(activeWorkbenchWindow);
-                }
-            }
-            return isWindowStateOk;
-        }
+				if ((nowindowState & WindowState.ViewOnly) > 0)
+				{
+					isWindowStateOk &= !IsViewOnly(activeWorkbenchWindow);
+				}
+			}
+			return isWindowStateOk;
+		}
 
-        private static bool IsUntitled(IFileViewContent viewContent)
-        {
-            if (viewContent == null)
-                return false;
-            OpenedFile file = viewContent.PrimaryFile;
-            if (file == null)
-                return false;
-            else
-                return file.IsUntitled;
-        }
+		private static bool IsUntitled(IFileViewContent viewContent)
+		{
+			if (viewContent == null)
+				return false;
+			OpenedFile file = viewContent.PrimaryFile;
+			if (file == null)
+				return false;
+			else
+				return file.IsUntitled;
+		}
 
-        private static bool IsViewOnly(IViewContent viewContent)
-        {
-            return viewContent != null && viewContent.IsViewOnly;
-        }
-    }
+		private static bool IsViewOnly(IViewContent viewContent)
+		{
+			return viewContent != null && viewContent.IsViewOnly;
+		}
+	}
 }

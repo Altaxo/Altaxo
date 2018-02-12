@@ -1,4 +1,4 @@
-//
+﻿//
 // ZipAESStream.cs
 //
 // Copyright 2009 David Pierson
@@ -113,7 +113,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
 					{
 						_slideBuffer[iTo] = _slideBuffer[iFrom];
 					}
-					_slideBufFreePos -= _slideBufStartPos;		// Note the -=
+					_slideBufFreePos -= _slideBufStartPos;    // Note the -=
 					_slideBufStartPos = 0;
 				}
 				int obtained = _stream.Read(_slideBuffer, _slideBufFreePos, lengthToRead);
@@ -150,8 +150,8 @@ namespace ICSharpCode.SharpZipLib.Encryption
 						_slideBufStartPos += finalBlock;
 					}
 					else if (byteCount < AUTH_CODE_LENGTH)
-						throw new Exception("Internal error missed auth code");	// Coding bug
-					// Final block done. Check Auth code.
+						throw new Exception("Internal error missed auth code"); // Coding bug
+																																		// Final block done. Check Auth code.
 					byte[] calcAuthCode = _transform.GetAuthCode();
 					for (int i = 0; i < AUTH_CODE_LENGTH; i++)
 					{
@@ -162,7 +162,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
 						}
 					}
 
-					break;	// Reached the auth code
+					break;  // Reached the auth code
 				}
 			}
 			return nBytes;

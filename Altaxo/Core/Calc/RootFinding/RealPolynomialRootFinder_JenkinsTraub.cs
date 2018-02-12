@@ -94,11 +94,11 @@ namespace Altaxo.Calc.RootFinding
 			double factor = 0;
 			double sc = 0;
 
-			const double RADFAC = 0.017453292519943295769; 	// Degrees-to-radians conversion factor = pi/180
+			const double RADFAC = 0.017453292519943295769;  // Degrees-to-radians conversion factor = pi/180
 			const double lb2 = 0.69314718055994530942; // Math.Log(2.0);
-			const double lo = DBL_MIN / DBL_EPSILON;	//Double.MinValue / Double.Epsilon
-			double cosr = Math.Cos(94.0 * RADFAC);	// = -0.069756474
-			double sinr = Math.Sin(94.0 * RADFAC);	// = 0.99756405
+			const double lo = DBL_MIN / DBL_EPSILON;  //Double.MinValue / Double.Epsilon
+			double cosr = Math.Cos(94.0 * RADFAC);  // = -0.069756474
+			double sinr = Math.Sin(94.0 * RADFAC);  // = 0.99756405
 
 			for (int i = 0, k = Degree; i <= Degree; ++i, --k)
 			{

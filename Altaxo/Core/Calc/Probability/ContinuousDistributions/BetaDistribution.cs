@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -198,7 +198,7 @@ namespace Altaxo.Calc.Probability
 			}
 			else
 			{
-			loop:
+				loop:
 
 				double v, y, z;
 				double u1 = generator.Next() * scale;
@@ -225,7 +225,7 @@ namespace Altaxo.Calc.Probability
 				w = (v > maxexp) ? infinity : a * Math.Exp(v);
 				if (hlpalpha * (Math.Log(hlpalpha / (b + w)) + v) - 1.3862944 < Math.Log(z)) goto loop;
 
-			fin: ;
+				fin:;
 			}
 
 			// return result

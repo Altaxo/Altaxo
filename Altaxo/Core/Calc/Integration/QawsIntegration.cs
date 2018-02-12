@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -297,7 +297,7 @@ namespace Altaxo.Calc.Integration
 
 				double factor = Math.Pow(0.5 * (b1 - a1), t.alpha + 1.0);
 
-				weighted_function = delegate(double tt) { return fn_qaws_R(tt, fn_params); };
+				weighted_function = delegate (double tt) { return fn_qaws_R(tt, fn_params); };
 
 				Qcheb.Approximation(weighted_function, a1, b1, cheb12, cheb24);
 
@@ -335,7 +335,7 @@ namespace Altaxo.Calc.Integration
 				double[] cheb12 = new double[13], cheb24 = new double[25];
 				double factor = Math.Pow(0.5 * (b1 - a1), t.beta + 1.0);
 
-				weighted_function = delegate(double tt) { return fn_qaws_L(tt, fn_params); };
+				weighted_function = delegate (double tt) { return fn_qaws_L(tt, fn_params); };
 
 				Qcheb.Approximation(weighted_function, a1, b1, cheb12, cheb24);
 
@@ -372,7 +372,7 @@ namespace Altaxo.Calc.Integration
 			{
 				double resabs, resasc;
 
-				weighted_function = delegate(double tt) { return fn_qaws(tt, fn_params); };
+				weighted_function = delegate (double tt) { return fn_qaws(tt, fn_params); };
 
 				QK15.Integration(weighted_function, a1, b1, out result, out abserr,
 															out resabs, out resasc);

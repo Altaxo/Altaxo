@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -465,7 +465,7 @@ namespace Altaxo.Calc.Fourier
 				base.FFT(result, scratch, FourierDirection.Inverse);
 			}
 
-		ErrorExit:
+			ErrorExit:
 
 			return status;
 		}
@@ -627,7 +627,7 @@ namespace Altaxo.Calc.Fourier
 				throw new NotImplementedException("Sorry, convolution of dimension 2 or 3 is not implemented yet. Will you do it?");
 			}
 
-		ErrorExit:
+			ErrorExit:
 			return status;
 		}
 

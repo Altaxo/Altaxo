@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -43,7 +43,7 @@ namespace Altaxo.Calc.Probability
 	/// log(phi(t)) = -scale |t| (1+i beta Sign(t) (2/pi) Log(|t|)) + i location t  (for alpha equal to 1)
 	/// </code>
 	/// <para>Reference: J.P.Nolan, Numerical calculation of stable densities and distribution functions. Communication is statistics - Stochastic models, 13, 759-774, 1999</para>
-	/// <para>Reference: S.Borak, W.H�rdle, R.Weron, Stable distributions. SFB 649 Discussion paper 2005-2008, http://sfb649.wiwi.hu-berlin.de, ISSN 1860-5664</para>
+	/// <para>Reference: S.Borak, W.Härdle, R.Weron, Stable distributions. SFB 649 Discussion paper 2005-2008, http://sfb649.wiwi.hu-berlin.de, ISSN 1860-5664</para>
 	/// <para/>
 	/// <para>If you are interested in accurate calculations when beta is close to 1 or -1, you should use those functions which allow you to provide the parameter <c>abe</c>. This helps
 	/// specifying beta with higher accuracy close to +1 or -1. For instance, by using abe=1E-30 and beta=1, it is possible to specify beta=1-1E-30, which is impossible otherwise since with the 64-bit representation of numbers.</para>
@@ -570,9 +570,9 @@ namespace Altaxo.Calc.Probability
 
 			object temp = tempStorage;
 			double root = double.NaN;
-			if (QuickRootFinding.BracketRootByExtensionOnly(delegate(double x) { return CDF(x, alpha, beta, abe, 1, 0, ref temp, DefaultPrecision) - p; }, 0, ref x0, ref x1))
+			if (QuickRootFinding.BracketRootByExtensionOnly(delegate (double x) { return CDF(x, alpha, beta, abe, 1, 0, ref temp, DefaultPrecision) - p; }, 0, ref x0, ref x1))
 			{
-				if (null != QuickRootFinding.ByBrentsAlgorithm(delegate(double x) { return CDF(x, alpha, beta, abe, 1, 0, ref temp, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
+				if (null != QuickRootFinding.ByBrentsAlgorithm(delegate (double x) { return CDF(x, alpha, beta, abe, 1, 0, ref temp, DefaultPrecision) - p; }, x0, x1, 0, DoubleConstants.DBL_EPSILON, out root))
 					root = double.NaN;
 			}
 			tempStorage = temp;

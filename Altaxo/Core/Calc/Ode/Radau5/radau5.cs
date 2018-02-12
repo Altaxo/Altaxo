@@ -1,4 +1,4 @@
-#region Translated by Jose Antonio De Santiago-Castillo.
+﻿#region Translated by Jose Antonio De Santiago-Castillo.
 
 //Translated by Jose Antonio De Santiago-Castillo.
 //E-mail:JAntonioDeSantiago@gmail.com
@@ -1361,8 +1361,8 @@ namespace Altaxo.Calc.Ode.Radau5
 			HHFAC = H;
 			FCN.Run(N, X, Y, offset_y, ref Y0, offset_y0, RPAR[1 + o_rpar], IPAR[1 + o_ipar]);
 			NFCN += 1;
-		// C --- BASIC INTEGRATION STEP
-		LABEL10:;
+			// C --- BASIC INTEGRATION STEP
+			LABEL10:;
 			// C *** *** *** *** *** *** ***
 			// C  COMPUTATION OF THE JACOBIAN
 			// C *** *** *** *** *** *** ***
@@ -1380,7 +1380,7 @@ namespace Altaxo.Calc.Ode.Radau5
 						for (K = 1; K <= MD; K++)
 						{
 							J = K + (MM - 1) * M2;
-						LABEL12: F1[J + o_f1] = Y[J + o_y];
+							LABEL12: F1[J + o_f1] = Y[J + o_y];
 							F2[J + o_f2] = Math.Sqrt(UROUND * Math.Max(1.0E-5, Math.Abs(Y[J + o_y])));
 							Y[J + o_y] += F2[J + o_f2];
 							J += MD;
@@ -1389,7 +1389,7 @@ namespace Altaxo.Calc.Ode.Radau5
 							J = K + (MM - 1) * M2;
 							J1 = K;
 							LBEG = Math.Max(1, J1 - MUJAC) + M1;
-						LABEL14: LEND = Math.Min(M2, J1 + MLJAC) + M1;
+							LABEL14: LEND = Math.Min(M2, J1 + MLJAC) + M1;
 							Y[J + o_y] = F1[J + o_f1];
 							MUJACJ = MUJACP - J1 - M1;
 							FJAC_J = J * LDJAC + o_fjac;
@@ -1430,7 +1430,7 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			CALJAC = true;
 			CALHES = true;
-		LABEL20:;
+			LABEL20:;
 			// C --- COMPUTE THE MATRICES E1 AND E2 AND THEIR DECOMPOSITIONS
 			FAC1 = U1 / H;
 			ALPHN = ALPH / H;
@@ -1444,7 +1444,7 @@ namespace Altaxo.Calc.Ode.Radau5
 											 , ref E2R, offset_e2r, ref E2I, offset_e2i, LDE1, ref IP2, offset_ip2, ref IER, IJOB);
 			if (IER != 0) goto LABEL78;
 			NDEC += 1;
-		LABEL30:;
+			LABEL30:;
 			NSTEP += 1;
 			if (NSTEP > NMAX) goto LABEL178;
 			if (0.1E0 * Math.Abs(H) <= Math.Abs(X) * UROUND) goto LABEL177;
@@ -1505,7 +1505,7 @@ namespace Altaxo.Calc.Ode.Radau5
 			NEWT = 0;
 			FACCON = Math.Pow(Math.Max(FACCON, UROUND), 0.8E0);
 			THETA = Math.Abs(THET);
-		LABEL40:;
+			LABEL40:;
 			if (NEWT >= NIT) goto LABEL78;
 			// C ---     COMPUTE THE RIGHT-HAND SIDE
 			for (I = 1; I <= N; I++)
@@ -1723,8 +1723,8 @@ namespace Altaxo.Calc.Ode.Radau5
 				if (CALJAC) goto LABEL20;
 				goto LABEL10;
 			}
-		// C --- UNEXPECTED STEP-REJECTION
-		LABEL78:;
+			// C --- UNEXPECTED STEP-REJECTION
+			LABEL78:;
 			if (IER != 0)
 			{
 				NSING += 1;
@@ -1736,24 +1736,24 @@ namespace Altaxo.Calc.Ode.Radau5
 			LAST = false;
 			if (CALJAC) goto LABEL20;
 			goto LABEL10;
-		// C --- FAIL EXIT
-		LABEL176:;
+			// C --- FAIL EXIT
+			LABEL176:;
 			//ERROR-ERROR      WRITE(6,979)X   ;
 			//ERROR-ERROR      WRITE(6,*) ' MATRIX IS REPEATEDLY SINGULAR, IER=',IER;
 			IDID = -4;
 			return;
-		LABEL177:;
+			LABEL177:;
 			//ERROR-ERROR      WRITE(6,979)X   ;
 			//ERROR-ERROR      WRITE(6,*) ' STEP SIZE T0O SMALL, H=',H;
 			IDID = -3;
 			return;
-		LABEL178:;
+			LABEL178:;
 			//ERROR-ERROR      WRITE(6,979)X   ;
 			//ERROR-ERROR      WRITE(6,*) ' MORE THAN NMAX =',NMAX,'STEPS ARE NEEDED' ;
 			IDID = -2;
 			return;
-		// C --- EXIT CAUSED BY SOLOUT
-		LABEL179:;
+			// C --- EXIT CAUSED BY SOLOUT
+			LABEL179:;
 			//ERROR-ERROR      WRITE(6,979)X;
 			IDID = 2;
 			return;

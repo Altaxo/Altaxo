@@ -1,4 +1,4 @@
-#region Translated by Jose Antonio De Santiago-Castillo.
+﻿#region Translated by Jose Antonio De Santiago-Castillo.
 
 //Translated by Jose Antonio De Santiago-Castillo.
 //E-mail:JAntonioDeSantiago@gmail.com
@@ -1878,7 +1878,7 @@ namespace Altaxo.Calc.Ode.DVode
 			if (INIT.v != 1) goto LABEL603;
 			if (ISTATE == 2) goto LABEL200;
 			goto LABEL20;
-		LABEL10: INIT.v = 0;
+			LABEL10: INIT.v = 0;
 			if (TOUT == T) return;
 			// C-----------------------------------------------------------------------
 			// C Block B.
@@ -1917,7 +1917,7 @@ namespace Altaxo.Calc.Ode.DVode
 			HMXI.v = ZERO;
 			HMIN.v = ZERO;
 			goto LABEL60;
-		LABEL40: MAXORD.v = IWORK[5 + o_iwork];
+			LABEL40: MAXORD.v = IWORK[5 + o_iwork];
 			if (MAXORD.v < 0) goto LABEL611;
 			if (MAXORD.v == 0) MAXORD.v = 100;
 			MAXORD.v = Math.Min(MAXORD.v, MORD[METH.v + o_mord]);
@@ -1989,18 +1989,18 @@ namespace Altaxo.Calc.Ode.DVode
 			if (NQ.v <= MAXORD.v) goto LABEL90;
 			// C MAXORD was reduced below NQ.  Copy YH(*,MAXORD+2) into SAVF. ---------
 			this._dcopy.Run(N.v, RWORK, LWM.v + o_rwork, 1, ref RWORK, LSAVF.v + o_rwork, 1);
-		// C Reload WM(1) = RWORK(LWM), since LWM may have changed. ---------------
-		LABEL90:
+			// C Reload WM(1) = RWORK(LWM), since LWM may have changed. ---------------
+			LABEL90:
 			if (MITER.v > 0) RWORK[LWM.v + o_rwork] = Math.Sqrt(UROUND.v);
 			goto LABEL200;
-		// C-----------------------------------------------------------------------
-		// C Block C.
-		// C The next block is for the initial call only (ISTATE = 1).
-		// C It contains all remaining initializations, the initial call to F,
-		// C and the calculation of the initial step size.
-		// C The error weights in EWT are inverted after being loaded.
-		// C-----------------------------------------------------------------------
-		LABEL100: UROUND.v = this._dumach.Run();
+			// C-----------------------------------------------------------------------
+			// C Block C.
+			// C The next block is for the initial call only (ISTATE = 1).
+			// C It contains all remaining initializations, the initial call to F,
+			// C and the calculation of the initial step size.
+			// C The error weights in EWT are inverted after being loaded.
+			// C-----------------------------------------------------------------------
+			LABEL100: UROUND.v = this._dumach.Run();
 			TN.v = T;
 			if (ITASK != 4 && ITASK != 5) goto LABEL110;
 			TCRIT = RWORK[1 + o_rwork];
@@ -2050,12 +2050,12 @@ namespace Altaxo.Calc.Ode.DVode
 			H.v = H0;
 			this._dscal.Run(N.v, H0, ref RWORK, LF0 + o_rwork, 1);
 			goto LABEL270;
-		// C-----------------------------------------------------------------------
-		// C Block D.
-		// C The next code block is for continuation calls only (ISTATE = 2 or 3)
-		// C and is to check stop conditions before taking a step.
-		// C-----------------------------------------------------------------------
-		LABEL200: NSLAST = NST.v;
+			// C-----------------------------------------------------------------------
+			// C Block D.
+			// C The next code block is for continuation calls only (ISTATE = 2 or 3)
+			// C and is to check stop conditions before taking a step.
+			// C-----------------------------------------------------------------------
+			LABEL200: NSLAST = NST.v;
 			KUTH.v = 0;
 			switch (ITASK)
 			{
@@ -2065,17 +2065,17 @@ namespace Altaxo.Calc.Ode.DVode
 				case 4: goto LABEL230;
 				case 5: goto LABEL240;
 			}
-		LABEL210:
+			LABEL210:
 			if ((TN.v - TOUT) * H.v < ZERO) goto LABEL250;
 			this._dvindy.Run(TOUT, 0, RWORK, LYH.v + o_rwork, NYH.v, ref Y, offset_y, ref IFLAG);
 			if (IFLAG != 0) goto LABEL627;
 			T = TOUT;
 			goto LABEL420;
-		LABEL220: TP = TN.v - HU.v * (ONE + HUN * UROUND.v);
+			LABEL220: TP = TN.v - HU.v * (ONE + HUN * UROUND.v);
 			if ((TP - TOUT) * H.v > ZERO) goto LABEL623;
 			if ((TN.v - TOUT) * H.v < ZERO) goto LABEL250;
 			goto LABEL400;
-		LABEL230: TCRIT = RWORK[1 + o_rwork];
+			LABEL230: TCRIT = RWORK[1 + o_rwork];
 			if ((TN.v - TCRIT) * H.v > ZERO) goto LABEL624;
 			if ((TCRIT - TOUT) * H.v < ZERO) goto LABEL625;
 			if ((TN.v - TOUT) * H.v < ZERO) goto LABEL245;
@@ -2083,7 +2083,7 @@ namespace Altaxo.Calc.Ode.DVode
 			if (IFLAG != 0) goto LABEL627;
 			T = TOUT;
 			goto LABEL420;
-		LABEL240: TCRIT = RWORK[1 + o_rwork];
+			LABEL240: TCRIT = RWORK[1 + o_rwork];
 			if ((TN.v - TCRIT) * H.v > ZERO) goto LABEL624;
 			LABEL245: HMX = Math.Abs(TN.v) + Math.Abs(H.v);
 			IHIT = Math.Abs(TN.v - TCRIT) <= HUN * UROUND.v * HMX;
@@ -2092,18 +2092,18 @@ namespace Altaxo.Calc.Ode.DVode
 			if ((TNEXT - TCRIT) * H.v <= ZERO) goto LABEL250;
 			H.v = (TCRIT - TN.v) * (ONE - FOUR * UROUND.v);
 			KUTH.v = 1;
-		// C-----------------------------------------------------------------------
-		// C Block E.
-		// C The next block is normally executed for all calls and contains
-		// C the call to the one-step core integrator DVSTEP.
-		// C
-		// C This is a looping point for the integration steps.
-		// C
-		// C First check for too many steps being taken, update EWT (if not at
-		// C start of problem), check for too much accuracy being requested, and
-		// C check for H below the roundoff level in T.
-		// C-----------------------------------------------------------------------
-		LABEL250:;
+			// C-----------------------------------------------------------------------
+			// C Block E.
+			// C The next block is normally executed for all calls and contains
+			// C the call to the one-step core integrator DVSTEP.
+			// C
+			// C This is a looping point for the integration steps.
+			// C
+			// C First check for too many steps being taken, update EWT (if not at
+			// C start of problem), check for too much accuracy being requested, and
+			// C check for H below the roundoff level in T.
+			// C-----------------------------------------------------------------------
+			LABEL250:;
 			if ((NST.v - NSLAST) >= MXSTEP.v) goto LABEL500;
 			this._dewset.Run(N.v, ITOL, RTOL, offset_rtol, ATOL, offset_atol, RWORK, LYH.v + o_rwork, ref RWORK, LEWT.v + o_rwork);
 			for (I = 1; I <= N.v; I++)
@@ -2111,12 +2111,12 @@ namespace Altaxo.Calc.Ode.DVode
 				if (RWORK[I + LEWT.v - 1 + o_rwork] <= ZERO) goto LABEL510;
 				RWORK[I + LEWT.v - 1 + o_rwork] = ONE / RWORK[I + LEWT.v - 1 + o_rwork];
 			}
-		LABEL270: TOLSF = UROUND.v * this._dvnorm.Run(N.v, RWORK, LYH.v + o_rwork, RWORK, LEWT.v + o_rwork);
+			LABEL270: TOLSF = UROUND.v * this._dvnorm.Run(N.v, RWORK, LYH.v + o_rwork, RWORK, LEWT.v + o_rwork);
 			if (TOLSF <= ONE) goto LABEL280;
 			TOLSF *= TWO;
 			if (NST.v == 0) goto LABEL626;
 			goto LABEL520;
-		LABEL280:
+			LABEL280:
 			if ((TN.v + H.v) != TN.v) goto LABEL290;
 			NHNIL.v += 1;
 			if (NHNIL.v > MXHNIL.v) goto LABEL290;
@@ -2136,7 +2136,7 @@ namespace Altaxo.Calc.Ode.DVode
 			FortranLib.Copy(ref MSG, "      it will not be issued again for this problem");
 			this._xerrwd.Run(MSG, 50, 102, 1, 1, MXHNIL.v
 											 , 0, 0, ZERO, ZERO);
-		LABEL290:;
+			LABEL290:;
 			// C-----------------------------------------------------------------------
 			// C CALL DVSTEP (Y, YH, NYH, YH, EWT, SAVF, VSAV, ACOR,
 			// C              WM, IWM, F, JAC, F, DVNLSD, RPAR, IPAR)
@@ -2153,12 +2153,12 @@ namespace Altaxo.Calc.Ode.DVode
 				case 2: goto LABEL530;
 				case 3: goto LABEL540;
 			}
-		// C-----------------------------------------------------------------------
-		// C Block F.
-		// C The following block handles the case of a successful return from the
-		// C core integrator (KFLAG = 0).  Test for stop conditions.
-		// C-----------------------------------------------------------------------
-		LABEL300: INIT.v = 1;
+			// C-----------------------------------------------------------------------
+			// C Block F.
+			// C The following block handles the case of a successful return from the
+			// C core integrator (KFLAG = 0).  Test for stop conditions.
+			// C-----------------------------------------------------------------------
+			LABEL300: INIT.v = 1;
 			KUTH.v = 0;
 			switch (ITASK)
 			{
@@ -2168,23 +2168,23 @@ namespace Altaxo.Calc.Ode.DVode
 				case 4: goto LABEL340;
 				case 5: goto LABEL350;
 			}
-		// C ITASK = 1.  If TOUT has been reached, interpolate. -------------------
-		LABEL310:
+			// C ITASK = 1.  If TOUT has been reached, interpolate. -------------------
+			LABEL310:
 			if ((TN.v - TOUT) * H.v < ZERO) goto LABEL250;
 			this._dvindy.Run(TOUT, 0, RWORK, LYH.v + o_rwork, NYH.v, ref Y, offset_y, ref IFLAG);
 			T = TOUT;
 			goto LABEL420;
-		// C ITASK = 3.  Jump to exit if TOUT was reached. ------------------------
-		LABEL330:
+			// C ITASK = 3.  Jump to exit if TOUT was reached. ------------------------
+			LABEL330:
 			if ((TN.v - TOUT) * H.v >= ZERO) goto LABEL400;
 			goto LABEL250;
-		// C ITASK = 4.  See if TOUT or TCRIT was reached.  Adjust H if necessary.
-		LABEL340:
+			// C ITASK = 4.  See if TOUT or TCRIT was reached.  Adjust H if necessary.
+			LABEL340:
 			if ((TN.v - TOUT) * H.v < ZERO) goto LABEL345;
 			this._dvindy.Run(TOUT, 0, RWORK, LYH.v + o_rwork, NYH.v, ref Y, offset_y, ref IFLAG);
 			T = TOUT;
 			goto LABEL420;
-		LABEL345: HMX = Math.Abs(TN.v) + Math.Abs(H.v);
+			LABEL345: HMX = Math.Abs(TN.v) + Math.Abs(H.v);
 			IHIT = Math.Abs(TN.v - TCRIT) <= HUN * UROUND.v * HMX;
 			if (IHIT) goto LABEL400;
 			TNEXT = TN.v + HNEW.v * (ONE + FOUR * UROUND.v);
@@ -2192,17 +2192,17 @@ namespace Altaxo.Calc.Ode.DVode
 			H.v = (TCRIT - TN.v) * (ONE - FOUR * UROUND.v);
 			KUTH.v = 1;
 			goto LABEL250;
-		// C ITASK = 5.  See if TCRIT was reached and jump to exit. ---------------
-		LABEL350: HMX = Math.Abs(TN.v) + Math.Abs(H.v);
+			// C ITASK = 5.  See if TCRIT was reached and jump to exit. ---------------
+			LABEL350: HMX = Math.Abs(TN.v) + Math.Abs(H.v);
 			IHIT = Math.Abs(TN.v - TCRIT) <= HUN * UROUND.v * HMX;
-		// C-----------------------------------------------------------------------
-		// C Block G.
-		// C The following block handles all successful returns from DVODE.
-		// C If ITASK .ne. 1, Y is loaded from YH and T is set accordingly.
-		// C ISTATE is set to 2, and the optional output is loaded into the work
-		// C arrays before returning.
-		// C-----------------------------------------------------------------------
-		LABEL400:;
+			// C-----------------------------------------------------------------------
+			// C Block G.
+			// C The following block handles all successful returns from DVODE.
+			// C If ITASK .ne. 1, Y is loaded from YH and T is set accordingly.
+			// C ISTATE is set to 2, and the optional output is loaded into the work
+			// C arrays before returning.
+			// C-----------------------------------------------------------------------
+			LABEL400:;
 			this._dcopy.Run(N.v, RWORK, LYH.v + o_rwork, 1, ref Y, offset_y, 1);
 			T = TN.v;
 			if (ITASK != 4 && ITASK != 5) goto LABEL420;
@@ -2221,16 +2221,16 @@ namespace Altaxo.Calc.Ode.DVode
 			IWORK[21 + o_iwork] = NCFN.v;
 			IWORK[22 + o_iwork] = NETF.v;
 			return;
-		// C-----------------------------------------------------------------------
-		// C Block H.
-		// C The following block handles all unsuccessful returns other than
-		// C those for illegal input.  First the error message routine is called.
-		// C if there was an error test or convergence test failure, IMXER is set.
-		// C Then Y is loaded from YH, and T is set to TN.
-		// C The optional output is loaded into the work arrays before returning.
-		// C-----------------------------------------------------------------------
-		// C The maximum number of steps was taken before reaching TOUT. ----------
-		LABEL500: FortranLib.Copy(ref MSG, "DVODE--  At current T (=R1), MXSTEP (=I1) steps   ");
+			// C-----------------------------------------------------------------------
+			// C Block H.
+			// C The following block handles all unsuccessful returns other than
+			// C those for illegal input.  First the error message routine is called.
+			// C if there was an error test or convergence test failure, IMXER is set.
+			// C Then Y is loaded from YH, and T is set to TN.
+			// C The optional output is loaded into the work arrays before returning.
+			// C-----------------------------------------------------------------------
+			// C The maximum number of steps was taken before reaching TOUT. ----------
+			LABEL500: FortranLib.Copy(ref MSG, "DVODE--  At current T (=R1), MXSTEP (=I1) steps   ");
 			this._xerrwd.Run(MSG, 50, 201, 1, 0, 0
 											 , 0, 0, ZERO, ZERO);
 			FortranLib.Copy(ref MSG, "      taken on this call before reaching TOUT     ");
@@ -2238,15 +2238,15 @@ namespace Altaxo.Calc.Ode.DVode
 											 , 0, 1, TN.v, ZERO);
 			ISTATE = -1;
 			goto LABEL580;
-		// C EWT(i) .le. 0.0 for some i (not at start of problem). ----------------
-		LABEL510: EWTI = RWORK[LEWT.v + I - 1 + o_rwork];
+			// C EWT(i) .le. 0.0 for some i (not at start of problem). ----------------
+			LABEL510: EWTI = RWORK[LEWT.v + I - 1 + o_rwork];
 			FortranLib.Copy(ref MSG, "DVODE--  At T (=R1), EWT(I1) has become R2 .le. 0.");
 			this._xerrwd.Run(MSG, 50, 202, 1, 1, I
 											 , 0, 2, TN.v, EWTI);
 			ISTATE = -6;
 			goto LABEL580;
-		// C Too much accuracy requested for machine precision. -------------------
-		LABEL520: FortranLib.Copy(ref MSG, "DVODE--  At T (=R1), too much accuracy requested  ");
+			// C Too much accuracy requested for machine precision. -------------------
+			LABEL520: FortranLib.Copy(ref MSG, "DVODE--  At T (=R1), too much accuracy requested  ");
 			this._xerrwd.Run(MSG, 50, 203, 1, 0, 0
 											 , 0, 0, ZERO, ZERO);
 			FortranLib.Copy(ref MSG, "      for precision of machine:   see TOLSF (=R2) ");
@@ -2255,8 +2255,8 @@ namespace Altaxo.Calc.Ode.DVode
 			RWORK[14 + o_rwork] = TOLSF;
 			ISTATE = -2;
 			goto LABEL580;
-		// C KFLAG = -1.  Error test failed repeatedly or with ABS(H) = HMIN. -----
-		LABEL530: FortranLib.Copy(ref MSG, "DVODE--  At T(=R1) and step size H(=R2), the error");
+			// C KFLAG = -1.  Error test failed repeatedly or with ABS(H) = HMIN. -----
+			LABEL530: FortranLib.Copy(ref MSG, "DVODE--  At T(=R1) and step size H(=R2), the error");
 			this._xerrwd.Run(MSG, 50, 204, 1, 0, 0
 											 , 0, 0, ZERO, ZERO);
 			FortranLib.Copy(ref MSG, "      test failed repeatedly or with abs(H) = HMIN");
@@ -2264,8 +2264,8 @@ namespace Altaxo.Calc.Ode.DVode
 											 , 0, 2, TN.v, H.v);
 			ISTATE = -4;
 			goto LABEL560;
-		// C KFLAG = -2.  Convergence failed repeatedly or with ABS(H) = HMIN. ----
-		LABEL540: FortranLib.Copy(ref MSG, "DVODE--  At T (=R1) and step size H (=R2), the    ");
+			// C KFLAG = -2.  Convergence failed repeatedly or with ABS(H) = HMIN. ----
+			LABEL540: FortranLib.Copy(ref MSG, "DVODE--  At T (=R1) and step size H (=R2), the    ");
 			this._xerrwd.Run(MSG, 50, 205, 1, 0, 0
 											 , 0, 0, ZERO, ZERO);
 			FortranLib.Copy(ref MSG, "      corrector convergence failed repeatedly     ");
@@ -2275,8 +2275,8 @@ namespace Altaxo.Calc.Ode.DVode
 			this._xerrwd.Run(MSG, 30, 205, 1, 0, 0
 											 , 0, 2, TN.v, H.v);
 			ISTATE = -5;
-		// C Compute IMXER if relevant. -------------------------------------------
-		LABEL560: BIG = ZERO;
+			// C Compute IMXER if relevant. -------------------------------------------
+			LABEL560: BIG = ZERO;
 			IMXER = 1;
 			for (I = 1; I <= N.v; I++)
 			{
@@ -2284,11 +2284,11 @@ namespace Altaxo.Calc.Ode.DVode
 				if (BIG >= SIZE) goto LABEL570;
 				BIG = SIZE;
 				IMXER = I;
-			LABEL570:;
+				LABEL570:;
 			}
 			IWORK[16 + o_iwork] = IMXER;
-		// C Set Y vector, T, and optional output. --------------------------------
-		LABEL580:;
+			// C Set Y vector, T, and optional output. --------------------------------
+			LABEL580:;
 			this._dcopy.Run(N.v, RWORK, LYH.v + o_rwork, 1, ref Y, offset_y, 1);
 			T = TN.v;
 			RWORK[11 + o_rwork] = HU.v;
@@ -2304,125 +2304,125 @@ namespace Altaxo.Calc.Ode.DVode
 			IWORK[21 + o_iwork] = NCFN.v;
 			IWORK[22 + o_iwork] = NETF.v;
 			return;
-		// C-----------------------------------------------------------------------
-		// C Block I.
-		// C The following block handles all error returns due to illegal input
-		// C (ISTATE = -3), as detected before calling the core integrator.
-		// C First the error message routine is called.   If the illegal input
-		// C is a negative ISTATE, the run is aborted (apparent infinite loop).
-		// C-----------------------------------------------------------------------
-		LABEL601: FortranLib.Copy(ref MSG, "DVODE--  ISTATE (=I1) illegal ");
+			// C-----------------------------------------------------------------------
+			// C Block I.
+			// C The following block handles all error returns due to illegal input
+			// C (ISTATE = -3), as detected before calling the core integrator.
+			// C First the error message routine is called.   If the illegal input
+			// C is a negative ISTATE, the run is aborted (apparent infinite loop).
+			// C-----------------------------------------------------------------------
+			LABEL601: FortranLib.Copy(ref MSG, "DVODE--  ISTATE (=I1) illegal ");
 			this._xerrwd.Run(MSG, 30, 1, 1, 1, ISTATE
 											 , 0, 0, ZERO, ZERO);
 			if (ISTATE < 0) goto LABEL800;
 			goto LABEL700;
-		LABEL602: FortranLib.Copy(ref MSG, "DVODE--  ITASK (=I1) illegal  ");
+			LABEL602: FortranLib.Copy(ref MSG, "DVODE--  ITASK (=I1) illegal  ");
 			this._xerrwd.Run(MSG, 30, 2, 1, 1, ITASK
 											 , 0, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL603: FortranLib.Copy(ref MSG, "DVODE--  ISTATE (=I1) .gt. 1 but DVODE not initialized      ");
+			LABEL603: FortranLib.Copy(ref MSG, "DVODE--  ISTATE (=I1) .gt. 1 but DVODE not initialized      ");
 			this._xerrwd.Run(MSG, 60, 3, 1, 1, ISTATE
 											 , 0, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL604: FortranLib.Copy(ref MSG, "DVODE--  NEQ (=I1) .lt. 1     ");
+			LABEL604: FortranLib.Copy(ref MSG, "DVODE--  NEQ (=I1) .lt. 1     ");
 			this._xerrwd.Run(MSG, 30, 4, 1, 1, NEQ
 											 , 0, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL605: FortranLib.Copy(ref MSG, "DVODE--  ISTATE = 3 and NEQ increased (I1 to I2)  ");
+			LABEL605: FortranLib.Copy(ref MSG, "DVODE--  ISTATE = 3 and NEQ increased (I1 to I2)  ");
 			this._xerrwd.Run(MSG, 50, 5, 1, 2, N.v
 											 , NEQ, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL606: FortranLib.Copy(ref MSG, "DVODE--  ITOL (=I1) illegal   ");
+			LABEL606: FortranLib.Copy(ref MSG, "DVODE--  ITOL (=I1) illegal   ");
 			this._xerrwd.Run(MSG, 30, 6, 1, 1, ITOL
 											 , 0, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL607: FortranLib.Copy(ref MSG, "DVODE--  IOPT (=I1) illegal   ");
+			LABEL607: FortranLib.Copy(ref MSG, "DVODE--  IOPT (=I1) illegal   ");
 			this._xerrwd.Run(MSG, 30, 7, 1, 1, IOPT
 											 , 0, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL608: FortranLib.Copy(ref MSG, "DVODE--  MF (=I1) illegal     ");
+			LABEL608: FortranLib.Copy(ref MSG, "DVODE--  MF (=I1) illegal     ");
 			this._xerrwd.Run(MSG, 30, 8, 1, 1, MF
 											 , 0, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL609: FortranLib.Copy(ref MSG, "DVODE--  ML (=I1) illegal:  .lt.0 or .ge.NEQ (=I2)");
+			LABEL609: FortranLib.Copy(ref MSG, "DVODE--  ML (=I1) illegal:  .lt.0 or .ge.NEQ (=I2)");
 			this._xerrwd.Run(MSG, 50, 9, 1, 2, ML
 											 , NEQ, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL610: FortranLib.Copy(ref MSG, "DVODE--  MU (=I1) illegal:  .lt.0 or .ge.NEQ (=I2)");
+			LABEL610: FortranLib.Copy(ref MSG, "DVODE--  MU (=I1) illegal:  .lt.0 or .ge.NEQ (=I2)");
 			this._xerrwd.Run(MSG, 50, 10, 1, 2, MU
 											 , NEQ, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL611: FortranLib.Copy(ref MSG, "DVODE--  MAXORD (=I1) .lt. 0  ");
+			LABEL611: FortranLib.Copy(ref MSG, "DVODE--  MAXORD (=I1) .lt. 0  ");
 			this._xerrwd.Run(MSG, 30, 11, 1, 1, MAXORD.v
 											 , 0, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL612: FortranLib.Copy(ref MSG, "DVODE--  MXSTEP (=I1) .lt. 0  ");
+			LABEL612: FortranLib.Copy(ref MSG, "DVODE--  MXSTEP (=I1) .lt. 0  ");
 			this._xerrwd.Run(MSG, 30, 12, 1, 1, MXSTEP.v
 											 , 0, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL613: FortranLib.Copy(ref MSG, "DVODE--  MXHNIL (=I1) .lt. 0  ");
+			LABEL613: FortranLib.Copy(ref MSG, "DVODE--  MXHNIL (=I1) .lt. 0  ");
 			this._xerrwd.Run(MSG, 30, 13, 1, 1, MXHNIL.v
 											 , 0, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL614: FortranLib.Copy(ref MSG, "DVODE--  TOUT (=R1) behind T (=R2)      ");
+			LABEL614: FortranLib.Copy(ref MSG, "DVODE--  TOUT (=R1) behind T (=R2)      ");
 			this._xerrwd.Run(MSG, 40, 14, 1, 0, 0
 											 , 0, 2, TOUT, T);
 			FortranLib.Copy(ref MSG, "      integration direction is given by H0 (=R1)  ");
 			this._xerrwd.Run(MSG, 50, 14, 1, 0, 0
 											 , 0, 1, H0, ZERO);
 			goto LABEL700;
-		LABEL615: FortranLib.Copy(ref MSG, "DVODE--  HMAX (=R1) .lt. 0.0  ");
+			LABEL615: FortranLib.Copy(ref MSG, "DVODE--  HMAX (=R1) .lt. 0.0  ");
 			this._xerrwd.Run(MSG, 30, 15, 1, 0, 0
 											 , 0, 1, HMAX, ZERO);
 			goto LABEL700;
-		LABEL616: FortranLib.Copy(ref MSG, "DVODE--  HMIN (=R1) .lt. 0.0  ");
+			LABEL616: FortranLib.Copy(ref MSG, "DVODE--  HMIN (=R1) .lt. 0.0  ");
 			this._xerrwd.Run(MSG, 30, 16, 1, 0, 0
 											 , 0, 1, HMIN.v, ZERO);
 			goto LABEL700;
-		LABEL617:;
+			LABEL617:;
 			FortranLib.Copy(ref MSG, "DVODE--  RWORK length needed, LENRW (=I1), exceeds LRW (=I2)");
 			this._xerrwd.Run(MSG, 60, 17, 1, 2, LENRW
 											 , LRW, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL618:;
+			LABEL618:;
 			FortranLib.Copy(ref MSG, "DVODE--  IWORK length needed, LENIW (=I1), exceeds LIW (=I2)");
 			this._xerrwd.Run(MSG, 60, 18, 1, 2, LENIW
 											 , LIW, 0, ZERO, ZERO);
 			goto LABEL700;
-		LABEL619: FortranLib.Copy(ref MSG, "DVODE--  RTOL(I1) is R1 .lt. 0.0        ");
+			LABEL619: FortranLib.Copy(ref MSG, "DVODE--  RTOL(I1) is R1 .lt. 0.0        ");
 			this._xerrwd.Run(MSG, 40, 19, 1, 1, I
 											 , 0, 1, RTOLI, ZERO);
 			goto LABEL700;
-		LABEL620: FortranLib.Copy(ref MSG, "DVODE--  ATOL(I1) is R1 .lt. 0.0        ");
+			LABEL620: FortranLib.Copy(ref MSG, "DVODE--  ATOL(I1) is R1 .lt. 0.0        ");
 			this._xerrwd.Run(MSG, 40, 20, 1, 1, I
 											 , 0, 1, ATOLI, ZERO);
 			goto LABEL700;
-		LABEL621: EWTI = RWORK[LEWT.v + I - 1 + o_rwork];
+			LABEL621: EWTI = RWORK[LEWT.v + I - 1 + o_rwork];
 			FortranLib.Copy(ref MSG, "DVODE--  EWT(I1) is R1 .le. 0.0         ");
 			this._xerrwd.Run(MSG, 40, 21, 1, 1, I
 											 , 0, 1, EWTI, ZERO);
 			goto LABEL700;
-		LABEL622:;
+			LABEL622:;
 			FortranLib.Copy(ref MSG, "DVODE--  TOUT (=R1) too close to T(=R2) to start integration");
 			this._xerrwd.Run(MSG, 60, 22, 1, 0, 0
 											 , 0, 2, TOUT, T);
 			goto LABEL700;
-		LABEL623:;
+			LABEL623:;
 			FortranLib.Copy(ref MSG, "DVODE--  ITASK = I1 and TOUT (=R1) behind TCUR - HU (= R2)  ");
 			this._xerrwd.Run(MSG, 60, 23, 1, 1, ITASK
 											 , 0, 2, TOUT, TP);
 			goto LABEL700;
-		LABEL624:;
+			LABEL624:;
 			FortranLib.Copy(ref MSG, "DVODE--  ITASK = 4 or 5 and TCRIT (=R1) behind TCUR (=R2)   ");
 			this._xerrwd.Run(MSG, 60, 24, 1, 0, 0
 											 , 0, 2, TCRIT, TN.v);
 			goto LABEL700;
-		LABEL625:;
+			LABEL625:;
 			FortranLib.Copy(ref MSG, "DVODE--  ITASK = 4 or 5 and TCRIT (=R1) behind TOUT (=R2)   ");
 			this._xerrwd.Run(MSG, 60, 25, 1, 0, 0
 											 , 0, 2, TCRIT, TOUT);
 			goto LABEL700;
-		LABEL626: FortranLib.Copy(ref MSG, "DVODE--  At start of problem, too much accuracy   ");
+			LABEL626: FortranLib.Copy(ref MSG, "DVODE--  At start of problem, too much accuracy   ");
 			this._xerrwd.Run(MSG, 50, 26, 1, 0, 0
 											 , 0, 0, ZERO, ZERO);
 			FortranLib.Copy(ref MSG, "      requested for precision of machine:   see TOLSF (=R1) ");
@@ -2430,15 +2430,15 @@ namespace Altaxo.Calc.Ode.DVode
 											 , 0, 1, TOLSF, ZERO);
 			RWORK[14 + o_rwork] = TOLSF;
 			goto LABEL700;
-		LABEL627: FortranLib.Copy(ref MSG, "DVODE--  Trouble from DVINDY.  ITASK = I1, TOUT = R1.       ");
+			LABEL627: FortranLib.Copy(ref MSG, "DVODE--  Trouble from DVINDY.  ITASK = I1, TOUT = R1.       ");
 			this._xerrwd.Run(MSG, 60, 27, 1, 1, ITASK
 											 , 0, 1, TOUT, ZERO);
-		// C
-		LABEL700:;
+			// C
+			LABEL700:;
 			ISTATE = -3;
 			return;
-		// C
-		LABEL800: FortranLib.Copy(ref MSG, "DVODE--  Run aborted:  apparent infinite loop     ");
+			// C
+			LABEL800: FortranLib.Copy(ref MSG, "DVODE--  Run aborted:  apparent infinite loop     ");
 			this._xerrwd.Run(MSG, 50, 303, 2, 0, 0
 											 , 0, 0, ZERO, ZERO);
 			return;
@@ -2653,9 +2653,9 @@ namespace Altaxo.Calc.Ode.DVode
 				H0 = HG;
 				goto LABEL90;
 			}
-		// C
-		// C Looping point for iteration. -----------------------------------------
-		LABEL50:;
+			// C
+			// C Looping point for iteration. -----------------------------------------
+			LABEL50:;
 			// C Estimate the second derivative as a difference quotient in f. --------
 			H = FortranLib.Sign(HG, TOUT - T0);
 			T1 = T0 + H;
@@ -2696,17 +2696,17 @@ namespace Altaxo.Calc.Ode.DVode
 			}
 			HG = HNEW;
 			goto LABEL50;
-		// C
-		// C Iteration done.  Apply bounds, bias factor, and sign.  Then exit. ----
-		LABEL80: H0 = HNEW * HALF;
+			// C
+			// C Iteration done.  Apply bounds, bias factor, and sign.  Then exit. ----
+			LABEL80: H0 = HNEW * HALF;
 			if (H0 < HLB) H0 = HLB;
 			if (H0 > HUB) H0 = HUB;
 			LABEL90: H0 = FortranLib.Sign(H0, TOUT - T0);
 			NITER = ITER;
 			IER = 0;
 			return;
-		// C Error return for TOUT - T0 too small. --------------------------------
-		LABEL100: IER = -1;
+			// C Error return for TOUT - T0 too small. --------------------------------
+			LABEL100: IER = -1;
 			return;
 			// C----------------------- End of Subroutine DVHIN -----------------------
 
@@ -3071,7 +3071,7 @@ namespace Altaxo.Calc.Ode.DVode
 			{
 				IC *= JJ;
 			}
-		LABEL15: C = Convert.ToSingle(IC);
+			LABEL15: C = Convert.ToSingle(IC);
 			for (I = 1; I <= N.v; I++)
 			{
 				DKY[I + o_dky] = C * YH[I + L.v * LDYH + o_yh];
@@ -3089,7 +3089,7 @@ namespace Altaxo.Calc.Ode.DVode
 				{
 					IC *= JJ;
 				}
-			LABEL35: C = Convert.ToSingle(IC);
+				LABEL35: C = Convert.ToSingle(IC);
 				for (I = 1; I <= N.v; I++)
 				{
 					DKY[I + o_dky] = C * YH[I + JP1 * LDYH + o_yh] + S * DKY[I + o_dky];
@@ -3099,13 +3099,13 @@ namespace Altaxo.Calc.Ode.DVode
 			LABEL55: R = Math.Pow(H.v, -K);
 			this._dscal.Run(N.v, R, ref DKY, offset_dky, 1);
 			return;
-		// C
-		LABEL80: FortranLib.Copy(ref MSG, "DVINDY-- K (=I1) illegal      ");
+			// C
+			LABEL80: FortranLib.Copy(ref MSG, "DVINDY-- K (=I1) illegal      ");
 			this._xerrwd.Run(MSG, 30, 51, 1, 1, K
 											 , 0, 0, ZERO, ZERO);
 			IFLAG = -1;
 			return;
-		LABEL90: FortranLib.Copy(ref MSG, "DVINDY-- T (=R1) illegal      ");
+			LABEL90: FortranLib.Copy(ref MSG, "DVINDY-- T (=R1) illegal      ");
 			this._xerrwd.Run(MSG, 30, 52, 1, 0, 0
 											 , 0, 1, T, ZERO);
 			FortranLib.Copy(ref MSG, "      T not in interval TCUR - HU (= R1) to TCUR (=R2)      ");
@@ -3634,22 +3634,22 @@ namespace Altaxo.Calc.Ode.DVode
 			NQWAIT.v = 2;
 			HSCAL.v = H.v;
 			goto LABEL200;
-		// C-----------------------------------------------------------------------
-		// C Take preliminary actions on a normal continuation step (JSTART.GT.0).
-		// C If the driver changed H, then ETA must be reset and NEWH set to 1.
-		// C If a change of order was dictated on the previous step, then
-		// C it is done here and appropriate adjustments in the history are made.
-		// C On an order decrease, the history array is adjusted by DVJUST.
-		// C On an order increase, the history array is augmented by a column.
-		// C On a change of step size H, the history array YH is rescaled.
-		// C-----------------------------------------------------------------------
-		LABEL20:;
+			// C-----------------------------------------------------------------------
+			// C Take preliminary actions on a normal continuation step (JSTART.GT.0).
+			// C If the driver changed H, then ETA must be reset and NEWH set to 1.
+			// C If a change of order was dictated on the previous step, then
+			// C it is done here and appropriate adjustments in the history are made.
+			// C On an order decrease, the history array is adjusted by DVJUST.
+			// C On an order increase, the history array is augmented by a column.
+			// C On a change of step size H, the history array YH is rescaled.
+			// C-----------------------------------------------------------------------
+			LABEL20:;
 			if (KUTH.v == 1)
 			{
 				ETA.v = Math.Min(ETA.v, H.v / HSCAL.v);
 				NEWH.v = 1;
 			}
-		LABEL50:
+			LABEL50:
 			if (NEWH.v == 0) goto LABEL200;
 			if (NEWQ.v == NQ.v) goto LABEL150;
 			if (NEWQ.v < NQ.v)
@@ -3668,19 +3668,19 @@ namespace Altaxo.Calc.Ode.DVode
 				NQWAIT.v = L.v;
 				goto LABEL150;
 			}
-		// C-----------------------------------------------------------------------
-		// C The following block handles preliminaries needed when JSTART = -1.
-		// C If N was reduced, zero out part of YH to avoid undefined references.
-		// C If MAXORD was reduced to a value less than the tentative order NEWQ,
-		// C then NQ is set to MAXORD, and a new H ratio ETA is chosen.
-		// C Otherwise, we take the same preliminary actions as for JSTART .gt. 0.
-		// C In any case, NQWAIT is reset to L = NQ + 1 to prevent further
-		// C changes in order for that many steps.
-		// C The new H ratio ETA is limited by the input H if KUTH = 1,
-		// C by HMIN if KUTH = 0, and by HMXI in any case.
-		// C Finally, the history array YH is rescaled.
-		// C-----------------------------------------------------------------------
-		LABEL100:;
+			// C-----------------------------------------------------------------------
+			// C The following block handles preliminaries needed when JSTART = -1.
+			// C If N was reduced, zero out part of YH to avoid undefined references.
+			// C If MAXORD was reduced to a value less than the tentative order NEWQ,
+			// C then NQ is set to MAXORD, and a new H ratio ETA is chosen.
+			// C Otherwise, we take the same preliminary actions as for JSTART .gt. 0.
+			// C In any case, NQWAIT is reset to L = NQ + 1 to prevent further
+			// C changes in order for that many steps.
+			// C The new H ratio ETA is limited by the input H if KUTH = 1,
+			// C by HMIN if KUTH = 0, and by HMXI in any case.
+			// C Finally, the history array YH is rescaled.
+			// C-----------------------------------------------------------------------
+			LABEL100:;
 			LMAX.v = MAXORD.v + 1;
 			if (N.v == LDYH) goto LABEL120;
 			I1 = 1 + (NEWQ.v + 1) * LDYH;
@@ -3690,7 +3690,7 @@ namespace Altaxo.Calc.Ode.DVode
 			{
 				YH1[I + o_yh1] = ZERO;
 			}
-		LABEL120:
+			LABEL120:
 			if (NEWQ.v <= MAXORD.v) goto LABEL140;
 			FLOTL = Convert.ToSingle(LMAX.v);
 			if (MAXORD.v < NQ.v - 1)
@@ -3713,7 +3713,7 @@ namespace Altaxo.Calc.Ode.DVode
 			ETA.v = Math.Min(ETA.v, ONE);
 			NQ.v = MAXORD.v;
 			L.v = LMAX.v;
-		LABEL140:
+			LABEL140:
 			if (KUTH.v == 1) ETA.v = Math.Min(ETA.v, Math.Abs(H.v / HSCAL.v));
 			if (KUTH.v == 0) ETA.v = Math.Max(ETA.v, HMIN.v / Math.Abs(HSCAL.v));
 			ETA.v /= Math.Max(ONE, Math.Abs(HSCAL.v) * HMXI.v * ETA.v);
@@ -3731,13 +3731,13 @@ namespace Altaxo.Calc.Ode.DVode
 			HSCAL.v = H.v;
 			RC.v *= ETA.v;
 			NQNYH.v = NQ.v * LDYH;
-		// C-----------------------------------------------------------------------
-		// C This section computes the predicted values by effectively
-		// C multiplying the YH array by the Pascal triangle matrix.
-		// C DVSET is called to calculate all integration coefficients.
-		// C RC is the ratio of new to old values of the coefficient H/EL(2)=h/l1.
-		// C-----------------------------------------------------------------------
-		LABEL200: TN.v += H.v;
+			// C-----------------------------------------------------------------------
+			// C This section computes the predicted values by effectively
+			// C multiplying the YH array by the Pascal triangle matrix.
+			// C DVSET is called to calculate all integration coefficients.
+			// C RC is the ratio of new to old values of the coefficient H/EL(2)=h/l1.
+			// C-----------------------------------------------------------------------
+			LABEL200: TN.v += H.v;
 			I1 = NQNYH.v + 1;
 			for (JB = 1; JB <= NQ.v; JB++)
 			{
@@ -3785,11 +3785,11 @@ namespace Altaxo.Calc.Ode.DVode
 			ETA.v = Math.Max(ETA.v, HMIN.v / Math.Abs(H.v));
 			NFLAG = -1;
 			goto LABEL150;
-		// C-----------------------------------------------------------------------
-		// C The corrector has converged (NFLAG = 0).  The local error test is
-		// C made and control passes to statement 500 if it fails.
-		// C-----------------------------------------------------------------------
-		LABEL450:;
+			// C-----------------------------------------------------------------------
+			// C The corrector has converged (NFLAG = 0).  The local error test is
+			// C made and control passes to statement 500 if it fails.
+			// C-----------------------------------------------------------------------
+			LABEL450:;
 			DSM = ACNRM.v / TQ[2 + o_tq].v;
 			if (DSM > ONE) goto LABEL500;
 			// C-----------------------------------------------------------------------
@@ -3816,7 +3816,7 @@ namespace Altaxo.Calc.Ode.DVode
 			if ((L.v == LMAX.v) || (NQWAIT.v != 1)) goto LABEL490;
 			this._dcopy.Run(N.v, ACOR, offset_acor, 1, ref YH, 1 + LMAX.v * LDYH + o_yh, 1);
 			CONP.v = TQ[5 + o_tq].v;
-		LABEL490:
+			LABEL490:
 			if (ETAMAX.v != ONE) goto LABEL560;
 			if (NQWAIT.v < 2) NQWAIT.v = 2;
 			NEWQ.v = NQ.v;
@@ -3824,14 +3824,14 @@ namespace Altaxo.Calc.Ode.DVode
 			ETA.v = ONE;
 			HNEW.v = H.v;
 			goto LABEL690;
-		// C-----------------------------------------------------------------------
-		// C The error test failed.  KFLAG keeps track of multiple failures.
-		// C Restore TN and the YH array to their previous values, and prepare
-		// C to try the step again.  Compute the optimum step size for the
-		// C same order.  After repeated failures, H is forced to decrease
-		// C more rapidly.
-		// C-----------------------------------------------------------------------
-		LABEL500: KFLAG.v -= 1;
+			// C-----------------------------------------------------------------------
+			// C The error test failed.  KFLAG keeps track of multiple failures.
+			// C Restore TN and the YH array to their previous values, and prepare
+			// C to try the step again.  Compute the optimum step size for the
+			// C same order.  After repeated failures, H is forced to decrease
+			// C more rapidly.
+			// C-----------------------------------------------------------------------
+			LABEL500: KFLAG.v -= 1;
 			NETF.v += 1;
 			NFLAG = -2;
 			TN.v = TOLD;
@@ -3853,15 +3853,15 @@ namespace Altaxo.Calc.Ode.DVode
 			ETA.v = Math.Max(ETA.v, Math.Max(HMIN.v / Math.Abs(H.v), ETAMIN));
 			if ((KFLAG.v <= -2) && (ETA.v > ETAMXF)) ETA.v = ETAMXF;
 			goto LABEL150;
-		// C-----------------------------------------------------------------------
-		// C Control reaches this section if 3 or more consecutive failures
-		// C have occurred.  It is assumed that the elements of the YH array
-		// C have accumulated errors of the wrong order.  The order is reduced
-		// C by one, if possible.  Then H is reduced by a factor of 0.1 and
-		// C the step is retried.  After a total of 7 consecutive failures,
-		// C an exit is taken with KFLAG = -1.
-		// C-----------------------------------------------------------------------
-		LABEL530:
+			// C-----------------------------------------------------------------------
+			// C Control reaches this section if 3 or more consecutive failures
+			// C have occurred.  It is assumed that the elements of the YH array
+			// C have accumulated errors of the wrong order.  The order is reduced
+			// C by one, if possible.  Then H is reduced by a factor of 0.1 and
+			// C the step is retried.  After a total of 7 consecutive failures,
+			// C an exit is taken with KFLAG = -1.
+			// C-----------------------------------------------------------------------
+			LABEL530:
 			if (KFLAG.v == KFH) goto LABEL660;
 			if (NQ.v == 1) goto LABEL540;
 			ETA.v = Math.Max(ETAMIN, HMIN.v / Math.Abs(H.v));
@@ -3870,7 +3870,7 @@ namespace Altaxo.Calc.Ode.DVode
 			NQ.v -= 1;
 			NQWAIT.v = L.v;
 			goto LABEL150;
-		LABEL540: ETA.v = Math.Max(ETAMIN, HMIN.v / Math.Abs(H.v));
+			LABEL540: ETA.v = Math.Max(ETAMIN, HMIN.v / Math.Abs(H.v));
 			H.v *= ETA.v;
 			HSCAL.v = H.v;
 			TAU[1 + o_tau].v = H.v;
@@ -3882,18 +3882,18 @@ namespace Altaxo.Calc.Ode.DVode
 			}
 			NQWAIT.v = 10;
 			goto LABEL200;
-		// C-----------------------------------------------------------------------
-		// C If NQWAIT = 0, an increase or decrease in order by one is considered.
-		// C Factors ETAQ, ETAQM1, ETAQP1 are computed by which H could
-		// C be multiplied at order q, q-1, or q+1, respectively.
-		// C The largest of these is determined, and the new order and
-		// C step size set accordingly.
-		// C A change of H or NQ is made only if H increases by at least a
-		// C factor of THRESH.  If an order change is considered and rejected,
-		// C then NQWAIT is set to 2 (reconsider it after 2 steps).
-		// C-----------------------------------------------------------------------
-		// C Compute ratio of new H to current H at the current order. ------------
-		LABEL560: FLOTL = Convert.ToSingle(L.v);
+			// C-----------------------------------------------------------------------
+			// C If NQWAIT = 0, an increase or decrease in order by one is considered.
+			// C Factors ETAQ, ETAQM1, ETAQP1 are computed by which H could
+			// C be multiplied at order q, q-1, or q+1, respectively.
+			// C The largest of these is determined, and the new order and
+			// C step size set accordingly.
+			// C A change of H or NQ is made only if H increases by at least a
+			// C factor of THRESH.  If an order change is considered and rejected,
+			// C then NQWAIT is set to 2 (reconsider it after 2 steps).
+			// C-----------------------------------------------------------------------
+			// C Compute ratio of new H to current H at the current order. ------------
+			LABEL560: FLOTL = Convert.ToSingle(L.v);
 			ETAQ = ONE / (Math.Pow(BIAS2 * DSM, ONE / FLOTL) + ADDON);
 			if (NQWAIT.v != 0) goto LABEL600;
 			NQWAIT.v = 2;
@@ -3902,7 +3902,7 @@ namespace Altaxo.Calc.Ode.DVode
 			// C Compute ratio of new H to current H at the current order less one. ---
 			DDN = this._dvnorm.Run(N.v, YH, 1 + L.v * LDYH + o_yh, EWT, offset_ewt) / TQ[1 + o_tq].v;
 			ETAQM1 = ONE / (Math.Pow(BIAS1 * DDN, ONE / (FLOTL - ONE)) + ADDON);
-		LABEL570: ETAQP1 = ZERO;
+			LABEL570: ETAQP1 = ZERO;
 			if (L.v == LMAX.v) goto LABEL580;
 			// C Compute ratio of new H to current H at current order plus one. -------
 			CNQUOT = (TQ[5 + o_tq].v / CONP.v) * Math.Pow(H.v / TAU[2 + o_tau].v, L.v);
@@ -3912,51 +3912,51 @@ namespace Altaxo.Calc.Ode.DVode
 			}
 			DUP = this._dvnorm.Run(N.v, SAVF, offset_savf, EWT, offset_ewt) / TQ[3 + o_tq].v;
 			ETAQP1 = ONE / (Math.Pow(BIAS3 * DUP, ONE / (FLOTL + ONE)) + ADDON);
-		LABEL580:
+			LABEL580:
 			if (ETAQ >= ETAQP1) goto LABEL590;
 			if (ETAQP1 > ETAQM1) goto LABEL620;
 			goto LABEL610;
-		LABEL590:
+			LABEL590:
 			if (ETAQ < ETAQM1) goto LABEL610;
 			LABEL600: ETA.v = ETAQ;
 			NEWQ.v = NQ.v;
 			goto LABEL630;
-		LABEL610: ETA.v = ETAQM1;
+			LABEL610: ETA.v = ETAQM1;
 			NEWQ.v = NQ.v - 1;
 			goto LABEL630;
-		LABEL620: ETA.v = ETAQP1;
+			LABEL620: ETA.v = ETAQP1;
 			NEWQ.v = NQ.v + 1;
 			this._dcopy.Run(N.v, ACOR, offset_acor, 1, ref YH, 1 + LMAX.v * LDYH + o_yh, 1);
-		// C Test tentative new H against THRESH, ETAMAX, and HMXI, then exit. ----
-		LABEL630:
+			// C Test tentative new H against THRESH, ETAMAX, and HMXI, then exit. ----
+			LABEL630:
 			if (ETA.v < THRESH || ETAMAX.v == ONE) goto LABEL640;
 			ETA.v = Math.Min(ETA.v, ETAMAX.v);
 			ETA.v /= Math.Max(ONE, Math.Abs(H.v) * HMXI.v * ETA.v);
 			NEWH.v = 1;
 			HNEW.v = H.v * ETA.v;
 			goto LABEL690;
-		LABEL640: NEWQ.v = NQ.v;
+			LABEL640: NEWQ.v = NQ.v;
 			NEWH.v = 0;
 			ETA.v = ONE;
 			HNEW.v = H.v;
 			goto LABEL690;
-		// C-----------------------------------------------------------------------
-		// C All returns are made through this section.
-		// C On a successful return, ETAMAX is reset and ACOR is scaled.
-		// C-----------------------------------------------------------------------
-		LABEL660: KFLAG.v = -1;
+			// C-----------------------------------------------------------------------
+			// C All returns are made through this section.
+			// C On a successful return, ETAMAX is reset and ACOR is scaled.
+			// C-----------------------------------------------------------------------
+			LABEL660: KFLAG.v = -1;
 			goto LABEL720;
-		LABEL670: KFLAG.v = -2;
+			LABEL670: KFLAG.v = -2;
 			goto LABEL720;
-		LABEL680:
+			LABEL680:
 			if (NFLAG == -2) KFLAG.v = -3;
 			if (NFLAG == -3) KFLAG.v = -4;
 			goto LABEL720;
-		LABEL690: ETAMAX.v = ETAMX3;
+			LABEL690: ETAMAX.v = ETAMX3;
 			if (NST.v <= 10) ETAMAX.v = ETAMX2;
 			R = ONE / TQ[2 + o_tq].v;
 			this._dscal.Run(N.v, R, ref ACOR, offset_acor, 1);
-		LABEL720: JSTART.v = 1;
+			LABEL720: JSTART.v = 1;
 			return;
 			// C----------------------- End of Subroutine DVSTEP ----------------------
 
@@ -4266,9 +4266,9 @@ namespace Altaxo.Calc.Ode.DVode
 				case 1: goto LABEL100;
 				case 2: goto LABEL200;
 			}
-		// C
-		// C Set coefficients for Adams methods. ----------------------------------
-		LABEL100:
+			// C
+			// C Set coefficients for Adams methods. ----------------------------------
+			LABEL100:
 			if (NQ.v != 1) goto LABEL110;
 			EL[1 + o_el].v = ONE;
 			EL[2 + o_el].v = ONE;
@@ -4277,7 +4277,7 @@ namespace Altaxo.Calc.Ode.DVode
 			TQ[3 + o_tq].v = SIX * TQ[2 + o_tq].v;
 			TQ[5 + o_tq].v = ONE;
 			goto LABEL300;
-		LABEL110: HSUM = H.v;
+			LABEL110: HSUM = H.v;
 			EM[1 + o_em] = ONE;
 			FLOTNQ = FLOTL - ONE;
 			for (I = 2; I <= L.v; I++)
@@ -4295,7 +4295,7 @@ namespace Altaxo.Calc.Ode.DVode
 					S = -S;
 				}
 				TQ[1 + o_tq].v = EM[NQM1 + o_em] / (FLOTNQ * CSUM);
-			LABEL130: RXI = H.v / HSUM;
+				LABEL130: RXI = H.v / HSUM;
 				for (IBACK = 1; IBACK <= J; IBACK++)
 				{
 					I = (J + 2) - IBACK;
@@ -4342,9 +4342,9 @@ namespace Altaxo.Calc.Ode.DVode
 			}
 			TQ[3 + o_tq].v = FLOTL * EM0 / CSUM;
 			goto LABEL300;
-		// C
-		// C Set coefficients for BDF methods. ------------------------------------
-		LABEL200:
+			// C
+			// C Set coefficients for BDF methods. ------------------------------------
+			LABEL200:
 			for (I = 3; I <= L.v; I++)
 			{
 				EL[I + o_el].v = ZERO;
@@ -4380,7 +4380,7 @@ namespace Altaxo.Calc.Ode.DVode
 				I = (NQ.v + 2) - IBACK;
 				EL[I + o_el].v += EL[I - 1 + o_el].v * RXIS;
 			}
-		LABEL240: T1 = ONE - AHATN0 + ALPH0;
+			LABEL240: T1 = ONE - AHATN0 + ALPH0;
 			T2 = ONE + Convert.ToSingle(NQ.v) * T1;
 			TQ[2 + o_tq].v = Math.Abs(ALPH0 * T2 / T1);
 			TQ[5 + o_tq].v = Math.Abs(T2 / (EL[L.v + o_el].v * RXI / RXIS));
@@ -4396,7 +4396,7 @@ namespace Altaxo.Calc.Ode.DVode
 			T6 = AHATN0 - RXI;
 			ELP = T2 / (ONE - T6 + T5);
 			TQ[3 + o_tq].v = Math.Abs(ELP * RXI * (FLOTL + ONE) * T5);
-		LABEL300: TQ[4 + o_tq].v = CORTES * TQ[2 + o_tq].v;
+			LABEL300: TQ[4 + o_tq].v = CORTES * TQ[2 + o_tq].v;
 			return;
 			// C----------------------- End of Subroutine DVSET -----------------------
 
@@ -4698,11 +4698,11 @@ namespace Altaxo.Calc.Ode.DVode
 				case 1: goto LABEL100;
 				case 2: goto LABEL200;
 			}
-		// C-----------------------------------------------------------------------
-		// C Nonstiff option...
-		// C Check to see if the order is being increased or decreased.
-		// C-----------------------------------------------------------------------
-		LABEL100:;
+			// C-----------------------------------------------------------------------
+			// C Nonstiff option...
+			// C Check to see if the order is being increased or decreased.
+			// C-----------------------------------------------------------------------
+			LABEL100:;
 			if (IORD == 1) goto LABEL180;
 			// C Order decrease. ------------------------------------------------------
 			for (J = 1; J <= LMAX.v; J++)
@@ -4737,20 +4737,20 @@ namespace Altaxo.Calc.Ode.DVode
 				}
 			}
 			return;
-		// C Order increase. ------------------------------------------------------
-		// C Zero out next column in YH array. ------------------------------------
-		LABEL180:;
+			// C Order increase. ------------------------------------------------------
+			// C Zero out next column in YH array. ------------------------------------
+			LABEL180:;
 			LP1 = L.v + 1;
 			for (I = 1; I <= N.v; I++)
 			{
 				YH[I + LP1 * LDYH + o_yh] = ZERO;
 			}
 			return;
-		// C-----------------------------------------------------------------------
-		// C Stiff option...
-		// C Check to see if the order is being increased or decreased.
-		// C-----------------------------------------------------------------------
-		LABEL200:;
+			// C-----------------------------------------------------------------------
+			// C Stiff option...
+			// C Check to see if the order is being increased or decreased.
+			// C-----------------------------------------------------------------------
+			LABEL200:;
 			if (IORD == 1) goto LABEL300;
 			// C Order decrease. ------------------------------------------------------
 			for (J = 1; J <= LMAX.v; J++)
@@ -4780,8 +4780,8 @@ namespace Altaxo.Calc.Ode.DVode
 				}
 			}
 			return;
-		// C Order increase. ------------------------------------------------------
-		LABEL300:
+			// C Order increase. ------------------------------------------------------
+			LABEL300:
 			for (J = 1; J <= LMAX.v; J++)
 			{
 				EL[J + o_el].v = ZERO;
@@ -4809,7 +4809,7 @@ namespace Altaxo.Calc.Ode.DVode
 				}
 				XIOLD = XI;
 			}
-		LABEL340:;
+			LABEL340:;
 			T1 = (-ALPH0 - ALPH1) / PROD;
 			// C Load column L + 1 in YH array. ---------------------------------------
 			LP1 = L.v + 1;
@@ -5340,8 +5340,8 @@ namespace Altaxo.Calc.Ode.DVode
 			{
 				ACOR[I + o_acor] = ZERO;
 			}
-		// C This is a looping point for the corrector iteration. -----------------
-		LABEL270:
+			// C This is a looping point for the corrector iteration. -----------------
+			LABEL270:
 			if (MITER.v != 0) goto LABEL350;
 			// C-----------------------------------------------------------------------
 			// C In the case of functional iteration, update Y directly from
@@ -5362,13 +5362,13 @@ namespace Altaxo.Calc.Ode.DVode
 			}
 			this._dcopy.Run(N.v, SAVF, offset_savf, 1, ref ACOR, offset_acor, 1);
 			goto LABEL400;
-		// C-----------------------------------------------------------------------
-		// C In the case of the chord method, compute the corrector error,
-		// C and solve the linear system with that as right-hand side and
-		// C P as coefficient matrix.  The correction is scaled by the factor
-		// C 2/(1+RC) to account for changes in h*rl1 since the last DVJAC call.
-		// C-----------------------------------------------------------------------
-		LABEL350:
+			// C-----------------------------------------------------------------------
+			// C In the case of the chord method, compute the corrector error,
+			// C and solve the linear system with that as right-hand side and
+			// C P as coefficient matrix.  The correction is scaled by the factor
+			// C 2/(1+RC) to account for changes in h*rl1 since the last DVJAC call.
+			// C-----------------------------------------------------------------------
+			LABEL350:
 			for (I = 1; I <= N.v; I++)
 			{
 				Y[I + o_y] = (RL1.v * H.v) * SAVF[I + o_savf] - (RL1.v * YH[I + 2 * LDYH + o_yh] + ACOR[I + o_acor]);
@@ -5387,11 +5387,11 @@ namespace Altaxo.Calc.Ode.DVode
 			{
 				Y[I + o_y] = YH[I + 1 * LDYH + o_yh] + ACOR[I + o_acor];
 			}
-		// C-----------------------------------------------------------------------
-		// C Test for convergence.  If M .gt. 0, an estimate of the convergence
-		// C rate constant is stored in CRATE, and this is used in the test.
-		// C-----------------------------------------------------------------------
-		LABEL400:
+			// C-----------------------------------------------------------------------
+			// C Test for convergence.  If M .gt. 0, an estimate of the convergence
+			// C rate constant is stored in CRATE, and this is used in the test.
+			// C-----------------------------------------------------------------------
+			LABEL400:
 			if (M != 0) CRATE.v = Math.Max(CRDOWN * CRATE.v, DEL / DELP);
 			DCON = DEL * Math.Min(ONE, CRATE.v) / TQ[4 + o_tq].v;
 			if (DCON <= ONE) goto LABEL450;
@@ -5402,21 +5402,21 @@ namespace Altaxo.Calc.Ode.DVode
 			F.Run(N.v, TN.v, Y, offset_y, ref SAVF, offset_savf, RPAR[1 + o_rpar], IPAR[1 + o_ipar]);
 			NFE.v += 1;
 			goto LABEL270;
-		// C
-		LABEL410:
+			// C
+			LABEL410:
 			if (MITER.v == 0 || JCUR.v == 1) goto LABEL430;
 			ICF.v = 1;
 			IPUP.v = MITER.v;
 			goto LABEL220;
-		// C
-		LABEL430:;
+			// C
+			LABEL430:;
 			NFLAG = -1;
 			ICF.v = 2;
 			IPUP.v = MITER.v;
 			return;
-		// C
-		// C Return for successful step. ------------------------------------------
-		LABEL450: NFLAG = 0;
+			// C
+			// C Return for successful step. ------------------------------------------
+			LABEL450: NFLAG = 0;
 			JCUR.v = 0;
 			ICF.v = 0;
 			if (M == 0) ACNRM.v = DEL;
@@ -5968,10 +5968,10 @@ namespace Altaxo.Calc.Ode.DVode
 					if (Math.Abs(R0) < UROUND.v / EWT[I + o_ewt]) goto LABEL320;
 					if (Math.Abs(DI) == ZERO) goto LABEL330;
 					WM[I + 2 + o_wm] = PT1 * R0 / DI;
-				LABEL320:;
+					LABEL320:;
 				}
 				return;
-			LABEL330: IERPJ = 1;
+				LABEL330: IERPJ = 1;
 				return;
 			}
 			// C End of code block for MITER = 3. -------------------------------------
@@ -6472,10 +6472,10 @@ namespace Altaxo.Calc.Ode.DVode
 				case 4: goto LABEL400;
 				case 5: goto LABEL400;
 			}
-		LABEL100: this._dgesl.Run(WM, 3 + o_wm, N.v, N.v, IWM, 31 + o_iwm, ref X, offset_x, 0);
+			LABEL100: this._dgesl.Run(WM, 3 + o_wm, N.v, N.v, IWM, 31 + o_iwm, ref X, offset_x, 0);
 			return;
-		// C
-		LABEL300: PHRL1 = WM[2 + o_wm];
+			// C
+			LABEL300: PHRL1 = WM[2 + o_wm];
 			HRL1 = H.v * RL1.v;
 			WM[2 + o_wm] = HRL1;
 			if (HRL1 == PHRL1) goto LABEL330;
@@ -6486,17 +6486,17 @@ namespace Altaxo.Calc.Ode.DVode
 				if (Math.Abs(DI) == ZERO) goto LABEL390;
 				WM[I + 2 + o_wm] = ONE / DI;
 			}
-		// C
-		LABEL330:
+			// C
+			LABEL330:
 			for (I = 1; I <= N.v; I++)
 			{
 				X[I + o_x] *= WM[I + 2 + o_wm];
 			}
 			return;
-		LABEL390: IERSL = 1;
+			LABEL390: IERSL = 1;
 			return;
-		// C
-		LABEL400: ML = IWM[1 + o_iwm];
+			// C
+			LABEL400: ML = IWM[1 + o_iwm];
 			MU = IWM[2 + o_iwm];
 			MEBAND = 2 * ML + MU + 1;
 			this._dgbsl.Run(WM, 3 + o_wm, MEBAND, N.v, ML, MU, IWM, 31 + o_iwm
@@ -6720,8 +6720,8 @@ namespace Altaxo.Calc.Ode.DVode
 			}
 			// C
 			return;
-		// C
-		LABEL100:;
+			// C
+			LABEL100:;
 			for (I = 1; I <= LENRV1; I++)
 			{
 				RVOD1[I + o_rvod1].v = RSAV[I + o_rsav];
@@ -6856,25 +6856,25 @@ namespace Altaxo.Calc.Ode.DVode
 				case 3: goto LABEL30;
 				case 4: goto LABEL40;
 			}
-		LABEL10:;
+			LABEL10:;
 			for (I = 1; I <= N; I++)
 			{
 				EWT[I + o_ewt] = RTOL[1 + o_rtol] * Math.Abs(YCUR[I + o_ycur]) + ATOL[1 + o_atol];
 			}
 			return;
-		LABEL20:;
+			LABEL20:;
 			for (I = 1; I <= N; I++)
 			{
 				EWT[I + o_ewt] = RTOL[1 + o_rtol] * Math.Abs(YCUR[I + o_ycur]) + ATOL[I + o_atol];
 			}
 			return;
-		LABEL30:;
+			LABEL30:;
 			for (I = 1; I <= N; I++)
 			{
 				EWT[I + o_ewt] = RTOL[I + o_rtol] * Math.Abs(YCUR[I + o_ycur]) + ATOL[1 + o_atol];
 			}
 			return;
-		LABEL40:;
+			LABEL40:;
 			for (I = 1; I <= N; I++)
 			{
 				EWT[I + o_ewt] = RTOL[I + o_rtol] * Math.Abs(YCUR[I + o_ycur]) + ATOL[I + o_atol];
@@ -8055,7 +8055,7 @@ namespace Altaxo.Calc.Ode.DVode
 			#endregion Prolog
 
 			U = 1.0E0;
-		LABEL10: U *= 0.5E0;
+			LABEL10: U *= 0.5E0;
 			this._dumsum.Run(1.0E0, U, ref COMP);
 			if (COMP != 1.0E0) goto LABEL10;
 			dumach = U * 2.0E0;
@@ -8367,7 +8367,7 @@ namespace Altaxo.Calc.Ode.DVode
 				T = A[L + K * LDA + o_a];
 				A[L + K * LDA + o_a] = A[K + K * LDA + o_a];
 				A[K + K * LDA + o_a] = T;
-			LABEL10:;
+				LABEL10:;
 				// C
 				// C           COMPUTE MULTIPLIERS
 				// C
@@ -8382,15 +8382,15 @@ namespace Altaxo.Calc.Ode.DVode
 					if (L == K) goto LABEL20;
 					A[L + J * LDA + o_a] = A[K + J * LDA + o_a];
 					A[K + J * LDA + o_a] = T;
-				LABEL20:;
+					LABEL20:;
 					this._daxpy.Run(N - K, T, A, K + 1 + K * LDA + o_a, 1, ref A, K + 1 + J * LDA + o_a, 1);
 				}
 				goto LABEL50;
-			LABEL40:;
+				LABEL40:;
 				INFO = K;
-			LABEL50:;
+				LABEL50:;
 			}
-		LABEL70:;
+			LABEL70:;
 			IPVT[N + o_ipvt] = N;
 			if (A[N + N * LDA + o_a] == 0.0E0) INFO = N;
 			return;
@@ -8710,10 +8710,10 @@ namespace Altaxo.Calc.Ode.DVode
 				if (L == K) goto LABEL10;
 				B[L + o_b] = B[K + o_b];
 				B[K + o_b] = T;
-			LABEL10:;
+				LABEL10:;
 				this._daxpy.Run(N - K, T, A, K + 1 + K * LDA + o_a, 1, ref B, K + 1 + o_b, 1);
 			}
-		LABEL30:;
+			LABEL30:;
 			// C
 			// C        NOW SOLVE  U*X = Y
 			// C
@@ -8725,7 +8725,7 @@ namespace Altaxo.Calc.Ode.DVode
 				this._daxpy.Run(K - 1, T, A, 1 + K * LDA + o_a, 1, ref B, 1 + o_b, 1);
 			}
 			goto LABEL100;
-		LABEL50:;
+			LABEL50:;
 			// C
 			// C        JOB = NONZERO, SOLVE  TRANS(A) * X = B
 			// C        FIRST SOLVE  TRANS(U)*Y = B
@@ -8748,10 +8748,10 @@ namespace Altaxo.Calc.Ode.DVode
 				T = B[L + o_b];
 				B[L + o_b] = B[K + o_b];
 				B[K + o_b] = T;
-			LABEL70:;
+				LABEL70:;
 			}
-		LABEL90:;
-		LABEL100:;
+			LABEL90:;
+			LABEL100:;
 			return;
 
 			#endregion Body
@@ -9168,7 +9168,7 @@ namespace Altaxo.Calc.Ode.DVode
 					ABD[I + ABD_JZ] = 0.0E0;
 				}
 			}
-		LABEL30:;
+			LABEL30:;
 			JZ = J1;
 			JU = 0;
 			// C
@@ -9190,7 +9190,7 @@ namespace Altaxo.Calc.Ode.DVode
 				{
 					ABD[I + ABD_JZ] = 0.0E0;
 				}
-			LABEL50:;
+				LABEL50:;
 				// C
 				// C        FIND L = PIVOT INDEX
 				// C
@@ -9208,7 +9208,7 @@ namespace Altaxo.Calc.Ode.DVode
 				T = ABD[L + K * LDA + o_abd];
 				ABD[L + K * LDA + o_abd] = ABD[M + K * LDA + o_abd];
 				ABD[M + K * LDA + o_abd] = T;
-			LABEL60:;
+				LABEL60:;
 				// C
 				// C           COMPUTE MULTIPLIERS
 				// C
@@ -9228,16 +9228,16 @@ namespace Altaxo.Calc.Ode.DVode
 					if (L == MM) goto LABEL70;
 					ABD[L + J * LDA + o_abd] = ABD[MM + J * LDA + o_abd];
 					ABD[MM + J * LDA + o_abd] = T;
-				LABEL70:;
+					LABEL70:;
 					this._daxpy.Run(LM, T, ABD, M + 1 + K * LDA + o_abd, 1, ref ABD, MM + 1 + J * LDA + o_abd, 1);
 				}
-			LABEL90:;
+				LABEL90:;
 				goto LABEL110;
-			LABEL100:;
+				LABEL100:;
 				INFO = K;
-			LABEL110:;
+				LABEL110:;
 			}
-		LABEL130:;
+			LABEL130:;
 			IPVT[N + o_ipvt] = N;
 			if (ABD[M + N * LDA + o_abd] == 0.0E0) INFO = N;
 			return;
@@ -9590,10 +9590,10 @@ namespace Altaxo.Calc.Ode.DVode
 				if (L == K) goto LABEL10;
 				B[L + o_b] = B[K + o_b];
 				B[K + o_b] = T;
-			LABEL10:;
+				LABEL10:;
 				this._daxpy.Run(LM, T, ABD, M + 1 + K * LDA + o_abd, 1, ref B, K + 1 + o_b, 1);
 			}
-		LABEL30:;
+			LABEL30:;
 			// C
 			// C        NOW SOLVE  U*X = Y
 			// C
@@ -9608,7 +9608,7 @@ namespace Altaxo.Calc.Ode.DVode
 				this._daxpy.Run(LM, T, ABD, LA + K * LDA + o_abd, 1, ref B, LB + o_b, 1);
 			}
 			goto LABEL100;
-		LABEL50:;
+			LABEL50:;
 			// C
 			// C        JOB = NONZERO, SOLVE  TRANS(A) * X = B
 			// C        FIRST SOLVE  TRANS(U)*Y = B
@@ -9636,10 +9636,10 @@ namespace Altaxo.Calc.Ode.DVode
 				T = B[L + o_b];
 				B[L + o_b] = B[K + o_b];
 				B[K + o_b] = T;
-			LABEL70:;
+				LABEL70:;
 			}
-		LABEL90:;
-		LABEL100:;
+			LABEL90:;
+			LABEL100:;
 			return;
 
 			#endregion Body
@@ -9844,10 +9844,10 @@ namespace Altaxo.Calc.Ode.DVode
 					else goto LABEL20;
 				}
 			}
-		// C
-		// C     Code for unequal or nonpositive increments.
-		// C
-		LABEL5: IX = 1;
+			// C
+			// C     Code for unequal or nonpositive increments.
+			// C
+			LABEL5: IX = 1;
 			IY = 1;
 			if (INCX < 0) IX = (-N + 1) * INCX + 1;
 			if (INCY < 0) IY = (-N + 1) * INCY + 1;
@@ -9858,12 +9858,12 @@ namespace Altaxo.Calc.Ode.DVode
 				IY += INCY;
 			}
 			return;
-		// C
-		// C     Code for both increments equal to 1.
-		// C
-		// C     Clean-up loop so remaining vector length is a multiple of 4.
-		// C
-		LABEL20: M = FortranLib.Mod(N, 4);
+			// C
+			// C     Code for both increments equal to 1.
+			// C
+			// C     Clean-up loop so remaining vector length is a multiple of 4.
+			// C
+			LABEL20: M = FortranLib.Mod(N, 4);
 			if (M == 0) goto LABEL40;
 			for (I = 1; I <= M; I++)
 			{
@@ -9879,10 +9879,10 @@ namespace Altaxo.Calc.Ode.DVode
 				DY[I + 3 + o_dy] += DA * DX[I + 3 + o_dx];
 			}
 			return;
-		// C
-		// C     Code for equal, positive, non-unit increments.
-		// C
-		LABEL60: NS = N * INCX;
+			// C
+			// C     Code for equal, positive, non-unit increments.
+			// C
+			LABEL60: NS = N * INCX;
 			for (I = 1; (INCX >= 0) ? (I <= NS) : (I >= NS); I += INCX)
 			{
 				DY[I + o_dy] = DA * DX[I + o_dx] + DY[I + o_dy];
@@ -10082,10 +10082,10 @@ namespace Altaxo.Calc.Ode.DVode
 					else goto LABEL20;
 				}
 			}
-		// C
-		// C     Code for unequal or nonpositive increments.
-		// C
-		LABEL5: IX = 1;
+			// C
+			// C     Code for unequal or nonpositive increments.
+			// C
+			LABEL5: IX = 1;
 			IY = 1;
 			if (INCX < 0) IX = (-N + 1) * INCX + 1;
 			if (INCY < 0) IY = (-N + 1) * INCY + 1;
@@ -10096,12 +10096,12 @@ namespace Altaxo.Calc.Ode.DVode
 				IY += INCY;
 			}
 			return;
-		// C
-		// C     Code for both increments equal to 1.
-		// C
-		// C     Clean-up loop so remaining vector length is a multiple of 7.
-		// C
-		LABEL20: M = FortranLib.Mod(N, 7);
+			// C
+			// C     Code for both increments equal to 1.
+			// C
+			// C     Clean-up loop so remaining vector length is a multiple of 7.
+			// C
+			LABEL20: M = FortranLib.Mod(N, 7);
 			if (M == 0) goto LABEL40;
 			for (I = 1; I <= M; I++)
 			{
@@ -10120,10 +10120,10 @@ namespace Altaxo.Calc.Ode.DVode
 				DY[I + 6 + o_dy] = DX[I + 6 + o_dx];
 			}
 			return;
-		// C
-		// C     Code for equal, positive, non-unit increments.
-		// C
-		LABEL60: NS = N * INCX;
+			// C
+			// C     Code for equal, positive, non-unit increments.
+			// C
+			LABEL60: NS = N * INCX;
 			for (I = 1; (INCX >= 0) ? (I <= NS) : (I >= NS); I += INCX)
 			{
 				DY[I + o_dy] = DX[I + o_dx];
@@ -10326,10 +10326,10 @@ namespace Altaxo.Calc.Ode.DVode
 					else goto LABEL20;
 				}
 			}
-		// C
-		// C     Code for unequal or nonpositive increments.
-		// C
-		LABEL5: IX = 1;
+			// C
+			// C     Code for unequal or nonpositive increments.
+			// C
+			LABEL5: IX = 1;
 			IY = 1;
 			if (INCX < 0) IX = (-N + 1) * INCX + 1;
 			if (INCY < 0) IY = (-N + 1) * INCY + 1;
@@ -10340,12 +10340,12 @@ namespace Altaxo.Calc.Ode.DVode
 				IY += INCY;
 			}
 			return ddot;
-		// C
-		// C     Code for both increments equal to 1.
-		// C
-		// C     Clean-up loop so remaining vector length is a multiple of 5.
-		// C
-		LABEL20: M = FortranLib.Mod(N, 5);
+			// C
+			// C     Code for both increments equal to 1.
+			// C
+			// C     Clean-up loop so remaining vector length is a multiple of 5.
+			// C
+			LABEL20: M = FortranLib.Mod(N, 5);
 			if (M == 0) goto LABEL40;
 			for (I = 1; I <= M; I++)
 			{
@@ -10358,10 +10358,10 @@ namespace Altaxo.Calc.Ode.DVode
 				ddot += DX[I + o_dx] * DY[I + o_dy] + DX[I + 1 + o_dx] * DY[I + 1 + o_dy] + DX[I + 2 + o_dx] * DY[I + 2 + o_dy] + DX[I + 3 + o_dx] * DY[I + 3 + o_dy] + DX[I + 4 + o_dx] * DY[I + 4 + o_dy];
 			}
 			return ddot;
-		// C
-		// C     Code for equal, positive, non-unit increments.
-		// C
-		LABEL60: NS = N * INCX;
+			// C
+			// C     Code for equal, positive, non-unit increments.
+			// C
+			LABEL60: NS = N * INCX;
 			for (I = 1; (INCX >= 0) ? (I <= NS) : (I >= NS); I += INCX)
 			{
 				ddot += DX[I + o_dx] * DY[I + o_dy];
@@ -10664,15 +10664,15 @@ namespace Altaxo.Calc.Ode.DVode
 			if (N > 0) goto LABEL10;
 			dnrm2 = ZERO;
 			goto LABEL300;
-		// C
-		LABEL10: NEXT = 30;
+			// C
+			LABEL10: NEXT = 30;
 			SUM = ZERO;
 			NN = N * INCX;
 			// C
 			// C                                                 BEGIN MAIN LOOP
 			// C
 			I = 1;
-		LABEL20:
+			LABEL20:
 			switch (NEXT)
 			{
 				case 30: goto LABEL30;
@@ -10680,14 +10680,14 @@ namespace Altaxo.Calc.Ode.DVode
 				case 70: goto LABEL70;
 				case 110: goto LABEL110;
 			}
-		LABEL30:
+			LABEL30:
 			if (Math.Abs(DX[I + o_dx]) > CUTLO) goto LABEL85;
 			NEXT = 50;
 			XMAX = ZERO;
-		// C
-		// C                        PHASE 1.  SUM IS ZERO
-		// C
-		LABEL50:
+			// C
+			// C                        PHASE 1.  SUM IS ZERO
+			// C
+			LABEL50:
 			if (DX[I + o_dx] == ZERO) goto LABEL200;
 			if (Math.Abs(DX[I + o_dx]) > CUTLO) goto LABEL85;
 			// C
@@ -10695,19 +10695,19 @@ namespace Altaxo.Calc.Ode.DVode
 			// C
 			NEXT = 70;
 			goto LABEL105;
-		// C
-		// C                                PREPARE FOR PHASE 4.
-		// C
-		LABEL100: I = J;
+			// C
+			// C                                PREPARE FOR PHASE 4.
+			// C
+			LABEL100: I = J;
 			NEXT = 110;
 			SUM = (SUM / DX[I + o_dx]) / DX[I + o_dx];
-		LABEL105: XMAX = Math.Abs(DX[I + o_dx]);
+			LABEL105: XMAX = Math.Abs(DX[I + o_dx]);
 			goto LABEL115;
-		// C
-		// C                   PHASE 2.  SUM IS SMALL.
-		// C                             SCALE TO AVOID DESTRUCTIVE UNDERFLOW.
-		// C
-		LABEL70:
+			// C
+			// C                   PHASE 2.  SUM IS SMALL.
+			// C                             SCALE TO AVOID DESTRUCTIVE UNDERFLOW.
+			// C
+			LABEL70:
 			if (Math.Abs(DX[I + o_dx]) > CUTLO) goto LABEL75;
 			// C
 			// C                     COMMON CODE FOR PHASES 2 AND 4.
@@ -10718,18 +10718,18 @@ namespace Altaxo.Calc.Ode.DVode
 			SUM = ONE + SUM * Math.Pow(XMAX / DX[I + o_dx], 2);
 			XMAX = Math.Abs(DX[I + o_dx]);
 			goto LABEL200;
-		// C
-		LABEL115: SUM += Math.Pow(DX[I + o_dx] / XMAX, 2);
+			// C
+			LABEL115: SUM += Math.Pow(DX[I + o_dx] / XMAX, 2);
 			goto LABEL200;
-		// C
-		// C                  PREPARE FOR PHASE 3.
-		// C
-		LABEL75: SUM = (SUM * XMAX) * XMAX;
-		// C
-		// C     FOR REAL OR D.P. SET HITEST = CUTHI/N
-		// C     FOR COMPLEX      SET HITEST = CUTHI/(2*N)
-		// C
-		LABEL85: HITEST = CUTHI / N;
+			// C
+			// C                  PREPARE FOR PHASE 3.
+			// C
+			LABEL75: SUM = (SUM * XMAX) * XMAX;
+			// C
+			// C     FOR REAL OR D.P. SET HITEST = CUTHI/N
+			// C     FOR COMPLEX      SET HITEST = CUTHI/(2*N)
+			// C
+			LABEL85: HITEST = CUTHI / N;
 			// C
 			// C                   PHASE 3.  SUM IS MID-RANGE.  NO SCALING.
 			// C
@@ -10740,8 +10740,8 @@ namespace Altaxo.Calc.Ode.DVode
 			}
 			dnrm2 = Math.Sqrt(SUM);
 			goto LABEL300;
-		// C
-		LABEL200:;
+			// C
+			LABEL200:;
 			I += INCX;
 			if (I <= NN) goto LABEL20;
 			// C
@@ -10750,7 +10750,7 @@ namespace Altaxo.Calc.Ode.DVode
 			// C              COMPUTE SQUARE ROOT AND ADJUST FOR SCALING.
 			// C
 			dnrm2 = XMAX * Math.Sqrt(SUM);
-		LABEL300:;
+			LABEL300:;
 			return dnrm2;
 
 			#endregion Body
@@ -10942,12 +10942,12 @@ namespace Altaxo.Calc.Ode.DVode
 				IX += INCX;
 			}
 			return;
-		// C
-		// C     Code for increment equal to 1.
-		// C
-		// C     Clean-up loop so remaining vector length is a multiple of 5.
-		// C
-		LABEL20: M = FortranLib.Mod(N, 5);
+			// C
+			// C     Code for increment equal to 1.
+			// C
+			// C     Clean-up loop so remaining vector length is a multiple of 5.
+			// C
+			LABEL20: M = FortranLib.Mod(N, 5);
 			if (M == 0) goto LABEL40;
 			for (I = 1; I <= M; I++)
 			{
@@ -11164,10 +11164,10 @@ namespace Altaxo.Calc.Ode.DVode
 				IX += INCX;
 			}
 			return idamax;
-		// C
-		// C     Code for increments equal to 1.
-		// C
-		LABEL20: DMAX = Math.Abs(DX[1 + o_dx]);
+			// C
+			// C     Code for increments equal to 1.
+			// C
+			LABEL20: DMAX = Math.Abs(DX[1 + o_dx]);
 			for (I = 2; I <= N; I++)
 			{
 				XMAG = Math.Abs(DX[I + o_dx]);

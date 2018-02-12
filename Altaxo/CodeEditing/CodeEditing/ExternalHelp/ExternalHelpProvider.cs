@@ -56,7 +56,6 @@ namespace Altaxo.CodeEditing.ExternalHelp
 			if (desc.Kind == SymbolKind.Parameter && model.Item2.Count >= 2) // for a parameter, we rather want to have the type of the parameter
 				desc = model.Item2[1];
 
-
 			if (!desc.CanBeReferencedByName)
 				return null;
 
@@ -76,7 +75,7 @@ namespace Altaxo.CodeEditing.ExternalHelp
 				typeName = typeSymbol.GetNameParts();
 				memberName = null;
 			}
-			else if(desc is ILocalSymbol lsymb)
+			else if (desc is ILocalSymbol lsymb)
 			{
 				typeName = lsymb.Type.GetNameParts();
 				memberName = null;
@@ -93,7 +92,6 @@ namespace Altaxo.CodeEditing.ExternalHelp
 				typeChar = 'M';
 			else if (desc.Kind == SymbolKind.Property)
 				typeChar = 'P';
-			
 
 			return new ExternalHelpItem(
 				assemblyIdentity: assemblyIdentity,

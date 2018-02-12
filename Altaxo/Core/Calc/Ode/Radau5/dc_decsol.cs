@@ -1,4 +1,4 @@
-#region Translated by Jose Antonio De Santiago-Castillo.
+﻿#region Translated by Jose Antonio De Santiago-Castillo.
 
 //Translated by Jose Antonio De Santiago-Castillo.
 //E-mail:JAntonioDeSantiago@gmail.com
@@ -148,10 +148,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				case 14: goto LABEL14;
 				case 15: goto LABEL15;
 			}
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL1:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL1:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX
 			for (J = 1; J <= N; J++)
 			{
@@ -165,10 +165,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._dec.Run(N, LDE1, ref E1, offset_e1, ref IP1, offset_ip1, ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL11:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL11:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (J = 1; J <= NM1; J++)
 			{
@@ -181,7 +181,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				}
 				E1[J + J * LDE1 + o_e1] += FAC1;
 			}
-		LABEL45: MM = M1 / M2;
+			LABEL45: MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
 				E1_J = J * LDE1 + o_e1;
@@ -197,10 +197,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._dec.Run(NM1, LDE1, ref E1, offset_e1, ref IP1, offset_ip1, ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL2:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL2:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX
 			for (J = 1; J <= N; J++)
 			{
@@ -215,10 +215,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._decb.Run(N, LDE1, ref E1, offset_e1, MLE.v, MUE.v, ref IP1, offset_ip1
 										 , ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL12:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL12:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX, SECOND ORDER
 			for (J = 1; J <= NM1; J++)
 			{
@@ -231,7 +231,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				}
 				E1[MDIAG.v + J * LDE1 + o_e1] += FAC1;
 			}
-		LABEL46: MM = M1 / M2;
+			LABEL46: MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
 				E1_J = J * LDE1 + o_e1;
@@ -248,10 +248,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._decb.Run(NM1, LDE1, ref E1, offset_e1, MLE.v, MUE.v, ref IP1, offset_ip1
 										 , ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL3:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL3:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX
 			for (J = 1; J <= N; J++)
 			{
@@ -270,10 +270,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._dec.Run(N, LDE1, ref E1, offset_e1, ref IP1, offset_ip1, ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL13:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL13:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (J = 1; J <= NM1; J++)
 			{
@@ -292,10 +292,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				}
 			}
 			goto LABEL45;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL4:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL4:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A BANDED MATRIX
 			for (J = 1; J <= N; J++)
 			{
@@ -315,10 +315,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._decb.Run(N, LDE1, ref E1, offset_e1, MLE.v, MUE.v, ref IP1, offset_ip1
 										 , ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL14:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL14:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A BANDED MATRIX, SECOND ORDER
 			for (J = 1; J <= NM1; J++)
 			{
@@ -337,10 +337,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				}
 			}
 			goto LABEL46;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL5:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL5:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX
 			for (J = 1; J <= N; J++)
 			{
@@ -354,10 +354,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._dec.Run(N, LDE1, ref E1, offset_e1, ref IP1, offset_ip1, ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL15:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL15:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (J = 1; J <= NM1; J++)
 			{
@@ -371,17 +371,17 @@ namespace Altaxo.Calc.Ode.Radau5
 				}
 			}
 			goto LABEL45;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL6:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL6:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A BANDED MATRIX
 			// C ---  THIS OPTION IS NOT PROVIDED
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL7:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL7:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX, HESSENBERG-OPTION
 			if (CALHES) this._elmhes.Run(LDJAC, N, 1, N, ref FJAC, offset_fjac, ref IPHES, offset_iphes);
 			CALHES = false;
@@ -402,10 +402,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._dech.Run(N, LDE1, ref E1, offset_e1, 1, ref IP1, offset_ip1, ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL55:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL55:;
 			return;
 
 			#endregion Body
@@ -547,10 +547,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				case 14: goto LABEL14;
 				case 15: goto LABEL15;
 			}
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL1:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL1:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX
 			for (J = 1; J <= N; J++)
 			{
@@ -567,10 +567,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._decc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, ref IP2, offset_ip2, ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL11:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL11:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (J = 1; J <= NM1; J++)
 			{
@@ -586,7 +586,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				E2R[J + J * LDE1 + o_e2r] += ALPHN;
 				E2I[J + J * LDE1 + o_e2i] = BETAN;
 			}
-		LABEL45: MM = M1 / M2;
+			LABEL45: MM = M1 / M2;
 			ABNO = Math.Pow(ALPHN, 2) + Math.Pow(BETAN, 2);
 			ALP = ALPHN / ABNO;
 			BET = BETAN / ABNO;
@@ -610,10 +610,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._decc.Run(NM1, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, ref IP2, offset_ip2, ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL2:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL2:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX
 			for (J = 1; J <= N; J++)
 			{
@@ -630,10 +630,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._decbc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, MLE.v, MUE.v
 											, ref IP2, offset_ip2, ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL12:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL12:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX, SECOND ORDER
 			for (J = 1; J <= NM1; J++)
 			{
@@ -649,7 +649,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				E2R[MDIAG.v + J * LDE1 + o_e2r] += ALPHN;
 				E2I[MDIAG.v + J * LDE1 + o_e2i] += BETAN;
 			}
-		LABEL46: MM = M1 / M2;
+			LABEL46: MM = M1 / M2;
 			ABNO = Math.Pow(ALPHN, 2) + Math.Pow(BETAN, 2);
 			ALP = ALPHN / ABNO;
 			BET = BETAN / ABNO;
@@ -673,10 +673,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._decbc.Run(NM1, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, MLE.v, MUE.v
 											, ref IP2, offset_ip2, ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL3:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL3:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX
 			for (J = 1; J <= N; J++)
 			{
@@ -703,10 +703,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._decc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, ref IP2, offset_ip2, ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL13:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL13:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (J = 1; J <= NM1; J++)
 			{
@@ -730,10 +730,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				}
 			}
 			goto LABEL45;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL4:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL4:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A BANDED MATRIX
 			for (J = 1; J <= N; J++)
 			{
@@ -756,10 +756,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._decbc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, MLE.v, MUE.v
 											, ref IP2, offset_ip2, ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL14:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL14:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A BANDED MATRIX, SECOND ORDER
 			for (J = 1; J <= NM1; J++)
 			{
@@ -782,10 +782,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				}
 			}
 			goto LABEL46;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL5:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL5:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX
 			for (J = 1; J <= N; J++)
 			{
@@ -802,10 +802,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._decc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, ref IP2, offset_ip2, ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL15:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL15:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (J = 1; J <= NM1; J++)
 			{
@@ -821,17 +821,17 @@ namespace Altaxo.Calc.Ode.Radau5
 				}
 			}
 			goto LABEL45;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL6:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL6:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A BANDED MATRIX
 			// C ---  THIS OPTION IS NOT PROVIDED
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL7:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL7:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX, HESSENBERG-OPTION
 			for (J = 1; J <= N - 1; J++)
 			{
@@ -855,10 +855,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._dechc.Run(N, LDE1, ref E2R, offset_e2r, ref E2I, offset_e2i, 1, ref IP2, offset_ip2
 											, ref IER);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL55:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL55:;
 			return;
 
 			#endregion Body
@@ -1000,10 +1000,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				case 14: goto LABEL13;
 				case 15: goto LABEL15;
 			}
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL1:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL1:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -1011,16 +1011,16 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL11:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL11:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= N; I++)
 			{
 				Z1[I + o_z1] += -F1[I + o_f1] * FAC1;
 			}
-		LABEL48:;
+			LABEL48:;
 			MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
@@ -1038,16 +1038,16 @@ namespace Altaxo.Calc.Ode.Radau5
 				}
 			}
 			this._sol.Run(NM1, LDE1, E1, offset_e1, ref Z1, M1 + 1 + o_z1, IP1, offset_ip1);
-		LABEL49:;
+			LABEL49:;
 			for (I = M1; I >= 1; I += -1)
 			{
 				Z1[I + o_z1] = (Z1[I + o_z1] + Z1[M2 + I + o_z1]) / FAC1;
 			}
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL2:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL2:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -1056,16 +1056,16 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, offset_z1
 										 , IP1, offset_ip1);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL12:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL12:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX, SECOND ORDER
 			for (I = 1; I <= N; I++)
 			{
 				Z1[I + o_z1] += -F1[I + o_f1] * FAC1;
 			}
-		LABEL45:;
+			LABEL45:;
 			MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
@@ -1085,10 +1085,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solb.Run(NM1, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, M1 + 1 + o_z1
 										 , IP1, offset_ip1);
 			goto LABEL49;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL3:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL3:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -1101,10 +1101,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL13:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL13:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= M1; I++)
 			{
@@ -1122,10 +1122,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			if (IJOB == 14) goto LABEL45;
 			goto LABEL48;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL4:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL4:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A BANDED MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -1139,10 +1139,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref Z1, offset_z1
 										 , IP1, offset_ip1);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL5:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL5:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -1155,10 +1155,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._sol.Run(N, LDE1, E1, offset_e1, ref Z1, offset_z1, IP1, offset_ip1);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL15:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL15:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= M1; I++)
 			{
@@ -1175,17 +1175,17 @@ namespace Altaxo.Calc.Ode.Radau5
 				Z1[IM1 + o_z1] += S1 * FAC1;
 			}
 			goto LABEL48;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL6:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL6:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A BANDED MATRIX
 			// C ---  THIS OPTION IS NOT PROVIDED
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL7:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL7:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX, HESSENBERG-OPTION
 			for (I = 1; I <= N; I++)
 			{
@@ -1200,7 +1200,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				ZSAFE = Z1[MP + o_z1];
 				Z1[MP + o_z1] = Z1[I + o_z1];
 				Z1[I + o_z1] = ZSAFE;
-			LABEL746:;
+				LABEL746:;
 				FJAC_MP1 = MP1 * LDJAC + o_fjac;
 				for (I = MP + 1; I <= N; I++)
 				{
@@ -1222,13 +1222,13 @@ namespace Altaxo.Calc.Ode.Radau5
 				ZSAFE = Z1[MP + o_z1];
 				Z1[MP + o_z1] = Z1[I + o_z1];
 				Z1[I + o_z1] = ZSAFE;
-			LABEL750:;
+				LABEL750:;
 			}
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL55:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL55:;
 			return;
 
 			#endregion Body
@@ -1374,10 +1374,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				case 14: goto LABEL13;
 				case 15: goto LABEL15;
 			}
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL1:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL1:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -1389,10 +1389,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
 										 , IP2, offset_ip2);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL11:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL11:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= N; I++)
 			{
@@ -1401,7 +1401,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
 				Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
 			}
-		LABEL48: ABNO = Math.Pow(ALPHN, 2) + Math.Pow(BETAN, 2);
+			LABEL48: ABNO = Math.Pow(ALPHN, 2) + Math.Pow(BETAN, 2);
 			MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
@@ -1425,7 +1425,7 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._solc.Run(NM1, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, M1 + 1 + o_z2, ref Z3, M1 + 1 + o_z3
 										 , IP2, offset_ip2);
-		LABEL49:;
+			LABEL49:;
 			for (I = M1; I >= 1; I += -1)
 			{
 				MPI = M2 + I;
@@ -1435,10 +1435,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				Z2[I + o_z2] = (Z2I * ALPHN + Z3I * BETAN) / ABNO;
 			}
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL2:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL2:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -1450,10 +1450,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solbc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
 											, ref Z2, offset_z2, ref Z3, offset_z3, IP2, offset_ip2);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL12:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL12:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX, SECOND ORDER
 			for (I = 1; I <= N; I++)
 			{
@@ -1462,7 +1462,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
 				Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
 			}
-		LABEL45: ABNO = Math.Pow(ALPHN, 2) + Math.Pow(BETAN, 2);
+			LABEL45: ABNO = Math.Pow(ALPHN, 2) + Math.Pow(BETAN, 2);
 			MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
@@ -1487,10 +1487,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solbc.Run(NM1, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
 											, ref Z2, M1 + 1 + o_z2, ref Z3, M1 + 1 + o_z3, IP2, offset_ip2);
 			goto LABEL49;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL3:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL3:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -1508,10 +1508,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
 										 , IP2, offset_ip2);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL13:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL13:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= M1; I++)
 			{
@@ -1537,10 +1537,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			if (IJOB == 14) goto LABEL45;
 			goto LABEL48;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL4:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL4:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A BANDED MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -1558,10 +1558,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solbc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
 											, ref Z2, offset_z2, ref Z3, offset_z3, IP2, offset_ip2);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL5:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL5:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -1579,10 +1579,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
 										 , IP2, offset_ip2);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL15:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL15:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= M1; I++)
 			{
@@ -1607,17 +1607,17 @@ namespace Altaxo.Calc.Ode.Radau5
 				Z3[IM1 + o_z3] += S3 * ALPHN + S2 * BETAN;
 			}
 			goto LABEL48;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL6:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL6:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A BANDED MATRIX
 			// C ---  THIS OPTION IS NOT PROVIDED
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL7:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL7:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX, HESSENBERG-OPTION
 			for (I = 1; I <= N; I++)
 			{
@@ -1638,7 +1638,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				ZSAFE = Z3[MP + o_z3];
 				Z3[MP + o_z3] = Z3[I + o_z3];
 				Z3[I + o_z3] = ZSAFE;
-			LABEL746:;
+				LABEL746:;
 				FJAC_MP1 = MP1 * LDJAC + o_fjac;
 				for (I = MP + 1; I <= N; I++)
 				{
@@ -1668,13 +1668,13 @@ namespace Altaxo.Calc.Ode.Radau5
 				ZSAFE = Z3[MP + o_z3];
 				Z3[MP + o_z3] = Z3[I + o_z3];
 				Z3[I + o_z3] = ZSAFE;
-			LABEL750:;
+				LABEL750:;
 			}
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL55:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL55:;
 			return;
 
 			#endregion Body
@@ -1826,10 +1826,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				case 14: goto LABEL13;
 				case 15: goto LABEL15;
 			}
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL1:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL1:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -1843,10 +1843,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
 										 , IP2, offset_ip2);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL11:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL11:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= N; I++)
 			{
@@ -1856,7 +1856,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
 				Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
 			}
-		LABEL48: ABNO = Math.Pow(ALPHN, 2) + Math.Pow(BETAN, 2);
+			LABEL48: ABNO = Math.Pow(ALPHN, 2) + Math.Pow(BETAN, 2);
 			MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
@@ -1884,7 +1884,7 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._sol.Run(NM1, LDE1, E1, offset_e1, ref Z1, M1 + 1 + o_z1, IP1, offset_ip1);
 			this._solc.Run(NM1, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, M1 + 1 + o_z2, ref Z3, M1 + 1 + o_z3
 										 , IP2, offset_ip2);
-		LABEL49:;
+			LABEL49:;
 			for (I = M1; I >= 1; I += -1)
 			{
 				MPI = M2 + I;
@@ -1895,10 +1895,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				Z2[I + o_z2] = (Z2I * ALPHN + Z3I * BETAN) / ABNO;
 			}
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL2:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL2:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -1913,10 +1913,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solbc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
 											, ref Z2, offset_z2, ref Z3, offset_z3, IP2, offset_ip2);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL12:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL12:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX, SECOND ORDER
 			for (I = 1; I <= N; I++)
 			{
@@ -1926,7 +1926,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				Z2[I + o_z2] += S2 * ALPHN - S3 * BETAN;
 				Z3[I + o_z3] += S3 * ALPHN + S2 * BETAN;
 			}
-		LABEL45: ABNO = Math.Pow(ALPHN, 2) + Math.Pow(BETAN, 2);
+			LABEL45: ABNO = Math.Pow(ALPHN, 2) + Math.Pow(BETAN, 2);
 			MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
@@ -1957,10 +1957,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solbc.Run(NM1, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
 											, ref Z2, M1 + 1 + o_z2, ref Z3, M1 + 1 + o_z3, IP2, offset_ip2);
 			goto LABEL49;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL3:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL3:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -1982,10 +1982,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
 										 , IP2, offset_ip2);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL13:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL13:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= M1; I++)
 			{
@@ -2017,10 +2017,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			if (IJOB == 14) goto LABEL45;
 			goto LABEL48;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL4:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL4:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A BANDED MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -2043,10 +2043,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solbc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, MLE.v, MUE.v
 											, ref Z2, offset_z2, ref Z3, offset_z3, IP2, offset_ip2);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL5:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL5:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -2068,10 +2068,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solc.Run(N, LDE1, E2R, offset_e2r, E2I, offset_e2i, ref Z2, offset_z2, ref Z3, offset_z3
 										 , IP2, offset_ip2);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL15:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL15:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= M1; I++)
 			{
@@ -2100,17 +2100,17 @@ namespace Altaxo.Calc.Ode.Radau5
 				Z3[IM1 + o_z3] += S3 * ALPHN + S2 * BETAN;
 			}
 			goto LABEL48;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL6:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL6:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A BANDED MATRIX
 			// C ---  THIS OPTION IS NOT PROVIDED
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL7:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL7:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX, HESSENBERG-OPTION
 			for (I = 1; I <= N; I++)
 			{
@@ -2135,7 +2135,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				ZSAFE = Z3[MP + o_z3];
 				Z3[MP + o_z3] = Z3[I + o_z3];
 				Z3[I + o_z3] = ZSAFE;
-			LABEL746:;
+				LABEL746:;
 				FJAC_MP1 = MP1 * LDJAC + o_fjac;
 				for (I = MP + 1; I <= N; I++)
 				{
@@ -2171,13 +2171,13 @@ namespace Altaxo.Calc.Ode.Radau5
 				ZSAFE = Z3[MP + o_z3];
 				Z3[MP + o_z3] = Z3[I + o_z3];
 				Z3[I + o_z3] = ZSAFE;
-			LABEL750:;
+				LABEL750:;
 			}
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL55:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL55:;
 			return;
 
 			#endregion Body
@@ -2327,8 +2327,8 @@ namespace Altaxo.Calc.Ode.Radau5
 				case 14: goto LABEL14;
 				case 15: goto LABEL15;
 			}
-		// C
-		LABEL1:;
+			// C
+			LABEL1:;
 			// C ------  B=IDENTITY, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -2337,15 +2337,15 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
 			goto LABEL77;
-		// C
-		LABEL11:;
+			// C
+			LABEL11:;
 			// C ------  B=IDENTITY, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= N; I++)
 			{
 				F2[I + o_f2] = HEE1 * Z1[I + o_z1] + HEE2 * Z2[I + o_z2] + HEE3 * Z3[I + o_z3];
 				CONT[I + o_cont] = F2[I + o_f2] + Y0[I + o_y0];
 			}
-		LABEL48: MM = M1 / M2;
+			LABEL48: MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
 				SUM1 = 0.0E0;
@@ -2366,8 +2366,8 @@ namespace Altaxo.Calc.Ode.Radau5
 				CONT[I + o_cont] = (CONT[I + o_cont] + CONT[M2 + I + o_cont]) / FAC1;
 			}
 			goto LABEL77;
-		// C
-		LABEL2:;
+			// C
+			LABEL2:;
 			// C ------  B=IDENTITY, JACOBIAN A BANDED MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -2377,15 +2377,15 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
 										 , IP1, offset_ip1);
 			goto LABEL77;
-		// C
-		LABEL12:;
+			// C
+			LABEL12:;
 			// C ------  B=IDENTITY, JACOBIAN A BANDED MATRIX, SECOND ORDER
 			for (I = 1; I <= N; I++)
 			{
 				F2[I + o_f2] = HEE1 * Z1[I + o_z1] + HEE2 * Z2[I + o_z2] + HEE3 * Z3[I + o_z3];
 				CONT[I + o_cont] = F2[I + o_f2] + Y0[I + o_y0];
 			}
-		LABEL45: MM = M1 / M2;
+			LABEL45: MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
 				SUM1 = 0.0E0;
@@ -2407,8 +2407,8 @@ namespace Altaxo.Calc.Ode.Radau5
 				CONT[I + o_cont] = (CONT[I + o_cont] + CONT[M2 + I + o_cont]) / FAC1;
 			}
 			goto LABEL77;
-		// C
-		LABEL3:;
+			// C
+			LABEL3:;
 			// C ------  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -2426,8 +2426,8 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
 			goto LABEL77;
-		// C
-		LABEL13:;
+			// C
+			LABEL13:;
 			// C ------  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= M1; I++)
 			{
@@ -2450,8 +2450,8 @@ namespace Altaxo.Calc.Ode.Radau5
 				CONT[IM1 + o_cont] = SUM + Y0[IM1 + o_y0];
 			}
 			goto LABEL48;
-		// C
-		LABEL4:;
+			// C
+			LABEL4:;
 			// C ------  B IS A BANDED MATRIX, JACOBIAN A BANDED MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -2470,8 +2470,8 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
 										 , IP1, offset_ip1);
 			goto LABEL77;
-		// C
-		LABEL14:;
+			// C
+			LABEL14:;
 			// C ------  B IS A BANDED MATRIX, JACOBIAN A BANDED MATRIX, SECOND ORDER
 			for (I = 1; I <= M1; I++)
 			{
@@ -2494,8 +2494,8 @@ namespace Altaxo.Calc.Ode.Radau5
 				CONT[IM1 + o_cont] = SUM + Y0[IM1 + o_y0];
 			}
 			goto LABEL45;
-		// C
-		LABEL5:;
+			// C
+			LABEL5:;
 			// C ------  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -2513,8 +2513,8 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
 			goto LABEL77;
-		// C
-		LABEL15:;
+			// C
+			LABEL15:;
 			// C ------  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= M1; I++)
 			{
@@ -2537,13 +2537,13 @@ namespace Altaxo.Calc.Ode.Radau5
 				CONT[IM1 + o_cont] = SUM + Y0[IM1 + o_y0];
 			}
 			goto LABEL48;
-		// C
-		LABEL6:;
+			// C
+			LABEL6:;
 			// C ------  B IS A FULL MATRIX, JACOBIAN A BANDED MATRIX
 			// C ------  THIS OPTION IS NOT PROVIDED
 			return;
-		// C
-		LABEL7:;
+			// C
+			LABEL7:;
 			// C ------  B=IDENTITY, JACOBIAN A FULL MATRIX, HESSENBERG-OPTION
 			for (I = 1; I <= N; I++)
 			{
@@ -2558,7 +2558,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				ZSAFE = CONT[MP + o_cont];
 				CONT[MP + o_cont] = CONT[I + o_cont];
 				CONT[I + o_cont] = ZSAFE;
-			LABEL310:;
+				LABEL310:;
 				FJAC_2 = (MP - 1) * LDJAC + o_fjac;
 				for (I = MP + 1; I <= N; I++)
 				{
@@ -2579,12 +2579,12 @@ namespace Altaxo.Calc.Ode.Radau5
 				ZSAFE = CONT[MP + o_cont];
 				CONT[MP + o_cont] = CONT[I + o_cont];
 				CONT[I + o_cont] = ZSAFE;
-			LABEL440:;
+				LABEL440:;
 			}
-		// C
-		// C --------------------------------------
-		// C
-		LABEL77:;
+			// C
+			// C --------------------------------------
+			// C
+			LABEL77:;
 			ERR = 0.0E0;
 			for (I = 1; I <= N; I++)
 			{
@@ -2623,12 +2623,12 @@ namespace Altaxo.Calc.Ode.Radau5
 					case 14: goto LABEL42;
 					case 15: goto LABEL41;
 				}
-			// C ------ FULL MATRIX OPTION
-			LABEL31:;
+				// C ------ FULL MATRIX OPTION
+				LABEL31:;
 				this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
 				goto LABEL88;
-			// C ------ FULL MATRIX OPTION, SECOND ORDER
-			LABEL41:;
+				// C ------ FULL MATRIX OPTION, SECOND ORDER
+				LABEL41:;
 				for (J = 1; J <= M2; J++)
 				{
 					SUM1 = 0.0E0;
@@ -2649,13 +2649,13 @@ namespace Altaxo.Calc.Ode.Radau5
 					CONT[I + o_cont] = (CONT[I + o_cont] + CONT[M2 + I + o_cont]) / FAC1;
 				}
 				goto LABEL88;
-			// C ------ BANDED MATRIX OPTION
-			LABEL32:;
+				// C ------ BANDED MATRIX OPTION
+				LABEL32:;
 				this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
 											 , IP1, offset_ip1);
 				goto LABEL88;
-			// C ------ BANDED MATRIX OPTION, SECOND ORDER
-			LABEL42:;
+				// C ------ BANDED MATRIX OPTION, SECOND ORDER
+				LABEL42:;
 				for (J = 1; J <= M2; J++)
 				{
 					SUM1 = 0.0E0;
@@ -2677,8 +2677,8 @@ namespace Altaxo.Calc.Ode.Radau5
 					CONT[I + o_cont] = (CONT[I + o_cont] + CONT[M2 + I + o_cont]) / FAC1;
 				}
 				goto LABEL88;
-			// C ------ HESSENBERG MATRIX OPTION
-			LABEL33:;
+				// C ------ HESSENBERG MATRIX OPTION
+				LABEL33:;
 				for (MM = N - 2; MM >= 1; MM += -1)
 				{
 					MP = N - MM;
@@ -2687,7 +2687,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					ZSAFE = CONT[MP + o_cont];
 					CONT[MP + o_cont] = CONT[I + o_cont];
 					CONT[I + o_cont] = ZSAFE;
-				LABEL510:;
+					LABEL510:;
 					FJAC_6 = (MP - 1) * LDJAC + o_fjac;
 					for (I = MP + 1; I <= N; I++)
 					{
@@ -2708,10 +2708,10 @@ namespace Altaxo.Calc.Ode.Radau5
 					ZSAFE = CONT[MP + o_cont];
 					CONT[MP + o_cont] = CONT[I + o_cont];
 					CONT[I + o_cont] = ZSAFE;
-				LABEL640:;
+					LABEL640:;
 				}
-			// C -----------------------------------
-			LABEL88:;
+				// C -----------------------------------
+				LABEL88:;
 				ERR = 0.0E0;
 				for (I = 1; I <= N; I++)
 				{
@@ -2720,8 +2720,8 @@ namespace Altaxo.Calc.Ode.Radau5
 				ERR = Math.Max(Math.Sqrt(ERR / N), 1.0E-10);
 			}
 			return;
-		// C -----------------------------------------------------------
-		LABEL55:;
+			// C -----------------------------------------------------------
+			LABEL55:;
 			return;
 
 			#endregion Body
@@ -2867,8 +2867,8 @@ namespace Altaxo.Calc.Ode.Radau5
 				case 14: goto LABEL14;
 				case 15: goto LABEL15;
 			}
-		// C
-		LABEL1:;
+			// C
+			LABEL1:;
 			// C ------  B=IDENTITY, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -2882,8 +2882,8 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
 			goto LABEL77;
-		// C
-		LABEL11:;
+			// C
+			LABEL11:;
 			// C ------  B=IDENTITY, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= N; I++)
 			{
@@ -2895,7 +2895,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				FF[I + N + o_ff] = SUM / H;
 				CONT[I + o_cont] = FF[I + N + o_ff] + Y0[I + o_y0];
 			}
-		LABEL48: MM = M1 / M2;
+			LABEL48: MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
 				SUM1 = 0.0E0;
@@ -2916,8 +2916,8 @@ namespace Altaxo.Calc.Ode.Radau5
 				CONT[I + o_cont] = (CONT[I + o_cont] + CONT[M2 + I + o_cont]) / FAC1;
 			}
 			goto LABEL77;
-		// C
-		LABEL2:;
+			// C
+			LABEL2:;
 			// C ------  B=IDENTITY, JACOBIAN A BANDED MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -2932,8 +2932,8 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
 										 , IP1, offset_ip1);
 			goto LABEL77;
-		// C
-		LABEL12:;
+			// C
+			LABEL12:;
 			// C ------  B=IDENTITY, JACOBIAN A BANDED MATRIX, SECOND ORDER
 			for (I = 1; I <= N; I++)
 			{
@@ -2945,7 +2945,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				FF[I + N + o_ff] = SUM / H;
 				CONT[I + o_cont] = FF[I + N + o_ff] + Y0[I + o_y0];
 			}
-		LABEL45: MM = M1 / M2;
+			LABEL45: MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
 				SUM1 = 0.0E0;
@@ -2967,8 +2967,8 @@ namespace Altaxo.Calc.Ode.Radau5
 				CONT[I + o_cont] = (CONT[I + o_cont] + CONT[M2 + I + o_cont]) / FAC1;
 			}
 			goto LABEL77;
-		// C
-		LABEL3:;
+			// C
+			LABEL3:;
 			// C ------  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -2991,8 +2991,8 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
 			goto LABEL77;
-		// C
-		LABEL13:;
+			// C
+			LABEL13:;
 			// C ------  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= M1; I++)
 			{
@@ -3025,8 +3025,8 @@ namespace Altaxo.Calc.Ode.Radau5
 				CONT[IM1 + o_cont] = SUM + Y0[IM1 + o_y0];
 			}
 			goto LABEL48;
-		// C
-		LABEL4:;
+			// C
+			LABEL4:;
 			// C ------  B IS A BANDED MATRIX, JACOBIAN A BANDED MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -3050,8 +3050,8 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
 										 , IP1, offset_ip1);
 			goto LABEL77;
-		// C
-		LABEL14:;
+			// C
+			LABEL14:;
 			// C ------  B IS A BANDED MATRIX, JACOBIAN A BANDED MATRIX, SECOND ORDER
 			for (I = 1; I <= M1; I++)
 			{
@@ -3084,8 +3084,8 @@ namespace Altaxo.Calc.Ode.Radau5
 				CONT[IM1 + o_cont] = SUM + Y0[IM1 + o_y0];
 			}
 			goto LABEL45;
-		// C
-		LABEL5:;
+			// C
+			LABEL5:;
 			// C ------  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX
 			for (I = 1; I <= N; I++)
 			{
@@ -3108,8 +3108,8 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
 			goto LABEL77;
-		// C
-		LABEL15:;
+			// C
+			LABEL15:;
 			// C ------  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			for (I = 1; I <= M1; I++)
 			{
@@ -3142,13 +3142,13 @@ namespace Altaxo.Calc.Ode.Radau5
 				CONT[IM1 + o_cont] = SUM + Y0[IM1 + o_y0];
 			}
 			goto LABEL48;
-		// C
-		LABEL6:;
+			// C
+			LABEL6:;
 			// C ------  B IS A FULL MATRIX, JACOBIAN A BANDED MATRIX
 			// C ------  THIS OPTION IS NOT PROVIDED
 			return;
-		// C
-		LABEL7:;
+			// C
+			LABEL7:;
 			// C ------  B=IDENTITY, JACOBIAN A FULL MATRIX, HESSENBERG-OPTION
 			for (I = 1; I <= N; I++)
 			{
@@ -3168,7 +3168,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				ZSAFE = CONT[MP + o_cont];
 				CONT[MP + o_cont] = CONT[I + o_cont];
 				CONT[I + o_cont] = ZSAFE;
-			LABEL310:;
+				LABEL310:;
 				FJAC_2 = (MP - 1) * LDJAC + o_fjac;
 				for (I = MP + 1; I <= N; I++)
 				{
@@ -3189,12 +3189,12 @@ namespace Altaxo.Calc.Ode.Radau5
 				ZSAFE = CONT[MP + o_cont];
 				CONT[MP + o_cont] = CONT[I + o_cont];
 				CONT[I + o_cont] = ZSAFE;
-			LABEL440:;
+				LABEL440:;
 			}
-		// C
-		// C --------------------------------------
-		// C
-		LABEL77:;
+			// C
+			// C --------------------------------------
+			// C
+			LABEL77:;
 			ERR = 0.0E0;
 			for (I = 1; I <= N; I++)
 			{
@@ -3233,12 +3233,12 @@ namespace Altaxo.Calc.Ode.Radau5
 					case 14: goto LABEL42;
 					case 15: goto LABEL41;
 				}
-			// C ------ FULL MATRIX OPTION
-			LABEL31:;
+				// C ------ FULL MATRIX OPTION
+				LABEL31:;
 				this._sol.Run(N, LDE1, E1, offset_e1, ref CONT, offset_cont, IP1, offset_ip1);
 				goto LABEL88;
-			// C ------ FULL MATRIX OPTION, SECOND ORDER
-			LABEL41:;
+				// C ------ FULL MATRIX OPTION, SECOND ORDER
+				LABEL41:;
 				for (J = 1; J <= M2; J++)
 				{
 					SUM1 = 0.0E0;
@@ -3259,13 +3259,13 @@ namespace Altaxo.Calc.Ode.Radau5
 					CONT[I + o_cont] = (CONT[I + o_cont] + CONT[M2 + I + o_cont]) / FAC1;
 				}
 				goto LABEL88;
-			// C ------ BANDED MATRIX OPTION
-			LABEL32:;
+				// C ------ BANDED MATRIX OPTION
+				LABEL32:;
 				this._solb.Run(N, LDE1, E1, offset_e1, MLE.v, MUE.v, ref CONT, offset_cont
 											 , IP1, offset_ip1);
 				goto LABEL88;
-			// C ------ BANDED MATRIX OPTION, SECOND ORDER
-			LABEL42:;
+				// C ------ BANDED MATRIX OPTION, SECOND ORDER
+				LABEL42:;
 				for (J = 1; J <= M2; J++)
 				{
 					SUM1 = 0.0E0;
@@ -3287,8 +3287,8 @@ namespace Altaxo.Calc.Ode.Radau5
 					CONT[I + o_cont] = (CONT[I + o_cont] + CONT[M2 + I + o_cont]) / FAC1;
 				}
 				goto LABEL88;
-			// C ------ HESSENBERG MATRIX OPTION
-			LABEL33:;
+				// C ------ HESSENBERG MATRIX OPTION
+				LABEL33:;
 				for (MM = N - 2; MM >= 1; MM += -1)
 				{
 					MP = N - MM;
@@ -3297,7 +3297,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					ZSAFE = CONT[MP + o_cont];
 					CONT[MP + o_cont] = CONT[I + o_cont];
 					CONT[I + o_cont] = ZSAFE;
-				LABEL510:;
+					LABEL510:;
 					FJAC_6 = (MP - 1) * LDJAC + o_fjac;
 					for (I = MP + 1; I <= N; I++)
 					{
@@ -3318,10 +3318,10 @@ namespace Altaxo.Calc.Ode.Radau5
 					ZSAFE = CONT[MP + o_cont];
 					CONT[MP + o_cont] = CONT[I + o_cont];
 					CONT[I + o_cont] = ZSAFE;
-				LABEL640:;
+					LABEL640:;
 				}
-			// C -----------------------------------
-			LABEL88:;
+				// C -----------------------------------
+				LABEL88:;
 				ERR = 0.0E0;
 				for (I = 1; I <= N; I++)
 				{
@@ -3330,10 +3330,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				ERR = Math.Max(Math.Sqrt(ERR / N), 1.0E-10);
 			}
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL55:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL55:;
 			return;
 
 			#endregion Body
@@ -3489,10 +3489,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				case 14: goto LABEL13;
 				case 15: goto LABEL15;
 			}
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL1:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL1:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX
 			if (STAGE1)
 			{
@@ -3503,10 +3503,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._sol.Run(N, LDE, E, offset_e, ref AK, offset_ak, IP, offset_ip);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL11:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL11:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX, SECOND ORDER
 			if (STAGE1)
 			{
@@ -3515,7 +3515,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					AK[I + o_ak] += YNEW[I + o_ynew];
 				}
 			}
-		LABEL48: MM = M1 / M2;
+			LABEL48: MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
 				SUM = 0.0E0;
@@ -3537,10 +3537,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				AK[I + o_ak] = (AK[I + o_ak] + AK[M2 + I + o_ak]) / FAC1;
 			}
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL2:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL2:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX
 			if (STAGE1)
 			{
@@ -3552,10 +3552,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solb.Run(N, LDE, E, offset_e, MLE.v, MUE.v, ref AK, offset_ak
 										 , IP, offset_ip);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL12:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL12:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX, SECOND ORDER
 			if (STAGE1)
 			{
@@ -3564,7 +3564,7 @@ namespace Altaxo.Calc.Ode.Radau5
 					AK[I + o_ak] += YNEW[I + o_ynew];
 				}
 			}
-		LABEL45: MM = M1 / M2;
+			LABEL45: MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
 			{
 				SUM = 0.0E0;
@@ -3587,10 +3587,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				AK[I + o_ak] = (AK[I + o_ak] + AK[M2 + I + o_ak]) / FAC1;
 			}
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL3:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL3:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX
 			if (STAGE1)
 			{
@@ -3606,10 +3606,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._sol.Run(N, LDE, E, offset_e, ref AK, offset_ak, IP, offset_ip);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL13:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL13:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			if (STAGE1)
 			{
@@ -3630,10 +3630,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			if (IJOB == 14) goto LABEL45;
 			goto LABEL48;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL4:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL4:;
 			// C ---  B IS A BANDED MATRIX, JACOBIAN A BANDED MATRIX
 			if (STAGE1)
 			{
@@ -3650,10 +3650,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			this._solb.Run(N, LDE, E, offset_e, MLE.v, MUE.v, ref AK, offset_ak
 										 , IP, offset_ip);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL5:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL5:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX
 			if (STAGE1)
 			{
@@ -3669,10 +3669,10 @@ namespace Altaxo.Calc.Ode.Radau5
 			}
 			this._sol.Run(N, LDE, E, offset_e, ref AK, offset_ak, IP, offset_ip);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL15:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL15:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A FULL MATRIX, SECOND ORDER
 			if (STAGE1)
 			{
@@ -3692,10 +3692,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				}
 			}
 			goto LABEL48;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL6:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL6:;
 			// C ---  B IS A FULL MATRIX, JACOBIAN A BANDED MATRIX
 			// C ---  THIS OPTION IS NOT PROVIDED
 			if (STAGE1)
@@ -3713,10 +3713,10 @@ namespace Altaxo.Calc.Ode.Radau5
 											 , IP, offset_ip);
 			}
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL55:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL55:;
 			return;
 
 			#endregion Body
@@ -3859,17 +3859,17 @@ namespace Altaxo.Calc.Ode.Radau5
 				case 14: goto LABEL12;
 				case 15: goto LABEL11;
 			}
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL1:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL1:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX
 			this._sol.Run(N, LDE, E, offset_e, ref DEL, offset_del, IP, offset_ip);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL11:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL11:;
 			// C ---  B=IDENTITY, JACOBIAN A FULL MATRIX, SECOND ORDER
 			MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
@@ -3893,18 +3893,18 @@ namespace Altaxo.Calc.Ode.Radau5
 				DEL[I + o_del] = (DEL[I + o_del] + DEL[M2 + I + o_del]) / FAC1;
 			}
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL2:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL2:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX
 			this._solb.Run(N, LDE, E, offset_e, MLE.v, MUE.v, ref DEL, offset_del
 										 , IP, offset_ip);
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL12:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL12:;
 			// C ---  B=IDENTITY, JACOBIAN A BANDED MATRIX, SECOND ORDER
 			MM = M1 / M2;
 			for (J = 1; J <= M2; J++)
@@ -3929,10 +3929,10 @@ namespace Altaxo.Calc.Ode.Radau5
 				DEL[I + o_del] = (DEL[I + o_del] + DEL[M2 + I + o_del]) / FAC1;
 			}
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL7:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL7:;
 			// C ---  HESSENBERG OPTION
 			for (MMM = N - 2; MMM >= 1; MMM += -1)
 			{
@@ -3943,7 +3943,7 @@ namespace Altaxo.Calc.Ode.Radau5
 				ZSAFE = DEL[MP + o_del];
 				DEL[MP + o_del] = DEL[I + o_del];
 				DEL[I + o_del] = ZSAFE;
-			LABEL110:;
+				LABEL110:;
 				FJAC_MP1 = MP1 * LDJAC + o_fjac;
 				for (I = MP + 1; I <= N; I++)
 				{
@@ -3965,13 +3965,13 @@ namespace Altaxo.Calc.Ode.Radau5
 				ZSAFE = DEL[MP + o_del];
 				DEL[MP + o_del] = DEL[I + o_del];
 				DEL[I + o_del] = ZSAFE;
-			LABEL240:;
+				LABEL240:;
 			}
 			return;
-		// C
-		// C -----------------------------------------------------------
-		// C
-		LABEL55:;
+			// C
+			// C -----------------------------------------------------------
+			// C
+			LABEL55:;
 			return;
 
 			#endregion Body

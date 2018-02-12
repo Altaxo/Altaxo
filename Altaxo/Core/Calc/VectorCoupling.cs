@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -257,7 +257,7 @@ namespace Altaxo.Calc
 			throw new ArgumentException("l1min greater than l1max.");
 
 			//  This is reached in case that l1 can take only one value,
-		//  i.e. l1min = l1max
+			//  i.e. l1min = l1max
 
 			L10:
 			// lscale = 0
@@ -265,7 +265,7 @@ namespace Altaxo.Calc
 			return;
 
 			//  This is reached in case that l1 takes more than one value,
-		//  i.e. l1min < l1max.
+			//  i.e. l1min < l1max.
 
 			L20:
 			// lscale = 0
@@ -288,7 +288,7 @@ namespace Altaxo.Calc
 
 			lstep = 1;
 
-		L30:
+			L30:
 			++lstep;
 			l1 += one;
 
@@ -310,7 +310,7 @@ namespace Altaxo.Calc
 			L40:
 			c1 = -(l1 + l1 - one) * l1 * (m3 - m2) / newfac;
 
-		L50:
+			L50:
 			if (lstep > 2) goto L60;
 
 			//  if l1 = l1min + 1, the third term in the recursion equation vanishes,
@@ -321,7 +321,7 @@ namespace Altaxo.Calc
 			if (lstep == nfin) goto L220;
 			goto L30;
 
-		L60:
+			L60:
 			c2 = -l1 * oldfac / denom;
 
 			//  Recursion to the next 3j coefficient X
@@ -351,16 +351,16 @@ namespace Altaxo.Calc
 			x /= srhuge;
 
 			//  As long as abs(c1) is decreasing, the recursion proceeds towards
-		//  increasing 3j values and, hence, is numerically stable.  once
-		//  an increase of abs(c1) is detected, the recursion direction is
-		//  reversed.
+			//  increasing 3j values and, hence, is numerically stable.  once
+			//  an increase of abs(c1) is detected, the recursion direction is
+			//  reversed.
 
 			L80:
 			if (c1old - Math.Abs(c1) <= 0.0) goto L100;
 			else goto L30;
 
 			//  Keep three 3j coefficients around lmatch for comparison with
-		//  backward recursion.
+			//  backward recursion.
 
 			L100:
 			// lmatch = l1 - 1
@@ -382,7 +382,7 @@ namespace Altaxo.Calc
 
 			l1 += two;
 			lstep = 1;
-		L110:
+			L110:
 			++lstep;
 			l1 -= one;
 
@@ -405,7 +405,7 @@ namespace Altaxo.Calc
 			sum2 += tiny * (l1 + l1 - three) * c1 * c1;
 			goto L110;
 
-		L120:
+			L120:
 			c2 = -(l1 - one) * oldfac / denom;
 
 			//  Recursion to the next 3j coefficient y
@@ -439,7 +439,7 @@ namespace Altaxo.Calc
 			goto L110;
 
 			// The forward recursion 3j coefficients x1, x2, x3 are to be matched
-		// with the corresponding backward recursion values y1, y2, y3.
+			// with the corresponding backward recursion values y1, y2, y3.
 
 			L200:
 			y3 = y;
@@ -459,7 +459,7 @@ namespace Altaxo.Calc
 			sumuni = ratio * ratio * sumfor + sumbac;
 			goto L230;
 
-		L211:
+			L211:
 			++nlim;
 			ratio = one / ratio;
 			for (n = nlim; n <= nfin; ++n)
@@ -467,7 +467,7 @@ namespace Altaxo.Calc
 			sumuni = sumfor + ratio * ratio * sumbac;
 			goto L230;
 
-		L220:
+			L220:
 			sumuni = sum1;
 
 			//  Normalize 3j coefficients
@@ -488,7 +488,7 @@ namespace Altaxo.Calc
 
 			return;
 
-		L250:
+			L250:
 			thresh = tiny / Math.Abs(cnorm);
 			for (n = 0; n < nfin; ++n)
 			{
@@ -677,13 +677,13 @@ namespace Altaxo.Calc
 			throw new ArgumentException("m2min greater than m2max.");
 
 			// This is reached in case that m2 and m3 can take only one value.
-		L10:
+			L10:
 			// mscale = 0
 			thrcof[0] = (odd((int)(Math.Abs(l2 - l3 - m1) + eps)) ? -one : one) / Math.Sqrt(l1 + l2 + l3 + one);
 			return;
 
 			// This is reached in case that M1 and M2 take more than one value.
-		L20:
+			L20:
 			// mscale = 0
 			nfin = (int)(m2max - m2min + one + eps);
 			if (ndim - nfin >= 0) goto L23;
@@ -703,7 +703,7 @@ namespace Altaxo.Calc
 			sum1 = tiny;
 
 			lstep = 1;
-		L30:
+			L30:
 			++lstep;
 			m2 += one;
 			m3 = -m1 - m2;
@@ -731,7 +731,7 @@ namespace Altaxo.Calc
 			if (lstep == nfin) goto L220;
 			goto L30;
 
-		L60:
+			L60:
 			c2 = -oldfac / newfac;
 
 			// Recursion to the next 3j coefficient
@@ -760,15 +760,15 @@ namespace Altaxo.Calc
 			x /= srhuge;
 
 			// As long as abs(c1) is decreasing, the recursion proceeds towards
-		// increasing 3j values and, hence, is numerically stable.  Once
-		// an increase of abs(c1) is detected, the recursion direction is
-		// reversed.
+			// increasing 3j values and, hence, is numerically stable.  Once
+			// an increase of abs(c1) is detected, the recursion direction is
+			// reversed.
 
 			L80:
 			if (c1old - Math.Abs(c1) > 0.0) goto L30;
 
 			//  Keep three 3j coefficients around mmatch for comparison later
-		//  with backward recursion values.
+			//  with backward recursion values.
 
 			L100:
 			// mmatch = m2 - 1
@@ -789,7 +789,7 @@ namespace Altaxo.Calc
 
 			m2 = m2max + two;
 			lstep = 1;
-		L110:
+			L110:
 			++lstep;
 			m2 -= one;
 			m3 = -m1 - m2;
@@ -810,7 +810,7 @@ namespace Altaxo.Calc
 			sum2 += y * y;
 			goto L110;
 
-		L120:
+			L120:
 			c2 = -oldfac / newfac;
 
 			// Recursion to the next 3j coefficient
@@ -844,7 +844,7 @@ namespace Altaxo.Calc
 			goto L110;
 
 			//  The forward recursion 3j coefficients x1, x2, x3 are to be matched
-		//  with the corresponding backward recursion values y1, y2, y3.
+			//  with the corresponding backward recursion values y1, y2, y3.
 
 			L200:
 			y3 = y;
@@ -863,7 +863,7 @@ namespace Altaxo.Calc
 			sumuni = ratio * ratio * sumfor + sumbac;
 			goto L230;
 
-		L211:
+			L211:
 			++nlim;
 			ratio = one / ratio;
 			for (n = nlim; n <= nfin; ++n)
@@ -871,7 +871,7 @@ namespace Altaxo.Calc
 			sumuni = sumfor + ratio * ratio * sumbac;
 			goto L230;
 
-		L220:
+			L220:
 			sumuni = sum1;
 
 			// Normalize 3j coefficients
@@ -886,17 +886,17 @@ namespace Altaxo.Calc
 			if (sign1 * sign2 <= 0.0) goto L235;
 			else goto L236;
 
-		L235:
+			L235:
 			cnorm = -cnorm;
 
-		L236:
+			L236:
 			if (Math.Abs(cnorm) < one) goto L250;
 
 			for (n = 0; n < nfin; ++n)
 				thrcof[n] = cnorm * thrcof[n];
 			return;
 
-		L250:
+			L250:
 			thresh = tiny / Math.Abs(cnorm);
 			for (n = 0; n < nfin; ++n)
 			{
@@ -1117,7 +1117,7 @@ namespace Altaxo.Calc
 			sum1 = (l1 + l1 + one) * tiny;
 
 			lstep = 1;
-		L30:
+			L30:
 			++lstep;
 			l1 += one;
 
@@ -1138,7 +1138,7 @@ namespace Altaxo.Calc
 			if (lstep - 2 <= 0) goto L32;
 			c1old = Math.Abs(c1);
 
-		L32:
+			L32:
 			c1 = -(l1 + l1 - one) * dv / denom;
 			goto L50;
 
@@ -1147,7 +1147,7 @@ namespace Altaxo.Calc
 			L40:
 			c1 = -two * (l2 * (l2 + one) + l5 * (l5 + one) - l4 * (l4 + one)) / newfac;
 
-		L50:
+			L50:
 			if (lstep > 2) goto L60;
 
 			// If l1 = l1min + 1, the third term in recursion equation vanishes
@@ -1159,7 +1159,7 @@ namespace Altaxo.Calc
 			if (lstep == nfin) goto L220;
 			goto L30;
 
-		L60:
+			L60:
 			c2 = -l1 * oldfac / denom;
 
 			// Recursion to the next 6j coefficient x
@@ -1190,9 +1190,9 @@ namespace Altaxo.Calc
 			x /= srhuge;
 
 			// As long as the coefficient abs(c1) is decreasing, the recursion
-		// proceeds towards increasing 6j values and, hence, is numerically
-		// stable.  Once an increase of abs(c1) is detected, the recursion
-		// direction is reversed.
+			// proceeds towards increasing 6j values and, hence, is numerically
+			// stable.  Once an increase of abs(c1) is detected, the recursion
+			// direction is reversed.
 
 			L80:
 			if (c1old - Math.Abs(c1) <= 0.0)
@@ -1201,7 +1201,7 @@ namespace Altaxo.Calc
 				goto L30;
 
 			// Keep three 6j coefficients around lmatch for comparison later
-		// with backward recursion.
+			// with backward recursion.
 
 			L100:
 			// lmatch = l1 - 1
@@ -1224,7 +1224,7 @@ namespace Altaxo.Calc
 
 			l1 += two;
 			lstep = 1;
-		L110:
+			L110:
 			++lstep;
 			l1 -= one;
 
@@ -1251,7 +1251,7 @@ namespace Altaxo.Calc
 			sum2 += (l1 + l1 - three) * c1 * c1 * tiny;
 			goto L110;
 
-		L120:
+			L120:
 			c2 = -(l1 - one) * oldfac / denom;
 
 			// Recursion to the next 6j coefficient y
@@ -1284,7 +1284,7 @@ namespace Altaxo.Calc
 			goto L110;
 
 			// The forward recursion 6j coefficients x1, x2, x3 are to be matched
-		// with the corresponding backward recursion values y1, y2, y3.
+			// with the corresponding backward recursion values y1, y2, y3.
 
 			L200:
 			y3 = y;
@@ -1304,7 +1304,7 @@ namespace Altaxo.Calc
 			sumuni = ratio * ratio * sumfor + sumbac;
 			goto L230;
 
-		L211:
+			L211:
 			++nlim;
 			ratio = one / ratio;
 			for (n = nlim; n <= nfin; ++n)
@@ -1312,7 +1312,7 @@ namespace Altaxo.Calc
 			sumuni = sumfor + ratio * ratio * sumbac;
 			goto L230;
 
-		L220:
+			L220:
 			sumuni = sum1;
 
 			// Normalize 6j coefficients
@@ -1327,17 +1327,17 @@ namespace Altaxo.Calc
 			if (sign1 * sign2 <= 0.0) goto L235;
 			else goto L236;
 
-		L235:
+			L235:
 			cnorm = -cnorm;
 
-		L236:
+			L236:
 			if (Math.Abs(cnorm) < one) goto L250;
 
 			for (n = 0; n < nfin; ++n)
 				sixcof[n] = cnorm * sixcof[n];
 			return;
 
-		L250:
+			L250:
 			thresh = tiny / Math.Abs(cnorm);
 			for (n = 0; n < nfin; ++n)
 			{

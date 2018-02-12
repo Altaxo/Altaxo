@@ -160,7 +160,7 @@ namespace Altaxo.Calc.RootFinding
 					pi[i] *= bnd;
 				}
 			}
-		search:
+			search:
 
 			if ((nn <= 1))
 			{
@@ -442,7 +442,7 @@ namespace Altaxo.Calc.RootFinding
 				}
 
 				omp = mp;
-			_20:
+				_20:
 
 				// Calculate next iterate
 				calct(ref bol);

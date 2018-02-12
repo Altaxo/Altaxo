@@ -253,7 +253,7 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// Resumes changed events, either with taking the accumulated event data into account (see <see cref="M:Resume(ISuspendToken)"/>) or discarding the accumulated event data (see <see cref="ResumeSilently"/>,
+		/// Resumes changed events, either with taking the accumulated event data into account (see <see cref="Resume(ref ISuspendToken)"/>) or discarding the accumulated event data (see <see cref="ResumeSilently"/>,
 		/// depending on the provided argument <paramref name="eventFiring"/>.
 		/// </summary>
 		/// <param name="suspendToken">The suspend token.</param>

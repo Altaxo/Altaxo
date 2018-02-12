@@ -1,4 +1,4 @@
-// ZipHelperStream.cs
+﻿// ZipHelperStream.cs
 //
 // Copyright 2006, 2007 John Reilly
 //
@@ -256,7 +256,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				{
 					patchData.CrcPatchOffset = stream_.Position;
 				}
-				WriteLEInt(0);	// Crc
+				WriteLEInt(0);  // Crc
 
 				if (patchData != null)
 				{
@@ -271,8 +271,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 				}
 				else
 				{
-					WriteLEInt(0);	// Compressed size
-					WriteLEInt(0);	// Uncompressed size
+					WriteLEInt(0);  // Compressed size
+					WriteLEInt(0);  // Uncompressed size
 				}
 			}
 
@@ -386,7 +386,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			WriteLELong(noOfEntries);       // Total No of entries in central directory
 			WriteLELong(sizeEntries);       // Size of the central directory
 			WriteLELong(centralDirOffset);  // offset of start of central directory
-			// zip64 extensible data sector not catered for here (variable size)
+																			// zip64 extensible data sector not catered for here (variable size)
 
 			// Write the Zip64 end of central directory locator
 			WriteLEInt(ZipConstants.Zip64CentralDirLocatorSignature);

@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -674,7 +674,7 @@ namespace Altaxo.Calc.Integration
 					break;
 				}
 
-			skip_extrapolation:
+				skip_extrapolation:
 
 				workspace.reset_nrmax();
 				extrapolate = false;
@@ -731,12 +731,12 @@ namespace Altaxo.Calc.Integration
 
 			goto return_error;
 
-		compute_result:
+			compute_result:
 
 			result = workspace.sum_results();
 			abserr = errsum;
 
-		return_error:
+			return_error:
 
 			if (error_type > 2)
 				error_type--;

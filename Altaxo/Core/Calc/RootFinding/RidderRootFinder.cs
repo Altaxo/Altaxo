@@ -46,7 +46,7 @@ namespace Altaxo.Calc.RootFinding
 		{
 			// Vérifications d'usage
 			if (_xMin >= _xMax)
-				throw new RootFinderException(MessageRangeArgumentInvalid, 0, new Range(_xMin, _xMax), 0.0);						// Mauvaise plage de recherche
+				throw new RootFinderException(MessageRangeArgumentInvalid, 0, new Range(_xMin, _xMax), 0.0);            // Mauvaise plage de recherche
 
 			double ans = -1.11e30;
 			double fm, fnew, s;
@@ -100,14 +100,14 @@ namespace Altaxo.Calc.RootFinding
 					if (Math.Abs(xh - xl) <= _accuracy)
 						return (ans);
 				}
-				throw new RootFinderException(MessageAccuracyNotReached, iiter, new Range(_xMin, _xMax), Math.Abs(xh - xl));									// nombre d'itérations autorisé dépassé
+				throw new RootFinderException(MessageAccuracyNotReached, iiter, new Range(_xMin, _xMax), Math.Abs(xh - xl));                  // nombre d'itérations autorisé dépassé
 			}
 			else
 			{
 				if (fl == 0.0) return (_xMin);
 				if (fh == 0.0) return (_xMax);
 			}
-			throw new RootFinderException(MessageAccuracyNotReached, iiter, new Range(_xMin, _xMax), Math.Abs(xh - xl));									// nombre d'itérations autorisé dépassé
+			throw new RootFinderException(MessageAccuracyNotReached, iiter, new Range(_xMin, _xMax), Math.Abs(xh - xl));                  // nombre d'itérations autorisé dépassé
 		}
 	}
 }

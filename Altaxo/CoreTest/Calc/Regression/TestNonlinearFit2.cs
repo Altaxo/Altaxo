@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -80,7 +80,7 @@ namespace AltaxoTest.Calc.Regression
 				new Altaxo.Calc.Regression.NonLinearFit2.FitFunction(ros),
 				new Altaxo.Calc.Regression.NonLinearFit2.JacobianFunction(jacros),
 				p, x, null, 1000, opts, info, ref tempstorage, null, null); // with analytic jacobian
-			//ret=dlevmar_dif(modros, p, x, m, n, 1000, opts, info, NULL, NULL, NULL);  // no jacobian
+																																		//ret=dlevmar_dif(modros, p, x, m, n, 1000, opts, info, NULL, NULL, NULL);  // no jacobian
 			Assert.AreEqual(1, p[0], 0.1);
 			Assert.AreEqual(1, p[1], 0.12);
 		}
@@ -163,7 +163,7 @@ namespace AltaxoTest.Calc.Regression
 				new Altaxo.Calc.Regression.NonLinearFit2.FitFunction(poly),
 				new Altaxo.Calc.Regression.NonLinearFit2.JacobianFunction(jacpoly),
 				p, x, null, 1000, opts, info, ref tempstorage, covar, null); // with analytic jacobian
-			//ret=dlevmar_dif(modros, p, x, m, n, 1000, opts, info, NULL, NULL, NULL);  // no jacobian
+																																		 //ret=dlevmar_dif(modros, p, x, m, n, 1000, opts, info, NULL, NULL, NULL);  // no jacobian
 
 			Assert.AreEqual(0.11111111, p[0], 0.001);
 			Assert.AreEqual(1, p[1], 0.001);
@@ -203,7 +203,7 @@ namespace AltaxoTest.Calc.Regression
 			int ret = Altaxo.Calc.Regression.NonLinearFit2.LEVMAR_DIF(
 				new Altaxo.Calc.Regression.NonLinearFit2.FitFunction(poly),
 				p, x, 1000, opts, info, ref tempstorage, covar, null); // with analytic jacobian
-			//ret=dlevmar_dif(modros, p, x, m, n, 1000, opts, info, NULL, NULL, NULL);  // no jacobian
+																															 //ret=dlevmar_dif(modros, p, x, m, n, 1000, opts, info, NULL, NULL, NULL);  // no jacobian
 
 			Assert.AreEqual(0.11111111, p[0], 0.001);
 			Assert.AreEqual(1, p[1], 0.001);

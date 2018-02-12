@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -66,7 +66,6 @@ namespace Altaxo.Main
 			get
 			{
 				yield return ".axoprj";
-				
 			}
 		}
 
@@ -664,10 +663,8 @@ namespace Altaxo.Main
 
 		private void RemoveWorksheet_Unsynchronized(Altaxo.Gui.Worksheet.Viewing.IWorksheetController ctrl)
 		{
-            if(ctrl is IViewContent content)
-            Current.Workbench.CloseContent(content);
-
-           
+			if (ctrl is IViewContent content)
+				Current.Workbench.CloseContent(content);
 		}
 
 		#endregion Worksheet functions
@@ -842,9 +839,8 @@ namespace Altaxo.Main
 
 		private void RemoveGraph_Unsynchronized(IGraphController ctrl)
 		{
-            if(ctrl is IViewContent content)
-            Current.Workbench.CloseContent(content);
-            
+			if (ctrl is IViewContent content)
+				Current.Workbench.CloseContent(content);
 		}
 
 		#endregion Graph functions

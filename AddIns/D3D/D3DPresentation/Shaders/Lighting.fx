@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////
+﻿/////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2016 Dr. Dirk Lellinger
 //
@@ -175,7 +175,7 @@ float4 CalcLighting(float3 position, float3 normal, float4 diffuseColor)
 	float3 finalColor = lerp(HemisphericLightColorBelow, HemisphericLightColorAbove, r);
 
 	// Calculate the final color value
-	float4 pixelIntensity = NDotL*(MaterialDiffuseIntensity + MaterialMetalnessValue * SpecValue * Attn);
+	float4 pixelIntensity = NDotL * (MaterialDiffuseIntensity + MaterialMetalnessValue * SpecValue * Attn);
 	finalColor += float3(dot(LightColorR, pixelIntensity), dot(LightColorG, pixelIntensity), dot(LightColorB, pixelIntensity));
 	finalColor *= diffuseColor;
 

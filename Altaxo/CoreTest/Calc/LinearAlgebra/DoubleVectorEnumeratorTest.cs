@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -29,49 +29,49 @@ using System.Collections;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
-  [TestFixture]
-  public class DoubleVectorEnumeratorTest
-  {
-    private const double TOLERENCE = 0.001;
+	[TestFixture]
+	public class DoubleVectorEnumeratorTest
+	{
+		private const double TOLERENCE = 0.001;
 
-    //Test Current Method
-    [Test]
-    public void Current()
-    {
-      DoubleVector test = new DoubleVector(new double[2] { 1, 2 });
-      IEnumerator enumerator = test.GetEnumerator();
-      bool movenextresult;
+		//Test Current Method
+		[Test]
+		public void Current()
+		{
+			DoubleVector test = new DoubleVector(new double[2] { 1, 2 });
+			IEnumerator enumerator = test.GetEnumerator();
+			bool movenextresult;
 
-      movenextresult = enumerator.MoveNext();
-      Assert.IsTrue(movenextresult);
-      Assert.AreEqual(enumerator.Current, test[0]);
+			movenextresult = enumerator.MoveNext();
+			Assert.IsTrue(movenextresult);
+			Assert.AreEqual(enumerator.Current, test[0]);
 
-      movenextresult = enumerator.MoveNext();
-      Assert.IsTrue(movenextresult);
-      Assert.AreEqual(enumerator.Current, test[1]);
+			movenextresult = enumerator.MoveNext();
+			Assert.IsTrue(movenextresult);
+			Assert.AreEqual(enumerator.Current, test[1]);
 
-      movenextresult = enumerator.MoveNext();
-      Assert.IsFalse(movenextresult);
-    }
+			movenextresult = enumerator.MoveNext();
+			Assert.IsFalse(movenextresult);
+		}
 
-    //Test foreach
-    [Test]
-    public void ForEach()
-    {
-      DoubleVector test = new DoubleVector(new double[2] { 1, 2 });
-      foreach (double f in test)
-        Assert.IsTrue(test.Contains(f));
-    }
+		//Test foreach
+		[Test]
+		public void ForEach()
+		{
+			DoubleVector test = new DoubleVector(new double[2] { 1, 2 });
+			foreach (double f in test)
+				Assert.IsTrue(test.Contains(f));
+		}
 
-    //Test Current Exception with index>length
-    [Test]
-    public void CurrentException2()
-    {
-      DoubleVector test = new DoubleVector(new double[2] { 1, 2 });
-      IEnumerator enumerator = test.GetEnumerator();
-      Assert.IsTrue(enumerator.MoveNext());
-      Assert.IsTrue(enumerator.MoveNext());
-      Assert.IsFalse(enumerator.MoveNext());
-    }
-  }
+		//Test Current Exception with index>length
+		[Test]
+		public void CurrentException2()
+		{
+			DoubleVector test = new DoubleVector(new double[2] { 1, 2 });
+			IEnumerator enumerator = test.GetEnumerator();
+			Assert.IsTrue(enumerator.MoveNext());
+			Assert.IsTrue(enumerator.MoveNext());
+			Assert.IsFalse(enumerator.MoveNext());
+		}
+	}
 }
