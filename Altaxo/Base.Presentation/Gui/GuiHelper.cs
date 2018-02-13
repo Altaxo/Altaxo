@@ -143,6 +143,38 @@ namespace Altaxo.Gui
 		#region Image Conversion Wpf <==> Gdi
 
 		/// <summary>
+		/// Converts a Wpf <see cref="System.Windows.Media.Imaging.BitmapSource"/> to a Gdi <see cref="System.Drawing.Bitmap"/>.
+		/// Note that this works only with 32 bits BRGA bitmaps.
+		/// </summary>
+		/// <param name="wpfBitmapSource">The Wpf bitmap source.</param>
+		/// <returns>The Gdi bitmap.</returns>
+		public static System.Drawing.Bitmap ToGdi(System.Windows.Media.Imaging.BitmapSource wpfBitmapSource)
+		{
+			if (null == wpfBitmapSource)
+				throw new ArgumentNullException(nameof(wpfBitmapSource));
+
+			var gdiBitmap = new System.Drawing.Bitmap(
+				wpfBitmapSource.PixelWidth,
+				wpfBitmapSource.PixelHeight,
+				System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+
+			var bitmapData = gdiBitmap.LockBits(
+				new System.Drawing.Rectangle(System.Drawing.Point.Empty, gdiBitmap.Size),
+				System.Drawing.Imaging.ImageLockMode.WriteOnly,
+				System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+
+			wpfBitmapSource.CopyPixels(
+				Int32Rect.Empty,
+				bitmapData.Scan0,
+				bitmapData.Height * bitmapData.Stride,
+				bitmapData.Stride);
+
+			gdiBitmap.UnlockBits(bitmapData);
+
+			return gdiBitmap;
+		}
+
+		/// <summary>
 		/// Converts a Gdi <see cref="System.Drawing.Image"/> into a Wpf <see cref="System.Windows.Media.Imaging.BitmapSource"/>.
 		/// For this, the Gdi image is converted into a Gdi bitmap, and then converted to a Wpf BitmapSource.
 		/// </summary>
