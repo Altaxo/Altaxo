@@ -140,6 +140,70 @@ namespace Altaxo.Gui
 
 		#endregion Image Proxy converters
 
+		#region Image Conversion Wpf <==> Gdi
+
+		/// <summary>
+		/// Converts a Gdi <see cref="System.Drawing.Image"/> into a Wpf <see cref="System.Windows.Media.Imaging.BitmapSource"/>.
+		/// For this, the Gdi image is converted into a Gdi bitmap, and then converted to a Wpf BitmapSource.
+		/// </summary>
+		/// <param name="gdiImage">The Gdi image to convert.</param>
+		/// <returns>A Wpf <see cref="System.Windows.Media.Imaging.BitmapSource"/>.</returns>
+		public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource(this System.Drawing.Image gdiImage)
+		{
+			if (null == gdiImage)
+				throw new ArgumentNullException(nameof(gdiImage));
+
+			System.Windows.Media.Imaging.BitmapSource wpfBitmapSource = null;
+
+			using (var gdiBitmap = new System.Drawing.Bitmap(gdiImage))
+			{
+				wpfBitmapSource = gdiBitmap.ToBitmapSource();
+			}
+			return wpfBitmapSource;
+		}
+
+		/// <summary>
+		/// Converts a <see cref="System.Drawing.Bitmap"/> into a WPF <see cref="System.Windows.Media.Imaging.BitmapSource"/>.
+		/// </summary>
+		/// <remarks>Uses GDI to do the conversion. Hence the call to the marshalled DeleteObject.
+		/// </remarks>
+		/// <param name="gdiBitmap">The source bitmap.</param>
+		/// <returns>A Wpf <see cref="System.Windows.Media.Imaging.BitmapSource"/>.</returns>
+		public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource(this System.Drawing.Bitmap gdiBitmap)
+		{
+			if (null == gdiBitmap)
+				throw new ArgumentNullException(nameof(gdiBitmap));
+
+			System.Windows.Media.Imaging.BitmapSource wpfBitmapSource = null;
+
+			var hBitmap = gdiBitmap.GetHbitmap();
+
+			try
+			{
+				wpfBitmapSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+						hBitmap,
+						IntPtr.Zero,
+						Int32Rect.Empty,
+						System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+			}
+			catch (Win32Exception)
+			{
+				wpfBitmapSource = null;
+			}
+			finally
+			{
+				DeleteObject(hBitmap);
+			}
+
+			return wpfBitmapSource;
+		}
+
+		[System.Runtime.InteropServices.DllImport("gdi32.dll")]
+		[return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+		private static extern bool DeleteObject(IntPtr hObject);
+
+		#endregion Image Conversion Wpf <==> Gdi
+
 		#region Drag-Drop
 
 		public static DragDropEffects ConvertCopyMoveToDragDropEffect(bool copy, bool move)
