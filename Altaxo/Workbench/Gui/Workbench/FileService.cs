@@ -402,7 +402,7 @@ namespace Altaxo.Gui.Workbench
 
 			displayBindingService.AttachSubWindows(newContent, false);
 
-			Altaxo.Current.GetRequiredService<IWorkbench>().ShowView(newContent);
+			Altaxo.Current.GetRequiredService<IWorkbench>().ShowView(newContent, true);
 			return newContent;
 		}
 

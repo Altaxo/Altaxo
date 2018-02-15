@@ -25,6 +25,27 @@ namespace Altaxo.Gui.Workbench
 		private void EhLoaded(object sender, RoutedEventArgs e)
 		{
 			System.Windows.Input.CommandManager.RequerySuggested += EhCommandManager_RequerySuggested;
+
+			// set a timer with low priority that is called __after__ all bindings have been processed.
+			DispatcherTimer dispatcherTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(1), DispatcherPriority.Background, EhAfterLoaded, this.Dispatcher);
+		}
+
+		/// <summary>
+		/// Is called after this workbench is loaded and all bindings (this is important!) have been processed.
+		/// We use this to fix a problem when an project is loaded during startup, but
+		/// ActiveViewContent and ActiveContent is still null. The fixup determines the selected document and
+		/// sets the two properties accordingly.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+		private void EhAfterLoaded(object sender, EventArgs e)
+		{
+			((DispatcherTimer)sender).Stop();
+
+			if (this.DataContext is AltaxoWorkbench wb)
+			{
+				wb.FixViewContentIsNullWhenThereAreDocumentsAvailable();
+			}
 		}
 
 		protected override void OnStateChanged(EventArgs e)

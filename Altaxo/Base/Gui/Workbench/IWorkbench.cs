@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -93,7 +93,8 @@ namespace Altaxo.Gui.Workbench
 		/// requires an object of type IViewContent;
 		/// </summary>
 		/// <param name="content">The view content that should be shown.</param>
-		void ShowView(object content);
+		/// <param name="selectView">If true, the workbench will switch to the view.</param>
+		void ShowView(object content, bool selectView);
 
 		/// <summary>
 		/// Shows the provided pad content in the pad area.

@@ -134,13 +134,17 @@ namespace Altaxo.Main
 			}
 
 			// second, we save all workbench windows into the Workbench/Views
+			var selectedViewsMemento = new Altaxo.Gui.Workbench.ViewStatesMemento();
 			int i = 0;
 			foreach (IViewContent ctrl in Current.Workbench.ViewContentCollection)
 			{
 				if (info.IsSerializable(ctrl.ModelObject))
 				{
 					i++;
-					var zipEntry = zippedStream.CreateEntry("Workbench/Views/View" + i.ToString() + ".xml", 0);
+					var entryName = "Workbench/Views/View" + i.ToString() + ".xml";
+					if (ctrl.IsSelected)
+						selectedViewsMemento.SelectedView_EntryName = entryName;
+					var zipEntry = zippedStream.CreateEntry(entryName, 0);
 					try
 					{
 						using (var zipEntryStream = zipEntry.Open())
@@ -154,6 +158,24 @@ namespace Altaxo.Main
 					{
 						errorText.Append(exc.ToString());
 					}
+				}
+			}
+
+			{
+				// Save the states of the views
+				var zipEntry = zippedStream.CreateEntry("Workbench/ViewStates.xml", 0);
+				try
+				{
+					using (var zipEntryStream = zipEntry.Open())
+					{
+						info.BeginWriting(zipEntryStream);
+						info.AddValue("ViewStates", selectedViewsMemento);
+						info.EndWriting();
+					}
+				}
+				catch (Exception exc)
+				{
+					errorText.Append(exc.ToString());
 				}
 			}
 
@@ -262,8 +284,9 @@ namespace Altaxo.Main
 		/// <param name="restoredDoc">The previously (also from the zip file!) restored Altaxo document.</param>
 		public void RestoreWindowStateFromZippedFile(ZipArchive zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc)
 		{
-			var restoredDocModels = new List<object>();
+			var restoredDocModels = new List<(object Document, string ZipEntryName)>();
 			var restoredPadModels = new List<object>();
+			Altaxo.Gui.Workbench.ViewStatesMemento selectedViewsMemento = null;
 
 			foreach (var zipEntry in zipFile.Entries)
 			{
@@ -273,7 +296,7 @@ namespace Altaxo.Main
 					{
 						info.BeginReading(zipinpstream);
 						object readedobject = info.GetValue("ViewContentModel", null);
-						restoredDocModels.Add(readedobject);
+						restoredDocModels.Add((readedobject, zipEntry.FullName));
 						info.EndReading();
 					}
 				}
@@ -293,6 +316,15 @@ namespace Altaxo.Main
 						info.EndReading();
 					}
 				}
+				else if (zipEntry.FullName == "Workbench/ViewStates.xml")
+				{
+					using (var zipinpstream = zipEntry.Open())
+					{
+						info.BeginReading(zipinpstream);
+						selectedViewsMemento = info.GetValue("ViewStates", null) as Altaxo.Gui.Workbench.ViewStatesMemento;
+						info.EndReading();
+					}
+				}
 			}
 
 			info.AnnounceDeserializationEnd(restoredDoc, false);
@@ -300,9 +332,10 @@ namespace Altaxo.Main
 
 			// now give all restored controllers a view and show them in the Main view
 
-			foreach (object o in restoredDocModels)
+			foreach ((object doc, string entryName) in restoredDocModels)
 			{
-				Current.Workbench.ShowView(o);
+				var isSelected = entryName == selectedViewsMemento?.SelectedView_EntryName;
+				Current.Workbench.ShowView(doc, isSelected);
 			}
 
 			foreach (var o in restoredPadModels)
@@ -493,7 +526,7 @@ namespace Altaxo.Main
 			}
 
 			if (null != Current.Workbench)
-				Current.Workbench.ShowView(viewContent);
+				Current.Workbench.ShowView(viewContent, true);
 
 			return controller;
 		}
@@ -585,7 +618,7 @@ namespace Altaxo.Main
 			ctrl.ViewObject = view;
 
 			if (null != Current.Workbench)
-				Current.Workbench.ShowView(ctrl);
+				Current.Workbench.ShowView(ctrl, true);
 
 			return ctrl;
 		}

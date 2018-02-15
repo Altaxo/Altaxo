@@ -265,6 +265,7 @@
     <Compile Include="Gui\SimpleCheckableCommand.cs" />
     <Compile Include="Gui\Workbench\IWorkbenchContent.cs" />
     <Compile Include="Gui\Workbench\StartupSettings.cs" />
+    <Compile Include="Gui\Workbench\ViewStatesMemento.cs" />
     <Compile Include="Gui\Workbench\WorkbenchState.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetControllerWpf.cs" />
     <Compile Include="Main\Services\IInvokableThread.cs" />

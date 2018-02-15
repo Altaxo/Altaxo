@@ -550,7 +550,7 @@ namespace Altaxo.Dom
 
 			if (null != viewcontent)
 			{
-				Current.Workbench.ShowView(viewcontent);
+				Current.Workbench.ShowView(viewcontent, true);
 			}
 		}
 

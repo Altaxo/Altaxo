@@ -592,6 +592,54 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 		}
 
 		/// <summary>
+		/// Fix to handle the case, that when a document is loaded at startup, the Avalon dockmanager
+		/// does not bind properly to the document collection and set the properties <see cref="ActiveContent"/>
+		/// and <see cref="ActiveViewContent"/>. We fix this up by using either the last document of the list or
+		/// the last document that has <see cref="IWorkbenchContent.IsSelected"/> set to true.
+		/// </summary>
+		public void FixViewContentIsNullWhenThereAreDocumentsAvailable()
+		{
+			if (_documentCollection.Count == 0)
+				return;
+
+			if (ActiveViewContent != null)
+			{
+				var storeActiveViewContent = ActiveViewContent;
+				ActiveViewContent = null;
+				ActiveViewContent = storeActiveViewContent;
+				storeActiveViewContent.IsVisible = true;
+				storeActiveViewContent.IsActive = true;
+				storeActiveViewContent.IsSelected = true;
+			}
+			else // ActiveViewContent is null
+			{
+				// do the fix only if the active content or the active view content is null and the document collection contains documents
+
+				// select the last document by default
+				IViewContent selectedDocument = _documentCollection[_documentCollection.Count - 1];
+				for (int i = _documentCollection.Count - 1; i >= 0; --i)
+				{
+					// search for the last selected document in the list
+					if (_documentCollection[i].IsSelected)
+					{
+						selectedDocument = _documentCollection[i];
+						break;
+					}
+				}
+
+				// set IsSelected and IsActive first to false, then to true, in order to force a reevalution
+				// of the ActiveViewContent and ActiveContent properties
+				selectedDocument.IsActive = false;
+				selectedDocument.IsSelected = false;
+
+				selectedDocument.IsActive = true;
+				selectedDocument.IsSelected = true;
+				_activeViewContent = selectedDocument;
+				_activeContent = selectedDocument;
+			}
+		}
+
+		/// <summary>
 		/// Avalon's dock manager does not set ActiveViewContent to null if the last view content is deleted. Therefore,
 		/// we have to watch the view content collection, and if the count is null, then set ActiveViewContent to zero.
 		/// </summary>
@@ -738,26 +786,26 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 			if (content.ViewObject == null)
 				Current.Gui.FindAndAttachControlTo(content);
 
-			content.IsVisible = true;
-
 			if (switchToOpenedView)
 			{
+				ActiveViewContent = content;
+				content.IsVisible = true;
 				content.IsSelected = true;
 				content.IsActive = true;
 			}
 		}
 
-		public void ShowView(object content)
+		public void ShowView(object content, bool selectView)
 		{
 			if (content is IViewContent viewContent)
 			{
-				this.ShowView(viewContent);
+				this.ShowView(viewContent, selectView);
 			}
 			else if (content is IProjectItemPresentationModel)
 			{
 				var ctrl = (IViewContent)Current.Gui.GetController(new object[] { content }, typeof(IViewContent));
 				if (null != ctrl)
-					this.ShowView(ctrl);
+					this.ShowView(ctrl, selectView);
 			}
 		}
 
@@ -811,9 +859,9 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 		private void LoadViewContentMemento(IViewContent viewContent)
 		{
 			/*
-IMementoCapable mementoCapable = viewContent.GetService<IMementoCapable>();
-if (mementoCapable != null && LoadDocumentProperties)
-{
+	IMementoCapable mementoCapable = viewContent.GetService<IMementoCapable>();
+	if (mementoCapable != null && LoadDocumentProperties)
+	{
 	if (viewContent.PrimaryFileName == null)
 		return;
 
@@ -828,8 +876,8 @@ if (mementoCapable != null && LoadDocumentProperties)
 	{
 		MessageService.ShowException(e, "Can't get/set memento");
 	}
-}
-*/
+	}
+	*/
 		}
 
 		#endregion Loading/storing of content mementos
