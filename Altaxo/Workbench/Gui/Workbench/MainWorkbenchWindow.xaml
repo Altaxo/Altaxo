@@ -72,7 +72,6 @@
                                    local:DockingLayoutStringObserver.Observe="True"
                                    local:DockingLayoutStringObserver.DockingLayoutString="{Binding CurrentLayoutConfiguration, Mode=TwoWay}"
                                    AllowDrop="True"
-                                   local:FileDropCommand.DropCommand="{Binding DropCommand}"
                                    Theme="{Binding DockManagerTheme, Mode=OneWay, Converter={StaticResource DockManagerThemeConverter}}"
 
             Grid.Row="1">
