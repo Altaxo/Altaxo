@@ -272,6 +272,15 @@ namespace Altaxo.Main
 		IEnumerable<string> ProjectFileExtensions { get; }
 
 		/// <summary>
+		/// Tests if the provided file name to have an extension that is associated with the extension of a project document
+		/// (a specific part of the project), and if it is, tries to open the document and add it to the current project.
+		/// </summary>
+		/// <param name="fileName">Name of the file.</param>
+		/// <param name="forceTrialRegardlessOfExtension">If true, it is tried to deserialize the object in the file regardless of the file extension.</param>
+		/// <returns>True if the fileName has an extension that is a project document extension, and the document could successfully be opened; otherwise, false.</returns>
+		bool TryOpenProjectDocumentFile(string fileName, bool forceTrialRegardlessOfExtension);
+
+		/// <summary>
 		/// Gets the title that should be shown as the main window title.
 		/// </summary>
 		/// <returns>The title of the main window with respect to the current state.</returns>

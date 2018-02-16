@@ -152,19 +152,44 @@ namespace Altaxo.Gui.Workbench
 
 		private void HandleDrop(string[] files)
 		{
+			var alreadyProcessedFiles = new HashSet<string>();
+
+			// handle project files (hopefully, it is only one), with the highest priority
 			foreach (string file in files)
 			{
-				if (System.IO.File.Exists(file))
+				var fileName = FileName.Create(file);
+				if (!alreadyProcessedFiles.Contains(file) && System.IO.File.Exists(file))
 				{
-					var fileName = FileName.Create(file);
-
 					if (Current.IProjectService.IsProjectFileExtension(System.IO.Path.GetExtension(file)))
 					{
 						Current.IProjectService.OpenProject(file, false);
+						alreadyProcessedFiles.Add(file);
 					}
-					else
+				}
+			}
+
+			// now handle other files that maybe are part of the project
+			foreach (string file in files)
+			{
+				if (!alreadyProcessedFiles.Contains(file) && System.IO.File.Exists(file))
+				{
+					if (Current.IProjectService.TryOpenProjectDocumentFile(file, forceTrialRegardlessOfExtension: false))
 					{
-						Altaxo.Current.GetRequiredService<IFileService>().OpenFile(fileName);
+						alreadyProcessedFiles.Add(file);
+					}
+				}
+			}
+
+			// and finally, we maybe are able to open the file independent of the project
+			foreach (string file in files)
+			{
+				if (!alreadyProcessedFiles.Contains(file) && System.IO.File.Exists(file))
+				{
+					var fileService = Altaxo.Current.GetService<IFileService>();
+					if (null != fileService)
+					{
+						alreadyProcessedFiles.Add(file);
+						fileService.OpenFile(FileName.Create(file));
 					}
 				}
 			}

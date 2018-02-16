@@ -389,6 +389,9 @@ namespace Altaxo.Dom
 		/// <param name="filename">Either the filename of the file which stored the document, or null (e.g. myStream is a MemoryStream).</param>
 		protected abstract string InternalLoadProjectFromStream(System.IO.Stream myStream, string filename);
 
+		/// <inheritdoc/>
+		public abstract bool TryOpenProjectDocumentFile(string fileName, bool forceTrialRegardlessOfExtension);
+
 		#endregion Project opening
 
 		public void CloseDocumentViews(object document)

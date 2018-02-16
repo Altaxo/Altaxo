@@ -357,6 +357,79 @@ namespace Altaxo.Main
 
 		#endregion Project opening
 
+		#region Opening of project document files
+
+		private static readonly HashSet<string> ProjectDocumentExtensions = new HashSet<string>()
+			{
+			".axowks", // Altaxo worksheet
+			".axogrp" // Altaxo graph
+			};
+
+		/// <inheritdoc/>
+		public override bool TryOpenProjectDocumentFile(string fileName, bool forceTrialRegardlessOfExtension)
+		{
+			if (null == fileName)
+				throw new ArgumentNullException(nameof(fileName));
+
+			if (!forceTrialRegardlessOfExtension)
+			{
+				var extension = System.IO.Path.GetExtension(fileName).ToLowerInvariant();
+
+				if (!ProjectDocumentExtensions.Contains(extension))
+					return false;
+			}
+
+			object deserializedObject;
+
+			using (System.IO.Stream myStream = new System.IO.FileStream(fileName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read))
+			{
+				using (var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo())
+				{
+					try
+					{
+						info.BeginReading(myStream);
+						deserializedObject = info.GetValue("Table", null);
+						info.EndReading();
+						myStream.Close();
+					}
+					catch (Exception ex)
+					{
+						return false;
+					}
+
+					if (deserializedObject is IProjectItem projectItem)
+					{
+						Current.Project.AddItemWithThisOrModifiedName(projectItem);
+						info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
+						Current.ProjectService.OpenOrCreateViewContentForDocument(projectItem);
+					}
+					else if (deserializedObject is Altaxo.Worksheet.TablePlusLayout tableAndLayout)
+					{
+						var table = tableAndLayout.Table;
+						Current.Project.AddItemWithThisOrModifiedName(table);
+
+						if (tableAndLayout.Layout != null)
+							Current.Project.TableLayouts.Add(tableAndLayout.Layout);
+
+						tableAndLayout.Layout.DataTable = table; // this is the table for the layout now
+
+						info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
+
+						Current.ProjectService.CreateNewWorksheet(table, tableAndLayout.Layout);
+					}
+					else
+					{
+						return false;
+					}
+
+					info.AnnounceDeserializationEnd(Current.Project, true); // final deserialization end
+					return true;
+				}
+			}
+		}
+
+		#endregion Opening of project document files
+
 		/// <summary>
 		/// Sets the current project instance and file name. No events raised (events should be raised by the caller).
 		/// The old project instance will be disposed of.

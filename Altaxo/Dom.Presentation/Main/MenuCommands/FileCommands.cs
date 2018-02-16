@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -60,58 +60,36 @@ namespace Altaxo.Main.Commands
 
 	public class CreateNewWorksheetOrGraphFromFile : SimpleCommand
 	{
-		public static void OpenWorksheetOrGraph(string filename)
-		{
-			object deserObject;
-
-			using (System.IO.Stream myStream = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read))
-			{
-				using (var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo())
-				{
-					info.BeginReading(myStream);
-					deserObject = info.GetValue("Table", null);
-					info.EndReading();
-					myStream.Close();
-
-					if (deserObject is IProjectItem)
-					{
-						Current.Project.AddItemWithThisOrModifiedName((IProjectItem)deserObject);
-						info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
-						Current.ProjectService.OpenOrCreateViewContentForDocument((IProjectItem)deserObject);
-					}
-					else if (deserObject is Altaxo.Worksheet.TablePlusLayout)
-					{
-						Altaxo.Worksheet.TablePlusLayout tableAndLayout = deserObject as Altaxo.Worksheet.TablePlusLayout;
-						var table = tableAndLayout.Table;
-
-						Current.Project.AddItemWithThisOrModifiedName(table);
-
-						if (tableAndLayout.Layout != null)
-							Current.Project.TableLayouts.Add(tableAndLayout.Layout);
-
-						tableAndLayout.Layout.DataTable = table; // this is the table for the layout now
-
-						info.AnnounceDeserializationEnd(Current.Project, false); // fire the event to resolve path references
-
-						Current.ProjectService.CreateNewWorksheet(table, tableAndLayout.Layout);
-					}
-
-					info.AnnounceDeserializationEnd(Current.Project, true); // final deserialization end
-				}
-			}
-		}
-
 		public override void Execute(object parameter)
 		{
-			var openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
+			var dlg = new OpenFileOptions();
 
-			openFileDialog1.Filter = "Worksheet or graph files (*.axowks;*.axogrp)|*.axowks;*.axogrp|All files (*.*)|*.*";
-			openFileDialog1.FilterIndex = 1;
-			openFileDialog1.RestoreDirectory = true;
+			dlg.AddFilter("*.axowks;*.axogrp", "Worksheet or graph files(*.axowks; *.axogrp");
+			dlg.AddFilter("*.*", "All files (*.*)");
+			dlg.RestoreDirectory = true;
+			dlg.FilterIndex = 0;
+			dlg.Multiselect = true;
 
-			if (true == openFileDialog1.ShowDialog((System.Windows.Window)Current.Workbench.ViewObject))
+			if (Current.Gui.ShowOpenFileDialog(dlg))
 			{
-				OpenWorksheetOrGraph(openFileDialog1.FileName);
+				var failedToOpen = new List<string>();
+				foreach (var fileName in dlg.FileNames)
+				{
+					if (!Current.IProjectService.TryOpenProjectDocumentFile(fileName, forceTrialRegardlessOfExtension: true))
+					{
+						failedToOpen.Add(fileName);
+					}
+				}
+
+				if (failedToOpen.Count > 0)
+				{
+					var stb = new System.Text.StringBuilder();
+					stb.AppendFormat("The following {0} of {1} file(s) could not be opened:\r\n", failedToOpen.Count, dlg.FileNames.Length);
+					foreach (var fileName in failedToOpen)
+						stb.AppendFormat("{0}\r\n", fileName);
+
+					Current.Gui.ErrorMessageBox(stb.ToString(), "Error opening file(s)");
+				}
 			}
 		}
 	}
