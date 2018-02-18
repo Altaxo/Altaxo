@@ -369,5 +369,68 @@ namespace Altaxo.Collections
 			for (int i = upperIndexExclusive - 1; i >= lowerIndexInclusive; --i)
 				yield return list[i];
 		}
+
+		/// <summary>
+		/// Determines whether two enumerations are structural equivalent. They are structurally equivalent if i) both enumerations are null, ii) both enumerations are empty,
+		/// or c) both enumerations have the same number of elements and contain the same elements in the same order.
+		/// Please not that if one enumeration is null and the other is empty, they are not considered equivalent.
+		/// </summary>
+		/// <typeparam name="T">Type of the elements in the enumeration</typeparam>
+		/// <param name="e1">The first enumeration.</param>
+		/// <param name="e2">The second enumeration.</param>
+		/// <returns><c>true</c> if the two enumerations are structural equivalent; otherwise, <c>false</c>.
+		/// </returns>
+		public static bool AreStructurallyEqual<T>(IEnumerable<T> e1, IEnumerable<T> e2) where T : IEquatable<T>
+		{
+			return AreStructurallyEqual(e1, e2, EqualityComparer<T>.Default);
+		}
+
+		/// <summary>
+		/// Determines whether two enumerations are structural equivalent. They are structural equivalent if i) both enumerations are null, ii) both enumerations are empty,
+		/// or c) both enumerations have the same number of elements and contain the same elements in the same order.
+		/// Please not that if one enumeration is null and the other is empty, they are not considered equivalent.
+		/// </summary>
+		/// <typeparam name="T">Type of the elements in the enumeration</typeparam>
+		/// <param name="e1">The first enumeration.</param>
+		/// <param name="e2">The second enumeration.</param>
+		/// <param name="equalityComparer">The equality comparer to compare the elements of the enumeration.</param>
+		/// <returns><c>true</c> if the two enumerations are structural equivalent; otherwise, <c>false</c>.
+		/// </returns>
+		public static bool AreStructurallyEqual<T>(IEnumerable<T> e1, IEnumerable<T> e2, IEqualityComparer<T> equalityComparer)
+		{
+			if (null == e1 && null == e2)
+				return true;
+			if ((null == e1 && null != e2) || (null != e1 && null == e2))
+				return false;
+
+			// both e1 and e2 are != null
+			if (e1 is System.Collections.ICollection c1 && e2 is System.Collections.ICollection c2 && c1.Count != c2.Count)
+				return false;
+
+			using (var it1 = e1.GetEnumerator())
+			{
+				using (var it2 = e2.GetEnumerator())
+				{
+					bool b1, b2;
+					b1 = it1.MoveNext();
+					b2 = it2.MoveNext();
+					if (b1 ^ b2)
+						return false; // one of the enumerations is empty
+					if (!b1 && !b2)
+						return true; // both enumerations empty
+
+					do
+					{
+						if (!equalityComparer.Equals(it1.Current, it2.Current))
+							return false; // one element is different from the other element
+
+						b1 = it1.MoveNext();
+						b2 = it2.MoveNext();
+					} while (b1 && b2);
+
+					return !b1 && !b2; // both enumerations must be at the end in order for both enumerations to be equal
+				}
+			}
+		}
 	}
 }

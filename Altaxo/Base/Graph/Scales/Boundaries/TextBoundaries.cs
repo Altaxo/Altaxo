@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -24,6 +24,7 @@
 
 using Altaxo.Collections;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -32,10 +33,10 @@ namespace Altaxo.Graph.Scales.Boundaries
 	[Serializable]
 	public class TextBoundaries : Main.SuspendableDocumentLeafNodeWithSingleAccumulatedData<BoundariesChangedEventArgs>, IPhysicalBoundaries
 	{
-		private AltaxoSet<string> _itemList;
+		private SetList<string> _itemList;
 
 		[NonSerialized]
-		protected int _savedNumberOfItems;
+		protected string[] _savedItems;
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextBoundaries), 10)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -64,19 +65,13 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 		public TextBoundaries()
 		{
-			_itemList = new AltaxoSet<string>();
+			_itemList = new SetList<string>();
 		}
 
 		public TextBoundaries(TextBoundaries from)
 		{
-			_itemList = new AltaxoSet<string>();
-			using (var suspendToken = SuspendGetToken())
-			{
-				foreach (string s in from._itemList)
-					_itemList.Add(s);
-
-				suspendToken.Resume();
-			}
+			_itemList = new SetList<string>();
+			Add(from);
 		}
 
 		/// <summary>
@@ -128,6 +123,9 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 			string s = item.ToString();
 
+			if (string.IsNullOrEmpty(s))
+				return false; // we consider empty string as invalid data here
+
 			if (IsSuspended) // when suspended: performance tweak, see overrides OnSuspended and OnResume for details (if suspended, we have saved the state of the instance for comparison when we resume).
 			{
 				if (!_itemList.Contains(s))
@@ -146,17 +144,16 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 		public void Add(IPhysicalBoundaries b)
 		{
-			if (b is TextBoundaries)
+			if (b is TextBoundaries from)
 			{
-				using (var suspendToken = SuspendGetToken())
+				using (var suspendToken = SuspendGetToken()) // Performance tweak; see OnSuspended and OnResumed
 				{
-					TextBoundaries from = (TextBoundaries)b;
 					foreach (string s in from._itemList)
 					{
 						if (!_itemList.Contains(s))
-							_itemList.Add(s);
+							_itemList.Add(s); // it is OK that this does not trigger a changed event : Performance tweak; see OnSuspended and OnResumed
 					}
-					suspendToken.Resume();
+					suspendToken.Resume(); // Performance tweak; see OnResumed
 				}
 			}
 		}
@@ -172,7 +169,11 @@ namespace Altaxo.Graph.Scales.Boundaries
 
 		public void Reset()
 		{
+			var hasChanged = (_itemList.Count > 0);
 			_itemList.Clear();
+
+			if (hasChanged && !IsSuspended) // Performance tweak; see OnSuspended and OnResumed
+				EhSelfChanged(new BoundariesChangedEventArgs(BoundariesChangedData.NumberOfItemsChanged | BoundariesChangedData.UpperBoundChanged));
 		}
 
 		public int NumberOfItems
@@ -201,7 +202,9 @@ namespace Altaxo.Graph.Scales.Boundaries
 		/// </summary>
 		protected override void OnSuspended()
 		{
-			this._savedNumberOfItems = this._itemList.Count;
+			// because not only the number of items matter, but also their order, we have to save a full copy of the items
+			// to compare it during the call to OnResume
+			this._savedItems = this._itemList.ToArray();
 
 			base.OnSuspended();
 		}
@@ -214,15 +217,15 @@ namespace Altaxo.Graph.Scales.Boundaries
 		{
 			BoundariesChangedData data = 0;
 			// if anything changed in the meantime, fire the event
-			if (this._savedNumberOfItems != this._itemList.Count)
+			if (!EnumerableExtensions.AreStructurallyEqual(this._savedItems, this._itemList))
 			{
-				data |= BoundariesChangedData.NumberOfItemsChanged;
-				data |= BoundariesChangedData.UpperBoundChanged;
+				data |= BoundariesChangedData.ComplexChange;
 			}
 
 			if (0 != data)
 				_accumulatedEventData = new BoundariesChangedEventArgs(data);
 
+			_savedItems = null;
 			base.OnResume();
 		}
 

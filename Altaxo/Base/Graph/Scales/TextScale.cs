@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -139,9 +139,9 @@ namespace Altaxo.Graph.Scales
 
 		public TextScale()
 		{
-			_dataBounds = new TextBoundaries() { ParentObject = this };
-			_rescaling = new LinearScaleRescaleConditions() { ParentObject = this };
-			_tickSpacing = new Ticks.TextTickSpacing() { ParentObject = this };
+			ChildSetMember(ref _dataBounds, new TextBoundaries());
+			ChildSetMember(ref _rescaling, new LinearScaleRescaleConditions());
+			ChildSetMember(ref _tickSpacing, new Ticks.TextTickSpacing());
 			UpdateTicksAndOrgEndUsingRescalingObject();
 		}
 
@@ -275,8 +275,7 @@ namespace Altaxo.Graph.Scales
 
 		private void InternalSetOrgEnd(double org, double end)
 		{
-			bool changed = _cachedAxisOrg != org ||
-				_cachedAxisEnd != end;
+			bool changed = _cachedAxisOrg != org || _cachedAxisEnd != end;
 
 			_cachedAxisOrg = org;
 			_cachedAxisEnd = end;
@@ -311,7 +310,14 @@ namespace Altaxo.Graph.Scales
 					xend = _dataBounds.NumberOfItems + 0.5;
 				}
 
-				_rescaling.OnDataBoundsChanged(xorg, xend);
+				var rescalingHasChanged = _rescaling.OnDataBoundsChanged(xorg, xend);
+				if (!rescalingHasChanged) // Note: the other case (rescaling has changed) is handled in HandleHighPriorityChildChangeCases
+				{
+					// even if the data bounds have not changed, we must force the update of the ticks.
+					// Example: the mutual exchange of two elements in a text column will not change the data bounds, but the order of our ticks __will__ change!!
+					UpdateTicksAndOrgEndUsingRescalingObject();
+				}
+
 				e = EventArgs.Empty;
 				return false;
 			}

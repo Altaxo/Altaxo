@@ -1588,7 +1588,7 @@
     <Compile Include="Calc\FitFunctions\Transitions\PercolationTheory.cs" />
     <Compile Include="Calc\FitFunctions\Transitions\SmoothedPercolation.cs" />
     <Compile Include="Calc\Regression\Nonlinear\SimpleNonlinearFit.cs" />
-    <Compile Include="Collections\AltaxoSet.cs" />
+    <Compile Include="Collections\SetList.cs" />
     <Compile Include="Collections\DictionaryWithNullableKey.cs" />
     <Compile Include="Collections\IArray.cs" />
     <Compile Include="Collections\IndexSelection.cs" />

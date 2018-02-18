@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -404,7 +404,14 @@ namespace Altaxo.Graph.Scales.Rescaling
 		/// <param name="zoomEnd">The zoom end.</param>
 		protected abstract void FixValuesForUserZoomed(ref double zoomOrg, ref double zoomEnd);
 
-		public void OnDataBoundsChanged(double dataBoundsOrg, double dataBoundsEnd)
+		/// <summary>
+		/// Announces a change of the data bounds of the set of data belonging to a scale.
+		/// </summary>
+		/// <param name="dataBoundsOrg">The one side of the data bounds.</param>
+		/// <param name="dataBoundsEnd">The other side of the data bounds.</param>
+		/// <returns>True if the provided data bounds resulted in changed orgs and ends of this object; otherwise, false.</returns>
+		/// <exception cref="ArgumentOutOfRangeException">dataBoundsOrg should be less than dataBoundsEnd</exception>
+		public bool OnDataBoundsChanged(double dataBoundsOrg, double dataBoundsEnd)
 		{
 			if (!(dataBoundsOrg <= dataBoundsEnd))
 				throw new ArgumentOutOfRangeException("dataBoundsOrg should be less than dataBoundsEnd");
@@ -422,14 +429,16 @@ namespace Altaxo.Graph.Scales.Rescaling
 			ProcessOrg_DataBoundsChanged();
 			ProcessEnd_DataBoundsChanged();
 
-			var changed =
+			var hasChanged =
 				_resultingOrg != oldResultingOrg ||
 				_resultingEnd != oldResultingEnd ||
 				_resultingMinOrg != oldResultingMinOrg ||
 				_resultingMaxEnd != oldResultingMaxEnd;
 
-			if (changed)
+			if (hasChanged)
 				EhSelfChanged();
+
+			return hasChanged;
 		}
 
 		#endregion Event handling
