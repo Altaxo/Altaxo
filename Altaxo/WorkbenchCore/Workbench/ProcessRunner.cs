@@ -186,48 +186,12 @@ namespace Altaxo.Workbench
 		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern IntPtr GetStdHandle(int nStdHandle);
 
-		[DllImport("shell32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-		private static extern unsafe char** CommandLineToArgvW([MarshalAs(UnmanagedType.LPWStr)] string lpCmdLine, out int pNumArgs);
-
 		[DllImport("kernel32.dll")]
 		private static extern IntPtr LocalFree(IntPtr hMem);
 
 		#endregion Native methods
 
 		#region CommandLine <-> Argument Array
-
-		/// <summary>
-		/// Decodes a command line into an array of arguments according to the CommandLineToArgvW rules.
-		/// </summary>
-		/// <remarks>
-		/// Command line parsing rules:
-		/// - 2n backslashes followed by a quotation mark produce n backslashes, and the quotation mark is considered to be the end of the argument.
-		/// - (2n) + 1 backslashes followed by a quotation mark again produce n backslashes followed by a quotation mark.
-		/// - n backslashes not followed by a quotation mark simply produce n backslashes.
-		/// </remarks>
-		public static unsafe string[] CommandLineToArgumentArray(string commandLine)
-		{
-			if (string.IsNullOrEmpty(commandLine))
-				return new string[0];
-			int numberOfArgs;
-			char** arr = CommandLineToArgvW(commandLine, out numberOfArgs);
-			if (arr == null)
-				throw new Win32Exception();
-			try
-			{
-				string[] result = new string[numberOfArgs];
-				for (int i = 0; i < numberOfArgs; i++)
-				{
-					result[i] = new string(arr[i]);
-				}
-				return result;
-			}
-			finally
-			{
-				// Free memory obtained by CommandLineToArgW.
-				LocalFree(new IntPtr(arr));
-			}
-		}
 
 		private static readonly char[] charsNeedingQuoting = { ' ', '\t', '\n', '\v', '"' };
 
