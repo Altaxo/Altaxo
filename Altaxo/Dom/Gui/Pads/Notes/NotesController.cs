@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -118,15 +118,15 @@ namespace Altaxo.Gui.Pads.Notes
 				ITextBackedConsole notes = null;
 				if (_currentActiveViewContent.Target is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl1)
 				{
-					notes = ctrl1.DataTable.Notes;
+					notes = ctrl1.DataTable?.Notes;
 				}
 				else if (_currentActiveViewContent.Target is Altaxo.Gui.Graph.Gdi.Viewing.GraphController ctrl2)
 				{
-					notes = ctrl2.Doc.Notes;
+					notes = ctrl2.Doc?.Notes;
 				}
 				else if (_currentActiveViewContent.Target is Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController ctrl3)
 				{
-					notes = ctrl3.Doc.Notes;
+					notes = ctrl3.Doc?.Notes;
 				}
 				if (notes != null)
 					notes.Text = _view.Text;
