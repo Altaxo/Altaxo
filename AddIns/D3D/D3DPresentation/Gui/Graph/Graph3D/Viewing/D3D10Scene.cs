@@ -441,7 +441,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		private void BringDrawingIntoBuffers(D3D10GraphicsContext drawing)
 		{
 			Device device = _hostDevice;
-			if (device == null)
+			if (device == null || device.IsDisposed)
 				return;
 
 			var buffersOfType =
@@ -514,7 +514,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		private void BringMarkerGeometryIntoDeviceBuffers(D3D10OverlayContext overlayGeometry)
 		{
 			Device device = _hostDevice;
-			if (device == null)
+			if (device == null || device.IsDisposed)
 				return;
 
 			// ------------------  Triangle buffer ------------------------------------
@@ -571,7 +571,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		private void BringOverlayGeometryIntoDeviceBuffers(D3D10OverlayContext overlayGeometry)
 		{
 			Device device = _hostDevice;
-			if (device == null)
+			if (device == null || device.IsDisposed)
 				return;
 
 			// ------------------  Triangle buffer ------------------------------------
@@ -655,6 +655,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			Device device = _hostDevice;
 			if (device == null)
 				throw new InvalidOperationException("Rendering failed because device is null");
+			if (device.IsDisposed)
+				throw new InvalidOperationException("Rendering failed because device is disposed");
 			if (_camera == null)
 				throw new InvalidOperationException("Rendering failed because camera is null");
 			if (_drawing == null)
