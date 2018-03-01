@@ -45,6 +45,12 @@ namespace Altaxo.Gui.Workbench
 		/// </summary>
 		INavigationPoint BuildNavPoint();
 
+		/// <summary>
+		/// Announces that this view content is about to be disposed very soon. The view content should remain passiv (e.g. should not react to events any more),
+		/// but should not release its resources yet (this is done later in <see cref="IDisposable.Dispose"/>).
+		/// </summary>
+		void SetDisposeInProgress();
+
 		bool IsDisposed { get; }
 
 		event EventHandler Disposed;

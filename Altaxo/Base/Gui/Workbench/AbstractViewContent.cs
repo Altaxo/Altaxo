@@ -58,6 +58,7 @@ namespace Altaxo.Gui.Workbench
 
 		private IServiceContainer _services;
 
+		public bool IsDisposeInProgress { get; private set; }
 		private bool _isDisposed;
 
 		public event EventHandler IsDirtyChanged;
@@ -98,8 +99,17 @@ namespace Altaxo.Gui.Workbench
 			{
 				if (!(_isActive == value))
 				{
+					var oldIsContentVisible = IsContentVisible;
+
 					_isActive = value;
-					OnPropertyChanged(nameof(IsActive));
+
+					if (!(IsDisposeInProgress || IsDisposed)) // Fire events only if not dispose is in progress
+					{
+						OnPropertyChanged(nameof(IsActive));
+
+						if (oldIsContentVisible != IsContentVisible)
+							OnPropertyChanged(nameof(IsContentVisible));
+					}
 				}
 			}
 		}
@@ -128,8 +138,16 @@ namespace Altaxo.Gui.Workbench
 			{
 				if (!(_isSelected == value))
 				{
+					var oldIsContentVisible = IsContentVisible;
 					_isSelected = value;
-					OnPropertyChanged(nameof(IsSelected));
+
+					if (!(IsDisposeInProgress || IsDisposed)) // Fire events only if not dispose is in progress
+					{
+						OnPropertyChanged(nameof(IsSelected));
+
+						if (oldIsContentVisible != IsContentVisible)
+							OnPropertyChanged(nameof(IsContentVisible));
+					}
 				}
 			}
 		}
@@ -153,8 +171,23 @@ namespace Altaxo.Gui.Workbench
 				if (!(_isVisible == value))
 				{
 					_isVisible = value;
-					OnPropertyChanged(nameof(IsVisible));
+
+					if (!(IsDisposeInProgress || IsDisposed)) // Fire events only if not dispose is in progress
+					{
+						OnPropertyChanged(nameof(IsVisible));
+					}
 				}
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether the content of this document window is visible (it is if either <see cref="IsActive"/> or <see cref="IsSelected"/> is visible.
+		/// </summary>
+		public bool IsContentVisible
+		{
+			get
+			{
+				return _isActive | _isSelected;
 			}
 		}
 
@@ -344,6 +377,12 @@ namespace Altaxo.Gui.Workbench
 
 			Disposed?.Invoke(this, EventArgs.Empty);
 			OnPropertyChanged(nameof(IsDisposed));
+		}
+
+		/// <inheritdoc/>
+		public void SetDisposeInProgress()
+		{
+			IsDisposeInProgress = true;
 		}
 
 		#endregion IDisposable

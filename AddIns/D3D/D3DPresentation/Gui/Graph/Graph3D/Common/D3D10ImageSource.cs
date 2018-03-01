@@ -62,10 +62,23 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
 		private Texture _renderTarget;
 
+		public string Name { get; private set; }
+		public int InstanceID { get; private set; }
+		private static int _instanceCounter;
+
 		private bool _isDisposed;
 
-		public D3D10ImageSource()
+		public D3D10ImageSource() : this("Unnamed")
 		{
+		}
+
+		public D3D10ImageSource(string name)
+		{
+			InstanceID = ++_instanceCounter;
+			Name = name;
+
+			// System.Diagnostics.Debug.WriteLine("D3DImageSource.ctor Name={0}, Id={1}", Name, InstanceID);
+
 			if (1 == System.Threading.Interlocked.Increment(ref _numberOfActiveClients))
 			{
 				StartD3D();
@@ -84,6 +97,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
 		public void Dispose(bool disposing)
 		{
+			// System.Diagnostics.Debug.WriteLine("D3DImageSource.Dispose Name={0}, Id={1}", Name, InstanceID);
+
 			if (!_isDisposed)
 			{
 				_isDisposed = true;
@@ -106,12 +121,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 				base.AddDirtyRect(new Int32Rect(0, 0, base.PixelWidth, base.PixelHeight));
 				base.Unlock();
 			}
+
+			// System.Diagnostics.Debug.WriteLine("D3DImageSource.InvalidateD3DImage Name={0}, Id={1}", Name, InstanceID);
 		}
 
 		public void SetRenderTargetDX10(SharpDX.Direct3D10.Texture2D renderTarget)
 		{
 			if (_isDisposed)
 				throw new ObjectDisposedException(this.GetType().Name);
+
+			// System.Diagnostics.Debug.WriteLine("D3DImageSource.SetRenderTarget Name={0}, Id={1}, renderTarget={2}", Name, InstanceID, renderTarget);
 
 			if (this._renderTarget != null)
 			{
@@ -122,38 +141,41 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 				base.Unlock();
 			}
 
-			if (renderTarget == null)
-				return;
-
-			if (!IsShareable(renderTarget))
-				throw new ArgumentException("Texture must be created with ResourceOptionFlags.Shared");
-
-			Format format = D3D10ImageSource.TranslateFormat(renderTarget);
-			if (format == Format.Unknown)
-				throw new ArgumentException("Texture format is not compatible with OpenSharedResource");
-
-			IntPtr handle = GetSharedHandle(renderTarget);
-			if (handle == IntPtr.Zero)
-				throw new ArgumentNullException("Handle");
-
-			this._renderTarget = new Texture(D3D10ImageSource._d3DDevice, renderTarget.Description.Width, renderTarget.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
-			using (Surface surface = this._renderTarget.GetSurfaceLevel(0))
+			if (renderTarget != null)
 			{
-				base.Lock();
-				base.SetBackBuffer(D3DResourceType.IDirect3DSurface9, surface.NativePointer);
-				base.Unlock();
+				if (!IsShareable(renderTarget))
+					throw new ArgumentException("Texture must be created with ResourceOptionFlags.Shared");
+
+				Format format = D3D10ImageSource.TranslateFormat(renderTarget);
+				if (format == Format.Unknown)
+					throw new ArgumentException("Texture format is not compatible with OpenSharedResource");
+
+				IntPtr handle = GetSharedHandle(renderTarget);
+				if (handle == IntPtr.Zero)
+					throw new ArgumentNullException("Handle");
+
+				this._renderTarget = new Texture(D3D10ImageSource._d3DDevice, renderTarget.Description.Width, renderTarget.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
+				using (Surface surface = this._renderTarget.GetSurfaceLevel(0))
+				{
+					base.Lock();
+					base.SetBackBuffer(D3DResourceType.IDirect3DSurface9, surface.NativePointer);
+					base.Unlock();
+				}
 			}
+			// System.Diagnostics.Debug.WriteLine("D3DImageSource.SetRenderTarget(end) Name={0}, Id={1}, renderTarget={2}, Size={3}x{4}", Name, InstanceID, renderTarget, this.PixelWidth, this.PixelHeight);
 		}
 
 		private static void StartD3D()
 		{
 			_d3DContext = new Direct3DEx();
 
-			PresentParameters presentparams = new PresentParameters();
-			presentparams.Windowed = true;
-			presentparams.SwapEffect = SwapEffect.Discard;
-			presentparams.DeviceWindowHandle = GetDesktopWindow();
-			presentparams.PresentationInterval = PresentInterval.Default;
+			var presentparams = new PresentParameters
+			{
+				Windowed = true,
+				SwapEffect = SwapEffect.Discard,
+				DeviceWindowHandle = GetDesktopWindow(),
+				PresentationInterval = PresentInterval.Default
+			};
 
 			D3D10ImageSource._d3DDevice = new DeviceEx(_d3DContext, 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.HardwareVertexProcessing | CreateFlags.Multithreaded | CreateFlags.FpuPreserve, presentparams);
 		}

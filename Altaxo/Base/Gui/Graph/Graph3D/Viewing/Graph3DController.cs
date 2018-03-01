@@ -207,6 +207,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			}
 		}
 
+		/// <summary>
+		/// Is called when the graph3d is no longer displayed. Used here to free resources
+		/// </summary>
+		public override void Dispose()
+		{
+			ViewObject = null;
+
+			base.Dispose();
+		}
+
 		private void InitLayerStructure()
 		{
 			_layerStructure = Altaxo.Collections.TreeNodeExtensions.ProjectTreeToNewTree(
@@ -222,6 +232,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			_triggerBasedUpdate.MinimumWaitingTimeAfterLastTrigger = TimeSpanExtensions.FromSecondsAccurate(0.02);
 			_triggerBasedUpdate.MaximumWaitingTimeAfterFirstTrigger = TimeSpanExtensions.FromSecondsAccurate(0.1);
 			_triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
+		}
+
+		protected override void OnPropertyChanged(string propertyName)
+		{
+			base.OnPropertyChanged(propertyName);
+
+			if (propertyName == nameof(IsContentVisible))
+				OnContentVisibilityChanged();
+		}
+
+		protected void OnContentVisibilityChanged()
+		{
+			_view?.AnnounceContentVisibilityChanged(IsContentVisible);
 		}
 
 		#region Properties
@@ -326,10 +349,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		public virtual IList<IHitTestObject> SelectedObjects
 		{
 			get { return _view?.SelectedObjects ?? _emptyReadOnlyList; }
-		}
-
-		public void Dispose()
-		{
 		}
 
 		/// <summary>

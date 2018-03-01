@@ -48,6 +48,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		/// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
 		protected MouseStateHandler _mouseState;
 
+		private bool _isDisposed;
+
 		private static IList<IHitTestObject> _emptyReadOnlyList = new List<IHitTestObject>().AsReadOnly();
 
 		public Graph3DControl()
@@ -55,14 +57,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			InitializeComponent();
 
 			_scene = new D3D10Scene();
-			var imageSource = new D3D10ImageSource();
-			_d3dCanvas.Source = imageSource;
 		}
 
 		public virtual void Dispose()
 		{
+			_isDisposed = true;
 			_controller = new WeakReference(null);
 			_renderer?.Dispose();
+			var imgSource = _d3dCanvas?.Source as D3D10ImageSource;
+			_d3dCanvas.Source = null;
+			imgSource?.Dispose();
+			_scene = null;
+			_mouseState = null;
 		}
 
 		private Graph3DController Controller
@@ -79,8 +85,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			{
 				var oldcontroller = _controller;
 				_controller = new WeakReference(value);
+
 				if (null != value)
+				{
+					if (_isDisposed)
+						throw new ObjectDisposedException(nameof(Graph3DControl));
+
 					_mouseState = new ObjectPointerMouseHandler(value);
+				}
+				else // new Controller is null, so free any resources
+				{
+					this.Dispose();
+				}
 			}
 		}
 
@@ -208,6 +224,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 		private void EhGraphPanel_MouseWheel(object sender, MouseWheelEventArgs e)
 		{
+			if (!(_d3dCanvas.ActualWidth > 0 && _d3dCanvas.ActualHeight > 0))
+				return; // _d3dCanvas was not measured till now
+
 			var mousePosition = e.GetPosition(this._d3dCanvas);
 			double relX = mousePosition.X / _d3dCanvas.ActualWidth;
 			double relY = 1 - mousePosition.Y / _d3dCanvas.ActualHeight;
@@ -256,6 +275,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 		private void EhGraphPanel_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
+			// System.Diagnostics.Debug.WriteLine("Graph3DControl.EhGraphPanel_SizeChanged, Name={0}, NewSize={1}x{2}", Controller?.Doc?.Name, e.NewSize.Width, e.NewSize.Height);
 			OnGraphPanel_SizeChanged(new PointD2D(e.NewSize.Width, e.NewSize.Height));
 		}
 
@@ -266,32 +286,44 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 			if (null == _renderer)
 			{
-				_renderer = new D3D10RendererToImageSource(_scene, (D3D10ImageSource)_d3dCanvas.Source);
+				_d3dCanvas.Source = new D3D10ImageSource(Controller?.Doc?.Name);
+				_renderer = new D3D10RendererToImageSource(_scene, (D3D10ImageSource)_d3dCanvas.Source, Controller?.Doc?.Name);
+				// invalidate the cached graph sizes in order to force a new rendering
+				_cachedGraphSize_Pixels = new System.Drawing.Size(0, 0);
+				_cachedGraphSize_96thInch = new PointD2D(0, 0);
 			}
 
-			_cachedGraphSize_96thInch = newSize;
-			var screenResolution = Current.Gui.ScreenResolutionDpi;
-			var graphSizePixels = screenResolution * _cachedGraphSize_96thInch / 96.0;
-			_cachedGraphSize_Pixels = new System.Drawing.Size((int)graphSizePixels.X, (int)graphSizePixels.Y);
+			if (newSize != _cachedGraphSize_96thInch)
+			{
+				_cachedGraphSize_96thInch = newSize;
+				var screenResolution = Current.Gui.ScreenResolutionDpi;
+				var graphSizePixels = screenResolution * _cachedGraphSize_96thInch / 96.0;
+				_cachedGraphSize_Pixels = new System.Drawing.Size((int)graphSizePixels.X, (int)graphSizePixels.Y);
 
-			_renderer.SetRenderSize(_cachedGraphSize_Pixels.Width, _cachedGraphSize_Pixels.Height);
+				_renderer.SetRenderSize(_cachedGraphSize_Pixels.Width, _cachedGraphSize_Pixels.Height);
 
-			Controller?.EhView_GraphPanelSizeChanged(); // inform controller
+				Controller?.EhView_GraphPanelSizeChanged(); // inform controller
+			}
 		}
 
-		private void EhIsGraphVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		public void AnnounceContentVisibilityChanged(bool isVisible)
 		{
-			_isGraphVisible = (bool)e.NewValue;
+			_isGraphVisible = isVisible;
+			// System.Diagnostics.Debug.WriteLine("Visibility of Graph {0} is now {1} Canvas: {2}x{3}", Controller?.Doc?.Name, _isGraphVisible, _guiCanvas.ActualWidth, _guiCanvas.ActualHeight);
 
 			if (_isGraphVisible)
 			{
-				OnGraphPanel_SizeChanged(_cachedGraphSize_96thInch);
+				OnGraphPanel_SizeChanged(new PointD2D(_guiCanvas.ActualWidth, _guiCanvas.ActualHeight));
 			}
 			else
 			{
 				var tempRenderer = _renderer;
 				_renderer = null;
 				tempRenderer?.Dispose();
+
+				var oldSource = (D3D10ImageSource)_d3dCanvas.Source;
+				_d3dCanvas.Source = null;
+				oldSource?.Dispose();
 			}
 		}
 
@@ -300,13 +332,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			var tempObj = obj;
 			obj = null;
 			tempObj?.Dispose();
-		}
-
-		private void EhControlUnloaded(object sender, RoutedEventArgs e)
-		{
-			var tempRenderer = _renderer;
-			_renderer = null;
-			tempRenderer?.Dispose();
 		}
 
 		#endregion Graph panel size and visibility
@@ -488,7 +513,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		public void TriggerRendering()
 		{
 			if (_isGraphVisible && null != _renderer)
+			{
 				Current.Dispatcher.InvokeIfRequired(_renderer.TriggerRendering);
+			}
 		}
 
 		public void SetSceneBackColor(Altaxo.Drawing.AxoColor sceneBackColor)

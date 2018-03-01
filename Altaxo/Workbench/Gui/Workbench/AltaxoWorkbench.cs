@@ -687,7 +687,11 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 		public void CloseAllViews()
 		{
 			var documents = _documentCollection.ToArray();
+			foreach (var document in documents)
+				document.SetDisposeInProgress();
+
 			_documentCollection.Clear();
+
 			foreach (var document in documents)
 				document.Dispose();
 		}

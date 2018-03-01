@@ -73,6 +73,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 		public int InstanceID { get; private set; }
 		private static int _instanceCounter;
 
+		public string Name { get; private set; }
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="D3D10RendererToImageSource"/> class.
 		/// </summary>
@@ -80,18 +82,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 		/// <param name="d3dImageSource">The D3D image source, which is the target of the rendering.</param>
 		/// <exception cref="ArgumentNullException">
 		/// </exception>
-		public D3D10RendererToImageSource(IScene scene, D3D10ImageSource d3dImageSource)
+		public D3D10RendererToImageSource(IScene scene, D3D10ImageSource d3dImageSource, string name = "Unnamed")
 		{
+			Name = name;
 			InstanceID = ++_instanceCounter;
-
-			if (null == scene)
-				throw new ArgumentNullException(nameof(scene));
-
-			if (null == d3dImageSource)
-				throw new ArgumentNullException(nameof(d3dImageSource));
-
-			this.Scene = scene;
-			this._d3dImageSource = d3dImageSource;
+			this.Scene = scene ?? throw new ArgumentNullException(nameof(scene));
+			this._d3dImageSource = d3dImageSource ?? throw new ArgumentNullException(nameof(d3dImageSource));
 			this._d3dImageSource.IsFrontBufferAvailableChanged += EhIsFrontBufferAvailableChanged;
 		}
 
@@ -135,8 +131,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 		/// </summary>
 		public void TriggerRendering()
 		{
-			this.Render();
-			this._d3dImageSource?.InvalidateD3DImage();
+			// System.Diagnostics.Debug.WriteLine("D3DImageSource before rendering, ImgSize:{0}x{1}", _d3dImageSource.Width, _d3dImageSource.Height);
+			try
+			{
+				this.Render();
+				this._d3dImageSource?.InvalidateD3DImage();
+			}
+			catch (Exception ex)
+			{
+				Current.Console.WriteLine("Exception during 3D rendering, details:\r\n{0}", ex.ToString());
+				System.Diagnostics.Debug.WriteLine("D3DImageSource rendering exception: {0}", ex.ToString());
+			}
+
+			// System.Diagnostics.Debug.WriteLine("D3DImageSource after rendering, ImgSize:{0}x{1}", _d3dImageSource.Width, _d3dImageSource.Height);
 		}
 
 		private void EndD3D()
@@ -226,14 +233,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 		{
 			SharpDX.Direct3D10.Device device = this._device;
 			if (device == null)
-				return;
+				throw new InvalidOperationException("Rendering failed because 3D device is null");
 
 			Texture2D renderTarget = this._renderTargetIntermediate;
 			if (renderTarget == null)
-				return;
+				throw new InvalidOperationException("Rendering failed because renderTarget is null");
 
 			int targetWidth = renderTarget.Description.Width;
 			int targetHeight = renderTarget.Description.Height;
+
+			if (!(targetWidth > 0 && targetHeight > 0))
+				throw new InvalidOperationException("Rendering failed because targetWidth or targetHeight is 0");
 
 			device.OutputMerger.SetTargets(this._depthStencilView, this._renderTargetIntermediateView);
 			device.Rasterizer.SetViewports(new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f));

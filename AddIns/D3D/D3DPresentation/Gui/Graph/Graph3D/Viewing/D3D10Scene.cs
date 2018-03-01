@@ -654,11 +654,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		{
 			Device device = _hostDevice;
 			if (device == null)
-				return;
+				throw new InvalidOperationException("Rendering failed because device is null");
 			if (_camera == null)
-				return;
+				throw new InvalidOperationException("Rendering failed because camera is null");
 			if (_drawing == null)
-				return;
+				throw new InvalidOperationException("Rendering failed because drawing is null");
 
 			UseNextTriangleDeviceBuffers();
 

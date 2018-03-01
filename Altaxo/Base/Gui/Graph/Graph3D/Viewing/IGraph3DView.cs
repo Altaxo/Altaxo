@@ -131,5 +131,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 		void RenderOverlay();
 
 		IList<IHitTestObject> SelectedObjects { get; }
+
+		void AnnounceContentVisibilityChanged(bool isVisible);
 	}
 }
