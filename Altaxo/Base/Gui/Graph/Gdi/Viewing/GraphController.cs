@@ -179,6 +179,19 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 			_triggerBasedUpdate.UpdateAction += EhUpdateByTimerQueue;
 		}
 
+		protected override void OnPropertyChanged(string propertyName)
+		{
+			base.OnPropertyChanged(propertyName);
+
+			if (propertyName == nameof(IsContentVisible))
+				OnContentVisibilityChanged();
+		}
+
+		protected void OnContentVisibilityChanged()
+		{
+			_view?.AnnounceContentVisibilityChanged(IsContentVisible);
+		}
+
 		#region Properties
 
 		/// <summary>
@@ -1653,7 +1666,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
 		#endregion Movement in X Y direction
 
-		public void Dispose()
+		public override void Dispose()
 		{
 			if (null != _triggerBasedUpdate)
 			{
@@ -1663,10 +1676,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
 			InternalUninitializeGraphDocument(); // remove event handlers and _doc
 
-			if (_view is IDisposable)
-				((IDisposable)_view).Dispose();
+			(_view as IDisposable)?.Dispose();
+			ViewObject = null;
 
-			_view = null;
+			base.Dispose();
 		}
 
 		public bool Apply(bool disposeController)

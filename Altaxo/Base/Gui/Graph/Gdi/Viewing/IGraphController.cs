@@ -128,6 +128,12 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		bool MouseState_IsOverlayPaintingRequired { get; }
 
 		void MouseState_AfterPaint(System.Drawing.Graphics g);
+
+		/// <summary>
+		/// Announces that the visibility of the graph has changed.
+		/// </summary>
+		/// <param name="isVisible">if set to <c>true</c> [is visible].</param>
+		void AnnounceContentVisibilityChanged(bool isVisible);
 	}
 
 	public interface IGraphViewEventSink

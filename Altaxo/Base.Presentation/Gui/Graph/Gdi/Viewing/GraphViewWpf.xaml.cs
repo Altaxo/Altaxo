@@ -66,6 +66,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
 		private CachedGraphImage _cachedGraphImage;
 
+		private bool _isDisposed;
+
 		/// <summary>A instance of a mouse handler class that currently handles the mouse events. Is mirrored from
 		/// the controller to here.</summary>
 		protected GraphControllerMouseHandlers.MouseStateHandler _mouseState;
@@ -128,7 +130,11 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
 		public virtual void Dispose()
 		{
+			_isDisposed = true;
 			_controller = new WeakReference(null);
+			_mouseState = null;
+			_graphImage.Source = null;
+			_graphOverlay.Source = null;
 		}
 
 		private Altaxo.Gui.Graph.Gdi.Viewing.GraphController Controller
@@ -341,37 +347,63 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 		{
 			set
 			{
+				var oldcontroller = _controller;
 				_controller = new WeakReference(value as GraphController);
-				((IGraphView)this).InvalidateCachedGraphBitmapAndRepaint();
+
+				if (null != value)
+				{
+					if (_isDisposed)
+						throw new ObjectDisposedException(nameof(GraphViewWpf));
+
+					((IGraphView)this).InvalidateCachedGraphBitmapAndRepaint();
+				}
+				else
+				{
+					this.Dispose();
+				}
 			}
 		}
 
 		private void EhGraphPanelSizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			var s = e.NewSize;
-			_guiCanvas.Clip = new RectangleGeometry(new Rect(0, 0, s.Width, s.Height));
-
-			if (!(s.Width > 0 && s.Height > 0))
-				return;
-
-			_cachedGraphSize_96thInch = new PointD2D(s.Width, s.Height);
-			var screenResolution = Current.Gui.ScreenResolutionDpi;
-			var graphSizePixels = screenResolution * _cachedGraphSize_96thInch / 96.0;
-			_cachedGraphSize_Pixels = new System.Drawing.Size((int)graphSizePixels.X, (int)graphSizePixels.Y);
-
-			if (null != Controller)
-				Controller.EhView_GraphPanelSizeChanged(); // inform controller
-
-			ShowCachedGraphImage();
-
-			_isGraphUpToDate = false;
-			if (_isGraphVisible)
-				((IGraphView)this).InvalidateCachedGraphBitmapAndRepaint();
+			// System.Diagnostics.Debug.WriteLine("GraphViewWpf.EhGraphPanel_SizeChanged, Name={0}, NewSize={1}x{2}", Controller?.Doc?.Name, e.NewSize.Width, e.NewSize.Height);
+			OnGraphPanel_SizeChanged(new PointD2D(e.NewSize.Width, e.NewSize.Height));
 		}
 
-		private void EhIsGraphVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		private void OnGraphPanel_SizeChanged(PointD2D newSize)
 		{
-			_isGraphVisible = (bool)e.NewValue;
+			if (!(newSize.X > 0 && newSize.Y > 0))
+				return;
+
+			_guiCanvas.Clip = new RectangleGeometry(new Rect(0, 0, newSize.X, newSize.Y));
+
+			if (null == _graphImage.Source)
+			{
+				// invalidate the cached graph sizes in order to force a new rendering
+				_cachedGraphSize_Pixels = new System.Drawing.Size(0, 0);
+				_cachedGraphSize_96thInch = new PointD2D(0, 0);
+			}
+
+			if (newSize != _cachedGraphSize_96thInch)
+			{
+				_cachedGraphSize_96thInch = newSize;
+				var screenResolution = Current.Gui.ScreenResolutionDpi;
+				var graphSizePixels = screenResolution * _cachedGraphSize_96thInch / 96.0;
+				_cachedGraphSize_Pixels = new System.Drawing.Size((int)graphSizePixels.X, (int)graphSizePixels.Y);
+
+				Controller?.EhView_GraphPanelSizeChanged(); // inform controller
+
+				ShowCachedGraphImage();
+
+				_isGraphUpToDate = false;
+				if (_isGraphVisible)
+					((IGraphView)this).InvalidateCachedGraphBitmapAndRepaint();
+			}
+		}
+
+		public void AnnounceContentVisibilityChanged(bool isVisible)
+		{
+			_isGraphVisible = isVisible;
 
 			if (_isGraphVisible)
 			{

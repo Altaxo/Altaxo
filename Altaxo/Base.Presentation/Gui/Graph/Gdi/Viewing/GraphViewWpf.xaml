@@ -36,7 +36,7 @@
 					<CommandBinding Command="Delete" CanExecute="EhEnableCmdDelete" Executed="EhCmdDelete" />
 					<CommandBinding Command="Paste" CanExecute="EhEnableCmdPaste" Executed="EhCmdPaste" />
 				</Canvas.CommandBindings>
-				<Image Focusable="False" SnapsToDevicePixels="True" Stretch="Uniform"  Name="_graphImage"     IsVisibleChanged="EhIsGraphVisibleChanged" />
+				<Image Focusable="False" SnapsToDevicePixels="True" Stretch="Uniform"  Name="_graphImage" />
 				<Image Focusable="False" SnapsToDevicePixels="True" Stretch="Uniform" Name="_graphOverlay" />
 			</Canvas>
 			<Label x:Name="_guiUpdateCount" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" />
