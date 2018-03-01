@@ -51,6 +51,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 	using System.Drawing;
 
 	[UserControllerForObject(typeof(GraphDocument))]
+	[UserControllerForObject(typeof(GraphViewOptions))]
 	[ExpectedTypeOfView(typeof(IGraph3DView))]
 	public class Graph3DController : AbstractViewContent, IDisposable, IMVCANController, IGraphController, IClipboardHandler
 	{
@@ -125,11 +126,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			TextGraphic.TextGraphicsEditorMethod = new DoubleClickHandler(EhEditTextGraphics);
 		}
 
-		protected Graph3DController()
+		public Graph3DController()
 		{
 			InitTriggerBasedUpdate();
 		}
 
+		
 		/// <summary>
 		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
 		/// </summary>
@@ -142,6 +144,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 			InitTriggerBasedUpdate();
 			InternalInitializeGraphDocument(graphdoc); // Using DataTable here wires the event chain also
 		}
+		
 
 		public bool InitializeDocument(params object[] args)
 		{
