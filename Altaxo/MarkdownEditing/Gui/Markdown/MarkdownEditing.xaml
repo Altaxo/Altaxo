@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="Altaxo.Gui.Markdown.MarkdownEditing"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Altaxo.Gui.Markdown"
+						 xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="4" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<FrameworkElement.CommandBindings>
+			<CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
+		</FrameworkElement.CommandBindings>
+		<avalonEdit:TextEditor x:Name="_guiRawText"  xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    FontFamily="Consolas"
+    SyntaxHighlighting="MarkDown"
+    FontSize="12pt"
+													 TextChanged="EhTextChanged" />
+		<DockPanel Grid.Column="2">
+			<Button x:Name="ToggleExtensionsButton" DockPanel.Dock="Top" HorizontalAlignment="Center"
+            Content="Toggle supported extensions" Click="ToggleExtensionsButton_OnClick" />
+			<markdig:MarkdownViewer x:Name="Viewer" />
+		</DockPanel>
+	</Grid>
+</UserControl>
