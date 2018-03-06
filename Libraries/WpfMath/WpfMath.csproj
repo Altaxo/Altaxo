@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{08F4B41A-7F21-446D-836B-00056E7BC311}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <RootNamespace>WpfMath</RootNamespace>
+    <AssemblyName>WpfMath</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccentedAtom.cs" />
+    <Compile Include="Atom.cs" />
+    <Compile Include="BigDelimeterAtom.cs" />
+    <Compile Include="BigOperatorAtom.cs" />
+    <Compile Include="Box.cs" />
+    <Compile Include="CharAtom.cs" />
+    <Compile Include="CharBox.cs" />
+    <Compile Include="CharFont.cs" />
+    <Compile Include="CharInfo.cs" />
+    <Compile Include="CharSymbol.cs" />
+    <Compile Include="Controls\FormulaControl.xaml.cs">
+      <DependentUpon>FormulaControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\VisualContainerElement.cs" />
+    <Compile Include="DefaultTexFont.cs" />
+    <Compile Include="DefaultTexFontParser.cs" />
+    <Compile Include="DelimiterFactory.cs" />
+    <Compile Include="DelimiterInfo.cs" />
+    <Compile Include="DelimiterMappingNotFoundException.cs" />
+    <Compile Include="DummyAtom.cs" />
+    <Compile Include="Exceptions\TexCharacterMappingNotFoundException.cs" />
+    <Compile Include="Exceptions\TexException.cs" />
+    <Compile Include="Exceptions\TexNotSupportedException.cs" />
+    <Compile Include="Exceptions\TexParseException.cs" />
+    <Compile Include="Exceptions\TextStyleMappingNotFoundException.cs" />
+    <Compile Include="Exceptions\TypeFaceNotFoundException.cs" />
+    <Compile Include="ExtensionChar.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="FencedAtom.cs" />
+    <Compile Include="FixedCharAtom.cs" />
+    <Compile Include="FormulaNotFoundException.cs" />
+    <Compile Include="FractionAtom.cs" />
+    <Compile Include="Glue.cs" />
+    <Compile Include="GlueBox.cs" />
+    <Compile Include="GlueSettingsParser.cs" />
+    <Compile Include="HorizontalBox.cs" />
+    <Compile Include="HorizontalRule.cs" />
+    <Compile Include="IRow.cs" />
+    <Compile Include="ITeXFont.cs" />
+    <Compile Include="OverBar.cs" />
+    <Compile Include="OverlinedAtom.cs" />
+    <Compile Include="OverUnderBox.cs" />
+    <Compile Include="OverUnderDelimiter.cs" />
+    <Compile Include="PhantomAtom.cs" />
+    <Compile Include="PredefinedColorParser.cs" />
+    <Compile Include="PredefinedTexFormulaSettingsParser.cs" />
+    <Compile Include="PredefinedTexFormulasParser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Radical.cs" />
+    <Compile Include="Rendering\GeometryElementRenderer.cs" />
+    <Compile Include="Rendering\GeometryHelper.cs" />
+    <Compile Include="Rendering\IElementRenderer.cs" />
+    <Compile Include="Rendering\Transformations\Transformation.cs" />
+    <Compile Include="Rendering\Transformations\TransformationKind.cs" />
+    <Compile Include="Rendering\WpfElementRenderer.cs" />
+    <Compile Include="RowAtom.cs" />
+    <Compile Include="ScriptsAtom.cs" />
+    <Compile Include="SpaceAtom.cs" />
+    <Compile Include="StrutBox.cs" />
+    <Compile Include="StyledAtom.cs" />
+    <Compile Include="SVGConverter.cs" />
+    <Compile Include="SymbolAtom.cs" />
+    <Compile Include="SymbolMappingNotFoundException.cs" />
+    <Compile Include="SymbolNotFoundException.cs" />
+    <Compile Include="SystemFont.cs" />
+    <Compile Include="TexEnums.cs" />
+    <Compile Include="TexEnvironment.cs" />
+    <Compile Include="TexExpressionVisitor.cs" />
+    <Compile Include="TexFontInfo.cs" />
+    <Compile Include="TexFontMetrics.cs" />
+    <Compile Include="TexFontUtilities.cs" />
+    <Compile Include="TexFormula.cs" />
+    <Compile Include="TexFormulaHelper.cs" />
+    <Compile Include="TexFormulaParser.cs" />
+    <Compile Include="TexRenderer.cs" />
+    <Compile Include="TexSymbolParser.cs" />
+    <Compile Include="TexUtilities.cs" />
+    <Compile Include="TypedAtom.cs" />
+    <Compile Include="UnderlinedAtom.cs" />
+    <Compile Include="UnderOverAtom.cs" />
+    <Compile Include="VerticalBox.cs" />
+    <Compile Include="VerticalCenteredAtom.cs" />
+    <Compile Include="XmlUtilities.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Resource Include="Fonts\cmex10.ttf" />
+    <Resource Include="Fonts\cmmi10.ttf" />
+    <Resource Include="Fonts\cmr10.ttf" />
+    <Resource Include="Fonts\cmsy10.ttf" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Controls\FormulaControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\DefaultTexFont.xml" />
+    <EmbeddedResource Include="Data\GlueSettings.xml" />
+    <EmbeddedResource Include="Data\PredefinedColors.xml" />
+    <EmbeddedResource Include="Data\PredefinedTexFormulas.xml" />
+    <EmbeddedResource Include="Data\TexFormulaSettings.xml" />
+    <EmbeddedResource Include="Data\TexSymbols.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
