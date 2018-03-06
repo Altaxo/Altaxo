@@ -63,12 +63,12 @@
     <DefineTrace>True</DefineTrace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Net40'">
-    <OutputPath>..\..\rtDir\</OutputPath>
-    <DocumentationFile>..\..\rtDir\ICSharpCode.AvalonEdit.xml</DocumentationFile>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
+    <DocumentationFile>..\..\rtDir\bin\ICSharpCode.AvalonEdit.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Net40'">
-    <OutputPath>..\..\rtDir\</OutputPath>
-    <DocumentationFile>..\..\rtDir\ICSharpCode.AvalonEdit.xml</DocumentationFile>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
+    <DocumentationFile>..\..\rtDir\bin\ICSharpCode.AvalonEdit.xml</DocumentationFile>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <ItemGroup>
