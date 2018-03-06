@@ -1,14 +1,14 @@
 ﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
 // without restriction, including without limitation the rights to use, copy, modify, merge,
 // publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
 // to whom the Software is furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or
 // substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
@@ -17,14 +17,16 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using ICSharpCode.AvalonEdit.Editing;
-
-using System;
-
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Editing;
+using ICSharpCode.AvalonEdit.Rendering;
 
 namespace ICSharpCode.AvalonEdit.Search
 {
@@ -40,7 +42,7 @@ namespace ICSharpCode.AvalonEdit.Search
 			"FindNext", typeof(SearchPanel),
 			new InputGestureCollection { new KeyGesture(Key.F3) }
 		);
-
+		
 		/// <summary>
 		/// Finds the previous occurrence in the file.
 		/// </summary>
@@ -48,7 +50,7 @@ namespace ICSharpCode.AvalonEdit.Search
 			"FindPrevious", typeof(SearchPanel),
 			new InputGestureCollection { new KeyGesture(Key.F3, ModifierKeys.Shift) }
 		);
-
+		
 		/// <summary>
 		/// Closes the SearchPanel.
 		/// </summary>
@@ -57,7 +59,7 @@ namespace ICSharpCode.AvalonEdit.Search
 			new InputGestureCollection { new KeyGesture(Key.Escape) }
 		);
 	}
-
+	
 	/// <summary>
 	/// TextAreaInputHandler that registers all search-related commands.
 	/// </summary>
@@ -73,14 +75,14 @@ namespace ICSharpCode.AvalonEdit.Search
 			RegisterCommands(this.CommandBindings);
 			panel = SearchPanel.Install(textArea);
 		}
-
+		
 		internal SearchInputHandler(TextArea textArea, SearchPanel panel)
 			: base(textArea)
 		{
 			RegisterCommands(this.CommandBindings);
 			this.panel = panel;
 		}
-
+		
 		internal void RegisterGlobalCommands(CommandBindingCollection commandBindings)
 		{
 			commandBindings.Add(new CommandBinding(ApplicationCommands.Find, ExecuteFind));
@@ -88,17 +90,17 @@ namespace ICSharpCode.AvalonEdit.Search
 			commandBindings.Add(new CommandBinding(SearchCommands.FindPrevious, ExecuteFindPrevious, CanExecuteWithOpenSearchPanel));
 		}
 
-		private void RegisterCommands(ICollection<CommandBinding> commandBindings)
+		void RegisterCommands(ICollection<CommandBinding> commandBindings)
 		{
 			commandBindings.Add(new CommandBinding(ApplicationCommands.Find, ExecuteFind));
 			commandBindings.Add(new CommandBinding(SearchCommands.FindNext, ExecuteFindNext, CanExecuteWithOpenSearchPanel));
 			commandBindings.Add(new CommandBinding(SearchCommands.FindPrevious, ExecuteFindPrevious, CanExecuteWithOpenSearchPanel));
 			commandBindings.Add(new CommandBinding(SearchCommands.CloseSearchPanel, ExecuteCloseSearchPanel, CanExecuteWithOpenSearchPanel));
 		}
-
-		private SearchPanel panel;
-
-		private void ExecuteFind(object sender, ExecutedRoutedEventArgs e)
+		
+		SearchPanel panel;
+		
+		void ExecuteFind(object sender, ExecutedRoutedEventArgs e)
 		{
 			panel.Open();
 			if (!(TextArea.Selection.IsEmpty || TextArea.Selection.IsMultiline))
@@ -106,53 +108,46 @@ namespace ICSharpCode.AvalonEdit.Search
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Input, (Action)delegate { panel.Reactivate(); });
 		}
 
-		private void CanExecuteWithOpenSearchPanel(object sender, CanExecuteRoutedEventArgs e)
+		void CanExecuteWithOpenSearchPanel(object sender, CanExecuteRoutedEventArgs e)
 		{
-			if (panel.IsClosed)
-			{
+			if (panel.IsClosed) {
 				e.CanExecute = false;
 				// Continue routing so that the key gesture can be consumed by another component.
 				e.ContinueRouting = true;
-			}
-			else
-			{
+			} else {
 				e.CanExecute = true;
 				e.Handled = true;
 			}
 		}
-
-		private void ExecuteFindNext(object sender, ExecutedRoutedEventArgs e)
+		
+		void ExecuteFindNext(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (!panel.IsClosed)
-			{
+			if (!panel.IsClosed) {
 				panel.FindNext();
 				e.Handled = true;
 			}
 		}
-
-		private void ExecuteFindPrevious(object sender, ExecutedRoutedEventArgs e)
+		
+		void ExecuteFindPrevious(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (!panel.IsClosed)
-			{
+			if (!panel.IsClosed) {
 				panel.FindPrevious();
 				e.Handled = true;
 			}
 		}
-
-		private void ExecuteCloseSearchPanel(object sender, ExecutedRoutedEventArgs e)
+		
+		void ExecuteCloseSearchPanel(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (!panel.IsClosed)
-			{
+			if (!panel.IsClosed) {
 				panel.Close();
 				e.Handled = true;
 			}
 		}
-
+		
 		/// <summary>
 		/// Fired when SearchOptions are modified inside the SearchPanel.
 		/// </summary>
-		public event EventHandler<SearchOptionsChangedEventArgs> SearchOptionsChanged
-		{
+		public event EventHandler<SearchOptionsChangedEventArgs> SearchOptionsChanged {
 			add { panel.SearchOptionsChanged += value; }
 			remove { panel.SearchOptionsChanged -= value; }
 		}

@@ -1,14 +1,14 @@
 ﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
 // without restriction, including without limitation the rights to use, copy, modify, merge,
 // publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
 // to whom the Software is furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or
 // substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
@@ -17,23 +17,18 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-
-using System;
-
-using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Utils;
-
-using System;
-
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Utils;
+
 namespace ICSharpCode.AvalonEdit.Rendering
 {
 	// This class is internal because it does not need to be accessed by the user - it can be configured using TextEditorOptions.
-
+	
 	/// <summary>
 	/// Element generator that displays · for spaces and » for tabs and a box for control characters.
 	/// </summary>
@@ -42,23 +37,23 @@ namespace ICSharpCode.AvalonEdit.Rendering
 	/// <see cref="TextEditorOptions"/>.
 	/// </remarks>
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Whitespace")]
-	internal sealed class SingleCharacterElementGenerator : VisualLineElementGenerator, IBuiltinElementGenerator
+	sealed class SingleCharacterElementGenerator : VisualLineElementGenerator, IBuiltinElementGenerator
 	{
 		/// <summary>
 		/// Gets/Sets whether to show · for spaces.
 		/// </summary>
 		public bool ShowSpaces { get; set; }
-
+		
 		/// <summary>
 		/// Gets/Sets whether to show » for tabs.
 		/// </summary>
 		public bool ShowTabs { get; set; }
-
+		
 		/// <summary>
 		/// Gets/Sets whether to show a box with the hex code for control characters.
 		/// </summary>
 		public bool ShowBoxForControlCharacters { get; set; }
-
+		
 		/// <summary>
 		/// Creates a new SingleCharacterElementGenerator instance.
 		/// </summary>
@@ -68,37 +63,32 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			this.ShowTabs = true;
 			this.ShowBoxForControlCharacters = true;
 		}
-
+		
 		void IBuiltinElementGenerator.FetchOptions(TextEditorOptions options)
 		{
 			this.ShowSpaces = options.ShowSpaces;
 			this.ShowTabs = options.ShowTabs;
 			this.ShowBoxForControlCharacters = options.ShowBoxForControlCharacters;
 		}
-
+		
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
 			DocumentLine endLine = CurrentContext.VisualLine.LastDocumentLine;
 			StringSegment relevantText = CurrentContext.GetText(startOffset, endLine.EndOffset - startOffset);
-
-			for (int i = 0; i < relevantText.Count; i++)
-			{
+			
+			for (int i = 0; i < relevantText.Count; i++) {
 				char c = relevantText.Text[relevantText.Offset + i];
-				switch (c)
-				{
+				switch (c) {
 					case ' ':
 						if (ShowSpaces)
 							return startOffset + i;
 						break;
-
 					case '\t':
 						if (ShowTabs)
 							return startOffset + i;
 						break;
-
 					default:
-						if (ShowBoxForControlCharacters && char.IsControl(c))
-						{
+						if (ShowBoxForControlCharacters && char.IsControl(c)) {
 							return startOffset + i;
 						}
 						break;
@@ -106,41 +96,34 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			}
 			return -1;
 		}
-
+		
 		public override VisualLineElement ConstructElement(int offset)
 		{
 			char c = CurrentContext.Document.GetCharAt(offset);
-			if (ShowSpaces && c == ' ')
-			{
+			if (ShowSpaces && c == ' ') {
 				return new SpaceTextElement(CurrentContext.TextView.cachedElements.GetTextForNonPrintableCharacter("\u00B7", CurrentContext));
-			}
-			else if (ShowTabs && c == '\t')
-			{
+			} else if (ShowTabs && c == '\t') {
 				return new TabTextElement(CurrentContext.TextView.cachedElements.GetTextForNonPrintableCharacter("\u00BB", CurrentContext));
-			}
-			else if (ShowBoxForControlCharacters && char.IsControl(c))
-			{
+			} else if (ShowBoxForControlCharacters && char.IsControl(c)) {
 				var p = new VisualLineElementTextRunProperties(CurrentContext.GlobalTextRunProperties);
 				p.SetForegroundBrush(Brushes.White);
 				var textFormatter = TextFormatterFactory.Create(CurrentContext.TextView);
 				var text = FormattedTextElement.PrepareText(textFormatter,
-																										TextUtilities.GetControlCharacterName(c), p);
+				                                            TextUtilities.GetControlCharacterName(c), p);
 				return new SpecialCharacterBoxElement(text);
-			}
-			else
-			{
+			} else {
 				return null;
 			}
 		}
-
-		private sealed class SpaceTextElement : FormattedTextElement
+		
+		sealed class SpaceTextElement : FormattedTextElement
 		{
 			public SpaceTextElement(TextLine textLine) : base(textLine, 1)
 			{
 				BreakBefore = LineBreakCondition.BreakPossible;
 				BreakAfter = LineBreakCondition.BreakDesired;
 			}
-
+			
 			public override int GetNextCaretPosition(int visualColumn, LogicalDirection direction, CaretPositioningMode mode)
 			{
 				if (mode == CaretPositioningMode.Normal || mode == CaretPositioningMode.EveryCodepoint)
@@ -148,22 +131,22 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				else
 					return -1;
 			}
-
+			
 			public override bool IsWhitespace(int visualColumn)
 			{
 				return true;
 			}
 		}
-
-		private sealed class TabTextElement : VisualLineElement
+		
+		sealed class TabTextElement : VisualLineElement
 		{
 			internal readonly TextLine text;
-
+			
 			public TabTextElement(TextLine text) : base(2, 1)
 			{
 				this.text = text;
 			}
-
+			
 			public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
 			{
 				// the TabTextElement consists of two TextRuns:
@@ -175,7 +158,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				else
 					throw new ArgumentOutOfRangeException("startVisualColumn");
 			}
-
+			
 			public override int GetNextCaretPosition(int visualColumn, LogicalDirection direction, CaretPositioningMode mode)
 			{
 				if (mode == CaretPositioningMode.Normal || mode == CaretPositioningMode.EveryCodepoint)
@@ -183,18 +166,18 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				else
 					return -1;
 			}
-
+			
 			public override bool IsWhitespace(int visualColumn)
 			{
 				return true;
 			}
 		}
-
-		private sealed class TabGlyphRun : TextEmbeddedObject
+		
+		sealed class TabGlyphRun : TextEmbeddedObject
 		{
-			private readonly TabTextElement element;
-			private TextRunProperties properties;
-
+			readonly TabTextElement element;
+			TextRunProperties properties;
+			
 			public TabGlyphRun(TabTextElement element, TextRunProperties properties)
 			{
 				if (properties == null)
@@ -202,83 +185,77 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				this.properties = properties;
 				this.element = element;
 			}
-
-			public override LineBreakCondition BreakBefore
-			{
+			
+			public override LineBreakCondition BreakBefore {
 				get { return LineBreakCondition.BreakPossible; }
 			}
-
-			public override LineBreakCondition BreakAfter
-			{
+			
+			public override LineBreakCondition BreakAfter {
 				get { return LineBreakCondition.BreakRestrained; }
 			}
-
-			public override bool HasFixedSize
-			{
+			
+			public override bool HasFixedSize {
 				get { return true; }
 			}
-
-			public override CharacterBufferReference CharacterBufferReference
-			{
+			
+			public override CharacterBufferReference CharacterBufferReference {
 				get { return new CharacterBufferReference(); }
 			}
-
-			public override int Length
-			{
+			
+			public override int Length {
 				get { return 1; }
 			}
-
-			public override TextRunProperties Properties
-			{
+			
+			public override TextRunProperties Properties {
 				get { return properties; }
 			}
-
+			
 			public override TextEmbeddedObjectMetrics Format(double remainingParagraphWidth)
 			{
 				double width = Math.Min(0, element.text.WidthIncludingTrailingWhitespace - 1);
 				return new TextEmbeddedObjectMetrics(width, element.text.Height, element.text.Baseline);
 			}
-
+			
 			public override Rect ComputeBoundingBox(bool rightToLeft, bool sideways)
 			{
 				double width = Math.Min(0, element.text.WidthIncludingTrailingWhitespace - 1);
 				return new Rect(0, 0, width, element.text.Height);
 			}
-
+			
 			public override void Draw(DrawingContext drawingContext, Point origin, bool rightToLeft, bool sideways)
 			{
 				origin.Y -= element.text.Baseline;
 				element.text.Draw(drawingContext, origin, InvertAxes.None);
 			}
 		}
-
-		private sealed class SpecialCharacterBoxElement : FormattedTextElement
+		
+		sealed class SpecialCharacterBoxElement : FormattedTextElement
 		{
 			public SpecialCharacterBoxElement(TextLine text) : base(text, 1)
 			{
 			}
-
+			
 			public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
 			{
 				return new SpecialCharacterTextRun(this, this.TextRunProperties);
 			}
 		}
-
-		private sealed class SpecialCharacterTextRun : FormattedTextRun
+		
+		sealed class SpecialCharacterTextRun : FormattedTextRun
 		{
-			private static readonly SolidColorBrush darkGrayBrush;
-
+			static readonly SolidColorBrush darkGrayBrush;
+			
 			static SpecialCharacterTextRun()
 			{
 				darkGrayBrush = new SolidColorBrush(Color.FromArgb(200, 128, 128, 128));
 				darkGrayBrush.Freeze();
 			}
-
+			
 			public SpecialCharacterTextRun(FormattedTextElement element, TextRunProperties properties)
 				: base(element, properties)
 			{
 			}
-
+			
 			public override void Draw(DrawingContext drawingContext, Point origin, bool rightToLeft, bool sideways)
 			{
 				Point newOrigin = new Point(origin.X + 1.5, origin.Y);
@@ -287,14 +264,14 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				drawingContext.DrawRoundedRectangle(darkGrayBrush, null, r, 2.5, 2.5);
 				base.Draw(drawingContext, newOrigin, rightToLeft, sideways);
 			}
-
+			
 			public override TextEmbeddedObjectMetrics Format(double remainingParagraphWidth)
 			{
 				TextEmbeddedObjectMetrics metrics = base.Format(remainingParagraphWidth);
 				return new TextEmbeddedObjectMetrics(metrics.Width + 3,
-																						 metrics.Height, metrics.Baseline);
+				                                     metrics.Height, metrics.Baseline);
 			}
-
+			
 			public override Rect ComputeBoundingBox(bool rightToLeft, bool sideways)
 			{
 				Rect r = base.ComputeBoundingBox(rightToLeft, sideways);

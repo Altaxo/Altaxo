@@ -1,14 +1,14 @@
 ﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
 // without restriction, including without limitation the rights to use, copy, modify, merge,
 // publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
 // to whom the Software is furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or
 // substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
@@ -26,34 +26,31 @@ namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
 	[Serializable]
 	public struct XshdReference<T> : IEquatable<XshdReference<T>> where T : XshdElement
 	{
-		private string referencedDefinition;
-		private string referencedElement;
-		private T inlineElement;
-
+		string referencedDefinition;
+		string referencedElement;
+		T inlineElement;
+		
 		/// <summary>
 		/// Gets the reference.
 		/// </summary>
-		public string ReferencedDefinition
-		{
+		public string ReferencedDefinition {
 			get { return referencedDefinition; }
 		}
-
+		
 		/// <summary>
 		/// Gets the reference.
 		/// </summary>
-		public string ReferencedElement
-		{
+		public string ReferencedElement {
 			get { return referencedElement; }
 		}
-
+		
 		/// <summary>
 		/// Gets the inline element.
 		/// </summary>
-		public T InlineElement
-		{
+		public T InlineElement {
 			get { return inlineElement; }
 		}
-
+		
 		/// <summary>
 		/// Creates a new XshdReference instance.
 		/// </summary>
@@ -65,7 +62,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
 			this.referencedElement = referencedElement;
 			this.inlineElement = null;
 		}
-
+		
 		/// <summary>
 		/// Creates a new XshdReference instance.
 		/// </summary>
@@ -77,7 +74,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
 			this.referencedElement = null;
 			this.inlineElement = inlineElement;
 		}
-
+		
 		/// <summary>
 		/// Applies the visitor to the inline element, if there is any.
 		/// </summary>
@@ -88,12 +85,11 @@ namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
 			else
 				return null;
 		}
-
+		
 		#region Equals and GetHashCode implementation
-
 		// The code in this region is useful if you want to use this structure in collections.
 		// If you don't need it, you can just remove the region and the ": IEquatable<XshdColorReference>" declaration.
-
+		
 		/// <inheritdoc/>
 		public override bool Equals(object obj)
 		{
@@ -102,7 +98,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
 			else
 				return false;
 		}
-
+		
 		/// <summary>
 		/// Equality operator.
 		/// </summary>
@@ -113,19 +109,19 @@ namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
 				&& this.referencedElement == other.referencedElement
 				&& this.inlineElement == other.inlineElement;
 		}
-
+		
 		/// <inheritdoc/>
 		public override int GetHashCode()
 		{
 			// combine the hash codes of all members here (e.g. with XOR operator ^)
 			return GetHashCode(referencedDefinition) ^ GetHashCode(referencedElement) ^ GetHashCode(inlineElement);
 		}
-
-		private static int GetHashCode(object o)
+		
+		static int GetHashCode(object o)
 		{
 			return o != null ? o.GetHashCode() : 0;
 		}
-
+		
 		/// <summary>
 		/// Equality operator.
 		/// </summary>
@@ -133,7 +129,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
 		{
 			return left.Equals(right);
 		}
-
+		
 		/// <summary>
 		/// Inequality operator.
 		/// </summary>
@@ -141,7 +137,6 @@ namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
 		{
 			return !left.Equals(right);
 		}
-
-		#endregion Equals and GetHashCode implementation
+		#endregion
 	}
 }

@@ -1,14 +1,14 @@
 ﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
 // without restriction, including without limitation the rights to use, copy, modify, merge,
 // publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
 // to whom the Software is furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or
 // substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
@@ -16,18 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Text;
 using System;
-using ICSharpCode.AvalonEdit.Document;
-
-using System;
-
 using System.Diagnostics;
 using System.Globalization;
-
 using System.Text;
-
 using System.Windows;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.NRefactory.Editor;
 
 namespace ICSharpCode.AvalonEdit.Highlighting
 {
@@ -39,7 +34,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 		/// <summary>
 		/// Builds a header for the CF_HTML clipboard format.
 		/// </summary>
-		private static string BuildHeader(int startHTML, int endHTML, int startFragment, int endFragment)
+		static string BuildHeader(int startHTML, int endHTML, int startFragment, int endFragment)
 		{
 			StringBuilder b = new StringBuilder();
 			b.AppendLine("Version:0.9");
@@ -49,7 +44,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 			b.AppendLine("EndFragment:" + endFragment.ToString("d8", CultureInfo.InvariantCulture));
 			return b.ToString();
 		}
-
+		
 		/// <summary>
 		/// Sets the TextDataFormat.Html on the data object to the specified html fragment.
 		/// This helper methods takes care of creating the necessary CF_HTML header.
@@ -60,7 +55,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 				throw new ArgumentNullException("dataObject");
 			if (htmlFragment == null)
 				throw new ArgumentNullException("htmlFragment");
-
+			
 			string htmlStart = @"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">" + Environment.NewLine
 				+ "<HTML>" + Environment.NewLine
 				+ "<BODY>" + Environment.NewLine
@@ -76,7 +71,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 			Debug.WriteLine(cf_html);
 			dataObject.SetText(cf_html, TextDataFormat.Html);
 		}
-
+		
 		/// <summary>
 		/// Creates a HTML fragment from a part of a document.
 		/// </summary>
@@ -95,12 +90,11 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 				throw new ArgumentException("Highlighter does not belong to the specified document.");
 			if (segment == null)
 				segment = new SimpleSegment(0, document.TextLength);
-
+			
 			StringBuilder html = new StringBuilder();
 			int segmentEndOffset = segment.EndOffset;
 			IDocumentLine line = document.GetLineByOffset(segment.Offset);
-			while (line != null && line.Offset < segmentEndOffset)
-			{
+			while (line != null && line.Offset < segmentEndOffset) {
 				HighlightedLine highlightedLine;
 				if (highlighter != null)
 					highlightedLine = highlighter.HighlightLine(line.LineNumber);

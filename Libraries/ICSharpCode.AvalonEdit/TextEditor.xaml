@@ -6,8 +6,7 @@
 	<Style TargetType="{x:Type AvalonEdit:TextEditor}">
 		<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
 		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-		<Setter Property="FlowDirection" Value="LeftToRight" />
-		<!-- AvalonEdit does not support RTL, so ensure we use LTR by default -->
+		<Setter Property="FlowDirection" Value="LeftToRight"/> <!-- AvalonEdit does not support RTL, so ensure we use LTR by default -->
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type AvalonEdit:TextEditor}">
@@ -24,7 +23,8 @@
 							Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TextArea}"
 							VerticalContentAlignment="Top"
 							HorizontalContentAlignment="Left"
-							Padding="{TemplateBinding Padding}" />
+							Padding="{TemplateBinding Padding}"
+						/>
 					</Border>
 					<ControlTemplate.Triggers>
 						<Trigger Property="WordWrap"
@@ -38,23 +38,23 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
-
+	
 	<Style TargetType="{x:Type editing:TextArea}" x:Shared="False">
-		<Setter Property="FocusVisualStyle" Value="{x:Null}" />
+		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		<Setter Property="SelectionBrush">
 			<Setter.Value>
 				<SolidColorBrush
 					Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"
-					Opacity="0.7" />
+					Opacity="0.7"/>
 			</Setter.Value>
 		</Setter>
 		<Setter Property="SelectionBorder">
 			<Setter.Value>
 				<Pen Brush="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
-				     Thickness="1" />
+				     Thickness="1"/>
 			</Setter.Value>
 		</Setter>
-		<Setter Property="SelectionForeground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+		<Setter Property="SelectionForeground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type editing:TextArea}">
@@ -71,7 +71,7 @@
 						<ContentPresenter
 							Panel.ZIndex="-1"
 							Focusable="False"
-							Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TextView}" />
+							Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TextView}"/>
 					</DockPanel>
 				</ControlTemplate>
 			</Setter.Value>

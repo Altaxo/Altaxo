@@ -3,11 +3,11 @@
 	xmlns:cc="clr-namespace:ICSharpCode.AvalonEdit.CodeCompletion"
 >
 	<cc:InsightWindowTemplateSelector x:Key="templateSelector" />
-
+	
 	<!-- Template for InsightWindow. Based on the template for ToolTip. -->
 	<Style TargetType="{x:Type cc:InsightWindow}">
 		<Setter Property="SizeToContent" Value="WidthAndHeight" />
-
+		
 		<Setter Property="BorderThickness" Value="1" />
 		<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" />
 		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.InfoBrushKey}}" />
@@ -41,7 +41,7 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
-
+	
 	<!-- Template for OverloadViewer. -->
 	<Style TargetType="{x:Type cc:OverloadViewer}">
 		<Setter Property="Template">
@@ -49,28 +49,28 @@
 				<ControlTemplate TargetType="{x:Type cc:OverloadViewer}">
 					<Grid>
 						<Grid.Resources>
-							<cc:CollapseIfSingleOverloadConverter x:Key="collapseIfSingleOverloadConverter" />
-
+							<cc:CollapseIfSingleOverloadConverter x:Key="collapseIfSingleOverloadConverter"/>
+							
 							<!-- Style of the UpDownButton -->
 							<Style TargetType="{x:Type Button}" x:Key="upDownButtonStyle">
 								<Style.Setters>
-									<Setter Property="Background" Value="LightGray" />
-									<Setter Property="Padding" Value="2,2,2,2" />
-									<Setter Property="Width" Value="9" />
-									<Setter Property="Height" Value="9" />
-									<Setter Property="SnapsToDevicePixels" Value="True" />
-									<Setter Property="OverridesDefaultStyle" Value="True" />
+									<Setter Property="Background" Value="LightGray"/>
+									<Setter Property="Padding" Value="2,2,2,2"/>
+									<Setter Property="Width" Value="9"/>
+									<Setter Property="Height" Value="9"/>
+									<Setter Property="SnapsToDevicePixels" Value="True"/>
+									<Setter Property="OverridesDefaultStyle" Value="True"/>
 									<Setter Property="Template">
 										<Setter.Value>
 											<ControlTemplate TargetType="{x:Type Button}">
 												<Border Name="bd"
 												        Background="{TemplateBinding Background}" CornerRadius="2">
 													<ContentPresenter Margin="{TemplateBinding Padding}"
-													                  Content="{TemplateBinding Content}" />
+													                  Content="{TemplateBinding Content}"/>
 												</Border>
 												<ControlTemplate.Triggers>
 													<Trigger Property="IsMouseOver" Value="true">
-														<Setter TargetName="bd" Property="Background" Value="LightBlue" />
+														<Setter TargetName="bd" Property="Background" Value="LightBlue"/>
 													</Trigger>
 												</ControlTemplate.Triggers>
 											</ControlTemplate>
@@ -78,21 +78,21 @@
 									</Setter>
 								</Style.Setters>
 							</Style>
-
+						
 							<DataTemplate x:Key="TextBlockTemplate">
 								<TextBlock TextWrapping="Wrap" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" />
 							</DataTemplate>
 						</Grid.Resources>
-
+						
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="1*" />
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="1*"/>
 						</Grid.ColumnDefinitions>
 						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="1*" />
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="1*"/>
 						</Grid.RowDefinitions>
-
+						
 						<StackPanel Grid.Row="0" Grid.Column="0"
 						            Margin="0,0,4,0"
 						            Orientation="Horizontal"
@@ -101,7 +101,7 @@
 								<Path Stroke="Black" Fill="Black" Data="M 0,0.866 L 1,0.866 L 0.5,0 Z" Stretch="UniformToFill" />
 							</Button>
 							<TextBlock Margin="2,0,2,0"
-							           Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Provider.CurrentIndexText}" />
+							           Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Provider.CurrentIndexText}"/>
 							<Button Name="PART_DOWN" Style="{StaticResource upDownButtonStyle}">
 								<Path Stroke="Black" Fill="Black" Data="M 0,0 L 1,0 L 0.5,0.866 Z" Stretch="UniformToFill" />
 							</Button>

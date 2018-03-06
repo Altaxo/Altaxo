@@ -1,14 +1,14 @@
 ﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
 // without restriction, including without limitation the rights to use, copy, modify, merge,
 // publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
 // to whom the Software is furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or
 // substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
@@ -16,16 +16,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Generic;
-using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Highlighting;
-using System;
-
 using System;
 using System.Collections.Generic;
-
 using System.Windows;
 using System.Windows.Documents;
+
+using ICSharpCode.NRefactory.Editor;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace ICSharpCode.AvalonEdit.Utils
 {
@@ -34,7 +32,7 @@ namespace ICSharpCode.AvalonEdit.Utils
 	/// </summary>
 	public static class DocumentPrinter
 	{
-#if NREFACTORY
+		#if NREFACTORY
 		/// <summary>
 		/// Converts a readonly TextDocument to a Block and applies the provided highlighting definition.
 		/// </summary>
@@ -47,8 +45,8 @@ namespace ICSharpCode.AvalonEdit.Utils
 				highlighter = null;
 			return ConvertTextDocumentToBlock(document, highlighter);
 		}
-#endif
-
+		#endif
+		
 		/// <summary>
 		/// Converts an IDocument to a Block and applies the provided highlighter.
 		/// </summary>
@@ -58,25 +56,21 @@ namespace ICSharpCode.AvalonEdit.Utils
 				throw new ArgumentNullException("document");
 			Paragraph p = new Paragraph();
 			p.TextAlignment = TextAlignment.Left;
-			for (int lineNumber = 1; lineNumber <= document.LineCount; lineNumber++)
-			{
+			for (int lineNumber = 1; lineNumber <= document.LineCount; lineNumber++) {
 				if (lineNumber > 1)
 					p.Inlines.Add(new LineBreak());
 				var line = document.GetLineByNumber(lineNumber);
-				if (highlighter != null)
-				{
+				if (highlighter != null) {
 					HighlightedLine highlightedLine = highlighter.HighlightLine(lineNumber);
 					p.Inlines.AddRange(highlightedLine.ToRichText().CreateRuns());
-				}
-				else
-				{
+				} else {
 					p.Inlines.Add(document.GetText(line));
 				}
 			}
 			return p;
 		}
-
-#if NREFACTORY
+		
+		#if NREFACTORY
 		/// <summary>
 		/// Converts a readonly TextDocument to a RichText and applies the provided highlighting definition.
 		/// </summary>
@@ -89,8 +83,8 @@ namespace ICSharpCode.AvalonEdit.Utils
 				highlighter = null;
 			return ConvertTextDocumentToRichText(document, highlighter);
 		}
-#endif
-
+		#endif
+		
 		/// <summary>
 		/// Converts an IDocument to a RichText and applies the provided highlighter.
 		/// </summary>
@@ -99,24 +93,20 @@ namespace ICSharpCode.AvalonEdit.Utils
 			if (document == null)
 				throw new ArgumentNullException("document");
 			var texts = new List<RichText>();
-			for (int lineNumber = 1; lineNumber <= document.LineCount; lineNumber++)
-			{
+			for (int lineNumber = 1; lineNumber <= document.LineCount; lineNumber++) {
 				var line = document.GetLineByNumber(lineNumber);
 				if (lineNumber > 1)
 					texts.Add(line.PreviousLine.DelimiterLength == 2 ? "\r\n" : "\n");
-				if (highlighter != null)
-				{
+				if (highlighter != null) {
 					HighlightedLine highlightedLine = highlighter.HighlightLine(lineNumber);
 					texts.Add(highlightedLine.ToRichText());
-				}
-				else
-				{
+				} else {
 					texts.Add(document.GetText(line));
 				}
 			}
 			return RichText.Concat(texts.ToArray());
 		}
-
+		
 		/// <summary>
 		/// Creates a flow document from the editor's contents.
 		/// </summary>
