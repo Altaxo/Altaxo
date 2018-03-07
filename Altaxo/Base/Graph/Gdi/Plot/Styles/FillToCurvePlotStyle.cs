@@ -393,11 +393,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 				PlotRangeList rangeList = pdata.RangeList;
 				int rangelistlen = rangeList.Count;
 
-				// we have to ignore the missing points here, thus all ranges can be plotted
-				// as one range, i.e. continuously
-				// for this, we create the totalRange, which contains all ranges
-				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
-				_cachedPaintOneRange(g, pdata, totalRange, layer, nextItemData);
+				if (rangelistlen > 0)
+				{
+					// we have to ignore the missing points here, thus all ranges can be plotted
+					// as one range, i.e. continuously
+					// for this, we create the totalRange, which contains all ranges
+					PlotRange totalRange = new PlotRange(rangeList[0].LowerBound, rangeList[rangelistlen - 1].UpperBound);
+					_cachedPaintOneRange(g, pdata, totalRange, layer, nextItemData);
+				}
 			}
 		}
 
