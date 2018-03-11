@@ -76,7 +76,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Markdig.Wpf", "Libraries\Ma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfMath", "Libraries\WpfMath\WpfMath.csproj", "{08F4B41A-7F21-446D-836B-00056E7BC311}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkdownEditing", "Altaxo\MarkdownEditing\MarkdownEditing.csproj", "{4932152A-9031-4277-8C47-C53AB8FE8322}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoMarkdownEditing", "Altaxo\MarkdownEditing\AltaxoMarkdownEditing.csproj", "{4932152A-9031-4277-8C47-C53AB8FE8322}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
