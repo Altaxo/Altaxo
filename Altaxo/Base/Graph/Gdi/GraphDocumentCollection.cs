@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -30,10 +30,10 @@ using System.Linq;
 namespace Altaxo.Graph.Gdi
 {
 	public class GraphDocumentCollection :
-		ProjectItemCollectionBase<GraphDocument, GraphDocumentBase>,
+		ProjectItemCollectionBase<GraphDocument, IProjectItem>,
 		IEnumerable<GraphDocument>
 	{
-		public GraphDocumentCollection(AltaxoDocument parent, SortedDictionary<string, GraphDocumentBase> commonDictionaryForGraphs)
+		public GraphDocumentCollection(AltaxoDocument parent, SortedDictionary<string, IProjectItem> commonDictionaryForGraphs)
 			: base(parent)
 		{
 			this._itemsByName = commonDictionaryForGraphs ?? throw new ArgumentNullException(nameof(commonDictionaryForGraphs));
