@@ -631,24 +631,35 @@ namespace Altaxo
 		}
 
 		/// <summary>
+		/// Gets the collection for a certain project item type.
+		/// </summary>
+		/// <param name="type">The type (must be a type that implements <see cref="Altaxo.Main.IProjectItem"/>).</param>
+		/// <returns>The collection in which items of this type are stored.</returns>
+		/// <exception cref="ArgumentOutOfRangeException"></exception>
+		public IProjectItemCollection GetCollectionForProjectItemType(System.Type type)
+		{
+			if (type == typeof(Altaxo.Data.DataTable))
+				return DataTableCollection;
+			else if (type == typeof(Altaxo.Graph.Gdi.GraphDocument))
+				return GraphDocumentCollection;
+			else if (type == typeof(Altaxo.Graph.Graph3D.GraphDocument))
+				return Graph3DDocumentCollection;
+			else if (type == typeof(Altaxo.Notes.NotesDocument))
+				return NotesDocumentCollection;
+			else if (type == typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument))
+				return ProjectFolderProperties;
+			else
+				throw new ArgumentOutOfRangeException(string.Format("Unknown type of project item: {0}, or no project item type", type));
+		}
+
+		/// <summary>
 		/// Gets the root path for a given project item type.
 		/// </summary>
 		/// <param name="type">The type of project item.</param>
 		/// <returns>The root path of this type of item.</returns>
 		public AbsoluteDocumentPath GetRootPathForProjectItemType(System.Type type)
 		{
-			if (type == typeof(Altaxo.Data.DataTable))
-				return AbsoluteDocumentPath.GetAbsolutePath(Current.Project.DataTableCollection);
-			else if (type == typeof(Altaxo.Graph.Gdi.GraphDocument))
-				return AbsoluteDocumentPath.GetAbsolutePath(Current.Project.GraphDocumentCollection);
-			else if (type == typeof(Altaxo.Graph.Graph3D.GraphDocument))
-				return AbsoluteDocumentPath.GetAbsolutePath(Current.Project.Graph3DDocumentCollection);
-			else if (type == typeof(Altaxo.Notes.NotesDocument))
-				return AbsoluteDocumentPath.GetAbsolutePath(Current.Project.NotesDocumentCollection);
-			else if (type == typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument))
-				return AbsoluteDocumentPath.GetAbsolutePath(Current.Project.ProjectFolderProperties);
-			else
-				throw new ArgumentOutOfRangeException(string.Format("Unknown type of project item: {0}", type));
+			return AbsoluteDocumentPath.GetAbsolutePath(GetCollectionForProjectItemType(type));
 		}
 
 		/// <summary>
@@ -880,35 +891,12 @@ namespace Altaxo
 		/// <param name="item">The item to remove.</param>
 		/// <exception cref="System.ArgumentNullException">item</exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">The type of item is not yet considered here.</exception>
-		public void RemoveItem(IProjectItem item)
+		public bool RemoveItem(IProjectItem item)
 		{
 			if (null == item)
-				throw new ArgumentNullException("item");
-
-			if (item is Altaxo.Data.DataTable table)
-			{
-				this.DataTableCollection.Remove(table);
-			}
-			else if (item is Altaxo.Graph.Gdi.GraphDocument graphGdiDoc)
-			{
-				this.GraphDocumentCollection.Remove(graphGdiDoc);
-			}
-			else if (item is Altaxo.Graph.Graph3D.GraphDocument graph3DDoc)
-			{
-				this.Graph3DDocumentCollection.Remove(graph3DDoc);
-			}
-			else if (item is Altaxo.Notes.NotesDocument notesDoc)
-			{
-				this.NotesDocumentCollection.Remove(notesDoc);
-			}
-			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument propDoc)
-			{
-				this.ProjectFolderProperties.Remove(propDoc);
-			}
-			else
-			{
-				throw new ArgumentOutOfRangeException(string.Format("Removing an item of type {0} is currently not implemented", item.GetType()));
-			}
+				throw new ArgumentNullException(nameof(item));
+			var coll = GetCollectionForProjectItemType(item.GetType());
+			return coll.Remove(item);
 		}
 
 		#endregion Static functions

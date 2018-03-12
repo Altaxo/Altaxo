@@ -282,7 +282,7 @@ namespace Altaxo.Main
 		/// Removes the item, referenced by its name, from the collection and disposes it.
 		/// Only items that belong to this collection will be removed and disposed.
 		/// </summary>
-		/// <param name="item">The name of the item to remove and dispose.</param>
+		/// <param name="itemName">The name of the item to remove and dispose.</param>
 		/// <returns>True if the item was found in the collection and thus removed successfully.</returns>
 		public bool Remove(string itemName)
 		{
@@ -475,5 +475,34 @@ namespace Altaxo.Main
 			}
 			base.Dispose(isDisposing);
 		}
+
+		#region IProjectItemCollection hidden implementations
+
+		IProjectItem IProjectItemCollection.this[string name]
+		{
+			get { return this[name]; }
+		}
+
+		void IProjectItemCollection.Add(IProjectItem projectItem)
+		{
+			if (projectItem is TItem titem)
+				Add(titem);
+			else if (null != projectItem)
+				throw new ArgumentException("Item is not of expected type " + typeof(TItem).Name, nameof(projectItem));
+			else
+				throw new ArgumentNullException(nameof(projectItem));
+		}
+
+		bool IProjectItemCollection.Remove(IProjectItem projectItem)
+		{
+			if (projectItem is TItem titem)
+				return Remove(titem);
+			else if (null != projectItem)
+				throw new ArgumentException("Item is not of expected type " + typeof(TItem).GetType(), nameof(projectItem));
+			else
+				throw new ArgumentNullException(nameof(projectItem));
+		}
+
+		#endregion IProjectItemCollection hidden implementations
 	}
 }

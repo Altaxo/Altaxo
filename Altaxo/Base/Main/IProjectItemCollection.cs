@@ -30,12 +30,12 @@ using System.Text;
 namespace Altaxo.Main
 {
 	/// <summary>
-	/// Interface that all Altaxo project items must support. Currently, project items are the base items of an Altaxo<see cref="T:Altaxo.Main.Document"/>,
-	/// i.e. <see cref="T:Altaxo.Data.DataTable"/>s, <see cref="T:Altaxo.Graph.Gdi.GraphDocument"/>s and <see cref="T:Altaxo.Main.Properties.ProjectFolderPropertyDocument"/>.
+	/// Interface that all collections that store Altaxo project items must support.
 	/// </summary>
 	public interface IProjectItemCollection :
 		IParentOfINameOwnerChildNodes,
-		Altaxo.Main.INamedObjectCollection
+		Altaxo.Main.INamedObjectCollection,
+		Altaxo.Main.IDocumentNode
 	{
 		/// <summary>
 		/// Determines whether the collection contains any project item with the specified name.
@@ -43,5 +43,20 @@ namespace Altaxo.Main
 		/// <param name="projectItemName">Name of the project item.</param>
 		/// <returns>True if the collection contains any project item with the specified name.</returns>
 		bool ContainsAnyName(string projectItemName);
+
+		bool Remove(string projectItemName);
+
+		bool Remove(IProjectItem projectItem);
+
+		IProjectItem this[string projectItemName] { get; }
+
+		void Add(IProjectItem projectItem);
+
+		/// <summary>
+		/// Looks for the next free standard project item name in the specified folder.
+		/// </summary>
+		/// <param name="folder">The folder where to find a unique project item name.</param>
+		/// <returns>New item name. Some items can not have a new name (e.g. items that exists only once per folder). In this case, the unique name is returned.</returns>
+		string FindNewItemNameInFolder(string folder);
 	}
 }

@@ -232,6 +232,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 	}
 
+	public class CmdNewNotesDocument : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.CreateNewNotesDocument();
+		}
+	}
+
 	public class CmdPlotCommonColumns : ProjectBrowseControllerCommand
 	{
 		protected override void Run(ProjectBrowseController ctrl)

@@ -472,6 +472,30 @@ namespace Altaxo.Main
 		#region IProjectItem functions
 
 		/// <summary>
+		/// Creates a project item, and add it to the appropriate collection in the current project.
+		/// Note that there might exist more specialized function to create a certain project item.
+		/// </summary>
+		/// <typeparam name="T">The type of project item to create.</typeparam>
+		/// <param name="inFolder">The folder into which the project item is created.</param>
+		/// <returns>The created project item.</returns>
+		public T CreateDocument<T>(string inFolder) where T : IProjectItem
+		{
+			var collection = CurrentOpenProject.GetCollectionForProjectItemType(typeof(T));
+			var itemName = collection.FindNewItemNameInFolder(inFolder);
+			if (collection.ContainsAnyName(itemName))
+			{
+				return (T)collection[itemName];
+			}
+			else
+			{
+				var projectItem = (T)System.Activator.CreateInstance(typeof(T));
+				projectItem.Name = itemName;
+				collection.Add(projectItem);
+				return projectItem;
+			}
+		}
+
+		/// <summary>
 		/// This function will delete a project item and close the corresponding views.
 		/// </summary>
 		/// <param name="document">The project item to delete</param>
@@ -500,6 +524,11 @@ namespace Altaxo.Main
 			}
 
 			Current.Project.RemoveItem(document);
+
+			// the following sequence is related to a bug encountered when closing a tabbed window by the program:
+			// the active view content is not updated because the dockpanel lost the focus
+			// to circumvent this, we focus on a new viewcontent, in this case the first one
+			SelectFirstAvailableView();
 		}
 
 		/// <summary>
@@ -534,17 +563,6 @@ namespace Altaxo.Main
 			{
 				return CreateNewViewContent_Unsynchronized(document);
 			}
-
-			/*
-      if (document is Altaxo.Data.DataTable)
-				return CreateNewWorksheet_Unsynchronized((Altaxo.Data.DataTable)document);
-			else if (document is Altaxo.Graph.Gdi.GraphDocument)
-				return CreateNewGraph_Unsynchronized((Altaxo.Graph.Gdi.GraphDocument)document);     // otherwise create a new graph view
-			else if (document is Altaxo.Graph.Graph3D.GraphDocument)
-				return CreateNewGraph3D_Unsynchronized((Altaxo.Graph.Graph3D.GraphDocument)document);     // otherwise create a new graph view
-			else
-				throw new NotImplementedException(string.Format("Not implemented for type {0}", document?.GetType()));
-				*/
 		}
 
 		private IMVCController CreateNewViewContent_Unsynchronized(IProjectItem document)

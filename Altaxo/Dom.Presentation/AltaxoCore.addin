@@ -1185,6 +1185,8 @@
 								icon="Icons.16x16.PlotLineScatter" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewGraph" />
 			<MenuItem id="NewPropBag" label="${res:XML.MainMenu.FileMenu.New.PropertyBag}" description="${res:XML.MainMenu.FileMenu.New.PropertyBag.Description}"
 								icon="Icons.16x16.PropertyBag" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewPropertyBag" />
+			<MenuItem id="NewNotes" label="${res:XML.MainMenu.FileMenu.New.NotesDocument}" description="${res:XML.MainMenu.FileMenu.New.NotesDocument.Description}"
+								icon="Icons.16x16.PropertyBag" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewNotesDocument" />
 		</MenuItem>
 		<MenuItem id="ViewOnSelect" label="${res:XML.ProjectBrowserMenu.ViewOnSelect}" type="Menu">
 			<MenuItem id="ViewOnSelectOff" label="${res:XML.ProjectBrowserMenu.ViewOnSelectOff}" description="${res:XML.ProjectBrowserMenu.ViewOnSelectOff.Description}" type="CheckBox"

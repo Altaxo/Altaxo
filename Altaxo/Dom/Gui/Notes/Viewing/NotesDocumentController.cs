@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 namespace Altaxo.Gui.Notes.Viewing
 {
 	[UserControllerForObject(typeof(NotesDocument))]
+	[UserControllerForObject(typeof(Altaxo.Notes.GuiModels.NotesDocumentViewOptions))]
 	[ExpectedTypeOfView(typeof(INotesDocumentView))]
 	public class NotesDocumentController : AbstractViewContent, IDisposable, IMVCANController
 	{
@@ -41,6 +42,15 @@ namespace Altaxo.Gui.Notes.Viewing
 		protected NotesDocument _doc;
 
 		public NotesDocument Doc { get { return _doc; } }
+
+		public NotesDocumentController()
+		{
+		}
+
+		public NotesDocumentController(NotesDocument doc)
+		{
+			InitializeDocument(doc);
+		}
 
 		public bool InitializeDocument(params object[] args)
 		{

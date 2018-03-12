@@ -351,6 +351,19 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 
 		/// <summary>
+		/// Creates a new notes document in the current project folder, and shows it in the document area.
+		/// </summary>
+		/// <param name="ctrl">Project browse controller.</param>
+		/// <returns>The notes controller used to show the newly created notes document.</returns>
+		public static void CreateNewNotesDocument(this ProjectBrowseController ctrl)
+		{
+			if (!ctrl.IsProjectFolderSelected(out string folderName))
+				folderName = ProjectFolder.RootFolderName;
+			var doc = Current.ProjectService.CreateDocument<Altaxo.Notes.NotesDocument>(folderName);
+			Current.ProjectService.OpenOrCreateViewContentForDocument(doc);
+		}
+
+		/// <summary>
 		/// Creates a new empty property bag in the current project folder, and shows it in the document area.
 		/// </summary>
 		/// <param name="ctrl">Project browse controller.</param>
