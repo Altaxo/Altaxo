@@ -61,6 +61,7 @@ namespace Altaxo.Main
 			doc.GraphDocumentCollection.CollectionChanged += EhItemCollectionChanged;
 			doc.Graph3DDocumentCollection.CollectionChanged += EhItemCollectionChanged;
 			doc.ProjectFolderProperties.CollectionChanged += EhItemCollectionChanged;
+			doc.NotesDocumentCollection.CollectionChanged += EhItemCollectionChanged;
 			Initialize(doc);
 
 			_parent = doc; // Parent last because we dont want the changes above to be monitored by the parent
@@ -77,6 +78,8 @@ namespace Altaxo.Main
 					doc.GraphDocumentCollection.CollectionChanged -= EhItemCollectionChanged;
 				if (null != doc.Graph3DDocumentCollection)
 					doc.Graph3DDocumentCollection.CollectionChanged -= EhItemCollectionChanged;
+				if (null != doc.NotesDocumentCollection)
+					doc.NotesDocumentCollection.CollectionChanged -= EhItemCollectionChanged;
 				if (null != doc.ProjectFolderProperties)
 					doc.ProjectFolderProperties.CollectionChanged -= EhItemCollectionChanged;
 			}
@@ -373,6 +376,17 @@ namespace Altaxo.Main
 						((Graph.Graph3D.GraphDocument)item).Name = AltaxoDocument.GraphDocumentCollection.FindNewItemName(newName);
 					}
 				}
+				else if (item is Notes.NotesDocument notesDoc)
+				{
+					if (!AltaxoDocument.NotesDocumentCollection.Contains(newName))
+					{
+						notesDoc.Name = newName;
+					}
+					else
+					{
+						notesDoc.Name = AltaxoDocument.GraphDocumentCollection.FindNewItemName(newName);
+					}
+				}
 				else if (item is Main.Properties.ProjectFolderPropertyDocument)
 				{
 					if (!AltaxoDocument.ProjectFolderProperties.Contains(newName))
@@ -439,6 +453,9 @@ namespace Altaxo.Main
 				ItemAdded(v, v.Name, EventFiring.Suppressed);
 
 			foreach (Altaxo.Graph.Graph3D.GraphDocument v in doc.Graph3DDocumentCollection)
+				ItemAdded(v, v.Name, EventFiring.Suppressed);
+
+			foreach (Altaxo.Notes.NotesDocument v in doc.NotesDocumentCollection)
 				ItemAdded(v, v.Name, EventFiring.Suppressed);
 
 			foreach (var item in doc.ProjectFolderProperties)
@@ -610,6 +627,11 @@ namespace Altaxo.Main
 						if (AltaxoDocument.Graph3DDocumentCollection.Contains(newName) && !itemHashSet.Contains(AltaxoDocument.Graph3DDocumentCollection[newName]))
 							return false;
 					}
+					else if (item is Notes.NotesDocument)
+					{
+						if (AltaxoDocument.NotesDocumentCollection.Contains(newName) && !itemHashSet.Contains(AltaxoDocument.NotesDocumentCollection[newName]))
+							return false;
+					}
 					else if (item is Properties.ProjectFolderPropertyDocument)
 					{
 						if (AltaxoDocument.ProjectFolderProperties.Contains(newName) && !itemHashSet.Contains(AltaxoDocument.ProjectFolderProperties[newName]))
@@ -753,6 +775,13 @@ namespace Altaxo.Main
 						newName = Current.Project.Graph3DDocumentCollection.FindNewItemName(newName);
 					graph.Name = newName;
 				}
+				else if (item is Altaxo.Notes.NotesDocument notesDoc)
+				{
+					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(notesDoc.Name));
+					if (Current.Project.NotesDocumentCollection.Contains(newName))
+						newName = Current.Project.Graph3DDocumentCollection.FindNewItemName(newName);
+					notesDoc.Name = newName;
+				}
 				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
 				{
 					var pdoc = (Altaxo.Main.Properties.ProjectFolderPropertyDocument)item;
@@ -812,6 +841,13 @@ namespace Altaxo.Main
 					if (Current.Project.Graph3DDocumentCollection.Contains(newName))
 						newName = Current.Project.Graph3DDocumentCollection.FindNewItemName(newName);
 					graph.Name = newName;
+				}
+				else if (item is Altaxo.Notes.NotesDocument notesDoc)
+				{
+					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(notesDoc.Name));
+					if (Current.Project.NotesDocumentCollection.Contains(newName))
+						newName = Current.Project.Graph3DDocumentCollection.FindNewItemName(newName);
+					notesDoc.Name = newName;
 				}
 				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
 				{
