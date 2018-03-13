@@ -27,41 +27,50 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Text.Viewing
 {
-	/// <summary>
-	/// Interaction logic for TextDocumentControl.xaml
-	/// </summary>
-	public partial class TextDocumentControl : UserControl, ITextDocumentView
+	public class ImageProvider : Markdig.Renderers.WpfImageProviderBase
 	{
-		public TextDocumentControl()
-		{
-			InitializeComponent();
-			_guiEditor.ImageProvider = new ImageProvider();
-		}
+		private const string graphPretext = "graph:";
 
-		public string SourceText { get => _guiEditor.SourceText; set => _guiEditor.SourceText = value; }
-		public string StyleName { set => _guiEditor.StyleName = value; }
-
-		public event EventHandler SourceTextChanged
+		public override Inline GetInlineItem(string url)
 		{
-			add
+			if (url.StartsWith(graphPretext))
 			{
-				_guiEditor.SourceTextChanged += value;
+				string graphName = url.Substring(graphPretext.Length);
+
+				if (Current.Project.GraphDocumentCollection.Contains(graphName))
+				{
+					var graph = Current.Project.GraphDocumentCollection[graphName];
+
+					var options = new Altaxo.Graph.Gdi.GraphExportOptions()
+					{
+						SourceDpiResolution = 96,
+						DestinationDpiResolution = 96,
+					};
+
+					using (var stream = new System.IO.MemoryStream())
+					{
+						Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderToStream(graph, stream, options);
+						stream.Seek(0, System.IO.SeekOrigin.Begin);
+
+						var imageSource = BitmapFrame.Create(stream,
+																			BitmapCreateOptions.None,
+																			BitmapCacheOption.OnLoad);
+
+						return new InlineUIContainer(new Image() { Source = imageSource });
+					}
+				}
+
+				return new Run("ERROR-Image not found");
 			}
-			remove
+			else
 			{
-				_guiEditor.SourceTextChanged -= value;
+				return base.GetInlineItem(url);
 			}
 		}
 	}

@@ -127,6 +127,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Markdig.Wpf\Markdig.Wpf.csproj">
+      <Project>{73cef9b3-7110-45f0-bf93-b25ea8559bad}</Project>
+      <Name>Markdig.Wpf</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Dom\AltaxoDom.csproj">
       <Project>{71636e05-f91f-4efe-a63a-5ba2d525071f}</Project>
       <Name>AltaxoDom</Name>
@@ -195,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Com\DebugStreamWrapper.cs" />
+    <Compile Include="Gui\Text\Viewing\ImageProvider.cs" />
     <Compile Include="Gui\Text\Viewing\TextDocumentControl.xaml.cs">
       <DependentUpon>TextDocumentControl.xaml</DependentUpon>
     </Compile>
