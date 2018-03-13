@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4BD9D813-D23B-4506-A8E9-68F36C729796}</ProjectGuid>
+    <ProjectGuid>{73CEF9B3-7110-45F0-BF93-B25EA8559BAD}</ProjectGuid>
     <OutputType>library</OutputType>
     <RootNamespace>Markdig.Wpf</RootNamespace>
     <AssemblyName>Markdig.Wpf</AssemblyName>
@@ -137,11 +137,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Markdig\Markdig.csproj">
-      <Project>{174b6b1a-201c-441b-a400-5b1cb4a547af}</Project>
+      <Project>{a145ab45-e55e-4e22-8ca1-dae537a346e0}</Project>
       <Name>Markdig</Name>
     </ProjectReference>
     <ProjectReference Include="..\WpfMath\WpfMath.csproj">
-      <Project>{08f4b41a-7f21-446d-836b-00056e7bc311}</Project>
+      <Project>{f0a416dd-4a60-48d8-9a2e-18312d4b8c4d}</Project>
       <Name>WpfMath</Name>
     </ProjectReference>
   </ItemGroup>

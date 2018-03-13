@@ -1183,10 +1183,10 @@
 								icon="Icons.16x16.StandardWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewStandardWorksheet" />
 			<MenuItem id="NewGraph" label="${res:XML.MainMenu.FileMenu.New.Graph}" description="${res:XML.MainMenu.FileMenu.New.Graph.Description}"
 								icon="Icons.16x16.PlotLineScatter" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewGraph" />
+			<MenuItem id="NewNotes" label="${res:XML.MainMenu.FileMenu.New.NotesDocument}" description="${res:XML.MainMenu.FileMenu.New.NotesDocument.Description}"
+								icon="Icons.16x16.Editor" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewNotesDocument" />
 			<MenuItem id="NewPropBag" label="${res:XML.MainMenu.FileMenu.New.PropertyBag}" description="${res:XML.MainMenu.FileMenu.New.PropertyBag.Description}"
 								icon="Icons.16x16.PropertyBag" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewPropertyBag" />
-			<MenuItem id="NewNotes" label="${res:XML.MainMenu.FileMenu.New.NotesDocument}" description="${res:XML.MainMenu.FileMenu.New.NotesDocument.Description}"
-								icon="Icons.16x16.PropertyBag" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewNotesDocument" />
 		</MenuItem>
 		<MenuItem id="ViewOnSelect" label="${res:XML.ProjectBrowserMenu.ViewOnSelect}" type="Menu">
 			<MenuItem id="ViewOnSelectOff" label="${res:XML.ProjectBrowserMenu.ViewOnSelectOff}" description="${res:XML.ProjectBrowserMenu.ViewOnSelectOff.Description}" type="CheckBox"
@@ -1213,6 +1213,8 @@
 								icon="Icons.16x16.StandardWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewStandardWorksheet" />
 			<MenuItem id="NewGraph" label="${res:XML.MainMenu.FileMenu.New.Graph}" description="${res:XML.MainMenu.FileMenu.New.Graph.Description}"
 								icon="Icons.16x16.PlotLineScatter" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewGraph" />
+			<MenuItem id="NewNotes" label="${res:XML.MainMenu.FileMenu.New.NotesDocument}" description="${res:XML.MainMenu.FileMenu.New.NotesDocument.Description}"
+								icon="Icons.16x16.Editor" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewNotesDocument" />
 		</MenuItem>
 		<MenuItem id="Separator2" type = "Separator" />
 		<MenuItem id="Rename" label="${res:XML.ProjectBrowserMenu.RenameFolder}" description="${res:XML.ProjectBrowserMenu.RenameFolder.Description}"

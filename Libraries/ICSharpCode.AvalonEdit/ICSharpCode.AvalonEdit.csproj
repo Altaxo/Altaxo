@@ -63,10 +63,18 @@
     <DefineTrace>True</DefineTrace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Net40'">
+    <OutputPath>..\..\rtDir\</OutputPath>
+    <DocumentationFile>..\..\rtDir\ICSharpCode.AvalonEdit.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Net40'">
+    <OutputPath>..\..\rtDir\</OutputPath>
+    <DocumentationFile>..\..\rtDir\ICSharpCode.AvalonEdit.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|WithNRefactory'">
     <OutputPath>..\..\rtDir\bin\</OutputPath>
     <DocumentationFile>..\..\rtDir\bin\ICSharpCode.AvalonEdit.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Net40'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|WithNRefactory'">
     <OutputPath>..\..\rtDir\bin\</OutputPath>
     <DocumentationFile>..\..\rtDir\bin\ICSharpCode.AvalonEdit.xml</DocumentationFile>
   </PropertyGroup>

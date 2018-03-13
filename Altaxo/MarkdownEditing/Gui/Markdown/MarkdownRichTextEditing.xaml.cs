@@ -31,6 +31,64 @@ namespace Altaxo.Gui.Markdown
 
 		private MarkdownPipeline Pipeline { get; set; }
 
+		private string _sourceText;
+		private string _styleName;
+		private IStyles _currentStyle = DynamicStyles.Instance;
+
+		public string SourceText
+		{
+			get
+			{
+				return _sourceText;
+			}
+			set
+			{
+				_sourceText = value; // We do not fire SourceTextChanged here, instead we fire it in EhSourceTextChanged
+				_guiRawText.Text = _sourceText;
+			}
+		}
+
+		public string StyleName
+		{
+			get
+			{
+				return _styleName;
+			}
+			set
+			{
+				if (!(_styleName == value))
+				{
+					_styleName = value;
+
+					if (!string.IsNullOrEmpty(_styleName))
+					{
+						try
+						{
+							string sourceName = string.Format("/Markdig.Wpf;component/Themes/{0}Theme.xaml", _styleName);
+							var dictionary = new Markdig.Wpf.Themes.MarkdownThemeResourceDictionary
+							{
+								Source = new Uri(sourceName, UriKind.RelativeOrAbsolute)
+							};
+							_currentStyle = new StaticStyles(dictionary);
+						}
+						catch (Exception ex)
+						{
+							throw new ArgumentException(string.Format("MarkdownStyle '{0}' is not available!", value), nameof(value), ex);
+						}
+					}
+
+					// force a complete new rendering
+					EhSourceTextChanged(true);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Occurs when the source text has been changed from inside the editor, but not if it has been changed programmatrically
+		/// by using the <see cref="SourceText"/> property.
+		/// </summary>
+		public event EventHandler SourceTextChanged;
+
 		public MarkdownRichTextEditing()
 		{
 			InitializeComponent();
@@ -48,50 +106,55 @@ namespace Altaxo.Gui.Markdown
 			Process.Start(e.Parameter.ToString());
 		}
 
-		private string _lastSourceText = null;
-		private Markdig.Syntax.MarkdownDocument _lastMarkdownDocument = null;
+		private string _lastSourceTextProcessed = null;
+		private Markdig.Syntax.MarkdownDocument _lastMarkdownDocumentProcessed = null;
 		private System.Threading.CancellationTokenSource _lastCancellationTokenSource = null;
 
 		private void EhSourceTextChanged(object sender, EventArgs e)
 		{
+			EhSourceTextChanged(false);
+		}
+
+		private void EhSourceTextChanged(bool forceCompleteRendering)
+		{
 			if (null != _guiViewer && null != _guiRawText)
 			{
+				_sourceText = _guiRawText.Text;
+
 				var pipeline = Pipeline ?? DefaultPipeline;
-				if (_lastMarkdownDocument == null || _lastSourceText == null)
+				if (forceCompleteRendering || _lastMarkdownDocumentProcessed == null || _lastSourceTextProcessed == null)
 				{
-					var markdownText = _guiRawText.Text;
-					var markdownDocument = Markdig.Markdown.Parse(markdownText, pipeline);
+					
+					var markdownDocument = Markdig.Markdown.Parse(_sourceText, pipeline);
 
 					// We override the renderer with our own writer
 
-					var dictionary = new Markdig.Wpf.Themes.MarkdownThemeResourceDictionary
-					{
-						Source = new Uri("/Markdig.Wpf;component/Themes/GithubTheme.xaml", UriKind.RelativeOrAbsolute)
-					};
-
 					var flowDocument = new FlowDocument();
-					var renderer = new Markdig.Renderers.WpfRenderer(flowDocument, new StaticStyles(dictionary));
+					var renderer = new Markdig.Renderers.WpfRenderer(flowDocument, _currentStyle);
 					(Pipeline ?? DefaultPipeline).Setup(renderer);
 					renderer.Render(markdownDocument);
 					_guiViewer.Document = flowDocument;
-					_lastSourceText = markdownText;
-					_lastMarkdownDocument = markdownDocument;
+					_lastSourceTextProcessed = _sourceText;
+					_lastMarkdownDocumentProcessed = markdownDocument;
 				}
 				else
 				{
 					_lastCancellationTokenSource?.Cancel(); // cancel the previous task
 					_lastCancellationTokenSource = new System.Threading.CancellationTokenSource();
 					var task = new MarkdownDifferenceUpdater(
-						_lastSourceText, _lastMarkdownDocument, // old source text and old parsed document
+						_lastSourceTextProcessed, _lastMarkdownDocumentProcessed, // old source text and old parsed document
 						Pipeline ?? DefaultPipeline,
-						_guiRawText.Text,  // new source
+						_sourceText,  // new source
+						_currentStyle,
 						_guiViewer.Document, // the flow document to edit
 						this.Dispatcher,
-						(newText, newDocument) => { _lastSourceText = newText; _lastMarkdownDocument = newDocument; },
+						(newText, newDocument) => { _lastSourceTextProcessed = newText; _lastMarkdownDocumentProcessed = newDocument; },
 						_lastCancellationTokenSource.Token);
 
 					Task.Run(() => task.Parse());
 				}
+
+				SourceTextChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
 
@@ -153,10 +216,31 @@ namespace Altaxo.Gui.Markdown
 		{
 			System.Diagnostics.Debug.WriteLine("SourceScrollChanged, lastActivated={0}", _lastScrollActivatedWindow);
 
+			ICSharpCode.AvalonEdit.TextViewPosition? textPosition = null;
+
 			if (_lastScrollActivatedWindow == LastScrollActivatedWindow.SourceEditor)
 			{
+				// find out which of the windows has the caret
+
+				if (_guiRawText.IsKeyboardFocusWithin)
+				{
+					textPosition = _guiRawText.TextArea.Caret.Position;
+					if (null != textPosition)
+					{
+						var sourceLineTopAbs = _guiRawText.TextArea.TextView.GetVisualPosition(textPosition.Value, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.LineTop);
+						if (!(sourceLineTopAbs.Y >= _guiRawText.TextArea.TextView.VerticalOffset && sourceLineTopAbs.Y <= (_guiRawText.TextArea.TextView.VerticalOffset + _guiRawText.TextArea.TextView.ActualHeight)))
+						{
+							textPosition = null; // if caret is outside viewport, we do not consider this caret text position
+						}
+					}
+				}
+
 				var scrollPos = _guiRawText.TextArea.TextView.ScrollOffset;
-				var textPosition = _guiRawText.TextArea.TextView.GetPosition(new Point(0, _guiRawText.TextArea.TextView.VerticalOffset + _guiRawText.ActualHeight / 2));
+				if (null == textPosition)
+				{
+					textPosition = _guiRawText.TextArea.TextView.GetPosition(new Point(0, _guiRawText.TextArea.TextView.VerticalOffset + _guiRawText.ActualHeight / 2));
+				}
+
 				if (null != textPosition)
 				{
 					SyncSourceEditorTextPositionToViewer(textPosition.Value);
@@ -173,9 +257,23 @@ namespace Altaxo.Gui.Markdown
 		{
 			System.Diagnostics.Debug.WriteLine("LastActivated={0}", _lastScrollActivatedWindow);
 
+			TextPointer textPosition = null;
+
 			if (_lastScrollActivatedWindow == LastScrollActivatedWindow.Viewer)
 			{
-				var textPosition = _guiViewer.GetPositionFromPoint(new Point(0, _guiViewer.ActualHeight / 2), true);
+				if (_guiViewer.IsKeyboardFocusWithin && _guiViewer.IsSelectionActive)
+				{
+					textPosition = _guiViewer.Selection.Start;
+					var rect = textPosition.GetCharacterRect(LogicalDirection.Forward);
+					if (!(rect.Top >= 0 && rect.Top <= (0 + _guiViewer.ViewportHeight)))
+						textPosition = null; // Do not use caret position if it is outside the viewport window
+				}
+
+				if (null == textPosition)
+				{
+					textPosition = _guiViewer.GetPositionFromPoint(new Point(0, _guiViewer.ActualHeight / 2), true);
+				}
+
 				SyncViewersTextPositionToSourceEditor(textPosition);
 			}
 		}

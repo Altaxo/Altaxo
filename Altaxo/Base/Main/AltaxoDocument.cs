@@ -630,6 +630,18 @@ namespace Altaxo
 			}
 		}
 
+		public IEnumerable<IProjectItemCollection> ProjectItemCollections
+		{
+			get
+			{
+				yield return DataTableCollection;
+				yield return GraphDocumentCollection;
+				yield return Graph3DDocumentCollection;
+				yield return NotesDocumentCollection;
+				yield return ProjectFolderProperties;
+			}
+		}
+
 		/// <summary>
 		/// Gets the collection for a certain project item type.
 		/// </summary>
@@ -688,30 +700,9 @@ namespace Altaxo
 			if (null == item)
 				throw new ArgumentNullException(nameof(item));
 
-			if (item is Altaxo.Data.DataTable table)
-			{
-				return this.DataTableCollection.Contains(table);
-			}
-			else if (item is Altaxo.Graph.Gdi.GraphDocument graphGdiDoc)
-			{
-				return this.GraphDocumentCollection.Contains(graphGdiDoc);
-			}
-			else if (item is Altaxo.Graph.Graph3D.GraphDocument graph3DDoc)
-			{
-				return this.Graph3DDocumentCollection.Contains(graph3DDoc);
-			}
-			else if (item is Altaxo.Notes.NotesDocument notesDoc)
-			{
-				return this.NotesDocumentCollection.Contains(notesDoc);
-			}
-			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
-			{
-				return this.ProjectFolderProperties.Contains(item.Name);
-			}
-			else
-			{
-				throw new ArgumentOutOfRangeException(string.Format("Processing an item of type {0} is currently not implemented", item.GetType()));
-			}
+			var coll = GetCollectionForProjectItemType(item.GetType());
+
+			return coll.Contains(item.Name);
 		}
 
 		/// <summary>
@@ -724,38 +715,23 @@ namespace Altaxo
 		public void AddItem(IProjectItem item)
 		{
 			if (null == item)
-				throw new ArgumentNullException("item");
+				throw new ArgumentNullException(nameof(item));
 
-			if (item is Altaxo.Data.DataTable table)
-			{
-				this.DataTableCollection.Add(table);
-			}
-			else if (item is Altaxo.Graph.Gdi.GraphDocument graphGdiDoc)
-			{
-				this.GraphDocumentCollection.Add(graphGdiDoc);
-			}
-			else if (item is Altaxo.Graph.Graph3D.GraphDocument graph3DDoc)
-			{
-				this.Graph3DDocumentCollection.Add(graph3DDoc);
-			}
-			else if (item is Altaxo.Notes.NotesDocument notesDoc)
-			{
-				this.NotesDocumentCollection.Add(notesDoc);
-			}
-			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument propDoc)
+			if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument propDoc)
 			{
 				if (!this.ProjectFolderProperties.Contains(propDoc.Name))
 				{
-					Current.Project.ProjectFolderProperties.Add(propDoc); // if not existing, then add the new property document
+					ProjectFolderProperties.Add(propDoc); // if not existing, then add the new property document
 				}
 				else
 				{
-					Current.Project.ProjectFolderProperties[propDoc.Name].PropertyBagNotNull.MergePropertiesFrom(propDoc.PropertyBag, true); // if existing, then merge the properties into the existing bag
+					ProjectFolderProperties[propDoc.Name].PropertyBagNotNull.MergePropertiesFrom(propDoc.PropertyBag, true); // if existing, then merge the properties into the existing bag
 				}
 			}
 			else
 			{
-				throw new ArgumentOutOfRangeException(string.Format("Adding an item of type {0} is currently not implemented", item.GetType()));
+				var coll = GetCollectionForProjectItemType(item.GetType());
+				coll.Add(item);
 			}
 		}
 
@@ -772,57 +748,27 @@ namespace Altaxo
 			if (null == item)
 				throw new ArgumentNullException(nameof(item));
 
-			if (item is Altaxo.Data.DataTable table)
+			if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument propertyDoc)
 			{
-				if (table.Name == null || table.Name == string.Empty)
-					table.Name = Current.Project.DataTableCollection.FindNewTableName();
-				else if (Current.Project.DataTableCollection.Contains(table.Name))
-					table.Name = Current.Project.DataTableCollection.FindNewTableName(table.Name);
-
-				this.DataTableCollection.Add(table);
-			}
-			else if (item is Altaxo.Graph.Gdi.GraphDocument graphGdi)
-			{
-				if (graphGdi.Name == null || graphGdi.Name == string.Empty)
-					graphGdi.Name = Current.Project.GraphDocumentCollection.FindNewItemName();
-				else if (Current.Project.GraphDocumentCollection.Contains(graphGdi.Name))
-					graphGdi.Name = Current.Project.GraphDocumentCollection.FindNewItemName(graphGdi.Name);
-
-				this.GraphDocumentCollection.Add((Altaxo.Graph.Gdi.GraphDocument)item);
-			}
-			else if (item is Altaxo.Graph.Graph3D.GraphDocument graph3D)
-			{
-				if (graph3D.Name == null || graph3D.Name == string.Empty)
-					graph3D.Name = Current.Project.Graph3DDocumentCollection.FindNewItemName();
-				else if (Current.Project.Graph3DDocumentCollection.Contains(graph3D.Name))
-					graph3D.Name = Current.Project.Graph3DDocumentCollection.FindNewItemName(graph3D.Name);
-
-				this.Graph3DDocumentCollection.Add((Altaxo.Graph.Graph3D.GraphDocument)item);
-			}
-			else if (item is Altaxo.Notes.NotesDocument notesDoc)
-			{
-				if (notesDoc.Name == null || notesDoc.Name == string.Empty)
-					notesDoc.Name = Current.Project.NotesDocumentCollection.FindNewItemName();
-				else if (Current.Project.NotesDocumentCollection.Contains(notesDoc.Name))
-					notesDoc.Name = Current.Project.NotesDocumentCollection.FindNewItemName(notesDoc.Name);
-
-				this.NotesDocumentCollection.Add((Altaxo.Notes.NotesDocument)item);
-			}
-			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
-			{
-				var doc = (Altaxo.Main.Properties.ProjectFolderPropertyDocument)item;
-				if (!this.ProjectFolderProperties.Contains(doc.Name))
+				if (!ProjectFolderProperties.Contains(propertyDoc.Name))
 				{
-					Current.Project.ProjectFolderProperties.Add(doc); // if not existing, then add the new property document
+					ProjectFolderProperties.Add(propertyDoc); // if not existing, then add the new property document
 				}
 				else
 				{
-					Current.Project.ProjectFolderProperties[doc.Name].PropertyBagNotNull.MergePropertiesFrom(doc.PropertyBag, true); // if existing, then merge the properties into the existing bag
+					ProjectFolderProperties[propertyDoc.Name].PropertyBagNotNull.MergePropertiesFrom(propertyDoc.PropertyBag, true); // if existing, then merge the properties into the existing bag
 				}
 			}
-			else
+			else // normal case
 			{
-				throw new ArgumentOutOfRangeException(string.Format("Adding an item of type {0} is currently not implemented", item.GetType()));
+				var coll = GetCollectionForProjectItemType(item.GetType());
+
+				if (item.Name == null || item.Name == string.Empty)
+					item.Name = coll.FindNewItemName();
+				else if (coll.Contains(item.Name))
+					item.Name = coll.FindNewItemName(item.Name);
+
+				coll.Add(item);
 			}
 		}
 
@@ -838,37 +784,9 @@ namespace Altaxo
 			if (null == item)
 				throw new ArgumentNullException(nameof(item));
 
-			string name = item.Name;
-
-			if (item is Altaxo.Data.DataTable)
-			{
-				if (this.DataTableCollection.Contains(name))
-					return this.DataTableCollection[name];
-			}
-			else if (item is Altaxo.Graph.Gdi.GraphDocument)
-			{
-				if (this.GraphDocumentCollection.Contains(item.Name))
-					return this.GraphDocumentCollection[item.Name];
-			}
-			else if (item is Altaxo.Graph.Graph3D.GraphDocument)
-			{
-				if (this.Graph3DDocumentCollection.Contains(item.Name))
-					return this.Graph3DDocumentCollection[item.Name];
-			}
-			else if (item is Altaxo.Notes.NotesDocument)
-			{
-				if (this.NotesDocumentCollection.Contains(item.Name))
-					return this.NotesDocumentCollection[item.Name];
-			}
-			else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
-			{
-				if (this.ProjectFolderProperties.Contains(item.Name))
-					return this.ProjectFolderProperties[item.Name];
-			}
-			else
-			{
-				throw new ArgumentOutOfRangeException(string.Format("Processing an item of type {0} is currently not implemented", item.GetType()));
-			}
+			var coll = GetCollectionForProjectItemType(item.GetType());
+			if (coll.Contains(item.Name))
+				return coll[item.Name];
 
 			return null;
 		}

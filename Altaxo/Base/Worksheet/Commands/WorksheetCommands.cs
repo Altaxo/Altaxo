@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -39,7 +39,7 @@ namespace Altaxo.Worksheet.Commands
 
 			// find a new name for the cloned table and add it to the DataTableCollection
 			string newnamebase = Altaxo.Main.ProjectFolder.CreateFullName(ctrl.DataTable.Name, "WKS");
-			clonedTable.Name = Data.DataTableCollection.GetParentDataTableCollectionOf(ctrl.DataTable).FindNewTableName(newnamebase);
+			clonedTable.Name = Data.DataTableCollection.GetParentDataTableCollectionOf(ctrl.DataTable).FindNewItemName(newnamebase);
 			Data.DataTableCollection.GetParentDataTableCollectionOf(ctrl.DataTable).Add(clonedTable);
 			Current.ProjectService.CreateNewWorksheet(clonedTable);
 		}

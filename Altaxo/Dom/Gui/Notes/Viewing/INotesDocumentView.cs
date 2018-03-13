@@ -32,5 +32,10 @@ namespace Altaxo.Gui.Notes.Viewing
 {
 	public interface INotesDocumentView
 	{
+		string SourceText { get; set; }
+
+		event EventHandler SourceTextChanged;
+
+		string StyleName { set; }
 	}
 }

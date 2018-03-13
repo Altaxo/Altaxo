@@ -49,5 +49,20 @@ namespace Altaxo.Gui.Notes.Viewing
 		{
 			InitializeComponent();
 		}
+
+		public string SourceText { get => _guiEditor.SourceText; set => _guiEditor.SourceText = value; }
+		public string StyleName { set => _guiEditor.StyleName = value; }
+
+		public event EventHandler SourceTextChanged
+		{
+			add
+			{
+				_guiEditor.SourceTextChanged += value;
+			}
+			remove
+			{
+				_guiEditor.SourceTextChanged -= value;
+			}
+		}
 	}
 }

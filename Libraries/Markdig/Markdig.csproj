@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{174B6B1A-201C-441B-A400-5B1CB4A547AF}</ProjectGuid>
+    <ProjectGuid>{A145AB45-E55E-4E22-8CA1-DAE537A346E0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Markdig</RootNamespace>

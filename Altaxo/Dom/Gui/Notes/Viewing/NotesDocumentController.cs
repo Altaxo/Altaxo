@@ -94,14 +94,31 @@ namespace Altaxo.Gui.Notes.Viewing
 
 		protected void Initialize(bool initData)
 		{
+			if (initData)
+			{
+			}
+			if (null != _view)
+			{
+				_view.SourceText = _doc.SourceText;
+			}
 		}
 
 		private void AttachView()
 		{
+			_view.SourceTextChanged += EhSourceTextChanged;
 		}
 
 		private void DetachView()
 		{
+			_view.SourceTextChanged -= EhSourceTextChanged;
+		}
+
+		private void EhSourceTextChanged(object sender, EventArgs e)
+		{
+			if (null != _view)
+			{
+				_doc.SourceText = _view.SourceText;
+			}
 		}
 
 		public bool Apply(bool disposeController)

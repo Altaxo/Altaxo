@@ -337,7 +337,7 @@ namespace Altaxo.Main.Commands
 				if (collection == null)
 					return null; // if there is no parent data set we can enter anything
 
-				if (collection.ContainsAnyName(projectItemName))
+				if (collection.Contains(projectItemName))
 					return string.Format("This {0} name already exists, please choose another name!", _projectItemTypeName);
 				else
 					return null;

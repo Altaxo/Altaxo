@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -49,7 +49,7 @@ namespace Altaxo.Serialization.Origin
 			for (int nspread = 0; nspread < opj.numSpreads(); nspread++)
 			{
 				// Create a new table
-				string tablename = Current.Project.DataTableCollection.FindNewTableName(opj.spreadName(nspread));
+				string tablename = Current.Project.DataTableCollection.FindNewItemName(opj.spreadName(nspread));
 				DataTable table = new DataTable(tablename);
 
 				int numberOfColumns = opj.numCols(nspread);

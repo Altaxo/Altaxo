@@ -413,7 +413,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		OpenFolder = 2,
 		Worksheet = 3,
 		Graph = 4,
-		PropertyBag = 5
+		PropertyBag = 5,
+		NotesDocument = 6,
 	}
 
 	public enum ViewOnSelect

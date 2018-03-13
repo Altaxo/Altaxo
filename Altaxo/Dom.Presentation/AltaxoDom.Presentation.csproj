@@ -333,7 +333,7 @@
     </Page>
     <Page Include="Gui\Notes\Viewing\NotesDocumentControl.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Gui\Pads\FileBrowser\FileBrowserControl.xaml">
       <SubType>Designer</SubType>

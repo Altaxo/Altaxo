@@ -482,7 +482,7 @@ namespace Altaxo.Main
 		{
 			var collection = CurrentOpenProject.GetCollectionForProjectItemType(typeof(T));
 			var itemName = collection.FindNewItemNameInFolder(inFolder);
-			if (collection.ContainsAnyName(itemName))
+			if (collection.Contains(itemName))
 			{
 				return (T)collection[itemName];
 			}
@@ -645,7 +645,7 @@ namespace Altaxo.Main
 		/// <returns>The view content for the provided table.</returns>
 		public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheet(bool bCreateDefaultColumns)
 		{
-			return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewTableName(), bCreateDefaultColumns);
+			return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewItemName(), bCreateDefaultColumns);
 		}
 
 		/// <summary>
@@ -663,7 +663,7 @@ namespace Altaxo.Main
 		/// <returns>The content controller for that table.</returns>
 		public Altaxo.Gui.Worksheet.Viewing.IWorksheetController CreateNewWorksheetInFolder(string folder)
 		{
-			return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewTableNameInFolder(folder), false);
+			return CreateNewWorksheet(this.CurrentOpenProject.DataTableCollection.FindNewItemNameInFolder(folder), false);
 		}
 
 		/// <summary>

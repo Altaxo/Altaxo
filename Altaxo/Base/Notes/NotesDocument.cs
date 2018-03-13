@@ -181,6 +181,7 @@ namespace Altaxo.Notes
 			using (var suppressToken = SuspendGetToken())
 			{
 				_creationTime = _lastChangeTime = DateTime.UtcNow;
+				_images = new Dictionary<string, Graph.MemoryStreamImageProxy>();
 				CopyFrom(from);
 
 				suppressToken.ResumeSilently();

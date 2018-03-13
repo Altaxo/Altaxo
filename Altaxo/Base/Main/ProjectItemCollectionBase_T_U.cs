@@ -523,6 +523,15 @@ namespace Altaxo.Main
 				throw new ArgumentNullException(nameof(projectItem));
 		}
 
+		IEnumerable<IProjectItem> IProjectItemCollection.ProjectItems
+		{
+			get
+			{
+				foreach (var item in _itemsByName.Values)
+					yield return item;
+			}
+		}
+
 		#endregion IProjectItemCollection hidden implementations
 	}
 }
