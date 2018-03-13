@@ -31,13 +31,15 @@ namespace Markdig.Renderers.Wpf.Inlines
 
             if (link.IsImage)
             {
-                var image = new Image
-                {
-                    Source = new BitmapImage(new Uri(url, UriKind.RelativeOrAbsolute))
-                };
+                var inline = renderer.ImageProvider.GetInlineItem(url);
+                inline.Tag = link;
 
-                renderer.Styles.ApplyImageStyle(image);
-                renderer.WriteInline(new InlineUIContainer(image) { Tag = link });
+                if (inline is InlineUIContainer container && container.Child is Image image)
+                {
+                    renderer.Styles.ApplyImageStyle(image);
+                }
+
+                renderer.WriteInline(inline);
             }
             else
             {

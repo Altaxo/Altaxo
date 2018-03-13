@@ -1,4 +1,5 @@
 ﻿using Markdig;
+using Markdig.Renderers;
 using Markdig.Wpf;
 using System;
 using System.Collections.Generic;
@@ -84,6 +85,14 @@ namespace Altaxo.Gui.Markdown
 		}
 
 		/// <summary>
+		/// Gets or sets an image provider, that can be used to provide images from special sources. If null, a default image provider will be used.
+		/// </summary>
+		/// <value>
+		/// The image provider.
+		/// </value>
+		public IWpfImageProvider ImageProvider { get; set; }
+
+		/// <summary>
 		/// Occurs when the source text has been changed from inside the editor, but not if it has been changed programmatrically
 		/// by using the <see cref="SourceText"/> property.
 		/// </summary>
@@ -124,13 +133,16 @@ namespace Altaxo.Gui.Markdown
 				var pipeline = Pipeline ?? DefaultPipeline;
 				if (forceCompleteRendering || _lastMarkdownDocumentProcessed == null || _lastSourceTextProcessed == null)
 				{
-					
 					var markdownDocument = Markdig.Markdown.Parse(_sourceText, pipeline);
 
 					// We override the renderer with our own writer
 
 					var flowDocument = new FlowDocument();
-					var renderer = new Markdig.Renderers.WpfRenderer(flowDocument, _currentStyle);
+					var renderer = new Markdig.Renderers.WpfRenderer(flowDocument, _currentStyle)
+					{
+						ImageProvider = this.ImageProvider
+					};
+
 					(Pipeline ?? DefaultPipeline).Setup(renderer);
 					renderer.Render(markdownDocument);
 					_guiViewer.Document = flowDocument;
@@ -144,8 +156,9 @@ namespace Altaxo.Gui.Markdown
 					var task = new MarkdownDifferenceUpdater(
 						_lastSourceTextProcessed, _lastMarkdownDocumentProcessed, // old source text and old parsed document
 						Pipeline ?? DefaultPipeline,
-						_sourceText,  // new source
 						_currentStyle,
+						ImageProvider,
+						_sourceText,  // new source
 						_guiViewer.Document, // the flow document to edit
 						this.Dispatcher,
 						(newText, newDocument) => { _lastSourceTextProcessed = newText; _lastMarkdownDocumentProcessed = newDocument; },

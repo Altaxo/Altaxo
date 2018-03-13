@@ -30,6 +30,26 @@ namespace Markdig.Renderers
         private char[] buffer;
         public IStyles Styles { get; private set; }
 
+        private IWpfImageProvider _imageProvider = WpfImageProviderBase.Instance;
+
+        /// <summary>
+        /// Gets or sets the image provider, i.e. a hook to provide images to the renderer.
+        /// </summary>
+        /// <value>
+        /// The image provider. If set to null, the default image provider will be used.
+        /// </value>
+        public IWpfImageProvider ImageProvider
+        {
+            get
+            {
+                return _imageProvider;
+            }
+            set
+            {
+                _imageProvider = value ?? WpfImageProviderBase.Instance;
+            }
+        }
+
         public WpfRenderer([NotNull] IAddChild document)
             : this(document, null)
         {

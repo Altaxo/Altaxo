@@ -1,0 +1,39 @@
+﻿// Copyright (c) 2018 Dr. Dirk Lellinger. All rights reserved.
+// This file is licensed under the MIT license.
+// See the LICENSE.md file in the project root for more information.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Media.Imaging;
+
+namespace Markdig.Renderers
+{
+    /// <summary>
+    /// Basic implementation of a <see cref="IWpfImageProvider"/>. Use <see cref="Instance"/> to get an instance of this class.
+    /// </summary>
+    /// <seealso cref="Markdig.Renderers.IWpfImageProvider" />
+    public class WpfImageProviderBase : IWpfImageProvider
+    {
+        public static IWpfImageProvider Instance { get; private set; } = new WpfImageProviderBase();
+
+        protected WpfImageProviderBase()
+        {
+        }
+
+        /// <inheritdoc/>
+        public virtual Inline GetInlineItem(string url)
+        {
+            var image = new Image
+            {
+                Source = new BitmapImage(new Uri(url, UriKind.RelativeOrAbsolute))
+            };
+
+            return new InlineUIContainer(image);
+        }
+    }
+}

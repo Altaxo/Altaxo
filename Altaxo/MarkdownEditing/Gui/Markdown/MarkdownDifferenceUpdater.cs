@@ -1,4 +1,5 @@
 ﻿using Markdig;
+using Markdig.Renderers;
 using Markdig.Syntax;
 using Markdig.Wpf;
 using System;
@@ -52,6 +53,8 @@ namespace Altaxo.Gui.Markdown
 		/// </value>
 		protected IStyles Styles { get; private set; }
 
+		protected IWpfImageProvider ImageProvider { get; private set; }
+
 		/// <summary>
 		/// The flow document to change.
 		/// </summary>
@@ -89,13 +92,14 @@ namespace Altaxo.Gui.Markdown
 
 		#endregion Operational members
 
-		public MarkdownDifferenceUpdater(string oldSourceText, MarkdownDocument oldDocument, MarkdownPipeline pipeline, string newSourceText, IStyles styles, FlowDocument flowDocument, Dispatcher dispatcher, Action<string, MarkdownDocument> newDocumentSetter, CancellationToken cancellationToken)
+		public MarkdownDifferenceUpdater(string oldSourceText, MarkdownDocument oldDocument, MarkdownPipeline pipeline, IStyles styles, IWpfImageProvider imageProvider, string newSourceText, FlowDocument flowDocument, Dispatcher dispatcher, Action<string, MarkdownDocument> newDocumentSetter, CancellationToken cancellationToken)
 		{
 			OldSourceText = oldSourceText;
 			OldDocument = oldDocument;
 			Pipeline = pipeline;
-			NewSourceText = newSourceText;
 			Styles = styles;
+			ImageProvider = imageProvider;
+			NewSourceText = newSourceText;
 			FlowDocument = flowDocument;
 			Dispatcher = dispatcher;
 			NewTextAndDocumentSetter = newDocumentSetter;
@@ -166,7 +170,7 @@ namespace Altaxo.Gui.Markdown
 			var (firstLevelTextElementToInsertBefore, firstLevelTextElementToInsertAfter, firstLevelTextElementsToDelete) = GetTextElementInsertionAndDeletionPositions();
 
 			// create new TextElements for the changed span of top level blocks - this seems to be the most CPU intensive call
-			var newListOfTextElements = ListOfMarkdownObjectsToListOfTextElements(listOfChangedMarkdig, Pipeline, Styles); // create new TextElements
+			var newListOfTextElements = ListOfMarkdownObjectsToListOfTextElements(listOfChangedMarkdig, Pipeline, Styles, ImageProvider); // create new TextElements
 
 			// now delete the changed top level blocks of FlowDocument and insert or add the newly created ones
 			DeleteOldAndInsertNewElementsInFlowDocument(firstLevelTextElementsToDelete, newListOfTextElements, firstLevelTextElementToInsertBefore, firstLevelTextElementToInsertAfter);
@@ -446,10 +450,11 @@ namespace Altaxo.Gui.Markdown
 		/// <param name="pipeline">The pipeline used for the conversion.</param>
 		/// <returns>The list of (top level) <see cref="TextElement"/>s as the result of the conversion.</returns>
 		/// <exception cref="System.ArgumentNullException">if markdown variable is null</exception>
-		public static IList<TextElement> ListOfMarkdownObjectsToListOfTextElements(IList<MarkdownObject> markdownObjects, MarkdownPipeline pipeline, IStyles styles)
+		public static IList<TextElement> ListOfMarkdownObjectsToListOfTextElements(IList<MarkdownObject> markdownObjects, MarkdownPipeline pipeline, IStyles styles, IWpfImageProvider imageProvider)
 		{
 			var result = new TextElementList();
-			var renderer = new Markdig.Renderers.WpfRenderer(result, styles);
+			var renderer = new Markdig.Renderers.WpfRenderer(result, styles) { ImageProvider = imageProvider };
+
 			pipeline.Setup(renderer);
 			renderer.Render(markdownObjects);
 

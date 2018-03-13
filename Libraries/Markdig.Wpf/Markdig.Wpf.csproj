@@ -71,6 +71,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Renderers\WpfImageProviderBase.cs" />
+    <Compile Include="Renderers\IWpfImageProvider.cs" />
     <Compile Include="Renderers\WpfRenderer.cs" />
     <Compile Include="Renderers\Wpf\CodeBlockRenderer.cs" />
     <Compile Include="Renderers\Wpf\Extensions\MathBlockRenderer.cs" />
