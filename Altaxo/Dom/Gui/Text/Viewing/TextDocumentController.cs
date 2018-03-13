@@ -23,31 +23,31 @@
 #endregion Copyright
 
 using Altaxo.Gui.Workbench;
-using Altaxo.Notes;
+using Altaxo.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Gui.Notes.Viewing
+namespace Altaxo.Gui.Text.Viewing
 {
-	[UserControllerForObject(typeof(NotesDocument))]
-	[UserControllerForObject(typeof(Altaxo.Notes.GuiModels.NotesDocumentViewOptions))]
-	[ExpectedTypeOfView(typeof(INotesDocumentView))]
-	public class NotesDocumentController : AbstractViewContent, IDisposable, IMVCANController
+	[UserControllerForObject(typeof(TextDocument))]
+	[UserControllerForObject(typeof(Altaxo.Text.GuiModels.TextDocumentViewOptions))]
+	[ExpectedTypeOfView(typeof(ITextDocumentView))]
+	public class TextDocumentController : AbstractViewContent, IDisposable, IMVCANController
 	{
-		public INotesDocumentView _view;
+		public ITextDocumentView _view;
 
-		protected NotesDocument _doc;
+		protected TextDocument _doc;
 
-		public NotesDocument Doc { get { return _doc; } }
+		public TextDocument Doc { get { return _doc; } }
 
-		public NotesDocumentController()
+		public TextDocumentController()
 		{
 		}
 
-		public NotesDocumentController(NotesDocument doc)
+		public TextDocumentController(TextDocument doc)
 		{
 			InitializeDocument(doc);
 		}
@@ -56,11 +56,11 @@ namespace Altaxo.Gui.Notes.Viewing
 		{
 			if (null == args || args.Length == 0)
 				return false;
-			if (args[0] is NotesDocument notesDoc)
+			if (args[0] is TextDocument notesDoc)
 			{
 				InternalInitializeDocument(notesDoc);
 			}
-			else if (args[0] is Altaxo.Notes.GuiModels.NotesDocumentViewOptions notesViewOptions)
+			else if (args[0] is Altaxo.Text.GuiModels.TextDocumentViewOptions notesViewOptions)
 			{
 				if (this._doc == null)
 				{
@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Notes.Viewing
 			set { }
 		}
 
-		protected void InternalInitializeDocument(NotesDocument doc)
+		protected void InternalInitializeDocument(TextDocument doc)
 		{
 			if (_doc != null)
 				throw new ApplicationException(nameof(_doc) + " is already initialized");
@@ -144,7 +144,7 @@ namespace Altaxo.Gui.Notes.Viewing
 					DetachView();
 				}
 
-				_view = value as INotesDocumentView;
+				_view = value as ITextDocumentView;
 
 				if (null != _view)
 				{
@@ -158,7 +158,7 @@ namespace Altaxo.Gui.Notes.Viewing
 		{
 			get
 			{
-				return new Altaxo.Notes.GuiModels.NotesDocumentViewOptions(_doc);
+				return new Altaxo.Text.GuiModels.TextDocumentViewOptions(_doc);
 			}
 		}
 	}

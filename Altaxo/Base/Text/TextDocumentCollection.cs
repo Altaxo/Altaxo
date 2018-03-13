@@ -27,16 +27,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Altaxo.Notes
+namespace Altaxo.Text
 {
 	/// <summary>
-	/// Stores the <see cref="NotesDocument"/>s of the project.
+	/// Stores the <see cref="TextDocument"/>s of the project.
 	/// </summary>
-	public class NotesDocumentCollection :
-		ProjectItemCollectionBase<NotesDocument, IProjectItem>,
-		IEnumerable<NotesDocument>
+	public class TextDocumentCollection :
+		ProjectItemCollectionBase<TextDocument, IProjectItem>,
+		IEnumerable<TextDocument>
 	{
-		public NotesDocumentCollection(AltaxoDocument parent, SortedDictionary<string, IProjectItem> commonDictionaryForProjectItems)
+		public TextDocumentCollection(AltaxoDocument parent, SortedDictionary<string, IProjectItem> commonDictionaryForProjectItems)
 			: base(parent)
 		{
 			this._itemsByName = commonDictionaryForProjectItems ?? throw new ArgumentNullException(nameof(commonDictionaryForProjectItems));
@@ -65,9 +65,9 @@ namespace Altaxo.Notes
 		/// </summary>
 		/// <param name="child">A NotesDocument for which the parent collection is searched.</param>
 		/// <returns>The parent NotesDocumentCollection, if it exists, or null otherwise.</returns>
-		public static NotesDocumentCollection GetParentNotesDocumentCollectionOf(Main.IDocumentLeafNode child)
+		public static TextDocumentCollection GetParentNotesDocumentCollectionOf(Main.IDocumentLeafNode child)
 		{
-			return (NotesDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(NotesDocumentCollection));
+			return (TextDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(TextDocumentCollection));
 		}
 	}
 }

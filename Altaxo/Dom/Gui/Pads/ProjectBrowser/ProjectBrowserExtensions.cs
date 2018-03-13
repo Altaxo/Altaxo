@@ -355,11 +355,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// </summary>
 		/// <param name="ctrl">Project browse controller.</param>
 		/// <returns>The notes controller used to show the newly created notes document.</returns>
-		public static void CreateNewNotesDocument(this ProjectBrowseController ctrl)
+		public static void CreateNewTextDocument(this ProjectBrowseController ctrl)
 		{
 			if (!ctrl.IsProjectFolderSelected(out string folderName))
 				folderName = ProjectFolder.RootFolderName;
-			var doc = Current.ProjectService.CreateDocument<Altaxo.Notes.NotesDocument>(folderName);
+			var doc = Current.ProjectService.CreateDocument<Altaxo.Text.TextDocument>(folderName);
 			Current.ProjectService.OpenOrCreateViewContentForDocument(doc);
 		}
 

@@ -1,4 +1,14 @@
-﻿#region Copyright
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+
+#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -22,24 +32,37 @@
 
 #endregion Copyright
 
-using Altaxo.Main;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-namespace Altaxo.Notes.GuiModels
+namespace Altaxo.Gui.Text.Viewing
 {
-	public class NotesDocumentViewOptions : IProjectItemPresentationModel
+	/// <summary>
+	/// Interaction logic for TextDocumentControl.xaml
+	/// </summary>
+	public partial class TextDocumentControl : UserControl, ITextDocumentView
 	{
-		public NotesDocument Document { get; protected set; }
-
-		IProjectItem IProjectItemPresentationModel.Document => Document;
-
-		public NotesDocumentViewOptions(NotesDocument doc)
+		public TextDocumentControl()
 		{
-			Document = doc ?? throw new ArgumentNullException(nameof(doc));
+			InitializeComponent();
+		}
+
+		public string SourceText { get => _guiEditor.SourceText; set => _guiEditor.SourceText = value; }
+		public string StyleName { set => _guiEditor.StyleName = value; }
+
+		public event EventHandler SourceTextChanged
+		{
+			add
+			{
+				_guiEditor.SourceTextChanged += value;
+			}
+			remove
+			{
+				_guiEditor.SourceTextChanged -= value;
+			}
 		}
 	}
 }

@@ -414,7 +414,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		Worksheet = 3,
 		Graph = 4,
 		PropertyBag = 5,
-		NotesDocument = 6,
+		TextDocument = 6,
 	}
 
 	public enum ViewOnSelect

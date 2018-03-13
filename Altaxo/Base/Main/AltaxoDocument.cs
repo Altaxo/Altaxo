@@ -50,7 +50,7 @@ namespace Altaxo
 		protected Altaxo.Graph.Graph3D.GraphDocumentCollection _graphs3D = null; // all graphs are stored here
 
 		/// <summary>Collection of all notes documents in this document.</summary>
-		protected Altaxo.Notes.NotesDocumentCollection _notesDocuments = null;
+		protected Altaxo.Text.TextDocumentCollection _textDocuments = null;
 
 		/// <summary>
 		/// The properties associated with the project folders. Please note that the properties of the project are also stored inside this collection, with the name being an empty string (root folder node).
@@ -81,7 +81,7 @@ namespace Altaxo
 
 			_graphs = new Graph.Gdi.GraphDocumentCollection(this, commonDictionaryForGraphs);
 			_graphs3D = new Graph.Graph3D.GraphDocumentCollection(this, commonDictionaryForGraphs);
-			_notesDocuments = new Notes.NotesDocumentCollection(this, commonDictionaryForGraphs);
+			_textDocuments = new Text.TextDocumentCollection(this, commonDictionaryForGraphs);
 
 			_projectFolderProperties = new Main.Properties.ProjectFolderPropertyDocumentCollection(this);
 			_tableLayouts = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
@@ -164,15 +164,15 @@ namespace Altaxo
 			}
 
 			// next, we save all notes documents
-			foreach (var item in this._notesDocuments)
+			foreach (var item in this._textDocuments)
 			{
 				try
 				{
-					var zipEntry = zippedStream.CreateEntry("Notes/" + item.Name + ".xml");
+					var zipEntry = zippedStream.CreateEntry("Texts/" + item.Name + ".xml");
 					using (var zs = zipEntry.Open())
 					{
 						info.BeginWriting(zs);
-						info.AddValue("Note", item);
+						info.AddValue("Text", item);
 						info.EndWriting();
 					}
 				}
@@ -309,14 +309,14 @@ namespace Altaxo
 							info.EndReading();
 						}
 					}
-					else if (zipEntry.FullName.StartsWith("Notes/"))
+					else if (zipEntry.FullName.StartsWith("Texts/"))
 					{
 						using (var zipinpstream = zipEntry.Open())
 						{
 							info.BeginReading(zipinpstream);
-							object readedobject = info.GetValue("Note", null);
-							if (readedobject is Notes.NotesDocument noteDoc)
-								this._notesDocuments.Add(noteDoc);
+							object readedobject = info.GetValue("Text", null);
+							if (readedobject is Text.TextDocument noteDoc)
+								this._textDocuments.Add(noteDoc);
 							info.EndReading();
 						}
 					}
@@ -404,9 +404,9 @@ namespace Altaxo
 			get { return _graphs3D; }
 		}
 
-		public Altaxo.Notes.NotesDocumentCollection NotesDocumentCollection
+		public Altaxo.Text.TextDocumentCollection TextDocumentCollection
 		{
-			get { return _notesDocuments; }
+			get { return _textDocuments; }
 		}
 
 		public Altaxo.Worksheet.WorksheetLayoutCollection TableLayouts
@@ -541,8 +541,8 @@ namespace Altaxo
 				case "Graphs3D":
 					return this._graphs3D;
 
-				case "Notes":
-					return this._notesDocuments;
+				case "Texts":
+					return this._textDocuments;
 
 				case "TableLayouts":
 					return this._tableLayouts;
@@ -569,8 +569,8 @@ namespace Altaxo
 				return "Graphs";
 			else if (object.ReferenceEquals(o, this._graphs3D))
 				return "Graphs3D";
-			else if (object.ReferenceEquals(o, this._notesDocuments))
-				return "Notes";
+			else if (object.ReferenceEquals(o, this._textDocuments))
+				return "Texts";
 			else if (object.ReferenceEquals(o, this._tableLayouts))
 				return "TableLayouts";
 			else if (object.ReferenceEquals(o, this._fitFunctionScripts))
@@ -594,8 +594,8 @@ namespace Altaxo
 			if (null != _graphs3D)
 				yield return new Main.DocumentNodeAndName(_graphs3D, () => _graphs3D = null, "Graphs3D");
 
-			if (null != _notesDocuments)
-				yield return new Main.DocumentNodeAndName(_notesDocuments, () => _notesDocuments = null, "Notes");
+			if (null != _textDocuments)
+				yield return new Main.DocumentNodeAndName(_textDocuments, () => _textDocuments = null, "Text");
 
 			if (null != _tableLayouts)
 				yield return new Main.DocumentNodeAndName(_tableLayouts, () => _tableLayouts = null, "TableLayouts");
@@ -625,7 +625,7 @@ namespace Altaxo
 				yield return typeof(Altaxo.Data.DataTable);
 				yield return typeof(Altaxo.Graph.Gdi.GraphDocument);
 				yield return typeof(Altaxo.Graph.Graph3D.GraphDocument);
-				yield return typeof(Altaxo.Notes.NotesDocument);
+				yield return typeof(Altaxo.Text.TextDocument);
 				yield return typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument);
 			}
 		}
@@ -637,7 +637,7 @@ namespace Altaxo
 				yield return DataTableCollection;
 				yield return GraphDocumentCollection;
 				yield return Graph3DDocumentCollection;
-				yield return NotesDocumentCollection;
+				yield return TextDocumentCollection;
 				yield return ProjectFolderProperties;
 			}
 		}
@@ -656,8 +656,8 @@ namespace Altaxo
 				return GraphDocumentCollection;
 			else if (type == typeof(Altaxo.Graph.Graph3D.GraphDocument))
 				return Graph3DDocumentCollection;
-			else if (type == typeof(Altaxo.Notes.NotesDocument))
-				return NotesDocumentCollection;
+			else if (type == typeof(Altaxo.Text.TextDocument))
+				return TextDocumentCollection;
 			else if (type == typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument))
 				return ProjectFolderProperties;
 			else

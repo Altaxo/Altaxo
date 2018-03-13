@@ -236,7 +236,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 	{
 		protected override void Run(ProjectBrowseController ctrl)
 		{
-			ctrl.CreateNewNotesDocument();
+			ctrl.CreateNewTextDocument();
 		}
 	}
 

@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -32,37 +22,20 @@ using System.Windows.Documents;
 
 #endregion Copyright
 
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Altaxo.Gui.Notes.Viewing
+namespace Altaxo.Gui.Text.Viewing
 {
-	/// <summary>
-	/// Interaction logic for NotesDocumentControl.xaml
-	/// </summary>
-	public partial class NotesDocumentControl : UserControl, INotesDocumentView
+	public interface ITextDocumentView
 	{
-		public NotesDocumentControl()
-		{
-			InitializeComponent();
-		}
+		string SourceText { get; set; }
 
-		public string SourceText { get => _guiEditor.SourceText; set => _guiEditor.SourceText = value; }
-		public string StyleName { set => _guiEditor.StyleName = value; }
+		event EventHandler SourceTextChanged;
 
-		public event EventHandler SourceTextChanged
-		{
-			add
-			{
-				_guiEditor.SourceTextChanged += value;
-			}
-			remove
-			{
-				_guiEditor.SourceTextChanged -= value;
-			}
-		}
+		string StyleName { set; }
 	}
 }

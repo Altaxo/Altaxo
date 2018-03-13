@@ -30,7 +30,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Notes
+namespace Altaxo.Text
 {
 	/// <summary>
 	/// Stores notes as markdown annotated text.
@@ -41,7 +41,7 @@ namespace Altaxo.Notes
 	/// <seealso cref="Altaxo.Main.IChangedEventSource" />
 	/// <seealso cref="Altaxo.Main.INameOwner" />
 	/// <seealso cref="Altaxo.Main.Properties.IPropertyBagOwner" />
-	public class NotesDocument :
+	public class TextDocument :
 		Main.SuspendableDocumentNodeWithSingleAccumulatedData<EventArgs>,
 		IProjectItem,
 		Main.ICopyFrom,
@@ -96,12 +96,12 @@ namespace Altaxo.Notes
 
 		#region "Serialization"
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NotesDocument), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextDocument), 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				var s = (NotesDocument)obj;
+				var s = (TextDocument)obj;
 
 				info.AddValue("Name", s._name);
 				info.AddValue("CreationTime", s._creationTime.ToLocalTime());
@@ -126,7 +126,7 @@ namespace Altaxo.Notes
 				info.CommitArray();
 			}
 
-			public void Deserialize(NotesDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			public void Deserialize(TextDocument s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				s._name = info.GetString("Name");
 				s._creationTime = info.GetDateTime("CreationTime").ToUniversalTime();
@@ -154,7 +154,7 @@ namespace Altaxo.Notes
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
-				var s = (NotesDocument)o ?? new NotesDocument();
+				var s = (TextDocument)o ?? new TextDocument();
 				Deserialize(s, info, parent);
 				return s;
 			}
@@ -163,9 +163,9 @@ namespace Altaxo.Notes
 		#endregion "Serialization"
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="NotesDocument"/> class.
+		/// Initializes a new instance of the <see cref="TextDocument"/> class.
 		/// </summary>
-		public NotesDocument()
+		public TextDocument()
 		{
 			_creationTime = _lastChangeTime = DateTime.UtcNow;
 			_notes = new TextBackedConsole() { ParentObject = this };
@@ -173,10 +173,10 @@ namespace Altaxo.Notes
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="NotesDocument"/> class by copying the content from another instance.
+		/// Initializes a new instance of the <see cref="TextDocument"/> class by copying the content from another instance.
 		/// </summary>
 		/// <param name="from">Notes to copy from</param>
-		public NotesDocument(NotesDocument from)
+		public TextDocument(TextDocument from)
 		{
 			using (var suppressToken = SuspendGetToken())
 			{
@@ -194,7 +194,7 @@ namespace Altaxo.Notes
 			if (object.ReferenceEquals(this, obj))
 				return true;
 
-			if (obj is NotesDocument from)
+			if (obj is TextDocument from)
 			{
 				using (var suspendToken = SuspendGetToken())
 				{
@@ -229,7 +229,7 @@ namespace Altaxo.Notes
 		/// <inheritdoc/>
 		public object Clone()
 		{
-			return new NotesDocument(this);
+			return new TextDocument(this);
 		}
 
 		/// <inheritdoc/>

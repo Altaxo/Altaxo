@@ -22,20 +22,24 @@
 
 #endregion Copyright
 
+using Altaxo.Main;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Gui.Notes.Viewing
+namespace Altaxo.Text.GuiModels
 {
-	public interface INotesDocumentView
+	public class TextDocumentViewOptions : IProjectItemPresentationModel
 	{
-		string SourceText { get; set; }
+		public TextDocument Document { get; protected set; }
 
-		event EventHandler SourceTextChanged;
+		IProjectItem IProjectItemPresentationModel.Document => Document;
 
-		string StyleName { set; }
+		public TextDocumentViewOptions(TextDocument doc)
+		{
+			Document = doc ?? throw new ArgumentNullException(nameof(doc));
+		}
 	}
 }

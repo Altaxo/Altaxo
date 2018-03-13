@@ -195,8 +195,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Com\DebugStreamWrapper.cs" />
-    <Compile Include="Gui\Notes\Viewing\NotesDocumentControl.xaml.cs">
-      <DependentUpon>NotesDocumentControl.xaml</DependentUpon>
+    <Compile Include="Gui\Text\Viewing\TextDocumentControl.xaml.cs">
+      <DependentUpon>TextDocumentControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Main\MenuCommands\GraphToolCommands.cs" />
     <Compile Include="Main\MenuCommands\RecentProjectsMenuBuilder.cs" />
@@ -331,7 +331,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Gui\Notes\Viewing\NotesDocumentControl.xaml">
+    <Page Include="Gui\Text\Viewing\TextDocumentControl.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>

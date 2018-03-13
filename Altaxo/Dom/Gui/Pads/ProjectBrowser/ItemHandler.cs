@@ -49,7 +49,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				[typeof(Altaxo.Data.DataTable)] = ProjectBrowseItemImage.Worksheet,
 				[typeof(Altaxo.Graph.Gdi.GraphDocument)] = ProjectBrowseItemImage.Graph,
 				[typeof(Altaxo.Graph.Graph3D.GraphDocument)] = ProjectBrowseItemImage.Graph,
-				[typeof(Altaxo.Notes.NotesDocument)] = ProjectBrowseItemImage.NotesDocument,
+				[typeof(Altaxo.Text.TextDocument)] = ProjectBrowseItemImage.TextDocument,
 				[typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument)] = ProjectBrowseItemImage.PropertyBag,
 			};
 		}
