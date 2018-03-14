@@ -313,18 +313,23 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 			if (item is Altaxo.Graph.Gdi.GraphDocument)
 			{
-				if (Current.Project.GraphDocumentCollection.Contains(name))
+				if (Current.Project.GraphDocumentCollection.ContainsAnyName(name))
 					return "A graph with the same name is already present in the project";
 			}
 			else if (item is Altaxo.Graph.Graph3D.GraphDocument)
 			{
-				if (Current.Project.Graph3DDocumentCollection.Contains(name))
+				if (Current.Project.Graph3DDocumentCollection.ContainsAnyName(name))
 					return "A graph with the same name is already present in the project";
 			}
 			else if (item is Altaxo.Data.DataTable)
 			{
-				if (Current.Project.DataTableCollection.Contains(name))
+				if (Current.Project.DataTableCollection.ContainsAnyName(name))
 					return "A table with the same name is already present in the project";
+			}
+			else if (item is Altaxo.Text.TextDocument)
+			{
+				if (Current.Project.TextDocumentCollection.ContainsAnyName(name))
+					return "A text document with the same name is already present in the project";
 			}
 			else if (item is Altaxo.Main.ProjectFolder)
 			{
@@ -355,7 +360,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 				if (item is Altaxo.Graph.Gdi.GraphDocument)
 				{
-					if (!Current.Project.GraphDocumentCollection.Contains(name))
+					if (!Current.Project.GraphDocumentCollection.ContainsAnyName(name))
 					{
 						((Altaxo.Graph.Gdi.GraphDocument)item).Name = fullName;
 						return true;
@@ -363,7 +368,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				}
 				if (item is Altaxo.Graph.Graph3D.GraphDocument)
 				{
-					if (!Current.Project.Graph3DDocumentCollection.Contains(name))
+					if (!Current.Project.Graph3DDocumentCollection.ContainsAnyName(name))
 					{
 						((Altaxo.Graph.Graph3D.GraphDocument)item).Name = fullName;
 						return true;
@@ -371,9 +376,17 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				}
 				else if (item is Altaxo.Data.DataTable)
 				{
-					if (!Current.Project.DataTableCollection.Contains(name))
+					if (!Current.Project.DataTableCollection.ContainsAnyName(name))
 					{
 						((Altaxo.Data.DataTable)item).Name = fullName;
+						return true;
+					}
+				}
+				else if (item is Altaxo.Text.TextDocument)
+				{
+					if (!Current.Project.TextDocumentCollection.ContainsAnyName(name))
+					{
+						((Altaxo.Text.TextDocument)item).Name = fullName;
 						return true;
 					}
 				}

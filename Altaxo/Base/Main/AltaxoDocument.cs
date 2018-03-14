@@ -750,7 +750,7 @@ namespace Altaxo
 
 			if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument propertyDoc)
 			{
-				if (!ProjectFolderProperties.Contains(propertyDoc.Name))
+				if (!ProjectFolderProperties.ContainsAnyName(propertyDoc.Name))
 				{
 					ProjectFolderProperties.Add(propertyDoc); // if not existing, then add the new property document
 				}
@@ -765,7 +765,7 @@ namespace Altaxo
 
 				if (item.Name == null || item.Name == string.Empty)
 					item.Name = coll.FindNewItemName();
-				else if (coll.Contains(item.Name))
+				else if (coll.ContainsAnyName(item.Name))
 					item.Name = coll.FindNewItemName(item.Name);
 
 				coll.Add(item);

@@ -44,10 +44,24 @@ namespace Altaxo.Gui.Text.Viewing
 	/// </summary>
 	public partial class TextDocumentControl : UserControl, ITextDocumentView
 	{
+		private ImageProvider _imageProvider = new ImageProvider("");
+
 		public TextDocumentControl()
 		{
 			InitializeComponent();
-			_guiEditor.ImageProvider = new ImageProvider();
+			_guiEditor.ImageProvider = _imageProvider;
+		}
+
+		public string DocumentName
+		{
+			set
+			{
+				var folder = Altaxo.Main.ProjectFolder.GetFolderPart(value);
+				if (_imageProvider.AltaxoFolderLocation != folder)
+				{
+					_guiEditor.ImageProvider = _imageProvider = new ImageProvider(folder);
+				}
+			}
 		}
 
 		public string SourceText { get => _guiEditor.SourceText; set => _guiEditor.SourceText = value; }

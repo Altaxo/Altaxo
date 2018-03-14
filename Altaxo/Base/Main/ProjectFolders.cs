@@ -340,7 +340,7 @@ namespace Altaxo.Main
 				if (item is Main.Properties.ProjectFolderPropertyDocument propDoc)
 				{
 					var coll = AltaxoDocument.ProjectFolderProperties;
-					if (!coll.Contains(newName))
+					if (!coll.ContainsAnyName(newName))
 					{
 						item.Name = newName;
 					}
@@ -354,7 +354,7 @@ namespace Altaxo.Main
 				else // normal case
 				{
 					var coll = AltaxoDocument.GetCollectionForProjectItemType(item.GetType());
-					if (!coll.Contains(newName))
+					if (!coll.ContainsAnyName(newName))
 					{
 						item.Name = newName;
 					}
@@ -405,9 +405,9 @@ namespace Altaxo.Main
 			_directories.Clear();
 			_directories.Add(ProjectFolder.RootFolderName, new HashSet<object>()); // Root folder
 
-			foreach(var coll in doc.ProjectItemCollections)
+			foreach (var coll in doc.ProjectItemCollections)
 			{
-				foreach(var v in coll.ProjectItems)
+				foreach (var v in coll.ProjectItems)
 				{
 					ItemAdded(v, v.Name, EventFiring.Suppressed);
 				}
@@ -566,7 +566,7 @@ namespace Altaxo.Main
 					string newName = (newFolderName ?? string.Empty) + oldName.Substring(oldFolderNameLength);
 
 					var coll = AltaxoDocument.GetCollectionForProjectItemType(projItem.GetType());
-					if (coll.Contains(newName) && !itemHashSet.Contains(coll[newName]))
+					if (coll.ContainsAnyName(newName) && !itemHashSet.Contains(coll[newName]))
 						return false;
 				}
 				else
@@ -696,7 +696,7 @@ namespace Altaxo.Main
 				{
 					var coll = AltaxoDocument.GetCollectionForProjectItemType(item.GetType());
 					var newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(projItem.Name));
-					if (coll.Contains(newName))
+					if (coll.ContainsAnyName(newName))
 						newName = coll.FindNewItemName(newName);
 					projItem.Name = newName;
 				}
@@ -738,7 +738,7 @@ namespace Altaxo.Main
 				{
 					var coll = AltaxoDocument.GetCollectionForProjectItemType(item.GetType());
 					var newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(projItem.Name));
-					if (coll.Contains(newName))
+					if (coll.ContainsAnyName(newName))
 						newName = coll.FindNewItemName(newName);
 					projItem.Name = newName;
 				}

@@ -195,20 +195,25 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// Determines whether the collection contains any project item with the specified name.
+		/// Determines whether the collection contains any project item with the specified name. This must not neccessarily
+		/// a item of the type that this collection stores (some collections can have a shared name dictionary).
+		/// In constrast, use <see cref="Contains(string)"/> to determine if the collection contains an item with the specified name and the native type that the collection stores.
 		/// </summary>
-		/// <param name="projectItemName">Name of the project item.</param>
-		/// <returns>
-		/// True if the collection contains any project item with the specified name.
-		/// </returns>
-		public bool ContainsAnyName(string projectItemName)
+		/// <param name="itemName">Name of the project item.</param>
+		/// <returns>True if the collection contains any project item with the specified name.</returns>
+		public bool ContainsAnyName(string itemName)
 		{
-			return null != projectItemName && _itemsByName.ContainsKey(projectItemName);
+			return null != itemName && _itemsByName.ContainsKey(itemName);
 		}
 
+		/// <summary>
+		/// Determines whether the collection contains a project item with the specified name and with the type that this collection stores.
+		/// </summary>
+		/// <param name="itemName">Name of the project item.</param>
+		/// <returns>True if the collection contains any project item with the specified name.</returns>
 		public bool Contains(string itemName)
 		{
-			return _itemsByName.ContainsKey(itemName);
+			return null != itemName && _itemsByName.ContainsKey(itemName);
 		}
 
 		public IEnumerable<string> Names

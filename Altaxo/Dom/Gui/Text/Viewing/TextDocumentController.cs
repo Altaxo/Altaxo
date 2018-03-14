@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Gui.Workbench;
+using Altaxo.Main;
 using Altaxo.Text;
 using System;
 using System.Collections.Generic;
@@ -90,6 +91,16 @@ namespace Altaxo.Gui.Text.Viewing
 			_doc = doc ?? throw new ArgumentNullException(nameof(doc));
 
 			this.Title = _doc.Name;
+
+			_doc.TunneledEvent += new WeakActionHandler<object, object, Altaxo.Main.TunnelingEventArgs>(EhDocumentTunneledEvent, (handler) => _doc.TunneledEvent -= handler);
+		}
+
+		private void EhDocumentTunneledEvent(object arg1, object arg2, TunnelingEventArgs e)
+		{
+			if (e is Altaxo.Main.DocumentPathChangedEventArgs && _view != null)
+			{
+				_view.DocumentName = _doc.Name;
+			}
 		}
 
 		protected void Initialize(bool initData)
@@ -99,6 +110,7 @@ namespace Altaxo.Gui.Text.Viewing
 			}
 			if (null != _view)
 			{
+				_view.DocumentName = _doc.Name;
 				_view.SourceText = _doc.SourceText;
 			}
 		}
@@ -111,6 +123,10 @@ namespace Altaxo.Gui.Text.Viewing
 		private void DetachView()
 		{
 			_view.SourceTextChanged -= EhSourceTextChanged;
+		}
+
+		private void EhDocumentChanged(object sender, EventArgs e)
+		{
 		}
 
 		private void EhSourceTextChanged(object sender, EventArgs e)

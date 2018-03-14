@@ -32,6 +32,14 @@ namespace Altaxo.Gui.Text.Viewing
 {
 	public interface ITextDocumentView
 	{
+		/// <summary>
+		/// Sets the name of the document. This function must be called every time the document name has changed.
+		/// </summary>
+		/// <value>
+		/// The name of the document.
+		/// </value>
+		string DocumentName { set; }
+
 		string SourceText { get; set; }
 
 		event EventHandler SourceTextChanged;

@@ -38,11 +38,20 @@ namespace Altaxo.Main
 		Altaxo.Main.IDocumentNode
 	{
 		/// <summary>
-		/// Determines whether the collection contains any project item with the specified name.
+		/// Determines whether the collection contains a project item with the specified name and with the type that this collection stores.
 		/// </summary>
-		/// <param name="projectItemName">Name of the project item.</param>
+		/// <param name="itemName">Name of the project item.</param>
 		/// <returns>True if the collection contains any project item with the specified name.</returns>
-		bool Contains(string projectItemName);
+		bool Contains(string itemName);
+
+		/// <summary>
+		/// Determines whether the collection contains any project item with the specified name. This must not neccessarily
+		/// a item of the type that this collection stores (some collections can have a shared name dictionary).
+		/// In constrast, use <see cref="Contains(string)"/> to determine if the collection contains an item with the specified name and the native type that the collection stores.
+		/// </summary>
+		/// <param name="itemName">Name of the project item.</param>
+		/// <returns>True if the collection contains any project item with the specified name.</returns>
+		bool ContainsAnyName(string itemName);
 
 		/// <summary>
 		/// Removes the project item with the specified name.

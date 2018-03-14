@@ -51,6 +51,11 @@
 								 GotFocus="EhViewerGotFocus"
 								 PreviewMouseWheel="EhViewerMouseWheel"
 								 PreviewMouseDown="EhViewerMouseDown"
-								 SelectionChanged="EhViewerSelectionChanged" />
+								 SelectionChanged="EhViewerSelectionChanged"
+								 IsUndoEnabled="False">
+			<!-- Note: It is of utmost importance that Undo is disabled for this RichTextBox,
+			otherwise RichTextBox would try to serialize deleted elements to store them for Undo,
+			which cost performance, especially with images -->
+		</RichTextBox>
 	</Grid>
 </UserControl>

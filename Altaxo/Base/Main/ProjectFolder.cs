@@ -111,6 +111,11 @@ namespace Altaxo.Main
 			return folder == string.Empty;
 		}
 
+		public static bool IsValidFolderName(string folder)
+		{
+			return (folder != null) && (folder == string.Empty || folder.EndsWith(DirectorySeparatorString));
+		}
+
 		#endregion Static ProjectFolder
 
 		#region Static Name functions
