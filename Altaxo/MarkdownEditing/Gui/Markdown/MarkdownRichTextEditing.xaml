@@ -29,6 +29,7 @@
 			FontFamily="Consolas"
 			SyntaxHighlighting="MarkDown"
 			ShowLineNumbers="True"
+ 		  WordWrap="True"
 			FontSize="12pt"
 			TextChanged="EhSourceTextChanged"
 			GotFocus="EhSourceGotFocus"
