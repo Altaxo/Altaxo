@@ -23,12 +23,6 @@
 			<CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
 		</FrameworkElement.CommandBindings>
 
-		<Menu Grid.Row="0" Grid.ColumnSpan="3">
-			<MenuItem Header="Sync left top with right top" Click="EhSyncViewersTextPositionToSourceEditor" />
-			<MenuItem Header="Switch to Github theme" Click="EhSwitchThemeToGithub" />
-			<MenuItem Header="Switch to Markdig.Wpf theme" Click="EhSwitchThemeToMarkdigWpf" />
-		</Menu>
-
 		<avalonEdit:TextEditor Grid.Row="2" Grid.Column="0"
 			x:Name="_guiRawText"
 			xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
