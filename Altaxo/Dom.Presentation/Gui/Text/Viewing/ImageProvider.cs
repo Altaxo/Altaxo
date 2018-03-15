@@ -51,7 +51,7 @@ namespace Altaxo.Gui.Text.Viewing
 			AltaxoFolderLocation = folder ?? throw new ArgumentNullException();
 		}
 
-		public override Inline GetInlineItem(string url)
+		public override Inline GetInlineItem(string url, out bool inlineItemIsErrorMessage)
 		{
 			if (url.StartsWith(graphPretext))
 			{
@@ -96,6 +96,7 @@ namespace Altaxo.Gui.Text.Viewing
 
 						imageSource.Freeze();
 						var image = new Image() { Source = imageSource };
+						inlineItemIsErrorMessage = false;
 						return new InlineUIContainer(image);
 					}
 				}
@@ -110,7 +111,10 @@ namespace Altaxo.Gui.Text.Viewing
 					using (var stream = new System.IO.MemoryStream())
 					{
 						if (!Altaxo.Graph.Graph3D.GraphDocumentExportActions.RenderToStream(graph3D, stream, options))
+						{
+							inlineItemIsErrorMessage = true;
 							return new Run(string.Format("ERROR: NO RENDERER FOR 3D GRAPHS FOUND!"));
+						}
 
 						stream.Seek(0, System.IO.SeekOrigin.Begin);
 						var imageSource = BitmapFrame.Create(stream,
@@ -119,11 +123,13 @@ namespace Altaxo.Gui.Text.Viewing
 
 						imageSource.Freeze();
 						var image = new Image() { Source = imageSource };
+						inlineItemIsErrorMessage = false;
 						return new InlineUIContainer(image);
 					}
 				}
 				else
 				{
+					inlineItemIsErrorMessage = true;
 					return new Run(string.Format("ERROR: GRAPH '{0}' NOT FOUND!", graphName));
 				}
 			}
@@ -143,16 +149,18 @@ namespace Altaxo.Gui.Text.Viewing
 				{
 					var image = new Image() { Source = bitmapSource };
 
+					inlineItemIsErrorMessage = false;
 					return new InlineUIContainer(image);
 				}
 				else
 				{
+					inlineItemIsErrorMessage = true;
 					return new Run(string.Format("ERROR: RESOURCE '{0}' NOT FOUND!", name));
 				}
 			}
 			else
 			{
-				return base.GetInlineItem(url);
+				return base.GetInlineItem(url, out inlineItemIsErrorMessage);
 			}
 		}
 

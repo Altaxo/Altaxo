@@ -24,25 +24,28 @@ namespace Markdig.Renderers.Wpf.Inlines
         {
             var url = link.GetDynamicUrl != null ? link.GetDynamicUrl() ?? link.Url : link.Url;
 
-            if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
-            {
-                url = "#";
-            }
-
             if (link.IsImage)
             {
-                var inline = renderer.ImageProvider.GetInlineItem(url);
-                inline.Tag = link;
-
-                if (inline is InlineUIContainer container && container.Child is Image image)
+                var inline = renderer.ImageProvider.GetInlineItem(url, out var inlineItemIsErrorMessage);
+                if (null != inline)
                 {
-                    renderer.Styles.ApplyImageStyle(image);
-                }
+                    inline.Tag = link;
 
-                renderer.WriteInline(inline);
+                    if (inline is InlineUIContainer container && container.Child is Image image)
+                    {
+                        renderer.Styles.ApplyImageStyle(image);
+                    }
+
+                    renderer.WriteInline(inline);
+                }
             }
             else
             {
+                if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+                {
+                    url = "#";
+                }
+
                 var hyperlink = new Hyperlink
                 {
                     Command = Commands.Hyperlink,

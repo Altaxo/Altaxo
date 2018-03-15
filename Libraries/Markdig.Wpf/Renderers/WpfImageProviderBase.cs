@@ -26,14 +26,27 @@ namespace Markdig.Renderers
         }
 
         /// <inheritdoc/>
-        public virtual Inline GetInlineItem(string url)
+        public virtual Inline GetInlineItem(string url, out bool inlineItemIsErrorMessage)
         {
-            var image = new Image
+            if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
             {
-                Source = new BitmapImage(new Uri(url, UriKind.RelativeOrAbsolute))
-            };
-
-            return new InlineUIContainer(image);
+                inlineItemIsErrorMessage = false;
+                return null;
+            }
+            try
+            {
+                var image = new Image
+                {
+                    Source = new BitmapImage(new Uri(url, UriKind.RelativeOrAbsolute))
+                };
+                inlineItemIsErrorMessage = false;
+                return new InlineUIContainer(image);
+            }
+            catch (Exception ex)
+            {
+                inlineItemIsErrorMessage = true;
+                return new Run(string.Format("ERROR RENDERING '{0}' ({1})", url, ex.Message));
+            }
         }
     }
 }
