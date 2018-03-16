@@ -340,7 +340,7 @@ namespace Altaxo.Gui.Markdown
 
 			var blocks = flowDocument.Blocks;
 
-			var textElement = BinarySearchBlocksForLineNumber(flowDocument.Blocks, sourceLineNumber - 1);
+			var textElement = BinarySearchBlocksForLineNumber(flowDocument.Blocks, sourceLineNumber - 1, 0);
 			if (null != textElement)
 				textElement.BringIntoView();
 		}
@@ -360,10 +360,22 @@ namespace Altaxo.Gui.Markdown
 			// now search the TextElements of the flow documents for the element which spans the carets line
 			var flowDocument = _guiViewer.Document;
 			var blocks = flowDocument.Blocks;
-			var textElement = BinarySearchBlocksForLineNumber(flowDocument.Blocks, sourceTextPosition.Line - 1);
+			var textOffset = _guiRawText.Document.GetOffset(sourceTextPosition.Location);
+			var textElement = BinarySearchBlocksForTextOffset(flowDocument.Blocks, textOffset);
 			if (null != textElement && textElement.Tag is Markdig.Syntax.MarkdownObject markdigTag)
 			{
 				var viewTextPosition = textElement.ElementStart;
+
+				if (textElement is Run run && run.Text.Length>0)
+				{
+					int offsetIntoRun = textOffset - markdigTag.Span.Start;
+					offsetIntoRun = Math.Max(0, offsetIntoRun);
+					offsetIntoRun = Math.Min(run.Text.Length-1, offsetIntoRun);
+					//var c1 = _guiRawText.Text[textOffset]; // the char at this offset is the char after the cursor
+					//var c2 = run.Text[offsetIntoRun];      // the char at this offset is the char after the cursor
+					viewTextPosition = viewTextPosition.GetPositionAtOffset(offsetIntoRun);
+				}
+
 				var viewRectangle = viewTextPosition.GetCharacterRect(LogicalDirection.Forward); // the y-Position of this rect is relative to the top of the view, even if this text element is far below
 
 				// now scroll the viewer window to the required offset
@@ -442,7 +454,7 @@ namespace Altaxo.Gui.Markdown
 		/// <param name="blocks">The list of <see cref="TextElement"/>s. Most of them should be tagged with the corresponding a <see cref="Markdig.Syntax.MarkdownObject"/> from which they are created.</param>
 		/// <param name="lineNumber">The line number in the source markdown text to be searched for.</param>
 		/// <returns>The <see cref="TextElement"/> which corresponds to a line number equal to or greater than the searched line number.</returns>
-		private TextElement BinarySearchBlocksForLineNumber(System.Collections.IList blocks, int lineNumber)
+		private TextElement BinarySearchBlocksForLineNumber(System.Collections.IList blocks, int lineNumber, int columnNumber)
 		{
 			var count = blocks.Count;
 			if (0 == count)
@@ -454,8 +466,8 @@ namespace Altaxo.Gui.Markdown
 			{
 				if (((TextElement)blocks[lowerIdx]).Tag is Markdig.Syntax.MarkdownObject lowerMdo)
 				{
-					if (lowerMdo.Line >= lineNumber)
-						return (TextElement)blocks[lowerIdx];
+					if (CompareLineColumn(lowerMdo.Line, lowerMdo.Column, lineNumber, columnNumber) > 0)
+						return (TextElement)blocks[lowerIdx]; // we have already passed the position without finding them
 					else
 						break;
 				}
@@ -470,10 +482,7 @@ namespace Altaxo.Gui.Markdown
 			{
 				if (((TextElement)blocks[upperIdx]).Tag is Markdig.Syntax.MarkdownObject upperMdo)
 				{
-					if (upperMdo.Line == lineNumber)
-						return (TextElement)blocks[upperIdx];
-					else
-						break;
+					break;
 				}
 			}
 
@@ -506,9 +515,7 @@ namespace Altaxo.Gui.Markdown
 				if (!(((TextElement)blocks[middleIdx]).Tag is Markdig.Syntax.MarkdownObject middleMdo))
 					break;
 
-				if (middleMdo.Line == lineNumber)
-					return (TextElement)blocks[middleIdx];
-				else if (middleMdo.Line > lineNumber)
+				if (CompareLineColumn(middleMdo.Line, middleMdo.Column, lineNumber, columnNumber) > 0)
 					upperIdx = middleIdx;
 				else
 					lowerIdx = middleIdx;
@@ -519,22 +526,125 @@ namespace Altaxo.Gui.Markdown
 			// our only chance is to search the children of the lowerIdx
 
 			int diveIntoIdx = lowerIdx;
-			if (((TextElement)blocks[upperIdx]).Tag is Markdig.Syntax.MarkdownObject upperMdo2 && upperMdo2.Line < lineNumber)
+			if (((TextElement)blocks[upperIdx]).Tag is Markdig.Syntax.MarkdownObject upperMdo2 && CompareLineColumn(upperMdo2.Line, upperMdo2.Column, lineNumber, columnNumber) <= 0)
 				diveIntoIdx = upperIdx;
 
 			var childs = GetChildList((TextElement)blocks[diveIntoIdx]);
 			if (null == childs)
 			{
-				return (TextElement)blocks[upperIdx]; // no childs, then our upperIdx element is the best choice
+				return (TextElement)blocks[diveIntoIdx]; // no childs, then diveIntoIdx element is the best choice
 			}
 			else // there are child, so search in them
 			{
-				var result = BinarySearchBlocksForLineNumber(childs, lineNumber);
+				var result = BinarySearchBlocksForLineNumber(childs, lineNumber, columnNumber);
 				if (null != result)
 					return result; // we have found a child, so return it
 				else
 					return (TextElement)blocks[upperIdx]; // no child found, then upperIdx may be the best choice.
 			}
+		}
+
+		private TextElement BinarySearchBlocksForTextOffset(System.Collections.IList blocks, int textPosition)
+		{
+			var count = blocks.Count;
+			if (0 == count)
+				return null;
+
+			// Skip forward lowerIdx unil we find a markdown tag
+			int lowerIdx;
+			for (lowerIdx = 0; lowerIdx < count; ++lowerIdx)
+			{
+				if (((TextElement)blocks[lowerIdx]).Tag is Markdig.Syntax.MarkdownObject lowerMdo)
+				{
+					if (lowerMdo.Span.Start >= textPosition)
+						return (TextElement)blocks[lowerIdx]; // then we have already passed the position without finding the element
+					else
+						break;
+				}
+			}
+
+			if (lowerIdx == count)
+				return null; // ups - no element with a tag found in the entire list of elements
+
+			// Skip backward upperIdx until we find a markdown tag
+			int upperIdx;
+			for (upperIdx = count - 1; upperIdx >= lowerIdx; --upperIdx)
+			{
+				if (((TextElement)blocks[upperIdx]).Tag is Markdig.Syntax.MarkdownObject upperMdo)
+				{
+					break;
+				}
+			}
+
+			// lowerMdo.TextPosition should now be less than or equal to the textposition  we are looking for
+
+			for (; ; )
+			{
+				if (lowerIdx == upperIdx || (lowerIdx + 1) == upperIdx)
+					break;
+
+				// calculate a block inbetween lowerIdx and upperIdx
+
+				var middleIdx = (lowerIdx + upperIdx) / 2;
+				// skip items that do not contain a tag
+
+				for (int offs = 0; !(middleIdx + offs > upperIdx && middleIdx - offs < lowerIdx); ++offs)
+				{
+					if ((middleIdx + offs < upperIdx) && ((TextElement)blocks[middleIdx + offs]).Tag is Markdig.Syntax.MarkdownObject)
+					{
+						middleIdx = middleIdx + offs;
+						break;
+					}
+					else if ((middleIdx - offs > lowerIdx) && ((TextElement)blocks[middleIdx - offs]).Tag is Markdig.Syntax.MarkdownObject)
+					{
+						middleIdx = middleIdx - offs;
+						break;
+					}
+				}
+
+				if (!(((TextElement)blocks[middleIdx]).Tag is Markdig.Syntax.MarkdownObject middleMdo))
+					break;
+				else if (middleMdo.Span.Start > textPosition)
+					upperIdx = middleIdx;
+				else
+					lowerIdx = middleIdx;
+			}
+
+			// now we have bracketed our search: lowerIdx should have a lineNumber less than our searched lineNumber,
+			// and upperIdx can have a line number less than, or greater than our searched line number
+			// our only chance is to search the children of the lowerIdx
+
+			int diveIntoIdx = lowerIdx;
+			if (((TextElement)blocks[upperIdx]).Tag is Markdig.Syntax.MarkdownObject upperMdo2 && upperMdo2.Span.Start <= textPosition)
+				diveIntoIdx = upperIdx;
+
+			var childs = GetChildList((TextElement)blocks[diveIntoIdx]);
+			if (null == childs)
+			{
+				return (TextElement)blocks[diveIntoIdx];
+			}
+			else // there are child, so search in them
+			{
+				var result = BinarySearchBlocksForTextOffset(childs, textPosition);
+				if (null != result)
+					return result; // we have found a child, so return it
+				else
+					return (TextElement)blocks[diveIntoIdx]; // no child found, then diveIntoIdx may be the best choice.
+			}
+		}
+
+		private static int CompareLineColumn(int lineA, int columA, int lineB, int columnB)
+		{
+			if (lineA < lineB)
+				return -1;
+			else if (lineA > lineB)
+				return +1;
+			else if (columA < columnB)
+				return -1;
+			else if (columA > columnB)
+				return +1;
+			else
+				return 0;
 		}
 
 		private System.Collections.IList GetChildList(TextElement parent)
