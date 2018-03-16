@@ -52,6 +52,16 @@ namespace Altaxo.Gui.Worksheet.Viewing
 			SetMemberVariablesToDefault();
 		}
 
+		public WorksheetController(Altaxo.Data.DataTable table)
+			: this(new Altaxo.Worksheet.WorksheetLayout(table ?? throw new ArgumentNullException(nameof(table))))
+		{
+		}
+
+		public WorksheetController(WorksheetViewLayout viewLayout)
+		: this(viewLayout?.WorksheetLayout ?? throw new ArgumentNullException(nameof(viewLayout)))
+		{
+		}
+
 		/// <summary>
 		/// Creates a WorksheetController which shows the table data using the specified <paramref name="layout"/>.
 		/// </summary>
