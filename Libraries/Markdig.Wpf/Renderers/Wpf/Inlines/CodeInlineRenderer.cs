@@ -22,7 +22,7 @@ namespace Markdig.Renderers.Wpf.Inlines
             run.FontStretch = FontStretches.UltraCondensed;
             span.Inlines.Add(run);
 
-            run = new Run(obj.Content.Replace(" ", "\xA0")); // Replace Space with fixed space
+            run = new Run(obj.Content.Replace(" ", "\xA0")) { Tag = obj }; // Replace Space with fixed space
             span.Inlines.Add(run);
 
             run = new Run("\x202F"); // Narrow fixed space
