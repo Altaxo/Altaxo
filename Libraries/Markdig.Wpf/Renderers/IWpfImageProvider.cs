@@ -29,5 +29,11 @@ namespace Markdig.Renderers
         /// <remarks>There is no need to apply a style to the image, as long as it packed in the <see cref="InlineUIContainer"/>.
         /// Assigment of a style is done during rendering.</remarks>
         Inline GetInlineItem(string url, out bool inlineItemIsErrorMessage);
+
+        /// <summary>
+        /// Removes all cached images and other resources, in order to
+        /// force a fresh retrieval of those resources.
+        /// </summary>
+        void ClearCache();
     }
 }

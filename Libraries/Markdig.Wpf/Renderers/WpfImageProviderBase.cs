@@ -48,5 +48,11 @@ namespace Markdig.Renderers
                 return new Run(string.Format("ERROR RENDERING '{0}' ({1})", url, ex.Message));
             }
         }
+
+        /// <inheritdoc/>
+        public virtual void ClearCache()
+        {
+            // nothing to do here since not image is cached here
+        }
     }
 }

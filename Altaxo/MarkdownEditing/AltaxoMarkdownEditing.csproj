@@ -51,6 +51,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gui\Markdown\Commands.cs" />
     <Compile Include="Gui\Markdown\MarkdownDifferenceUpdater.cs" />
     <Compile Include="Gui\Markdown\MarkdownRichTextEditing.xaml.cs">
       <DependentUpon>MarkdownRichTextEditing.xaml</DependentUpon>
@@ -61,6 +62,7 @@
     <Compile Include="Gui\Markdown\MarkdownSimpleEditing.xaml.cs">
       <DependentUpon>MarkdownSimpleEditing.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Markdown\PositionHelper.cs" />
     <Compile Include="Gui\Tests\TestControl1.xaml.cs">
       <DependentUpon>TestControl1.xaml</DependentUpon>
     </Compile>

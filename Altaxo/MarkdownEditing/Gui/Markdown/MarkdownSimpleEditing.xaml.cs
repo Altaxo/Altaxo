@@ -1,4 +1,15 @@
-﻿using Markdig;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    AltaxoMarkdownEditing
+//    Copyright (C) 2018 Dr. Dirk Lellinger
+//    This source file is licensed under the MIT license.
+//    See the LICENSE.md file in the root of the AltaxoMarkdownEditing library for more information.
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using Markdig;
 using Markdig.Wpf;
 using System;
 using System.Collections.Generic;

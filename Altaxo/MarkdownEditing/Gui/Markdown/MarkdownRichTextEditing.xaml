@@ -21,6 +21,8 @@
 
 		<FrameworkElement.CommandBindings>
 			<CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
+			<CommandBinding Command="{x:Static local:Commands.RefreshViewer}" Executed="EhRefreshViewer" />
+			<CommandBinding Command="{x:Static local:Commands.ToggleBetweenEditorAndViewer}" Executed="EhToggleBetweenEditorAndViewer" />
 		</FrameworkElement.CommandBindings>
 
 		<avalonEdit:TextEditor Grid.Row="2" Grid.Column="0"
@@ -46,7 +48,9 @@
 								 GotFocus="EhViewerGotFocus"
 								 PreviewMouseWheel="EhViewerMouseWheel"
 								 PreviewMouseDown="EhViewerMouseDown"
+								 PreviewKeyDown="EhViewerPreviewKeyDown"
 								 SelectionChanged="EhViewerSelectionChanged"
+
 								 IsUndoEnabled="False">
 			<!-- Note: It is of utmost importance that Undo is disabled for this RichTextBox,
 			otherwise RichTextBox would try to serialize deleted elements to store them for Undo,

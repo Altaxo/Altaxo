@@ -1,4 +1,15 @@
-﻿using Markdig;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    AltaxoMarkdownEditing
+//    Copyright (C) 2018 Dr. Dirk Lellinger
+//    This source file is licensed under the MIT license.
+//    See the LICENSE.md file in the root of the AltaxoMarkdownEditing library for more information.
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using Markdig;
 using Markdig.Renderers;
 using Markdig.Wpf;
 using System;
@@ -26,10 +37,7 @@ namespace Altaxo.Gui.Markdown
 	/// </summary>
 	public partial class MarkdownRichTextEditing : UserControl
 	{
-		private bool useExtensions = true;
-
 		private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().Build();
-
 		private MarkdownPipeline Pipeline { get; set; }
 
 		private string _sourceText;
@@ -79,7 +87,7 @@ namespace Altaxo.Gui.Markdown
 					}
 
 					// force a complete new rendering
-					EhSourceTextChanged(true);
+					RenderDocument(true);
 				}
 			}
 		}
@@ -115,16 +123,30 @@ namespace Altaxo.Gui.Markdown
 			Process.Start(e.Parameter.ToString());
 		}
 
+		#region Rendering
+
 		private string _lastSourceTextProcessed = null;
 		private Markdig.Syntax.MarkdownDocument _lastMarkdownDocumentProcessed = null;
 		private System.Threading.CancellationTokenSource _lastCancellationTokenSource = null;
 
 		private void EhSourceTextChanged(object sender, EventArgs e)
 		{
-			EhSourceTextChanged(false);
+			RenderDocument(false);
 		}
 
-		private void EhSourceTextChanged(bool forceCompleteRendering)
+		private void EhRefreshViewer(object sender, ExecutedRoutedEventArgs e)
+		{
+			ImageProvider.ClearCache();
+			RenderDocument(true);
+		}
+
+		/// <summary>
+		/// Renders the document.
+		/// </summary>
+		/// <param name="forceCompleteRendering">If set to <c>true</c>, a completely new rendering is forces; otherwise
+		/// only those parts that were changed in the source text are rendered anew.
+		/// Note that setting this parameter to <c>true</c> does not force a new rendering of the images; for that, call <see cref="IWpfImageProvider.ClearCache"/> of the <see cref="ImageProvider"/> member before rendering.</param>
+		private void RenderDocument(bool forceCompleteRendering)
 		{
 			if (null != _guiViewer && null != _guiRawText)
 			{
@@ -171,7 +193,9 @@ namespace Altaxo.Gui.Markdown
 			}
 		}
 
-		#region Track last scrolled windows
+		#endregion Rendering
+
+		#region Track last scrolled windows to decide if a scrolling event was originated by the user or if it was originated programatically
 
 		/// <summary>
 		/// Designates which window was last scrolled by a user action (<b>not</b> programatically).
@@ -221,7 +245,7 @@ namespace Altaxo.Gui.Markdown
 			_lastScrollActivatedWindow = LastScrollActivatedWindow.Viewer;
 		}
 
-		#endregion Track last scrolled windows
+		#endregion Track last scrolled windows to decide if a scrolling event was originated by the user or if it was originated programatically
 
 		#region Scroll handler (for source and viewer)
 
@@ -340,7 +364,7 @@ namespace Altaxo.Gui.Markdown
 
 			var blocks = flowDocument.Blocks;
 
-			var textElement = BinarySearchBlocksForLineNumber(flowDocument.Blocks, sourceLineNumber - 1, 0);
+			var textElement = PositionHelper.BinarySearchBlocksForLineNumber(flowDocument.Blocks, sourceLineNumber - 1, 0);
 			if (null != textElement)
 				textElement.BringIntoView();
 		}
@@ -361,16 +385,16 @@ namespace Altaxo.Gui.Markdown
 			var flowDocument = _guiViewer.Document;
 			var blocks = flowDocument.Blocks;
 			var textOffset = _guiRawText.Document.GetOffset(sourceTextPosition.Location);
-			var textElement = BinarySearchBlocksForTextOffset(flowDocument.Blocks, textOffset);
+			var textElement = PositionHelper.BinarySearchBlocksForTextOffset(flowDocument.Blocks, textOffset);
 			if (null != textElement && textElement.Tag is Markdig.Syntax.MarkdownObject markdigTag)
 			{
 				var viewTextPosition = textElement.ElementStart;
 
-				if (textElement is Run run && run.Text.Length>0)
+				if (textElement is Run run && run.Text.Length > 0)
 				{
 					int offsetIntoRun = textOffset - markdigTag.Span.Start;
 					offsetIntoRun = Math.Max(0, offsetIntoRun);
-					offsetIntoRun = Math.Min(run.Text.Length-1, offsetIntoRun);
+					offsetIntoRun = Math.Min(run.Text.Length - 1, offsetIntoRun);
 					//var c1 = _guiRawText.Text[textOffset]; // the char at this offset is the char after the cursor
 					//var c2 = run.Text[offsetIntoRun];      // the char at this offset is the char after the cursor
 					viewTextPosition = viewTextPosition.GetPositionAtOffset(offsetIntoRun);
@@ -445,234 +469,7 @@ namespace Altaxo.Gui.Markdown
 
 		#endregion Caret handling / synchronization
 
-		#region Helpers for searching FlowDocument children
-
-		/// <summary>
-		/// Performs a recursive binaries search in a list of <see cref="TextElement"/>s, most of them tagged with a <see cref="Markdig.Syntax.MarkdownObject"/> in order to find the
-		/// element with corresponds to a given line number in the source markdown.
-		/// </summary>
-		/// <param name="blocks">The list of <see cref="TextElement"/>s. Most of them should be tagged with the corresponding a <see cref="Markdig.Syntax.MarkdownObject"/> from which they are created.</param>
-		/// <param name="lineNumber">The line number in the source markdown text to be searched for.</param>
-		/// <returns>The <see cref="TextElement"/> which corresponds to a line number equal to or greater than the searched line number.</returns>
-		private TextElement BinarySearchBlocksForLineNumber(System.Collections.IList blocks, int lineNumber, int columnNumber)
-		{
-			var count = blocks.Count;
-			if (0 == count)
-				return null;
-
-			// Skip forward lowerIdx unil we find a markdown tag
-			int lowerIdx;
-			for (lowerIdx = 0; lowerIdx < count; ++lowerIdx)
-			{
-				if (((TextElement)blocks[lowerIdx]).Tag is Markdig.Syntax.MarkdownObject lowerMdo)
-				{
-					if (CompareLineColumn(lowerMdo.Line, lowerMdo.Column, lineNumber, columnNumber) > 0)
-						return (TextElement)blocks[lowerIdx]; // we have already passed the position without finding them
-					else
-						break;
-				}
-			}
-
-			if (lowerIdx == count)
-				return null; // ups - no element with a tag found in the entire list of elements
-
-			// Skip backward upperIdx until we find a markdown tag
-			int upperIdx;
-			for (upperIdx = count - 1; upperIdx >= lowerIdx; --upperIdx)
-			{
-				if (((TextElement)blocks[upperIdx]).Tag is Markdig.Syntax.MarkdownObject upperMdo)
-				{
-					break;
-				}
-			}
-
-			// lowerMdo.Line should now be less than the lineNumber we are searching for
-
-			for (; ; )
-			{
-				if (lowerIdx == upperIdx || (lowerIdx + 1) == upperIdx)
-					break;
-
-				// calculate a block inbetween lowerIdx and upperIdx
-
-				var middleIdx = (lowerIdx + upperIdx) / 2;
-				// skip items that do not contain a tag
-
-				for (int offs = 0; !(middleIdx + offs > upperIdx && middleIdx - offs < lowerIdx); ++offs)
-				{
-					if ((middleIdx + offs < upperIdx) && ((TextElement)blocks[middleIdx + offs]).Tag is Markdig.Syntax.MarkdownObject)
-					{
-						middleIdx = middleIdx + offs;
-						break;
-					}
-					else if ((middleIdx - offs > lowerIdx) && ((TextElement)blocks[middleIdx - offs]).Tag is Markdig.Syntax.MarkdownObject)
-					{
-						middleIdx = middleIdx - offs;
-						break;
-					}
-				}
-
-				if (!(((TextElement)blocks[middleIdx]).Tag is Markdig.Syntax.MarkdownObject middleMdo))
-					break;
-
-				if (CompareLineColumn(middleMdo.Line, middleMdo.Column, lineNumber, columnNumber) > 0)
-					upperIdx = middleIdx;
-				else
-					lowerIdx = middleIdx;
-			}
-
-			// now we have bracketed our search: lowerIdx should have a lineNumber less than our searched lineNumber,
-			// and upperIdx can have a line number less than, or greater than our searched line number
-			// our only chance is to search the children of the lowerIdx
-
-			int diveIntoIdx = lowerIdx;
-			if (((TextElement)blocks[upperIdx]).Tag is Markdig.Syntax.MarkdownObject upperMdo2 && CompareLineColumn(upperMdo2.Line, upperMdo2.Column, lineNumber, columnNumber) <= 0)
-				diveIntoIdx = upperIdx;
-
-			var childs = GetChildList((TextElement)blocks[diveIntoIdx]);
-			if (null == childs)
-			{
-				return (TextElement)blocks[diveIntoIdx]; // no childs, then diveIntoIdx element is the best choice
-			}
-			else // there are child, so search in them
-			{
-				var result = BinarySearchBlocksForLineNumber(childs, lineNumber, columnNumber);
-				if (null != result)
-					return result; // we have found a child, so return it
-				else
-					return (TextElement)blocks[upperIdx]; // no child found, then upperIdx may be the best choice.
-			}
-		}
-
-		private TextElement BinarySearchBlocksForTextOffset(System.Collections.IList blocks, int textPosition)
-		{
-			var count = blocks.Count;
-			if (0 == count)
-				return null;
-
-			// Skip forward lowerIdx unil we find a markdown tag
-			int lowerIdx;
-			for (lowerIdx = 0; lowerIdx < count; ++lowerIdx)
-			{
-				if (((TextElement)blocks[lowerIdx]).Tag is Markdig.Syntax.MarkdownObject lowerMdo)
-				{
-					if (lowerMdo.Span.Start >= textPosition)
-						return (TextElement)blocks[lowerIdx]; // then we have already passed the position without finding the element
-					else
-						break;
-				}
-			}
-
-			if (lowerIdx == count)
-				return null; // ups - no element with a tag found in the entire list of elements
-
-			// Skip backward upperIdx until we find a markdown tag
-			int upperIdx;
-			for (upperIdx = count - 1; upperIdx >= lowerIdx; --upperIdx)
-			{
-				if (((TextElement)blocks[upperIdx]).Tag is Markdig.Syntax.MarkdownObject upperMdo)
-				{
-					break;
-				}
-			}
-
-			// lowerMdo.TextPosition should now be less than or equal to the textposition  we are looking for
-
-			for (; ; )
-			{
-				if (lowerIdx == upperIdx || (lowerIdx + 1) == upperIdx)
-					break;
-
-				// calculate a block inbetween lowerIdx and upperIdx
-
-				var middleIdx = (lowerIdx + upperIdx) / 2;
-				// skip items that do not contain a tag
-
-				for (int offs = 0; !(middleIdx + offs > upperIdx && middleIdx - offs < lowerIdx); ++offs)
-				{
-					if ((middleIdx + offs < upperIdx) && ((TextElement)blocks[middleIdx + offs]).Tag is Markdig.Syntax.MarkdownObject)
-					{
-						middleIdx = middleIdx + offs;
-						break;
-					}
-					else if ((middleIdx - offs > lowerIdx) && ((TextElement)blocks[middleIdx - offs]).Tag is Markdig.Syntax.MarkdownObject)
-					{
-						middleIdx = middleIdx - offs;
-						break;
-					}
-				}
-
-				if (!(((TextElement)blocks[middleIdx]).Tag is Markdig.Syntax.MarkdownObject middleMdo))
-					break;
-				else if (middleMdo.Span.Start > textPosition)
-					upperIdx = middleIdx;
-				else
-					lowerIdx = middleIdx;
-			}
-
-			// now we have bracketed our search: lowerIdx should have a lineNumber less than our searched lineNumber,
-			// and upperIdx can have a line number less than, or greater than our searched line number
-			// our only chance is to search the children of the lowerIdx
-
-			int diveIntoIdx = lowerIdx;
-			if (((TextElement)blocks[upperIdx]).Tag is Markdig.Syntax.MarkdownObject upperMdo2 && upperMdo2.Span.Start <= textPosition)
-				diveIntoIdx = upperIdx;
-
-			var childs = GetChildList((TextElement)blocks[diveIntoIdx]);
-			if (null == childs)
-			{
-				return (TextElement)blocks[diveIntoIdx];
-			}
-			else // there are child, so search in them
-			{
-				var result = BinarySearchBlocksForTextOffset(childs, textPosition);
-				if (null != result)
-					return result; // we have found a child, so return it
-				else
-					return (TextElement)blocks[diveIntoIdx]; // no child found, then diveIntoIdx may be the best choice.
-			}
-		}
-
-		private static int CompareLineColumn(int lineA, int columA, int lineB, int columnB)
-		{
-			if (lineA < lineB)
-				return -1;
-			else if (lineA > lineB)
-				return +1;
-			else if (columA < columnB)
-				return -1;
-			else if (columA > columnB)
-				return +1;
-			else
-				return 0;
-		}
-
-		private System.Collections.IList GetChildList(TextElement parent)
-		{
-			if (parent is Paragraph para)
-			{
-				return para.Inlines;
-			}
-			else if (parent is List list)
-			{
-				return list.ListItems;
-			}
-			else if (parent is ListItem listItem)
-			{
-				return listItem.Blocks;
-			}
-			else if (parent is Span span)
-			{
-				return span.Inlines;
-			}
-			else if (parent is Section section)
-			{
-				return section.Blocks;
-			}
-			return null;
-		}
-
-		#endregion Helpers for searching FlowDocument children
+		#region Viewer theme handling
 
 		private void EhSwitchThemeToGithub(object sender, RoutedEventArgs e)
 		{
@@ -703,5 +500,83 @@ namespace Altaxo.Gui.Markdown
 
 			Application.Current.Resources.MergedDictionaries.Add(dictionary);
 		}
+
+		#endregion Viewer theme handling
+
+		#region Toggling between source editor and viewer
+
+		private void EhToggleBetweenEditorAndViewer(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (_guiViewer.IsKeyboardFocusWithin)
+			{
+				SwitchFromViewerToSourceEditor();
+			}
+			else if (_guiRawText.IsKeyboardFocusWithin)
+			{
+				SwitchFromSourceEditorToViewer();
+			}
+		}
+
+		private void SwitchFromViewerToSourceEditor()
+		{
+			var viewerPosition = _guiViewer.Selection.Start;
+			var (sourcePosition, isPositionAccurate) = PositionHelper.ViewersTextPositionToSourceEditorsTextPosition(viewerPosition);
+			// set the caret in the source editor only if (i) sourcePosition is >=0 and (ii) the position is accurate
+
+			if (sourcePosition >= 0 && isPositionAccurate)
+			{
+				_guiRawText.CaretOffset = sourcePosition;
+			}
+
+			_guiRawText.Focus();
+		}
+
+		private void SwitchFromSourceEditorToViewer()
+		{
+			var sourceTextPosition = _guiRawText.TextArea.Caret.Position;
+			var sourceTextOffset = _guiRawText.Document.GetOffset(sourceTextPosition.Location);
+			var (textPointer, isAccurate) = PositionHelper.SourceEditorTextPositionToViewersTextPosition(sourceTextOffset, _guiViewer.Document.Blocks);
+
+			if (null != textPointer && isAccurate)
+			{
+				_guiViewer.Selection.Select(textPointer, textPointer);
+			}
+			else
+			{
+			}
+
+			_guiViewer.Focus();
+		}
+
+		#endregion Toggling between source editor and viewer
+
+		#region Key handling, when a key is entered in the viewer
+
+		/// <summary>
+		/// Contains those keys which, when entered in the viewer, do not trigger a switching from the viewer to the source editor.
+		/// </summary>
+		private static HashSet<Key> KeysNotTriggeringSwitchFromViewerToSourceEditor = new HashSet<Key>()
+		{
+			Key.Left, Key.Right, Key.Up, Key.Down,
+			Key.PageDown, Key.PageUp, Key.Home
+		};
+
+		/// <summary>
+		/// When you enter a key in the viewer, normally nothing will happen (the viewer is read-only).
+		/// But here we catch the key, and for most of the keys (except navigation keys, like up, down etc.),
+		/// we first set the corresponding position in the source text, and then re-route the key to the source editor,
+		/// so that it is included in the source text.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="e">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
+		private void EhViewerPreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			if (KeysNotTriggeringSwitchFromViewerToSourceEditor.Contains(e.Key))
+				return;
+
+			SwitchFromViewerToSourceEditor();
+		}
+
+		#endregion Key handling, when a key is entered in the viewer
 	}
 }

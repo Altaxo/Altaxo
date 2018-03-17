@@ -78,5 +78,20 @@ namespace Altaxo.Gui.Text.Viewing
 				_guiEditor.SourceTextChanged -= value;
 			}
 		}
+
+		private void EhPreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.F12 && Altaxo.Gui.Markdown.Commands.ToggleBetweenEditorAndViewer.CanExecute(null, null))
+			{
+				Altaxo.Gui.Markdown.Commands.ToggleBetweenEditorAndViewer.Execute(null, null);
+				e.Handled = true;
+			}
+
+			if (e.Key == Key.F5 && Altaxo.Gui.Markdown.Commands.RefreshViewer.CanExecute(null, null))
+			{
+				Altaxo.Gui.Markdown.Commands.ToggleBetweenEditorAndViewer.Execute(null, null);
+				e.Handled = true;
+			}
+		}
 	}
 }
