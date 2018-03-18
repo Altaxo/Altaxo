@@ -37,7 +37,7 @@ namespace Altaxo.Gui.Markdown
 	/// </summary>
 	public partial class MarkdownRichTextEditing : UserControl
 	{
-		private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().Build();
+		private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().UseAltaxoPostProcessor().Build();
 		private MarkdownPipeline Pipeline { get; set; }
 
 		private string _sourceText;
@@ -148,11 +148,12 @@ namespace Altaxo.Gui.Markdown
 		/// Note that setting this parameter to <c>true</c> does not force a new rendering of the images; for that, call <see cref="IWpfImageProvider.ClearCache"/> of the <see cref="ImageProvider"/> member before rendering.</param>
 		private void RenderDocument(bool forceCompleteRendering)
 		{
+			var pipeline = Pipeline ?? DefaultPipeline;
+
 			if (null != _guiViewer && null != _guiRawText)
 			{
 				_sourceText = _guiRawText.Text;
 
-				var pipeline = Pipeline ?? DefaultPipeline;
 				if (forceCompleteRendering || _lastMarkdownDocumentProcessed == null || _lastSourceTextProcessed == null)
 				{
 					var markdownDocument = Markdig.Markdown.Parse(_sourceText, pipeline);
@@ -165,7 +166,7 @@ namespace Altaxo.Gui.Markdown
 						ImageProvider = this.ImageProvider
 					};
 
-					(Pipeline ?? DefaultPipeline).Setup(renderer);
+					pipeline.Setup(renderer);
 					renderer.Render(markdownDocument);
 					_guiViewer.Document = flowDocument;
 					_lastSourceTextProcessed = _sourceText;
@@ -177,7 +178,7 @@ namespace Altaxo.Gui.Markdown
 					_lastCancellationTokenSource = new System.Threading.CancellationTokenSource();
 					var task = new MarkdownDifferenceUpdater(
 						_lastSourceTextProcessed, _lastMarkdownDocumentProcessed, // old source text and old parsed document
-						Pipeline ?? DefaultPipeline,
+						pipeline,
 						_currentStyle,
 						ImageProvider,
 						_sourceText,  // new source

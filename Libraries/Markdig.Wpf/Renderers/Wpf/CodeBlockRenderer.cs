@@ -17,7 +17,7 @@ namespace Markdig.Renderers.Wpf
         /// Create a private tag in order to be able to tag every single line of a code block
         /// </summary>
         /// <seealso cref="Markdig.Syntax.MarkdownObject" />
-        private class CodeBlockLine : MarkdownObject
+        private class CodeBlockLine : Markdig.Syntax.Inlines.Inline
         {
             public CodeBlockLine(StringSlice l)
             {
@@ -31,15 +31,23 @@ namespace Markdig.Renderers.Wpf
             renderer.Styles.ApplyCodeBlockStyle(paragraph);
             renderer.Push(paragraph);
 
-            // original code: renderer.WriteLeafRawLines(obj); // Expand this call directly here in order to be able to include tags
-            var lines = obj.Lines;
-            if (lines.Lines != null)
+            if (obj.Inline != null)
             {
-                var slices = lines.Lines;
-                for (var i = 0; i < lines.Count; i++)
+                // there was a post-processor which has already processed the lines in this code block
+                renderer.WriteChildren(obj.Inline);
+            }
+            else // there was no post-processor - we have to do the writing of the code lines
+            {
+                // original code: renderer.WriteLeafRawLines(obj); // Expand this call directly here in order to be able to include tags
+                var lines = obj.Lines;
+                if (lines.Lines != null)
                 {
-                    renderer.WriteInline(new Run(slices[i].Slice.ToString()) { Tag = new CodeBlockLine(slices[i].Slice) });
-                    renderer.WriteInline(new LineBreak());
+                    var slices = lines.Lines;
+                    for (var i = 0; i < lines.Count; i++)
+                    {
+                        renderer.WriteInline(new Run(slices[i].Slice.ToString()));
+                        renderer.WriteInline(new LineBreak());
+                    }
                 }
             }
 
