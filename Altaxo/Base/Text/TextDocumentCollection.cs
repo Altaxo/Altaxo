@@ -33,13 +33,12 @@ namespace Altaxo.Text
 	/// Stores the <see cref="TextDocument"/>s of the project.
 	/// </summary>
 	public class TextDocumentCollection :
-		ProjectItemCollectionBase<TextDocument, IProjectItem>,
+		ProjectItemCollectionBase<TextDocument>,
 		IEnumerable<TextDocument>
 	{
-		public TextDocumentCollection(AltaxoDocument parent, SortedDictionary<string, IProjectItem> commonDictionaryForProjectItems)
+		public TextDocumentCollection(AltaxoDocument parent)
 			: base(parent)
 		{
-			this._itemsByName = commonDictionaryForProjectItems ?? throw new ArgumentNullException(nameof(commonDictionaryForProjectItems));
 		}
 
 		/// <inheritdoc/>
