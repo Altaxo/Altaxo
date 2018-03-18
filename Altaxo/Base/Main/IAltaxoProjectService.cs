@@ -27,6 +27,15 @@ namespace Altaxo.Main
 		void DeleteGraphDocument(Graph.Gdi.GraphDocument graph, bool force);
 
 		/// <summary>
+		/// Creates a project item, and adds it to the appropriate collection in the current project.
+		/// Note that there might exist more specialized function to create a certain project item.
+		/// </summary>
+		/// <typeparam name="T">The type of project item to create.</typeparam>
+		/// <param name="inFolder">The folder into which the project item is created.</param>
+		/// <returns>The created project item.</returns>
+		T CreateDocument<T>(string inFolder) where T : IProjectItem;
+
+		/// <summary>
 		/// This function will delete a project document and close all corresponding views.
 		/// </summary>
 		/// <param name="document">The document (project item) to delete.</param>

@@ -57,10 +57,8 @@ namespace Altaxo.Main
 			if (null == doc)
 				throw new ArgumentNullException();
 
-			doc.DataTableCollection.CollectionChanged += EhItemCollectionChanged;
-			doc.GraphDocumentCollection.CollectionChanged += EhItemCollectionChanged;
-			doc.Graph3DDocumentCollection.CollectionChanged += EhItemCollectionChanged;
-			doc.ProjectFolderProperties.CollectionChanged += EhItemCollectionChanged;
+			foreach (var coll in doc.ProjectItemCollections)
+				coll.CollectionChanged += EhItemCollectionChanged;
 			Initialize(doc);
 
 			_parent = doc; // Parent last because we dont want the changes above to be monitored by the parent
@@ -71,14 +69,13 @@ namespace Altaxo.Main
 			var doc = AltaxoDocument;
 			if (null != doc)
 			{
-				if (null != doc.DataTableCollection)
-					doc.DataTableCollection.CollectionChanged -= EhItemCollectionChanged;
-				if (null != doc.GraphDocumentCollection)
-					doc.GraphDocumentCollection.CollectionChanged -= EhItemCollectionChanged;
-				if (null != doc.Graph3DDocumentCollection)
-					doc.Graph3DDocumentCollection.CollectionChanged -= EhItemCollectionChanged;
-				if (null != doc.ProjectFolderProperties)
-					doc.ProjectFolderProperties.CollectionChanged -= EhItemCollectionChanged;
+				foreach (var coll in doc.ProjectItemCollections)
+				{
+					if (null != coll)
+					{
+						coll.CollectionChanged += EhItemCollectionChanged;
+					}
+				}
 			}
 
 			base.Dispose(isDisposing);
@@ -340,55 +337,31 @@ namespace Altaxo.Main
 				string oldName = oldNameDictionary[item];
 				string newName = (newFolderName == null ? "" : newFolderName) + oldName.Substring(oldFolderNameLength);
 
-				if (item is Data.DataTable)
+				if (item is Main.Properties.ProjectFolderPropertyDocument propDoc)
 				{
-					if (!AltaxoDocument.DataTableCollection.Contains(newName))
+					var coll = AltaxoDocument.ProjectFolderProperties;
+					if (!coll.ContainsAnyName(newName))
 					{
-						((Data.DataTable)item).Name = newName;
-					}
-					else
-					{
-						((Data.DataTable)item).Name = AltaxoDocument.DataTableCollection.FindNewTableName(newName);
-					}
-				}
-				else if (item is Graph.Gdi.GraphDocument)
-				{
-					if (!AltaxoDocument.GraphDocumentCollection.Contains(newName))
-					{
-						((Graph.Gdi.GraphDocument)item).Name = newName;
-					}
-					else
-					{
-						((Graph.Gdi.GraphDocument)item).Name = AltaxoDocument.GraphDocumentCollection.FindNewItemName(newName);
-					}
-				}
-				else if (item is Graph.Graph3D.GraphDocument)
-				{
-					if (!AltaxoDocument.Graph3DDocumentCollection.Contains(newName))
-					{
-						((Graph.Graph3D.GraphDocument)item).Name = newName;
-					}
-					else
-					{
-						((Graph.Graph3D.GraphDocument)item).Name = AltaxoDocument.GraphDocumentCollection.FindNewItemName(newName);
-					}
-				}
-				else if (item is Main.Properties.ProjectFolderPropertyDocument)
-				{
-					if (!AltaxoDocument.ProjectFolderProperties.Contains(newName))
-					{
-						((Main.Properties.ProjectFolderPropertyDocument)item).Name = newName;
+						item.Name = newName;
 					}
 					else // we integrate the properties in the other properties
 					{
-						var oldProps = AltaxoDocument.ProjectFolderProperties[newName].PropertyBagNotNull;
-						var propsToMerge = ((Main.Properties.ProjectFolderPropertyDocument)item).PropertyBagNotNull;
+						var oldProps = coll[newName].PropertyBagNotNull;
+						var propsToMerge = propDoc.PropertyBagNotNull;
 						oldProps.MergePropertiesFrom(propsToMerge, false);
 					}
 				}
-				else
+				else // normal case
 				{
-					throw new NotImplementedException("Unknown item type encountered: " + item.GetType().ToString());
+					var coll = AltaxoDocument.GetCollectionForProjectItemType(item.GetType());
+					if (!coll.ContainsAnyName(newName))
+					{
+						item.Name = newName;
+					}
+					else
+					{
+						item.Name = coll.FindNewItemName(newName);
+					}
 				}
 			} // end foreach item
 
@@ -432,17 +405,13 @@ namespace Altaxo.Main
 			_directories.Clear();
 			_directories.Add(ProjectFolder.RootFolderName, new HashSet<object>()); // Root folder
 
-			foreach (var v in doc.DataTableCollection)
-				ItemAdded(v, v.Name, EventFiring.Suppressed);
-
-			foreach (Altaxo.Graph.Gdi.GraphDocument v in doc.GraphDocumentCollection)
-				ItemAdded(v, v.Name, EventFiring.Suppressed);
-
-			foreach (Altaxo.Graph.Graph3D.GraphDocument v in doc.Graph3DDocumentCollection)
-				ItemAdded(v, v.Name, EventFiring.Suppressed);
-
-			foreach (var item in doc.ProjectFolderProperties)
-				ItemAdded(item, item.Name, EventFiring.Suppressed);
+			foreach (var coll in doc.ProjectItemCollections)
+			{
+				foreach (var v in coll.ProjectItems)
+				{
+					ItemAdded(v, v.Name, EventFiring.Suppressed);
+				}
+			}
 
 			EhSelfChanged(Main.NamedObjectCollectionChangedEventArgs.FromMultipleChanges());
 		}
@@ -591,34 +560,14 @@ namespace Altaxo.Main
 			int oldFolderNameLength = oldFolderName == null ? 0 : oldFolderName.Length;
 			foreach (var item in oldList)
 			{
-				if (item is INameOwner)
+				if (item is IProjectItem projItem)
 				{
-					string oldName = ((INameOwner)item).Name;
+					string oldName = projItem.Name;
 					string newName = (newFolderName ?? string.Empty) + oldName.Substring(oldFolderNameLength);
-					if (item is Data.DataTable)
-					{
-						if (AltaxoDocument.DataTableCollection.Contains(newName) && !itemHashSet.Contains(AltaxoDocument.DataTableCollection[newName]))
-							return false;
-					}
-					else if (item is Graph.Gdi.GraphDocument)
-					{
-						if (AltaxoDocument.GraphDocumentCollection.Contains(newName) && !itemHashSet.Contains(AltaxoDocument.GraphDocumentCollection[newName]))
-							return false;
-					}
-					else if (item is Graph.Graph3D.GraphDocument)
-					{
-						if (AltaxoDocument.Graph3DDocumentCollection.Contains(newName) && !itemHashSet.Contains(AltaxoDocument.Graph3DDocumentCollection[newName]))
-							return false;
-					}
-					else if (item is Properties.ProjectFolderPropertyDocument)
-					{
-						if (AltaxoDocument.ProjectFolderProperties.Contains(newName) && !itemHashSet.Contains(AltaxoDocument.ProjectFolderProperties[newName]))
-							return false;
-					}
-					else
-					{
-						throw new NotImplementedException("Unknown item type encountered: " + item.GetType().ToString());
-					}
+
+					var coll = AltaxoDocument.GetCollectionForProjectItemType(projItem.GetType());
+					if (coll.ContainsAnyName(newName) && !itemHashSet.Contains(coll[newName]))
+						return false;
 				}
 				else
 				{
@@ -723,51 +672,33 @@ namespace Altaxo.Main
 
 			foreach (object item in itemList)
 			{
-				if (item is ProjectFolder)
+				if (item is ProjectFolder projFolder)
 				{
-					var folder = (ProjectFolder)item;
-					string moveToFolder = ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetFoldersLastFolderPart(folder.Name));
-					RenameFolder(folder.Name, moveToFolder);
+					string moveToFolder = ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetFoldersLastFolderPart(projFolder.Name));
+					RenameFolder(projFolder.Name, moveToFolder);
 				}
-				else if (item is Altaxo.Data.DataTable)
+				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument propDoc)
 				{
-					var table = (Altaxo.Data.DataTable)item;
-					var newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(table.Name));
-					if (Current.Project.DataTableCollection.Contains(newName))
-						newName = Current.Project.DataTableCollection.FindNewTableName(newName);
-					table.Name = newName;
-				}
-				else if (item is Altaxo.Graph.Gdi.GraphDocument)
-				{
-					var graph = (Altaxo.Graph.Gdi.GraphDocument)item;
-					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
-					if (Current.Project.GraphDocumentCollection.Contains(newName))
-						newName = Current.Project.GraphDocumentCollection.FindNewItemName(newName);
-					graph.Name = newName;
-				}
-				else if (item is Altaxo.Graph.Graph3D.GraphDocument)
-				{
-					var graph = (Altaxo.Graph.Graph3D.GraphDocument)item;
-					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
-					if (Current.Project.Graph3DDocumentCollection.Contains(newName))
-						newName = Current.Project.Graph3DDocumentCollection.FindNewItemName(newName);
-					graph.Name = newName;
-				}
-				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
-				{
-					var pdoc = (Altaxo.Main.Properties.ProjectFolderPropertyDocument)item;
-					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(pdoc.Name));
-					if (Current.Project.ProjectFolderProperties.Contains(newName))
+					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(propDoc.Name));
+					if (AltaxoDocument.ProjectFolderProperties.Contains(newName))
 					{
 						// Project folders are unique for the specific folder, we can not simply rename it to another name
 						// Thus I decided here to merge the moved property bag with the already existing property bag
-						var existingDoc = Current.Project.ProjectFolderProperties[newName];
-						existingDoc.PropertyBagNotNull.MergePropertiesFrom(pdoc.PropertyBagNotNull, true);
+						var existingDoc = AltaxoDocument.ProjectFolderProperties[newName];
+						existingDoc.PropertyBagNotNull.MergePropertiesFrom(propDoc.PropertyBagNotNull, true);
 					}
 					else
 					{
-						pdoc.Name = newName;
+						propDoc.Name = newName;
 					}
+				}
+				else if (item is IProjectItem projItem)
+				{
+					var coll = AltaxoDocument.GetCollectionForProjectItemType(item.GetType());
+					var newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(projItem.Name));
+					if (coll.ContainsAnyName(newName))
+						newName = coll.FindNewItemName(newName);
+					projItem.Name = newName;
 				}
 			}
 		}
@@ -783,51 +714,33 @@ namespace Altaxo.Main
 
 			foreach (object item in list)
 			{
-				if (item is ProjectFolder)
+				if (item is ProjectFolder projFolder)
 				{
-					var folder = (ProjectFolder)item;
-					string moveToFolder = ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetFoldersLastFolderPart(folder.Name));
-					RenameFolder(folder.Name, moveToFolder);
+					string moveToFolder = ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetFoldersLastFolderPart(projFolder.Name));
+					RenameFolder(projFolder.Name, moveToFolder);
 				}
-				else if (item is Altaxo.Data.DataTable)
+				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument propDoc)
 				{
-					var table = (Altaxo.Data.DataTable)item;
-					var newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(table.Name));
-					if (Current.Project.DataTableCollection.Contains(newName))
-						newName = Current.Project.DataTableCollection.FindNewTableName(newName);
-					table.Name = newName;
-				}
-				else if (item is Altaxo.Graph.Gdi.GraphDocument)
-				{
-					var graph = (Altaxo.Graph.Gdi.GraphDocument)item;
-					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
-					if (Current.Project.GraphDocumentCollection.Contains(newName))
-						newName = Current.Project.GraphDocumentCollection.FindNewItemName(newName);
-					graph.Name = newName;
-				}
-				else if (item is Altaxo.Graph.Graph3D.GraphDocument)
-				{
-					var graph = (Altaxo.Graph.Graph3D.GraphDocument)item;
-					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(graph.Name));
-					if (Current.Project.Graph3DDocumentCollection.Contains(newName))
-						newName = Current.Project.Graph3DDocumentCollection.FindNewItemName(newName);
-					graph.Name = newName;
-				}
-				else if (item is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
-				{
-					var pdoc = (Altaxo.Main.Properties.ProjectFolderPropertyDocument)item;
-					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(pdoc.Name));
-					if (Current.Project.ProjectFolderProperties.Contains(newName))
+					string newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(propDoc.Name));
+					if (AltaxoDocument.ProjectFolderProperties.Contains(newName))
 					{
 						// Project folders are unique for the specific folder, we can not simply rename it to another name
 						// Thus I decided here to merge the moved property bag with the already existing property bag
-						var existingDoc = Current.Project.ProjectFolderProperties[newName];
-						existingDoc.PropertyBagNotNull.MergePropertiesFrom(pdoc.PropertyBagNotNull, true);
+						var existingDoc = AltaxoDocument.ProjectFolderProperties[newName];
+						existingDoc.PropertyBagNotNull.MergePropertiesFrom(propDoc.PropertyBagNotNull, true);
 					}
 					else
 					{
-						pdoc.Name = newName;
+						propDoc.Name = newName;
 					}
+				}
+				else if (item is IProjectItem projItem)
+				{
+					var coll = AltaxoDocument.GetCollectionForProjectItemType(item.GetType());
+					var newName = Main.ProjectFolder.Combine(newFolderName, Main.ProjectFolder.GetNamePart(projItem.Name));
+					if (coll.ContainsAnyName(newName))
+						newName = coll.FindNewItemName(newName);
+					projItem.Name = newName;
 				}
 			}
 		}
@@ -862,11 +775,11 @@ namespace Altaxo.Main
 			ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(destinationFolderName);
 
 			if (item == null)
-				throw new ArgumentNullException("Item is null");
+				throw new ArgumentNullException(nameof(item));
 
-			if (item is ProjectFolder)
+			if (item is ProjectFolder projFolder)
 			{
-				var orgName = (item as ProjectFolder).Name;
+				var orgName = projFolder.Name;
 				string destName = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetFoldersLastFolderPart(orgName));
 				foreach (var subitem in this.GetItemsInFolderAndSubfolders(orgName))
 				{
@@ -875,23 +788,22 @@ namespace Altaxo.Main
 					CopyItemToFolder(subitem, newItemFolder, ReportProxies, overwriteExistingItemsOfSameType);
 				}
 			}
-			else if (item is IProjectItem)
+			else if (item is IProjectItem projectItem)
 			{
-				var projectItem = (IProjectItem)item;
 				var orgName = projectItem.Name;
 				var clonedItem = (IProjectItem)projectItem.Clone();
 				clonedItem.Name = ProjectFolder.Combine(destinationFolderName, ProjectFolder.GetNamePart(orgName));
 
 				if (overwriteExistingItemsOfSameType)
 				{
-					var existingItem = Current.Project.TryGetExistingItemWithSameTypeAndName(clonedItem);
+					var existingItem = AltaxoDocument.TryGetExistingItemWithSameTypeAndName(clonedItem);
 					if (null != existingItem)
 					{
 						Current.ProjectService.DeleteDocument(existingItem, true);
 					}
 				}
 
-				Current.Project.AddItem(clonedItem);
+				AltaxoDocument.AddItem(clonedItem);
 
 				if (null != ReportProxies)
 				{

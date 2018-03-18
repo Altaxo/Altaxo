@@ -40,6 +40,20 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		protected event Action<SelectableListNodeList> _listChange;
 
+		protected static Dictionary<Type, ProjectBrowseItemImage> _projectItemTypesToImage;
+
+		static AbstractItemHandler()
+		{
+			_projectItemTypesToImage = new Dictionary<Type, ProjectBrowseItemImage>()
+			{
+				[typeof(Altaxo.Data.DataTable)] = ProjectBrowseItemImage.Worksheet,
+				[typeof(Altaxo.Graph.Gdi.GraphDocument)] = ProjectBrowseItemImage.Graph,
+				[typeof(Altaxo.Graph.Graph3D.GraphDocument)] = ProjectBrowseItemImage.Graph,
+				[typeof(Altaxo.Text.TextDocument)] = ProjectBrowseItemImage.TextDocument,
+				[typeof(Altaxo.Main.Properties.ProjectFolderPropertyDocument)] = ProjectBrowseItemImage.PropertyBag,
+			};
+		}
+
 		/// <summary>
 		/// Signals that the list has changed, so the view can update the list. When the first receiver registers for
 		/// the event, the function <see cref="BeginTracking"/> will be called. If the last receiver unregisters for
@@ -88,29 +102,18 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// </summary>
 		public abstract void EndTracking();
 
-		public static BrowserListItem GetBrowserListItem(Altaxo.Data.DataTable t, bool showFullName)
+		public static BrowserListItem GetBrowserListItem(IProjectItem t, bool showFullName)
 		{
 			var name = showFullName ? t.Name : ProjectFolder.GetNamePart(t.Name);
-			return new BrowserListItem(name, showFullName, t, false) { Image = ProjectBrowseItemImage.Worksheet, CreationDate = t.CreationTimeUtc };
-		}
+			if (t is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
+				name += "FolderProperties";
+			else if (t is Altaxo.Text.TextDocument && Altaxo.Main.ProjectFolder.IsValidFolderName(name))
+				name += "FolderNotes";
 
-		public static BrowserListItem GetBrowserListItem(Altaxo.Graph.Gdi.GraphDocument t, bool showFullName)
-		{
-			var name = showFullName ? t.Name : ProjectFolder.GetNamePart(t.Name);
-			return new BrowserListItem(name, showFullName, t, false) { Image = ProjectBrowseItemImage.Graph, CreationDate = t.CreationTimeUtc };
-		}
+			if (!_projectItemTypesToImage.TryGetValue(t.GetType(), out var image))
+				image = ProjectBrowseItemImage.OpenFolder;
 
-		public static BrowserListItem GetBrowserListItem(Altaxo.Graph.Graph3D.GraphDocument t, bool showFullName)
-		{
-			var name = showFullName ? t.Name : ProjectFolder.GetNamePart(t.Name);
-			return new BrowserListItem(name, showFullName, t, false) { Image = ProjectBrowseItemImage.Graph, CreationDate = t.CreationTimeUtc };
-		}
-
-		public static BrowserListItem GetBrowserListItem(Altaxo.Main.Properties.ProjectFolderPropertyDocument t, bool showFullName)
-		{
-			var name = showFullName ? t.Name : ProjectFolder.GetNamePart(t.Name);
-			name += "FolderProperties";
-			return new BrowserListItem(name, showFullName, t, false) { Image = ProjectBrowseItemImage.PropertyBag, CreationDate = t.CreationTimeUtc };
+			return new BrowserListItem(name, showFullName, t, false) { Image = image, CreationDate = t.CreationTimeUtc };
 		}
 
 		public static BrowserListItem GetBrowserListItem(string folder)
@@ -120,25 +123,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
 		public static BrowserListItem GetBrowserListItemFromObject(object t, bool showFullName)
 		{
-			Altaxo.Graph.Gdi.GraphDocument gd;
-			Altaxo.Graph.Graph3D.GraphDocument g3;
-			Altaxo.Data.DataTable dt;
-			Altaxo.Main.Properties.ProjectFolderPropertyDocument propBag;
-			string folder;
-			if (null != (gd = t as Altaxo.Graph.Gdi.GraphDocument))
-				return GetBrowserListItem(gd, showFullName);
-			if (null != (g3 = t as Altaxo.Graph.Graph3D.GraphDocument))
-				return GetBrowserListItem(g3, showFullName);
-			else if (null != (dt = t as Altaxo.Data.DataTable))
-				return GetBrowserListItem(dt, showFullName);
-			else if (null != (propBag = t as Altaxo.Main.Properties.ProjectFolderPropertyDocument))
-				return GetBrowserListItem(propBag, showFullName);
-			else if (null != (folder = t as string))
+			if (t is IProjectItem projectItem)
+				return GetBrowserListItem(projectItem, showFullName);
+			else if (t is string folder)
 				return GetBrowserListItem(folder);
-			else if (null == t)
-				throw new ArgumentNullException("Object to list is null");
-			else
+			else if (null != t)
 				throw new ApplicationException("Unknown type to list: " + t.GetType().ToString());
+			else
+				throw new ArgumentNullException("Object to list is null");
 		}
 	}
 
@@ -154,15 +146,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		public override SelectableListNodeList GetItemList()
 		{
 			_list = new SelectableListNodeList();
-			foreach (var t in Current.Project.DataTableCollection)
-				_list.Add(GetBrowserListItem(t, true));
-			foreach (Altaxo.Graph.Gdi.GraphDocument t in Current.Project.GraphDocumentCollection)
-				_list.Add(GetBrowserListItem(t, true));
-			foreach (Altaxo.Graph.Graph3D.GraphDocument t in Current.Project.Graph3DDocumentCollection)
-				_list.Add(GetBrowserListItem(t, true));
-			foreach (var t in Current.Project.ProjectFolderProperties)
-				_list.Add(GetBrowserListItem(t, true));
 
+			foreach (var coll in Current.Project.ProjectItemCollections)
+			{
+				foreach (IProjectItem item in coll.ProjectItems)
+				{
+					_list.Add(GetBrowserListItem(item, true));
+				}
+			}
 			return _list;
 		}
 
@@ -172,10 +163,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		public override void BeginTracking()
 		{
 			GetItemList();
-			Current.Project.DataTableCollection.CollectionChanged += EhCollectionChanged;
-			Current.Project.GraphDocumentCollection.CollectionChanged += EhCollectionChanged;
-			Current.Project.Graph3DDocumentCollection.CollectionChanged += EhCollectionChanged;
-			Current.Project.ProjectFolderProperties.CollectionChanged += EhCollectionChanged;
+
+			foreach (var coll in Current.Project.ProjectItemCollections)
+				coll.CollectionChanged += EhCollectionChanged;
+
 			OnListChange();
 		}
 
@@ -184,10 +175,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		/// </summary>
 		public override void EndTracking()
 		{
-			Current.Project.DataTableCollection.CollectionChanged -= EhCollectionChanged;
-			Current.Project.GraphDocumentCollection.CollectionChanged -= EhCollectionChanged;
-			Current.Project.Graph3DDocumentCollection.CollectionChanged -= EhCollectionChanged;
-			Current.Project.ProjectFolderProperties.CollectionChanged -= EhCollectionChanged;
+			foreach (var coll in Current.Project.ProjectItemCollections)
+				coll.CollectionChanged -= EhCollectionChanged;
 		}
 
 		private void EhCollectionChanged(object sender, Altaxo.Main.NamedObjectCollectionChangedEventArgs e)
@@ -263,6 +252,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			GetItemList();
 			Current.Project.GraphDocumentCollection.CollectionChanged += EhCollectionChanged;
+			Current.Project.Graph3DDocumentCollection.CollectionChanged += EhCollectionChanged;
 			OnListChange();
 		}
 
@@ -272,6 +262,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		public override void EndTracking()
 		{
 			Current.Project.GraphDocumentCollection.CollectionChanged -= EhCollectionChanged;
+			Current.Project.Graph3DDocumentCollection.CollectionChanged -= EhCollectionChanged;
 		}
 
 		private void EhCollectionChanged(object sender, Altaxo.Main.NamedObjectCollectionChangedEventArgs e)

@@ -1,14 +1,14 @@
 ﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
 // without restriction, including without limitation the rights to use, copy, modify, merge,
 // publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
 // to whom the Software is furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or
 // substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
@@ -19,6 +19,7 @@
 using ICSharpCode.AvalonEdit.Utils;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace ICSharpCode.AvalonEdit.Editing
@@ -44,36 +45,34 @@ namespace ICSharpCode.AvalonEdit.Editing
 		/// <summary>
 		/// Gets the text area that the input handler belongs to.
 		/// </summary>
-		TextArea TextArea
-		{
+		TextArea TextArea {
 			get;
 		}
-
+		
 		/// <summary>
 		/// Attaches an input handler to the text area.
 		/// </summary>
 		void Attach();
-
+		
 		/// <summary>
 		/// Detaches the input handler from the text area.
 		/// </summary>
 		void Detach();
 	}
-
+	
 	/// <summary>
 	/// Stacked input handler.
 	/// Uses OnEvent-methods instead of registering event handlers to ensure that the events are handled in the correct order.
 	/// </summary>
 	public abstract class TextAreaStackedInputHandler : ITextAreaInputHandler
 	{
-		private readonly TextArea textArea;
-
+		readonly TextArea textArea;
+		
 		/// <inheritdoc/>
-		public TextArea TextArea
-		{
+		public TextArea TextArea {
 			get { return textArea; }
 		}
-
+		
 		/// <summary>
 		/// Creates a new TextAreaInputHandler.
 		/// </summary>
@@ -83,24 +82,24 @@ namespace ICSharpCode.AvalonEdit.Editing
 				throw new ArgumentNullException("textArea");
 			this.textArea = textArea;
 		}
-
+		
 		/// <inheritdoc/>
 		public virtual void Attach()
 		{
 		}
-
+		
 		/// <inheritdoc/>
 		public virtual void Detach()
 		{
 		}
-
+		
 		/// <summary>
 		/// Called for the PreviewKeyDown event.
 		/// </summary>
 		public virtual void OnPreviewKeyDown(KeyEventArgs e)
 		{
 		}
-
+		
 		/// <summary>
 		/// Called for the PreviewKeyUp event.
 		/// </summary>
@@ -108,19 +107,19 @@ namespace ICSharpCode.AvalonEdit.Editing
 		{
 		}
 	}
-
+	
 	/// <summary>
 	/// Default-implementation of <see cref="ITextAreaInputHandler"/>.
 	/// </summary>
 	/// <remarks><inheritdoc cref="ITextAreaInputHandler"/></remarks>
 	public class TextAreaInputHandler : ITextAreaInputHandler
 	{
-		private readonly ObserveAddRemoveCollection<CommandBinding> commandBindings;
-		private readonly ObserveAddRemoveCollection<InputBinding> inputBindings;
-		private readonly ObserveAddRemoveCollection<ITextAreaInputHandler> nestedInputHandlers;
-		private readonly TextArea textArea;
-		private bool isAttached;
-
+		readonly ObserveAddRemoveCollection<CommandBinding> commandBindings;
+		readonly ObserveAddRemoveCollection<InputBinding> inputBindings;
+		readonly ObserveAddRemoveCollection<ITextAreaInputHandler> nestedInputHandlers;
+		readonly TextArea textArea;
+		bool isAttached;
+		
 		/// <summary>
 		/// Creates a new TextAreaInputHandler.
 		/// </summary>
@@ -133,63 +132,58 @@ namespace ICSharpCode.AvalonEdit.Editing
 			inputBindings = new ObserveAddRemoveCollection<InputBinding>(InputBinding_Added, InputBinding_Removed);
 			nestedInputHandlers = new ObserveAddRemoveCollection<ITextAreaInputHandler>(NestedInputHandler_Added, NestedInputHandler_Removed);
 		}
-
+		
 		/// <inheritdoc/>
-		public TextArea TextArea
-		{
+		public TextArea TextArea {
 			get { return textArea; }
 		}
-
+		
 		/// <summary>
 		/// Gets whether the input handler is currently attached to the text area.
 		/// </summary>
-		public bool IsAttached
-		{
+		public bool IsAttached {
 			get { return isAttached; }
 		}
-
+		
 		#region CommandBindings / InputBindings
-
 		/// <summary>
 		/// Gets the command bindings of this input handler.
 		/// </summary>
-		public ICollection<CommandBinding> CommandBindings
-		{
+		public ICollection<CommandBinding> CommandBindings {
 			get { return commandBindings; }
 		}
-
-		private void CommandBinding_Added(CommandBinding commandBinding)
+		
+		void CommandBinding_Added(CommandBinding commandBinding)
 		{
 			if (isAttached)
 				textArea.CommandBindings.Add(commandBinding);
 		}
-
-		private void CommandBinding_Removed(CommandBinding commandBinding)
+		
+		void CommandBinding_Removed(CommandBinding commandBinding)
 		{
 			if (isAttached)
 				textArea.CommandBindings.Remove(commandBinding);
 		}
-
+		
 		/// <summary>
 		/// Gets the input bindings of this input handler.
 		/// </summary>
-		public ICollection<InputBinding> InputBindings
-		{
+		public ICollection<InputBinding> InputBindings {
 			get { return inputBindings; }
 		}
-
-		private void InputBinding_Added(InputBinding inputBinding)
+		
+		void InputBinding_Added(InputBinding inputBinding)
 		{
 			if (isAttached)
 				textArea.InputBindings.Add(inputBinding);
 		}
-
-		private void InputBinding_Removed(InputBinding inputBinding)
+		
+		void InputBinding_Removed(InputBinding inputBinding)
 		{
 			if (isAttached)
 				textArea.InputBindings.Remove(inputBinding);
 		}
-
+		
 		/// <summary>
 		/// Adds a command and input binding.
 		/// </summary>
@@ -202,21 +196,18 @@ namespace ICSharpCode.AvalonEdit.Editing
 			this.CommandBindings.Add(new CommandBinding(command, handler));
 			this.InputBindings.Add(new KeyBinding(command, key, modifiers));
 		}
-
-		#endregion CommandBindings / InputBindings
-
+		#endregion
+		
 		#region NestedInputHandlers
-
 		/// <summary>
 		/// Gets the collection of nested input handlers. NestedInputHandlers are activated and deactivated
 		/// together with this input handler.
 		/// </summary>
-		public ICollection<ITextAreaInputHandler> NestedInputHandlers
-		{
+		public ICollection<ITextAreaInputHandler> NestedInputHandlers {
 			get { return nestedInputHandlers; }
 		}
-
-		private void NestedInputHandler_Added(ITextAreaInputHandler handler)
+		
+		void NestedInputHandler_Added(ITextAreaInputHandler handler)
 		{
 			if (handler == null)
 				throw new ArgumentNullException("handler");
@@ -225,37 +216,35 @@ namespace ICSharpCode.AvalonEdit.Editing
 			if (isAttached)
 				handler.Attach();
 		}
-
-		private void NestedInputHandler_Removed(ITextAreaInputHandler handler)
+		
+		void NestedInputHandler_Removed(ITextAreaInputHandler handler)
 		{
 			if (isAttached)
 				handler.Detach();
 		}
-
-		#endregion NestedInputHandlers
-
+		#endregion
+		
 		#region Attach/Detach
-
 		/// <inheritdoc/>
 		public virtual void Attach()
 		{
 			if (isAttached)
 				throw new InvalidOperationException("Input handler is already attached");
 			isAttached = true;
-
+			
 			textArea.CommandBindings.AddRange(commandBindings);
 			textArea.InputBindings.AddRange(inputBindings);
 			foreach (ITextAreaInputHandler handler in nestedInputHandlers)
 				handler.Attach();
 		}
-
+		
 		/// <inheritdoc/>
 		public virtual void Detach()
 		{
 			if (!isAttached)
 				throw new InvalidOperationException("Input handler is not attached");
 			isAttached = false;
-
+			
 			foreach (CommandBinding b in commandBindings)
 				textArea.CommandBindings.Remove(b);
 			foreach (InputBinding b in inputBindings)
@@ -263,7 +252,6 @@ namespace ICSharpCode.AvalonEdit.Editing
 			foreach (ITextAreaInputHandler handler in nestedInputHandlers)
 				handler.Detach();
 		}
-
-		#endregion Attach/Detach
+		#endregion
 	}
 }

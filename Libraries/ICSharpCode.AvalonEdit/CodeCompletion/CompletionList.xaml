@@ -16,7 +16,7 @@
 						<ContentPresenter
 							HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
 							VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-							SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+							SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
 					</Border>
 					<!-- Simplified triggers:
 						 we don't want a gray selection background when the ListBox doesn't have focus
@@ -24,16 +24,16 @@
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsSelected" Value="true">
 							<Setter Property="Background"
-							        Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+							        Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
 							<Setter Property="Foreground"
-							        Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+							        Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
 	</Style>
-
+	
 	<Style TargetType="{x:Type cc:CompletionList}">
 		<Setter Property="Template">
 			<Setter.Value>
@@ -43,8 +43,8 @@
 						<ItemsControl.ItemTemplate>
 							<DataTemplate>
 								<StackPanel Orientation="Horizontal">
-									<Image Source="{Binding Image}" Width="16" Height="16" Margin="0,0,2,0" />
-									<ContentPresenter Content="{Binding Content}" />
+									<Image Source="{Binding Image}" Width="16" Height="16" Margin="0,0,2,0"/>
+									<ContentPresenter Content="{Binding Content}"/>
 								</StackPanel>
 							</DataTemplate>
 						</ItemsControl.ItemTemplate>

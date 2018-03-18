@@ -62,7 +62,7 @@ namespace Altaxo.Graph.Gdi
 					return null;
 				else if (GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_doc) == null)
 					return null; // if there is no parent data set we can enter anything
-				else if (GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_doc).Contains(graphname))
+				else if (GraphDocumentCollection.GetParentGraphDocumentCollectionOf(_doc).ContainsAnyName(graphname))
 					return "This graph name already exists, please choose another name!";
 				else
 					return null;

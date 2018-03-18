@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A145AB45-E55E-4E22-8CA1-DAE537A346E0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Markdig</RootNamespace>
+    <AssemblyName>Markdig</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\rtDir\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Extensions\Abbreviations\Abbreviation.cs" />
+    <Compile Include="Extensions\Abbreviations\AbbreviationExtension.cs" />
+    <Compile Include="Extensions\Abbreviations\AbbreviationHelper.cs" />
+    <Compile Include="Extensions\Abbreviations\AbbreviationInline.cs" />
+    <Compile Include="Extensions\Abbreviations\AbbreviationParser.cs" />
+    <Compile Include="Extensions\Abbreviations\HtmlAbbreviationRenderer.cs" />
+    <Compile Include="Extensions\AutoIdentifiers\AutoIdentifierExtension.cs" />
+    <Compile Include="Extensions\AutoIdentifiers\AutoIdentifierOptions.cs" />
+    <Compile Include="Extensions\AutoIdentifiers\HeadingLinkReferenceDefinition.cs" />
+    <Compile Include="Extensions\AutoLinks\AutoLinkExtension.cs" />
+    <Compile Include="Extensions\AutoLinks\AutoLinkParser.cs" />
+    <Compile Include="Extensions\AutoLinks\NormalizeAutoLinkRenderer.cs" />
+    <Compile Include="Extensions\Bootstrap\BootstrapExtension.cs" />
+    <Compile Include="Extensions\Citations\CitationExtension.cs" />
+    <Compile Include="Extensions\CustomContainers\CustomContainer.cs" />
+    <Compile Include="Extensions\CustomContainers\CustomContainerExtension.cs" />
+    <Compile Include="Extensions\CustomContainers\CustomContainerInline.cs" />
+    <Compile Include="Extensions\CustomContainers\CustomContainerParser.cs" />
+    <Compile Include="Extensions\CustomContainers\HtmlCustomContainerInlineRenderer.cs" />
+    <Compile Include="Extensions\CustomContainers\HtmlCustomContainerRenderer.cs" />
+    <Compile Include="Extensions\DefinitionLists\DefinitionItem.cs" />
+    <Compile Include="Extensions\DefinitionLists\DefinitionList.cs" />
+    <Compile Include="Extensions\DefinitionLists\DefinitionListExtension.cs" />
+    <Compile Include="Extensions\DefinitionLists\DefinitionListParser.cs" />
+    <Compile Include="Extensions\DefinitionLists\DefinitionTerm.cs" />
+    <Compile Include="Extensions\DefinitionLists\HtmlDefinitionListRenderer.cs" />
+    <Compile Include="Extensions\Diagrams\DiagramExtension.cs" />
+    <Compile Include="Extensions\Emoji\EmojiExtension.cs" />
+    <Compile Include="Extensions\Emoji\EmojiInline.cs" />
+    <Compile Include="Extensions\Emoji\EmojiParser.cs" />
+    <Compile Include="Extensions\EmphasisExtras\EmphasisExtraExtension.cs" />
+    <Compile Include="Extensions\EmphasisExtras\EmphasisExtraOptions.cs" />
+    <Compile Include="Extensions\Figures\Figure.cs" />
+    <Compile Include="Extensions\Figures\FigureBlockParser.cs" />
+    <Compile Include="Extensions\Figures\FigureCaption.cs" />
+    <Compile Include="Extensions\Figures\FigureExtension.cs" />
+    <Compile Include="Extensions\Figures\HtmlFigureCaptionRenderer.cs" />
+    <Compile Include="Extensions\Figures\HtmlFigureRenderer.cs" />
+    <Compile Include="Extensions\Footers\FooterBlock.cs" />
+    <Compile Include="Extensions\Footers\FooterBlockParser.cs" />
+    <Compile Include="Extensions\Footers\FooterExtension.cs" />
+    <Compile Include="Extensions\Footers\HtmlFooterRenderer.cs" />
+    <Compile Include="Extensions\Footnotes\Footnote.cs" />
+    <Compile Include="Extensions\Footnotes\FootnoteExtension.cs" />
+    <Compile Include="Extensions\Footnotes\FootnoteGroup.cs" />
+    <Compile Include="Extensions\Footnotes\FootnoteLink.cs" />
+    <Compile Include="Extensions\Footnotes\FootnoteLinkReferenceDefinition.cs" />
+    <Compile Include="Extensions\Footnotes\FootnoteParser.cs" />
+    <Compile Include="Extensions\Footnotes\HtmlFootnoteGroupRenderer.cs" />
+    <Compile Include="Extensions\Footnotes\HtmlFootnoteLinkRenderer.cs" />
+    <Compile Include="Extensions\GenericAttributes\GenericAttributesExtension.cs" />
+    <Compile Include="Extensions\GenericAttributes\GenericAttributesParser.cs" />
+    <Compile Include="Extensions\Hardlines\SoftlineBreakAsHardlineExtension.cs" />
+    <Compile Include="Extensions\JiraLinks\JiraLink.cs" />
+    <Compile Include="Extensions\JiraLinks\JiraLinkExtension.cs" />
+    <Compile Include="Extensions\JiraLinks\JiraLinkInlineParser.cs" />
+    <Compile Include="Extensions\JiraLinks\JiraLinkOptions.cs" />
+    <Compile Include="Extensions\JiraLinks\NormalizeJiraLinksRenderer.cs" />
+    <Compile Include="Extensions\ListExtras\ListExtraExtension.cs" />
+    <Compile Include="Extensions\ListExtras\ListExtraItemParser.cs" />
+    <Compile Include="Extensions\Mathematics\HtmlMathBlockRenderer.cs" />
+    <Compile Include="Extensions\Mathematics\HtmlMathInlineRenderer.cs" />
+    <Compile Include="Extensions\Mathematics\MathBlock.cs" />
+    <Compile Include="Extensions\Mathematics\MathBlockParser.cs" />
+    <Compile Include="Extensions\Mathematics\MathExtension.cs" />
+    <Compile Include="Extensions\Mathematics\MathInline.cs" />
+    <Compile Include="Extensions\Mathematics\MathInlineParser.cs" />
+    <Compile Include="Extensions\MediaLinks\MediaLinkExtension.cs" />
+    <Compile Include="Extensions\MediaLinks\MediaOptions.cs" />
+    <Compile Include="Extensions\NonAsciiNoEscape\NonAsciiNoEscapeExtension.cs" />
+    <Compile Include="Extensions\NoRefLinks\NoFollowLinksExtension.cs" />
+    <Compile Include="Extensions\PragmaLines\PragmaLineExtension.cs" />
+    <Compile Include="Extensions\SelfPipeline\SelfPipelineExtension.cs" />
+    <Compile Include="Extensions\SmartyPants\HtmlSmartyPantRenderer.cs" />
+    <Compile Include="Extensions\SmartyPants\SmartyPant.cs" />
+    <Compile Include="Extensions\SmartyPants\SmartyPantOptions.cs" />
+    <Compile Include="Extensions\SmartyPants\SmartyPantsExtension.cs" />
+    <Compile Include="Extensions\SmartyPants\SmartyPantsInlineParser.cs" />
+    <Compile Include="Extensions\SmartyPants\SmartyPantType.cs" />
+    <Compile Include="Extensions\Tables\GridTableExtension.cs" />
+    <Compile Include="Extensions\Tables\GridTableParser.cs" />
+    <Compile Include="Extensions\Tables\GridTableState.cs" />
+    <Compile Include="Extensions\Tables\HtmlTableRenderer.cs" />
+    <Compile Include="Extensions\Tables\PipeTableBlockParser.cs" />
+    <Compile Include="Extensions\Tables\PipeTableDelimiterInline.cs" />
+    <Compile Include="Extensions\Tables\PipeTableExtension.cs" />
+    <Compile Include="Extensions\Tables\PipeTableOptions.cs" />
+    <Compile Include="Extensions\Tables\PipeTableParser.cs" />
+    <Compile Include="Extensions\Tables\Table.cs" />
+    <Compile Include="Extensions\Tables\TableCell.cs" />
+    <Compile Include="Extensions\Tables\TableColumnAlign.cs" />
+    <Compile Include="Extensions\Tables\TableColumnDefinition.cs" />
+    <Compile Include="Extensions\Tables\TableHelper.cs" />
+    <Compile Include="Extensions\Tables\TableRow.cs" />
+    <Compile Include="Extensions\TaskLists\HtmlTaskListRenderer.cs" />
+    <Compile Include="Extensions\TaskLists\NormalizeTaskListRenderer.cs" />
+    <Compile Include="Extensions\TaskLists\TaskList.cs" />
+    <Compile Include="Extensions\TaskLists\TaskListExtension.cs" />
+    <Compile Include="Extensions\TaskLists\TaskListInlineParser.cs" />
+    <Compile Include="Extensions\Yaml\YamlFrontMatterBlock.cs" />
+    <Compile Include="Extensions\Yaml\YamlFrontMatterExtension.cs" />
+    <Compile Include="Extensions\Yaml\YamlFrontMatterParser.cs" />
+    <Compile Include="Extensions\Yaml\YamlFrontMatterRenderer.cs" />
+    <Compile Include="Helpers\ArrayHelper.cs" />
+    <Compile Include="Helpers\CharacterMap.cs" />
+    <Compile Include="Helpers\CharHelper.cs" />
+    <Compile Include="Helpers\CharNormalizer.cs" />
+    <Compile Include="Helpers\DefaultObjectCache.cs" />
+    <Compile Include="Helpers\EntityHelper.cs" />
+    <Compile Include="Helpers\HtmlHelper.cs" />
+    <Compile Include="Helpers\ICharIterator.cs" />
+    <Compile Include="Helpers\LineReader.cs" />
+    <Compile Include="Helpers\LinkHelper.cs" />
+    <Compile Include="Helpers\MethodImplOptionPortable.cs" />
+    <Compile Include="Helpers\ObjectCache.cs" />
+    <Compile Include="Helpers\OrderedList.cs" />
+    <Compile Include="Helpers\StringBuilderCache.cs" />
+    <Compile Include="Helpers\StringBuilderExtensions.cs" />
+    <Compile Include="Helpers\StringLine.cs" />
+    <Compile Include="Helpers\StringLineGroup.cs" />
+    <Compile Include="Helpers\StringSlice.cs" />
+    <Compile Include="Helpers\TextMatcher.cs" />
+    <Compile Include="IMarkdownExtension.cs" />
+    <Compile Include="Markdown.cs" />
+    <Compile Include="MarkdownExtensions.cs" />
+    <Compile Include="MarkdownPipeline.cs" />
+    <Compile Include="MarkdownPipelineBuilder.cs" />
+    <Compile Include="Parsers\BlockParser.cs" />
+    <Compile Include="Parsers\BlockParserList.cs" />
+    <Compile Include="Parsers\BlockProcessor.cs" />
+    <Compile Include="Parsers\BlockState.cs" />
+    <Compile Include="Parsers\BlockStateExtensions.cs" />
+    <Compile Include="Parsers\FencedBlockParserBase.cs" />
+    <Compile Include="Parsers\FencedCodeBlockParser.cs" />
+    <Compile Include="Parsers\HeadingBlockParser.cs" />
+    <Compile Include="Parsers\HtmlBlockParser.cs" />
+    <Compile Include="Parsers\IAttributesParseable.cs" />
+    <Compile Include="Parsers\IBlockParser.cs" />
+    <Compile Include="Parsers\IInlineParser.cs" />
+    <Compile Include="Parsers\IMarkdownParser.cs" />
+    <Compile Include="Parsers\IndentedCodeBlockParser.cs" />
+    <Compile Include="Parsers\InlineParser.cs" />
+    <Compile Include="Parsers\InlineParserList.cs" />
+    <Compile Include="Parsers\InlineProcessor.cs" />
+    <Compile Include="Parsers\Inlines\AutolineInlineParser.cs" />
+    <Compile Include="Parsers\Inlines\CodeInlineParser.cs" />
+    <Compile Include="Parsers\Inlines\EmphasisDescriptor.cs" />
+    <Compile Include="Parsers\Inlines\EmphasisInlineParser.cs" />
+    <Compile Include="Parsers\Inlines\EscapeInlineParser.cs" />
+    <Compile Include="Parsers\Inlines\HtmlEntityParser.cs" />
+    <Compile Include="Parsers\Inlines\LineBreakInlineParser.cs" />
+    <Compile Include="Parsers\Inlines\LinkInlineParser.cs" />
+    <Compile Include="Parsers\Inlines\LiteralInlineParser.cs" />
+    <Compile Include="Parsers\IPostInlineProcessor.cs" />
+    <Compile Include="Parsers\ListBlockParser.cs" />
+    <Compile Include="Parsers\ListInfo.cs" />
+    <Compile Include="Parsers\ListItemParser.cs" />
+    <Compile Include="Parsers\MarkdownParser.cs" />
+    <Compile Include="Parsers\NumberedListItemParser.cs" />
+    <Compile Include="Parsers\OrderedListItemParser.cs" />
+    <Compile Include="Parsers\ParagraphBlockParser.cs" />
+    <Compile Include="Parsers\ParserBase.cs" />
+    <Compile Include="Parsers\ParserList.cs" />
+    <Compile Include="Parsers\QuoteBlockParser.cs" />
+    <Compile Include="Parsers\ThematicBreakParser.cs" />
+    <Compile Include="Parsers\UnorderedListItemParser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Renderers\HtmlRenderer.cs" />
+    <Compile Include="Renderers\Html\CodeBlockRenderer.cs" />
+    <Compile Include="Renderers\Html\HeadingRenderer.cs" />
+    <Compile Include="Renderers\Html\HtmlAttributes.cs" />
+    <Compile Include="Renderers\Html\HtmlBlockRenderer.cs" />
+    <Compile Include="Renderers\Html\HtmlObjectRenderer.cs" />
+    <Compile Include="Renderers\Html\Inlines\AutolinkInlineRenderer.cs" />
+    <Compile Include="Renderers\Html\Inlines\CodeInlineRenderer.cs" />
+    <Compile Include="Renderers\Html\Inlines\DelimiterInlineRenderer.cs" />
+    <Compile Include="Renderers\Html\Inlines\EmphasisInlineRenderer.cs" />
+    <Compile Include="Renderers\Html\Inlines\HtmlEntityInlineRenderer.cs" />
+    <Compile Include="Renderers\Html\Inlines\HtmlInlineRenderer.cs" />
+    <Compile Include="Renderers\Html\Inlines\LineBreakInlineRenderer.cs" />
+    <Compile Include="Renderers\Html\Inlines\LinkInlineRenderer.cs" />
+    <Compile Include="Renderers\Html\Inlines\LiteralInlineRenderer.cs" />
+    <Compile Include="Renderers\Html\ListRenderer.cs" />
+    <Compile Include="Renderers\Html\ParagraphRenderer.cs" />
+    <Compile Include="Renderers\Html\QuoteBlockRenderer.cs" />
+    <Compile Include="Renderers\Html\ThematicBreakRenderer.cs" />
+    <Compile Include="Renderers\IMarkdownObjectRenderer.cs" />
+    <Compile Include="Renderers\IMarkdownRenderer.cs" />
+    <Compile Include="Renderers\MarkdownObjectRenderer.cs" />
+    <Compile Include="Renderers\Normalize\CodeBlockRenderer.cs" />
+    <Compile Include="Renderers\Normalize\HeadingRenderer.cs" />
+    <Compile Include="Renderers\Normalize\HtmlBlockRenderer.cs" />
+    <Compile Include="Renderers\Normalize\Inlines\AutolinkInlineRenderer.cs" />
+    <Compile Include="Renderers\Normalize\Inlines\CodeInlineRenderer.cs" />
+    <Compile Include="Renderers\Normalize\Inlines\DelimiterInlineRenderer.cs" />
+    <Compile Include="Renderers\Normalize\Inlines\EmphasisInlineRenderer.cs" />
+    <Compile Include="Renderers\Normalize\Inlines\LineBreakInlineRenderer.cs" />
+    <Compile Include="Renderers\Normalize\Inlines\LinkInlineRenderer.cs" />
+    <Compile Include="Renderers\Normalize\Inlines\LiteralInlineRenderer.cs" />
+    <Compile Include="Renderers\Normalize\Inlines\NormalizeHtmlEntityInlineRenderer.cs" />
+    <Compile Include="Renderers\Normalize\Inlines\NormalizeHtmlInlineRenderer.cs" />
+    <Compile Include="Renderers\Normalize\LinkReferenceDefinitionGroupRenderer.cs" />
+    <Compile Include="Renderers\Normalize\LinkReferenceDefinitionRenderer.cs" />
+    <Compile Include="Renderers\Normalize\ListRenderer.cs" />
+    <Compile Include="Renderers\Normalize\NormalizeObjectRenderer.cs" />
+    <Compile Include="Renderers\Normalize\NormalizeOptions.cs" />
+    <Compile Include="Renderers\Normalize\NormalizeRenderer.cs" />
+    <Compile Include="Renderers\Normalize\ParagraphRenderer.cs" />
+    <Compile Include="Renderers\Normalize\QuoteBlockRenderer.cs" />
+    <Compile Include="Renderers\Normalize\ThematicBreakRenderer.cs" />
+    <Compile Include="Renderers\ObjectRendererCollection.cs" />
+    <Compile Include="Renderers\RendererBase.cs" />
+    <Compile Include="Renderers\TextRendererBase.cs" />
+    <Compile Include="Syntax\BlankLineBlock.cs" />
+    <Compile Include="Syntax\Block.cs" />
+    <Compile Include="Syntax\BlockExtensions.cs" />
+    <Compile Include="Syntax\CharIteratorHelper.cs" />
+    <Compile Include="Syntax\CodeBlock.cs" />
+    <Compile Include="Syntax\ContainerBlock.cs" />
+    <Compile Include="Syntax\FencedCodeBlock.cs" />
+    <Compile Include="Syntax\HeadingBlock.cs" />
+    <Compile Include="Syntax\HtmlBlock.cs" />
+    <Compile Include="Syntax\HtmlBlockType.cs" />
+    <Compile Include="Syntax\IBlock.cs" />
+    <Compile Include="Syntax\IFencedBlock.cs" />
+    <Compile Include="Syntax\IMarkdownObject.cs" />
+    <Compile Include="Syntax\Inlines\AutolinkInline.cs" />
+    <Compile Include="Syntax\Inlines\CodeInline.cs" />
+    <Compile Include="Syntax\Inlines\ContainerInline.cs" />
+    <Compile Include="Syntax\Inlines\DelimiterInline.cs" />
+    <Compile Include="Syntax\Inlines\DelimiterType.cs" />
+    <Compile Include="Syntax\Inlines\EmphasisDelimiterInline.cs" />
+    <Compile Include="Syntax\Inlines\EmphasisInline.cs" />
+    <Compile Include="Syntax\Inlines\HtmlEntityInline.cs" />
+    <Compile Include="Syntax\Inlines\HtmlInline.cs" />
+    <Compile Include="Syntax\Inlines\IInline.cs" />
+    <Compile Include="Syntax\Inlines\Inline.cs" />
+    <Compile Include="Syntax\Inlines\LeafInline.cs" />
+    <Compile Include="Syntax\Inlines\LineBreakInline.cs" />
+    <Compile Include="Syntax\Inlines\LinkDelimiterInline.cs" />
+    <Compile Include="Syntax\Inlines\LinkInline.cs" />
+    <Compile Include="Syntax\Inlines\LiteralInline.cs" />
+    <Compile Include="Syntax\LeafBlock.cs" />
+    <Compile Include="Syntax\LinkReferenceDefinition.cs" />
+    <Compile Include="Syntax\LinkReferenceDefinitionExtensions.cs" />
+    <Compile Include="Syntax\LinkReferenceDefinitionGroup.cs" />
+    <Compile Include="Syntax\ListBlock.cs" />
+    <Compile Include="Syntax\ListItemBlock.cs" />
+    <Compile Include="Syntax\MarkdownDocument.cs" />
+    <Compile Include="Syntax\MarkdownObject.cs" />
+    <Compile Include="Syntax\MarkdownObjectExtensions.cs" />
+    <Compile Include="Syntax\ParagraphBlock.cs" />
+    <Compile Include="Syntax\QuoteBlock.cs" />
+    <Compile Include="Syntax\SourceSpan.cs" />
+    <Compile Include="Syntax\ThematicBreakBlock.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Diagrams\Parsers.cd" />
+    <None Include="Diagrams\Renderers.cd" />
+    <None Include="Diagrams\Syntax.cd" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

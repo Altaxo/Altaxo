@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -67,38 +67,6 @@ namespace Altaxo.Data
 				var newTable = new DataTable(tableName);
 				Add(newTable);
 				return newTable;
-			}
-		}
-
-		/// <summary>
-		/// Looks for the next free standard table name in the root folder.
-		/// </summary>
-		/// <returns>A new table name unique for this data set.</returns>
-		public string FindNewTableName()
-		{
-			return FindNewTableNameInFolder(null);
-		}
-
-		/// <summary>
-		/// Looks for the next free standard table name in the specified folder.
-		/// </summary>
-		/// <param name="folder">The folder where to find a unique table name.</param>
-		/// <returns></returns>
-		public string FindNewTableNameInFolder(string folder)
-		{
-			return FindNewTableName(Main.ProjectFolder.Combine(folder, ItemBaseName));
-		}
-
-		/// <summary>
-		/// Looks for the next unique table name base on a basic name.
-		/// </summary>
-		/// <returns>A new table name unique for this data set.</returns>
-		public string FindNewTableName(string basicname)
-		{
-			for (int i = 0; ; i++)
-			{
-				if (!_itemsByName.ContainsKey(basicname + i))
-					return basicname + i;
 			}
 		}
 

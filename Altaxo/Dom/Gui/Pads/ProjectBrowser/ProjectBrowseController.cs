@@ -487,31 +487,18 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				if (!node.IsSelected)
 					continue;
 
-				// table nodes
-				if (node.Tag is Altaxo.Data.DataTable)
+				if (node.Tag is Altaxo.Main.Properties.ProjectFolderPropertyDocument propDoc)
 				{
-					// tag is the name of the table clicked, so look for a view that has the table or
-					// create a new one
-					Current.ProjectService.OpenOrCreateWorksheetForTable((Altaxo.Data.DataTable)node.Tag);
-				}
-				else if (node.Tag is Altaxo.Graph.Gdi.GraphDocument)
-				{
-					// tag is the name of the table clicked, so look for a view that has the table or create a new one
-					Current.ProjectService.OpenOrCreateGraphForGraphDocument((Altaxo.Graph.Gdi.GraphDocument)node.Tag);
-				}
-				else if (node.Tag is Altaxo.Graph.Graph3D.GraphDocument)
-				{
-					// tag is the name of the table clicked, so look for a view that has the table or create a new one
-					Current.ProjectService.OpenOrCreateViewContentForDocument((IProjectItem)node.Tag);
-				}
-				else if (node.Tag is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
-				{
-					var propHierarchy = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBags(node.Tag as Altaxo.Main.Properties.ProjectFolderPropertyDocument));
+					var propHierarchy = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBags(propDoc));
 					Current.Gui.ShowDialog(new object[] { propHierarchy }, "Folder properties", true);
 				}
-				else if (node.Tag is ProjectFolder)
+				else if (node.Tag is ProjectFolder projFolder)
 				{
-					SetItemListHandler(new SpecificProjectFolderHandler((node.Tag as ProjectFolder).Name));
+					SetItemListHandler(new SpecificProjectFolderHandler(projFolder.Name));
+				}
+				else if (node.Tag is IProjectItem projItem)
+				{
+					Current.ProjectService.OpenOrCreateViewContentForDocument(projItem);
 				}
 			}
 		}
@@ -950,9 +937,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			else if (object.ReferenceEquals(_currentSelectedTreeNode, _allItemsNode))
 			{
 				var list = new List<IProjectItem>();
-				list.AddRange(Current.Project.DataTableCollection);
-				list.AddRange(Current.Project.GraphDocumentCollection);
-				list.AddRange(Current.Project.ProjectFolderProperties);
+				foreach (var coll in Current.Project.ProjectItemCollections)
+				{
+					list.AddRange(coll.ProjectItems);
+				}
 				_listViewDataObject.ItemList = list;
 			}
 			else

@@ -45,6 +45,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.StandardWorksheet"));
 			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PlotLineScatter"));
 			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.PropertyBag"));
+			_imageList.Add(PresentationResourceService.GetBitmapSource("Icons.16x16.Editor"));
 		}
 
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

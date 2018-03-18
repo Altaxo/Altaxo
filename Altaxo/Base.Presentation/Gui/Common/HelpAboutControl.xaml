@@ -67,6 +67,15 @@
 							<Paragraph>Microsoft and the Moscow State University for providing code for solving ordinary differential equations (project OSLO).</Paragraph>
 						</ListItem>
 						<ListItem>
+							<Paragraph>Alexandre Mutel et al. for providing the Markdig library, which is used to parse Markdown text.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Nicolas Musset et al. for providing the Markdig.Wpf library, which is used for rendering a Markdown document.</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Alex Regueiro and the WPF-Math contributors for providing the WpfMath library, which is used for rendering of LaTeX formulas an a Markdown document.</Paragraph>
+						</ListItem>
+						<ListItem>
 							<Paragraph>The authors of the projects that I have forgotten (sorry!), and the authors of the
   countless support tools that are neccessary to manage such a project (for instance
   Mercurial, WinMerge, NUnit, NDoc).</Paragraph>

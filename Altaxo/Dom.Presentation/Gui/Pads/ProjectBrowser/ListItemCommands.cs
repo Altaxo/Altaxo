@@ -232,6 +232,22 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 	}
 
+	public class CmdNewTextDocument : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.CreateNewTextDocument();
+		}
+	}
+
+	public class CmdNewFolderTextDocument : ProjectBrowseControllerCommand
+	{
+		protected override void Run(ProjectBrowseController ctrl)
+		{
+			ctrl.CreateNewFolderTextDocument();
+		}
+	}
+
 	public class CmdPlotCommonColumns : ProjectBrowseControllerCommand
 	{
 		protected override void Run(ProjectBrowseController ctrl)

@@ -351,6 +351,41 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		}
 
 		/// <summary>
+		/// Creates a new text document in the current project folder, and shows it in the document area.
+		/// </summary>
+		/// <param name="ctrl">Project browse controller.</param>
+		/// <returns>The text controller used to show the newly created notes document.</returns>
+		public static void CreateNewTextDocument(this ProjectBrowseController ctrl)
+		{
+			if (!ctrl.IsProjectFolderSelected(out string folderName))
+				folderName = ProjectFolder.RootFolderName;
+			var doc = Current.ProjectService.CreateDocument<Altaxo.Text.TextDocument>(folderName);
+			Current.ProjectService.OpenOrCreateViewContentForDocument(doc);
+		}
+
+		/// <summary>
+		/// Creates a new folder text document in the current project folder (i.e. a text document which has the same name as the folder), and shows it in the document area.
+		/// </summary>
+		/// <param name="ctrl">Project browse controller.</param>
+		/// <returns>The text controller used to show the newly created text document.</returns>
+		public static void CreateNewFolderTextDocument(this ProjectBrowseController ctrl)
+		{
+			if (!ctrl.IsProjectFolderSelected(out string folderName))
+				folderName = ProjectFolder.RootFolderName;
+
+			if (!Current.Project.TextDocumentCollection.Contains(folderName))
+			{
+				var doc = new Altaxo.Text.TextDocument() { Name = folderName };
+				Current.Project.TextDocumentCollection.Add(doc);
+				Current.ProjectService.OpenOrCreateViewContentForDocument(doc);
+			}
+			else
+			{
+				Current.Gui.ErrorMessageBox(string.Format("Sorry, this project already contains a text document named '{0}'!", folderName), "TextDocument already exists");
+			}
+		}
+
+		/// <summary>
 		/// Creates a new empty property bag in the current project folder, and shows it in the document area.
 		/// </summary>
 		/// <param name="ctrl">Project browse controller.</param>

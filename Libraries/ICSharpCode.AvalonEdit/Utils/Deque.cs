@@ -1,14 +1,14 @@
 ﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
 // without restriction, including without limitation the rights to use, copy, modify, merge,
 // publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
 // to whom the Software is furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all copies or
 // substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ICSharpCode.AvalonEdit.Utils
 {
@@ -28,15 +29,14 @@ namespace ICSharpCode.AvalonEdit.Utils
 	[Serializable]
 	public sealed class Deque<T> : ICollection<T>
 	{
-		private T[] arr = Empty<T>.Array;
-		private int size, head, tail;
-
+		T[] arr = Empty<T>.Array;
+		int size, head, tail;
+		
 		/// <inheritdoc/>
-		public int Count
-		{
+		public int Count {
 			get { return size; }
 		}
-
+		
 		/// <inheritdoc/>
 		public void Clear()
 		{
@@ -45,24 +45,21 @@ namespace ICSharpCode.AvalonEdit.Utils
 			head = 0;
 			tail = 0;
 		}
-
+		
 		/// <summary>
 		/// Gets/Sets an element inside the deque.
 		/// </summary>
-		public T this[int index]
-		{
-			get
-			{
+		public T this[int index] {
+			get {
 				ThrowUtil.CheckInRangeInclusive(index, "index", 0, size - 1);
 				return arr[(head + index) % arr.Length];
 			}
-			set
-			{
+			set {
 				ThrowUtil.CheckInRangeInclusive(index, "index", 0, size - 1);
 				arr[(head + index) % arr.Length] = value;
 			}
 		}
-
+		
 		/// <summary>
 		/// Adds an element to the end of the deque.
 		/// </summary>
@@ -75,7 +72,7 @@ namespace ICSharpCode.AvalonEdit.Utils
 			if (tail == arr.Length) tail = 0;
 			size++;
 		}
-
+		
 		/// <summary>
 		/// Pops an element from the end of the deque.
 		/// </summary>
@@ -92,7 +89,7 @@ namespace ICSharpCode.AvalonEdit.Utils
 			size--;
 			return val;
 		}
-
+		
 		/// <summary>
 		/// Adds an element to the front of the deque.
 		/// </summary>
@@ -107,7 +104,7 @@ namespace ICSharpCode.AvalonEdit.Utils
 			arr[head] = item;
 			size++;
 		}
-
+		
 		/// <summary>
 		/// Pops an element from the end of the deque.
 		/// </summary>
@@ -122,8 +119,8 @@ namespace ICSharpCode.AvalonEdit.Utils
 			size--;
 			return val;
 		}
-
-		private void SetCapacity(int capacity)
+		
+		void SetCapacity(int capacity)
 		{
 			T[] newArr = new T[capacity];
 			CopyTo(newArr, 0);
@@ -131,39 +128,35 @@ namespace ICSharpCode.AvalonEdit.Utils
 			tail = (size == capacity) ? 0 : size;
 			arr = newArr;
 		}
-
+		
 		/// <inheritdoc/>
 		public IEnumerator<T> GetEnumerator()
 		{
-			if (head < tail)
-			{
+			if (head < tail) {
 				for (int i = head; i < tail; i++)
 					yield return arr[i];
-			}
-			else
-			{
+			} else {
 				for (int i = head; i < arr.Length; i++)
 					yield return arr[i];
 				for (int i = 0; i < tail; i++)
 					yield return arr[i];
 			}
 		}
-
+		
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
 			return this.GetEnumerator();
 		}
-
-		bool ICollection<T>.IsReadOnly
-		{
+		
+		bool ICollection<T>.IsReadOnly {
 			get { return false; }
 		}
-
+		
 		void ICollection<T>.Add(T item)
 		{
 			PushBack(item);
 		}
-
+		
 		/// <inheritdoc/>
 		public bool Contains(T item)
 		{
@@ -173,24 +166,21 @@ namespace ICSharpCode.AvalonEdit.Utils
 					return true;
 			return false;
 		}
-
+		
 		/// <inheritdoc/>
 		public void CopyTo(T[] array, int arrayIndex)
 		{
 			if (array == null)
 				throw new ArgumentNullException("array");
-			if (head < tail)
-			{
+			if (head < tail) {
 				Array.Copy(arr, head, array, arrayIndex, tail - head);
-			}
-			else
-			{
+			} else {
 				int num1 = arr.Length - head;
 				Array.Copy(arr, head, array, arrayIndex, num1);
 				Array.Copy(arr, 0, array, arrayIndex + num1, tail);
 			}
 		}
-
+		
 		bool ICollection<T>.Remove(T item)
 		{
 			throw new NotSupportedException();

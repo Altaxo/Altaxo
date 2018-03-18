@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gui\Autostart\StartColorSetManager.cs" />
+    <Compile Include="Gui\Text\Viewing\ITextDocumentView.cs" />
+    <Compile Include="Gui\Text\Viewing\TextDocumentController.cs" />
     <Compile Include="Gui\Pads\DataDisplay\DataDisplayController.cs" />
     <Compile Include="Gui\Pads\FileBrowser\FileBrowserController.cs" />
     <Compile Include="Gui\Pads\FileBrowser\FileListController.cs" />
