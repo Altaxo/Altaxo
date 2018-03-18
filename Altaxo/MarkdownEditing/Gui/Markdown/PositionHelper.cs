@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Markdown
 			if (null != markdigTag)
 			{
 				int charOffset = parent.ContentStart.GetOffsetToPosition(textPosition);
-				int sourceTextOffset = markdigTag.Span.Start + charOffset;
+				int sourceTextOffset = ContentSpan(markdigTag).Start + charOffset;
 
 				return (sourceTextOffset, isReturnedPositionAccurate);
 			}
@@ -89,13 +89,19 @@ namespace Altaxo.Gui.Markdown
 
 				if (textElement is Run run && run.Text.Length > 0)
 				{
-					int offsetIntoRun = textOffset - markdigTag.Span.Start;
-					offsetIntoRun = Math.Max(0, offsetIntoRun);
-					offsetIntoRun = Math.Min(run.Text.Length - 1, offsetIntoRun);
-					//var c1 = _guiRawText.Text[textOffset]; // the char at this offset is the char after the cursor
-					//var c2 = run.Text[offsetIntoRun];      // the char at this offset is the char after the cursor
-					viewTextPosition = viewTextPosition.GetPositionAtOffset(offsetIntoRun);
-					return (viewTextPosition, true);
+					var sourceSpan = ContentSpan(markdigTag);
+					int offsetIntoRun = textOffset - sourceSpan.Start;
+					if (sourceSpan.Length == run.Text.Length && offsetIntoRun >= 0 && offsetIntoRun <= run.Text.Length)
+					{
+						//var c1 = _guiRawText.Text[textOffset]; // the char at this offset is the char after the cursor
+						//var c2 = run.Text[offsetIntoRun];      // the char at this offset is the char after the cursor
+						viewTextPosition = viewTextPosition.GetPositionAtOffset(offsetIntoRun);
+						return (viewTextPosition, true);
+					}
+					else
+					{
+						return (viewTextPosition, false);
+					}
 				}
 				else
 				{
@@ -105,6 +111,23 @@ namespace Altaxo.Gui.Markdown
 			else
 			{
 				return (null, false);
+			}
+		}
+
+		/// <summary>
+		/// Returns the span of the contents of a <see cref="Markdig.Syntax.MarkdownObject"/>.
+		/// </summary>
+		/// <param name="markdownObj">The markdown object.</param>
+		/// <returns></returns>
+		public static Markdig.Syntax.SourceSpan ContentSpan(Markdig.Syntax.MarkdownObject markdownObj)
+		{
+			if (markdownObj is Markdig.Syntax.Inlines.CodeInline ci)
+			{
+				return new Markdig.Syntax.SourceSpan(ci.Span.Start + 1, ci.Span.End - 1);
+			}
+			else
+			{
+				return markdownObj.Span;
 			}
 		}
 
@@ -130,7 +153,7 @@ namespace Altaxo.Gui.Markdown
 			{
 				if (((TextElement)blocks[lowerIdx]).Tag is Markdig.Syntax.MarkdownObject lowerMdo)
 				{
-					if (lowerMdo.Span.Start >= textPosition)
+					if (lowerMdo.Span.Start > textPosition)
 						return (TextElement)blocks[lowerIdx]; // then we have already passed the position without finding the element
 					else
 						break;
@@ -189,7 +212,7 @@ namespace Altaxo.Gui.Markdown
 			// our only chance is to search the children of the lowerIdx
 
 			int diveIntoIdx = lowerIdx;
-			if (((TextElement)blocks[upperIdx]).Tag is Markdig.Syntax.MarkdownObject upperMdo2 && upperMdo2.Span.Start <= textPosition)
+			if (((TextElement)blocks[upperIdx]).Tag is Markdig.Syntax.MarkdownObject upperMdo2 && upperMdo2.Span.Start < textPosition)
 				diveIntoIdx = upperIdx;
 
 			var childs = GetChildList((TextElement)blocks[diveIntoIdx]);

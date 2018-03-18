@@ -203,20 +203,44 @@ namespace Altaxo.Gui.Markdown
 			foreach (var textEle in firstLevelTextElementsToDelete)
 				blocks.Remove(textEle);
 
-			if (firstLevelTextElementToInsertAfter != null)
+			if (firstLevelTextElementsToInsert.Count > 0)
 			{
-				for (int i = firstLevelTextElementsToInsert.Count - 1; i >= 0; --i)
-					blocks.InsertAfter(firstLevelTextElementToInsertAfter, (System.Windows.Documents.Block)firstLevelTextElementsToInsert[i]);
-			}
-			else if (null != firstLevelTextElementToInsertBefore)
-			{
-				for (int i = 0; i < firstLevelTextElementsToInsert.Count; ++i)
-					blocks.InsertBefore(firstLevelTextElementToInsertBefore, (System.Windows.Documents.Block)firstLevelTextElementsToInsert[i]);
-			}
-			else
-			{
-				for (int i = 0; i < firstLevelTextElementsToInsert.Count; ++i)
-					blocks.Add((System.Windows.Documents.Block)firstLevelTextElementsToInsert[i]);
+				if (firstLevelTextElementToInsertAfter != null)
+				{
+					for (int i = firstLevelTextElementsToInsert.Count - 1; i >= 0; --i)
+						blocks.InsertAfter(firstLevelTextElementToInsertAfter, (System.Windows.Documents.Block)firstLevelTextElementsToInsert[i]);
+				}
+				else if (null != firstLevelTextElementToInsertBefore)
+				{
+					for (int i = 0; i < firstLevelTextElementsToInsert.Count; ++i)
+						blocks.InsertBefore(firstLevelTextElementToInsertBefore, (System.Windows.Documents.Block)firstLevelTextElementsToInsert[i]);
+				}
+				else
+				{
+					// the insert position could not be determined, because none of the old blocks have been deleted
+					// we have to decide either (i) the blocks have to be added before all the other blocks, or
+					// (ii) the blocks have to be added after all the other blocks
+					// we do this using the markdig tags of the last block to insert, and the first of the old blocks
+
+					var lastToInsert = firstLevelTextElementsToInsert[firstLevelTextElementsToInsert.Count - 1];
+					var firstBlock = blocks.FirstBlock;
+					bool isAddedAtStart = firstBlock != null;
+					var lastToInsertTag = lastToInsert?.Tag as MarkdownObject;
+					var firstBlockTag = firstBlock?.Tag as MarkdownObject;
+					isAddedAtStart &= (null != lastToInsertTag && null != firstBlockTag);
+					isAddedAtStart = isAddedAtStart && (lastToInsertTag.Span.End <= firstBlockTag.Span.Start);
+
+					if (isAddedAtStart)
+					{
+						for (int i = 0; i < firstLevelTextElementsToInsert.Count; ++i)
+							blocks.InsertBefore(firstBlock, (System.Windows.Documents.Block)firstLevelTextElementsToInsert[i]);
+					}
+					else
+					{
+						for (int i = 0; i < firstLevelTextElementsToInsert.Count; ++i)
+							blocks.Add((System.Windows.Documents.Block)firstLevelTextElementsToInsert[i]);
+					}
+				}
 			}
 		}
 
@@ -231,17 +255,17 @@ namespace Altaxo.Gui.Markdown
 		{
 			// find the first block in FlowDocument that has to be exchanged
 
-			var firstLevelTextElementToInsertBefore = FlowDocument.Blocks.FirstBlock;
-			System.Windows.Documents.Block firstLevelTextElementToInsertAfter = null;
 			var firstLevelTextElementsToDelete = new List<System.Windows.Documents.Block>();
-			System.Windows.Documents.Block prevBlock = null;
+			System.Windows.Documents.Block firstLevelTextElementToInsertBefore = null;
+			System.Windows.Documents.Block firstLevelTextElementToInsertAfter = null;
+			System.Windows.Documents.Block previousBlockWithTag = null;
 			foreach (var blk in FlowDocument.Blocks)
 			{
-				if (blk.Tag == null)
+				if (blk.Tag == null) // blk.Tag==null indicates that this is a block that has been changed and should be removed (during exchanging the of the tags the tag of this block is assigned null)
 				{
 					if (null == firstLevelTextElementToInsertAfter)
 					{
-						firstLevelTextElementToInsertAfter = prevBlock;
+						firstLevelTextElementToInsertAfter = previousBlockWithTag;
 					}
 					firstLevelTextElementToInsertBefore = null;
 					firstLevelTextElementsToDelete.Add(blk);
@@ -252,7 +276,7 @@ namespace Altaxo.Gui.Markdown
 					{
 						firstLevelTextElementToInsertBefore = blk;
 					}
-					prevBlock = blk; // assign previous block here to make sure it is not in the list of elements to delete
+					previousBlockWithTag = blk; // assign previous block here to make sure it is not in the list of elements to delete
 				}
 			}
 
