@@ -36,6 +36,9 @@ rmdir /S /Q .\Altaxo\Dom.Presentation\bin
 rmdir /S /Q .\Altaxo\HelpViewer\obj
 rmdir /S /Q .\Altaxo\HelpViewer\bin
 
+rmdir /S /Q .\Altaxo\AltaxoMarkdownEditing\obj
+rmdir /S /Q .\Altaxo\AltaxoMarkdownEditing\bin
+
 rmdir /S /Q .\Altaxo\Startup\obj
 rmdir /S /Q .\Altaxo\Startup\bin
 
@@ -69,6 +72,12 @@ rmdir /S /Q .\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.VS2010\bin
 rmdir /S /Q .\Libraries\ICSharpCode.AvalonEdit\obj
 rmdir /S /Q .\Libraries\ICSharpCode.AvalonEdit\bin
 
+rmdir /S /Q .\Libraries\Markdig\obj
+rmdir /S /Q .\Libraries\Markdig\bin
+
+rmdir /S /Q .\Libraries\Markdig.Wpf\obj
+rmdir /S /Q .\Libraries\Markdig.Wpf\bin
+
 rmdir /S /Q .\Libraries\Numerator\obj
 rmdir /S /Q .\Libraries\Numerator\bin
 
@@ -77,6 +86,9 @@ rmdir /S /Q .\Libraries\UpdateDownLoader\bin
 
 rmdir /S /Q .\Libraries\UpdateInstaller\obj
 rmdir /S /Q .\Libraries\UpdateInstaller\bin
+
+rmdir /S /Q .\Libraries\WpfMath\obj
+rmdir /S /Q .\Libraries\WpfMath\bin
 
 rmdir /S /Q .\Setup\Debug
 rmdir /S /Q .\Setup\Release
