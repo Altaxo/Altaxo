@@ -328,6 +328,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 			}
 			else if (item is Altaxo.Text.TextDocument)
 			{
+				if (Altaxo.Main.ProjectFolder.IsValidFolderName(item.Name)) // if it is a project folder note
+					return "A project folder note can not be renamed";
+
 				if (Current.Project.TextDocumentCollection.ContainsAnyName(name))
 					return "A text document with the same name is already present in the project";
 			}

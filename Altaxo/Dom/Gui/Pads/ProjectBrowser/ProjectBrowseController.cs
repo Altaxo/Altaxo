@@ -496,7 +496,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 				{
 					SetItemListHandler(new SpecificProjectFolderHandler(projFolder.Name));
 				}
-				if (node.Tag is IProjectItem projItem)
+				else if (node.Tag is IProjectItem projItem)
 				{
 					Current.ProjectService.OpenOrCreateViewContentForDocument(projItem);
 				}

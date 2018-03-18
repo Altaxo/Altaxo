@@ -106,7 +106,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 		{
 			var name = showFullName ? t.Name : ProjectFolder.GetNamePart(t.Name);
 			if (t is Altaxo.Main.Properties.ProjectFolderPropertyDocument)
-				name += name += "FolderProperties";
+				name += "FolderProperties";
+			else if (t is Altaxo.Text.TextDocument && Altaxo.Main.ProjectFolder.IsValidFolderName(name))
+				name += "FolderNotes";
 
 			if (!_projectItemTypesToImage.TryGetValue(t.GetType(), out var image))
 				image = ProjectBrowseItemImage.OpenFolder;

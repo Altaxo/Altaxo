@@ -90,7 +90,7 @@ namespace Altaxo.Gui.Text.Viewing
 				throw new ApplicationException(nameof(_doc) + " is already initialized");
 			_doc = doc ?? throw new ArgumentNullException(nameof(doc));
 
-			this.Title = _doc.Name;
+			this.Title = GetTitleFromDocumentName(_doc);
 
 			_doc.TunneledEvent += new WeakActionHandler<object, object, Altaxo.Main.TunnelingEventArgs>(EhDocumentTunneledEvent, (handler) => _doc.TunneledEvent -= handler);
 		}
@@ -100,7 +100,16 @@ namespace Altaxo.Gui.Text.Viewing
 			if (e is Altaxo.Main.DocumentPathChangedEventArgs && _view != null)
 			{
 				_view.DocumentName = _doc.Name;
+				this.Title = GetTitleFromDocumentName(_doc);
 			}
+		}
+
+		private static string GetTitleFromDocumentName(TextDocument doc)
+		{
+			if (!Altaxo.Main.ProjectFolder.IsValidFolderName(doc.Name))
+				return doc.Name;
+			else
+				return doc.Name + "FolderNotes";
 		}
 
 		protected void Initialize(bool initData)

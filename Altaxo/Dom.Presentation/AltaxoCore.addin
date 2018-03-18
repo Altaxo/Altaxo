@@ -1183,8 +1183,10 @@
 								icon="Icons.16x16.StandardWorksheet" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewStandardWorksheet" />
 			<MenuItem id="NewGraph" label="${res:XML.MainMenu.FileMenu.New.Graph}" description="${res:XML.MainMenu.FileMenu.New.Graph.Description}"
 								icon="Icons.16x16.PlotLineScatter" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewGraph" />
-			<MenuItem id="NewNotes" label="${res:XML.MainMenu.FileMenu.New.NotesDocument}" description="${res:XML.MainMenu.FileMenu.New.NotesDocument.Description}"
-								icon="Icons.16x16.Editor" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewNotesDocument" />
+			<MenuItem id="NewNotes" label="${res:XML.MainMenu.FileMenu.New.TextDocument}" description="${res:XML.MainMenu.FileMenu.New.TextDocument.Description}"
+								icon="Icons.16x16.Editor" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewTextDocument" />
+			<MenuItem id="NewFolderNotes" label="${res:XML.MainMenu.FileMenu.New.FolderTextDocument}" description="${res:XML.MainMenu.FileMenu.New.FolderTextDocument.Description}"
+								icon="Icons.16x16.Editor" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewFolderTextDocument" />
 			<MenuItem id="NewPropBag" label="${res:XML.MainMenu.FileMenu.New.PropertyBag}" description="${res:XML.MainMenu.FileMenu.New.PropertyBag.Description}"
 								icon="Icons.16x16.PropertyBag" class="Altaxo.Gui.Pads.ProjectBrowser.CmdNewPropertyBag" />
 		</MenuItem>
