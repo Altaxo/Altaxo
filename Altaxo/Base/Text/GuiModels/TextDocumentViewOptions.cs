@@ -37,6 +37,11 @@ namespace Altaxo.Text.GuiModels
 		public ViewerConfiguration WindowConfiguration { get; protected set; }
 		public bool IsViewerSelected { get; protected set; }
 
+		/// <summary>
+		/// The fraction of the width (when shown in left-right configuration) or height (when shown in top-bottom configuration) of the source editor window in relation to the available width/height.
+		/// </summary>
+		private double _fractionOfSourceEditorWindowVisible = 0.5;
+
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextDocumentViewOptions), 0)]
@@ -51,6 +56,7 @@ namespace Altaxo.Text.GuiModels
 				info.AddValue("Document", AbsoluteDocumentPath.GetAbsolutePath(s.Document));
 				info.AddEnum("WindowConfiguration", s.WindowConfiguration);
 				info.AddValue("IsViewerSelected", s.IsViewerSelected);
+				info.AddValue("FractionSourceEditor", s._fractionOfSourceEditorWindowVisible);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -60,6 +66,7 @@ namespace Altaxo.Text.GuiModels
 				var pathToDocument = (AbsoluteDocumentPath)info.GetValue("Document", s);
 				s.WindowConfiguration = (ViewerConfiguration)info.GetEnum("WindowConfiguration", typeof(ViewerConfiguration));
 				s.IsViewerSelected = info.GetBoolean("IsViewerSelected");
+				s._fractionOfSourceEditorWindowVisible = info.GetDouble("FractionSourceEditor");
 
 				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0
 				{
