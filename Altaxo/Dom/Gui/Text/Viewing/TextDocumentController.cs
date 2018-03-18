@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Graph;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
 using Altaxo.Text;
@@ -36,7 +37,7 @@ namespace Altaxo.Gui.Text.Viewing
 	[UserControllerForObject(typeof(TextDocument))]
 	[UserControllerForObject(typeof(Altaxo.Text.GuiModels.TextDocumentViewOptions))]
 	[ExpectedTypeOfView(typeof(ITextDocumentView))]
-	public class TextDocumentController : AbstractViewContent, IDisposable, IMVCANController
+	public class TextDocumentController : AbstractViewContent, IDisposable, IMVCANController, ITextDocumentController
 	{
 		public ITextDocumentView _view;
 
@@ -99,7 +100,7 @@ namespace Altaxo.Gui.Text.Viewing
 		{
 			if (e is Altaxo.Main.DocumentPathChangedEventArgs && _view != null)
 			{
-				_view.DocumentName = _doc.Name;
+				_view.SetDocumentNameAndLocalImages(_doc.Name, _doc.Images);
 				this.Title = GetTitleFromDocumentName(_doc);
 			}
 		}
@@ -119,7 +120,7 @@ namespace Altaxo.Gui.Text.Viewing
 			}
 			if (null != _view)
 			{
-				_view.DocumentName = _doc.Name;
+				_view.SetDocumentNameAndLocalImages(_doc.Name, _doc.Images);
 				_view.SourceText = _doc.SourceText;
 			}
 		}
@@ -127,11 +128,13 @@ namespace Altaxo.Gui.Text.Viewing
 		private void AttachView()
 		{
 			_view.SourceTextChanged += EhSourceTextChanged;
+			_view.Controller = this;
 		}
 
 		private void DetachView()
 		{
 			_view.SourceTextChanged -= EhSourceTextChanged;
+			_view.Controller = null;
 		}
 
 		private void EhDocumentChanged(object sender, EventArgs e)
@@ -154,6 +157,34 @@ namespace Altaxo.Gui.Text.Viewing
 		public bool Revert(bool disposeController)
 		{
 			throw new NotImplementedException();
+		}
+
+		public string InsertImageInDocumentAndGetUrl(string fileName)
+		{
+			var imageProxy = MemoryStreamImageProxy.FromFile(fileName);
+			return _doc.AddImage(imageProxy);
+		}
+
+		public string InsertImageInDocumentAndGetUrl(System.IO.MemoryStream memoryStream)
+		{
+			var imageProxy = MemoryStreamImageProxy.FromStream(memoryStream);
+			return _doc.AddImage(imageProxy);
+		}
+
+		public bool CanAcceptImageFileName(string fileName)
+		{
+			var extension = System.IO.Path.GetExtension(fileName).ToLowerInvariant();
+			switch (extension)
+			{
+				case ".jpg":
+				case ".png":
+				case ".bmp":
+				case ".tif":
+					return true;
+
+				default:
+					return false;
+			}
 		}
 
 		public override object ViewObject

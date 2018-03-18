@@ -44,7 +44,8 @@ namespace Altaxo.Gui.Text.Viewing
 	/// </summary>
 	public partial class TextDocumentControl : UserControl, ITextDocumentView
 	{
-		private ImageProvider _imageProvider = new ImageProvider("");
+		private ImageProvider _imageProvider = new ImageProvider("", null);
+		private ITextDocumentController _controller;
 
 		public TextDocumentControl()
 		{
@@ -52,15 +53,21 @@ namespace Altaxo.Gui.Text.Viewing
 			_guiEditor.ImageProvider = _imageProvider;
 		}
 
-		public string DocumentName
+		public ITextDocumentController Controller
 		{
 			set
 			{
-				var folder = Altaxo.Main.ProjectFolder.GetFolderPart(value);
-				if (_imageProvider.AltaxoFolderLocation != folder)
-				{
-					_guiEditor.ImageProvider = _imageProvider = new ImageProvider(folder);
-				}
+				_controller = value;
+			}
+		}
+
+		/// <inheritdoc/>
+		public void SetDocumentNameAndLocalImages(string documentName, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages)
+		{
+			var folder = Altaxo.Main.ProjectFolder.GetFolderPart(documentName);
+			if (_imageProvider.AltaxoFolderLocation != folder || _imageProvider.LocalImages != localImages)
+			{
+				_guiEditor.ImageProvider = _imageProvider = new ImageProvider(folder, localImages);
 			}
 		}
 
@@ -93,5 +100,100 @@ namespace Altaxo.Gui.Text.Viewing
 				e.Handled = true;
 			}
 		}
+
+		#region Pasting of images
+
+		private string InsertImageInDocumentAndGetUrl(string fileName)
+		{
+			return _controller?.InsertImageInDocumentAndGetUrl(fileName);
+		}
+
+		private string InsertImageInDocumentAndGetUrl(ImageSource imgSource)
+		{
+			// before we can give the image to the controller, we have to create a stream from it
+
+			if (imgSource is BitmapSource bmpSource)
+			{
+				var pngStream = new System.IO.MemoryStream();
+				BitmapEncoder pngEncoder = new PngBitmapEncoder();
+				pngEncoder.Frames.Add(BitmapFrame.Create(bmpSource));
+				pngEncoder.Save(pngStream);
+				pngStream.Seek(0, System.IO.SeekOrigin.Begin);
+
+				var jpgStream = new System.IO.MemoryStream();
+				BitmapEncoder jpgEncoder = new JpegBitmapEncoder();
+				jpgEncoder.Frames.Add(BitmapFrame.Create(bmpSource));
+				jpgEncoder.Save(jpgStream);
+				jpgStream.Seek(0, System.IO.SeekOrigin.Begin);
+
+				var stream = pngStream.Length < jpgStream.Length ? pngStream : jpgStream;
+				var altStream = pngStream.Length < jpgStream.Length ? jpgStream : pngStream;
+				altStream.Dispose();
+
+				return _controller?.InsertImageInDocumentAndGetUrl(stream);
+			}
+
+			return null;
+		}
+
+		private void EhPreviewExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (e.Command == ApplicationCommands.Paste)
+			{
+				if (Clipboard.ContainsFileDropList())
+				{
+					var fileList = Clipboard.GetFileDropList();
+					foreach (var fileName in fileList)
+					{
+						if (true == _controller.CanAcceptImageFileName(fileName))
+						{
+							string url = InsertImageInDocumentAndGetUrl(fileName);
+
+							if (null != url)
+							{
+								_guiEditor.InsertSourceTextAtCaretPosition(string.Format("![](local:{0})", url));
+								e.Handled = true;
+							}
+						}
+					}
+				}
+				else if (Clipboard.ContainsImage())
+				{
+					var bitmap = Clipboard.GetImage();
+					var url = InsertImageInDocumentAndGetUrl(bitmap);
+					if (null != url)
+					{
+						_guiEditor.InsertSourceTextAtCaretPosition(string.Format("![](local:{0})", url));
+						e.Handled = true;
+					}
+				}
+			}
+		}
+
+		private void EhPreviewCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			if (e.Command == ApplicationCommands.Paste)
+			{
+				if (Clipboard.ContainsFileDropList())
+				{
+					var fileList = Clipboard.GetFileDropList();
+					foreach (var fileName in fileList)
+					{
+						if (true == _controller.CanAcceptImageFileName(fileName))
+						{
+							e.CanExecute = true;
+							e.Handled = true;
+						}
+					}
+				}
+				else if (Clipboard.ContainsImage())
+				{
+					e.CanExecute = true;
+					e.Handled = true;
+				}
+			}
+		}
+
+		#endregion Pasting of images
 	}
 }

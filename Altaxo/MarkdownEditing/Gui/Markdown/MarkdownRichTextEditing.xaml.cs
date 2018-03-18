@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Markdown
 		private string _styleName;
 		private IStyles _currentStyle = DynamicStyles.Instance;
 
+		public ICSharpCode.AvalonEdit.TextEditor SourceEditor { get { return _guiRawText; } }
+		public RichTextBox Viewer { get { return _guiViewer; } }
+
 		public string SourceText
 		{
 			get
@@ -599,6 +602,7 @@ namespace Altaxo.Gui.Markdown
 				}
 				else
 				{
+					_guiRawText.Select(sourcePositionStart, 0);
 					_guiRawText.CaretOffset = sourcePositionStart;
 				}
 				_guiRawText.Focus();
@@ -606,5 +610,18 @@ namespace Altaxo.Gui.Markdown
 		}
 
 		#endregion Key handling, when a key is entered in the viewer
+
+		#region Manipulate text, from outside of this control
+
+		/// <summary>
+		/// Inserts the given text at the caret position.
+		/// </summary>
+		/// <param name="textToInsert">The text to insert.</param>
+		public void InsertSourceTextAtCaretPosition(string textToInsert)
+		{
+			_guiRawText.Document.Insert(_guiRawText.CaretOffset, textToInsert);
+		}
+
+		#endregion Manipulate text, from outside of this control
 	}
 }

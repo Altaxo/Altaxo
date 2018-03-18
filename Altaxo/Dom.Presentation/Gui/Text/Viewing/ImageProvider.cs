@@ -38,17 +38,24 @@ namespace Altaxo.Gui.Text.Viewing
 		private const string absolutePathPretext = "//";
 		private const string graphPretext = "graph:";
 		private const string resourceImagePretext = "res:";
+		private const string localImagePretext = "local:";
 
 		/// <summary>
 		/// Location from where the images delivered by this image provider are referenced when using relative paths.
 		/// </summary>
 		public string AltaxoFolderLocation { get; protected set; }
 
-		public ImageProvider(string folder)
+		/// <summary>
+		/// Gets or sets the collection of local images. Key is the unique name of the image, value is the image proxy.
+		/// </summary>
+		public IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> LocalImages { get; protected set; }
+
+		public ImageProvider(string folder, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages)
 		{
 			if (!Altaxo.Main.ProjectFolder.IsValidFolderName(folder))
 				throw new ArgumentOutOfRangeException(nameof(folder), "Is not a valid folder name");
 			AltaxoFolderLocation = folder ?? throw new ArgumentNullException();
+			LocalImages = localImages;
 		}
 
 		public override Inline GetInlineItem(string url, out bool inlineItemIsErrorMessage)
@@ -156,6 +163,29 @@ namespace Altaxo.Gui.Text.Viewing
 				{
 					inlineItemIsErrorMessage = true;
 					return new Run(string.Format("ERROR: RESOURCE '{0}' NOT FOUND!", name));
+				}
+			}
+			else if (url.StartsWith(localImagePretext))
+			{
+				string name = url.Substring(localImagePretext.Length);
+
+				if (null != LocalImages && LocalImages.TryGetValue(name, out var img))
+				{
+					var stream = img.GetContentStream();
+
+					var imageSource = BitmapFrame.Create(stream,
+													BitmapCreateOptions.None,
+													BitmapCacheOption.OnLoad);
+
+					imageSource.Freeze();
+					var image = new Image() { Source = imageSource };
+					inlineItemIsErrorMessage = false;
+					return new InlineUIContainer(image);
+				}
+				else
+				{
+					inlineItemIsErrorMessage = true;
+					return new Run(string.Format("ERROR: LOCAL IMAGE '{0}' NOT FOUND!", name));
 				}
 			}
 			else

@@ -426,7 +426,7 @@ namespace Altaxo.Text
 		/// Local images for this markdown, stored in a dictionary. The key is a Guid which is created when the image is pasted into the markdown document.
 		/// The value is a memory stream image proxy.
 		/// </summary>
-		public IDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> Images
+		public IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> Images
 		{
 			get
 			{
@@ -435,5 +435,26 @@ namespace Altaxo.Text
 		}
 
 		#endregion SourceText and Style
+
+		#region Images
+
+		/// <summary>
+		/// Adds the provided image to the document, and returns a name for that image.
+		/// </summary>
+		/// <param name="image">The image.</param>
+		/// <returns>The name of the image added.</returns>
+		/// <exception cref="ArgumentNullException">image</exception>
+		public string AddImage(Altaxo.Graph.MemoryStreamImageProxy image)
+		{
+			if (null == image)
+				throw new ArgumentNullException(nameof(image));
+
+			if (!_images.ContainsKey(image.ContentHash))
+				_images.Add(image.ContentHash, image);
+
+			return image.ContentHash;
+		}
+
+		#endregion Images
 	}
 }

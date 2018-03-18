@@ -12,5 +12,7 @@
 
 							PreviewKeyDown="EhPreviewKeyDown">
 
-	<ame:MarkdownRichTextEditing Name="_guiEditor" />
+	<ame:MarkdownRichTextEditing Name="_guiEditor"
+															 CommandManager.PreviewCanExecute="EhPreviewCanExecute"
+															 CommandManager.PreviewExecuted="EhPreviewExecuted" />
 </UserControl>

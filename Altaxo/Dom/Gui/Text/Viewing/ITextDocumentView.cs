@@ -32,18 +32,33 @@ namespace Altaxo.Gui.Text.Viewing
 {
 	public interface ITextDocumentView
 	{
+		ITextDocumentController Controller { set; }
+
 		/// <summary>
-		/// Sets the name of the document. This function must be called every time the document name has changed.
+		/// Sets the name of the document, and the local images. This function must be called every time the document name has changed.
 		/// </summary>
-		/// <value>
-		/// The name of the document.
-		/// </value>
-		string DocumentName { set; }
+		/// <param name="documentName">The full name of the document.</param>
+		/// <param name="localImages">The dictionary of local images.</param>
+		void SetDocumentNameAndLocalImages(string documentName, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages);
 
 		string SourceText { get; set; }
 
 		event EventHandler SourceTextChanged;
 
 		string StyleName { set; }
+	}
+
+	public interface ITextDocumentController
+	{
+		string InsertImageInDocumentAndGetUrl(string fileName);
+
+		string InsertImageInDocumentAndGetUrl(System.IO.MemoryStream memoryStream);
+
+		/// <summary>
+		/// Tests if the provided file name could be accepted as an image.
+		/// </summary>
+		/// <param name="fileName">Name of the file.</param>
+		/// <returns>True if the name could be accepted; false otherwise.</returns>
+		bool CanAcceptImageFileName(string fileName);
 	}
 }
