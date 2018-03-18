@@ -565,7 +565,7 @@ namespace Altaxo.Gui.Markdown
 		/// <summary>
 		/// When you enter a key in the viewer, normally nothing will happen (the viewer is read-only).
 		/// But here we catch the key, and for most of the keys (except navigation keys, like up, down etc.),
-		/// we first set the corresponding position in the source text, and then re-route the key to the source editor,
+		/// we first set the corresponding position in the source text, and then re-route the key event to the source editor,
 		/// so that it is included in the source text.
 		/// </summary>
 		/// <param name="sender">The sender.</param>
@@ -575,7 +575,34 @@ namespace Altaxo.Gui.Markdown
 			if (KeysNotTriggeringSwitchFromViewerToSourceEditor.Contains(e.Key))
 				return;
 
-			SwitchFromViewerToSourceEditor();
+			var viewerPositionStart = _guiViewer.Selection.Start;
+			var (sourcePositionStart, isPositionStartAccurate) = PositionHelper.ViewersTextPositionToSourceEditorsTextPosition(viewerPositionStart);
+
+			int sourcePositionEnd;
+			bool isPositionEndAccurate;
+			if (_guiViewer.Selection.End != _guiViewer.Selection.Start)
+			{
+				var viewerPositionEnd = _guiViewer.Selection.End;
+				(sourcePositionEnd, isPositionEndAccurate) = PositionHelper.ViewersTextPositionToSourceEditorsTextPosition(viewerPositionEnd);
+			}
+			else
+			{
+				sourcePositionEnd = sourcePositionStart;
+				isPositionEndAccurate = isPositionStartAccurate;
+			}
+
+			if (isPositionStartAccurate && isPositionEndAccurate && sourcePositionStart >= 0 && sourcePositionEnd >= 0)
+			{
+				if (sourcePositionEnd > sourcePositionStart)
+				{
+					_guiRawText.Select(sourcePositionStart, sourcePositionEnd - sourcePositionStart);
+				}
+				else
+				{
+					_guiRawText.CaretOffset = sourcePositionStart;
+				}
+				_guiRawText.Focus();
+			}
 		}
 
 		#endregion Key handling, when a key is entered in the viewer
