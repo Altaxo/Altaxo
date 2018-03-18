@@ -89,7 +89,7 @@ namespace Altaxo.Gui.Text.Viewing
 
 			if (e.Key == Key.F5 && Altaxo.Gui.Markdown.Commands.RefreshViewer.CanExecute(null, null))
 			{
-				Altaxo.Gui.Markdown.Commands.ToggleBetweenEditorAndViewer.Execute(null, null);
+				Altaxo.Gui.Markdown.Commands.RefreshViewer.Execute(null, null);
 				e.Handled = true;
 			}
 		}
