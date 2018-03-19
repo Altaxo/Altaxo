@@ -58,6 +58,15 @@ namespace Altaxo.Main.Commands
 		}
 	}
 
+	public class CreateNewText : SimpleCommand
+	{
+		public override void Execute(object parameter)
+		{
+			var doc = Current.ProjectService.CreateDocument<Altaxo.Text.TextDocument>(Altaxo.Main.ProjectFolder.RootFolderName);
+			Current.ProjectService.OpenOrCreateViewContentForDocument(doc);
+		}
+	}
+
 	public class CreateNewWorksheetOrGraphFromFile : SimpleCommand
 	{
 		public override void Execute(object parameter)

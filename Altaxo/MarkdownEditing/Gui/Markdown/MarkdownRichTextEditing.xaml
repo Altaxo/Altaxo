@@ -7,14 +7,14 @@
 						 xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-	<Grid>
+	<Grid Name="_guiGrid">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="4" />
-			<ColumnDefinition Width="*" />
+			<ColumnDefinition />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
 			<RowDefinition Height="4" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
@@ -23,10 +23,23 @@
 			<CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
 			<CommandBinding Command="{x:Static local:Commands.RefreshViewer}" Executed="EhRefreshViewer" />
 			<CommandBinding Command="{x:Static local:Commands.ToggleBetweenEditorAndViewer}" Executed="EhToggleBetweenEditorAndViewer" />
+			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorLeftViewerRight}" Executed="EhSwitchToConfigurationEditorLeftViewerRight" CanExecute="EhCanSwitchToConfigurationEditorLeftViewerRight" />
+			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorRightViewerLeft}" Executed="EhSwitchToConfigurationEditorRightViewerLeft" CanExecute="EhCanSwitchToConfigurationEditorRightViewerLeft" />
+			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorTopViewerBottom}" Executed="EhSwitchToConfigurationEditorTopViewerBottom" CanExecute="EhCanSwitchToConfigurationEditorTopViewerBottom" />
+			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorBottomViewerTop}" Executed="EhSwitchToConfigurationEditorBottomViewerTop" CanExecute="EhCanSwitchToConfigurationEditorBottomViewerTop" />
+			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationTabbedEditorAndViewer}" Executed="EhSwitchToConfigurationTabbedEditorAndViewer" CanExecute="EhCanSwitchToConfigurationTabbedEditorAndViewer" />
 		</FrameworkElement.CommandBindings>
 
-		<avalonEdit:TextEditor Grid.Row="2" Grid.Column="0"
-			x:Name="_guiRawText"
+		<GridSplitter Name="_guiColumnGridSplitter" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="4" ResizeDirection="Columns" />
+		<GridSplitter Name="_guiRowGridSplitter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="4" ResizeDirection="Rows" Visibility="Hidden" />
+
+		<TabControl Name="_guiTabControl" TabStripPlacement="Bottom" Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="3" Visibility="Hidden">
+			<TabItem Name="_guiEditorTab" Header="Editor" />
+			<TabItem Name="_guiViewerTab" Header="Preview" />
+		</TabControl>
+
+		<avalonEdit:TextEditor Grid.Row="0" Grid.RowSpan="3" Grid.Column="0"
+			x:Name="_guiEditor"
 			xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
 			FontFamily="Consolas"
 			SyntaxHighlighting="MarkDown"
@@ -38,7 +51,7 @@
 			PreviewMouseWheel="EhSourceMouseWheel"
 			PreviewMouseDown="EhSourceMouseDown" />
 
-		<RichTextBox Grid.Row="2" Grid.Column="2"
+		<RichTextBox Grid.Row="0" Grid.RowSpan="3" Grid.Column="2"
 								 Name="_guiViewer"
 								 IsDocumentEnabled="True"
 								 IsReadOnly="True"

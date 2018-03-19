@@ -32,5 +32,30 @@ namespace Altaxo.Gui.Markdown
 		/// Command for toggling the input focus between the source code editor and the viewer.
 		/// </summary>
 		public static RoutedCommand ToggleBetweenEditorAndViewer { get; } = new RoutedCommand(nameof(ToggleBetweenEditorAndViewer), typeof(Commands));
+
+		/// <summary>
+		/// Command for switching the viewing configuration to: editor left, viewer right
+		/// </summary>
+		public static RoutedCommand SwitchToConfigurationEditorLeftViewerRight { get; } = new RoutedCommand(nameof(SwitchToConfigurationEditorLeftViewerRight), typeof(Commands));
+
+		/// <summary>
+		/// Command for switching the viewing configuration to: editor right, viewer left
+		/// </summary>
+		public static RoutedCommand SwitchToConfigurationEditorRightViewerLeft { get; } = new RoutedCommand(nameof(SwitchToConfigurationEditorRightViewerLeft), typeof(Commands));
+
+		/// <summary>
+		/// Command for switching the viewing configuration to: editor top, viewer bottom
+		/// </summary>
+		public static RoutedCommand SwitchToConfigurationEditorTopViewerBottom { get; } = new RoutedCommand(nameof(SwitchToConfigurationEditorTopViewerBottom), typeof(Commands));
+
+		/// <summary>
+		/// Command for switching the viewing configuration to: editor bottom, viewer top
+		/// </summary>
+		public static RoutedCommand SwitchToConfigurationEditorBottomViewerTop { get; } = new RoutedCommand(nameof(SwitchToConfigurationEditorBottomViewerTop), typeof(Commands));
+
+		/// <summary>
+		/// Command for switching the viewing configuration to: editor and viewer in a tab control
+		/// </summary>
+		public static RoutedCommand SwitchToConfigurationTabbedEditorAndViewer { get; } = new RoutedCommand(nameof(SwitchToConfigurationTabbedEditorAndViewer), typeof(Commands));
 	}
 }

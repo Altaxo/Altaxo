@@ -64,6 +64,7 @@
       <DependentUpon>MarkdownSimpleEditing.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Markdown\PositionHelper.cs" />
+    <Compile Include="Gui\Markdown\ViewingConfiguration.cs" />
     <Compile Include="Gui\Tests\TestControl1.xaml.cs">
       <DependentUpon>TestControl1.xaml</DependentUpon>
     </Compile>

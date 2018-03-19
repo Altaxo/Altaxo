@@ -44,6 +44,7 @@
 		<Import assembly=":AltaxoBase" />
 		<Import assembly=":AltaxoBase.Presentation" />
 		<Import assembly=":AltaxoDom" />
+		<Import assembly=":AltaxoMarkdownEditing" />
 		<Import assembly=":AltaxoDom.Presentation">
 			<ConditionEvaluator name="SelectedDataColumns" class="Altaxo.Worksheet.Commands.SelectedDataConditionEvaluator" />
 			<ConditionEvaluator name="SelectedPropertyColumns" class="Altaxo.Worksheet.Commands.SelectedPropertyConditionEvaluator" />
@@ -172,6 +173,8 @@
 				<MenuItem id="Graph" label="${res:XML.MainMenu.FileMenu.New.Graph}" icon="Icons.16x16.PlotLineScatter"
 					description="${res:XML.MainMenu.FileMenu.New.Graph.Description}" shortcut="Control|G"
 					class="Altaxo.Main.Commands.CreateNewGraph" />
+				<MenuItem id="NewNote" label="${res:XML.MainMenu.FileMenu.New.TextDocument}" description="${res:XML.MainMenu.FileMenu.New.TextDocument.Description}"
+					icon="Icons.16x16.Editor" class="Altaxo.Main.Commands.CreateNewText" />
 				<MenuItem id="WksGraphFromFile" label="${res:XML.MainMenu.FileMenu.New.WksGraphFromFile}"
 					icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.WksGraphFromFile.Description}"
 					shortcut="Control|N" class="Altaxo.Main.Commands.CreateNewWorksheetOrGraphFromFile" />
@@ -608,6 +611,33 @@
 					class="Altaxo.Graph.Commands.FitNonlinear" />
 				<MenuItem id="CreateMasterCurve" label="${res:XML.MainMenu.AnalysisMenu.CreateMasterCurve}" description="${res:XML.MainMenu.AnalysisMenu.CreateMasterCurve.Description}"
 					class="Altaxo.Graph.Commands.CreateMasterCurve" />
+			</MenuItem>
+		</Condition>
+		<!-- Text menu -->
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Text.Viewing.TextDocumentController" action="Exclude">
+			<MenuItem id="Text" label="${res:XML.MainMenu.TextMenu}"  type="Menu">
+				<MenuItem id="TextViewConf" label="${res:XML.MainMenu.TextViewConfigurationMenu}"  type="Menu">
+					<MenuItem id="EditorLeftViewerRight"
+										label="${res:XML.MainMenu.TextMenu.EditorLeftViewerRight}"
+										description="${res:XML.MainMenu.TextMenu.EditorLeftViewerRight.Description}"
+										class="Altaxo.Main.MenuCommands.Text.SwitchToConfigurationEditorLeftViewerRight" />
+					<MenuItem id="EditorTopViewerBottom"
+										label="${res:XML.MainMenu.TextMenu.EditorTopViewerBottom}"
+										description="${res:XML.MainMenu.TextMenu.EditorTopViewerBottom.Description}"
+										class="Altaxo.Main.MenuCommands.Text.SwitchToConfigurationEditorTopViewerBottom" />
+					<MenuItem id="EditorRightViewerLeft"
+										label="${res:XML.MainMenu.TextMenu.EditorRightViewerLeft}"
+										description="${res:XML.MainMenu.TextMenu.EditorRightViewerLeft.Description}"
+										class="Altaxo.Main.MenuCommands.Text.SwitchToConfigurationEditorRightViewerLeft" />
+					<MenuItem id="EditorBottomViewerTop"
+										label="${res:XML.MainMenu.TextMenu.EditorBottomViewerTop}"
+										description="${res:XML.MainMenu.TextMenu.EditorBottomViewerTop.Description}"
+										class="Altaxo.Main.MenuCommands.Text.SwitchToConfigurationEditorBottomViewerTop" />
+					<MenuItem id="TabbedEditorAndViewer"
+										label="${res:XML.MainMenu.TextMenu.TabbedEditorAndViewer}"
+										description="${res:XML.MainMenu.TextMenu.TabbedEditorAndViewer.Description}"
+										class="Altaxo.Main.MenuCommands.Text.SwitchToConfigurationTabbedEditorAndViewer" />
+				</MenuItem>
 			</MenuItem>
 		</Condition>
 		<!-- Tools menu -->

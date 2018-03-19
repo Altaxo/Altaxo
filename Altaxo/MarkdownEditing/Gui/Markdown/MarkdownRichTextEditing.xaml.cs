@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Markdown
 		private string _styleName;
 		private IStyles _currentStyle = DynamicStyles.Instance;
 
-		public ICSharpCode.AvalonEdit.TextEditor SourceEditor { get { return _guiRawText; } }
+		public ICSharpCode.AvalonEdit.TextEditor SourceEditor { get { return _guiEditor; } }
 		public RichTextBox Viewer { get { return _guiViewer; } }
 
 		public string SourceText
@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Markdown
 			set
 			{
 				_sourceText = value; // We do not fire SourceTextChanged here, instead we fire it in EhSourceTextChanged
-				_guiRawText.Text = _sourceText;
+				_guiEditor.Text = _sourceText;
 			}
 		}
 
@@ -113,8 +113,8 @@ namespace Altaxo.Gui.Markdown
 		{
 			InitializeComponent();
 			Loaded += EhLoaded;
-			_guiRawText.TextArea.TextView.ScrollOffsetChanged += EhSourceEditor_ScrollOffsetChanged;
-			_guiRawText.TextArea.Caret.PositionChanged += EhSourceEditor_CaretPositionChanged;
+			_guiEditor.TextArea.TextView.ScrollOffsetChanged += EhSourceEditor_ScrollOffsetChanged;
+			_guiEditor.TextArea.Caret.PositionChanged += EhSourceEditor_CaretPositionChanged;
 		}
 
 		private void EhLoaded(object sender, RoutedEventArgs e)
@@ -153,9 +153,9 @@ namespace Altaxo.Gui.Markdown
 		{
 			var pipeline = Pipeline ?? DefaultPipeline;
 
-			if (null != _guiViewer && null != _guiRawText)
+			if (null != _guiViewer && null != _guiEditor)
 			{
-				_sourceText = _guiRawText.Text;
+				_sourceText = _guiEditor.Text;
 
 				if (forceCompleteRendering || _lastMarkdownDocumentProcessed == null || _lastSourceTextProcessed == null)
 				{
@@ -263,23 +263,23 @@ namespace Altaxo.Gui.Markdown
 			{
 				// find out which of the windows has the caret
 
-				if (_guiRawText.IsKeyboardFocusWithin)
+				if (_guiEditor.IsKeyboardFocusWithin)
 				{
-					textPosition = _guiRawText.TextArea.Caret.Position;
+					textPosition = _guiEditor.TextArea.Caret.Position;
 					if (null != textPosition)
 					{
-						var sourceLineTopAbs = _guiRawText.TextArea.TextView.GetVisualPosition(textPosition.Value, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.LineTop);
-						if (!(sourceLineTopAbs.Y >= _guiRawText.TextArea.TextView.VerticalOffset && sourceLineTopAbs.Y <= (_guiRawText.TextArea.TextView.VerticalOffset + _guiRawText.TextArea.TextView.ActualHeight)))
+						var sourceLineTopAbs = _guiEditor.TextArea.TextView.GetVisualPosition(textPosition.Value, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.LineTop);
+						if (!(sourceLineTopAbs.Y >= _guiEditor.TextArea.TextView.VerticalOffset && sourceLineTopAbs.Y <= (_guiEditor.TextArea.TextView.VerticalOffset + _guiEditor.TextArea.TextView.ActualHeight)))
 						{
 							textPosition = null; // if caret is outside viewport, we do not consider this caret text position
 						}
 					}
 				}
 
-				var scrollPos = _guiRawText.TextArea.TextView.ScrollOffset;
+				var scrollPos = _guiEditor.TextArea.TextView.ScrollOffset;
 				if (null == textPosition)
 				{
-					textPosition = _guiRawText.TextArea.TextView.GetPosition(new Point(0, _guiRawText.TextArea.TextView.VerticalOffset + _guiRawText.ActualHeight / 2));
+					textPosition = _guiEditor.TextArea.TextView.GetPosition(new Point(0, _guiEditor.TextArea.TextView.VerticalOffset + _guiEditor.ActualHeight / 2));
 				}
 
 				if (null != textPosition)
@@ -288,7 +288,7 @@ namespace Altaxo.Gui.Markdown
 				}
 				else
 				{
-					var dl = _guiRawText.TextArea.TextView.GetDocumentLineByVisualTop(scrollPos.Y);
+					var dl = _guiEditor.TextArea.TextView.GetDocumentLineByVisualTop(scrollPos.Y);
 					ScrollViewerToLine(dl.LineNumber);
 				}
 			}
@@ -356,7 +356,7 @@ namespace Altaxo.Gui.Markdown
 			{
 				var rect = textPosition.GetCharacterRect(LogicalDirection.Forward);
 				System.Diagnostics.Debug.WriteLine("Scroll to line {0}, Y={1}", markdigTag.Line + 1, rect.Top);
-				_guiRawText.ScrollTo(markdigTag.Line + 1, 0, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.TextTop, rect.Top, 1e-3);
+				_guiEditor.ScrollTo(markdigTag.Line + 1, 0, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.TextTop, rect.Top, 1e-3);
 			}
 		}
 
@@ -380,15 +380,15 @@ namespace Altaxo.Gui.Markdown
 		public void SyncSourceEditorTextPositionToViewer(ICSharpCode.AvalonEdit.TextViewPosition sourceTextPosition)
 		{
 			// Get the absolute visual position of the caret
-			var sourceLineTopAbs = _guiRawText.TextArea.TextView.GetVisualPosition(sourceTextPosition, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.LineTop);
+			var sourceLineTopAbs = _guiEditor.TextArea.TextView.GetVisualPosition(sourceTextPosition, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.LineTop);
 			Debug.WriteLine("SourceLineTopAbs=({0}, {1})", sourceLineTopAbs.X, sourceLineTopAbs.Y);
 			// Calculate the relative position of the caret to the top of the viewport
-			var sourceLineTopRel = sourceLineTopAbs.Y - _guiRawText.TextArea.TextView.VerticalOffset;
+			var sourceLineTopRel = sourceLineTopAbs.Y - _guiEditor.TextArea.TextView.VerticalOffset;
 
 			// now search the TextElements of the flow documents for the element which spans the carets line
 			var flowDocument = _guiViewer.Document;
 			var blocks = flowDocument.Blocks;
-			var textOffset = _guiRawText.Document.GetOffset(sourceTextPosition.Location);
+			var textOffset = _guiEditor.Document.GetOffset(sourceTextPosition.Location);
 			var textElement = PositionHelper.BinarySearchBlocksForTextOffset(flowDocument.Blocks, textOffset);
 			if (null != textElement && textElement.Tag is Markdig.Syntax.MarkdownObject markdigTag)
 			{
@@ -454,7 +454,7 @@ namespace Altaxo.Gui.Markdown
 
 					var rect = textPosition.GetCharacterRect(LogicalDirection.Forward);
 					System.Diagnostics.Debug.WriteLine("Scroll to line {0}, Y={1}", markdigTag.Line + 1, rect.Top);
-					_guiRawText.ScrollTo(markdigTag.Line + 1, markdigTag.Column + columnOffset, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.TextTop, rect.Top, 1e-3);
+					_guiEditor.ScrollTo(markdigTag.Line + 1, markdigTag.Column + columnOffset, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.TextTop, rect.Top, 1e-3);
 				}
 			}
 		}
@@ -467,7 +467,7 @@ namespace Altaxo.Gui.Markdown
 		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
 		private void EhSourceEditor_CaretPositionChanged(object sender, EventArgs e)
 		{
-			var sourceTextPosition = _guiRawText.TextArea.Caret.Position;
+			var sourceTextPosition = _guiEditor.TextArea.Caret.Position;
 			SyncSourceEditorTextPositionToViewer(sourceTextPosition);
 		}
 
@@ -515,7 +515,7 @@ namespace Altaxo.Gui.Markdown
 			{
 				SwitchFromViewerToSourceEditor();
 			}
-			else if (_guiRawText.IsKeyboardFocusWithin)
+			else if (_guiEditor.IsKeyboardFocusWithin)
 			{
 				SwitchFromSourceEditorToViewer();
 			}
@@ -527,29 +527,46 @@ namespace Altaxo.Gui.Markdown
 			var (sourcePosition, isPositionAccurate) = PositionHelper.ViewersTextPositionToSourceEditorsTextPosition(viewerPosition);
 			// set the caret in the source editor only if (i) sourcePosition is >=0 and (ii) the position is accurate
 
-			if (sourcePosition >= 0 && isPositionAccurate)
+			if (_privatViewingConfiguration == ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
 			{
-				_guiRawText.CaretOffset = sourcePosition;
+				_guiEditorTab.IsSelected = true;
 			}
 
-			_guiRawText.Focus();
+			if (sourcePosition >= 0 && isPositionAccurate)
+			{
+				_guiEditor.CaretOffset = sourcePosition;
+			}
+
+			_guiEditor.Focus();
 		}
 
 		private void SwitchFromSourceEditorToViewer()
 		{
-			var sourceTextPosition = _guiRawText.TextArea.Caret.Position;
-			var sourceTextOffset = _guiRawText.Document.GetOffset(sourceTextPosition.Location);
+			var sourceTextPosition = _guiEditor.TextArea.Caret.Position;
+			var sourceTextOffset = _guiEditor.Document.GetOffset(sourceTextPosition.Location);
 			var (textPointer, isAccurate) = PositionHelper.SourceEditorTextPositionToViewersTextPosition(sourceTextOffset, _guiViewer.Document.Blocks);
+
+			if (_privatViewingConfiguration == ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
+			{
+				_guiViewerTab.IsSelected = true;
+			}
+
+			_guiViewer.Focus();
 
 			if (null != textPointer && isAccurate)
 			{
 				_guiViewer.Selection.Select(textPointer, textPointer);
+
+				if (_privatViewingConfiguration == ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
+				{
+					// when in tabbed mode, it is neccessary to delay the focussing on the rich text box
+					// because when doing it directly here (as it is alredy done above), the rich text box will not be focussed
+					Dispatcher.Invoke(() => { _guiViewer.Focus(); }, System.Windows.Threading.DispatcherPriority.Input);
+				}
 			}
 			else
 			{
 			}
-
-			_guiViewer.Focus();
 		}
 
 		#endregion Toggling between source editor and viewer
@@ -601,14 +618,19 @@ namespace Altaxo.Gui.Markdown
 			{
 				if (sourcePositionEnd > sourcePositionStart)
 				{
-					_guiRawText.Select(sourcePositionStart, sourcePositionEnd - sourcePositionStart);
+					_guiEditor.Select(sourcePositionStart, sourcePositionEnd - sourcePositionStart);
 				}
 				else
 				{
-					_guiRawText.Select(sourcePositionStart, 0);
-					_guiRawText.CaretOffset = sourcePositionStart;
+					_guiEditor.Select(sourcePositionStart, 0);
+					_guiEditor.CaretOffset = sourcePositionStart;
 				}
-				_guiRawText.Focus();
+
+				if (_privatViewingConfiguration == ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
+				{
+					_guiEditorTab.IsSelected = true;
+				}
+				_guiEditor.Focus();
 			}
 		}
 
@@ -622,9 +644,213 @@ namespace Altaxo.Gui.Markdown
 		/// <param name="textToInsert">The text to insert.</param>
 		public void InsertSourceTextAtCaretPosition(string textToInsert)
 		{
-			_guiRawText.Document.Insert(_guiRawText.CaretOffset, textToInsert);
+			_guiEditor.Document.Insert(_guiEditor.CaretOffset, textToInsert);
 		}
 
 		#endregion Manipulate text, from outside of this control
+
+		private ViewingConfiguration _privatViewingConfiguration = ViewingConfiguration.ConfigurationEditorLeftViewerRight;
+
+		public event Action<object, ViewingConfiguration> ViewingConfigurationChanged;
+
+		private void InternalSetViewingConfiguration(ViewingConfiguration value)
+		{
+			if (!(_privatViewingConfiguration == value))
+			{
+				_privatViewingConfiguration = value;
+				ViewingConfigurationChanged?.Invoke(this, value);
+			}
+		}
+
+		private ViewingConfiguration ViewingConfiguration
+		{
+			get { return _privatViewingConfiguration; }
+			set
+			{
+				if (!(_privatViewingConfiguration == value))
+				{
+					switch (value)
+					{
+						case ViewingConfiguration.ConfigurationEditorLeftViewerRight:
+							EhSwitchToConfigurationEditorLeftViewerRight(this, null);
+							break;
+
+						case ViewingConfiguration.ConfigurationEditorTopViewerBottom:
+							EhSwitchToConfigurationEditorTopViewerBottom(this, null);
+							break;
+
+						case ViewingConfiguration.ConfigurationEditorRightViewerLeft:
+							EhSwitchToConfigurationEditorRightViewerLeft(this, null);
+							break;
+
+						case ViewingConfiguration.ConfigurationEditorBottomViewerTop:
+							EhSwitchToConfigurationEditorBottomViewerTop(this, null);
+							break;
+
+						case ViewingConfiguration.ConfigurationTabbedEditorAndViewer:
+							EhSwitchToConfigurationTabbedEditorAndViewer(this, null);
+							break;
+
+						default:
+							throw new NotImplementedException();
+					}
+				}
+			}
+		}
+
+		private void EhSwitchToConfigurationEditorLeftViewerRight(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (ViewingConfiguration == ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
+			{
+				_guiEditorTab.Content = null;
+				_guiViewerTab.Content = null;
+				_guiGrid.Children.Add(_guiEditor);
+				_guiGrid.Children.Add(_guiViewer);
+			}
+
+			_guiTabControl.Visibility = Visibility.Hidden;
+			_guiColumnGridSplitter.Visibility = Visibility.Visible;
+			_guiRowGridSplitter.Visibility = Visibility.Hidden;
+
+			_guiEditor.SetValue(Grid.RowProperty, 0);
+			_guiEditor.SetValue(Grid.RowSpanProperty, 3);
+			_guiEditor.SetValue(Grid.ColumnProperty, 0);
+			_guiEditor.SetValue(Grid.ColumnSpanProperty, 1);
+
+			_guiViewer.SetValue(Grid.RowProperty, 0);
+			_guiViewer.SetValue(Grid.RowSpanProperty, 3);
+			_guiViewer.SetValue(Grid.ColumnProperty, 2);
+			_guiViewer.SetValue(Grid.ColumnSpanProperty, 1);
+
+			InternalSetViewingConfiguration(ViewingConfiguration.ConfigurationEditorLeftViewerRight);
+		}
+
+		private void EhCanSwitchToConfigurationEditorLeftViewerRight(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = ViewingConfiguration != ViewingConfiguration.ConfigurationEditorLeftViewerRight;
+			e.Handled = true;
+		}
+
+		private void EhSwitchToConfigurationEditorRightViewerLeft(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (ViewingConfiguration == ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
+			{
+				_guiEditorTab.Content = null;
+				_guiViewerTab.Content = null;
+				_guiGrid.Children.Add(_guiEditor);
+				_guiGrid.Children.Add(_guiViewer);
+			}
+
+			_guiTabControl.Visibility = Visibility.Hidden;
+			_guiColumnGridSplitter.Visibility = Visibility.Visible;
+			_guiRowGridSplitter.Visibility = Visibility.Hidden;
+
+			_guiEditor.SetValue(Grid.RowProperty, 0);
+			_guiEditor.SetValue(Grid.RowSpanProperty, 3);
+			_guiEditor.SetValue(Grid.ColumnProperty, 2);
+			_guiEditor.SetValue(Grid.ColumnSpanProperty, 1);
+
+			_guiViewer.SetValue(Grid.RowProperty, 0);
+			_guiViewer.SetValue(Grid.RowSpanProperty, 3);
+			_guiViewer.SetValue(Grid.ColumnProperty, 0);
+			_guiViewer.SetValue(Grid.ColumnSpanProperty, 1);
+
+			InternalSetViewingConfiguration(ViewingConfiguration.ConfigurationEditorRightViewerLeft);
+		}
+
+		private void EhCanSwitchToConfigurationEditorRightViewerLeft(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = ViewingConfiguration != ViewingConfiguration.ConfigurationEditorRightViewerLeft;
+			e.Handled = true;
+		}
+
+		private void EhSwitchToConfigurationEditorTopViewerBottom(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (ViewingConfiguration == ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
+			{
+				_guiEditorTab.Content = null;
+				_guiViewerTab.Content = null;
+				_guiGrid.Children.Add(_guiEditor);
+				_guiGrid.Children.Add(_guiViewer);
+			}
+
+			_guiTabControl.Visibility = Visibility.Hidden;
+			_guiColumnGridSplitter.Visibility = Visibility.Hidden;
+			_guiRowGridSplitter.Visibility = Visibility.Visible;
+
+			_guiEditor.SetValue(Grid.RowProperty, 0);
+			_guiEditor.SetValue(Grid.RowSpanProperty, 1);
+			_guiEditor.SetValue(Grid.ColumnProperty, 0);
+			_guiEditor.SetValue(Grid.ColumnSpanProperty, 3);
+
+			_guiViewer.SetValue(Grid.RowProperty, 2);
+			_guiViewer.SetValue(Grid.RowSpanProperty, 1);
+			_guiViewer.SetValue(Grid.ColumnProperty, 0);
+			_guiViewer.SetValue(Grid.ColumnSpanProperty, 3);
+
+			InternalSetViewingConfiguration(ViewingConfiguration.ConfigurationEditorTopViewerBottom);
+		}
+
+		private void EhCanSwitchToConfigurationEditorTopViewerBottom(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = ViewingConfiguration != ViewingConfiguration.ConfigurationEditorTopViewerBottom;
+			e.Handled = true;
+		}
+
+		private void EhSwitchToConfigurationEditorBottomViewerTop(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (ViewingConfiguration == ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
+			{
+				_guiEditorTab.Content = null;
+				_guiViewerTab.Content = null;
+				_guiGrid.Children.Add(_guiEditor);
+				_guiGrid.Children.Add(_guiViewer);
+			}
+
+			_guiTabControl.Visibility = Visibility.Hidden;
+			_guiColumnGridSplitter.Visibility = Visibility.Hidden;
+			_guiRowGridSplitter.Visibility = Visibility.Visible;
+
+			_guiEditor.SetValue(Grid.RowProperty, 2);
+			_guiEditor.SetValue(Grid.RowSpanProperty, 1);
+			_guiEditor.SetValue(Grid.ColumnProperty, 0);
+			_guiEditor.SetValue(Grid.ColumnSpanProperty, 3);
+
+			_guiViewer.SetValue(Grid.RowProperty, 0);
+			_guiViewer.SetValue(Grid.RowSpanProperty, 1);
+			_guiViewer.SetValue(Grid.ColumnProperty, 0);
+			_guiViewer.SetValue(Grid.ColumnSpanProperty, 3);
+
+			InternalSetViewingConfiguration(ViewingConfiguration.ConfigurationEditorBottomViewerTop);
+		}
+
+		private void EhCanSwitchToConfigurationEditorBottomViewerTop(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = ViewingConfiguration != ViewingConfiguration.ConfigurationEditorBottomViewerTop;
+			e.Handled = true;
+		}
+
+		private void EhSwitchToConfigurationTabbedEditorAndViewer(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (ViewingConfiguration != ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
+			{
+				_guiGrid.Children.Remove(_guiEditor);
+				_guiGrid.Children.Remove(_guiViewer);
+				_guiEditorTab.Content = _guiEditor;
+				_guiViewerTab.Content = _guiViewer;
+			}
+
+			_guiTabControl.Visibility = Visibility.Visible;
+			_guiColumnGridSplitter.Visibility = Visibility.Hidden;
+			_guiRowGridSplitter.Visibility = Visibility.Hidden;
+
+			InternalSetViewingConfiguration(ViewingConfiguration.ConfigurationTabbedEditorAndViewer);
+		}
+
+		private void EhCanSwitchToConfigurationTabbedEditorAndViewer(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = ViewingConfiguration != ViewingConfiguration.ConfigurationTabbedEditorAndViewer;
+			e.Handled = true;
+		}
 	}
 }
