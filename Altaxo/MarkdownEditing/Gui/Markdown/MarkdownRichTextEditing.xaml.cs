@@ -562,7 +562,10 @@ namespace Altaxo.Gui.Markdown
 		private static HashSet<Key> KeysNotTriggeringSwitchFromViewerToSourceEditor = new HashSet<Key>()
 		{
 			Key.Left, Key.Right, Key.Up, Key.Down,
-			Key.PageDown, Key.PageUp, Key.Home
+			Key.PageDown, Key.PageUp, Key.Home, Key.End,
+			Key.LeftCtrl, Key.RightCtrl, Key.LeftAlt, Key.RightAlt, Key.LWin, Key.RWin,
+			Key.LeftShift, Key.RightShift, Key.System, Key.Apps,
+			Key.CapsLock, Key.NumLock, Key.Scroll, Key.Pause, Key.Print
 		};
 
 		/// <summary>
