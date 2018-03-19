@@ -556,13 +556,6 @@ namespace Altaxo.Gui.Markdown
 			if (null != textPointer && isAccurate)
 			{
 				_guiViewer.Selection.Select(textPointer, textPointer);
-
-				if (_privatViewingConfiguration == ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
-				{
-					// when in tabbed mode, it is neccessary to delay the focussing on the rich text box
-					// because when doing it directly here (as it is alredy done above), the rich text box will not be focussed
-					Dispatcher.Invoke(() => { _guiViewer.Focus(); }, System.Windows.Threading.DispatcherPriority.Input);
-				}
 			}
 			else
 			{
@@ -700,15 +693,7 @@ namespace Altaxo.Gui.Markdown
 
 		private void EhSwitchToConfigurationEditorLeftViewerRight(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (ViewingConfiguration == ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
-			{
-				_guiEditorTab.Content = null;
-				_guiViewerTab.Content = null;
-				_guiGrid.Children.Add(_guiEditor);
-				_guiGrid.Children.Add(_guiViewer);
-			}
-
-			_guiTabControl.Visibility = Visibility.Hidden;
+			_guiTabControl.Visibility = Visibility.Collapsed;
 			_guiColumnGridSplitter.Visibility = Visibility.Visible;
 			_guiRowGridSplitter.Visibility = Visibility.Hidden;
 
@@ -733,15 +718,7 @@ namespace Altaxo.Gui.Markdown
 
 		private void EhSwitchToConfigurationEditorRightViewerLeft(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (ViewingConfiguration == ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
-			{
-				_guiEditorTab.Content = null;
-				_guiViewerTab.Content = null;
-				_guiGrid.Children.Add(_guiEditor);
-				_guiGrid.Children.Add(_guiViewer);
-			}
-
-			_guiTabControl.Visibility = Visibility.Hidden;
+			_guiTabControl.Visibility = Visibility.Collapsed;
 			_guiColumnGridSplitter.Visibility = Visibility.Visible;
 			_guiRowGridSplitter.Visibility = Visibility.Hidden;
 
@@ -766,15 +743,7 @@ namespace Altaxo.Gui.Markdown
 
 		private void EhSwitchToConfigurationEditorTopViewerBottom(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (ViewingConfiguration == ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
-			{
-				_guiEditorTab.Content = null;
-				_guiViewerTab.Content = null;
-				_guiGrid.Children.Add(_guiEditor);
-				_guiGrid.Children.Add(_guiViewer);
-			}
-
-			_guiTabControl.Visibility = Visibility.Hidden;
+			_guiTabControl.Visibility = Visibility.Collapsed;
 			_guiColumnGridSplitter.Visibility = Visibility.Hidden;
 			_guiRowGridSplitter.Visibility = Visibility.Visible;
 
@@ -799,15 +768,7 @@ namespace Altaxo.Gui.Markdown
 
 		private void EhSwitchToConfigurationEditorBottomViewerTop(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (ViewingConfiguration == ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
-			{
-				_guiEditorTab.Content = null;
-				_guiViewerTab.Content = null;
-				_guiGrid.Children.Add(_guiEditor);
-				_guiGrid.Children.Add(_guiViewer);
-			}
-
-			_guiTabControl.Visibility = Visibility.Hidden;
+			_guiTabControl.Visibility = Visibility.Collapsed;
 			_guiColumnGridSplitter.Visibility = Visibility.Hidden;
 			_guiRowGridSplitter.Visibility = Visibility.Visible;
 
@@ -832,17 +793,19 @@ namespace Altaxo.Gui.Markdown
 
 		private void EhSwitchToConfigurationTabbedEditorAndViewer(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (ViewingConfiguration != ViewingConfiguration.ConfigurationTabbedEditorAndViewer)
-			{
-				_guiGrid.Children.Remove(_guiEditor);
-				_guiGrid.Children.Remove(_guiViewer);
-				_guiEditorTab.Content = _guiEditor;
-				_guiViewerTab.Content = _guiViewer;
-			}
-
 			_guiTabControl.Visibility = Visibility.Visible;
 			_guiColumnGridSplitter.Visibility = Visibility.Hidden;
 			_guiRowGridSplitter.Visibility = Visibility.Hidden;
+
+			_guiEditor.SetValue(Grid.RowProperty, 0);
+			_guiEditor.SetValue(Grid.RowSpanProperty, 3);
+			_guiEditor.SetValue(Grid.ColumnProperty, 0);
+			_guiEditor.SetValue(Grid.ColumnSpanProperty, 3);
+
+			_guiViewer.SetValue(Grid.RowProperty, 0);
+			_guiViewer.SetValue(Grid.RowSpanProperty, 3);
+			_guiViewer.SetValue(Grid.ColumnProperty, 0);
+			_guiViewer.SetValue(Grid.ColumnSpanProperty, 3);
 
 			InternalSetViewingConfiguration(ViewingConfiguration.ConfigurationTabbedEditorAndViewer);
 		}
@@ -851,6 +814,20 @@ namespace Altaxo.Gui.Markdown
 		{
 			e.CanExecute = ViewingConfiguration != ViewingConfiguration.ConfigurationTabbedEditorAndViewer;
 			e.Handled = true;
+		}
+
+		private void EhTabSelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (_guiEditorTab.IsSelected)
+			{
+				_guiEditor.SetValue(Grid.ZIndexProperty, 101);
+				_guiViewer.SetValue(Grid.ZIndexProperty, 100);
+			}
+			else if (_guiViewerTab.IsSelected)
+			{
+				_guiEditor.SetValue(Grid.ZIndexProperty, 100);
+				_guiViewer.SetValue(Grid.ZIndexProperty, 101);
+			}
 		}
 	}
 }

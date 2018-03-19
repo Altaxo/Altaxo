@@ -14,9 +14,10 @@
 			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
+			<RowDefinition />
 			<RowDefinition Height="4" />
-			<RowDefinition Height="*" />
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
 		<FrameworkElement.CommandBindings>
@@ -33,12 +34,12 @@
 		<GridSplitter Name="_guiColumnGridSplitter" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="4" ResizeDirection="Columns" />
 		<GridSplitter Name="_guiRowGridSplitter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="4" ResizeDirection="Rows" Visibility="Hidden" />
 
-		<TabControl Name="_guiTabControl" TabStripPlacement="Bottom" Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="3" Visibility="Hidden">
+		<TabControl Name="_guiTabControl" TabStripPlacement="Bottom" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Visibility="Hidden" SelectionChanged="EhTabSelectionChanged">
 			<TabItem Name="_guiEditorTab" Header="Editor" />
 			<TabItem Name="_guiViewerTab" Header="Preview" />
 		</TabControl>
 
-		<avalonEdit:TextEditor Grid.Row="0" Grid.RowSpan="3" Grid.Column="0"
+		<avalonEdit:TextEditor Grid.Row="0" Grid.RowSpan="4" Grid.Column="0"
 			x:Name="_guiEditor"
 			xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
 			FontFamily="Consolas"
@@ -51,7 +52,7 @@
 			PreviewMouseWheel="EhSourceMouseWheel"
 			PreviewMouseDown="EhSourceMouseDown" />
 
-		<RichTextBox Grid.Row="0" Grid.RowSpan="3" Grid.Column="2"
+		<RichTextBox Grid.Row="0" Grid.RowSpan="4" Grid.Column="2"
 								 Name="_guiViewer"
 								 IsDocumentEnabled="True"
 								 IsReadOnly="True"
