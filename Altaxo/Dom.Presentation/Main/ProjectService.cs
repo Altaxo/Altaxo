@@ -290,40 +290,47 @@ namespace Altaxo.Main
 
 			foreach (var zipEntry in zipFile.Entries)
 			{
-				if (zipEntry.FullName.StartsWith("Workbench/Views/"))
+				try
 				{
-					using (var zipinpstream = zipEntry.Open())
+					if (zipEntry.FullName.StartsWith("Workbench/Views/"))
 					{
-						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("ViewContentModel", null);
-						restoredDocModels.Add((readedobject, zipEntry.FullName));
-						info.EndReading();
+						using (var zipinpstream = zipEntry.Open())
+						{
+							info.BeginReading(zipinpstream);
+							object readedobject = info.GetValue("ViewContentModel", null);
+							restoredDocModels.Add((readedobject, zipEntry.FullName));
+							info.EndReading();
+						}
+					}
+					else if (zipEntry.FullName.StartsWith("Workbench/Pads/"))
+					{
+						using (var zipinpstream = zipEntry.Open())
+						{
+							info.BeginReading(zipinpstream);
+							object readedobject = info.GetValue("Model", null);
+							if (readedobject != null)
+							{
+								restoredPadModels.Add(readedobject);
+							}
+							else
+							{
+							}
+							info.EndReading();
+						}
+					}
+					else if (zipEntry.FullName == "Workbench/ViewStates.xml")
+					{
+						using (var zipinpstream = zipEntry.Open())
+						{
+							info.BeginReading(zipinpstream);
+							selectedViewsMemento = info.GetValue("ViewStates", null) as Altaxo.Gui.Workbench.ViewStatesMemento;
+							info.EndReading();
+						}
 					}
 				}
-				else if (zipEntry.FullName.StartsWith("Workbench/Pads/"))
+				catch (Exception ex)
 				{
-					using (var zipinpstream = zipEntry.Open())
-					{
-						info.BeginReading(zipinpstream);
-						object readedobject = info.GetValue("Model", null);
-						if (readedobject != null)
-						{
-							restoredPadModels.Add(readedobject);
-						}
-						else
-						{
-						}
-						info.EndReading();
-					}
-				}
-				else if (zipEntry.FullName == "Workbench/ViewStates.xml")
-				{
-					using (var zipinpstream = zipEntry.Open())
-					{
-						info.BeginReading(zipinpstream);
-						selectedViewsMemento = info.GetValue("ViewStates", null) as Altaxo.Gui.Workbench.ViewStatesMemento;
-						info.EndReading();
-					}
+					Current.Console.WriteLine("Exception during serialization of {0}, message: {1}", zipEntry.FullName, ex.Message);
 				}
 			}
 
