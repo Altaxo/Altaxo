@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Text.GuiModels;
 
 namespace Altaxo.Gui.Text.Viewing
 {
@@ -46,6 +47,9 @@ namespace Altaxo.Gui.Text.Viewing
 		event EventHandler SourceTextChanged;
 
 		string StyleName { set; }
+		bool IsViewerSelected { get; set; }
+		ViewerConfiguration WindowConfiguration { get; set; }
+		double FractionOfEditorWindow { get; set; }
 	}
 
 	public interface ITextDocumentController
@@ -60,5 +64,11 @@ namespace Altaxo.Gui.Text.Viewing
 		/// <param name="fileName">Name of the file.</param>
 		/// <returns>True if the name could be accepted; false otherwise.</returns>
 		bool CanAcceptImageFileName(string fileName);
+
+		void EhIsViewerSelectedChanged(bool isViewerSelected);
+
+		void EhViewerConfigurationChanged(ViewerConfiguration windowConfiguration);
+
+		void EhFractionOfEditorWindowChanged(double fractionOfEditor);
 	}
 }

@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using Altaxo.Gui.Markdown;
+using Altaxo.Text.GuiModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +53,9 @@ namespace Altaxo.Gui.Text.Viewing
 		{
 			InitializeComponent();
 			_guiEditor.ImageProvider = _imageProvider;
+			_guiEditor.FractionOfEditorChanged += EhEditor_FractionOfEditorChanged;
+			_guiEditor.ViewingConfigurationChanged += EhEditor_ViewingConfigurationChanged;
+			_guiEditor.IsViewerSelectedChanged += EhEditor_IsViewerSelectedChanged;
 		}
 
 		public ITextDocumentController Controller
@@ -84,6 +89,57 @@ namespace Altaxo.Gui.Text.Viewing
 			{
 				_guiEditor.SourceTextChanged -= value;
 			}
+		}
+
+		public bool IsViewerSelected
+		{
+			get
+			{
+				return this._guiEditor.IsViewerSelected;
+			}
+			set
+			{
+				_guiEditor.IsViewerSelected = value;
+			}
+		}
+
+		private void EhEditor_IsViewerSelectedChanged(object sender, EventArgs e)
+		{
+			_controller?.EhIsViewerSelectedChanged(_guiEditor.IsViewerSelected);
+		}
+
+		public ViewerConfiguration WindowConfiguration
+		{
+			get
+			{
+				return (ViewerConfiguration)_guiEditor.ViewingConfiguration;
+			}
+			set
+			{
+				_guiEditor.ViewingConfiguration = (Markdown.ViewingConfiguration)value;
+			}
+		}
+
+		private void EhEditor_ViewingConfigurationChanged(object arg1, ViewingConfiguration arg2)
+		{
+			_controller?.EhViewerConfigurationChanged(this.WindowConfiguration);
+		}
+
+		public double FractionOfEditorWindow
+		{
+			get
+			{
+				return _guiEditor.FractionOfEditorWindow;
+			}
+			set
+			{
+				_guiEditor.FractionOfEditorWindow = value;
+			}
+		}
+
+		private void EhEditor_FractionOfEditorChanged(object sender, EventArgs e)
+		{
+			_controller?.EhFractionOfEditorWindowChanged(this.FractionOfEditorWindow);
 		}
 
 		private void EhPreviewKeyDown(object sender, KeyEventArgs e)

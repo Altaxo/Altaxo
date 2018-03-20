@@ -26,6 +26,7 @@ using Altaxo.Graph;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
 using Altaxo.Text;
+using Altaxo.Text.GuiModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,9 +40,17 @@ namespace Altaxo.Gui.Text.Viewing
 	[ExpectedTypeOfView(typeof(ITextDocumentView))]
 	public class TextDocumentController : AbstractViewContent, IDisposable, IMVCANController, ITextDocumentController
 	{
-		public ITextDocumentView _view;
+		protected ITextDocumentView _view;
 
 		protected TextDocument _doc;
+
+		public ViewerConfiguration WindowConfiguration { get; protected set; }
+		public bool IsViewerSelected { get; protected set; }
+
+		/// <summary>
+		/// The fraction of the width (when shown in left-right configuration) or height (when shown in top-bottom configuration) of the source editor window in relation to the available width/height.
+		/// </summary>
+		public double FractionOfSourceEditorWindowVisible { get; set; } = 0.5;
 
 		public TextDocument Doc { get { return _doc; } }
 
@@ -64,6 +73,10 @@ namespace Altaxo.Gui.Text.Viewing
 			}
 			else if (args[0] is Altaxo.Text.GuiModels.TextDocumentViewOptions notesViewOptions)
 			{
+				this.WindowConfiguration = notesViewOptions.WindowConfiguration;
+				this.IsViewerSelected = notesViewOptions.IsViewerSelected;
+				this.FractionOfSourceEditorWindowVisible = notesViewOptions.FractionOfSourceEditorWindowVisible;
+
 				if (this._doc == null)
 				{
 					InternalInitializeDocument(notesViewOptions.Document);
@@ -122,6 +135,10 @@ namespace Altaxo.Gui.Text.Viewing
 			{
 				_view.SetDocumentNameAndLocalImages(_doc.Name, _doc.Images);
 				_view.SourceText = _doc.SourceText;
+
+				_view.IsViewerSelected = this.IsViewerSelected;
+				_view.WindowConfiguration = this.WindowConfiguration;
+				_view.FractionOfEditorWindow = this.FractionOfSourceEditorWindowVisible;
 			}
 		}
 
@@ -187,6 +204,21 @@ namespace Altaxo.Gui.Text.Viewing
 			}
 		}
 
+		public void EhIsViewerSelectedChanged(bool isViewerSelected)
+		{
+			this.IsViewerSelected = isViewerSelected;
+		}
+
+		public void EhViewerConfigurationChanged(ViewerConfiguration windowConfiguration)
+		{
+			this.WindowConfiguration = windowConfiguration;
+		}
+
+		public void EhFractionOfEditorWindowChanged(double fractionOfEditor)
+		{
+			this.FractionOfSourceEditorWindowVisible = fractionOfEditor;
+		}
+
 		public override object ViewObject
 		{
 			get
@@ -214,7 +246,12 @@ namespace Altaxo.Gui.Text.Viewing
 		{
 			get
 			{
-				return new Altaxo.Text.GuiModels.TextDocumentViewOptions(_doc);
+				return new Altaxo.Text.GuiModels.TextDocumentViewOptions(_doc)
+				{
+					IsViewerSelected = this.IsViewerSelected,
+					FractionOfSourceEditorWindowVisible = this.FractionOfSourceEditorWindowVisible,
+					WindowConfiguration = this.WindowConfiguration
+				};
 			}
 		}
 	}

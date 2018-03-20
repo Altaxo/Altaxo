@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Markdown
 		private string _styleName;
 		private IStyles _currentStyle = DynamicStyles.Instance;
 
-		public ICSharpCode.AvalonEdit.TextEditor SourceEditor { get { return _guiEditor; } }
+		public ICSharpCode.AvalonEdit.TextEditor Editor { get { return _guiEditor; } }
 		public RichTextBox Viewer { get { return _guiViewer; } }
 
 		public string SourceText
@@ -113,8 +113,8 @@ namespace Altaxo.Gui.Markdown
 		{
 			InitializeComponent();
 			Loaded += EhLoaded;
-			_guiEditor.TextArea.TextView.ScrollOffsetChanged += EhSourceEditor_ScrollOffsetChanged;
-			_guiEditor.TextArea.Caret.PositionChanged += EhSourceEditor_CaretPositionChanged;
+			_guiEditor.TextArea.TextView.ScrollOffsetChanged += EhEditor_ScrollOffsetChanged;
+			_guiEditor.TextArea.Caret.PositionChanged += EhEditor_CaretPositionChanged;
 		}
 
 		private void EhLoaded(object sender, RoutedEventArgs e)
@@ -132,7 +132,7 @@ namespace Altaxo.Gui.Markdown
 		private Markdig.Syntax.MarkdownDocument _lastMarkdownDocumentProcessed = null;
 		private System.Threading.CancellationTokenSource _lastCancellationTokenSource = null;
 
-		private void EhSourceTextChanged(object sender, EventArgs e)
+		private void EhEditor_TextChanged(object sender, EventArgs e)
 		{
 			RenderDocument(false);
 		}
@@ -207,7 +207,7 @@ namespace Altaxo.Gui.Markdown
 		private enum LastScrollActivatedWindow
 		{
 			/// <summary>The user has scolled the source editor window. </summary>
-			SourceEditor,
+			Editor,
 
 			/// <summary>The user has scrolled the preview window.</summary>
 			Viewer,
@@ -219,32 +219,36 @@ namespace Altaxo.Gui.Markdown
 		/// </summary>
 		private LastScrollActivatedWindow _lastScrollActivatedWindow;
 
-		private void EhSourceGotFocus(object sender, RoutedEventArgs e)
+		private void EhEditor_GotFocus(object sender, RoutedEventArgs e)
 		{
-			_lastScrollActivatedWindow = LastScrollActivatedWindow.SourceEditor;
+			_lastScrollActivatedWindow = LastScrollActivatedWindow.Editor;
+			_isViewerSelected = false;
+			IsViewerSelectedChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		private void EhSourceMouseWheel(object sender, MouseWheelEventArgs e)
+		private void EhEditor_MouseWheel(object sender, MouseWheelEventArgs e)
 		{
-			_lastScrollActivatedWindow = LastScrollActivatedWindow.SourceEditor;
+			_lastScrollActivatedWindow = LastScrollActivatedWindow.Editor;
 		}
 
-		private void EhSourceMouseDown(object sender, MouseButtonEventArgs e)
+		private void EhEditor_MouseDown(object sender, MouseButtonEventArgs e)
 		{
-			_lastScrollActivatedWindow = LastScrollActivatedWindow.SourceEditor;
+			_lastScrollActivatedWindow = LastScrollActivatedWindow.Editor;
 		}
 
-		private void EhViewerGotFocus(object sender, RoutedEventArgs e)
+		private void EhViewer_GotFocus(object sender, RoutedEventArgs e)
+		{
+			_lastScrollActivatedWindow = LastScrollActivatedWindow.Viewer;
+			_isViewerSelected = true;
+			IsViewerSelectedChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		private void EhViewer_MouseWheel(object sender, MouseWheelEventArgs e)
 		{
 			_lastScrollActivatedWindow = LastScrollActivatedWindow.Viewer;
 		}
 
-		private void EhViewerMouseWheel(object sender, MouseWheelEventArgs e)
-		{
-			_lastScrollActivatedWindow = LastScrollActivatedWindow.Viewer;
-		}
-
-		private void EhViewerMouseDown(object sender, MouseButtonEventArgs e)
+		private void EhViewer_MouseDown(object sender, MouseButtonEventArgs e)
 		{
 			_lastScrollActivatedWindow = LastScrollActivatedWindow.Viewer;
 		}
@@ -253,13 +257,13 @@ namespace Altaxo.Gui.Markdown
 
 		#region Scroll handler (for source and viewer)
 
-		private void EhSourceEditor_ScrollOffsetChanged(object sender, EventArgs e)
+		private void EhEditor_ScrollOffsetChanged(object sender, EventArgs e)
 		{
 			System.Diagnostics.Debug.WriteLine("SourceScrollChanged, lastActivated={0}", _lastScrollActivatedWindow);
 
 			ICSharpCode.AvalonEdit.TextViewPosition? textPosition = null;
 
-			if (_lastScrollActivatedWindow == LastScrollActivatedWindow.SourceEditor)
+			if (_lastScrollActivatedWindow == LastScrollActivatedWindow.Editor)
 			{
 				// find out which of the windows has the caret
 
@@ -322,10 +326,6 @@ namespace Altaxo.Gui.Markdown
 		#endregion Scroll handler (for source and viewer)
 
 		#region Synchronization Source editor <---> Viewer
-
-		private void EhSyncViewersTextPositionToSourceEditor(object sender, RoutedEventArgs e)
-		{
-		}
 
 		/// <summary>
 		/// Adjusts the vertical scroll offset of the source editor in that way, that the source text that corresponds
@@ -419,7 +419,7 @@ namespace Altaxo.Gui.Markdown
 
 		#region Caret handling / synchronization
 
-		private void EhViewerSelectionChanged(object sender, RoutedEventArgs e)
+		private void EhViewer_SelectionChanged(object sender, RoutedEventArgs e)
 		{
 			if (_guiViewer.IsSelectionActive)
 			{
@@ -465,7 +465,7 @@ namespace Altaxo.Gui.Markdown
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-		private void EhSourceEditor_CaretPositionChanged(object sender, EventArgs e)
+		private void EhEditor_CaretPositionChanged(object sender, EventArgs e)
 		{
 			var sourceTextPosition = _guiEditor.TextArea.Caret.Position;
 			SyncSourceEditorTextPositionToViewer(sourceTextPosition);
@@ -586,7 +586,7 @@ namespace Altaxo.Gui.Markdown
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
-		private void EhViewerPreviewKeyDown(object sender, KeyEventArgs e)
+		private void EhViewer_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
 			if (KeysNotTriggeringSwitchFromViewerToSourceEditor.Contains(e.Key))
 				return;
@@ -642,7 +642,148 @@ namespace Altaxo.Gui.Markdown
 
 		#endregion Manipulate text, from outside of this control
 
+		#region IsViewerSelected
+
+		private bool _isViewerSelected;
+
+		public event EventHandler IsViewerSelectedChanged;
+
+		public bool IsViewerSelected
+		{
+			get
+			{
+				return _isViewerSelected;
+			}
+			set
+			{
+				if (!(_isViewerSelected == value))
+				{
+					if (value)
+						this._guiViewer.Focus();
+					else
+						this._guiEditor.Focus();
+				}
+			}
+		}
+
+		#endregion IsViewerSelected
+
+		#region FractionOfEditor
+
+		public event EventHandler FractionOfEditorChanged;
+
+		public double FractionOfEditorWindow
+		{
+			get
+			{
+				return _privateFractionOfEditor;
+			}
+			set
+			{
+				if (!(_privateFractionOfEditor == value))
+				{
+					_privateFractionOfEditor = value;
+
+					SetFractionOfEditor(value);
+				}
+			}
+		}
+
+		private void EhEditorOrGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			var f = GetFractionOfEditor();
+			if (f.HasValue)
+			{
+				_privateFractionOfEditor = f.Value;
+				FractionOfEditorChanged?.Invoke(this, EventArgs.Empty);
+			}
+		}
+
+		private void SetFractionOfEditor(double fraction)
+		{
+			switch (_privatViewingConfiguration)
+			{
+				case ViewingConfiguration.ConfigurationEditorLeftViewerRight:
+					{
+						double w = Math.Max(1, _guiGrid.ActualWidth - _guiColumnGridSplitter.ActualWidth);
+						_guiGrid.ColumnDefinitions[0].Width = new GridLength(fraction * w, GridUnitType.Star);
+						_guiGrid.ColumnDefinitions[2].Width = new GridLength(1 - fraction * w, GridUnitType.Star);
+					}
+					break;
+
+				case ViewingConfiguration.ConfigurationEditorTopViewerBottom:
+					{
+						double h = Math.Max(1, _guiGrid.ActualHeight - _guiRowGridSplitter.ActualHeight);
+						_guiGrid.RowDefinitions[0].Height = new GridLength(fraction * h, GridUnitType.Star);
+						_guiGrid.RowDefinitions[2].Height = new GridLength(1 - fraction * h, GridUnitType.Star);
+					}
+					break;
+
+				case ViewingConfiguration.ConfigurationEditorRightViewerLeft:
+					{
+						double w = Math.Max(1, _guiGrid.ActualWidth - _guiColumnGridSplitter.ActualWidth);
+						_guiGrid.ColumnDefinitions[2].Width = new GridLength(fraction * w, GridUnitType.Star);
+						_guiGrid.ColumnDefinitions[0].Width = new GridLength(1 - fraction * w, GridUnitType.Star);
+					}
+					break;
+
+				case ViewingConfiguration.ConfigurationEditorBottomViewerTop:
+					{
+						double h = Math.Max(1, _guiGrid.ActualHeight - _guiRowGridSplitter.ActualHeight);
+						_guiGrid.RowDefinitions[2].Height = new GridLength(fraction * h, GridUnitType.Star);
+						_guiGrid.RowDefinitions[0].Height = new GridLength(1 - fraction * h, GridUnitType.Star);
+					}
+					break;
+
+				case ViewingConfiguration.ConfigurationTabbedEditorAndViewer:
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		private double? GetFractionOfEditor()
+		{
+			double? result = null;
+
+			switch (_privatViewingConfiguration)
+			{
+				case ViewingConfiguration.ConfigurationEditorLeftViewerRight:
+				case ViewingConfiguration.ConfigurationEditorRightViewerLeft:
+					{
+						double w = _guiGrid.ActualWidth - _guiColumnGridSplitter.ActualWidth;
+						double v = _guiEditor.ActualWidth;
+						if (w > 0 && v > 0 && v < w)
+							result = v / w;
+					}
+					break;
+
+				case ViewingConfiguration.ConfigurationEditorTopViewerBottom:
+				case ViewingConfiguration.ConfigurationEditorBottomViewerTop:
+					{
+						double h = _guiGrid.ActualHeight - _guiRowGridSplitter.ActualHeight;
+						double v = _guiEditor.ActualHeight;
+						if (h > 0 && v > 0 && v < h)
+							result = v / h;
+					}
+					break;
+
+				case ViewingConfiguration.ConfigurationTabbedEditorAndViewer:
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+			return result;
+		}
+
+		#endregion FractionOfEditor
+
+		#region ViewingConfiguration
+
 		private ViewingConfiguration _privatViewingConfiguration = ViewingConfiguration.ConfigurationEditorLeftViewerRight;
+		private double _privateFractionOfEditor;
 
 		public event Action<object, ViewingConfiguration> ViewingConfigurationChanged;
 
@@ -655,7 +796,7 @@ namespace Altaxo.Gui.Markdown
 			}
 		}
 
-		private ViewingConfiguration ViewingConfiguration
+		public ViewingConfiguration ViewingConfiguration
 		{
 			get { return _privatViewingConfiguration; }
 			set
@@ -816,7 +957,7 @@ namespace Altaxo.Gui.Markdown
 			e.Handled = true;
 		}
 
-		private void EhTabSelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void EhTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (_guiEditorTab.IsSelected)
 			{
@@ -829,5 +970,7 @@ namespace Altaxo.Gui.Markdown
 				_guiViewer.SetValue(Grid.ZIndexProperty, 101);
 			}
 		}
+
+		#endregion ViewingConfiguration
 	}
 }

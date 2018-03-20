@@ -7,7 +7,7 @@
 						 xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-	<Grid Name="_guiGrid">
+	<Grid Name="_guiGrid" SizeChanged="EhEditorOrGrid_SizeChanged">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
 			<ColumnDefinition Width="Auto" />
@@ -34,7 +34,7 @@
 		<GridSplitter Name="_guiColumnGridSplitter" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="4" ResizeDirection="Columns" />
 		<GridSplitter Name="_guiRowGridSplitter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="4" ResizeDirection="Rows" Visibility="Hidden" />
 
-		<TabControl Name="_guiTabControl" TabStripPlacement="Bottom" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Visibility="Hidden" SelectionChanged="EhTabSelectionChanged">
+		<TabControl Name="_guiTabControl" TabStripPlacement="Bottom" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Visibility="Hidden" SelectionChanged="EhTabControl_SelectionChanged">
 			<TabItem Name="_guiEditorTab" Header="Editor" />
 			<TabItem Name="_guiViewerTab" Header="Preview" />
 		</TabControl>
@@ -47,10 +47,11 @@
 			ShowLineNumbers="True"
  		  WordWrap="True"
 			FontSize="12pt"
-			TextChanged="EhSourceTextChanged"
-			GotFocus="EhSourceGotFocus"
-			PreviewMouseWheel="EhSourceMouseWheel"
-			PreviewMouseDown="EhSourceMouseDown" />
+			TextChanged="EhEditor_TextChanged"
+			GotFocus="EhEditor_GotFocus"
+			PreviewMouseWheel="EhEditor_MouseWheel"
+			PreviewMouseDown="EhEditor_MouseDown"
+													 SizeChanged="EhEditorOrGrid_SizeChanged" />
 
 		<RichTextBox Grid.Row="0" Grid.RowSpan="4" Grid.Column="2"
 								 Name="_guiViewer"
@@ -59,11 +60,11 @@
 								 IsReadOnlyCaretVisible="True"
 								 VerticalScrollBarVisibility="Visible"
 								 ScrollViewer.ScrollChanged="EhViewer_ScrollOffsetChanged"
-								 GotFocus="EhViewerGotFocus"
-								 PreviewMouseWheel="EhViewerMouseWheel"
-								 PreviewMouseDown="EhViewerMouseDown"
-								 PreviewKeyDown="EhViewerPreviewKeyDown"
-								 SelectionChanged="EhViewerSelectionChanged"
+								 GotFocus="EhViewer_GotFocus"
+								 PreviewMouseWheel="EhViewer_MouseWheel"
+								 PreviewMouseDown="EhViewer_MouseDown"
+								 PreviewKeyDown="EhViewer_PreviewKeyDown"
+								 SelectionChanged="EhViewer_SelectionChanged"
 
 								 IsUndoEnabled="False">
 			<!-- Note: It is of utmost importance that Undo is disabled for this RichTextBox,

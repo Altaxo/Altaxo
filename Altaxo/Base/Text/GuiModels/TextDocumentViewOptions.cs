@@ -34,8 +34,8 @@ namespace Altaxo.Text.GuiModels
 	public class TextDocumentViewOptions : IProjectItemPresentationModel
 	{
 		public TextDocument Document { get; protected set; }
-		public ViewerConfiguration WindowConfiguration { get; protected set; }
-		public bool IsViewerSelected { get; protected set; }
+		public ViewerConfiguration WindowConfiguration { get; set; }
+		public bool IsViewerSelected { get; set; }
 
 		/// <summary>
 		/// The fraction of the width (when shown in left-right configuration) or height (when shown in top-bottom configuration) of the source editor window in relation to the available width/height.
@@ -101,6 +101,26 @@ namespace Altaxo.Text.GuiModels
 			Document = doc ?? throw new ArgumentNullException(nameof(doc));
 		}
 
+		/// <summary>
+		/// The fraction of the width (when shown in left-right configuration) or height (when shown in top-bottom configuration) of the source editor window in relation to the available width/height.
+		/// </summary>
+		public double FractionOfSourceEditorWindowVisible
+		{
+			get
+			{
+				return _fractionOfSourceEditorWindowVisible;
+			}
+			set
+			{
+				if (!(value >= 0 && value <= 1))
+					throw new ArgumentOutOfRangeException(nameof(value), "Must be >=0 and <=1");
+				if (!(_fractionOfSourceEditorWindowVisible == value))
+				{
+					_fractionOfSourceEditorWindowVisible = value;
+				}
+			}
+		}
+
 		IProjectItem IProjectItemPresentationModel.Document => Document;
 	}
 
@@ -112,11 +132,11 @@ namespace Altaxo.Text.GuiModels
 		/// <summary>The editor window is left, the viewer window is right.</summary>
 		EditorLeftViewerRight = 0,
 
-		/// <summary>The editor window is right, the viewer window is left.</summary>
-		EditorRightViewerLeft = 1,
-
 		/// <summary>The editor window is top, the viewer window is bottom.</summary>
-		EditorTopViewerBottom = 2,
+		EditorTopViewerBottom = 1,
+
+		/// <summary>The editor window is right, the viewer window is left.</summary>
+		EditorRightViewerLeft = 2,
 
 		/// <summary>The editor window is bottom, the viewer window is top.</summary>
 		EditorBottomViewerTop = 3,
