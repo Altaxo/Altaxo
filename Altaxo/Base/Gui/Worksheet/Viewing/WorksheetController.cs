@@ -55,6 +55,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
 		public WorksheetController(Altaxo.Data.DataTable table)
 			: this(new Altaxo.Worksheet.WorksheetLayout(table ?? throw new ArgumentNullException(nameof(table))))
 		{
+			// we have created a new WorksheetLayout in the constructor above
+			// it is still not part of Altaxo, so we need to register it
+			Current.Project.TableLayouts.Add(this.WorksheetLayout);
 		}
 
 		public WorksheetController(WorksheetViewLayout viewLayout)
