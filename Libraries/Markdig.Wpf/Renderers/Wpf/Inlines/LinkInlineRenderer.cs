@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
+// Copyright (c) 2016-2017 Nicolas Musset, 2018 Dr. Dirk Lellinger. All rights reserved.
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
@@ -100,6 +100,17 @@ namespace Markdig.Renderers.Wpf.Inlines
                                 double scale = height.Value / image.Source.Height;
                                 image.LayoutTransform = new System.Windows.Media.ScaleTransform(scale, scale);
                             }
+                        }
+                        else // neither width nor height provided
+                        {
+                            // it seems like a bug (or a feature?) in Wpf that to determine the size of the image,
+                            // _not_ the width and height property of the image source is used.
+                            // Instead it seems here that the PixelWidth and the PixelHeight is used and interpreted
+                            // as 1/96th inch.
+                            // We correct for that by assigning the image the width and height of the imageSource
+                            image.Width = image.Source.Width;
+                            image.Height = image.Source.Height;
+                            image.Stretch = System.Windows.Media.Stretch.Uniform;
                         }
                     }
 

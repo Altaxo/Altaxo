@@ -137,9 +137,9 @@ namespace Altaxo.Gui.Markdown
 			RenderDocument(false);
 		}
 
-		public void PrintShowDialog()
+		public void PrintShowDialog(string documentName)
 		{
-			Printing.PrintShowDialog(_guiViewer.Document, "FlowDocument");
+			Printing.PrintShowDialog(_guiViewer.Document, documentName);
 		}
 
 		private void EhRefreshViewer(object sender, ExecutedRoutedEventArgs e)

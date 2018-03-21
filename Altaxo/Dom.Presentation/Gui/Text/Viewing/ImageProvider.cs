@@ -40,6 +40,27 @@ namespace Altaxo.Gui.Text.Viewing
 		private const string resourceImagePretext = "res:";
 		private const string localImagePretext = "local:";
 
+		public const double DefaultTargetResolution = 96;
+		private double _targetResolution = DefaultTargetResolution;
+
+		public double TargetResolution
+		{
+			get
+			{
+				return _targetResolution;
+			}
+			set
+			{
+				if (!(value > 0))
+					throw new ArgumentException(nameof(value), "TargetResolution must be >0");
+
+				if (!(_targetResolution == value))
+				{
+					_targetResolution = value;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Location from where the images delivered by this image provider are referenced when using relative paths.
 		/// </summary>
@@ -70,8 +91,8 @@ namespace Altaxo.Gui.Text.Viewing
 				{
 					var options = new Altaxo.Graph.Gdi.GraphExportOptions()
 					{
-						SourceDpiResolution = 96,
-						DestinationDpiResolution = 96,
+						SourceDpiResolution = _targetResolution,
+						DestinationDpiResolution = _targetResolution,
 					};
 
 					using (var stream = new System.IO.MemoryStream())
@@ -79,7 +100,7 @@ namespace Altaxo.Gui.Text.Viewing
 						Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderToStream(graph, stream, options);
 						stream.Seek(0, System.IO.SeekOrigin.Begin);
 
-						// Please note that it it is possible here to use a BitmapFrame only if IsUndoEnabled is set to false
+						// Please note that it is possible here to use a BitmapFrame only if IsUndoEnabled is set to false
 						// in the RichTextBox which hosts the FlowDocument
 						// The reason is that when a text block containing the BitmapFrame is deleted, the flow document try
 						// to serialize the block (for Undo storage), but this fails for the BitmapFrame
@@ -111,8 +132,8 @@ namespace Altaxo.Gui.Text.Viewing
 				{
 					var options = new Altaxo.Graph.Gdi.GraphExportOptions()
 					{
-						SourceDpiResolution = 96,
-						DestinationDpiResolution = 96,
+						SourceDpiResolution = _targetResolution,
+						DestinationDpiResolution = _targetResolution,
 					};
 
 					using (var stream = new System.IO.MemoryStream())

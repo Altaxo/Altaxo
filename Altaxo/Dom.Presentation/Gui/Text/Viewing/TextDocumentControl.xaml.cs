@@ -48,6 +48,7 @@ namespace Altaxo.Gui.Text.Viewing
 	{
 		private ImageProvider _imageProvider = new ImageProvider("", null);
 		private ITextDocumentController _controller;
+		private string _documentName;
 
 		public TextDocumentControl()
 		{
@@ -69,7 +70,8 @@ namespace Altaxo.Gui.Text.Viewing
 		/// <inheritdoc/>
 		public void SetDocumentNameAndLocalImages(string documentName, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages)
 		{
-			var folder = Altaxo.Main.ProjectFolder.GetFolderPart(documentName);
+			_documentName = documentName;
+			var folder = Altaxo.Main.ProjectFolder.GetFolderPart(_documentName);
 			if (_imageProvider.AltaxoFolderLocation != folder || _imageProvider.LocalImages != localImages)
 			{
 				_guiEditor.ImageProvider = _imageProvider = new ImageProvider(folder, localImages);
@@ -139,7 +141,13 @@ namespace Altaxo.Gui.Text.Viewing
 
 		public void PrintShowDialog()
 		{
-			_guiEditor.PrintShowDialog();
+			_imageProvider.TargetResolution = 600;
+			Altaxo.Gui.Markdown.Commands.RefreshViewer.Execute(null, null);
+
+			_guiEditor.PrintShowDialog("Altaxo-" + _documentName);
+
+			_imageProvider.TargetResolution = ImageProvider.DefaultTargetResolution;
+			Altaxo.Gui.Markdown.Commands.RefreshViewer.Execute(null, null);
 		}
 
 		private void EhEditor_FractionOfEditorChanged(object sender, EventArgs e)
