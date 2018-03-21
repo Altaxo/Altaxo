@@ -70,10 +70,18 @@ namespace Altaxo.Gui
 
 		public override IntPtr MainWindowHandle
 		{
-			get { return ((System.Windows.Forms.IWin32Window)Current.Workbench.ViewObject).Handle; }
+			get
+			{
+				var visual = (System.Windows.Media.Visual)Current.Workbench.ViewObject;
+				var wnd = System.Windows.PresentationSource.FromVisual(visual) as System.Windows.Interop.IWin32Window;
+				if (wnd != null)
+					return wnd.Handle;
+				else
+					return IntPtr.Zero;
+			}
 		}
 
-		public override object MainWindowObject => ((System.Windows.Forms.IWin32Window)Current.Workbench.ViewObject);
+		public override object MainWindowObject => Current.Workbench.ViewObject;
 
 		public override RectangleD2D GetScreenInformation(double virtual_x, double virtual_y)
 		{
