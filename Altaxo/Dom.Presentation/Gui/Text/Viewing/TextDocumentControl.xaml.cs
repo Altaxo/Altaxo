@@ -137,6 +137,11 @@ namespace Altaxo.Gui.Text.Viewing
 			}
 		}
 
+		public void PrintShowDialog()
+		{
+			_guiEditor.PrintShowDialog();
+		}
+
 		private void EhEditor_FractionOfEditorChanged(object sender, EventArgs e)
 		{
 			_controller?.EhFractionOfEditorWindowChanged(this.FractionOfEditorWindow);

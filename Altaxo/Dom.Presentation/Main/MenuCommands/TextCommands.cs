@@ -70,6 +70,14 @@ namespace Altaxo.Main.MenuCommands.Text
 		public abstract void Run(Altaxo.Gui.Text.Viewing.TextDocumentController ctrl);
 	}
 
+	public class Print : AbstractTextControllerCommand
+	{
+		public override void Run(TextDocumentController ctrl)
+		{
+			ctrl.PrintShowDialog();
+		}
+	}
+
 	public class SwitchToConfigurationEditorLeftViewerRight : AbstractTextControllerCommand
 	{
 		public override bool CanExecute(object parameter)

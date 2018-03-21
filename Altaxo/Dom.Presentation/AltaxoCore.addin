@@ -86,7 +86,7 @@
 						 class="Altaxo.Main.Services.TimerQueue" />
 		<Service id="Altaxo.Main.IComManager"
 						 class="Altaxo.Com.AltaxoComManager" />
-		<Service id="Altaxo.Main.PrintingService"
+		<Service id="Altaxo.Main.IPrintingService"
 						 class="Altaxo.Main.PrintingService" />
 		<Service id="Altaxo.Main.Services.IFitFunctionService"
 						 class="Altaxo.Main.Services.FitFunctionService" />
@@ -227,6 +227,10 @@
 					description="${res:XML.MainMenu.FileMenu.PrintOptionsSetup.Description}" class="Altaxo.Graph.Commands.PrintOptionsSetup" />
 				<MenuItem id="GraphPrint" label="${res:XML.MainMenu.FileMenu.Print}" icon="Icons.16x16.Printer"
 					description="${res:XML.MainMenu.FileMenu.Print.Description}" class="Altaxo.Graph.Commands.Print" />
+			</Condition>
+			<Condition name = "WindowActive" activewindow="Altaxo.Gui.Text.Viewing.TextDocumentController" action="Exclude">
+				<MenuItem id="TextPrint" label="${res:XML.MainMenu.FileMenu.Print}" icon="Icons.16x16.Printer"
+					description="${res:XML.MainMenu.FileMenu.Print.Description}" class="Altaxo.Main.MenuCommands.Text.Print" />
 			</Condition>
 			<MenuItem id="ImportExportSeparator" type = "Separator" />
 			<MenuItem id="Import" label="${res:XML.MainMenu.FileMenu.Import}" type="Menu">
@@ -767,9 +771,13 @@
 			class="Altaxo.Main.Commands.CreateNewStandardWorksheet" />
 		<ToolbarItem id="EmptyWorksheet" icon="Icons.16x16.EmptyWorksheet" tooltip="${res:XML.MainMenu.FileMenu.New.Worksheet.Description}"
 			class="Altaxo.Main.Commands.CreateNewWorksheet" />
-		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Gdi.Viewing.GraphController" action="Disable">
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Gdi.Viewing.GraphController" action="Exclude">
 			<ToolbarItem id="GraphPrint" icon="Icons.16x16.Printer" tooltip="${res:XML.MainMenu.FileMenu.Print.Description}"
 				class="Altaxo.Graph.Commands.Print" />
+		</Condition>
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Text.Viewing.TextDocumentController" action="Exclude">
+			<ToolbarItem id="TextPrint" icon="Icons.16x16.Printer"
+				description="${res:XML.MainMenu.FileMenu.Print.Description}" class="Altaxo.Main.MenuCommands.Text.Print" />
 		</Condition>
 		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Disable">
 			<ToolbarItem id="ImportAscii" icon="Icons.16x16.ImportAscii" tooltip="${res:XML.MainMenu.FileMenu.Import.Ascii.Description}"

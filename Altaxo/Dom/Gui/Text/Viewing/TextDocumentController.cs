@@ -93,6 +93,11 @@ namespace Altaxo.Gui.Text.Viewing
 			return true;
 		}
 
+		public void PrintShowDialog()
+		{
+			_view?.PrintShowDialog();
+		}
+
 		public UseDocument UseDocumentCopy
 		{
 			set { }

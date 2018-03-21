@@ -50,6 +50,8 @@ namespace Altaxo.Gui.Text.Viewing
 		bool IsViewerSelected { get; set; }
 		ViewerConfiguration WindowConfiguration { get; set; }
 		double FractionOfEditorWindow { get; set; }
+
+		void PrintShowDialog();
 	}
 
 	public interface ITextDocumentController

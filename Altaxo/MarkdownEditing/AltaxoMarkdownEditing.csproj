@@ -31,8 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ReachFramework" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Printing" />
     <Reference Include="System.ValueTuple, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libraries\AssembliesOnly\System.ValueTuple.dll</HintPath>
@@ -64,6 +66,7 @@
       <DependentUpon>MarkdownSimpleEditing.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Markdown\PositionHelper.cs" />
+    <Compile Include="Gui\Markdown\Printing.cs" />
     <Compile Include="Gui\Markdown\ViewingConfiguration.cs" />
     <Compile Include="Gui\Tests\TestControl1.xaml.cs">
       <DependentUpon>TestControl1.xaml</DependentUpon>

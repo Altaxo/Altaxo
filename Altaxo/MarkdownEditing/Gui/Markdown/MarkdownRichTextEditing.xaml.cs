@@ -137,6 +137,11 @@ namespace Altaxo.Gui.Markdown
 			RenderDocument(false);
 		}
 
+		public void PrintShowDialog()
+		{
+			Printing.PrintShowDialog(_guiViewer.Document, "FlowDocument");
+		}
+
 		private void EhRefreshViewer(object sender, ExecutedRoutedEventArgs e)
 		{
 			ImageProvider.ClearCache();
