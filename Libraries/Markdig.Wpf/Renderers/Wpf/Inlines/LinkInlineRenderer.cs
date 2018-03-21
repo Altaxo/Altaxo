@@ -119,19 +119,29 @@ namespace Markdig.Renderers.Wpf.Inlines
             }
             else
             {
-                if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+                Hyperlink hyperlink = null;
+                if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
                 {
-                    url = "#";
+                    hyperlink = new Hyperlink
+                    {
+                        Command = Commands.Hyperlink,
+                        CommandParameter = url,
+                        NavigateUri = new Uri(url, UriKind.RelativeOrAbsolute),
+                        ToolTip = link.Title != string.Empty ? link.Title : null,
+                        Tag = link
+                    };
                 }
-
-                var hyperlink = new Hyperlink
+                else // not a well formed Uri String - then it is probably a fragment reference
                 {
-                    Command = Commands.Hyperlink,
-                    CommandParameter = url,
-                    NavigateUri = new Uri(url, UriKind.RelativeOrAbsolute),
-                    ToolTip = link.Title != string.Empty ? link.Title : null,
-                    Tag = link
-                };
+                    hyperlink = new Hyperlink
+                    {
+                        Command = Commands.FragmentLink,
+                        CommandParameter = url,
+                        NavigateUri = new Uri(url, UriKind.RelativeOrAbsolute),
+                        ToolTip = link.Title != string.Empty ? link.Title : null,
+                        Tag = link
+                    };
+                }
 
                 renderer.Styles.ApplyHyperlinkStyle(hyperlink);
                 renderer.Push(hyperlink);

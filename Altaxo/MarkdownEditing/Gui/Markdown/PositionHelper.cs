@@ -372,6 +372,42 @@ namespace Altaxo.Gui.Markdown
 			return null;
 		}
 
+		/// <summary>
+		/// Enumerates all text elements recursively, given a bunch of top level text elements
+		/// </summary>
+		/// <param name="toplevelTextElements">The toplevel text elements.</param>
+		/// <returns>Enumeration of all text elements.</returns>
+		public static IEnumerable<TextElement> EnumerateAllTextElementsRecursively(IEnumerable<TextElement> toplevelTextElements)
+		{
+			if (null != toplevelTextElements)
+			{
+				foreach (var child in toplevelTextElements)
+				{
+					foreach (TextElement childAndSub in EnumerateAllTextElementsRecursively(child))
+						yield return childAndSub;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Enumerates all text elements recursively, starting with one text element.
+		/// </summary>
+		/// <param name="startElement">The start element.</param>
+		/// <returns>All text element (the given text element and all its childs).</returns>
+		public static IEnumerable<TextElement> EnumerateAllTextElementsRecursively(TextElement startElement)
+		{
+			yield return startElement;
+			var childList = GetChildList(startElement);
+			if (null != childList)
+			{
+				foreach (TextElement child in GetChildList(startElement))
+				{
+					foreach (TextElement childAndSub in EnumerateAllTextElementsRecursively(child))
+						yield return childAndSub;
+				}
+			}
+		}
+
 		#endregion Helpers for Viewer
 	}
 }

@@ -22,6 +22,7 @@
 
 		<FrameworkElement.CommandBindings>
 			<CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
+			<CommandBinding Command="{x:Static markdig:Commands.FragmentLink}" Executed="JumpToFragmentLink" />
 			<CommandBinding Command="{x:Static local:Commands.RefreshViewer}" Executed="EhRefreshViewer" />
 			<CommandBinding Command="{x:Static local:Commands.ToggleBetweenEditorAndViewer}" Executed="EhToggleBetweenEditorAndViewer" />
 			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorLeftViewerRight}" Executed="EhSwitchToConfigurationEditorLeftViewerRight" CanExecute="EhCanSwitchToConfigurationEditorLeftViewerRight" />

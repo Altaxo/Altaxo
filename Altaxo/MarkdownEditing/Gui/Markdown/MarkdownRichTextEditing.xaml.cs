@@ -123,7 +123,42 @@ namespace Altaxo.Gui.Markdown
 
 		private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
 		{
-			Process.Start(e.Parameter.ToString());
+			try
+			{
+				Process.Start(e.Parameter.ToString());
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(
+					string.Format("Could not open hyperlink: {0}\r\nMessage: {1}", e.Parameter.ToString(), ex.Message),
+					"Error opening link", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+		}
+
+		private void JumpToFragmentLink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+		{
+			string url = e.Parameter.ToString();
+			if (url.StartsWith("#"))
+				url = url.Substring(1);
+
+			// for now, we have to go through the entire FlowDocument in search for a markdig tag that
+			// (i) contains HtmlAttributes, and (ii) the HtmlAttibutes has the Id that is our url
+
+			foreach (var textElement in PositionHelper.EnumerateAllTextElementsRecursively(_guiViewer.Document.Blocks))
+			{
+				if (textElement.Tag is Markdig.Syntax.MarkdownObject mdo)
+				{
+					var attr = (Markdig.Renderers.Html.HtmlAttributes)mdo.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
+					if (null != attr && attr.Id == url)
+					{
+						var position = textElement.ContentStart;
+						textElement.BringIntoView();
+						_guiViewer.Selection.Select(position, position);
+						_guiViewer.Focus();
+						break;
+					}
+				}
+			}
 		}
 
 		#region Rendering
