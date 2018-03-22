@@ -27,7 +27,7 @@ namespace Altaxo.Gui.Markdown
 	/// to Runs which are tagged then with the appropriate <see cref="LiteralInline"/>, so that the text location can
 	/// be precisely resolved.
 	/// </summary>
-	public static class MarkdigAltaxoPostProcessor
+	public static class FencedCodeBlockLineTaggingPostProcessor
 	{
 		/// <summary>
 		/// Executes the post-processor.
@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Markdown
 		/// </summary>
 		/// <param name="pipeline">The pipeline.</param>
 		/// <returns>The modified pipeline</returns>
-		public static MarkdownPipelineBuilder UseAltaxoPostProcessor(this MarkdownPipelineBuilder pipeline)
+		public static MarkdownPipelineBuilder UseFencedCodeBlockLineTaggingPostProcessor(this MarkdownPipelineBuilder pipeline)
 		{
 			if (pipeline == null)
 				throw new ArgumentNullException(nameof(pipeline));

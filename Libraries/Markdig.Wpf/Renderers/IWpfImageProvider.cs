@@ -35,5 +35,23 @@ namespace Markdig.Renderers
         /// force a fresh retrieval of those resources.
         /// </summary>
         void ClearCache();
+
+        /// <summary>
+        /// Creates a <b>fresh</b> Url collector that is the be used to collect all Urls from the parsed markdown document.
+        /// The return value null is allowed here and indicates that the image provider is not interested in collected Urls.
+        /// </summary>
+        /// <returns>A fresh Url collector. Since markdown can be parsed by several threads in parallel, this must be
+        /// a newly created instance that is not stored anywhere in this image provider.</returns>
+        IUrlCollector CreateUrlCollector();
+
+        /// <summary>
+        /// Sets the Url collector from a freshly parsed document. This function can be invoked by more than one thread in parallel.
+        /// The image provider should store the instance only if the update number is greater than the last
+        /// update number received.
+        /// </summary>
+        /// <param name="collector">The collector.</param>
+        /// <param name="updateSequenceNumber">Number that will increase with every change of the source text. To make sure that no old version
+        /// is stored, the image provider should store the provided UrlCollector only if the updateNumber is greater than the last update number received.</param>
+        void UpdateUrlCollector(IUrlCollector collector, long updateSequenceNumber);
     }
 }

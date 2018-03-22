@@ -54,7 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gui\Markdown\Commands.cs" />
-    <Compile Include="Gui\Markdown\MarkdigAltaxoPostProcessor.cs" />
+    <Compile Include="Gui\Markdown\LinkReferenceTrackerPostProcessor.cs" />
+    <Compile Include="Gui\Markdown\FencedCodeBlockLineTaggingPostProcessor.cs" />
     <Compile Include="Gui\Markdown\MarkdownDifferenceUpdater.cs" />
     <Compile Include="Gui\Markdown\MarkdownRichTextEditing.xaml.cs">
       <DependentUpon>MarkdownRichTextEditing.xaml</DependentUpon>

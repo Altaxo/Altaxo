@@ -54,5 +54,15 @@ namespace Markdig.Renderers
         {
             // nothing to do here since not image is cached here
         }
+
+        public virtual IUrlCollector CreateUrlCollector()
+        {
+            return null; // not interested here in collecting Urls
+        }
+
+        public virtual void UpdateUrlCollector(IUrlCollector collector, long updateSequenceNumber)
+        {
+            throw new InvalidOperationException("If CreateUrlCollector has been overridden, UpdateUrlCollector also must be overridden.");
+        }
     }
 }

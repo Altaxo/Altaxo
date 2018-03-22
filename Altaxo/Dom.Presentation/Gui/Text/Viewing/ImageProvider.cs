@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
+using Markdig.Renderers;
 
 namespace Altaxo.Gui.Text.Viewing
 {
@@ -256,5 +257,47 @@ namespace Altaxo.Gui.Text.Viewing
 				url = newUrl;
 			return newUrl;
 		}
+
+		#region UrlCollector
+
+		public override IUrlCollector CreateUrlCollector()
+		{
+			return new UrlCollector();
+		}
+
+		private object _lockUrlCollector = new object();
+		private long _lastUsn;
+		private UrlCollector _lastCollectedUrls;
+
+		public override void UpdateUrlCollector(IUrlCollector collector, long updateSequenceNumber)
+		{
+			lock (_lockUrlCollector)
+			{
+				if (updateSequenceNumber > _lastUsn)
+				{
+					_lastUsn = updateSequenceNumber;
+					_lastCollectedUrls = (UrlCollector)collector;
+				}
+			}
+		}
+
+		public class UrlCollector : Markdig.Renderers.IUrlCollector
+		{
+			public HashSet<(string url, int spanStart, int spanEnd)> _localUrls = new HashSet<(string, int, int)>();
+
+			public void AddUrl(bool isImage, string url, int urlSpanStart, int urlSpanEnd)
+			{
+				if (isImage && url.StartsWith(localImagePretext))
+				{
+					_localUrls.Add((url.Substring(localImagePretext.Length), urlSpanStart, urlSpanEnd));
+				}
+			}
+
+			public void Freeze()
+			{
+			}
+		}
+
+		#endregion UrlCollector
 	}
 }

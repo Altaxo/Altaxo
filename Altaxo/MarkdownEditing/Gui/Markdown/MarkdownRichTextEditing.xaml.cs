@@ -37,10 +37,11 @@ namespace Altaxo.Gui.Markdown
 	/// </summary>
 	public partial class MarkdownRichTextEditing : UserControl
 	{
-		private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().UseAltaxoPostProcessor().Build();
+		private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().UseFencedCodeBlockLineTaggingPostProcessor().Build();
 		private MarkdownPipeline Pipeline { get; set; }
 
 		private string _sourceText;
+		private long _sourceTextUsn;
 		private string _styleName;
 		private IStyles _currentStyle = DynamicStyles.Instance;
 
@@ -191,6 +192,7 @@ namespace Altaxo.Gui.Markdown
 		/// Note that setting this parameter to <c>true</c> does not force a new rendering of the images; for that, call <see cref="IWpfImageProvider.ClearCache"/> of the <see cref="ImageProvider"/> member before rendering.</param>
 		private void RenderDocument(bool forceCompleteRendering)
 		{
+			++_sourceTextUsn;
 			var pipeline = Pipeline ?? DefaultPipeline;
 
 			if (null != _guiViewer && null != _guiEditor)
@@ -200,9 +202,9 @@ namespace Altaxo.Gui.Markdown
 				if (forceCompleteRendering || _lastMarkdownDocumentProcessed == null || _lastSourceTextProcessed == null)
 				{
 					var markdownDocument = Markdig.Markdown.Parse(_sourceText, pipeline);
+					LinkReferenceTrackerPostProcessor.TrackLinks(markdownDocument, _sourceTextUsn, this.ImageProvider); // track links in the markdown document
 
 					// We override the renderer with our own writer
-
 					var flowDocument = new FlowDocument();
 					var renderer = new Markdig.Renderers.WpfRenderer(flowDocument, _currentStyle)
 					{
@@ -225,6 +227,7 @@ namespace Altaxo.Gui.Markdown
 						_currentStyle,
 						ImageProvider,
 						_sourceText,  // new source
+						_sourceTextUsn, // new source update sequence number
 						_guiViewer.Document, // the flow document to edit
 						this.Dispatcher,
 						(newText, newDocument) => { _lastSourceTextProcessed = newText; _lastMarkdownDocumentProcessed = newDocument; },

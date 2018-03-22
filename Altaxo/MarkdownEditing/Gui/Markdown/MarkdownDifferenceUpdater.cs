@@ -47,6 +47,11 @@ namespace Altaxo.Gui.Markdown
 		public string NewSourceText { get; private set; }
 
 		/// <summary>
+		/// The update sequence number of the new source text.
+		/// </summary>
+		public long NewSourceTextUsn { get; private set; }
+
+		/// <summary>
 		/// The markdown document of the new source text.
 		/// </summary>
 		public MarkdownDocument NewDocument { get; private set; }
@@ -103,7 +108,7 @@ namespace Altaxo.Gui.Markdown
 
 		#endregion Operational members
 
-		public MarkdownDifferenceUpdater(string oldSourceText, MarkdownDocument oldDocument, MarkdownPipeline pipeline, IStyles styles, IWpfImageProvider imageProvider, string newSourceText, FlowDocument flowDocument, Dispatcher dispatcher, Action<string, MarkdownDocument> newDocumentSetter, CancellationToken cancellationToken)
+		public MarkdownDifferenceUpdater(string oldSourceText, MarkdownDocument oldDocument, MarkdownPipeline pipeline, IStyles styles, IWpfImageProvider imageProvider, string newSourceText, long newSourceTextUsn, FlowDocument flowDocument, Dispatcher dispatcher, Action<string, MarkdownDocument> newDocumentSetter, CancellationToken cancellationToken)
 		{
 			OldSourceText = oldSourceText;
 			OldDocument = oldDocument;
@@ -124,6 +129,11 @@ namespace Altaxo.Gui.Markdown
 
 			// TODO make parse cancellable, at least in the first level
 			NewDocument = Markdig.Markdown.Parse(NewSourceText, Pipeline);
+
+			if (cancellationToken.IsCancellationRequested)
+				return;
+
+			LinkReferenceTrackerPostProcessor.TrackLinks(NewDocument, NewSourceTextUsn, ImageProvider);
 
 			if (cancellationToken.IsCancellationRequested)
 				return;
