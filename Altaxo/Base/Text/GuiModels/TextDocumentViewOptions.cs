@@ -37,6 +37,12 @@ namespace Altaxo.Text.GuiModels
 		public ViewerConfiguration WindowConfiguration { get; set; }
 		public bool IsViewerSelected { get; set; }
 
+		public bool? IsWordWrapEnabled { get; set; }
+		public bool? IsLineNumberingEnabled { get; set; }
+		public bool? IsSpellCheckingEnabled { get; set; }
+		public bool? IsFoldingEnabled { get; set; }
+		public string HighlightingStyle { get; set; }
+
 		/// <summary>
 		/// The fraction of the width (when shown in left-right configuration) or height (when shown in top-bottom configuration) of the source editor window in relation to the available width/height.
 		/// </summary>
@@ -57,6 +63,11 @@ namespace Altaxo.Text.GuiModels
 				info.AddEnum("WindowConfiguration", s.WindowConfiguration);
 				info.AddValue("IsViewerSelected", s.IsViewerSelected);
 				info.AddValue("FractionSourceEditor", s._fractionOfSourceEditorWindowVisible);
+				info.AddValue("IsWordWrapEnabled", s.IsWordWrapEnabled);
+				info.AddValue("IsLineNumberingEnabled", s.IsLineNumberingEnabled);
+				info.AddValue("IsSpellCheckingEnabled", s.IsSpellCheckingEnabled);
+				info.AddValue("IsFoldingEnabled", s.IsFoldingEnabled);
+				info.AddValue("HighlightingStyle", s.HighlightingStyle);
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -67,6 +78,11 @@ namespace Altaxo.Text.GuiModels
 				s.WindowConfiguration = (ViewerConfiguration)info.GetEnum("WindowConfiguration", typeof(ViewerConfiguration));
 				s.IsViewerSelected = info.GetBoolean("IsViewerSelected");
 				s._fractionOfSourceEditorWindowVisible = info.GetDouble("FractionSourceEditor");
+				s.IsWordWrapEnabled = info.GetNullableBoolean("IsWordWrapEnabled");
+				s.IsLineNumberingEnabled = info.GetNullableBoolean("IsLineNumberingEnabled");
+				s.IsSpellCheckingEnabled = info.GetNullableBoolean("IsSpellCheckingEnabled");
+				s.IsFoldingEnabled = info.GetNullableBoolean("IsFoldingEnabled");
+				s.HighlightingStyle = info.GetString("HighlightingStyle");
 
 				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0
 				{
