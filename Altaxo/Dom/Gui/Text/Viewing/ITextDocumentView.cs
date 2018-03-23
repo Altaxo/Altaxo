@@ -51,6 +51,12 @@ namespace Altaxo.Gui.Text.Viewing
 		ViewerConfiguration WindowConfiguration { get; set; }
 		double FractionOfEditorWindow { get; set; }
 
+		bool IsLineNumberingEnabled { set; }
+		bool IsWordWrappingEnabled { set; }
+		bool IsSpellCheckingEnabled { set; }
+		bool IsFoldingEnabled { set; }
+		string HighlightingStyle { set; }
+
 		void PrintShowDialog();
 	}
 

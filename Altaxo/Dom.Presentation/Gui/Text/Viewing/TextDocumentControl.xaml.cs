@@ -145,6 +145,46 @@ namespace Altaxo.Gui.Text.Viewing
 			}
 		}
 
+		public bool IsWordWrappingEnabled
+		{
+			set
+			{
+				_guiEditor.IsWordWrapEnabled = value;
+			}
+		}
+
+		public bool IsLineNumberingEnabled
+		{
+			set
+			{
+				_guiEditor.IsLineNumberingEnabled = value;
+			}
+		}
+
+		public bool IsSpellCheckingEnabled
+		{
+			set
+			{
+				_guiEditor.IsSpellCheckingEnabled = value;
+			}
+		}
+
+		public bool IsFoldingEnabled
+		{
+			set
+			{
+				_guiEditor.IsFoldingEnabled = value;
+			}
+		}
+
+		public string HighlightingStyle
+		{
+			set
+			{
+				_guiEditor.HighlightingStyle = value;
+			}
+		}
+
 		public void PrintShowDialog()
 		{
 			_imageProvider.TargetResolution = 600;

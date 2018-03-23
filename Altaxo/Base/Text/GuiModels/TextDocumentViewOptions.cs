@@ -31,16 +31,46 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Text.GuiModels
 {
-	public class TextDocumentViewOptions : IProjectItemPresentationModel
+	public class TextDocumentViewOptions : IProjectItemPresentationModel, ICloneable
 	{
+		/// <summary>
+		/// Gets the Markdown document this presentation data is based on.
+		/// </summary>
 		public TextDocument Document { get; protected set; }
+
+		/// <summary>
+		/// Gets or sets the window configuration, i.e. if the editor and the viewer windows are located left, top, right, bottom or in a tab control
+		/// </summary>
 		public ViewerConfiguration WindowConfiguration { get; set; }
+
+		/// <summary>
+		/// Gets or sets the last focus location. If true, the viewer window was selected last, if false, the editor window was selected.
+		/// </summary>
 		public bool IsViewerSelected { get; set; }
 
-		public bool? IsWordWrapEnabled { get; set; }
+		/// <summary>
+		/// Indicates if word wrapping  is enabled in the editor window. If null, the default global value of Altaxo is used.
+		/// </summary>
+		public bool? IsWordWrappingEnabled { get; set; }
+
+		/// <summary>
+		/// Indicates if line numbering is enabled in the editor window. If null, the default global value of Altaxo is used.
+		/// </summary>
 		public bool? IsLineNumberingEnabled { get; set; }
+
+		/// <summary>
+		/// Indicates if spell checking is enabled in the viewer window. If null, the default global value of Altaxo is used.
+		/// </summary>
 		public bool? IsSpellCheckingEnabled { get; set; }
+
+		/// <summary>
+		/// Indicates if folding marks are enabled in the editor window. If null, the default global value of Altaxo is used.
+		/// </summary>
 		public bool? IsFoldingEnabled { get; set; }
+
+		/// <summary>
+		/// Indicates the highlighting style of the editor window. If null, the default global highlighting style of Altaxo is used.
+		/// </summary>
 		public string HighlightingStyle { get; set; }
 
 		/// <summary>
@@ -63,7 +93,7 @@ namespace Altaxo.Text.GuiModels
 				info.AddEnum("WindowConfiguration", s.WindowConfiguration);
 				info.AddValue("IsViewerSelected", s.IsViewerSelected);
 				info.AddValue("FractionSourceEditor", s._fractionOfSourceEditorWindowVisible);
-				info.AddValue("IsWordWrapEnabled", s.IsWordWrapEnabled);
+				info.AddValue("IsWordWrappingEnabled", s.IsWordWrappingEnabled);
 				info.AddValue("IsLineNumberingEnabled", s.IsLineNumberingEnabled);
 				info.AddValue("IsSpellCheckingEnabled", s.IsSpellCheckingEnabled);
 				info.AddValue("IsFoldingEnabled", s.IsFoldingEnabled);
@@ -78,7 +108,7 @@ namespace Altaxo.Text.GuiModels
 				s.WindowConfiguration = (ViewerConfiguration)info.GetEnum("WindowConfiguration", typeof(ViewerConfiguration));
 				s.IsViewerSelected = info.GetBoolean("IsViewerSelected");
 				s._fractionOfSourceEditorWindowVisible = info.GetDouble("FractionSourceEditor");
-				s.IsWordWrapEnabled = info.GetNullableBoolean("IsWordWrapEnabled");
+				s.IsWordWrappingEnabled = info.GetNullableBoolean("IsWordWrappingEnabled");
 				s.IsLineNumberingEnabled = info.GetNullableBoolean("IsLineNumberingEnabled");
 				s.IsSpellCheckingEnabled = info.GetNullableBoolean("IsSpellCheckingEnabled");
 				s.IsFoldingEnabled = info.GetNullableBoolean("IsFoldingEnabled");
@@ -117,6 +147,12 @@ namespace Altaxo.Text.GuiModels
 			Document = doc ?? throw new ArgumentNullException(nameof(doc));
 		}
 
+		public object Clone()
+		{
+			var result = (TextDocumentViewOptions)this.MemberwiseClone();
+			return result;
+		}
+
 		/// <summary>
 		/// The fraction of the width (when shown in left-right configuration) or height (when shown in top-bottom configuration) of the source editor window in relation to the available width/height.
 		/// </summary>
@@ -138,6 +174,50 @@ namespace Altaxo.Text.GuiModels
 		}
 
 		IProjectItem IProjectItemPresentationModel.Document => Document;
+
+		#region Property keys
+
+		public static readonly Main.Properties.PropertyKey<bool> PropertyKeyIsWordWrappingEnabled =
+			new Main.Properties.PropertyKey<bool>(
+				"FA2B3AF4-ED5D-4A26-B467-D9C4AE7C394B",
+				"Text\\IsWordWrappingEnabled",
+				Main.Properties.PropertyLevel.All,
+				typeof(TextDocument),
+				() => true);
+
+		public static readonly Main.Properties.PropertyKey<bool> PropertyKeyIsLineNumberingEnabled =
+			new Main.Properties.PropertyKey<bool>(
+				"648D76D1-401F-4955-881A-716FFB4C6106",
+				"Text\\IsLineNumberingEnabled",
+				Main.Properties.PropertyLevel.All,
+				typeof(TextDocument),
+				() => true);
+
+		public static readonly Main.Properties.PropertyKey<bool> PropertyKeyIsSpellCheckingEnabled =
+			new Main.Properties.PropertyKey<bool>(
+			"0F4B3D74-51BB-4FE3-BF30-465E02305593",
+			"Text\\IsSpellCheckingEnabled",
+			Main.Properties.PropertyLevel.All,
+			typeof(TextDocument),
+			() => true);
+
+		public static readonly Main.Properties.PropertyKey<bool> PropertyKeyIsFoldingEnabled =
+			new Main.Properties.PropertyKey<bool>(
+			"8FBF38A4-E9ED-4C17-B6F0-F6E5E285FD33",
+			"Text\\IsFoldingEnabled",
+			Main.Properties.PropertyLevel.All,
+			typeof(TextDocument),
+			() => true);
+
+		public static readonly Main.Properties.PropertyKey<string> PropertyKeyHighlightingStyle =
+		new Main.Properties.PropertyKey<string>(
+		"60B8A644-DB17-4D7A-A6EC-DD076B6E3A7A",
+		"Text\\HighlightingStyle",
+		Main.Properties.PropertyLevel.All,
+		typeof(TextDocument),
+		() => "default");
+
+		#endregion Property keys
 	}
 
 	/// <summary>

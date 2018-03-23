@@ -42,17 +42,9 @@ namespace Altaxo.Gui.Text.Viewing
 	{
 		protected ITextDocumentView _view;
 
-		protected TextDocument _doc;
+		private Altaxo.Text.GuiModels.TextDocumentViewOptions _options;
 
-		public ViewerConfiguration WindowConfiguration { get; protected set; }
-		public bool IsViewerSelected { get; protected set; }
-
-		/// <summary>
-		/// The fraction of the width (when shown in left-right configuration) or height (when shown in top-bottom configuration) of the source editor window in relation to the available width/height.
-		/// </summary>
-		public double FractionOfSourceEditorWindowVisible { get; set; } = 0.5;
-
-		public TextDocument Doc { get { return _doc; } }
+		protected TextDocument TextDocument { get { return _options.Document; } }
 
 		public TextDocumentController()
 		{
@@ -67,29 +59,31 @@ namespace Altaxo.Gui.Text.Viewing
 		{
 			if (null == args || args.Length == 0)
 				return false;
-			if (args[0] is TextDocument notesDoc)
-			{
-				InternalInitializeDocument(notesDoc);
-			}
-			else if (args[0] is Altaxo.Text.GuiModels.TextDocumentViewOptions notesViewOptions)
-			{
-				this.WindowConfiguration = notesViewOptions.WindowConfiguration;
-				this.IsViewerSelected = notesViewOptions.IsViewerSelected;
-				this.FractionOfSourceEditorWindowVisible = notesViewOptions.FractionOfSourceEditorWindowVisible;
 
-				if (this._doc == null)
-				{
-					InternalInitializeDocument(notesViewOptions.Document);
-				}
-				else if (!object.ReferenceEquals(this._doc, notesViewOptions.Document))
-				{
-					throw new InvalidProgramException("The already initialized document and the document in the option class are not identical");
-				}
-			}
-			else
+			TextDocumentViewOptions newOptions = null;
+
+			if (args[0] is TextDocumentViewOptions notesViewOptions)
 			{
-				return false;
+				newOptions = notesViewOptions;
 			}
+			else if (args[0] is TextDocument notesDoc)
+			{
+				newOptions = new TextDocumentViewOptions(notesDoc);
+			}
+
+			if (newOptions == null)
+				return false; // not successfull
+
+			if (newOptions.Document == null)
+				throw new InvalidProgramException("The provided options do not contain any document");
+
+			if (_options?.Document != null && !object.ReferenceEquals(this.TextDocument, _options.Document))
+			{
+				throw new InvalidProgramException("The already initialized document and the document in the option class are not identical");
+			}
+
+			InternalInitializeDocument(newOptions);
+
 			return true;
 		}
 
@@ -103,23 +97,24 @@ namespace Altaxo.Gui.Text.Viewing
 			set { }
 		}
 
-		protected void InternalInitializeDocument(TextDocument doc)
+		protected void InternalInitializeDocument(TextDocumentViewOptions options)
 		{
-			if (_doc != null)
-				throw new ApplicationException(nameof(_doc) + " is already initialized");
-			_doc = doc ?? throw new ArgumentNullException(nameof(doc));
+			if (null == options?.Document)
+				throw new ArgumentNullException("No document stored inside options");
 
-			this.Title = GetTitleFromDocumentName(_doc);
+			_options = options;
 
-			_doc.TunneledEvent += new WeakActionHandler<object, object, Altaxo.Main.TunnelingEventArgs>(EhDocumentTunneledEvent, (handler) => _doc.TunneledEvent -= handler);
+			this.Title = GetTitleFromDocumentName(TextDocument);
+
+			TextDocument.TunneledEvent += new WeakActionHandler<object, object, Altaxo.Main.TunnelingEventArgs>(EhDocumentTunneledEvent, (handler) => TextDocument.TunneledEvent -= handler);
 		}
 
 		private void EhDocumentTunneledEvent(object arg1, object arg2, TunnelingEventArgs e)
 		{
 			if (e is Altaxo.Main.DocumentPathChangedEventArgs && _view != null)
 			{
-				_view.SetDocumentNameAndLocalImages(_doc.Name, _doc.Images);
-				this.Title = GetTitleFromDocumentName(_doc);
+				_view.SetDocumentNameAndLocalImages(TextDocument.Name, TextDocument.Images);
+				this.Title = GetTitleFromDocumentName(TextDocument);
 			}
 		}
 
@@ -138,12 +133,17 @@ namespace Altaxo.Gui.Text.Viewing
 			}
 			if (null != _view)
 			{
-				_view.SetDocumentNameAndLocalImages(_doc.Name, _doc.Images);
-				_view.SourceText = _doc.SourceText;
+				_view.SetDocumentNameAndLocalImages(TextDocument.Name, TextDocument.Images);
+				_view.SourceText = TextDocument.SourceText;
 
-				_view.IsViewerSelected = this.IsViewerSelected;
-				_view.WindowConfiguration = this.WindowConfiguration;
-				_view.FractionOfEditorWindow = this.FractionOfSourceEditorWindowVisible;
+				_view.IsViewerSelected = _options.IsViewerSelected;
+				_view.WindowConfiguration = _options.WindowConfiguration;
+				_view.FractionOfEditorWindow = _options.FractionOfSourceEditorWindowVisible;
+				_view.IsLineNumberingEnabled = _options.IsLineNumberingEnabled ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsLineNumberingEnabled, () => true);
+				_view.IsWordWrappingEnabled = _options.IsWordWrappingEnabled ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsWordWrappingEnabled, () => true);
+				_view.IsSpellCheckingEnabled = _options.IsSpellCheckingEnabled ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsSpellCheckingEnabled, () => true);
+				_view.IsFoldingEnabled = _options.IsFoldingEnabled ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsFoldingEnabled, () => true);
+				_view.HighlightingStyle = _options.HighlightingStyle ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyHighlightingStyle, () => "default");
 			}
 		}
 
@@ -167,7 +167,7 @@ namespace Altaxo.Gui.Text.Viewing
 		{
 			if (null != _view)
 			{
-				_doc.SourceText = _view.SourceText;
+				TextDocument.SourceText = _view.SourceText;
 			}
 		}
 
@@ -184,13 +184,13 @@ namespace Altaxo.Gui.Text.Viewing
 		public string InsertImageInDocumentAndGetUrl(string fileName)
 		{
 			var imageProxy = MemoryStreamImageProxy.FromFile(fileName);
-			return _doc.AddImage(imageProxy);
+			return TextDocument.AddImage(imageProxy);
 		}
 
 		public string InsertImageInDocumentAndGetUrl(System.IO.MemoryStream memoryStream)
 		{
 			var imageProxy = MemoryStreamImageProxy.FromStream(memoryStream);
-			return _doc.AddImage(imageProxy);
+			return TextDocument.AddImage(imageProxy);
 		}
 
 		public bool CanAcceptImageFileName(string fileName)
@@ -211,22 +211,22 @@ namespace Altaxo.Gui.Text.Viewing
 
 		public void EhIsViewerSelectedChanged(bool isViewerSelected)
 		{
-			this.IsViewerSelected = isViewerSelected;
+			_options.IsViewerSelected = isViewerSelected;
 		}
 
 		public void EhViewerConfigurationChanged(ViewerConfiguration windowConfiguration)
 		{
-			this.WindowConfiguration = windowConfiguration;
+			_options.WindowConfiguration = windowConfiguration;
 		}
 
 		public void EhFractionOfEditorWindowChanged(double fractionOfEditor)
 		{
-			this.FractionOfSourceEditorWindowVisible = fractionOfEditor;
+			_options.FractionOfSourceEditorWindowVisible = fractionOfEditor;
 		}
 
 		public void EhReferencedLocalImagesChanged(IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> referencedLocalImages)
 		{
-			this._doc.ReferencedLocalImages = referencedLocalImages;
+			this.TextDocument.ReferencedLocalImages = referencedLocalImages;
 		}
 
 		public override object ViewObject
@@ -256,12 +256,7 @@ namespace Altaxo.Gui.Text.Viewing
 		{
 			get
 			{
-				return new Altaxo.Text.GuiModels.TextDocumentViewOptions(_doc)
-				{
-					IsViewerSelected = this.IsViewerSelected,
-					FractionOfSourceEditorWindowVisible = this.FractionOfSourceEditorWindowVisible,
-					WindowConfiguration = this.WindowConfiguration
-				};
+				return (TextDocumentViewOptions)_options.Clone();
 			}
 		}
 	}

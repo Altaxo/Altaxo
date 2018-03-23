@@ -96,6 +96,58 @@ namespace Altaxo.Gui.Markdown
 			}
 		}
 
+		public bool IsWordWrapEnabled
+		{
+			set
+			{
+				_guiEditor.WordWrap = value;
+			}
+		}
+
+		public bool IsLineNumberingEnabled
+		{
+			set
+			{
+				_guiEditor.ShowLineNumbers = value;
+			}
+		}
+
+		public bool IsSpellCheckingEnabled
+		{
+			set
+			{
+				_guiViewer.SpellCheck.IsEnabled = true;
+			}
+		}
+
+		public bool IsFoldingEnabled
+		{
+			set
+			{
+				// _guiEditor.Fold
+			}
+		}
+
+		public string HighlightingStyle
+		{
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+				{
+					_guiEditor.SyntaxHighlighting = null;
+				}
+				else if (value == "default")
+				{
+					_guiEditor.SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("MarkDown");
+				}
+				/// include more possibilities here
+				else
+				{
+					_guiEditor.SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("MarkDown");
+				}
+			}
+		}
+
 		/// <summary>
 		/// Gets or sets an image provider, that can be used to provide images from special sources. If null, a default image provider will be used.
 		/// </summary>

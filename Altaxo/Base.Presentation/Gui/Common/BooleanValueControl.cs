@@ -48,9 +48,13 @@ namespace Altaxo.Gui.Common
 		protected override void OnChecked(System.Windows.RoutedEventArgs e)
 		{
 			base.OnChecked(e);
+			Bool1Changed?.Invoke(this.IsChecked == true);
+		}
 
-			if (null != Bool1Changed)
-				Bool1Changed(this.IsChecked == true);
+		protected override void OnUnchecked(System.Windows.RoutedEventArgs e)
+		{
+			base.OnUnchecked(e);
+			Bool1Changed?.Invoke(this.IsChecked == true);
 		}
 	}
 }
