@@ -497,7 +497,10 @@ namespace Altaxo.Gui.Markdown
 		/// <exception cref="System.ArgumentNullException">if markdown variable is null</exception>
 		public static IList<TextElement> ListOfMarkdownObjectsToListOfTextElements(IList<MarkdownObject> markdownObjects, MarkdownPipeline pipeline, IStyles styles, IWpfImageProvider imageProvider)
 		{
-			var result = new TextElementList();
+			var p = new Paragraph();
+			styles.ApplyParagraphStyle(p);
+
+			var result = new TextElementList() { FontSize = p.FontSize };
 			var renderer = new Markdig.Renderers.WpfRenderer(result, styles) { ImageProvider = imageProvider };
 
 			pipeline.Setup(renderer);
@@ -522,6 +525,12 @@ namespace Altaxo.Gui.Markdown
 			{
 				throw new NotImplementedException();
 			}
+
+			/// <summary>
+			/// Gets or sets the size of the font. It is important to set the fontsize to the same value as the markdown
+			/// document, because otherwise formulas can not determine their font size.
+			/// </summary>
+			public double FontSize { get; set; } = 16;
 		}
 
 		#endregion Flowdocument tree

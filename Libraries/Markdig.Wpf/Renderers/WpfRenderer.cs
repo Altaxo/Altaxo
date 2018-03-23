@@ -157,12 +157,38 @@ namespace Markdig.Renderers
 
         internal double CurrentFontSize()
         {
-            if (stack.Peek() is TextElement te)
+            var stackEle = stack.Peek();
+            if (stackEle is TextElement te)
+            {
                 return te.FontSize;
-            else if (stack.Peek() is FlowDocument flowDoc)
+            }
+            else if (stackEle is FlowDocument flowDoc)
+            {
                 return flowDoc.FontSize;
-            else
-                return 0;
+            }
+            else if (stackEle != null)
+            {
+                var type = stackEle.GetType();
+                var prop = type.GetProperty("FontSize");
+                if (null != prop)
+                {
+                    return (double)prop.GetValue(stackEle);
+                }
+
+                try
+                {
+                    return ((dynamic)stackEle).FontSize;
+                }
+                catch (Exception)
+                {
+                }
+
+
+
+                
+            }
+
+            return 0;
         }
 
         internal void WriteBlock([NotNull] Block block)
