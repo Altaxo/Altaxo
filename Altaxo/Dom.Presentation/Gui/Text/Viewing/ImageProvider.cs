@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -260,28 +261,38 @@ namespace Altaxo.Gui.Text.Viewing
 
 		#region UrlCollector
 
+		private object _lockUrlCollector = new object();
+		private long _lastUsn;
+		private UrlCollector _lastCollectedUrls;
+
+		public Action<ICollection<(string url, int spanStart, int spanEnd)>> ReferencedLocalUrlsChanged;
+
 		public override IUrlCollector CreateUrlCollector()
 		{
 			return new UrlCollector();
 		}
 
-		private object _lockUrlCollector = new object();
-		private long _lastUsn;
-		private UrlCollector _lastCollectedUrls;
-
 		public override void UpdateUrlCollector(IUrlCollector collector, long updateSequenceNumber)
 		{
+			bool wasUpdated = false;
+
 			lock (_lockUrlCollector)
 			{
 				if (updateSequenceNumber > _lastUsn)
 				{
 					_lastUsn = updateSequenceNumber;
 					_lastCollectedUrls = (UrlCollector)collector;
+					wasUpdated = true;
 				}
+			}
+
+			if (wasUpdated)
+			{
+				ReferencedLocalUrlsChanged?.Invoke(_lastCollectedUrls._localUrls);
 			}
 		}
 
-		public class UrlCollector : Markdig.Renderers.IUrlCollector
+		private class UrlCollector : Markdig.Renderers.IUrlCollector
 		{
 			public HashSet<(string url, int spanStart, int spanEnd)> _localUrls = new HashSet<(string, int, int)>();
 
@@ -296,8 +307,8 @@ namespace Altaxo.Gui.Text.Viewing
 			public void Freeze()
 			{
 			}
-		}
 
-		#endregion UrlCollector
+			#endregion UrlCollector
+		}
 	}
 }

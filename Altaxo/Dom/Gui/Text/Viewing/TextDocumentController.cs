@@ -224,6 +224,11 @@ namespace Altaxo.Gui.Text.Viewing
 			this.FractionOfSourceEditorWindowVisible = fractionOfEditor;
 		}
 
+		public void EhReferencedLocalImagesChanged(IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> referencedLocalImages)
+		{
+			this._doc.ReferencedLocalImages = referencedLocalImages;
+		}
+
 		public override object ViewObject
 		{
 			get

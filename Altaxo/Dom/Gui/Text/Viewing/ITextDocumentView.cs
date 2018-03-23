@@ -72,5 +72,7 @@ namespace Altaxo.Gui.Text.Viewing
 		void EhViewerConfigurationChanged(ViewerConfiguration windowConfiguration);
 
 		void EhFractionOfEditorWindowChanged(double fractionOfEditor);
+
+		void EhReferencedLocalImagesChanged(IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> referencedLocalImages);
 	}
 }

@@ -61,6 +61,11 @@ namespace Altaxo.Text
 		private Dictionary<string, Altaxo.Graph.MemoryStreamImageProxy> _images;
 
 		/// <summary>
+		/// Gets or sets the collection of all referenced local images. We use this only in the serialization code to serialize only those images which are referenced in the markdown.
+		/// </summary>
+		public IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> ReferencedLocalImages { get; set; }
+
+		/// <summary>
 		/// The name of the style used to visualize the markdown. If this string is null or empty, the current global
 		/// defined style of the current Altaxo instance will be used.
 		/// </summary>
@@ -111,14 +116,31 @@ namespace Altaxo.Text
 				info.AddValue("StyleName", s._styleName);
 				info.AddValue("SourceText", s._sourceText);
 
-				info.CreateArray("Images", s._images.Count);
+				// we need to calculate in advance the number of referenced local images
+
+				HashSet<string> allNames;
+				if (null != s.ReferencedLocalImages)
 				{
-					foreach (var entry in s._images)
+					allNames = new HashSet<string>();
+					foreach (var entry in s.ReferencedLocalImages)
+					{
+						if (s._images.ContainsKey(entry.Url))
+							allNames.Add(entry.Url);
+					}
+				}
+				else
+				{
+					allNames = new HashSet<string>(s._images.Keys);
+				}
+
+				info.CreateArray("Images", allNames.Count);
+				{
+					foreach (var name in allNames)
 					{
 						info.CreateElement("e");
 						{
-							info.AddValue("Name", entry.Key);
-							info.AddValue("Image", entry.Value);
+							info.AddValue("Name", name);
+							info.AddValue("Image", s._images[name]);
 						}
 						info.CommitElement();
 					}

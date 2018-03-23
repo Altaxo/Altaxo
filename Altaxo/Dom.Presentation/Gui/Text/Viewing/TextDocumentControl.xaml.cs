@@ -57,6 +57,12 @@ namespace Altaxo.Gui.Text.Viewing
 			_guiEditor.FractionOfEditorChanged += EhEditor_FractionOfEditorChanged;
 			_guiEditor.ViewingConfigurationChanged += EhEditor_ViewingConfigurationChanged;
 			_guiEditor.IsViewerSelectedChanged += EhEditor_IsViewerSelectedChanged;
+			_imageProvider.ReferencedLocalUrlsChanged += EhImageProvider_ReferencedLocalUrlsChanged;
+		}
+
+		private void EhImageProvider_ReferencedLocalUrlsChanged(ICollection<(string url, int spanStart, int spanEnd)> obj)
+		{
+			_controller?.EhReferencedLocalImagesChanged(obj);
 		}
 
 		public ITextDocumentController Controller
