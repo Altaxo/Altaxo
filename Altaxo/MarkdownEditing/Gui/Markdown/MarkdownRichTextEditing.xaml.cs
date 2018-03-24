@@ -672,7 +672,7 @@ namespace Altaxo.Gui.Markdown
 
 			_guiViewer.Focus();
 
-			if (null != textPointer && isAccurate)
+			if (null != textPointer) // && isAccurate -> from editor to viewer we can relax the requirement of being accurate, better to have a position at all
 			{
 				_guiViewer.Selection.Select(textPointer, textPointer);
 			}
