@@ -35,7 +35,16 @@ namespace Altaxo.Gui.Markdown
 		/// <param name="document">The markdown document.</param>
 		public static void PostProcess(MarkdownDocument document)
 		{
-			foreach (var block in document) // Note: as long as we post-process fenced code blocks, we need to parse only the first level blocks
+			PostProcessContainerBlock(document);
+		}
+
+		/// <summary>
+		/// Executes the post-processor recursively for all container blocks.
+		/// </summary>
+		/// <param name="containerBlock">The container block.</param>
+		private static void PostProcessContainerBlock(ContainerBlock containerBlock)
+		{
+			foreach (var block in containerBlock) // Note: as long as we post-process fenced code blocks, we need to parse only the first level blocks
 			{
 				if (block is FencedCodeBlock fcb)
 				{
@@ -53,6 +62,10 @@ namespace Altaxo.Gui.Markdown
 							fcb.Inline.AppendChild(new LineBreakInline() { IsHard = true, Span = new SourceSpan(slice.End + 1, slice.End) });
 						}
 					}
+				}
+				else if (block is ContainerBlock childContainerBlock)
+				{
+					PostProcessContainerBlock(childContainerBlock);
 				}
 			}
 		}
