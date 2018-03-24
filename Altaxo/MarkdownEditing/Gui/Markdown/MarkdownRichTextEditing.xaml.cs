@@ -120,11 +120,29 @@ namespace Altaxo.Gui.Markdown
 			}
 		}
 
+		private ICSharpCode.AvalonEdit.Folding.FoldingManager _foldingManager;
+		private SyntaxTreeFoldingStrategy _foldingStrategy;
+
 		public bool IsFoldingEnabled
 		{
 			set
 			{
-				// _guiEditor.Fold
+				var oldValue = _foldingManager != null;
+
+				if (!(oldValue == value))
+				{
+					if (true == value)
+					{
+						_foldingManager = ICSharpCode.AvalonEdit.Folding.FoldingManager.Install(_guiEditor.TextArea);
+						_foldingStrategy = new SyntaxTreeFoldingStrategy();
+						_foldingManager.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
+					}
+					else
+					{
+						ICSharpCode.AvalonEdit.Folding.FoldingManager.Uninstall(_foldingManager);
+						_foldingStrategy = null;
+					}
+				}
 			}
 		}
 
@@ -268,6 +286,7 @@ namespace Altaxo.Gui.Markdown
 					_guiViewer.Document = flowDocument;
 					_lastSourceTextProcessed = _sourceText;
 					_lastMarkdownDocumentProcessed = markdownDocument;
+					_foldingManager?.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
 				}
 				else
 				{
@@ -282,7 +301,12 @@ namespace Altaxo.Gui.Markdown
 						_sourceTextUsn, // new source update sequence number
 						_guiViewer.Document, // the flow document to edit
 						this.Dispatcher,
-						(newText, newDocument) => { _lastSourceTextProcessed = newText; _lastMarkdownDocumentProcessed = newDocument; },
+						(newText, newDocument) =>
+						{
+							_lastSourceTextProcessed = newText;
+							_lastMarkdownDocumentProcessed = newDocument;
+							_foldingManager?.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
+						},
 						_lastCancellationTokenSource.Token);
 
 					Task.Run(() => task.Parse());

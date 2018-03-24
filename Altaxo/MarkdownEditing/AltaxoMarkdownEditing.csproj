@@ -68,6 +68,7 @@
     </Compile>
     <Compile Include="Gui\Markdown\PositionHelper.cs" />
     <Compile Include="Gui\Markdown\Printing.cs" />
+    <Compile Include="Gui\Markdown\SyntaxTreeFoldingStrategy.cs" />
     <Compile Include="Gui\Markdown\ViewingConfiguration.cs" />
     <Compile Include="Gui\Tests\TestControl1.xaml.cs">
       <DependentUpon>TestControl1.xaml</DependentUpon>
