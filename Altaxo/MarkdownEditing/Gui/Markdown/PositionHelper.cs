@@ -211,9 +211,18 @@ namespace Altaxo.Gui.Markdown
 			// and upperIdx can have a line number less than, or greater than our searched line number
 			// our only chance is to search the children of the lowerIdx
 
-			int diveIntoIdx = lowerIdx;
-			if (((TextElement)blocks[upperIdx]).Tag is Markdig.Syntax.MarkdownObject upperMdo2 && upperMdo2.Span.Start < textPosition)
-				diveIntoIdx = upperIdx;
+
+			int lowerIdxSpanEnd = (((TextElement)blocks[lowerIdx]).Tag as Markdig.Syntax.MarkdownObject).Span.End;
+			int upperIdxSpanStart = (((TextElement)blocks[upperIdx]).Tag as Markdig.Syntax.MarkdownObject).Span.Start;
+
+			// if our search position is neither at the end of the lower nor at the start of the upper, but inbetween
+			if(textPosition>lowerIdxSpanEnd && textPosition<upperIdxSpanStart)
+			{
+				// we look forward then and decide to use the position of the next element forward
+				return (TextElement)blocks[upperIdx];
+			}
+
+			int diveIntoIdx = upperIdxSpanStart <= textPosition ? upperIdx : lowerIdx;
 
 			var childs = GetChildList((TextElement)blocks[diveIntoIdx]);
 			if (null == childs)
