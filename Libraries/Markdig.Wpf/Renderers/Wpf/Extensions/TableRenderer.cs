@@ -2,7 +2,10 @@
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
+using System;
+using System.Globalization;
 using System.Windows;
+using System.Windows.Media;
 using Markdig.Annotations;
 using Markdig.Extensions.Tables;
 using Markdig.Wpf;
@@ -106,6 +109,115 @@ namespace Markdig.Renderers.Wpf.Extensions
 
             renderer.Pop();
             renderer.Pop();
+
+            // TryOptimizeColumnWidths(wpfTable);
+        }
+
+        private void TryOptimizeColumnWidths(WpfTable table)
+        {
+            const double lineWidthOfTableFrame = 2;
+
+            var numColumns = table.Columns.Count;
+            var numRowGroups = table.RowGroups.Count;
+
+            if (1 != numRowGroups)
+                return;
+
+            var rows = table.RowGroups[0].Rows;
+            var numRows = rows.Count;
+
+            double[] columnWidths = new double[numColumns];
+            double totalWidthOfAllColumns = 0;
+
+            double maxPaddingLeft = 0, maxPaddingRight = 0;
+
+            for (int colIdx = 0; colIdx < numColumns; ++colIdx)
+            {
+                var col = table.Columns[colIdx];
+                columnWidths[colIdx] = 0;
+
+                foreach (var row in rows)
+                {
+                    if (colIdx >= row.Cells.Count) // it seems that table has one more columns defined than there are 'real' columns, thus we have to check it
+                        continue;
+
+                    var cell = row.Cells[colIdx];
+                    if (cell.RowSpan != 1)
+                        continue;
+
+                    if (cell.Blocks.Count != 1)
+                        continue;
+
+                    double? width = null;
+                    if (cell.Blocks.FirstBlock is System.Windows.Documents.Paragraph block)
+                    {
+                        width = Measure(block.Inlines);
+                    }
+
+                    if (width.HasValue)
+                    {
+                        columnWidths[colIdx] = Math.Max(columnWidths[colIdx], width.Value);
+                    }
+                    else
+                    {
+                        return; // if there is only one row that can not be measured, we can not optimize column widths
+                    }
+
+                    maxPaddingLeft = Math.Max(maxPaddingLeft, cell.Padding.Left);
+                    maxPaddingRight = Math.Max(maxPaddingRight, cell.Padding.Right);
+                }
+
+                totalWidthOfAllColumns += columnWidths[colIdx];
+            }
+
+            // it seems that there is one column more defined in the table than that is really there
+            if (0 == columnWidths[columnWidths.Length - 1])
+                numColumns -= 1;
+
+            totalWidthOfAllColumns += numColumns * (maxPaddingLeft + maxPaddingRight + lineWidthOfTableFrame);
+
+            // now, it seems that we have all column widths at hand
+            // but there is one catch: if the sum of column widths (plus some extra for the table frame lines) exceed
+            // the current width of the flow document, then we can not optimize the table widths
+
+            for (int colIdx = 0; colIdx < numColumns; ++colIdx)
+            {
+                table.Columns[colIdx].Width = new GridLength(columnWidths[colIdx] + maxPaddingLeft + maxPaddingRight + lineWidthOfTableFrame);
+            }
+        }
+
+        private double? Measure(System.Windows.Documents.InlineCollection inlines)
+        {
+            double totalWidth = 0;
+            foreach (var inline in inlines)
+            {
+                var width = Measure(inline);
+
+                if (width.HasValue)
+                {
+                    totalWidth = Math.Max(totalWidth, width.Value);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            return totalWidth;
+        }
+
+        private double? Measure(System.Windows.Documents.Inline inline)
+        {
+            if (inline is System.Windows.Documents.Run run)
+            {
+                var ft = new FormattedText(run.Text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(run.FontFamily, run.FontStyle, run.FontWeight, run.FontStretch), run.FontSize, Brushes.Black);
+                return ft.Width;
+            }
+            else if (inline is System.Windows.Documents.Span span)
+            {
+                return Measure(span.Inlines);
+            }
+
+            return null;
         }
     }
 }
