@@ -31,17 +31,13 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
+using Altaxo.Text;
 using Markdig.Renderers;
 
 namespace Altaxo.Gui.Text.Viewing
 {
 	public class ImageProvider : Markdig.Renderers.WpfImageProviderBase
 	{
-		private const string absolutePathPretext = "//";
-		private const string graphPretext = "graph:";
-		private const string resourceImagePretext = "res:";
-		private const string localImagePretext = "local:";
-
 		public const double DefaultTargetResolution = 96;
 		private double _targetResolution = DefaultTargetResolution;
 
@@ -83,9 +79,9 @@ namespace Altaxo.Gui.Text.Viewing
 
 		public override Inline GetInlineItem(string url, out bool inlineItemIsErrorMessage)
 		{
-			if (url.StartsWith(graphPretext))
+			if (url.StartsWith(ImagePretext.GraphRelativePathPretext))
 			{
-				string graphName = url.Substring(graphPretext.Length);
+				string graphName = url.Substring(ImagePretext.GraphRelativePathPretext.Length);
 
 				var grp = FindGraphWithUrl(graphName);
 
@@ -163,9 +159,9 @@ namespace Altaxo.Gui.Text.Viewing
 					return new Run(string.Format("ERROR: GRAPH '{0}' NOT FOUND!", graphName));
 				}
 			}
-			else if (url.StartsWith(resourceImagePretext))
+			else if (url.StartsWith(ImagePretext.ResourceImagePretext))
 			{
-				string name = url.Substring(resourceImagePretext.Length);
+				string name = url.Substring(ImagePretext.ResourceImagePretext.Length);
 				BitmapSource bitmapSource = null;
 				try
 				{
@@ -188,9 +184,9 @@ namespace Altaxo.Gui.Text.Viewing
 					return new Run(string.Format("ERROR: RESOURCE '{0}' NOT FOUND!", name));
 				}
 			}
-			else if (url.StartsWith(localImagePretext))
+			else if (url.StartsWith(ImagePretext.LocalImagePretext))
 			{
-				string name = url.Substring(localImagePretext.Length);
+				string name = url.Substring(ImagePretext.LocalImagePretext.Length);
 
 				if (null != LocalImages && LocalImages.TryGetValue(name, out var img))
 				{
@@ -227,10 +223,10 @@ namespace Altaxo.Gui.Text.Viewing
 		/// <returns>Either the found graph (2D or 3D), or null if no graph was found.</returns>
 		public Altaxo.Graph.GraphDocumentBase FindGraphWithUrl(string url)
 		{
-			bool isAbsolutePath = url.StartsWith(absolutePathPretext);
+			bool isAbsolutePath = url.StartsWith(ImagePretext.AbsolutePathPretext);
 			foreach (var modifiedUrl in ModifiedUrls(url))
 			{
-				var usedUrl = isAbsolutePath ? modifiedUrl.Substring(absolutePathPretext.Length) : AltaxoFolderLocation + modifiedUrl;
+				var usedUrl = isAbsolutePath ? modifiedUrl.Substring(ImagePretext.AbsolutePathPretext.Length) : AltaxoFolderLocation + modifiedUrl;
 
 				if (Current.Project.GraphDocumentCollection.Contains(usedUrl))
 					return Current.Project.GraphDocumentCollection[usedUrl];
@@ -265,7 +261,7 @@ namespace Altaxo.Gui.Text.Viewing
 		private long _lastUsn;
 		private UrlCollector _lastCollectedUrls;
 
-		public Action<ICollection<(string url, int spanStart, int spanEnd)>> ReferencedLocalUrlsChanged;
+		public Action<ICollection<(string url, int spanStart, int spanEnd)>> ReferencedImageUrlsChanged;
 
 		public override IUrlCollector CreateUrlCollector()
 		{
@@ -288,19 +284,19 @@ namespace Altaxo.Gui.Text.Viewing
 
 			if (wasUpdated)
 			{
-				ReferencedLocalUrlsChanged?.Invoke(_lastCollectedUrls._localUrls);
+				ReferencedImageUrlsChanged?.Invoke(_lastCollectedUrls._imageUrls);
 			}
 		}
 
 		private class UrlCollector : Markdig.Renderers.IUrlCollector
 		{
-			public HashSet<(string url, int spanStart, int spanEnd)> _localUrls = new HashSet<(string, int, int)>();
+			public HashSet<(string url, int spanStart, int spanEnd)> _imageUrls = new HashSet<(string, int, int)>();
 
 			public void AddUrl(bool isImage, string url, int urlSpanStart, int urlSpanEnd)
 			{
-				if (isImage && url.StartsWith(localImagePretext))
+				if (isImage)
 				{
-					_localUrls.Add((url.Substring(localImagePretext.Length), urlSpanStart, urlSpanEnd));
+					_imageUrls.Add((url, urlSpanStart, urlSpanEnd));
 				}
 			}
 
