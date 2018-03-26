@@ -191,7 +191,7 @@ namespace Altaxo.Text.GuiModels
 				"Text\\IsLineNumberingEnabled",
 				Main.Properties.PropertyLevel.All,
 				typeof(TextDocument),
-				() => true);
+				() => false);
 
 		public static readonly Main.Properties.PropertyKey<bool> PropertyKeyIsSpellCheckingEnabled =
 			new Main.Properties.PropertyKey<bool>(
@@ -199,7 +199,7 @@ namespace Altaxo.Text.GuiModels
 			"Text\\IsSpellCheckingEnabled",
 			Main.Properties.PropertyLevel.All,
 			typeof(TextDocument),
-			() => true);
+			() => false);
 
 		public static readonly Main.Properties.PropertyKey<bool> PropertyKeyIsFoldingEnabled =
 			new Main.Properties.PropertyKey<bool>(
@@ -207,7 +207,7 @@ namespace Altaxo.Text.GuiModels
 			"Text\\IsFoldingEnabled",
 			Main.Properties.PropertyLevel.All,
 			typeof(TextDocument),
-			() => true);
+			() => false);
 
 		public static readonly Main.Properties.PropertyKey<string> PropertyKeyHighlightingStyle =
 		new Main.Properties.PropertyKey<string>(
