@@ -116,6 +116,7 @@ namespace Altaxo.Gui.Markdown
 			Styles = styles;
 			ImageProvider = imageProvider;
 			NewSourceText = newSourceText;
+			NewSourceTextUsn = newSourceTextUsn;
 			FlowDocument = flowDocument;
 			Dispatcher = dispatcher;
 			NewTextAndDocumentSetter = newDocumentSetter;

@@ -129,7 +129,7 @@ namespace Altaxo.Text
 						{
 							string localImageName = entry.Url.Substring(ImagePretext.LocalImagePretext.Length);
 							if (s._images.ContainsKey(localImageName))
-								allNames.Add(entry.Url);
+								allNames.Add(localImageName);
 						}
 					}
 				}

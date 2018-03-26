@@ -46,18 +46,16 @@ namespace Altaxo.Gui.Text.Viewing
 	/// </summary>
 	public partial class TextDocumentControl : UserControl, ITextDocumentView
 	{
-		private ImageProvider _imageProvider = new ImageProvider("", null);
+		private ImageProvider _imageProvider;
 		private ITextDocumentController _controller;
 		private string _documentName;
 
 		public TextDocumentControl()
 		{
 			InitializeComponent();
-			_guiEditor.ImageProvider = _imageProvider;
 			_guiEditor.FractionOfEditorChanged += EhEditor_FractionOfEditorChanged;
 			_guiEditor.ViewingConfigurationChanged += EhEditor_ViewingConfigurationChanged;
 			_guiEditor.IsViewerSelectedChanged += EhEditor_IsViewerSelectedChanged;
-			_imageProvider.ReferencedImageUrlsChanged += EhImageProvider_ReferencedImageUrlsChanged;
 		}
 
 		private void EhImageProvider_ReferencedImageUrlsChanged(ICollection<(string url, int spanStart, int spanEnd)> obj)
@@ -78,9 +76,17 @@ namespace Altaxo.Gui.Text.Viewing
 		{
 			_documentName = documentName;
 			var folder = Altaxo.Main.ProjectFolder.GetFolderPart(_documentName);
-			if (_imageProvider.AltaxoFolderLocation != folder || _imageProvider.LocalImages != localImages)
+			if (null == _imageProvider || _imageProvider.AltaxoFolderLocation != folder || _imageProvider.LocalImages != localImages)
 			{
-				_guiEditor.ImageProvider = _imageProvider = new ImageProvider(folder, localImages);
+				if (null != _imageProvider)
+				{
+					_imageProvider.ReferencedImageUrlsChanged -= EhImageProvider_ReferencedImageUrlsChanged;
+				}
+
+				_imageProvider = new ImageProvider(folder, localImages);
+				_guiEditor.ImageProvider = _imageProvider;
+
+				_imageProvider.ReferencedImageUrlsChanged += EhImageProvider_ReferencedImageUrlsChanged;
 			}
 		}
 
