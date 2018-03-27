@@ -28,16 +28,20 @@ namespace Markdig.Renderers
         /// <inheritdoc/>
         public virtual Inline GetInlineItem(string url, out bool inlineItemIsErrorMessage)
         {
-            if (!Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+            if (string.IsNullOrEmpty(url) || !Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
             {
                 inlineItemIsErrorMessage = false;
                 return null;
             }
             try
             {
+                var bitmapSource = new BitmapImage(new Uri(url, UriKind.RelativeOrAbsolute));
+
+                int pixelWidth = bitmapSource.PixelWidth; // this is for pre-loading the image in order to provoke an exeption if it could not be found.
+
                 var image = new Image
                 {
-                    Source = new BitmapImage(new Uri(url, UriKind.RelativeOrAbsolute))
+                    Source = bitmapSource
                 };
                 inlineItemIsErrorMessage = false;
                 return new InlineUIContainer(image);

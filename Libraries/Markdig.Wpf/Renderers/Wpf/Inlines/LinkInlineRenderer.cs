@@ -58,47 +58,53 @@ namespace Markdig.Renderers.Wpf.Inlines
                     if (inline is InlineUIContainer container && container.Child is Image image)
                     {
                         renderer.Styles.ApplyImageStyle(image);
+
+                        var bitmapSource = image.Source as BitmapSource;
+
                         if (width.HasValue && height.HasValue)
                         {
                             // then we do a non-uniform stretching
-                            if (image.Source.Width >= width.Value && image.Source.Height >= height.Value)
+                            if (null != bitmapSource && (bitmapSource.PixelWidth < width.Value || bitmapSource.PixelHeight < height.Value))
                             {
+                                // we have to use scale to up-scale the image
+                                image.LayoutTransform = new System.Windows.Media.ScaleTransform(width.Value / image.Source.Width, height.Value / image.Source.Height);
                                 image.Width = width.Value;
                                 image.Height = height.Value;
                                 image.Stretch = System.Windows.Media.Stretch.Fill;
                             }
                             else
                             {
-                                // we have to use scale to up-scale the image
-                                image.LayoutTransform = new System.Windows.Media.ScaleTransform(width.Value / image.Source.Width, height.Value / image.Source.Height);
+                                image.Width = width.Value;
+                                image.Height = height.Value;
+                                image.Stretch = System.Windows.Media.Stretch.Fill;
                             }
                         }
                         else if (width.HasValue)
                         {
-                            if (image.Source.Width >= width.Value)
+                            if (null != bitmapSource && bitmapSource.PixelWidth < width.Value)
+                            {
+                                // we have to use scale to up-scale the image
+                                double scale = width.Value / bitmapSource.PixelWidth;
+                                image.LayoutTransform = new System.Windows.Media.ScaleTransform(scale, scale);
+                            }
+                            else
                             {
                                 image.Width = width.Value;
                                 image.Stretch = System.Windows.Media.Stretch.Uniform;
                             }
-                            else
-                            {
-                                // we have to use scale to up-scale the image
-                                double scale = width.Value / image.Source.Width;
-                                image.LayoutTransform = new System.Windows.Media.ScaleTransform(scale, scale);
-                            }
                         }
                         else if (height.HasValue)
                         {
-                            if (image.Source.Height >= height.Value)
+                            if (null != bitmapSource && bitmapSource.PixelHeight < height.Value)
                             {
-                                image.Height = height.Value;
-                                image.Stretch = System.Windows.Media.Stretch.Uniform;
+                                // we have to use scale to up-scale the image
+                                double scale = height.Value / bitmapSource.PixelHeight;
+                                image.LayoutTransform = new System.Windows.Media.ScaleTransform(scale, scale);
                             }
                             else
                             {
-                                // we have to use scale to up-scale the image
-                                double scale = height.Value / image.Source.Height;
-                                image.LayoutTransform = new System.Windows.Media.ScaleTransform(scale, scale);
+                                image.Height = height.Value;
+                                image.Stretch = System.Windows.Media.Stretch.Uniform;
                             }
                         }
                         else // neither width nor height provided
@@ -108,6 +114,8 @@ namespace Markdig.Renderers.Wpf.Inlines
                             // Instead it seems here that the PixelWidth and the PixelHeight is used and interpreted
                             // as 1/96th inch.
                             // We correct for that by assigning the image the width and height of the imageSource
+
+                            // TODO: if the above theory is correct, then the next lines will work only if the Dpi of the bitmapSource is >=96
                             image.Width = image.Source.Width;
                             image.Height = image.Source.Height;
                             image.Stretch = System.Windows.Media.Stretch.Uniform;
@@ -183,6 +191,11 @@ namespace Markdig.Renderers.Wpf.Inlines
             else if (lenString.EndsWith("px"))
             {
                 factor = 1;
+                numberString = lenString.Substring(0, lenString.Length - 2);
+            }
+            else if (lenString.EndsWith("in"))
+            {
+                factor = 96;
                 numberString = lenString.Substring(0, lenString.Length - 2);
             }
 
