@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Text.Viewing
 
 		private Altaxo.Text.GuiModels.TextDocumentViewOptions _options;
 
-		protected TextDocument TextDocument { get { return _options.Document; } }
+		public TextDocument TextDocument { get { return _options.Document; } }
 
 		public TextDocumentController()
 		{
@@ -187,9 +187,9 @@ namespace Altaxo.Gui.Text.Viewing
 			return TextDocument.AddImage(imageProxy);
 		}
 
-		public string InsertImageInDocumentAndGetUrl(System.IO.MemoryStream memoryStream)
+		public string InsertImageInDocumentAndGetUrl(System.IO.MemoryStream memoryStream, string fileExtension)
 		{
-			var imageProxy = MemoryStreamImageProxy.FromStream(memoryStream);
+			var imageProxy = MemoryStreamImageProxy.FromStream(memoryStream, fileExtension);
 			return TextDocument.AddImage(imageProxy);
 		}
 
@@ -199,6 +199,7 @@ namespace Altaxo.Gui.Text.Viewing
 			switch (extension)
 			{
 				case ".jpg":
+				case ".jpeg":
 				case ".png":
 				case ".bmp":
 				case ".tif":
@@ -246,8 +247,8 @@ namespace Altaxo.Gui.Text.Viewing
 
 				if (null != _view)
 				{
-					Initialize(false);
 					AttachView();
+					Initialize(false);
 				}
 			}
 		}

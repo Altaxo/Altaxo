@@ -78,6 +78,14 @@ namespace Altaxo.Main.MenuCommands.Text
 		}
 	}
 
+	public class ExportMarkdown : AbstractTextControllerCommand
+	{
+		public override void Run(TextDocumentController ctrl)
+		{
+			Altaxo.Text.MarkdownExportOptions.ExportShowDialog(ctrl.TextDocument);
+		}
+	}
+
 	public class SwitchToConfigurationEditorLeftViewerRight : AbstractTextControllerCommand
 	{
 		public override bool CanExecute(object parameter)

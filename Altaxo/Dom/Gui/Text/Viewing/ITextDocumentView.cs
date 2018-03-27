@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Text.Viewing
 	{
 		string InsertImageInDocumentAndGetUrl(string fileName);
 
-		string InsertImageInDocumentAndGetUrl(System.IO.MemoryStream memoryStream);
+		string InsertImageInDocumentAndGetUrl(System.IO.MemoryStream memoryStream, string fileExtension);
 
 		/// <summary>
 		/// Tests if the provided file name could be accepted as an image.

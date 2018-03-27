@@ -248,10 +248,11 @@ namespace Altaxo.Gui.Text.Viewing
 				jpgStream.Seek(0, System.IO.SeekOrigin.Begin);
 
 				var stream = pngStream.Length < jpgStream.Length ? pngStream : jpgStream;
+				var strExt = pngStream.Length < jpgStream.Length ? ".png" : ".jpg";
 				var altStream = pngStream.Length < jpgStream.Length ? jpgStream : pngStream;
 				altStream.Dispose();
 
-				return _controller?.InsertImageInDocumentAndGetUrl(stream);
+				return _controller?.InsertImageInDocumentAndGetUrl(stream, strExt);
 			}
 
 			return null;

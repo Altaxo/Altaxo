@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -321,6 +321,11 @@ namespace Altaxo.Graph
 		/// <summary>Image size in points (1/72 inch).</summary>
 		private PointD2D _imageSizePt;
 
+		/// <summary>
+		/// The media file extension, such as '.png', '.emf' or 'jpg'
+		/// </summary>
+		private string _extension;
+
 		// Cached objects
 		[NonSerialized]
 		private WeakReference _image;
@@ -330,8 +335,45 @@ namespace Altaxo.Graph
 
 		#region Serialization
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MemoryStreamImageProxy), 0)]
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.MemoryStreamImageProxy", 0)]
 		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				throw new InvalidOperationException("Serialization of old version");
+				/*
+				MemoryStreamImageProxy s = (MemoryStreamImageProxy)obj;
+				info.AddValue("Url", s._url);
+				info.AddValue("Name", s._name);
+				info.AddValue("Hash", s._hash);
+				info.AddValue("Stream", s._stream);
+				*/
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				MemoryStreamImageProxy s = SDeserialize(o, info, parent);
+				return s;
+			}
+
+			public virtual MemoryStreamImageProxy SDeserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				MemoryStreamImageProxy s = null != o ? (MemoryStreamImageProxy)o : new MemoryStreamImageProxy();
+				s._url = info.GetString("Url");
+				s._name = info.GetString("Name");
+				s._hash = info.GetString("Hash");
+				s._stream = info.GetMemoryStream("Stream");
+				s._extension = ".png";
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Extended 2018-03-27 with _extension;
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MemoryStreamImageProxy), 1)]
+		private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
@@ -339,6 +381,7 @@ namespace Altaxo.Graph
 				info.AddValue("Url", s._url);
 				info.AddValue("Name", s._name);
 				info.AddValue("Hash", s._hash);
+				info.AddValue("Extension", s._extension);
 				info.AddValue("Stream", s._stream);
 			}
 
@@ -354,6 +397,7 @@ namespace Altaxo.Graph
 				s._url = info.GetString("Url");
 				s._name = info.GetString("Name");
 				s._hash = info.GetString("Hash");
+				s._extension = info.GetString("Extension");
 				s._stream = info.GetMemoryStream("Stream");
 
 				return s;
@@ -384,6 +428,7 @@ namespace Altaxo.Graph
 					this._stream = from._stream;
 					this._hash = from._hash;
 					this._imageSizePt = from._imageSizePt;
+					this._extension = from._extension;
 					this._image = (null != from._image && from._image.IsAlive) ? new WeakReference(from._image.Target) : null;
 				}
 			}
@@ -395,6 +440,7 @@ namespace Altaxo.Graph
 			MemoryStreamImageProxy img = new MemoryStreamImageProxy();
 			img._url = fullpath;
 			img._name = System.IO.Path.GetFileName(fullpath);
+			img._extension = System.IO.Path.GetExtension(fullpath);
 			img.LoadStreamBuffer(fullpath);
 			return img;
 		}
@@ -407,48 +453,65 @@ namespace Altaxo.Graph
 		public static new MemoryStreamImageProxy FromImage(System.Drawing.Image image, string name)
 		{
 			MemoryStreamImageProxy img = new MemoryStreamImageProxy();
-			img._url = "image://" + name;
-			img._name = name;
-			MemoryStream str1;
-			MemoryStream str2;
+			MemoryStream str1, str2;
+			string fmt1, fmt2;
 			if (image is Metafile)
 			{
-				Metafile mf = (Metafile)image;
+				var mf = (Metafile)image;
 
+				fmt1 = ".emf";
 				str1 = ImageToStream(image, ImageFormat.Emf);
+				fmt2 = ".png";
 				str2 = ImageToStream(image, ImageFormat.Png);
 			}
 			else
 			{
+				fmt1 = ".jpg";
 				str1 = ImageToStream(image, ImageFormat.Jpeg);
+				fmt2 = ".png";
 				str2 = ImageToStream(image, ImageFormat.Png);
 			}
 
 			if (str2.Length < str1.Length)
 			{
 				img._stream = str2;
+				img._extension = fmt2;
 				str1.Dispose();
 			}
 			else
 			{
 				img._stream = str1;
+				img._extension = fmt1;
 				str2.Dispose();
 			}
 
 			img.ComputeStreamHash();
-			return img;
-		}
 
-		public static new MemoryStreamImageProxy FromStream(Stream istr)
-		{
-			return FromStream(istr, null);
+			if (string.IsNullOrEmpty(name))
+			{
+				img._name = img._hash + img._extension;
+				img._url = "image://" + img._name;
+			}
+			else
+			{
+				img._name = name;
+				img._url = "image://" + name;
+			}
+
+			return img;
 		}
 
 		public static new MemoryStreamImageProxy FromStream(Stream istr, string name)
 		{
+			if (istr == null)
+				throw new ArgumentNullException(nameof(istr));
+			if (string.IsNullOrEmpty(name))
+				throw new ArgumentNullException(nameof(name), "Name must be provided in order to deduce the file extension");
+
 			MemoryStreamImageProxy img = new MemoryStreamImageProxy();
 			img._url = name;
 			img._name = name;
+			img._extension = System.IO.Path.GetExtension(name);
 			img.CopyFromStream(istr);
 			return img;
 		}
@@ -466,6 +529,22 @@ namespace Altaxo.Graph
 				stb.Append(hash[i].ToString("X2"));
 
 			_hash = stb.ToString();
+		}
+
+		/// <summary>
+		/// Computes the hash of the content of the given stream. The stream must be seekable, since it is positioned to
+		/// the beginning before calculating the hash. Afterwards, the stream position is undefined.
+		/// </summary>
+		/// <param name="stream">The stream to compute the hash for.</param>
+		/// <returns>String with the MD5 hash of the stream.</returns>
+		public static string ComputeStreamHash(Stream stream)
+		{
+			stream.Seek(0, SeekOrigin.Begin);
+			byte[] hash = _md5.ComputeHash(stream);
+			StringBuilder stb = new StringBuilder();
+			for (int i = 0; i < hash.Length; i++)
+				stb.Append(hash[i].ToString("X2"));
+			return stb.ToString();
 		}
 
 		private void CopyFromStream(Stream istr)
@@ -579,6 +658,17 @@ namespace Altaxo.Graph
 		public override string ContentHash
 		{
 			get { return _hash; }
+		}
+
+		/// <summary>
+		/// Gets the extension that designates the type of memory stream, such as '.png' or '.jpg'.
+		/// </summary>
+		public string Extension
+		{
+			get
+			{
+				return _extension;
+			}
 		}
 
 		#region ICloneable Members

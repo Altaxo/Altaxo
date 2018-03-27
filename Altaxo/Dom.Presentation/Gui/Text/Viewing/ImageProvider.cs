@@ -209,7 +209,28 @@ namespace Altaxo.Gui.Text.Viewing
 			}
 			else
 			{
-				return base.GetInlineItem(url, out inlineItemIsErrorMessage);
+				if (string.IsNullOrEmpty(url) || !Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+				{
+					inlineItemIsErrorMessage = false;
+					return null;
+				}
+				try
+				{
+					var bitmapSource = new BitmapImage(new Uri(url, UriKind.RelativeOrAbsolute));
+
+					// This is not nice, but we have to validate that our bitmapSource is valid already now, since we may need to resize it immediately,
+					// and we want to provoke the exception if our url was not valid
+					int pixelHeight = bitmapSource.PixelHeight;
+
+					var image = new Image { Source = bitmapSource };
+					inlineItemIsErrorMessage = false;
+					return new InlineUIContainer(image);
+				}
+				catch (Exception ex)
+				{
+					inlineItemIsErrorMessage = true;
+					return new Run(string.Format("ERROR RENDERING '{0}' ({1})", url, ex.Message));
+				}
 			}
 		}
 

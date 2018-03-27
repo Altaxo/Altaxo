@@ -278,6 +278,12 @@
 				</MenuItem>
 			</Condition>
 
+			<Condition name = "WindowActive" activewindow="Altaxo.Gui.Text.Viewing.TextDocumentController" action="Exclude">
+				<MenuItem id="TextImportExportSeparator"  type = "Separator" />
+				<MenuItem id="TextExport" label="${res:XML.MainMenu.FileMenu.ExportMarkdown}"
+					description="${res:XML.MainMenu.FileMenu.ExportMarkdown.Description}" class="Altaxo.Main.MenuCommands.Text.ExportMarkdown" />
+			</Condition>
+
 			<MenuItem id="AfterExportSeparator" type = "Separator" />
 
 			<Condition name="IsInEmbeddedObjectMode" value="false" action="Exclude">
