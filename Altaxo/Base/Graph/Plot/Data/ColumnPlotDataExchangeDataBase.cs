@@ -62,8 +62,14 @@ namespace Altaxo.Graph.Plot.Data
 				// first the row selection(s)
 				foreach (var columnInfo in data.DataRowSelection.GetAdditionallyUsedColumns())
 				{
-					if ((columnInfo.Column is DataColumn dataColumn && predicate((dataColumn, columnInfo.ColumnName))) || (columnInfo.Column is null && !string.IsNullOrEmpty(columnInfo.ColumnName)))
+					if ((columnInfo.Column is DataColumn dataColumn1 && predicate((dataColumn1, columnInfo.ColumnName))) || (columnInfo.Column is null && !string.IsNullOrEmpty(columnInfo.ColumnName)))
+					{
 						yield return (nameof(data.DataRowSelection), columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.ColumnSetAction(col));
+					}
+					else if ((columnInfo.Column is TransformedReadableColumn transColumn && transColumn.UnderlyingReadableColumn is DataColumn dataColumn2 && predicate((dataColumn2, columnInfo.ColumnName))))
+					{
+						yield return (nameof(data.DataRowSelection), columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.ColumnSetAction(transColumn.WithUnderlyingReadableColumn(col)));
+					}
 				}
 
 				// now the data itself
@@ -71,9 +77,13 @@ namespace Altaxo.Graph.Plot.Data
 				{
 					foreach (var columnInfo in t.columnInfos)
 					{
-						if ((columnInfo.Column is DataColumn dataColumn && predicate((dataColumn, columnInfo.ColumnName))) || (columnInfo.Column is null && !string.IsNullOrEmpty(columnInfo.ColumnName)))
+						if ((columnInfo.Column is DataColumn dataColumn1 && predicate((dataColumn1, columnInfo.ColumnName))) || (columnInfo.Column is null && !string.IsNullOrEmpty(columnInfo.ColumnName)))
 						{
 							yield return (t.NameOfColumnGroup, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, columnInfo.SetColumnAction);
+						}
+						else if ((columnInfo.Column is TransformedReadableColumn transColumn && transColumn.UnderlyingReadableColumn is DataColumn dataColumn2 && predicate((dataColumn2, columnInfo.ColumnName))))
+						{
+							yield return (t.NameOfColumnGroup, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.SetColumnAction(transColumn.WithUnderlyingReadableColumn(col), tbl, grp));
 						}
 					}
 				}
@@ -85,9 +95,13 @@ namespace Altaxo.Graph.Plot.Data
 					{
 						foreach (var columnInfo in style.GetAdditionallyUsedColumns() ?? EmptyColumnInfoEnumeration)
 						{
-							if ((columnInfo.Column is DataColumn dataColumn && predicate((dataColumn, columnInfo.ColumnName))) || (columnInfo.Column is null && !string.IsNullOrEmpty(columnInfo.ColumnName)))
+							if ((columnInfo.Column is DataColumn dataColumn1 && predicate((dataColumn1, columnInfo.ColumnName))) || (columnInfo.Column is null && !string.IsNullOrEmpty(columnInfo.ColumnName)))
 							{
 								yield return (style.GetType().Name, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.ColumnSetAction(col));
+							}
+							else if ((columnInfo.Column is TransformedReadableColumn transColumn && transColumn.UnderlyingReadableColumn is DataColumn dataColumn2 && predicate((dataColumn2, columnInfo.ColumnName))))
+							{
+								yield return (style.GetType().Name, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.ColumnSetAction(transColumn.WithUnderlyingReadableColumn(col)));
 							}
 						}
 					}
@@ -96,9 +110,13 @@ namespace Altaxo.Graph.Plot.Data
 				{
 					foreach (var columnInfo in style.GetAdditionallyUsedColumns() ?? EmptyColumnInfoEnumeration)
 					{
-						if ((columnInfo.Column is DataColumn dataColumn && predicate((dataColumn, columnInfo.ColumnName))) || (columnInfo.Column is null && !string.IsNullOrEmpty(columnInfo.ColumnName)))
+						if ((columnInfo.Column is DataColumn dataColumn1 && predicate((dataColumn1, columnInfo.ColumnName))) || (columnInfo.Column is null && !string.IsNullOrEmpty(columnInfo.ColumnName)))
 						{
 							yield return (style.GetType().Name, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.ColumnSetAction(col));
+						}
+						else if ((columnInfo.Column is TransformedReadableColumn transColumn && transColumn.UnderlyingReadableColumn is DataColumn dataColumn2 && predicate((dataColumn2, columnInfo.ColumnName))))
+						{
+							yield return (style.GetType().Name, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.ColumnSetAction(transColumn.WithUnderlyingReadableColumn(col)));
 						}
 						else if (columnInfo.Column is null)
 						{
