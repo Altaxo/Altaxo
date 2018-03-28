@@ -86,6 +86,14 @@ namespace Altaxo.Main.MenuCommands.Text
 		}
 	}
 
+	public class ImportMarkdown : SimpleCommand
+	{
+		public override void Execute(object parameter)
+		{
+			Altaxo.Text.MarkdownImportOptions.ImportShowDialog();
+		}
+	}
+
 	public class SwitchToConfigurationEditorLeftViewerRight : AbstractTextControllerCommand
 	{
 		public override bool CanExecute(object parameter)

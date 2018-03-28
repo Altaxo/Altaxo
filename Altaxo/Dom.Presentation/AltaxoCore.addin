@@ -238,6 +238,9 @@
 						 description="${res:XML.MainMenu.FileMenu.Import.Ascii.Description}" class="Altaxo.Main.Commands.FileImportAscii" />
 				<MenuItem id="FileImportAsciiWithOptions" label="${res:XML.MainMenu.FileMenu.Import.AsciiWithOptions}" icon="Icons.16x16.ImportAscii"
 						 description="${res:XML.MainMenu.FileMenu.Import.AsciiWithOptions.Description}" class="Altaxo.Main.Commands.FileImportAsciiWithOptions" />
+				<MenuItem id="TextImport" label="${res:XML.MainMenu.FileMenu.ImportMarkdown}"
+									description="${res:XML.MainMenu.FileMenu.ImportMarkdown.Description}" class="Altaxo.Main.MenuCommands.Text.ImportMarkdown" />
+
 				<Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">
 					<MenuItem id="WorksheetImportAsciiSingleWksHorz" label="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet}" icon="Icons.16x16.ImportAscii"
 					description="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet.Description}" class="Altaxo.Worksheet.Commands.ImportAsciiInSingleWorksheetHorizontally" />
