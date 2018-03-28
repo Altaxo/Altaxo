@@ -79,6 +79,21 @@ namespace Altaxo.Gui.Text.Viewing
 
 		public override Inline GetInlineItem(string url, out bool inlineItemIsErrorMessage)
 		{
+			// There are two peculiarities when it comes to creating images from a stream (especially: from a MemoryStream)
+			// First peculiarity:
+			// The sequence
+			//
+			// var imageSource = BitmapFrame.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+			//
+			// to create an image can only be used if IsUndoEnabled is set to false in the FlowDocument.
+			// This is because the BitmapFrame is not serializable, but the Undo function needs that.
+			// Second peculiarity:
+			// even then, there is a bug in Wpf when converting the FlowDocument into a FixedDocument:
+			// when you use the above sequence to create images from MemoryStreams (tested only for them),
+			// all images in the FixedDocument are equal to the first image in the FlowDocument
+			// Summary1: we have to use a BitmapImage instead and use the stream to fill it
+			// Summary2: It is a good idea anyway to set IsUndoEnabled to false in the FlowDocument, as it speeds up changes of the FlowDocument considerably
+
 			if (url.StartsWith(ImagePretext.GraphRelativePathPretext))
 			{
 				string graphName = url.Substring(ImagePretext.GraphRelativePathPretext.Length);
@@ -97,31 +112,7 @@ namespace Altaxo.Gui.Text.Viewing
 					{
 						Altaxo.Graph.Gdi.GraphDocumentExportActions.RenderToStream(graph, stream, options);
 						stream.Seek(0, System.IO.SeekOrigin.Begin);
-
-						// Please note that it is possible here to use a BitmapFrame only if IsUndoEnabled is set to false
-						// in the RichTextBox which hosts the FlowDocument
-						// The reason is that when a text block containing the BitmapFrame is deleted, the flow document try
-						// to serialize the block (for Undo storage), but this fails for the BitmapFrame
-						// If you have to activate IsUndoEnabled, one have to use a BitmapImage instead
-						// Caveat: the serialization is really affecting the performance
-
-						/*
-						var imageSource = new BitmapImage();
-						imageSource.BeginInit();
-
-						// Set properties.
-						imageSource.CacheOption = BitmapCacheOption.OnLoad;
-						imageSource.CreateOptions = BitmapCreateOptions.None;
-						imageSource.StreamSource = stream;
-						imageSource.EndInit();
-						*/
-
-						var imageSource = BitmapFrame.Create(stream,
-													BitmapCreateOptions.None,
-													BitmapCacheOption.OnLoad);
-
-						imageSource.Freeze();
-						var image = new Image() { Source = imageSource };
+						var image = GetImageFromStream(stream);
 						inlineItemIsErrorMessage = false;
 						return new InlineUIContainer(image);
 					}
@@ -143,12 +134,8 @@ namespace Altaxo.Gui.Text.Viewing
 						}
 
 						stream.Seek(0, System.IO.SeekOrigin.Begin);
-						var imageSource = BitmapFrame.Create(stream,
-													BitmapCreateOptions.None,
-													BitmapCacheOption.OnLoad);
+						var image = GetImageFromStream(stream);
 
-						imageSource.Freeze();
-						var image = new Image() { Source = imageSource };
 						inlineItemIsErrorMessage = false;
 						return new InlineUIContainer(image);
 					}
@@ -191,13 +178,8 @@ namespace Altaxo.Gui.Text.Viewing
 				if (null != LocalImages && LocalImages.TryGetValue(name, out var img))
 				{
 					var stream = img.GetContentStream();
+					Image image = GetImageFromStream(stream);
 
-					var imageSource = BitmapFrame.Create(stream,
-													BitmapCreateOptions.None,
-													BitmapCacheOption.OnLoad);
-
-					imageSource.Freeze();
-					var image = new Image() { Source = imageSource };
 					inlineItemIsErrorMessage = false;
 					return new InlineUIContainer(image);
 				}
@@ -232,6 +214,18 @@ namespace Altaxo.Gui.Text.Viewing
 					return new Run(string.Format("ERROR RENDERING '{0}' ({1})", url, ex.Message));
 				}
 			}
+		}
+
+		private static Image GetImageFromStream(System.IO.Stream stream)
+		{
+			var imageSource = new BitmapImage();
+			imageSource.BeginInit();
+			imageSource.CacheOption = BitmapCacheOption.OnLoad;
+			imageSource.CreateOptions = BitmapCreateOptions.None;
+			imageSource.StreamSource = stream;
+			imageSource.EndInit();
+			imageSource.Freeze();
+			return new Image() { Source = imageSource };
 		}
 
 		/// <summary>
