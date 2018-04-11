@@ -100,5 +100,23 @@ namespace Altaxo.Serialization.Xml
 				return info.GetDateTime("e");
 			}
 		}
+
+		/// <summary>
+		/// 2018-04-11 Initial version
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Boolean), 0)]
+		private class XmlSerializationSurrogateForBoolean : IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (Boolean)obj;
+				info.AddValue("e", s);
+			}
+
+			public object Deserialize(object o, IXmlDeserializationInfo info, object parentobject)
+			{
+				return info.GetBoolean("e");
+			}
+		}
 	}
 }
