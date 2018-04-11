@@ -65,6 +65,8 @@
 								 PreviewMouseWheel="EhViewer_MouseWheel"
 								 PreviewMouseDown="EhViewer_MouseDown"
 								 PreviewKeyDown="EhViewer_PreviewKeyDown"
+ 								TextChanged="EhViewer_TextChanged"
+
 								 SelectionChanged="EhViewer_SelectionChanged"
 
 								 IsUndoEnabled="False">

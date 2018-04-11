@@ -36,8 +36,8 @@ rmdir /S /Q .\Altaxo\Dom.Presentation\bin
 rmdir /S /Q .\Altaxo\HelpViewer\obj
 rmdir /S /Q .\Altaxo\HelpViewer\bin
 
-rmdir /S /Q .\Altaxo\AltaxoMarkdownEditing\obj
-rmdir /S /Q .\Altaxo\AltaxoMarkdownEditing\bin
+rmdir /S /Q .\Altaxo\MarkdownEditing\obj
+rmdir /S /Q .\Altaxo\MarkdownEditing\bin
 
 rmdir /S /Q .\Altaxo\Startup\obj
 rmdir /S /Q .\Altaxo\Startup\bin

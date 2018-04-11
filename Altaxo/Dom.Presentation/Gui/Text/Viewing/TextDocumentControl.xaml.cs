@@ -175,6 +175,14 @@ namespace Altaxo.Gui.Text.Viewing
 			}
 		}
 
+		public bool IsHyphenationEnabled
+		{
+			set
+			{
+				_guiEditor.IsHyphenationEnabled = value;
+			}
+		}
+
 		public bool IsFoldingEnabled
 		{
 			set

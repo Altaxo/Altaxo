@@ -201,6 +201,14 @@ namespace Altaxo.Text.GuiModels
 			typeof(TextDocument),
 			() => false);
 
+		public static readonly Main.Properties.PropertyKey<bool> PropertyKeyIsHyphenationEnabled =
+			new Main.Properties.PropertyKey<bool>(
+			"1A61D4A8-06E8-4A98-AD60-E89C0B47D77F",
+			"Text\\IsHyphenationEnabled",
+			Main.Properties.PropertyLevel.All,
+			typeof(TextDocument),
+			() => false);
+
 		public static readonly Main.Properties.PropertyKey<bool> PropertyKeyIsFoldingEnabled =
 			new Main.Properties.PropertyKey<bool>(
 			"8FBF38A4-E9ED-4C17-B6F0-F6E5E285FD33",

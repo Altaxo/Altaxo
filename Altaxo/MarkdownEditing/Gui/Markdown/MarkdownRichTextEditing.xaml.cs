@@ -35,6 +35,8 @@ namespace Altaxo.Gui.Markdown
 	/// <summary>
 	/// Interaction logic for MarkdownSimpleEditing.xaml
 	/// </summary>
+	/// <seealso cref="System.Windows.Controls.UserControl" />
+	/// <seealso cref="System.Windows.Markup.IComponentConnector" />
 	public partial class MarkdownRichTextEditing : UserControl
 	{
 		private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().UseFencedCodeBlockLineTaggingPostProcessor().Build();
@@ -44,6 +46,18 @@ namespace Altaxo.Gui.Markdown
 		private long _sourceTextUsn;
 		private string _styleName;
 		private IStyles _currentStyle = DynamicStyles.Instance;
+
+		private bool _isSpellCheckingEnabled;
+		private bool _isHyphenationEnabled;
+		private ICSharpCode.AvalonEdit.Folding.FoldingManager _foldingManager;
+		private SyntaxTreeFoldingStrategy _foldingStrategy;
+
+		/// <summary>
+		/// Sets this flag to true when an update of the flow document is in progress.
+		/// This helps our MarkdownEditing controll to distinguish between TextChanged events coming from an update of the FlowDocument
+		/// and TextChanged events coming from user input, e.g. correction of spelling errors.
+		/// </summary>
+		private bool _isFlowDocumentUpdateInProgress;
 
 		public ICSharpCode.AvalonEdit.TextEditor Editor { get { return _guiEditor; } }
 		public RichTextBox Viewer { get { return _guiViewer; } }
@@ -116,12 +130,30 @@ namespace Altaxo.Gui.Markdown
 		{
 			set
 			{
-				_guiViewer.SpellCheck.IsEnabled = true;
+				if (!(_isSpellCheckingEnabled == value))
+				{
+					_guiViewer.SpellCheck.IsEnabled = value;
+					_guiViewer.IsReadOnly = !value; // in order to have spell checking, we have to enable the document
+					if (true == value && null != _guiViewer.Document)
+					{
+						_guiViewer.Document.Language = System.Windows.Markup.XmlLanguage.GetLanguage("en-US");
+					}
+				}
 			}
 		}
 
-		private ICSharpCode.AvalonEdit.Folding.FoldingManager _foldingManager;
-		private SyntaxTreeFoldingStrategy _foldingStrategy;
+		public bool IsHyphenationEnabled
+		{
+			set
+			{
+				if (!(_isHyphenationEnabled == value))
+				{
+					_isHyphenationEnabled = value;
+					if (null != _guiViewer.Document)
+						_guiViewer.Document.IsHyphenationEnabled = _isHyphenationEnabled;
+				}
+			}
+		}
 
 		public bool IsFoldingEnabled
 		{
@@ -276,6 +308,7 @@ namespace Altaxo.Gui.Markdown
 
 					// We override the renderer with our own writer
 					var flowDocument = new FlowDocument();
+					flowDocument.IsHyphenationEnabled = _isHyphenationEnabled;
 					var renderer = new Markdig.Renderers.WpfRenderer(flowDocument, _currentStyle)
 					{
 						ImageProvider = this.ImageProvider
@@ -283,7 +316,9 @@ namespace Altaxo.Gui.Markdown
 
 					pipeline.Setup(renderer);
 					renderer.Render(markdownDocument);
+					_isFlowDocumentUpdateInProgress = true;
 					_guiViewer.Document = flowDocument;
+					_isFlowDocumentUpdateInProgress = false;
 					_lastSourceTextProcessed = _sourceText;
 					_lastMarkdownDocumentProcessed = markdownDocument;
 					_foldingManager?.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
@@ -307,6 +342,7 @@ namespace Altaxo.Gui.Markdown
 							_lastMarkdownDocumentProcessed = newDocument;
 							_foldingManager?.UpdateFoldings(_foldingStrategy.GetNewFoldings(_lastMarkdownDocumentProcessed), -1);
 						},
+						(isFlowDocumentUpdateInProgress) => _isFlowDocumentUpdateInProgress = isFlowDocumentUpdateInProgress,
 						_lastCancellationTokenSource.Token);
 
 					Task.Run(() => task.Parse());
@@ -744,6 +780,61 @@ namespace Altaxo.Gui.Markdown
 				}
 				_guiEditor.Focus();
 			}
+		}
+
+		/// <summary>
+		/// It seems that the TextChanged event of the RichTextbox is the only event that fires up when the user use the correction context menu
+		/// to correct a misspelled word (assuming that spell check is enabled). Unfortunately, RTB fires the event every time if something
+		/// in the FlowDocument has changed, thus making it hard to tell those events from spell check input. Even the IsUserInitiated property
+		/// of the event args is false when correcting misspelled words.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="TextChangedEventArgs"/> instance containing the event data.</param>
+		private void EhViewer_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (_isFlowDocumentUpdateInProgress)
+				return; // return if the flow document is edited by the renderer
+
+			if (e.Changes.Count == 0)
+				return; // return if there are no changes
+
+			var changes = e.Changes.ToArray();
+			Array.Sort(changes, (x, y) => Comparer<int>.Default.Compare(x.Offset, y.Offset));
+
+			foreach (var textChange in changes)
+			{
+				Viewer_ProcessTextChange(textChange);
+			}
+		}
+
+		/// <summary>
+		/// Process a single text change of the Viewer (caused by the user that used spelling correction).
+		/// </summary>
+		/// <param name="textChange">The text change.</param>
+		/// <exception cref="NotImplementedException"></exception>
+		private void Viewer_ProcessTextChange(TextChange textChange)
+		{
+			var offsetPosition = _guiViewer.Document.ContentStart.GetPositionAtOffset(textChange.Offset);
+			if (!(offsetPosition.Parent is Run runAtOffset))
+				return;
+
+			var offsetIntoRun = runAtOffset.ContentStart.GetOffsetToPosition(offsetPosition);
+
+			if (!(offsetIntoRun + textChange.AddedLength <= runAtOffset.Text.Length))
+				return;
+
+			string addedText = runAtOffset.Text.Substring(offsetIntoRun, textChange.AddedLength);
+
+			var (sourceTextOffset, isReturnedPositionAccurate) = PositionHelper.ViewersTextPositionToSourceEditorsTextPosition(offsetPosition);
+
+			if (!isReturnedPositionAccurate)
+				return;
+
+			var stb = new System.Text.StringBuilder(_sourceText);
+			stb.Remove(sourceTextOffset, textChange.RemovedLength);
+			stb.Insert(sourceTextOffset, addedText);
+
+			_guiEditor.Text = stb.ToString();
 		}
 
 		#endregion Key handling, when a key is entered in the viewer

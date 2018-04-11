@@ -54,6 +54,8 @@ namespace Altaxo.Text
 		/// </summary>
 		private string _sourceText;
 
+		private bool? _isHyphenationEnabled;
+
 		/// <summary>
 		/// Local images for this markdown, stored in a dictionary. The key is a Guid which is created when the image is pasted into the markdown document.
 		/// The value is a memory stream image proxy.
@@ -116,6 +118,7 @@ namespace Altaxo.Text
 				info.AddValue("Properties", s._documentProperties);
 				info.AddValue("StyleName", s._styleName);
 				info.AddValue("SourceText", s._sourceText);
+				info.AddValue("IsHyphenationEnabled", s._isHyphenationEnabled);
 
 				// we need to calculate in advance the number of referenced local images
 
@@ -162,6 +165,7 @@ namespace Altaxo.Text
 				s.PropertyBag = (Main.Properties.PropertyBag)info.GetValue("Properties", s);
 				s._styleName = info.GetString("StyleName");
 				s._sourceText = info.GetString("SourceText");
+				s._isHyphenationEnabled = info.GetNullableBoolean("IsHyphenationEnabled");
 
 				int count = info.OpenArray("Images");
 				{
@@ -444,6 +448,25 @@ namespace Altaxo.Text
 				if (!(_sourceText == value))
 				{
 					_sourceText = value;
+					EhSelfChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether hyphenation is enabled.
+		/// </summary>
+		public bool? IsHyphenationEnabled
+		{
+			get
+			{
+				return _isHyphenationEnabled;
+			}
+			set
+			{
+				if (!(_isHyphenationEnabled == value))
+				{
+					_isHyphenationEnabled = value;
 					EhSelfChanged(EventArgs.Empty);
 				}
 			}

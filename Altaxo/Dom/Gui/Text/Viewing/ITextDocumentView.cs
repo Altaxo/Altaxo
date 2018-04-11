@@ -54,6 +54,7 @@ namespace Altaxo.Gui.Text.Viewing
 		bool IsLineNumberingEnabled { set; }
 		bool IsWordWrappingEnabled { set; }
 		bool IsSpellCheckingEnabled { set; }
+		bool IsHyphenationEnabled { set; }
 		bool IsFoldingEnabled { set; }
 		string HighlightingStyle { set; }
 

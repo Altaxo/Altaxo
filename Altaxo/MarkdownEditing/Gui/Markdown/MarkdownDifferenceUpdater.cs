@@ -92,6 +92,13 @@ namespace Altaxo.Gui.Markdown
 		/// </summary>
 		protected Action<string, MarkdownDocument> NewTextAndDocumentSetter { get; private set; }
 
+		/// <summary>
+		/// This action sets a flag to true when an update of the flow document is in progress.
+		/// This helps our MarkdownEditing controll to distinguish between TextChanged events coming from an update of the FlowDocument
+		/// and TextChanged events coming from user input, e.g. correction of spelling errors.
+		/// </summary>
+		protected Action<bool> SetFlowDocumentUpdateInProgressFlag { get; private set; }
+
 		#endregion Members given in constructor
 
 		#region Operational members
@@ -108,7 +115,7 @@ namespace Altaxo.Gui.Markdown
 
 		#endregion Operational members
 
-		public MarkdownDifferenceUpdater(string oldSourceText, MarkdownDocument oldDocument, MarkdownPipeline pipeline, IStyles styles, IWpfImageProvider imageProvider, string newSourceText, long newSourceTextUsn, FlowDocument flowDocument, Dispatcher dispatcher, Action<string, MarkdownDocument> newDocumentSetter, CancellationToken cancellationToken)
+		public MarkdownDifferenceUpdater(string oldSourceText, MarkdownDocument oldDocument, MarkdownPipeline pipeline, IStyles styles, IWpfImageProvider imageProvider, string newSourceText, long newSourceTextUsn, FlowDocument flowDocument, Dispatcher dispatcher, Action<string, MarkdownDocument> newDocumentSetter, Action<bool> setFlowDocumentUpdateInProgressFlag, CancellationToken cancellationToken)
 		{
 			OldSourceText = oldSourceText;
 			OldDocument = oldDocument;
@@ -120,6 +127,7 @@ namespace Altaxo.Gui.Markdown
 			FlowDocument = flowDocument;
 			Dispatcher = dispatcher;
 			NewTextAndDocumentSetter = newDocumentSetter;
+			SetFlowDocumentUpdateInProgressFlag = setFlowDocumentUpdateInProgressFlag;
 			this.cancellationToken = cancellationToken;
 		}
 
@@ -181,6 +189,8 @@ namespace Altaxo.Gui.Markdown
 			if (cancellationToken.IsCancellationRequested)
 				return;
 
+			SetFlowDocumentUpdateInProgressFlag?.Invoke(true);
+
 			// the next lines must be called in the context of Gui,
 			// and can not be cancelled, since that would
 			// mess up the FlowDocument
@@ -196,6 +206,8 @@ namespace Altaxo.Gui.Markdown
 
 			// now delete the changed top level blocks of FlowDocument and insert or add the newly created ones
 			DeleteOldAndInsertNewElementsInFlowDocument(firstLevelTextElementsToDelete, newListOfTextElements, firstLevelTextElementToInsertBefore, firstLevelTextElementToInsertAfter);
+
+			SetFlowDocumentUpdateInProgressFlag?.Invoke(false);
 
 			// exchange the current source text and parsed markdig in the text editor
 			NewTextAndDocumentSetter(NewSourceText, NewDocument);
