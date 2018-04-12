@@ -805,7 +805,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
 			{
 				this.ShowView(viewContent, selectView);
 			}
-			else if (content is IProjectItemPresentationModel)
+			else if (content is IProjectItemPresentationModel pm && pm.Document != null) 
 			{
 				var ctrl = (IViewContent)Current.Gui.GetController(new object[] { content }, typeof(IViewContent));
 				if (null != ctrl)
