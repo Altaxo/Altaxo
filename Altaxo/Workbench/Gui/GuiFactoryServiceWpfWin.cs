@@ -308,7 +308,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
 			dlg.Multiselect = options.Multiselect;
 			if (options.Title != null)
 				dlg.Title = options.Title;
-			if (options.InitialDirectory != null)
+			if (options.InitialDirectory != null && System.IO.Directory.Exists(options.InitialDirectory))
 				dlg.InitialDirectory = options.InitialDirectory;
 			dlg.RestoreDirectory = options.RestoreDirectory;
 
@@ -335,7 +335,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
 			//dlg.Multiselect = options.Multiselect;
 			if (options.Title != null)
 				dlg.Title = options.Title;
-			if (options.InitialDirectory != null)
+			if (options.InitialDirectory != null && System.IO.Directory.Exists(options.InitialDirectory))
 				dlg.InitialDirectory = options.InitialDirectory;
 			dlg.RestoreDirectory = options.RestoreDirectory;
 			dlg.OverwritePrompt = options.OverwritePrompt;
