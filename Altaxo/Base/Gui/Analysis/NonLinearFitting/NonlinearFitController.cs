@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -333,6 +333,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 		{
 			if (true == this._parameterController.Apply(false))
 			{
+				// test if there are any parameters to vary
+				if (null == _doc.CurrentParameters.Where(x => x.Vary).FirstOrDefault())
+				{
+					Current.Gui.ErrorMessageBox("You should select at least one parameter to vary!");
+					return;
+				}
+
 				//        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
 
 				LevMarAdapter fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
