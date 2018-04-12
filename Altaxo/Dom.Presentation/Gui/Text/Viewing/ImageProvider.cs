@@ -30,6 +30,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Altaxo.Text;
 using Markdig.Renderers;
@@ -149,7 +150,7 @@ namespace Altaxo.Gui.Text.Viewing
 			else if (url.StartsWith(ImagePretext.ResourceImagePretext))
 			{
 				string name = url.Substring(ImagePretext.ResourceImagePretext.Length);
-				BitmapSource bitmapSource = null;
+				ImageSource bitmapSource = null;
 				try
 				{
 					bitmapSource = PresentationResourceService.GetBitmapSource(name);

@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Altaxo.Gui
@@ -99,7 +100,7 @@ namespace Altaxo.Gui
 		/// <exception cref="ResourceNotFoundException">
 		/// Is thrown when the GlobalResource manager can't find a requested resource.
 		/// </exception>
-		public static BitmapSource GetBitmapSource(string name)
+		public static ImageSource GetBitmapSource(string name)
 		{
 			if (_resourceService == null)
 			{
@@ -137,6 +138,16 @@ namespace Altaxo.Gui
 						NativeMethods.DeleteObject(hBitmap);
 					}
 					return bs;
+				}
+				else if (imageObject is byte[] byteArray)
+				{
+					// then it is probably a Xaml text
+					// Note: do not catch Exceptions here, because we want to know about wrong resources
+					using (var ms = new System.IO.MemoryStream(byteArray))
+					{
+						var presentation = System.Windows.Markup.XamlReader.Load(ms);
+						return (ImageSource)presentation;
+					}
 				}
 				else if (imageObject != null)
 				{
