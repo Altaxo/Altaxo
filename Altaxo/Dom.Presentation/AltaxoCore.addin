@@ -671,6 +671,9 @@
 				<MenuItem id="Metro" label="Metro" description="Loads the Metro theme" class="Altaxo.Gui.MenuCommands.LoadMetroTheme" />
 				<MenuItem id="Aero" label="Aero" description="Loads the Aero theme" class="Altaxo.Gui.MenuCommands.LoadAeroTheme" />
 				<MenuItem id="VS2010" label="VS2010" description="Loads the VS2010 theme" class="Altaxo.Gui.MenuCommands.LoadVS2010Theme" />
+				<MenuItem id="VS2013Dark" label="VS2013 (Dark)" description="Loads the VS2010 dark theme" class="Altaxo.Gui.MenuCommands.LoadVS2013DarkTheme" />
+				<MenuItem id="VS2013Light" label="VS2013 (Light)" description="Loads the VS2010 light theme" class="Altaxo.Gui.MenuCommands.LoadVS2013LightTheme" />
+				<MenuItem id="VS2013Blue" label="VS2013 (Blue)" description="Loads the VS2010 blue theme" class="Altaxo.Gui.MenuCommands.LoadVS2013BlueTheme" />
 			</MenuItem>
 			<MenuItem id="UserSettings"
 							label="${res:XML.MainMenu.ToolsMenu.ShowUserSettings}"

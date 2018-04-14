@@ -147,6 +147,10 @@
       <Project>{b3fc3e21-5f2d-4581-aea2-59f671cffc21}</Project>
       <Name>Xceed.Wpf.AvalonDock.Themes.VS2010</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\AvalonDock\Xceed.Wpf.AvalonDock.Themes.VS2013\Xceed.Wpf.AvalonDock.Themes.VS2013.csproj">
+      <Project>{913367af-7da0-494a-ac1a-45ccdfd95d00}</Project>
+      <Name>Xceed.Wpf.AvalonDock.Themes.VS2013</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Base.Presentation\AltaxoBase.Presentation.csproj">
       <Project>{323D97E6-92A8-40B4-99C1-D64D4368DFC7}</Project>
       <Name>AltaxoBase.Presentation</Name>
