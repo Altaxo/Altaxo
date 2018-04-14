@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gui\Markdown\Commands.cs" />
+    <Compile Include="Gui\Markdown\LastActivatedWindow.cs" />
     <Compile Include="Gui\Markdown\LinkReferenceTrackerPostProcessor.cs" />
     <Compile Include="Gui\Markdown\FencedCodeBlockLineTaggingPostProcessor.cs" />
     <Compile Include="Gui\Markdown\MarkdownDifferenceUpdater.cs" />
@@ -63,6 +64,8 @@
     <Compile Include="Gui\Markdown\MarkdownEditing.xaml.cs">
       <DependentUpon>MarkdownEditing.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Markdown\MarkdownRichTextEditing_TextBlockCommands.cs" />
+    <Compile Include="Gui\Markdown\MarkdownRichTextEditing_TextInlineCommands.cs" />
     <Compile Include="Gui\Markdown\MarkdownSimpleEditing.xaml.cs">
       <DependentUpon>MarkdownSimpleEditing.xaml</DependentUpon>
     </Compile>

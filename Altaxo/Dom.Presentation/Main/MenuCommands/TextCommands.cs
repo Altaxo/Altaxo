@@ -33,129 +33,211 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Main.MenuCommands.Text
 {
+  /// <summary>
+  /// Provides a abstract class for issuing commands that apply to text document controllers.
+  /// </summary>
+  public abstract class AbstractTextControllerCommand : SimpleCommand
+  {
+	/// <summary>Determines if the command can be executed.</summary>
+	/// <param name="parameter">The parameter (context of the command).</param>
+	/// <returns>True if either the <paramref name="parameter"/> or the ActiveViewContent of the workbench is a <see cref="Altaxo.Gui.Text.Viewing.TextDocumentController"/>.
+	/// </returns>
+	public override bool CanExecute(object parameter)
+	{
+	  if (!(parameter is IViewContent viewContent))
+		viewContent = Current.Workbench.ActiveViewContent;
+	  return viewContent is Altaxo.Gui.Text.Viewing.TextDocumentController;
+	}
+
 	/// <summary>
-	/// Provides a abstract class for issuing commands that apply to text document controllers.
+	/// Determines the currently active worksheet and issues the command to that text document controller by calling
+	/// Run with the text document controller as a parameter.
 	/// </summary>
-	public abstract class AbstractTextControllerCommand : SimpleCommand
+	public override void Execute(object parameter)
 	{
-		/// <summary>Determines if the command can be executed.</summary>
-		/// <param name="parameter">The parameter (context of the command).</param>
-		/// <returns>True if either the <paramref name="parameter"/> or the ActiveViewContent of the workbench is a <see cref="Altaxo.Gui.Text.Viewing.TextDocumentController"/>.
-		/// </returns>
-		public override bool CanExecute(object parameter)
-		{
-			if (!(parameter is IViewContent viewContent))
-				viewContent = Current.Workbench.ActiveViewContent;
-			return viewContent is Altaxo.Gui.Text.Viewing.TextDocumentController;
-		}
+	  if (!(parameter is IViewContent activeViewContent))
+		activeViewContent = Current.Workbench.ActiveViewContent;
 
-		/// <summary>
-		/// Determines the currently active worksheet and issues the command to that text document controller by calling
-		/// Run with the text document controller as a parameter.
-		/// </summary>
-		public override void Execute(object parameter)
-		{
-			if (!(parameter is IViewContent activeViewContent))
-				activeViewContent = Current.Workbench.ActiveViewContent;
-
-			if (activeViewContent is Altaxo.Gui.Text.Viewing.TextDocumentController ctrl)
-				Run(ctrl);
-		}
-
-		/// <summary>
-		/// Override this function for adding own text document controller commands. You will get
-		/// the text document controller in the parameter.
-		/// </summary>
-		/// <param name="ctrl">The text document controller this command is applied to.</param>
-		public abstract void Run(Altaxo.Gui.Text.Viewing.TextDocumentController ctrl);
+	  if (activeViewContent is Altaxo.Gui.Text.Viewing.TextDocumentController ctrl)
+		Run(ctrl);
 	}
 
-	public class Print : AbstractTextControllerCommand
+	/// <summary>
+	/// Override this function for adding own text document controller commands. You will get
+	/// the text document controller in the parameter.
+	/// </summary>
+	/// <param name="ctrl">The text document controller this command is applied to.</param>
+	public abstract void Run(Altaxo.Gui.Text.Viewing.TextDocumentController ctrl);
+  }
+
+  public class Print : AbstractTextControllerCommand
+  {
+	public override void Run(TextDocumentController ctrl)
 	{
-		public override void Run(TextDocumentController ctrl)
-		{
-			ctrl.PrintShowDialog();
-		}
+	  ctrl.PrintShowDialog();
+	}
+  }
+
+  public class ExportMarkdown : AbstractTextControllerCommand
+  {
+	public override void Run(TextDocumentController ctrl)
+	{
+	  Altaxo.Text.MarkdownExportOptions.ExportShowDialog(ctrl.TextDocument);
+	}
+  }
+
+  public class ImportMarkdown : SimpleCommand
+  {
+	public override void Execute(object parameter)
+	{
+	  Altaxo.Text.MarkdownImportOptions.ImportShowDialog();
+	}
+  }
+
+  public class SwitchToConfigurationEditorLeftViewerRight : AbstractTextControllerCommand
+  {
+	public override bool CanExecute(object parameter)
+	{
+	  return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorLeftViewerRight.CanExecute(null, null);
 	}
 
-	public class ExportMarkdown : AbstractTextControllerCommand
+	public override void Run(TextDocumentController ctrl)
 	{
-		public override void Run(TextDocumentController ctrl)
-		{
-			Altaxo.Text.MarkdownExportOptions.ExportShowDialog(ctrl.TextDocument);
-		}
+	  Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorLeftViewerRight.Execute(null, null);
+	}
+  }
+
+  public class SwitchToConfigurationEditorTopViewerBottom : AbstractTextControllerCommand
+  {
+	public override bool CanExecute(object parameter)
+	{
+	  return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorTopViewerBottom.CanExecute(null, null);
 	}
 
-	public class ImportMarkdown : SimpleCommand
+	public override void Run(TextDocumentController ctrl)
 	{
-		public override void Execute(object parameter)
-		{
-			Altaxo.Text.MarkdownImportOptions.ImportShowDialog();
-		}
+	  Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorTopViewerBottom.Execute(null, null);
+	}
+  }
+
+  public class SwitchToConfigurationEditorRightViewerLeft : AbstractTextControllerCommand
+  {
+	public override bool CanExecute(object parameter)
+	{
+	  return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorRightViewerLeft.CanExecute(null, null);
 	}
 
-	public class SwitchToConfigurationEditorLeftViewerRight : AbstractTextControllerCommand
+	public override void Run(TextDocumentController ctrl)
 	{
-		public override bool CanExecute(object parameter)
-		{
-			return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorLeftViewerRight.CanExecute(null, null);
-		}
+	  Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorRightViewerLeft.Execute(null, null);
+	}
+  }
 
-		public override void Run(TextDocumentController ctrl)
-		{
-			Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorLeftViewerRight.Execute(null, null);
-		}
+  public class SwitchToConfigurationEditorBottomViewerTop : AbstractTextControllerCommand
+  {
+	public override bool CanExecute(object parameter)
+	{
+	  return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorBottomViewerTop.CanExecute(null, null);
 	}
 
-	public class SwitchToConfigurationEditorTopViewerBottom : AbstractTextControllerCommand
+	public override void Run(TextDocumentController ctrl)
 	{
-		public override bool CanExecute(object parameter)
-		{
-			return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorTopViewerBottom.CanExecute(null, null);
-		}
+	  Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorBottomViewerTop.Execute(null, null);
+	}
+  }
 
-		public override void Run(TextDocumentController ctrl)
-		{
-			Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorTopViewerBottom.Execute(null, null);
-		}
+  public class SwitchToConfigurationTabbedEditorAndViewer : AbstractTextControllerCommand
+  {
+	public override bool CanExecute(object parameter)
+	{
+	  return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.SwitchToConfigurationTabbedEditorAndViewer.CanExecute(null, null);
 	}
 
-	public class SwitchToConfigurationEditorRightViewerLeft : AbstractTextControllerCommand
+	public override void Run(TextDocumentController ctrl)
 	{
-		public override bool CanExecute(object parameter)
-		{
-			return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorRightViewerLeft.CanExecute(null, null);
-		}
+	  Altaxo.Gui.Markdown.Commands.SwitchToConfigurationTabbedEditorAndViewer.Execute(null, null);
+	}
+  }
 
-		public override void Run(TextDocumentController ctrl)
-		{
-			Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorRightViewerLeft.Execute(null, null);
-		}
+  #region Inline Text commands
+
+  public class Bold : AbstractTextControllerCommand
+  {
+	public override bool CanExecute(object parameter)
+	{
+	  return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.Bold.CanExecute(null, null);
 	}
 
-	public class SwitchToConfigurationEditorBottomViewerTop : AbstractTextControllerCommand
+	public override void Run(TextDocumentController ctrl)
 	{
-		public override bool CanExecute(object parameter)
-		{
-			return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorBottomViewerTop.CanExecute(null, null);
-		}
+	  Altaxo.Gui.Markdown.Commands.Bold.Execute(null, null);
+	}
+  }
 
-		public override void Run(TextDocumentController ctrl)
-		{
-			Altaxo.Gui.Markdown.Commands.SwitchToConfigurationEditorBottomViewerTop.Execute(null, null);
-		}
+  public class Italic : AbstractTextControllerCommand
+  {
+	public override bool CanExecute(object parameter)
+	{
+	  return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.Italic.CanExecute(null, null);
 	}
 
-	public class SwitchToConfigurationTabbedEditorAndViewer : AbstractTextControllerCommand
+	public override void Run(TextDocumentController ctrl)
 	{
-		public override bool CanExecute(object parameter)
-		{
-			return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.SwitchToConfigurationTabbedEditorAndViewer.CanExecute(null, null);
-		}
-
-		public override void Run(TextDocumentController ctrl)
-		{
-			Altaxo.Gui.Markdown.Commands.SwitchToConfigurationTabbedEditorAndViewer.Execute(null, null);
-		}
+	  Altaxo.Gui.Markdown.Commands.Italic.Execute(null, null);
 	}
+  }
+
+  public class StrikeThrough : AbstractTextControllerCommand
+  {
+	public override bool CanExecute(object parameter)
+	{
+	  return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.Strikethrough.CanExecute(null, null);
+	}
+
+	public override void Run(TextDocumentController ctrl)
+	{
+	  Altaxo.Gui.Markdown.Commands.Strikethrough.Execute(null, null);
+	}
+  }
+
+  public class Subscript : AbstractTextControllerCommand
+  {
+	public override bool CanExecute(object parameter)
+	{
+	  return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.Subscript.CanExecute(null, null);
+	}
+
+	public override void Run(TextDocumentController ctrl)
+	{
+	  Altaxo.Gui.Markdown.Commands.Subscript.Execute(null, null);
+	}
+  }
+
+  public class Superscript : AbstractTextControllerCommand
+  {
+	public override bool CanExecute(object parameter)
+	{
+	  return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.Superscript.CanExecute(null, null);
+	}
+
+	public override void Run(TextDocumentController ctrl)
+	{
+	  Altaxo.Gui.Markdown.Commands.Superscript.Execute(null, null);
+	}
+  }
+
+  public class InlineCode : AbstractTextControllerCommand
+  {
+	public override bool CanExecute(object parameter)
+	{
+	  return base.CanExecute(parameter) && Altaxo.Gui.Markdown.Commands.InlineCode.CanExecute(null, null);
+	}
+
+	public override void Run(TextDocumentController ctrl)
+	{
+	  Altaxo.Gui.Markdown.Commands.InlineCode.Execute(null, null);
+	}
+  }
+
+  #endregion Inline Text commands
 }

@@ -30,6 +30,22 @@
 			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorTopViewerBottom}" Executed="EhSwitchToConfigurationEditorTopViewerBottom" CanExecute="EhCanSwitchToConfigurationEditorTopViewerBottom" />
 			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationEditorBottomViewerTop}" Executed="EhSwitchToConfigurationEditorBottomViewerTop" CanExecute="EhCanSwitchToConfigurationEditorBottomViewerTop" />
 			<CommandBinding Command="{x:Static local:Commands.SwitchToConfigurationTabbedEditorAndViewer}" Executed="EhSwitchToConfigurationTabbedEditorAndViewer" CanExecute="EhCanSwitchToConfigurationTabbedEditorAndViewer" />
+			<!-- Text inline commands -->
+			<CommandBinding Command="{x:Static local:Commands.Subscript}" Executed="EhSubscript" CanExecute="EhCanSubscript" />
+			<CommandBinding Command="{x:Static local:Commands.Superscript}" Executed="EhSuperscript" CanExecute="EhCanSuperscript" />
+			<CommandBinding Command="{x:Static local:Commands.Bold}" Executed="EhBold" CanExecute="EhCanBold" />
+			<CommandBinding Command="{x:Static local:Commands.Italic}" Executed="EhItalic" CanExecute="EhCanItalic" />
+			<CommandBinding Command="{x:Static local:Commands.Strikethrough}" Executed="EhStrikethrough" CanExecute="EhCanStrikethrough" />
+			<CommandBinding Command="{x:Static local:Commands.InlineCode}" Executed="EhInlineCode" CanExecute="EhCanInlineCode" />
+			<!-- Text block commands -->
+			<CommandBinding Command="{x:Static local:Commands.BlockCode}" Executed="EhBlockCode" CanExecute="EhCanBlockCode" />
+			<CommandBinding Command="{x:Static local:Commands.Quoted}" Executed="EhQuoted" CanExecute="EhCanQuoted" />
+			<CommandBinding Command="{x:Static local:Commands.Header1}" Executed="EhHeader1" CanExecute="EhCanHeader1" />
+			<CommandBinding Command="{x:Static local:Commands.Header2}" Executed="EhHeader2" CanExecute="EhCanHeader2" />
+			<CommandBinding Command="{x:Static local:Commands.Header3}" Executed="EhHeader3" CanExecute="EhCanHeader3" />
+			<CommandBinding Command="{x:Static local:Commands.Header4}" Executed="EhHeader4" CanExecute="EhCanHeader4" />
+			<CommandBinding Command="{x:Static local:Commands.Header5}" Executed="EhHeader5" CanExecute="EhCanHeader5" />
+			<CommandBinding Command="{x:Static local:Commands.Header6}" Executed="EhHeader6" CanExecute="EhCanHeader6" />
 		</FrameworkElement.CommandBindings>
 
 		<GridSplitter Name="_guiColumnGridSplitter" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="4" ResizeDirection="Columns" />
