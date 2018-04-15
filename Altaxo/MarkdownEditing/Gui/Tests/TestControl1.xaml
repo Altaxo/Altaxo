@@ -5,33 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Altaxo.Gui.Tests"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
-	<FlowDocument FontSize="12" ColumnWidth="999999">
-		<Table Background="Yellow" CellSpacing="0">
-			<Table.Columns>
-				<TableColumn Width="Auto" />
-				<TableColumn Width="Auto" />
-				<TableColumn  Width="Auto" />
-				<TableColumn Width="*" />
-			</Table.Columns>
-			<Table.RowGroups>
-				<TableRowGroup>
-					<TableRow>
-						<TableCell>
-							<Paragraph>Zelle 1</Paragraph>
-						</TableCell>
-						<TableCell>
-							<Paragraph>Zelle 2</Paragraph>
-						</TableCell>
-						<TableCell>
-							<Paragraph>Zelle 3</Paragraph>
-						</TableCell>
-						<TableCell>
-							<Paragraph>Zelle 4</Paragraph>
-						</TableCell>
-					</TableRow>
-				</TableRowGroup>
-			</Table.RowGroups>
-		</Table>
+             d:DesignHeight="400" d:DesignWidth="900">
+	<FlowDocument FontFamily="Palatino Linotype" FontSize="30" ColumnWidth="999999">
+		<Paragraph>
+			A<Run Typography.Variants="Superscript">0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ</Run>
+			a<Run Typography.Variants="Superscript">0123456789abcdefghijklmnopqrstuvwxyzäöü</Run>
+		</Paragraph>
+		<Paragraph>
+			A<Run Typography.Variants="Subscript">0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ</Run>
+			a<Run Typography.Variants="Subscript">0123456789abcdefghijklmnopqrstuvwxyzäöü</Run>
+		</Paragraph>
 	</FlowDocument>
 </UserControl>
