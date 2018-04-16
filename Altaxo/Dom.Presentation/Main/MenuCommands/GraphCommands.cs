@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.AddInItems;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
@@ -40,6 +41,8 @@ using Altaxo.Main;
 using Altaxo.Main.Services;
 using Altaxo.Scripting;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -884,39 +887,22 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
-	public class FontSizeChooser : System.Windows.Controls.ComboBox, ICommand
+	public class FontSizeChooser : ToolBarComboBox
 	{
-		public event EventHandler CanExecuteChanged;
-
-		public FontSizeChooser()
+		public FontSizeChooser(Codon codon, object caller, IEnumerable<ICondition> conditions) : base(codon, caller, conditions)
 		{
-			Initialize();
 		}
 
-		protected void Initialize()
+		public override void InitializeContent()
 		{
 			this.IsEditable = true;
-
 			this.Items.Add("8 pt");
 			this.Items.Add("10 pt");
 			this.Items.Add("12 pt");
 			this.Items.Add("24 pt");
-
-			this.KeyDown += comboBox_KeyDown;
 		}
 
-		private void comboBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-		{
-			if (e.Key == System.Windows.Input.Key.Enter)
-				Execute(null);
-		}
-
-		public bool CanExecute(object parameter)
-		{
-			return true;
-		}
-
-		public void Execute(object parameter)
+		public override void Execute(object parameter)
 		{
 			if (string.IsNullOrEmpty(this.Text))
 				return;
@@ -946,16 +932,13 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
-	public class StrokeWidthChooser : System.Windows.Controls.ComboBox, ICommand
+	public class StrokeWidthChooser : ToolBarComboBox
 	{
-		public event EventHandler CanExecuteChanged;
-
-		public StrokeWidthChooser()
+		public StrokeWidthChooser(Codon codon, object caller, IEnumerable<ICondition> conditions) : base(codon, caller, conditions)
 		{
-			Initialize();
 		}
 
-		protected void Initialize()
+		public override void InitializeContent()
 		{
 			IsEditable = true;
 
@@ -963,22 +946,9 @@ namespace Altaxo.Graph.Commands
 			Items.Add("10 pt");
 			Items.Add("12 pt");
 			Items.Add("24 pt");
-
-			KeyDown += EhKeyDown;
 		}
 
-		private void EhKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-		{
-			if (e.Key == System.Windows.Input.Key.Enter)
-				Execute(null);
-		}
-
-		public bool CanExecute(object parameter)
-		{
-			return true;
-		}
-
-		public void Execute(object parameter)
+		public override void Execute(object parameter)
 		{
 			if (string.IsNullOrEmpty(this.Text))
 				return;
@@ -1008,36 +978,20 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
-	public class FontFamilyChooser : System.Windows.Controls.ComboBox, ICommand
+	public class FontFamilyChooser : ToolBarComboBox
 	{
-		public event EventHandler CanExecuteChanged;
-
-		public FontFamilyChooser()
+		public FontFamilyChooser(Codon codon, object caller, IEnumerable<ICondition> conditions) : base(codon, caller, conditions)
 		{
-			Initialize();
 		}
 
-		protected void Initialize()
+		public override void InitializeContent()
 		{
-			KeyDown += EhKeyDown;
-
 			// Fill with all available font families
 			foreach (var famName in GdiFontManager.EnumerateAvailableGdiFontFamilyNames().OrderBy(x => x))
 				Items.Add(famName);
 		}
 
-		private void EhKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-		{
-			if (e.Key == System.Windows.Input.Key.Enter)
-				Execute(null);
-		}
-
-		public bool CanExecute(object parameter)
-		{
-			return true;
-		}
-
-		public void Execute(object parameter)
+		public override void Execute(object parameter)
 		{
 			if (string.IsNullOrEmpty(this.Text))
 				return;

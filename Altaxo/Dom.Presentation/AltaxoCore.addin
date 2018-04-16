@@ -816,7 +816,16 @@
 			command="Delete" />
 		<ToolbarItem id="CutSeparator"  type = "Separator" />
 		<ToolbarItem id="GraphToolSeparator"  type = "Separator" />
-		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Gdi.Viewing.GraphController" action="Disable">
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">
+
+			<ToolbarItem id="PlotLine" icon="Icons.16x16.PlotLine" tooltip="${res:XML.MainMenu.PlotMenu.PlotLine.Description}"
+				class="Altaxo.Worksheet.Commands.PlotLine" />
+			<ToolbarItem id="PlotScatter" icon="Icons.16x16.PlotScatter" tooltip="${res:XML.MainMenu.PlotMenu.PlotScatter.Description}"
+				class="Altaxo.Worksheet.Commands.PlotScatter" />
+			<ToolbarItem id="PlotLineScatter" icon="Icons.16x16.PlotLineScatter" tooltip="${res:XML.MainMenu.PlotMenu.PlotLineAndScatter.Description}"
+				class="Altaxo.Worksheet.Commands.PlotLineAndScatter" />
+		</Condition>
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Gdi.Viewing.GraphController" action="Exclude">
 			<ToolbarItem id="GraphPointer" type="CheckBox" icon="Icons.16x16.GraphPointerTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Pointer.Description}"
 				loadclasslazy="false" class="Altaxo.Graph.Commands.SelectPointerTool" />
 			<ToolbarItem id="TextPointer" type="CheckBox" icon="Icons.16x16.TextTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.TextTool.Description}"
@@ -850,7 +859,6 @@
 				class="Altaxo.Graph.Commands.ZoomAxesTool" />
 			<ToolbarItem id="RescaleAxes" icon="Icons.16x16.RescaleAxes" tooltip="${res:XML.MainMenu.GraphMenu.RescaleAxes.Description}"
 				class="Altaxo.Graph.Commands.RescaleAxes" />
-
 			<ToolbarItem id    = "FontSizeChooser"
 								 type    = "Custom"
 								 tooltip = "${res:XML.MainToolBar.FontSizeChooser.ToolTip}"
@@ -863,19 +871,7 @@
 								type    = "Custom"
 								tooltip = "${res:XML.MainToolBar.StrokeWidthChooser.ToolTip}"
 								class   = "Altaxo.Graph.Commands.StrokeWidthChooser" />
-		</Condition>
-		<ToolbarItem id="PlotSeparator"  type = "Separator" />
-		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Disable">
-
-			<ToolbarItem id="PlotLine" icon="Icons.16x16.PlotLine" tooltip="${res:XML.MainMenu.PlotMenu.PlotLine.Description}"
-				class="Altaxo.Worksheet.Commands.PlotLine" />
-			<ToolbarItem id="PlotScatter" icon="Icons.16x16.PlotScatter" tooltip="${res:XML.MainMenu.PlotMenu.PlotScatter.Description}"
-				class="Altaxo.Worksheet.Commands.PlotScatter" />
-			<ToolbarItem id="PlotLineScatter" icon="Icons.16x16.PlotLineScatter" tooltip="${res:XML.MainMenu.PlotMenu.PlotLineAndScatter.Description}"
-				class="Altaxo.Worksheet.Commands.PlotLineAndScatter" />
-		</Condition>
-		<ToolbarItem id="ArrangeSeparator"  type = "Separator" />
-		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Gdi.Viewing.GraphController" action="Disable">
+			<ToolbarItem id="PlotSeparator"  type = "Separator" />
 			<ToolbarItem id="ArrangeTop" icon="Icons.16x16.ArrangeTop" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeTop.Description}"
 				class="Altaxo.Graph.Commands.ArrangeTop" />
 			<ToolbarItem id="ArrangeBottom" icon="Icons.16x16.ArrangeBottom" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeBottom.Description}"

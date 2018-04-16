@@ -1293,6 +1293,7 @@
     <Compile Include="Gui\AddInItems\Menu\MenuService.cs" />
     <Compile Include="Gui\AddInItems\ToolBar\ToolBarButton.cs" />
     <Compile Include="Gui\AddInItems\ToolBar\ToolBarCheckBox.cs" />
+    <Compile Include="Gui\AddInItems\ToolBar\ToolBarComboBox.cs" />
     <Compile Include="Gui\AddInItems\ToolBar\ToolBarDropDownButton.cs" />
     <Compile Include="Gui\AddInItems\ToolBar\ToolBarService.cs" />
     <Compile Include="Gui\AddInItems\ToolBar\ToolBarSplitButton.cs" />

@@ -104,12 +104,24 @@ namespace Altaxo.Gui.AddInItems
 					return codon.AddIn.CreateObject(codon.Properties["class"]);
 
 				case "Custom":
-					object result = codon.AddIn.CreateObject(codon.Properties["class"]);
-					if (result is ComboBox)
-						((ComboBox)result).SetResourceReference(FrameworkElement.StyleProperty, ToolBar.ComboBoxStyleKey);
-					if (result is ICustomToolBarItem)
-						((ICustomToolBarItem)result).Initialize(inputBindingOwner, codon, caller);
-					return result;
+					var resultType = codon.AddIn.FindType(codon.Properties["class"]);
+					if (null != resultType)
+					{
+						object result = null;
+						var c1 = resultType.GetConstructor(new Type[] { typeof(Codon), typeof(object), typeof(IReadOnlyCollection<ICondition>) });
+						result = c1?.Invoke(new object[] { codon, caller, descriptor.Conditions });
+						if (null == result)
+						{
+							result = Activator.CreateInstance(resultType);
+						}
+						if (result is ComboBox cb)
+							cb.SetResourceReference(FrameworkElement.StyleProperty, ToolBar.ComboBoxStyleKey);
+						if (result is ICustomToolBarItem ctbi)
+							ctbi.Initialize(inputBindingOwner, codon, caller);
+						return result;
+					}
+					else
+						throw new System.NotSupportedException("Unsupported: Custom item must contain a class name");
 
 				default:
 					throw new System.NotSupportedException("unsupported menu item type : " + type);
