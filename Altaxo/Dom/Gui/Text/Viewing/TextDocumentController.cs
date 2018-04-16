@@ -134,6 +134,7 @@ namespace Altaxo.Gui.Text.Viewing
 			if (null != _view)
 			{
 				_view.SetDocumentNameAndLocalImages(TextDocument.Name, TextDocument.Images);
+				_view.StyleName = TextDocument.StyleName;
 				_view.SourceText = TextDocument.SourceText;
 
 				_view.IsViewerSelected = _options.IsViewerSelected;

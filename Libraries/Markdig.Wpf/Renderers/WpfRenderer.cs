@@ -60,7 +60,7 @@ namespace Markdig.Renderers
             buffer = new char[1024];
             Styles = styles ?? Markdig.Wpf.DynamicStyles.Instance;
             Document = document;
-            if (document is TextElement teDocument)
+            if (document is FrameworkContentElement teDocument)
                 Styles.ApplyDocumentStyle(teDocument);
             stack.Push(document);
 
@@ -182,10 +182,6 @@ namespace Markdig.Renderers
                 catch (Exception)
                 {
                 }
-
-
-
-                
             }
 
             return 0;

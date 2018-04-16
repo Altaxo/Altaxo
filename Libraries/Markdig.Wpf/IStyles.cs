@@ -14,7 +14,7 @@ namespace Markdig.Wpf
 
         void ApplyCodeBlockStyle(TextElement element);
 
-        void ApplyDocumentStyle(TextElement element);
+        void ApplyDocumentStyle(FrameworkContentElement element);
 
         void ApplyHeading1Style(TextElement element);
 

@@ -31,7 +31,7 @@ namespace Markdig.Wpf
             element.SetResourceReference(FrameworkContentElement.StyleProperty, CodeStyleKey);
         }
 
-        public void ApplyDocumentStyle(TextElement element)
+        public void ApplyDocumentStyle(FrameworkContentElement element)
         {
             element.SetResourceReference(FrameworkContentElement.StyleProperty, DocumentStyleKey);
         }
