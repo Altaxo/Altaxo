@@ -133,9 +133,10 @@ namespace Altaxo.Gui.Text.Viewing
 			}
 			if (null != _view)
 			{
+				_view.IsInInitializationMode = true;
 				_view.SetDocumentNameAndLocalImages(TextDocument.Name, TextDocument.Images);
-				_view.StyleName = TextDocument.StyleName;
 				_view.SourceText = TextDocument.SourceText;
+				_view.StyleName = TextDocument.StyleName;
 
 				_view.IsViewerSelected = _options.IsViewerSelected;
 				_view.WindowConfiguration = _options.WindowConfiguration;
@@ -146,6 +147,7 @@ namespace Altaxo.Gui.Text.Viewing
 				_view.IsHyphenationEnabled = TextDocument.IsHyphenationEnabled ?? TextDocument.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsHyphenationEnabled, () => true);
 				_view.IsFoldingEnabled = _options.IsFoldingEnabled ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsFoldingEnabled, () => true);
 				_view.HighlightingStyle = _options.HighlightingStyle ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyHighlightingStyle, () => "default");
+				_view.IsInInitializationMode = false;
 			}
 		}
 

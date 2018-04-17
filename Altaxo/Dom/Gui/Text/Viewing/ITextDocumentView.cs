@@ -36,6 +36,11 @@ namespace Altaxo.Gui.Text.Viewing
 		ITextDocumentController Controller { set; }
 
 		/// <summary>
+		/// Flag that is set if the view is in initialization mode. If in initialization mode, it should not fire events etc, not render the document.
+		/// </summary>
+		bool IsInInitializationMode { set; }
+
+		/// <summary>
 		/// Sets the name of the document, and the local images. This function must be called every time the document name has changed.
 		/// </summary>
 		/// <param name="documentName">The full name of the document.</param>

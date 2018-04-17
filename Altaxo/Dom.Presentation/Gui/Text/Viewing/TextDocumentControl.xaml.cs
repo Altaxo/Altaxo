@@ -49,6 +49,7 @@ namespace Altaxo.Gui.Text.Viewing
 		private ImageProvider _imageProvider;
 		private ITextDocumentController _controller;
 		private string _documentName;
+		private bool _isInInitializationStage;
 
 		public TextDocumentControl()
 		{
@@ -71,6 +72,8 @@ namespace Altaxo.Gui.Text.Viewing
 			}
 		}
 
+		public bool IsInInitializationMode { set { _guiEditor.IsInInitializationMode = value; } }
+
 		/// <inheritdoc/>
 		public void SetDocumentNameAndLocalImages(string documentName, IReadOnlyDictionary<string, Altaxo.Graph.MemoryStreamImageProxy> localImages)
 		{
@@ -90,8 +93,19 @@ namespace Altaxo.Gui.Text.Viewing
 			}
 		}
 
-		public string SourceText { get => _guiEditor.SourceText; set => _guiEditor.SourceText = value; }
-		public string StyleName { set => _guiEditor.StyleName = value; }
+		public string SourceText
+		{
+			get { return _guiEditor.SourceText; }
+			set { _guiEditor.SourceText = value; }
+		}
+
+		public string StyleName
+		{
+			set
+			{
+				_guiEditor.StyleName = value;
+			}
+		}
 
 		public event EventHandler SourceTextChanged
 		{
