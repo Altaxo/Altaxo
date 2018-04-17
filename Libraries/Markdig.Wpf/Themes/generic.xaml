@@ -3,7 +3,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:markdig="clr-namespace:Markdig.Wpf">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/Markdig.Wpf;component/Themes/PalatinoTheme.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Markdig.Wpf;component/Themes/GithubTheme.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <!-- MarkdownViewer Template-->

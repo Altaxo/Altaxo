@@ -30,14 +30,20 @@ namespace Markdig.Renderers.Wpf.Inlines
                 case '~':
                     span = new Span();
                     if (obj.IsDouble)
+                    {
                         renderer.Styles.ApplyStrikeThroughStyle(span);
+                    }
                     else
+                    {
                         renderer.Styles.ApplySubscriptStyle(span);
+                        if (span.FontSize < 1) span.FontSize = renderer.CurrentFontSize() * span.FontSize;
+                    }
                     break;
 
                 case '^':
                     span = new Span();
                     renderer.Styles.ApplySuperscriptStyle(span);
+                    if (span.FontSize < 1) span.FontSize = renderer.CurrentFontSize() * span.FontSize;
                     break;
 
                 case '+':

@@ -118,10 +118,12 @@
         <Setter Property="Stroke" Value="Black" />
     </Style>
     <Style TargetType="{x:Type Span}" x:Key="{x:Static markdig:Styles.SubscriptStyleKey}">
-        <Setter Property="Typography.Variants" Value="Subscript" />
+        <Setter Property="BaselineAlignment" Value="Subscript" />
+        <Setter Property="FontSize" Value="0.75"/>
     </Style>
     <Style TargetType="{x:Type Span}" x:Key="{x:Static markdig:Styles.SuperscriptStyleKey}">
-        <Setter Property="Typography.Variants" Value="Superscript" />
+        <Setter Property="BaselineAlignment" Value="TextTop" />
+        <Setter Property="FontSize" Value="0.75"/>
     </Style>
     <Style TargetType="{x:Type Span}" x:Key="{x:Static markdig:Styles.StrikeThroughStyleKey}">
         <Setter Property="TextBlock.TextDecorations" Value="Strikethrough" />
