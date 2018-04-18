@@ -926,6 +926,22 @@
 				class="Altaxo.Main.MenuCommands.Text.Superscript" />
 			<ToolbarItem id="InlineCode" icon="Icons.16x16.InlineCode" tooltip="${res:XML.MainMenu.TextMenu.InlineCode.Description}"
 				class="Altaxo.Main.MenuCommands.Text.InlineCode" />
+			<ToolbarItem id="CodeBlock" icon="Icons.16x16.CodeBlock" tooltip="${res:XML.MainMenu.TextMenu.CodeBlock.Description}"
+				class="Altaxo.Main.MenuCommands.Text.CodeBlock" />
+			<ToolbarItem id="Quoted" icon="Icons.16x16.Quoted" tooltip="${res:XML.MainMenu.TextMenu.Quoted.Description}"
+				class="Altaxo.Main.MenuCommands.Text.Quoted" />
+			<ToolbarItem id="Header1" icon="Icons.16x16.Header1" tooltip="${res:XML.MainMenu.TextMenu.Header1.Description}"
+				class="Altaxo.Main.MenuCommands.Text.Header1" />
+			<ToolbarItem id="Header2" icon="Icons.16x16.Header2" tooltip="${res:XML.MainMenu.TextMenu.Header2.Description}"
+				class="Altaxo.Main.MenuCommands.Text.Header2" />
+			<ToolbarItem id="Header3" icon="Icons.16x16.Header3" tooltip="${res:XML.MainMenu.TextMenu.Header3.Description}"
+				class="Altaxo.Main.MenuCommands.Text.Header3" />
+			<ToolbarItem id="Header4" icon="Icons.16x16.Header4" tooltip="${res:XML.MainMenu.TextMenu.Header4.Description}"
+				class="Altaxo.Main.MenuCommands.Text.Header4" />
+			<ToolbarItem id="Header5" icon="Icons.16x16.Header5" tooltip="${res:XML.MainMenu.TextMenu.Header5.Description}"
+				class="Altaxo.Main.MenuCommands.Text.Header5" />
+			<ToolbarItem id="Header6" icon="Icons.16x16.Header6" tooltip="${res:XML.MainMenu.TextMenu.Header6.Description}"
+				class="Altaxo.Main.MenuCommands.Text.Header6" />
 		</Condition>
 	</Path>
 

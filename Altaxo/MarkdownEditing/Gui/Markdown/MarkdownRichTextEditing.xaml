@@ -38,7 +38,7 @@
 			<CommandBinding Command="{x:Static local:Commands.Strikethrough}" Executed="EhStrikethrough" CanExecute="EhCanStrikethrough" />
 			<CommandBinding Command="{x:Static local:Commands.InlineCode}" Executed="EhInlineCode" CanExecute="EhCanInlineCode" />
 			<!-- Text block commands -->
-			<CommandBinding Command="{x:Static local:Commands.BlockCode}" Executed="EhBlockCode" CanExecute="EhCanBlockCode" />
+			<CommandBinding Command="{x:Static local:Commands.CodeBlock}" Executed="EhBlockCode" CanExecute="EhCanBlockCode" />
 			<CommandBinding Command="{x:Static local:Commands.Quoted}" Executed="EhQuoted" CanExecute="EhCanQuoted" />
 			<CommandBinding Command="{x:Static local:Commands.Header1}" Executed="EhHeader1" CanExecute="EhCanHeader1" />
 			<CommandBinding Command="{x:Static local:Commands.Header2}" Executed="EhHeader2" CanExecute="EhCanHeader2" />

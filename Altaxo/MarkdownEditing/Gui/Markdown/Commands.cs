@@ -93,7 +93,7 @@ namespace Altaxo.Gui.Markdown
 		/// <summary>
 		/// Command for converting text to code text in a block.
 		/// </summary>
-		public static RoutedCommand BlockCode { get; } = new RoutedCommand(nameof(BlockCode), typeof(Commands));
+		public static RoutedCommand CodeBlock { get; } = new RoutedCommand(nameof(CodeBlock), typeof(Commands));
 
 		/// <summary>
 		/// Command for converting text to quoted text.
@@ -129,6 +129,11 @@ namespace Altaxo.Gui.Markdown
 		/// Command for converting text to header6 text.
 		/// </summary>
 		public static RoutedCommand Header6 { get; } = new RoutedCommand(nameof(Header6), typeof(Commands));
+
+		/// <summary>
+		/// Command for converting text to header7 text.
+		/// </summary>
+		public static RoutedCommand Header7 { get; } = new RoutedCommand(nameof(Header7), typeof(Commands));
 
 		#endregion Commands acting on the text
 	}
