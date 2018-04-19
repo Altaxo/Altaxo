@@ -25,7 +25,7 @@ namespace Altaxo.Gui.Markdown
 		/// Gets the start and end line/column positions (1-based) of the selection. If no selection is active, the position of the caret is returned; in this case start and end line/column positions are the same.
 		/// </summary>
 		/// <returns>Start and end line/column positions (1-based) of the selection or the caret. If it can not be retrieved, the tuple (0, 0, 0, 0) is returned.</returns>
-		private (int startline, int startcolumn, int selectionStart, int selectionLength) GetSelectionOrCaret()
+		private (int startline, int startcolumn, int endline, int endcolumn) GetSelectionOrCaret()
 		{
 			if (IsViewerSelected)
 			{
@@ -93,18 +93,39 @@ namespace Altaxo.Gui.Markdown
 
 			// if we select entire lines, the last line of the selection ends in column 1
 			// thus we will not format the last line
-			if (endline > startline && endcol == 1)
-				--endline;
+			int endlineTemp = (endline > startline && endcol == 1) ? endline - 1 : endline;
 
 			_guiEditor.Document.BeginUpdate();
 			{
-				for (int line = endline; line >= startline; --line)
+				for (int line = endlineTemp; line >= startline; --line)
 				{
 					var offset = _guiEditor.Document.GetOffset(line, 1);
 					_guiEditor.Document.Insert(offset, modifier);
 				}
 			}
 			_guiEditor.Document.EndUpdate();
+
+			if (IsViewerSelected)
+			{
+				// Clear the selection in the viewer, because its contents gets updated, and this will lead to side effects when clicking again into the viewer
+				_guiViewer.Selection.Select(_guiViewer.Document.ContentStart, _guiViewer.Document.ContentStart);
+			}
+
+			if (startline == endline && startcol == endcol)
+			{
+				// if the selection was empty, just set the caret to the beginning of the line
+				var offset = _guiEditor.Document.GetOffset(startline, 1);
+				_guiEditor.Select(offset, 0);
+				_guiEditor.Focus();
+			}
+			else
+			{
+				// now select the amended text in the source editor
+				var start = _guiEditor.Document.GetOffset(startline, 1);
+				var end = endlineTemp + 1 > _guiEditor.LineCount ? _guiEditor.Document.TextLength : _guiEditor.Document.GetOffset(endlineTemp + 1, 1);
+				_guiEditor.Select(start, end - start);
+				_guiEditor.Focus();
+			}
 		}
 
 		private void EhTextBlockCommand(object sender, ExecutedRoutedEventArgs e, string modifier)
@@ -113,18 +134,38 @@ namespace Altaxo.Gui.Markdown
 			if (!(startcol == 1))
 				return;
 
+			// Update the document
+			int selectionStartPos, selectionEndPos;
+			int numberOfInsertedChars = 0;
 			_guiEditor.Document.BeginUpdate();
 			{
-				int offset = _guiEditor.Document.GetOffset(endline, endcol);
+				selectionEndPos = _guiEditor.Document.GetOffset(endline, endcol);
 				if (endcol == 1)
-					_guiEditor.Document.Insert(offset, modifier + "\r\n");
+				{
+					_guiEditor.Document.Insert(selectionEndPos, modifier + "\r\n");
+					numberOfInsertedChars += modifier.Length + 2;
+				}
 				else
-					_guiEditor.Document.Insert(offset, "\r\n" + modifier + "\r\n");
+				{
+					_guiEditor.Document.Insert(selectionEndPos, "\r\n" + modifier + "\r\n");
+					numberOfInsertedChars += modifier.Length + 4;
+				}
 
-				offset = _guiEditor.Document.GetOffset(startline, 1);
-				_guiEditor.Document.Insert(offset, modifier + "\r\n");
+				selectionStartPos = _guiEditor.Document.GetOffset(startline, 1);
+				_guiEditor.Document.Insert(selectionStartPos, modifier + "\r\n");
+				numberOfInsertedChars += modifier.Length + 2;
 			}
 			_guiEditor.Document.EndUpdate();
+
+			if (IsViewerSelected)
+			{
+				// Clear the selection in the viewer, because its contents gets updated, and this will lead to side effects when clicking again into the viewer
+				_guiViewer.Selection.Select(_guiViewer.Document.ContentStart, _guiViewer.Document.ContentStart);
+			}
+
+			// now select the amended text in the source editor
+			_guiEditor.Select(selectionStartPos, (selectionEndPos - selectionStartPos) + numberOfInsertedChars);
+			_guiEditor.Focus();
 		}
 
 		private void EhCanBlockCode(object sender, CanExecuteRoutedEventArgs e)

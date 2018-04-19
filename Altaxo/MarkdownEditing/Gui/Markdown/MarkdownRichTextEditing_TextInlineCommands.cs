@@ -21,16 +21,51 @@ namespace Altaxo.Gui.Markdown
 {
 	public partial class MarkdownRichTextEditing : UserControl
 	{
-		private bool CanUseTextInlineCommand()
+		/// <summary>
+		/// Gets the start and end positions (0-based) of the selection.
+		/// If no selection is active, the position of the caret is returned; in this case start and end positions are the same.
+		/// </summary>
+		/// <returns>Start and end positions (0-based) of the selection or the caret. If it can not be retrieved, the tuple (-1, -1) is returned.</returns>
+		private (int selectionStartPosition, int selectionEndPosition) GetSelectionStartAndEndPosition()
 		{
 			if (IsViewerSelected)
 			{
-				return !_guiViewer.Selection.IsEmpty && _guiViewer.Selection.Text.Length > 0;
+				var (sourceStart, isSourceStartAccurate) = PositionHelper.ViewersTextPositionToSourceEditorsTextPosition(_guiViewer.Selection.Start);
+				var (sourceEnd, isSourceEndAccurate) = PositionHelper.ViewersTextPositionToSourceEditorsTextPosition(_guiViewer.Selection.End);
+
+				if (isSourceStartAccurate && isSourceEndAccurate)
+				{
+					return (sourceStart, sourceEnd);
+				}
+				else
+				{
+					return (-1, -1);
+				}
 			}
-			else
+			else // Editor is selected
 			{
-				return _guiEditor.SelectionLength > 0;
+				int selectionStart = 0;
+				int selectionEnd = 0;
+
+				if (_guiEditor.SelectionLength > 0)
+				{
+					selectionStart = _guiEditor.SelectionStart;
+					selectionEnd = _guiEditor.SelectionStart + _guiEditor.SelectionLength;
+				}
+				else
+				{
+					selectionStart = _guiEditor.CaretOffset;
+					selectionEnd = _guiEditor.CaretOffset;
+				}
+
+				return (selectionStart, selectionEnd);
 			}
+		}
+
+		private bool CanUseTextInlineCommand()
+		{
+			var (selStart, selEnd) = GetSelectionStartAndEndPosition();
+			return selStart >= 0 && selEnd > selStart;
 		}
 
 		private void EhCanUseTextInlineCommand(object sender, CanExecuteRoutedEventArgs e)
@@ -41,28 +76,27 @@ namespace Altaxo.Gui.Markdown
 
 		private void EhTextInlineCommand(object sender, ExecutedRoutedEventArgs e, string modifier)
 		{
+			var (selStart, selEnd) = GetSelectionStartAndEndPosition();
+			if (!(selStart >= 0 && selEnd > selStart))
+				return;
+
+			// update the document
+			_guiEditor.Document.BeginUpdate();
+			{
+				_guiEditor.Document.Insert(selEnd, modifier);
+				_guiEditor.Document.Insert(selStart, modifier);
+			}
+			_guiEditor.Document.EndUpdate();
+
 			if (IsViewerSelected)
 			{
-				var (sourceStart, isSourceStartAccurate) = PositionHelper.ViewersTextPositionToSourceEditorsTextPosition(_guiViewer.Selection.Start);
-				var (sourceEnd, isSourceEndAccurate) = PositionHelper.ViewersTextPositionToSourceEditorsTextPosition(_guiViewer.Selection.End);
+				// Clear the selection in the viewer, because its contents gets updated, and this will lead to side effects when clicking again into the viewer
+				_guiViewer.Selection.Select(_guiViewer.Document.ContentStart, _guiViewer.Document.ContentStart);
+			}
 
-				if (isSourceStartAccurate && isSourceEndAccurate)
-				{
-					var stb = new StringBuilder(_guiEditor.Text);
-					stb.Insert(sourceEnd, modifier);
-					stb.Insert(sourceStart, modifier);
-					_guiEditor.Text = stb.ToString();
-					e.Handled = true;
-				}
-			}
-			else
-			{
-				var stb = new StringBuilder(_guiEditor.Text);
-				stb.Insert(_guiEditor.SelectionStart + _guiEditor.SelectionLength, modifier);
-				stb.Insert(_guiEditor.SelectionStart, modifier);
-				_guiEditor.Text = stb.ToString();
-				e.Handled = true;
-			}
+			// now select the amended text in the source editor
+			_guiEditor.Select(selStart, (selEnd - selStart) + modifier.Length * 2);
+			_guiEditor.Focus();
 		}
 
 		private void EhCanSubscript(object sender, CanExecuteRoutedEventArgs e)
