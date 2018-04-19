@@ -25,6 +25,7 @@
 using Altaxo.Gui;
 using Altaxo.Gui.Text.Viewing;
 using Altaxo.Gui.Workbench;
+using Altaxo.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -361,4 +362,24 @@ namespace Altaxo.Main.MenuCommands.Text
 	}
 
 	#endregion Block text commands
+
+	#region Document context menu
+
+	public class TextDocumentRename : AbstractTextControllerCommand
+	{
+		public override void Run(TextDocumentController ctrl)
+		{
+			ctrl.TextDocument.ShowRenameDialog();
+		}
+	}
+
+	public class TextDocumentShowProperties : AbstractTextControllerCommand
+	{
+		public override void Run(TextDocumentController ctrl)
+		{
+			ctrl.TextDocument.ShowPropertyDialog();
+		}
+	}
+
+	#endregion Document context menu
 }

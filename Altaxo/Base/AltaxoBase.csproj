@@ -1124,6 +1124,7 @@
     <Compile Include="Serialization\Xml\FrameworkSurrogates\System_Drawing_Imaging_ImageFormat.cs" />
     <Compile Include="Serialization\Xml\FrameworkXmlSerializationWrapper.cs" />
     <Compile Include="Serialization\Xml\SerializationOfBasicTypes.cs" />
+    <Compile Include="Text\TextDocumentOtherActions.cs" />
     <Compile Include="Units\Angle\Serialization.cs" />
     <Compile Include="Units\Dimensionless\Serialization.cs" />
     <Compile Include="Units\Length\Serialization.cs" />

@@ -64,7 +64,7 @@ namespace Altaxo.Text
 		/// </summary>
 		/// <param name="child">A NotesDocument for which the parent collection is searched.</param>
 		/// <returns>The parent NotesDocumentCollection, if it exists, or null otherwise.</returns>
-		public static TextDocumentCollection GetParentNotesDocumentCollectionOf(Main.IDocumentLeafNode child)
+		public static TextDocumentCollection GetParentTextDocumentCollectionOf(Main.IDocumentLeafNode child)
 		{
 			return (TextDocumentCollection)Main.AbsoluteDocumentPath.GetRootNodeImplementing(child, typeof(TextDocumentCollection));
 		}

@@ -1048,6 +1048,22 @@
 								usedatacontext ="true"
 								class="Altaxo.Worksheet.Commands.TableShowProperties" />
 		</Condition>
+		<!-- TextDocument menu -->
+		<Condition name = "WindowActive" activewindow="Altaxo.Gui.Text.Viewing.TextDocumentController" action="Exclude">
+
+			<MenuItem id="Rename"
+								label="${res:XML.MainMenu.TextMenu.Rename}"
+								description="${res:XML.MainMenu.TextMenu.Rename.Description}"
+								usedatacontext ="true"
+								class="Altaxo.Main.MenuCommands.Text.TextDocumentRename" />
+
+			<MenuItem id="EditTextDocumentProperties"
+									label="${res:XML.MainMenu.FileMenu.EditTextDocumentProperties}"
+									icon="Icons.16x16.PropertyBag"
+									description="${res:XML.MainMenu.FileMenu.EditTextDocumentProperties.Description}"
+								usedatacontext ="true"
+									class="Altaxo.Main.MenuCommands.Text.TextDocumentShowProperties" />
+		</Condition>
 
 		<MenuItem id = "CloseSeparator" type = "Separator" />
 
