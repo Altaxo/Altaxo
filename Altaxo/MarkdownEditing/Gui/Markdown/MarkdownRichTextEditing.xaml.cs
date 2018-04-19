@@ -149,10 +149,15 @@ namespace Altaxo.Gui.Markdown
 
 		public bool IsSpellCheckingEnabled
 		{
+			get
+			{
+				return _isSpellCheckingEnabled;
+			}
 			set
 			{
 				if (!(_isSpellCheckingEnabled == value))
 				{
+					_isSpellCheckingEnabled = value;
 					_guiViewer.SpellCheck.IsEnabled = value;
 					_guiViewer.IsReadOnly = !value; // in order to have spell checking, we have to enable the document
 					if (true == value && null != _guiViewer.Document)
@@ -813,40 +818,64 @@ namespace Altaxo.Gui.Markdown
 			var changes = e.Changes.ToArray();
 			Array.Sort(changes, (x, y) => Comparer<int>.Default.Compare(x.Offset, y.Offset));
 
+			int? maxEndPosition = null;
 			foreach (var textChange in changes)
 			{
-				Viewer_ProcessTextChange(textChange);
+				var endPos = Viewer_ProcessSingleTextChange(textChange);
+				if (endPos.HasValue && (maxEndPosition == null || endPos.Value > maxEndPosition.Value))
+					maxEndPosition = endPos;
+			}
+
+			// if any text has changed, we have to deselected text in the viewer
+			if (changes.Length > 0)
+			{
+				if (IsViewerSelected)
+				{
+					// Clear the selection in the viewer, because its contents gets updated, and this will lead to side effects when clicking again into the viewer
+					_guiViewer.Selection.Select(_guiViewer.Document.ContentStart, _guiViewer.Document.ContentStart);
+				}
+
+				// now select the amended text in the source editor
+				if (maxEndPosition.HasValue)
+				{
+					_guiEditor.Select(maxEndPosition.Value, 0);
+				}
+				_guiEditor.Focus();
 			}
 		}
 
 		/// <summary>
-		/// Process a single text change of the Viewer (caused by the user that used spelling correction).
+		/// Process a single text change of the Viewer (caused by the user that has used spelling correction).
 		/// </summary>
 		/// <param name="textChange">The text change.</param>
+		/// <returns>The position after the changed text (if text was changed), or null (if text was not changed).</returns>
 		/// <exception cref="NotImplementedException"></exception>
-		private void Viewer_ProcessTextChange(TextChange textChange)
+		private int? Viewer_ProcessSingleTextChange(TextChange textChange)
 		{
 			var offsetPosition = _guiViewer.Document.ContentStart.GetPositionAtOffset(textChange.Offset);
 			if (!(offsetPosition.Parent is Run runAtOffset))
-				return;
+				return null;
 
 			var offsetIntoRun = runAtOffset.ContentStart.GetOffsetToPosition(offsetPosition);
 
 			if (!(offsetIntoRun + textChange.AddedLength <= runAtOffset.Text.Length))
-				return;
+				return null;
 
 			string addedText = runAtOffset.Text.Substring(offsetIntoRun, textChange.AddedLength);
 
 			var (sourceTextOffset, isReturnedPositionAccurate) = PositionHelper.ViewersTextPositionToSourceEditorsTextPosition(offsetPosition);
 
 			if (!isReturnedPositionAccurate)
-				return;
+				return null;
 
-			var stb = new System.Text.StringBuilder(_sourceText);
-			stb.Remove(sourceTextOffset, textChange.RemovedLength);
-			stb.Insert(sourceTextOffset, addedText);
+			_guiEditor.Document.BeginUpdate();
+			{
+				_guiEditor.Document.Remove(sourceTextOffset, textChange.RemovedLength);
+				_guiEditor.Document.Insert(sourceTextOffset, addedText);
+			}
+			_guiEditor.Document.EndUpdate();
 
-			_guiEditor.Text = stb.ToString();
+			return sourceTextOffset + addedText.Length;
 		}
 
 		#endregion Key handling, when a key is entered in the viewer
