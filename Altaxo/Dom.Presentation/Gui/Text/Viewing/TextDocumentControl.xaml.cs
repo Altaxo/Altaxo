@@ -181,6 +181,17 @@ namespace Altaxo.Gui.Text.Viewing
 			}
 		}
 
+		/// <summary>
+		/// Sets the culture for this document. This is important for instance for spell checking.
+		/// </summary>
+		public System.Globalization.CultureInfo DocumentCulture
+		{
+			set
+			{
+				_guiEditor.DocumentCulture = value;
+			}
+		}
+
 		public bool IsSpellCheckingEnabled
 		{
 			set

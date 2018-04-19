@@ -47,6 +47,7 @@ namespace Altaxo.Gui.Markdown
 		private string _styleName;
 		private IStyles _currentStyle = DynamicStyles.Instance;
 
+		private System.Globalization.CultureInfo _documentCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
 		private bool _isSpellCheckingEnabled;
 		private bool _isHyphenationEnabled;
 		private ICSharpCode.AvalonEdit.Folding.FoldingManager _foldingManager;
@@ -147,6 +148,19 @@ namespace Altaxo.Gui.Markdown
 			}
 		}
 
+		public System.Globalization.CultureInfo DocumentCulture
+		{
+			set
+			{
+				if (!(_documentCulture == value))
+				{
+					_documentCulture = value;
+
+					_guiViewer.Document.Language = System.Windows.Markup.XmlLanguage.GetLanguage(_documentCulture.IetfLanguageTag);
+				}
+			}
+		}
+
 		public bool IsSpellCheckingEnabled
 		{
 			get
@@ -162,7 +176,7 @@ namespace Altaxo.Gui.Markdown
 					_guiViewer.IsReadOnly = !value; // in order to have spell checking, we have to enable the document
 					if (true == value && null != _guiViewer.Document)
 					{
-						_guiViewer.Document.Language = System.Windows.Markup.XmlLanguage.GetLanguage("en-US");
+						_guiViewer.Document.Language = System.Windows.Markup.XmlLanguage.GetLanguage(_documentCulture.IetfLanguageTag);
 					}
 				}
 			}

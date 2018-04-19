@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,6 +63,11 @@ namespace Altaxo.Gui.Text.Viewing
 		bool IsHyphenationEnabled { set; }
 		bool IsFoldingEnabled { set; }
 		string HighlightingStyle { set; }
+
+		/// <summary>
+		/// Sets the culture for this document. This is important for instance for spell checking.
+		/// </summary>
+		CultureInfo DocumentCulture { set; }
 
 		void PrintShowDialog();
 	}
