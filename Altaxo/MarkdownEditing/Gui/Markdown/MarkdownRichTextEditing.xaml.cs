@@ -350,8 +350,12 @@ namespace Altaxo.Gui.Markdown
 					LinkReferenceTrackerPostProcessor.TrackLinks(markdownDocument, _sourceTextUsn, this.ImageProvider); // track links in the markdown document
 
 					// We override the renderer with our own writer
-					var flowDocument = new FlowDocument();
-					flowDocument.IsHyphenationEnabled = _isHyphenationEnabled;
+					var flowDocument = new FlowDocument
+					{
+						IsHyphenationEnabled = _isHyphenationEnabled,
+						Language = System.Windows.Markup.XmlLanguage.GetLanguage(_documentCulture.IetfLanguageTag)
+					};
+
 					var renderer = new Markdig.Renderers.WpfRenderer(flowDocument, _currentStyle)
 					{
 						ImageProvider = this.ImageProvider
