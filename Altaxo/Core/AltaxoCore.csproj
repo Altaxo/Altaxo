@@ -824,8 +824,10 @@
     <Content Include="Calc\LinearAlgebra\MatrixMath_Footer.ttinclude" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(MSBuildBinPath)\TextTemplating\Microsoft.TextTemplating.targets" />
-  <!-- Before you can use this, you have to copy the TextTemplating subdirectory from the visual studio path to the build path -->
+  <!-- To find the targets for text templating, we first search this path -->
+  <Import Project="$(MSBuildBinPath)\..\..\Microsoft\VisualStudio\v15.0\TextTemplating\Microsoft.TextTemplating.targets" />
+  <!-- Then we could search this path, but before you can use this, you have to copy the TextTemplating subdirectory from the visual studio path to the build path -->
+  <!-- <Import Project="$(MSBuildBinPath)\TextTemplating\Microsoft.TextTemplating.targets" /> -->
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
