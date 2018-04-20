@@ -235,6 +235,21 @@ namespace Altaxo.Gui.Text.Viewing
 			this.TextDocument.ReferencedImageUrls = referencedImageUrls;
 		}
 
+		/// <summary>
+		/// This event was fired by the markdown edit control before a complete rendering takes place.
+		/// Here we update all properties that may influence the rendering (language, spell checking, hyphenation etc.)
+		/// </summary>
+		public void EhBeforeCompleteRendering()
+		{
+			_view.IsLineNumberingEnabled = _options.IsLineNumberingEnabled ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsLineNumberingEnabled, () => true);
+			_view.IsWordWrappingEnabled = _options.IsWordWrappingEnabled ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsWordWrappingEnabled, () => true);
+			_view.DocumentCulture = TextDocument.GetPropertyValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, () => Current.PropertyService.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin)).Culture;
+			_view.IsSpellCheckingEnabled = _options.IsSpellCheckingEnabled ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsSpellCheckingEnabled, () => true);
+			_view.IsHyphenationEnabled = TextDocument.IsHyphenationEnabled ?? TextDocument.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsHyphenationEnabled, () => true);
+			_view.IsFoldingEnabled = _options.IsFoldingEnabled ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsFoldingEnabled, () => true);
+			_view.HighlightingStyle = _options.HighlightingStyle ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyHighlightingStyle, () => "default");
+		}
+
 		public override object ViewObject
 		{
 			get

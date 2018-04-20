@@ -64,6 +64,12 @@ namespace Altaxo.Gui.Markdown
 		public ICSharpCode.AvalonEdit.TextEditor Editor { get { return _guiEditor; } }
 		public RichTextBox Viewer { get { return _guiViewer; } }
 
+		/// <summary>
+		/// Occurs before a complete rendering takes place. This event can be used to set properties that will influence the rendering, e.g. document language, hyphenation etc. that
+		/// may have changed outside this control.
+		/// </summary>
+		public event EventHandler BeforeCompleteRendering;
+
 		public bool IsInInitializationMode
 		{
 			get
@@ -346,6 +352,8 @@ namespace Altaxo.Gui.Markdown
 
 				if (forceCompleteRendering || _lastMarkdownDocumentProcessed == null || _lastSourceTextProcessed == null)
 				{
+					BeforeCompleteRendering?.Invoke(this, EventArgs.Empty);
+
 					var markdownDocument = Markdig.Markdown.Parse(_sourceText, pipeline);
 					LinkReferenceTrackerPostProcessor.TrackLinks(markdownDocument, _sourceTextUsn, this.ImageProvider); // track links in the markdown document
 

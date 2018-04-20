@@ -57,6 +57,7 @@ namespace Altaxo.Gui.Text.Viewing
 			_guiEditor.FractionOfEditorChanged += EhEditor_FractionOfEditorChanged;
 			_guiEditor.ViewingConfigurationChanged += EhEditor_ViewingConfigurationChanged;
 			_guiEditor.IsViewerSelectedChanged += EhEditor_IsViewerSelectedChanged;
+			_guiEditor.BeforeCompleteRendering += EhEditor_BeforeCompleteRendering;
 		}
 
 		private void EhImageProvider_ReferencedImageUrlsChanged(ICollection<(string url, int spanStart, int spanEnd)> obj)
@@ -134,6 +135,11 @@ namespace Altaxo.Gui.Text.Viewing
 		private void EhEditor_IsViewerSelectedChanged(object sender, EventArgs e)
 		{
 			_controller?.EhIsViewerSelectedChanged(_guiEditor.IsViewerSelected);
+		}
+
+		private void EhEditor_BeforeCompleteRendering(object sender, EventArgs e)
+		{
+			_controller?.EhBeforeCompleteRendering();
 		}
 
 		public ViewerConfiguration WindowConfiguration
