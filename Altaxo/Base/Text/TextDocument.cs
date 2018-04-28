@@ -505,6 +505,16 @@ namespace Altaxo.Text
 			return image.ContentHash;
 		}
 
+		/// <summary>
+		/// Adds the local images from another <see cref="TextDocument"/> to the local images of this instance.
+		/// </summary>
+		/// <param name="textDocument">The text document to copy the images from.</param>
+		public void AddImagesFrom(TextDocument textDocument)
+		{
+			foreach (var entry in textDocument._images)
+				AddImage(entry.Value);
+		}
+
 		#endregion Images
 	}
 }

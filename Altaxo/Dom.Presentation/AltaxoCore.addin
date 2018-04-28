@@ -325,6 +325,10 @@
 					<MenuItem id="CopyGraphActiveLayer" label="${res:XML.MainMenu.EditMenu.CopyGraphActiveLayer}" description="${res:XML.MainMenu.EditMenu.CopyGraphActiveLayer.Description}"
 						class="Altaxo.Graph.Commands.CopyActiveLayer" />
 				</Condition>
+				<Condition name = "WindowActive" activewindow="Altaxo.Gui.Text.Viewing.TextDocumentController" action="Exclude">
+					<MenuItem id="CopyTextWithImages" label="${res:XML.MainMenu.EditMenu.CopyTextWithImages}" description="${res:XML.MainMenu.EditMenu.CopyTextWithImages.Description}"
+						class="Altaxo.Main.MenuCommands.Text.CopyTextWithImages" />
+				</Condition>
 			</MenuItem>
 			<MenuItem id="PasteSpec" label="${res:XML.MainMenu.PasteSpecificMenu}"  type="Menu">
 				<Condition name="Clipboard" content="Altaxo.Graph.GraphLayerAsXml" action="Exclude">

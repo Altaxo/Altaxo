@@ -70,13 +70,19 @@ namespace Altaxo.Gui.Text.Viewing
 		CultureInfo DocumentCulture { set; }
 
 		void PrintShowDialog();
+
+		/// <summary>
+		/// Inserts the provided markdown source text at the current caret position.
+		/// </summary>
+		/// <param name="text">The text to insert.</param>
+		void InsertSourceTextAtCaretPosition(string text);
 	}
 
 	public interface ITextDocumentController
 	{
 		string InsertImageInDocumentAndGetUrl(string fileName);
 
-		string InsertImageInDocumentAndGetUrl(System.IO.MemoryStream memoryStream, string fileExtension);
+		string InsertImageInDocumentAndGetUrl(System.IO.Stream memoryStream, string fileExtension);
 
 		/// <summary>
 		/// Tests if the provided file name could be accepted as an image.
@@ -94,5 +100,20 @@ namespace Altaxo.Gui.Text.Viewing
 		void EhReferencedImageUrlsChanged(IEnumerable<(string Url, int urlSpanStart, int urlSpanEnd)> referencedLocalImages);
 
 		void EhBeforeCompleteRendering();
+
+		/// <summary>
+		/// Determines whether this controller can accept the current data of the clipboard. If the return value is true,
+		/// the controller is used to paste the clipboard data (via <see cref="Paste"/>; otherwise, pasting is delegated further down to the source editor.
+		/// </summary>
+		/// <returns>
+		///   <c>true</c> if this instance can accept the current data of the clipboard; otherwise, <c>false</c>.
+		/// </returns>
+		bool CanPaste();
+
+		/// <summary>
+		/// Pastes data from the clipboard in the document managed by this controller.
+		/// </summary>
+		/// <returns>True if pasting clipboard data was successfull; otherwise, <c>false</c>.</returns>
+		bool Paste();
 	}
 }

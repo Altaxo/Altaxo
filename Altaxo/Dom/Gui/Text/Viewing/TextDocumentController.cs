@@ -192,10 +192,26 @@ namespace Altaxo.Gui.Text.Viewing
 			return TextDocument.AddImage(imageProxy);
 		}
 
-		public string InsertImageInDocumentAndGetUrl(System.IO.MemoryStream memoryStream, string fileExtension)
+		public string InsertImageInDocumentAndGetUrl(System.IO.Stream memoryStream, string fileExtension)
 		{
 			var imageProxy = MemoryStreamImageProxy.FromStream(memoryStream, fileExtension);
 			return TextDocument.AddImage(imageProxy);
+		}
+
+		/// <summary>
+		/// Inserts the provided markdown source text at the current caret position.
+		/// </summary>
+		/// <param name="text">The text to insert.</param>
+		public void InsertSourceTextAtCaretPosition(string text)
+		{
+			if (null != _view)
+			{
+				_view.InsertSourceTextAtCaretPosition(text);
+			}
+			else
+			{
+				TextDocument.SourceText += text;
+			}
 		}
 
 		public bool CanAcceptImageFileName(string fileName)
@@ -248,6 +264,103 @@ namespace Altaxo.Gui.Text.Viewing
 			_view.IsHyphenationEnabled = TextDocument.IsHyphenationEnabled ?? TextDocument.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsHyphenationEnabled, () => true);
 			_view.IsFoldingEnabled = _options.IsFoldingEnabled ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyIsFoldingEnabled, () => true);
 			_view.HighlightingStyle = _options.HighlightingStyle ?? _options.Document.GetPropertyValue(TextDocumentViewOptions.PropertyKeyHighlightingStyle, () => "default");
+		}
+
+		/// <summary>
+		/// Determines whether this controller is able to accept data from the clipboard to be pasted into the text.
+		/// Here we catch special cases like pasting of images.
+		/// Thus, a return value of false does not mean that the data can not be pasted, it only mean that pasting should be delegated to the source text view.
+		/// </summary>
+		/// <returns>
+		///   <c>true</c> if data from the clipboard can be accepted to be pasted into the text; otherwise, <c>false</c>.
+		/// </returns>
+		public bool CanPaste()
+		{
+			var dao = Current.Gui.OpenClipboardDataObject();
+
+			if (dao.ContainsFileDropList())
+			{
+				var fileList = dao.GetFileDropList();
+				foreach (var fileName in fileList)
+				{
+					if (true == CanAcceptImageFileName(fileName))
+					{
+						return true;
+					}
+				}
+			}
+			else if (dao.ContainsImage())
+			{
+				return true;
+			}
+			else if (dao.GetDataPresent("Altaxo.Text.TextDocument"))
+			{
+				return true;
+			}
+			return false;
+		}
+
+		public bool Paste()
+		{
+			var dao = Current.Gui.OpenClipboardDataObject();
+
+			if (dao.ContainsFileDropList())
+			{
+				var fileList = dao.GetFileDropList();
+				foreach (var fileName in fileList)
+				{
+					if (true == CanAcceptImageFileName(fileName))
+					{
+						string url = InsertImageInDocumentAndGetUrl(fileName);
+
+						if (null != url)
+						{
+							InsertSourceTextAtCaretPosition(string.Format("![](local:{0})", url));
+							return true;
+						}
+					}
+				}
+			}
+			else if (dao.ContainsImage())
+			{
+				var (stream, streamFileExtension) = dao.GetBitmapImageAsOptimizedMemoryStream();
+				if (null != stream)
+				{
+					try
+					{
+						var url = InsertImageInDocumentAndGetUrl(stream, streamFileExtension);
+						if (null != url)
+						{
+							InsertSourceTextAtCaretPosition(string.Format("![](local:{0})", url));
+							return true;
+						}
+					}
+					finally
+					{
+						stream.Dispose();
+					}
+				}
+			}
+			else if (dao.GetDataPresent("Altaxo.Text.TextDocument"))
+			{
+				var textDocument = Altaxo.Serialization.Clipboard.ClipboardSerialization.GetObjectFromClipboard<Altaxo.Text.TextDocument>("Altaxo.Text.TextDocument");
+				TextDocument.AddImagesFrom(textDocument);
+				this.InsertSourceTextAtCaretPosition(textDocument.SourceText);
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Copies the text with the local images to the clipboard.
+		/// </summary>
+		public void CopyTextWithImages()
+		{
+			var dao = Current.Gui.GetNewClipboardDataObject();
+			Altaxo.Serialization.Clipboard.ClipboardSerialization.PutObjectToDataObject("Altaxo.Text.TextDocument", TextDocument, dao);
+			dao.SetData(typeof(string), TextDocument.SourceText);
+			Current.Gui.SetClipboardDataObject(dao);
 		}
 
 		public override object ViewObject

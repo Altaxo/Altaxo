@@ -483,6 +483,35 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
 
 				return null;
 			}
+
+			public (System.IO.Stream, string fileExtension) GetBitmapImageAsOptimizedMemoryStream()
+			{
+				var imgSource = _dao.GetImage();
+
+				if (imgSource is System.Windows.Media.Imaging.BitmapSource bmpSource)
+				{
+					var pngStream = new System.IO.MemoryStream();
+					var pngEncoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
+					pngEncoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bmpSource));
+					pngEncoder.Save(pngStream);
+					pngStream.Seek(0, System.IO.SeekOrigin.Begin);
+
+					var jpgStream = new System.IO.MemoryStream();
+					var jpgEncoder = new System.Windows.Media.Imaging.JpegBitmapEncoder();
+					jpgEncoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bmpSource));
+					jpgEncoder.Save(jpgStream);
+					jpgStream.Seek(0, System.IO.SeekOrigin.Begin);
+
+					var stream = pngStream.Length < jpgStream.Length ? pngStream : jpgStream;
+					var strExt = pngStream.Length < jpgStream.Length ? ".png" : ".jpg";
+					var altStream = pngStream.Length < jpgStream.Length ? jpgStream : pngStream;
+					altStream.Dispose();
+
+					return (stream, strExt);
+				}
+
+				return (null, null);
+			}
 		}
 
 		public override IClipboardSetDataObject GetNewClipboardDataObject()

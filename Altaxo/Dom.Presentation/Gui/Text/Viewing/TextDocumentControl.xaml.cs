@@ -100,6 +100,15 @@ namespace Altaxo.Gui.Text.Viewing
 			set { _guiEditor.SourceText = value; }
 		}
 
+		/// <summary>
+		/// Inserts the provided markdown source text at the current caret position.
+		/// </summary>
+		/// <param name="text">The text to insert.</param>
+		public void InsertSourceTextAtCaretPosition(string text)
+		{
+			_guiEditor.InsertSourceTextAtCaretPosition(text);
+		}
+
 		public string StyleName
 		{
 			set
@@ -301,32 +310,9 @@ namespace Altaxo.Gui.Text.Viewing
 		{
 			if (e.Command == ApplicationCommands.Paste)
 			{
-				if (Clipboard.ContainsFileDropList())
+				if (true == _controller?.Paste())
 				{
-					var fileList = Clipboard.GetFileDropList();
-					foreach (var fileName in fileList)
-					{
-						if (true == _controller.CanAcceptImageFileName(fileName))
-						{
-							string url = InsertImageInDocumentAndGetUrl(fileName);
-
-							if (null != url)
-							{
-								_guiEditor.InsertSourceTextAtCaretPosition(string.Format("![](local:{0})", url));
-								e.Handled = true;
-							}
-						}
-					}
-				}
-				else if (Clipboard.ContainsImage())
-				{
-					var bitmap = Clipboard.GetImage();
-					var url = InsertImageInDocumentAndGetUrl(bitmap);
-					if (null != url)
-					{
-						_guiEditor.InsertSourceTextAtCaretPosition(string.Format("![](local:{0})", url));
-						e.Handled = true;
-					}
+					e.Handled = true;
 				}
 			}
 		}
@@ -335,19 +321,7 @@ namespace Altaxo.Gui.Text.Viewing
 		{
 			if (e.Command == ApplicationCommands.Paste)
 			{
-				if (Clipboard.ContainsFileDropList())
-				{
-					var fileList = Clipboard.GetFileDropList();
-					foreach (var fileName in fileList)
-					{
-						if (true == _controller.CanAcceptImageFileName(fileName))
-						{
-							e.CanExecute = true;
-							e.Handled = true;
-						}
-					}
-				}
-				else if (Clipboard.ContainsImage())
+				if (true == _controller?.CanPaste())
 				{
 					e.CanExecute = true;
 					e.Handled = true;

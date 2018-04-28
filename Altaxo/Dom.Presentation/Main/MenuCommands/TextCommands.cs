@@ -160,6 +160,18 @@ namespace Altaxo.Main.MenuCommands.Text
 		}
 	}
 
+	/// <summary>
+	/// Command to copy the source text along with the local images to the clipboard.
+	/// </summary>
+	/// <seealso cref="Altaxo.Main.MenuCommands.Text.AbstractTextControllerCommand" />
+	public class CopyTextWithImages : AbstractTextControllerCommand
+	{
+		public override void Run(TextDocumentController ctrl)
+		{
+			ctrl.CopyTextWithImages();
+		}
+	}
+
 	#region Inline Text commands
 
 	public class Bold : AbstractTextControllerCommand
