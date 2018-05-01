@@ -655,6 +655,10 @@
 										description="${res:XML.MainMenu.TextMenu.TabbedEditorAndViewer.Description}"
 										class="Altaxo.Main.MenuCommands.Text.SwitchToConfigurationTabbedEditorAndViewer" />
 				</MenuItem>
+				<MenuItem id="ExportMaml"
+									label="${res:XML.MainMenu.TextMenu.ExportMaml}"
+									description="${res:XML.MainMenu.TextMenu.ExportMaml.Description}"
+									class="Altaxo.Main.MenuCommands.Text.ExportMaml" />
 			</MenuItem>
 		</Condition>
 		<!-- Tools menu -->
