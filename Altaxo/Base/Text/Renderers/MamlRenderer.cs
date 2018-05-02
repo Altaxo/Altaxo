@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using Altaxo.Text.Renderers.Maml;
+using Altaxo.Text.Renderers.Maml.Extensions;
 using Altaxo.Text.Renderers.Maml.Inlines;
 using Markdig.Helpers;
 using Markdig.Renderers;
@@ -82,15 +83,18 @@ namespace Altaxo.Text.Renderers
 			//ObjectRenderers.Add(new ThematicBreakRenderer());
 
 			// Default inline renderers
-			//ObjectRenderers.Add(new AutolinkInlineRenderer());
+			ObjectRenderers.Add(new AutolinkInlineRenderer());
 			ObjectRenderers.Add(new CodeInlineRenderer());
-			//ObjectRenderers.Add(new DelimiterInlineRenderer());
+			ObjectRenderers.Add(new DelimiterInlineRenderer());
 			ObjectRenderers.Add(new EmphasisInlineRenderer());
-			//ObjectRenderers.Add(new LineBreakInlineRenderer());
+			ObjectRenderers.Add(new LineBreakInlineRenderer());
 			//ObjectRenderers.Add(new HtmlInlineRenderer());
-			//ObjectRenderers.Add(new HtmlEntityInlineRenderer());
-			//ObjectRenderers.Add(new LinkInlineRenderer());
+			ObjectRenderers.Add(new HtmlEntityInlineRenderer());
+			ObjectRenderers.Add(new LinkInlineRenderer());
 			ObjectRenderers.Add(new LiteralInlineRenderer());
+
+			// Extension renderers
+			ObjectRenderers.Add(new TableRenderer());
 		}
 
 		#region Properties
@@ -253,7 +257,7 @@ namespace Altaxo.Text.Renderers
 			Push(mamlElement, null);
 		}
 
-		public void Push(Maml.MamlElement mamlElement, Dictionary<string, string> attributes)
+		public void Push(Maml.MamlElement mamlElement, IEnumerable<KeyValuePair<string, string>> attributes)
 		{
 			_currentElementStack.Add(mamlElement);
 
@@ -346,6 +350,17 @@ namespace Altaxo.Text.Renderers
 					++result;
 
 			return result;
+		}
+
+		/// <summary>
+		/// Writes the content escaped for Maml.
+		/// </summary>
+		/// <param name="slice">The slice.</param>
+		/// <param name="softEscape">Only escape &lt; and &amp;</param>
+		/// <returns>This instance</returns>
+		public void WriteEscape(StringSlice slice, bool softEscape = false)
+		{
+			WriteEscape(ref slice, softEscape);
 		}
 
 		/// <summary>
