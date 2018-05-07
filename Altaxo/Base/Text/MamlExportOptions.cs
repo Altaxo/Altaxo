@@ -95,6 +95,8 @@ namespace Altaxo.Text
 
 			var imageStreamProvider = new ImageStreamProvider();
 
+			var oldToNewImageUrl = new Dictionary<string, string>();
+
 			// Export images
 			foreach (var (Url, urlSpanStart, urlSpanEnd) in list)
 			{
@@ -123,6 +125,8 @@ namespace Altaxo.Text
 
 						sourceDoc.Remove(urlSpanStart, 1 + urlSpanEnd - urlSpanStart);
 						sourceDoc.Insert(urlSpanStart, newUrl);
+
+						oldToNewImageUrl[Url] = newUrl;
 					}
 				}
 			}
@@ -141,6 +145,7 @@ namespace Altaxo.Text
 				SplitLevel = 2,
 				EnableHtmlEscape = true,
 				AutoOutline = true,
+				OldToNewImageUris = oldToNewImageUrl,
 			};
 
 			renderer.Render(markdownDocument);

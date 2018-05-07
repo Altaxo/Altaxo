@@ -35,27 +35,30 @@ namespace Altaxo.Text.Renderers.Maml
 	{
 		protected override void Write(MamlRenderer renderer, HeadingBlock obj)
 		{
-			if (obj.Level <= renderer.SplitLevel)
-			{
-				renderer.StartNewMamlFile(renderer.ExtractTextContentFrom(obj), obj.Level, obj.Span.Start);
-			}
-			else
-			{
-				// Ensure we have the sections element somewhere down the line ...
-				// we need (obj.Level - renderer.SplitLevel) section elements down the stack
-				int numberOfSectionsElementsRequired = obj.Level - renderer.SplitLevel;
-				int numberOfSectionsElementsOnStack = renderer.NumberOfElementsOnStack(MamlElements.sections);
+			renderer.TryStartNewMamlFile(obj);
 
-				// Push sections element if required
-				for (int i = 0; i < numberOfSectionsElementsRequired - numberOfSectionsElementsOnStack; ++i)
-					renderer.Push(MamlElements.sections);
+			// Ensure we have the sections element somewhere down the line ...
+			// we need (obj.Level - renderer.SplitLevel) section elements down the stack
+			int numberOfSectionsElementsRequired = obj.Level - renderer.SplitLevel;
+			int numberOfSectionsElementsOnStack = renderer.NumberOfElementsOnStack(MamlElements.sections);
 
+			// Push sections element if required
+			for (int i = 0; i < numberOfSectionsElementsRequired - numberOfSectionsElementsOnStack; ++i)
+				renderer.Push(MamlElements.sections);
+
+			if (numberOfSectionsElementsOnStack > 0 && numberOfSectionsElementsRequired >= 0)
+			{
 				// Or pop sections elements if required
 				for (int i = 0; i <= numberOfSectionsElementsOnStack - numberOfSectionsElementsRequired; ++i)
 					renderer.PopToBefore(MamlElements.sections);
 			}
 
-			renderer.Push(MamlElements.section);
+			var attr = (Markdig.Renderers.Html.HtmlAttributes)obj.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
+			if (null != attr && !string.IsNullOrEmpty(attr.Id))
+				renderer.Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", attr.Id) });
+			else
+				renderer.Push(MamlElements.section);
+
 			renderer.Push(MamlElements.title);
 			renderer.WriteLeafInline(obj);
 			renderer.EnsureLine();

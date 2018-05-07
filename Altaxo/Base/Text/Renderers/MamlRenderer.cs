@@ -44,6 +44,8 @@ namespace Altaxo.Text.Renderers
 	/// <seealso cref="TextRendererBase{T}" />
 	public class MamlRenderer : TextRendererBase<MamlRenderer>
 	{
+		private MarkdownDocument _markdownDocument;
+
 		/// <summary>
 		/// The header level where to split the output into different MAML files.
 		/// 0 = render in only one file. 1 = Split at header level 1, 2 = split at header level 2, and so on.
@@ -62,14 +64,12 @@ namespace Altaxo.Text.Renderers
 
 		public bool EnableHtmlEscape { get; set; }
 
-		private int _numberOfMamlFile;
-
-		// operational members
-		private Guid _currentTopicGuid;
-
 		private List<Maml.MamlElement> _currentElementStack = new List<MamlElement>();
 
 		private List<(string fileName, string guid, string title, int level, int spanStart)> _mamlFileList = new List<(string fileName, string guid, string title, int level, int spanStart)>();
+		private int _indexOfMamlFile;
+
+		private Dictionary<string, string> _oldToNewImageUris;
 
 		public MamlRenderer() : base(TextWriter.Null)
 		{
@@ -80,7 +80,7 @@ namespace Altaxo.Text.Renderers
 			//ObjectRenderers.Add(new HtmlBlockRenderer());
 			ObjectRenderers.Add(new ParagraphRenderer());
 			ObjectRenderers.Add(new QuoteBlockRenderer());
-			//ObjectRenderers.Add(new ThematicBreakRenderer());
+			ObjectRenderers.Add(new ThematicBreakRenderer());
 
 			// Default inline renderers
 			ObjectRenderers.Add(new AutolinkInlineRenderer());
@@ -135,33 +135,70 @@ namespace Altaxo.Text.Renderers
 			}
 		}
 
+		public IDictionary<string, string> OldToNewImageUris { get; set; }
+
 		#endregion Properties
 
-		public void StartNewMamlFile(string title, int headingLevel, int spanStart)
+		#region Maml content file handling
+
+		/// <summary>
+		/// For the given markdown document, this evaluates all .aml files that are neccessary to store the content.
+		/// </summary>
+		/// <param name="markdownDocument">The markdown document.</param>
+		/// <exception cref="ArgumentException">First block of the markdown document should be a heading block!</exception>
+		private void EvaluateMamlFileNames(MarkdownDocument markdownDocument)
 		{
-			if (null != this.Writer)
+			_mamlFileList.Clear();
+			_indexOfMamlFile = -1;
+
+			if (markdownDocument[0] is HeadingBlock hbStart)
+				AddMamlFile(hbStart);
+			else
+				throw new ArgumentException("The first block of the markdown document should be a heading block! Please add a header on top of your markdown document!");
+
+			for (int i = 1; i < markdownDocument.Count; ++i)
 			{
-				CloseCurrentMamlFile();
+				if (markdownDocument[i] is HeadingBlock hb && hb.Level <= _splitLevel)
+					AddMamlFile(hb);
 			}
+		}
 
-			++_numberOfMamlFile;
-			var fileName = _fullPathBaseFileName + _numberOfMamlFile.ToString() + ".aml";
-			var tw = new System.IO.StreamWriter(fileName, false, Encoding.UTF8, 1024);
-			this.Writer = tw;
+		private void AddMamlFile(HeadingBlock headingBlock)
+		{
+			var fileName = _fullPathBaseFileName + _mamlFileList.Count.ToString() + ".aml";
+			var guid = Guid.NewGuid();
+			var title = ExtractTextContentFrom(headingBlock);
+			_mamlFileList.Add((fileName, guid.ToString(), title, headingBlock.Level, headingBlock.Span.Start));
+		}
 
-			_currentTopicGuid = Guid.NewGuid();
-			WriteLine(string.Format("<topic id=\"{0}\" revisionNumber=\"1\">", _currentTopicGuid));
-			WriteLine("<developerConceptualDocument xmlns=\"http://ddue.schemas.microsoft.com/authoring/2003/5\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">");
-			WriteLine("<introduction>");
+		public void TryStartNewMamlFile(HeadingBlock headingBlock)
+		{
+			if (_indexOfMamlFile < 0 || (_indexOfMamlFile + 1 < _mamlFileList.Count && _mamlFileList[_indexOfMamlFile + 1].spanStart == headingBlock.Span.Start))
+			{
+				++_indexOfMamlFile;
 
-			if (_autoOutline)
-				WriteLine("<autoOutline />");
+				if (null != this.Writer)
+				{
+					CloseCurrentMamlFile();
+				}
 
-			// TODO here insert introductory text
+				var mamlFile = _mamlFileList[_indexOfMamlFile];
 
-			Write("</introduction>");
+				var tw = new System.IO.StreamWriter(mamlFile.fileName, false, Encoding.UTF8, 1024);
+				this.Writer = tw;
 
-			_mamlFileList.Add((fileName, _currentTopicGuid.ToString(), title, headingLevel, spanStart));
+				Push(MamlElements.topic, new[] { new KeyValuePair<string, string>("id", mamlFile.guid), new KeyValuePair<string, string>("revisionNumber", "1") });
+				Push(MamlElements.developerConceptualDocument, new[] { new KeyValuePair<string, string>("xmlns", "http://ddue.schemas.microsoft.com/authoring/2003/5"), new KeyValuePair<string, string>("xmlns:xlink", "http://www.w3.org/1999/xlink") });
+
+				Push(MamlElements.introduction);
+
+				if (_autoOutline)
+					WriteLine("<autoOutline />");
+
+				// TODO here insert introductory text
+
+				PopTo(MamlElements.introduction);
+			}
 		}
 
 		public void CloseCurrentMamlFile()
@@ -169,14 +206,66 @@ namespace Altaxo.Text.Renderers
 			if (null != this.Writer)
 			{
 				PopAll();
-
-				WriteLine("</developerConceptualDocument>");
-				WriteLine("</topic>");
 				this.Writer.Close();
 				this.Writer.Dispose();
 				this.Writer = TextWriter.Null;
 			}
 		}
+
+		#endregion Maml content file handling
+
+		#region Maml image topic files handling
+
+		/// <summary>
+		/// Writes a file which contains all referenced images in native resolution (without using width and height attributes).
+		/// To include this file helps ensure that all referenced images will be included into the help file.
+		/// </summary>
+		/// <returns>The guid of this .aml file.</returns>
+		public Guid WriteImageTopicFile()
+		{
+			var fileName = _fullPathBaseFileName + "_Images.aml";
+			var tw = new System.IO.StreamWriter(fileName, false, Encoding.UTF8, 1024);
+			this.Writer = tw;
+
+			var guid = Guid.NewGuid();
+			Push(MamlElements.topic, new[] { new KeyValuePair<string, string>("id", guid.ToString()), new KeyValuePair<string, string>("revisionNumber", "1") });
+			Push(MamlElements.developerConceptualDocument, new[] { new KeyValuePair<string, string>("xmlns", "http://ddue.schemas.microsoft.com/authoring/2003/5"), new KeyValuePair<string, string>("xmlns:xlink", "http://www.w3.org/1999/xlink") });
+			Push(MamlElements.introduction);
+			Write("This page contains all images used in this help file in native resolution. The ordering of the images is arbitrary.");
+			PopTo(MamlElements.introduction);
+			Push(MamlElements.section);
+			Push(MamlElements.title);
+			Write("Appendix: All images in native resolution");
+			EnsureLine();
+			PopTo(MamlElements.title);
+			Push(MamlElements.content);
+
+			// all links to all images here
+			foreach (var entry in OldToNewImageUris)
+			{
+				var localUrl = System.IO.Path.GetFileNameWithoutExtension(entry.Value);
+
+				Push(MamlElements.para);
+
+				Push(MamlElements.mediaLinkInline);
+
+				Push(MamlElements.image, new[] { new KeyValuePair<string, string>("xlink:href", localUrl) });
+
+				PopTo(MamlElements.para);
+			}
+
+			PopAll();
+
+			this.Writer.Close();
+			this.Writer.Dispose();
+			this.Writer = StreamWriter.Null;
+
+			return guid;
+		}
+
+		#endregion Maml image topic files handling
+
+		#region Content file creation
 
 		public void WriteContentFile()
 		{
@@ -184,6 +273,8 @@ namespace Altaxo.Text.Renderers
 			{
 				CloseCurrentMamlFile();
 			}
+
+			var imageTopicFileGuid = WriteImageTopicFile();
 
 			if (0 == _mamlFileList.Count)
 				return;
@@ -217,6 +308,10 @@ namespace Altaxo.Text.Renderers
 			for (int j = previousHeadingLevel; j >= startingHeadingLevel; --j)
 				WriteLine("</Topic>");
 
+			// Add image topic file at the very end
+			WriteLine(string.Format("<Topic id=\"{0}\" visible=\"True\" title=\"{1}\">", imageTopicFileGuid, "Appendix: Images"));
+			WriteLine("</Topic>");
+
 			Write("</Topics>");
 
 			this.Writer.Close();
@@ -224,19 +319,105 @@ namespace Altaxo.Text.Renderers
 			this.Writer = StreamWriter.Null;
 		}
 
+		#endregion Content file creation
+
+		/// <summary>
+		/// Enumerates all objects in a markdown parse tree recursively, starting with the given element.
+		/// </summary>
+		/// <param name="startElement">The start element.</param>
+		/// <returns>All text element (the given text element and all its childs).</returns>
+		public static IEnumerable<Markdig.Syntax.MarkdownObject> EnumerateAllMarkdownObjectsRecursively(Markdig.Syntax.MarkdownObject startElement)
+		{
+			yield return startElement;
+			var childList = GetChildList(startElement);
+			if (null != childList)
+			{
+				foreach (var child in GetChildList(startElement))
+				{
+					foreach (var childAndSub in EnumerateAllMarkdownObjectsRecursively(child))
+						yield return childAndSub;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the childs of a markdown object. Null is returned if no childs were to be found.
+		/// </summary>
+		/// <param name="parent">The markdown object from which to get the childs.</param>
+		/// <returns>The childs of the given markdown object, or null.</returns>
+		public static IEnumerable<Markdig.Syntax.MarkdownObject> GetChilds(Markdig.Syntax.MarkdownObject parent)
+		{
+			if (parent is Markdig.Syntax.LeafBlock leafBlock)
+				return leafBlock.Inline;
+			else if (parent is Markdig.Syntax.Inlines.ContainerInline containerInline)
+				return containerInline;
+			else if (parent is Markdig.Syntax.ContainerBlock containerBlock)
+				return containerBlock;
+			else
+				return null;
+		}
+
+		/// <summary>
+		/// Gets the childs of a markdown object. Null is returned if no childs were to be found.
+		/// </summary>
+		/// <param name="parent">The markdown object from which to get the childs.</param>
+		/// <returns>The childs of the given markdown object, or null.</returns>
+		public static IReadOnlyList<Markdig.Syntax.MarkdownObject> GetChildList(Markdig.Syntax.MarkdownObject parent)
+		{
+			if (parent is Markdig.Syntax.LeafBlock leafBlock)
+				return leafBlock.Inline?.ToArray<Markdig.Syntax.MarkdownObject>();
+			else if (parent is Markdig.Syntax.Inlines.ContainerInline containerInline)
+				return containerInline.ToArray<Markdig.Syntax.MarkdownObject>();
+			else if (parent is Markdig.Syntax.ContainerBlock containerBlock)
+				return containerBlock;
+			else
+				return null;
+		}
+
+		public (string fileGuid, string address) FindFragmentLink(string url)
+		{
+			if (url.StartsWith("#"))
+				url = url.Substring(1);
+
+			// for now, we have to go through the entire FlowDocument in search for a markdig tag that
+			// (i) contains HtmlAttributes, and (ii) the HtmlAttibutes has the Id that is our url
+
+			foreach (var mdo in EnumerateAllMarkdownObjectsRecursively(_markdownDocument))
+			{
+				var attr = (Markdig.Renderers.Html.HtmlAttributes)mdo.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
+				if (null != attr && attr.Id == url)
+				{
+					// markdown element found, now we need to know in which file it is
+					var prevFile = _mamlFileList.First();
+					foreach (var file in _mamlFileList.Skip(1))
+					{
+						if (file.spanStart > mdo.Span.End)
+							break;
+						prevFile = file;
+					}
+
+					return (prevFile.guid, url);
+				}
+			}
+
+			return (null, null);
+		}
+
 		public override object Render(MarkdownObject markdownObject)
 		{
 			object result = null;
 
+			if (null == markdownObject)
+				throw new ArgumentNullException(nameof(markdownObject));
+
 			if (markdownObject is MarkdownDocument markdownDocument)
 			{
+				_markdownDocument = markdownDocument;
+
 				if (markdownDocument.Count == 0)
 					return base.Render(markdownDocument);
 
-				if (!(markdownDocument[0] is HeadingBlock))
-				{
-					// if the first block of the markdown document starts with something but an header, we have to start a section manually
-				}
+				EvaluateMamlFileNames(markdownDocument);
 
 				base.Render(markdownObject);
 			}

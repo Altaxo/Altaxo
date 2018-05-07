@@ -50,9 +50,12 @@ namespace Altaxo.Text.Renderers.Maml
 		public static MamlElement code { get; private set; } = new MamlElement("code", false);
 		public static MamlElement codeInline { get; private set; } = new MamlElement("codeInline", true);
 		public static MamlElement content { get; private set; } = new MamlElement("content", false);
+		public static MamlElement developerConceptualDocument { get; private set; } = new MamlElement("developerConceptualDocument", false);
 		public static MamlElement entry { get; private set; } = new MamlElement("entry", true);
 		public static MamlElement externalLink { get; private set; } = new MamlElement("externalLink", true);
+		public static MamlElement img { get; private set; } = new MamlElement("img", true);
 		public static MamlElement image { get; private set; } = new MamlElement("image", true);
+		public static MamlElement introduction { get; private set; } = new MamlElement("introduction", false);
 		public static MamlElement legacyBold { get; private set; } = new MamlElement("legacyBold", true);
 		public static MamlElement legacyItalic { get; private set; } = new MamlElement("legacyItalic", true);
 		public static MamlElement legacyStrikethrough { get; private set; } = new MamlElement("legacyStrikethrough", true);
@@ -62,6 +65,7 @@ namespace Altaxo.Text.Renderers.Maml
 		public static MamlElement linkUri { get; private set; } = new MamlElement("linkUri", true);
 		public static MamlElement list { get; private set; } = new MamlElement("list", false);
 		public static MamlElement listItem { get; private set; } = new MamlElement("listItem", false);
+		public static MamlElement markup { get; private set; } = new MamlElement("markup", true);
 		public static MamlElement mediaLinkInline { get; private set; } = new MamlElement("mediaLinkInline", true);
 		public static MamlElement para { get; private set; } = new MamlElement("para", false);
 		public static MamlElement quote { get; private set; } = new MamlElement("quote", false);
@@ -73,5 +77,6 @@ namespace Altaxo.Text.Renderers.Maml
 		public static MamlElement table { get; private set; } = new MamlElement("table", false);
 		public static MamlElement tableHeader { get; private set; } = new MamlElement("tableHeader", false);
 		public static MamlElement title { get; private set; } = new MamlElement("title", true);
+		public static MamlElement topic { get; private set; } = new MamlElement("topic", false);
 	}
 }

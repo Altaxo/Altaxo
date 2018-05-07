@@ -37,9 +37,9 @@ namespace Altaxo.Text.Renderers.Maml
 			// since there is no direct equivalent to a thematic break in Maml,
 			// here we use a paragraph with 80 underlines
 
-			renderer.Push(MamlElements.para);
-			renderer.Write("________________________________________________________________________________");
-			renderer.PopTo(MamlElements.para);
+			renderer.Push(MamlElements.markup);
+			renderer.Write("<hr/>");
+			renderer.PopTo(MamlElements.markup);
 		}
 	}
 }

@@ -60,9 +60,14 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
 				else // not a well formed Uri String - then it is probably a fragment reference
 				{
 					// the challenge here is to find out where (in which file) our target is. The file might even not be defined in the moment
-					string localUrl = "TODO"; // Todo evaluate url
+					var (fileGuid, localUrl) = renderer.FindFragmentLink(url);
+					string totalAddress = string.Empty;
+					if (null != fileGuid && null != localUrl)
+					{
+						totalAddress = fileGuid + "#" + localUrl;
+					}
 
-					renderer.Push(MamlElements.link, new[] { new KeyValuePair<string, string>("xlink:href", localUrl) });
+					renderer.Push(MamlElements.link, new[] { new KeyValuePair<string, string>("xlink:href", totalAddress) });
 					renderer.WriteChildren(link);
 					renderer.PopTo(MamlElements.link);
 				}
@@ -71,8 +76,6 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
 
 		private void RenderImage(MamlRenderer renderer, LinkInline link, string url)
 		{
-			//var inline = renderer.ImageProvider.GetInlineItem(url, out var inlineItemIsErrorMessage);
-
 			double? width = null, height = null;
 
 			if (link.ContainsData(typeof(Markdig.Renderers.Html.HtmlAttributes)))
@@ -96,15 +99,40 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
 				}
 			}
 
-			string localUrl = "TODO"; // TODO
+			if (null != renderer.OldToNewImageUris && renderer.OldToNewImageUris.ContainsKey(url))
+				url = renderer.OldToNewImageUris[url];
 
-			renderer.Push(MamlElements.mediaLinkInline);
+			if (width == null && height == null)
+			{
+				string localUrl = System.IO.Path.GetFileNameWithoutExtension(url);
 
-			renderer.Push(MamlElements.image, new[] { new KeyValuePair<string, string>("xlink:href", localUrl) });
+				renderer.Push(MamlElements.mediaLinkInline);
 
-			renderer.PopTo(MamlElements.image);
+				renderer.Push(MamlElements.image, new[] { new KeyValuePair<string, string>("xlink:href", localUrl) });
 
-			renderer.PopTo(MamlElements.mediaLinkInline);
+				renderer.PopTo(MamlElements.image);
+
+				renderer.PopTo(MamlElements.mediaLinkInline);
+			}
+			else // width or height or both specified
+			{
+				string localUrl = "../media/" + System.IO.Path.GetFileName(url);
+
+				var attributes = new Dictionary<string, string>();
+				attributes.Add("src", localUrl);
+				if (width.HasValue)
+					attributes.Add("width", System.Xml.XmlConvert.ToString(Math.Round(width.Value)));
+				if (height.HasValue)
+					attributes.Add("height", System.Xml.XmlConvert.ToString(height.Value));
+
+				renderer.Push(MamlElements.markup);
+
+				renderer.Push(MamlElements.img, attributes);
+
+				renderer.PopTo(MamlElements.img);
+
+				renderer.PopTo(MamlElements.markup);
+			}
 		}
 
 		/// <summary>
