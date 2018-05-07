@@ -69,8 +69,6 @@ namespace Altaxo.Text.Renderers
 		private List<(string fileName, string guid, string title, int level, int spanStart)> _mamlFileList = new List<(string fileName, string guid, string title, int level, int spanStart)>();
 		private int _indexOfMamlFile;
 
-		private Dictionary<string, string> _oldToNewImageUris;
-
 		public MamlRenderer() : base(TextWriter.Null)
 		{
 			// Default block renderers

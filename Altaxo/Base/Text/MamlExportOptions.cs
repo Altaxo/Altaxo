@@ -87,8 +87,6 @@ namespace Altaxo.Text
 
 			var imagePath = GetImagePath(path);
 
-			var sourceDoc = new System.Text.StringBuilder(document.SourceText);
-
 			var list = new List<(string Url, int urlSpanStart, int urlSpanEnd)>(document.ReferencedImageUrls);
 
 			list.Sort((x, y) => Comparer<int>.Default.Compare(y.urlSpanEnd, x.urlSpanEnd)); // Note the inverse order of x and y to sort urlSpanEnd descending
@@ -122,9 +120,6 @@ namespace Altaxo.Text
 
 						// now change the url in the markdown text
 						var newUrl = ImageDirectoryName + "/" + imageFileName;
-
-						sourceDoc.Remove(urlSpanStart, 1 + urlSpanEnd - urlSpanStart);
-						sourceDoc.Insert(urlSpanStart, newUrl);
 
 						oldToNewImageUrl[Url] = newUrl;
 					}
