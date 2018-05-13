@@ -272,6 +272,7 @@
     <Compile Include="Gui\Workbench\ViewStatesMemento.cs" />
     <Compile Include="Gui\Workbench\WorkbenchState.cs" />
     <Compile Include="Gui\Worksheet\Viewing\WorksheetControllerWpf.cs" />
+    <Compile Include="Main\Services\ILaTeXFormulaImageStreamProvider.cs" />
     <Compile Include="Main\Services\IInvokableThread.cs" />
     <Compile Include="Main\Services\IDispatcherMessageLoop.cs" />
     <Compile Include="Main\Services\InvokeableThread.cs" />
