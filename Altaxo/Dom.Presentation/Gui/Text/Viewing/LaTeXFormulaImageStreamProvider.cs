@@ -54,11 +54,66 @@ namespace Altaxo.Gui.Markdown
 				return (null, null);
 			}
 
+			double cyAscent;
+			double cyDescent;
+			double cyMiddle;
+			{
+				var bmpTemp = new System.Drawing.Bitmap(4, 4);
+				var graphics = System.Drawing.Graphics.FromImage(bmpTemp);
+				var gdiFont = new System.Drawing.Font("Segoe UI", (float)fontSize, System.Drawing.FontStyle.Regular);
+				var cyLineSpace = gdiFont.GetHeight(graphics); // space between two lines
+				int iCellSpace = gdiFont.FontFamily.GetLineSpacing(gdiFont.Style);
+				int iEmHeight = gdiFont.FontFamily.GetEmHeight(gdiFont.Style);
+				int iCellAscent = gdiFont.FontFamily.GetCellAscent(gdiFont.Style);
+				int iCellDescent = gdiFont.FontFamily.GetCellDescent(gdiFont.Style);
+				cyAscent = fontSize * iCellAscent / (double)iEmHeight;
+				cyDescent = fontSize * iCellDescent / (double)iEmHeight;
+				cyMiddle = cyAscent / 2;
+				gdiFont.Dispose();
+				graphics.Dispose();
+				bmpTemp.Dispose();
+			}
+
 			var formulaRenderer = formula.GetRenderer(TexStyle.Display, fontSize, "Arial");
 			// the placement of the image depends on the depth value
 			var absoluteDepth = formulaRenderer.RenderSize.Height * formulaRenderer.RelativeDepth;
+			var absoluteAscent = formulaRenderer.RenderSize.Height * (1 - formulaRenderer.RelativeDepth);
 
-			var bmp = formulaRenderer.RenderToBitmap(0, 0);
+			double oversize = 0;
+			double yoffset = 0;
+			var sort = new SortedDictionary<double, (double, string)>();
+
+			if (formulaRenderer.RelativeDepth < (1 / 16.0))
+			{
+				sort.Add(0, (0.0, "baseline"));
+			}
+			if (absoluteAscent <= cyAscent) // then we can use texttop alignment
+			{
+				oversize = cyAscent - absoluteAscent;
+				yoffset = -oversize;
+				sort.Add(Math.Abs(yoffset), (yoffset, "texttop"));
+			}
+
+			if (absoluteDepth <= cyDescent) // then we can use bottom alignment
+			{
+				oversize = cyDescent - absoluteDepth;
+				yoffset = oversize;
+				sort.Add(Math.Abs(yoffset), (yoffset, "bottom"));
+			}
+
+			{
+				// Alignment: middle
+				// Note that this is a moving target: we must change the vertical size of the image, but by that
+				// we change the middle of the image, which changes again the offset...
+
+				oversize = 2 * cyMiddle + absoluteDepth - absoluteAscent; // if oversize is negative, then pad at the bottom, else pad at the top
+
+				sort.Add(Math.Abs(oversize), (-oversize, "middle"));
+			}
+
+			var firstEntry = sort.First();
+
+			var bmp = formulaRenderer.RenderToBitmap(0, firstEntry.Value.Item1);
 
 			var fileStream = new MemoryStream();
 			BitmapEncoder encoder = new PngBitmapEncoder();
@@ -66,7 +121,7 @@ namespace Altaxo.Gui.Markdown
 			encoder.Save(fileStream);
 			fileStream.Seek(0, SeekOrigin.Begin);
 
-			return (fileStream, "baseline");
+			return (fileStream, firstEntry.Value.Item2);
 		}
 	}
 }

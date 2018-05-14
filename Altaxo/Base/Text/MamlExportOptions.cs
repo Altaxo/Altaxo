@@ -32,6 +32,7 @@ using Altaxo.Graph;
 using Altaxo.Gui;
 using Markdig;
 using Altaxo.Text.Renderers;
+using System.Xml;
 
 namespace Altaxo.Text
 {
@@ -64,6 +65,7 @@ namespace Altaxo.Text
 			var options = new MamlExportOptions();
 
 			var dlg = new SaveFileOptions();
+			dlg.AddFilter("*.shfbproj", "Sandcastle help file builder project (*.shfbproj)");
 			dlg.AddFilter("*.content", "Content files (*.content)");
 			dlg.AddFilter("*.*", "All files (*.*)");
 
@@ -141,9 +143,17 @@ namespace Altaxo.Text
 				EnableHtmlEscape = true,
 				AutoOutline = true,
 				OldToNewImageUris = oldToNewImageUrl,
+				ContentLayoutFileName = GetContentLayoutFileName(fileName),
 			};
 
 			renderer.Render(markdownDocument);
+
+			// afterwards: change the shfbproj to include i) all images and ii) all aml files that where created
+			if (Path.GetExtension(fileName).ToLowerInvariant() == ".shfbproj")
+			{
+				var imageFileNames = oldToNewImageUrl.Values.Concat(renderer.ImageFileNames);
+				UpdateShfbproj(fileName, GetContentLayoutFileName(fileName), renderer.AmlFileNames, imageFileNames);
+			}
 		}
 
 		/// <summary>
@@ -162,6 +172,162 @@ namespace Altaxo.Text
 					.UseAutoLinks()
 					.UseMathematics()
 					.UseGenericAttributes();
+		}
+
+		public static string GetContentLayoutFileName(string userChosenfileName)
+		{
+			if (Path.GetExtension(userChosenfileName).ToLowerInvariant() == ".content")
+			{
+				return userChosenfileName;
+			}
+			else if (Path.GetExtension(userChosenfileName).ToLowerInvariant() == ".shfbproj")
+			{
+				var contentFileName = ExtractContentLayoutFileNameFromShfbproj(userChosenfileName);
+				if (!string.IsNullOrEmpty(contentFileName))
+					return contentFileName;
+			}
+			return Path.Combine(Path.GetDirectoryName(userChosenfileName), Path.GetFileNameWithoutExtension(userChosenfileName) + ".content");
+		}
+
+		public static string ExtractContentLayoutFileNameFromShfbproj(string userChosenfileName)
+		{
+			var doc = new XmlDocument();
+			//Load the the document with the last book node.
+			doc.Load(userChosenfileName);
+
+			XmlNode currNode = doc.DocumentElement.FirstChild;
+			while (null != currNode)
+			{
+				if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "ContentLayout")
+				{
+					var clFileName = currNode.FirstChild.Attributes["Include"];
+					return Path.Combine(Path.GetDirectoryName(userChosenfileName), clFileName.Value);
+				}
+
+				currNode = currNode.NextSibling;
+			}
+
+			return null;
+		}
+
+		public static void UpdateShfbproj(string shfbprojFileName, string contentLayoutFileName, IEnumerable<string> amlFileNames, IEnumerable<string> imageFileNames)
+		{
+			XmlNode contentLayoutNode = null;
+			XmlNode amlFilesNode = null;
+			XmlNode imageFilesNode = null;
+
+			string projectDirectory = Path.GetDirectoryName(shfbprojFileName);
+
+			var doc = new XmlDocument();
+			//Load the the document with the last book node.
+			doc.Load(shfbprojFileName);
+
+			XmlNode currNode = doc.DocumentElement.FirstChild;
+			while (null != currNode)
+			{
+				if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "ContentLayout")
+				{
+					contentLayoutNode = currNode;
+				}
+				if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "Image")
+				{
+					imageFilesNode = currNode;
+				}
+				if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "None")
+				{
+					amlFilesNode = currNode;
+				}
+
+				currNode = currNode.NextSibling;
+			}
+
+			if (null == contentLayoutNode)
+			{
+				var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
+
+				doc.DocumentElement.AppendChild(itemGroup);
+				contentLayoutNode = itemGroup;
+			}
+
+			if (null == amlFilesNode && amlFileNames.Any())
+			{
+				var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
+				doc.DocumentElement.AppendChild(itemGroup);
+				amlFilesNode = itemGroup;
+			}
+
+			if (null == imageFilesNode && imageFileNames.Any())
+			{
+				var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
+				doc.DocumentElement.AppendChild(itemGroup);
+				imageFilesNode = itemGroup;
+			}
+
+			if (null != contentLayoutNode)
+			{
+				contentLayoutNode.RemoveAll();
+
+				var layoutNode = doc.CreateElement("ContentLayout", doc.DocumentElement.NamespaceURI);
+				var inclAttr = doc.CreateAttribute("Include");
+				inclAttr.Value = GetFileNameRelativeTo(contentLayoutFileName, projectDirectory);
+				layoutNode.Attributes.Append(inclAttr);
+				contentLayoutNode.AppendChild(layoutNode);
+			}
+
+			if (null != amlFilesNode)
+			{
+				amlFilesNode.RemoveAll();
+
+				foreach (var amlFileName in amlFileNames)
+				{
+					var noneNode = doc.CreateElement("Node", doc.DocumentElement.NamespaceURI);
+					var inclAttr = doc.CreateAttribute("Include");
+					inclAttr.Value = GetFileNameRelativeTo(amlFileName, projectDirectory);
+					noneNode.Attributes.Append(inclAttr);
+					amlFilesNode.AppendChild(noneNode);
+				}
+			}
+
+			if (null != imageFilesNode)
+			{
+				imageFilesNode.RemoveAll();
+
+				foreach (var imageFileName in imageFileNames)
+				{
+					var imgNode = doc.CreateElement("Image", doc.DocumentElement.NamespaceURI);
+					var inclAttr = doc.CreateAttribute("Include");
+					inclAttr.Value = GetFileNameRelativeTo(imageFileName, projectDirectory);
+					imgNode.Attributes.Append(inclAttr);
+
+					var imgId = doc.CreateElement("ImageId", doc.DocumentElement.NamespaceURI);
+					imgId.InnerText = Path.GetFileNameWithoutExtension(imageFileName);
+					imgNode.AppendChild(imgId);
+
+					var altText = doc.CreateElement("AlternateText", doc.DocumentElement.NamespaceURI);
+					altText.InnerText = Path.GetFileNameWithoutExtension(imageFileName);
+					imgNode.AppendChild(altText);
+
+					imageFilesNode.AppendChild(imgNode);
+				}
+			}
+
+			// Finally, save the sandcastle help file builder project
+			doc.Save(shfbprojFileName);
+		}
+
+		public static string GetFileNameRelativeTo(string fullFileName, string baseDirectory)
+		{
+			if (!Path.IsPathRooted(fullFileName))
+				return fullFileName;
+
+			var dir = Path.GetDirectoryName(fullFileName);
+
+			if (!dir.StartsWith(baseDirectory))
+				throw new ArgumentException("File must be in the base directory or in a subdirectory", nameof(fullFileName));
+
+			int addLength = baseDirectory.EndsWith("" + Path.DirectorySeparatorChar) ? 0 : 1;
+
+			return fullFileName.Substring(baseDirectory.Length + addLength);
 		}
 	}
 }

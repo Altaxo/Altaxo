@@ -64,13 +64,20 @@ namespace Altaxo.Text.Renderers
 
 		public bool EnableHtmlEscape { get; set; }
 
+		public string ContentLayoutFileName { get; set; }
+
 		private List<Maml.MamlElement> _currentElementStack = new List<MamlElement>();
 
 		private List<(string fileName, string guid, string title, int level, int spanStart)> _mamlFileList = new List<(string fileName, string guid, string title, int level, int spanStart)>();
 		private int _indexOfMamlFile;
 
+		private HashSet<string> _imageFileList = new HashSet<string>();
+
 		public MamlRenderer() : base(TextWriter.Null)
 		{
+			// Extension renderers that must be registered before the default renders
+			ObjectRenderers.Add(new MathBlockRenderer()); // since MathBlock derives from CodeBlock, it must be registered before CodeBlockRenderer
+
 			// Default block renderers
 			ObjectRenderers.Add(new CodeBlockRenderer());
 			ObjectRenderers.Add(new ListRenderer());
@@ -93,6 +100,7 @@ namespace Altaxo.Text.Renderers
 
 			// Extension renderers
 			ObjectRenderers.Add(new TableRenderer());
+			ObjectRenderers.Add(new MathInlineRenderer());
 		}
 
 		#region Properties
@@ -134,6 +142,16 @@ namespace Altaxo.Text.Renderers
 		}
 
 		public IDictionary<string, string> OldToNewImageUris { get; set; }
+
+		/// <summary>
+		/// Gets all .mal file names that are used here.
+		/// </summary>
+		public IEnumerable<string> AmlFileNames { get { return _mamlFileList.Select(x => x.fileName); } }
+
+		/// <summary>
+		/// Gets all image file names that are used, including the equation images.
+		/// </summary>
+		public IEnumerable<string> ImageFileNames { get { return _imageFileList; } }
 
 		#endregion Properties
 
@@ -318,6 +336,24 @@ namespace Altaxo.Text.Renderers
 		}
 
 		#endregion Content file creation
+
+		#region Image file creation
+
+		public void StorePngImageFile(Stream imageStream, string contentHash)
+		{
+			var dir = Path.GetDirectoryName(_fullPathBaseFileName);
+			var fullFileName = Path.Combine(dir, "Images", contentHash + ".png");
+
+			using (var outStream = new FileStream(fullFileName, FileMode.Create, FileAccess.Write, FileShare.Read))
+			{
+				imageStream.CopyTo(outStream);
+				outStream.Close();
+			}
+
+			_imageFileList.Add(fullFileName);
+		}
+
+		#endregion Image file creation
 
 		/// <summary>
 		/// Enumerates all objects in a markdown parse tree recursively, starting with the given element.
