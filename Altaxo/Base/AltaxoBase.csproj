@@ -285,6 +285,7 @@
     <Compile Include="Text\MarkdownExportOptions.cs" />
     <Compile Include="Text\MarkdownImportOptions.cs" />
     <Compile Include="Text\Renderers\MamlRenderer.cs" />
+    <Compile Include="Text\Renderers\MamlRenderer_ContentLayoutFileHandling.cs" />
     <Compile Include="Text\Renderers\Maml\Extensions\MathBlockRenderer.cs" />
     <Compile Include="Text\Renderers\Maml\Extensions\MathInlineRenderer.cs" />
     <Compile Include="Text\Renderers\Maml\Extensions\TableRenderer.cs" />
@@ -297,6 +298,7 @@
     <Compile Include="Text\Renderers\Maml\Inlines\LinkInlineRenderer.cs" />
     <Compile Include="Text\Renderers\Maml\Inlines\LiteralInlineRenderer.cs" />
     <Compile Include="Text\Renderers\Maml\ListRenderer.cs" />
+    <Compile Include="Text\Renderers\MamlRenderer_ShfbProjectFileHandling.cs" />
     <Compile Include="Text\Renderers\Maml\QuoteBlockRenderer.cs" />
     <Compile Include="Text\Renderers\Maml\CodeBlockRenderer.cs" />
     <Compile Include="Text\Renderers\Maml\HeadingRenderer.cs" />

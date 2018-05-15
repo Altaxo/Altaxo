@@ -42,9 +42,108 @@ namespace Altaxo.Text
 	public class MamlExportOptions
 	{
 		/// <summary>
+		/// Gets or sets the font family of the body text that later on is rendered out of the Maml file.
+		/// We need this here because we have to convert the formulas to images, and need therefore the image size.
+		/// </summary>
+		protected string _bodyTextFontFamily = "Segoe UI";
+
+		/// <summary>
+		/// Gets or sets the font size of the body text that later on is rendered out of the Maml file.
+		/// We need this here because we have to convert the formulas to images, and need therefore the image size.
+		/// </summary>
+		private double _bodyTextFontSize = 15;
+
+		/// <summary>
+		/// Set this field to true if the Maml is indended to be used in a Help1 file.
+		/// In such a file, the placement of images with align="middle" differs from HTML rendering
+		/// (the text baseline is aligned with the middle of the image,
+		/// whereas in HTML the middle of the text is aligned with the middle of the image).
+		/// </summary>
+		public bool IsIntendedForHtml1HelpFile { get; set; } = true;
+
+		public bool EnableHtmlEscape { get; set; } = true;
+
+		/// <summary>
+		/// If true, an outline of the content will be included at the top of every Maml file.
+		/// </summary>
+		public bool AutoOutLine { get; set; } = false;
+
+		/// <summary>
+		/// The header level where to split the output into different MAML files.
+		/// 0 = render in only one file. 1 = Split at header level 1, 2 = split at header level 2, and so on.
+		/// </summary>
+		protected int _splitLevel = 2;
+
+		/// <summary>
 		/// Name of the folder relative to the markdown document, in which the images (graphs and local images) are stored.
 		/// </summary>
-		public string ImageDirectoryName { get; } = "Images";
+		protected string _imageFolderName = "Images";
+
+		#region Properties
+
+		/// <summary>
+		/// Gets or sets the font family of the body text that later on is rendered out of the Maml file.
+		/// We need this here because we have to convert the formulas to images, and need therefore the image size.
+		/// </summary>
+		public string BodyTextFontFamily
+		{
+			get
+			{ return _bodyTextFontFamily; }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+					throw new ArgumentNullException(nameof(value));
+				_bodyTextFontFamily = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the font size of the body text that later on is rendered out of the Maml file.
+		/// We need this here because we have to convert the formulas to images, and need therefore the image size.
+		/// </summary>
+		public double BodyTextFontSize
+		{
+			get { return _bodyTextFontSize; }
+			set
+			{
+				if (!(value > 0))
+					throw new ArgumentOutOfRangeException(nameof(value), "Must be >0");
+				_bodyTextFontSize = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the name of the image folder. This folder, for instance 'Image', is relative to the folder where the sandcastle project file is located.
+		/// </summary>
+		/// <exception cref="ArgumentNullException">value</exception>
+		public string ImageFolderName
+		{
+			get
+			{ return _imageFolderName; }
+			set
+			{
+				if (string.IsNullOrEmpty(value))
+					throw new ArgumentNullException(nameof(value));
+				_imageFolderName = value;
+			}
+		}
+
+		/// <summary>
+		/// The header level where to split the output into different MAML files.
+		/// 0 = render in only one file. 1 = Split at header level 1, 2 = split at header level 2, and so on.
+		/// </summary>
+		public int SplitLevel
+		{
+			get { return _splitLevel; }
+			set
+			{
+				if (!(value >= 0))
+					throw new ArgumentOutOfRangeException(nameof(value), "Must be >= 0");
+				_splitLevel = value;
+			}
+		}
+
+		#endregion Properties
 
 		/// <summary>
 		/// Given the folder where the markdown file resides, this gets the full folder name of the image folder.
@@ -53,7 +152,7 @@ namespace Altaxo.Text
 		/// <returns>Full folder name of the image folder</returns>
 		private string GetImagePath(string markdownPathName)
 		{
-			return Path.Combine(markdownPathName, "Images");
+			return Path.Combine(markdownPathName, ImageFolderName);
 		}
 
 		/// <summary>
@@ -85,6 +184,34 @@ namespace Altaxo.Text
 		/// this is the base file name only; the file names will be derived from this name.</param>
 		public void Export(TextDocument document, string fileName)
 		{
+			// First, export the images
+			var (oldToNewImageUrl, listOfReferencedImageFileNames) = ExportImages(document, fileName);
+
+			// now export the markdown document as Maml file(s)
+
+			// first parse it with Markdig
+			var pipeline = new MarkdownPipelineBuilder();
+			pipeline = UseSupportedExtensions(pipeline);
+
+			var markdownDocument = Markdig.Markdown.Parse(document.SourceText, pipeline.Build());
+
+			var renderer = new MamlRenderer(
+				projectOrContentFileName: fileName,
+				splitLevel: SplitLevel,
+				enableHtmlEscape: EnableHtmlEscape,
+				autoOutline: AutoOutLine,
+				imagesFullFileNames: listOfReferencedImageFileNames,
+				oldToNewImageUris: oldToNewImageUrl,
+				bodyTextFontFamily: BodyTextFontFamily,
+				bodyTextFontSize: BodyTextFontSize,
+				isIntendedForHelp1File: IsIntendedForHtml1HelpFile
+				);
+
+			renderer.Render(markdownDocument);
+		}
+
+		private (Dictionary<string, string> oldToNewImageUrl, HashSet<string> listOfReferencedImageFileNames) ExportImages(TextDocument document, string fileName)
+		{
 			var path = Path.GetDirectoryName(fileName);
 
 			var imagePath = GetImagePath(path);
@@ -96,7 +223,7 @@ namespace Altaxo.Text
 			var imageStreamProvider = new ImageStreamProvider();
 
 			var oldToNewImageUrl = new Dictionary<string, string>();
-			var listOfReferencedImageFileNames = new HashSet<string>(); // full file names of the images
+			var listOfReferencedImageFileNames = new HashSet<string>();
 
 			// Export images
 			foreach (var (Url, urlSpanStart, urlSpanEnd) in list)
@@ -123,7 +250,7 @@ namespace Altaxo.Text
 						}
 
 						// now change the url in the markdown text
-						var newUrl = ImageDirectoryName + "/" + imageFileName;
+						var newUrl = ImageFolderName + "/" + imageFileName;
 
 						oldToNewImageUrl[Url] = newUrl;
 						listOfReferencedImageFileNames.Add(fullImageFileName);
@@ -131,35 +258,7 @@ namespace Altaxo.Text
 				}
 			}
 
-			// now export the markdown document as Maml file(s)
-
-			// first parse it with Markdig
-			var pipeline = new MarkdownPipelineBuilder();
-			pipeline = UseSupportedExtensions(pipeline);
-
-			var markdownDocument = Markdig.Markdown.Parse(document.SourceText, pipeline.Build());
-
-			var renderer = new MamlRenderer()
-			{
-				FullPathBaseFileName = Path.Combine(path, Path.GetFileNameWithoutExtension(fileName)),
-				SplitLevel = 2,
-				EnableHtmlEscape = true,
-				AutoOutline = true,
-				OldToNewImageUris = oldToNewImageUrl,
-				ContentLayoutFileName = GetContentLayoutFileName(fileName),
-				BodyTextFontFamily = "Segoe UI",
-				BodyTextFontSize = 15,
-				IsIntendedForHelp1File = true,
-			};
-
-			renderer.Render(markdownDocument);
-
-			// afterwards: change the shfbproj to include i) all images and ii) all aml files that where created
-			if (Path.GetExtension(fileName).ToLowerInvariant() == ".shfbproj")
-			{
-				var imageFileNames = listOfReferencedImageFileNames.Concat(renderer.ImageFileNames);
-				UpdateShfbproj(fileName, GetContentLayoutFileName(fileName), renderer.AmlFileNames, imageFileNames);
-			}
+			return (oldToNewImageUrl, listOfReferencedImageFileNames);
 		}
 
 		/// <summary>
@@ -178,168 +277,6 @@ namespace Altaxo.Text
 					.UseAutoLinks()
 					.UseMathematics()
 					.UseGenericAttributes();
-		}
-
-		public static string GetContentLayoutFileName(string userChosenfileName)
-		{
-			if (Path.GetExtension(userChosenfileName).ToLowerInvariant() == ".content")
-			{
-				return userChosenfileName;
-			}
-			else if (Path.GetExtension(userChosenfileName).ToLowerInvariant() == ".shfbproj")
-			{
-				var contentFileName = ExtractContentLayoutFileNameFromShfbproj(userChosenfileName);
-				if (!string.IsNullOrEmpty(contentFileName))
-					return contentFileName;
-			}
-			return Path.Combine(Path.GetDirectoryName(userChosenfileName), Path.GetFileNameWithoutExtension(userChosenfileName) + ".content");
-		}
-
-		public static string ExtractContentLayoutFileNameFromShfbproj(string userChosenfileName)
-		{
-			var doc = new XmlDocument();
-			//Load the the document with the last book node.
-			doc.Load(userChosenfileName);
-
-			XmlNode currNode = doc.DocumentElement.FirstChild;
-			while (null != currNode)
-			{
-				if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "ContentLayout")
-				{
-					var clFileName = currNode.FirstChild.Attributes["Include"];
-					return Path.Combine(Path.GetDirectoryName(userChosenfileName), clFileName.Value);
-				}
-
-				currNode = currNode.NextSibling;
-			}
-
-			return null;
-		}
-
-		public static void UpdateShfbproj(string shfbprojFileName, string contentLayoutFileName, IEnumerable<string> amlFileNames, IEnumerable<string> imageFileNames)
-		{
-			XmlNode contentLayoutNode = null;
-			XmlNode amlFilesNode = null;
-			XmlNode imageFilesNode = null;
-
-			string projectDirectory = Path.GetDirectoryName(shfbprojFileName);
-
-			var doc = new XmlDocument();
-			//Load the the document with the last book node.
-			doc.Load(shfbprojFileName);
-
-			XmlNode currNode = doc.DocumentElement.FirstChild;
-			while (null != currNode)
-			{
-				if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "ContentLayout")
-				{
-					contentLayoutNode = currNode;
-				}
-				if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "Image")
-				{
-					imageFilesNode = currNode;
-				}
-				if (currNode.Name == "ItemGroup" && currNode.FirstChild?.Name == "None")
-				{
-					amlFilesNode = currNode;
-				}
-
-				currNode = currNode.NextSibling;
-			}
-
-			if (null == contentLayoutNode)
-			{
-				var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
-
-				doc.DocumentElement.AppendChild(itemGroup);
-				contentLayoutNode = itemGroup;
-			}
-
-			if (null == amlFilesNode && amlFileNames.Any())
-			{
-				var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
-				doc.DocumentElement.AppendChild(itemGroup);
-				amlFilesNode = itemGroup;
-			}
-
-			if (null == imageFilesNode && imageFileNames.Any())
-			{
-				var itemGroup = doc.CreateElement("ItemGroup", doc.DocumentElement.NamespaceURI);
-				doc.DocumentElement.AppendChild(itemGroup);
-				imageFilesNode = itemGroup;
-			}
-
-			if (null != contentLayoutNode)
-			{
-				contentLayoutNode.RemoveAll();
-
-				var layoutNode = doc.CreateElement("ContentLayout", doc.DocumentElement.NamespaceURI);
-				var inclAttr = doc.CreateAttribute("Include");
-				inclAttr.Value = GetFileNameRelativeTo(contentLayoutFileName, projectDirectory);
-				layoutNode.Attributes.Append(inclAttr);
-				contentLayoutNode.AppendChild(layoutNode);
-			}
-
-			if (null != amlFilesNode)
-			{
-				amlFilesNode.RemoveAll();
-
-				foreach (var amlFileName in amlFileNames)
-				{
-					var noneNode = doc.CreateElement("None", doc.DocumentElement.NamespaceURI);
-					var inclAttr = doc.CreateAttribute("Include");
-					inclAttr.Value = GetFileNameRelativeTo(amlFileName, projectDirectory);
-					noneNode.Attributes.Append(inclAttr);
-					amlFilesNode.AppendChild(noneNode);
-				}
-			}
-
-			if (null != imageFilesNode)
-			{
-				imageFilesNode.RemoveAll();
-
-				foreach (var imageFileName in imageFileNames)
-				{
-					var imgNode = doc.CreateElement("Image", doc.DocumentElement.NamespaceURI);
-					var inclAttr = doc.CreateAttribute("Include");
-					inclAttr.Value = GetFileNameRelativeTo(imageFileName, projectDirectory);
-					imgNode.Attributes.Append(inclAttr);
-
-					var imgId = doc.CreateElement("ImageId", doc.DocumentElement.NamespaceURI);
-					imgId.InnerText = Path.GetFileNameWithoutExtension(imageFileName);
-					imgNode.AppendChild(imgId);
-
-					var altText = doc.CreateElement("AlternateText", doc.DocumentElement.NamespaceURI);
-					altText.InnerText = Path.GetFileNameWithoutExtension(imageFileName);
-					imgNode.AppendChild(altText);
-
-					imageFilesNode.AppendChild(imgNode);
-				}
-			}
-
-			// Finally, save the sandcastle help file builder project
-			doc.Save(shfbprojFileName);
-		}
-
-		/// <summary>
-		/// Gets the file name relative to a directory.
-		/// </summary>
-		/// <param name="fullFileName">Full name of the file.</param>
-		/// <param name="baseDirectory">The full name of the directory.</param>
-		/// <returns>The path name relative to the provided directory. Backslashes are replaced with slashes to conform with HTML style.</returns>
-		public static string GetFileNameRelativeTo(string fullFileName, string baseDirectory)
-		{
-			if (!Path.IsPathRooted(fullFileName))
-				throw new ArgumentException("Path is not rooted", nameof(fullFileName));
-
-			var dir = Path.GetDirectoryName(fullFileName);
-
-			if (!dir.StartsWith(baseDirectory))
-				throw new ArgumentException("File must be in the base directory or in a subdirectory", nameof(fullFileName));
-
-			int addLength = baseDirectory.EndsWith("" + Path.DirectorySeparatorChar) ? 0 : 1;
-
-			return fullFileName.Substring(baseDirectory.Length + addLength).Replace('\\', '/');
 		}
 	}
 }
