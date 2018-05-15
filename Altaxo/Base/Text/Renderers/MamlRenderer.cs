@@ -45,6 +45,7 @@ namespace Altaxo.Text.Renderers
 	public class MamlRenderer : TextRendererBase<MamlRenderer>
 	{
 		private MarkdownDocument _markdownDocument;
+		private System.Security.Cryptography.MD5 _md5Hasher = System.Security.Cryptography.MD5.Create();
 
 		/// <summary>
 		/// The header level where to split the output into different MAML files.
@@ -65,6 +66,26 @@ namespace Altaxo.Text.Renderers
 		public bool EnableHtmlEscape { get; set; }
 
 		public string ContentLayoutFileName { get; set; }
+
+		/// <summary>
+		/// Set this property to true if the Maml is indended to be used in a Help1 file.
+		/// In such a file, the placement of images with align="middle" differs from HTML rendering
+		/// (the text baseline is aligned with the middle of the image,
+		/// whereas in HTML the middle of the text is aligned with the middle of the image).
+		/// </summary>
+		public bool IsIntendedForHelp1File { get; set; }
+
+		/// <summary>
+		/// Gets or sets the font family of the body text that later on is rendered out of the Maml file.
+		/// We need this here because we have to convert the formulas to images, and need therefore the image size.
+		/// </summary>
+		public string BodyTextFontFamily { get; set; }
+
+		/// <summary>
+		/// Gets or sets the font size of the body text that later on is rendered out of the Maml file.
+		/// We need this here because we have to convert the formulas to images, and need therefore the image size.
+		/// </summary>
+		public double BodyTextFontSize { get; set; }
 
 		private List<Maml.MamlElement> _currentElementStack = new List<MamlElement>();
 
@@ -155,7 +176,7 @@ namespace Altaxo.Text.Renderers
 
 		#endregion Properties
 
-		#region Maml content file handling
+		#region Maml topic file handling
 
 		/// <summary>
 		/// For the given markdown document, this evaluates all .aml files that are neccessary to store the content.
@@ -167,24 +188,60 @@ namespace Altaxo.Text.Renderers
 			_mamlFileList.Clear();
 			_indexOfMamlFile = -1;
 
+			// the header titles, entry 0 is the current title for level1, entry [1] is the current title for level 2 and so on
+			List<string> headerTitles = new List<string>();
+
 			if (markdownDocument[0] is HeadingBlock hbStart)
-				AddMamlFile(hbStart);
+				AddMamlFile(hbStart, headerTitles);
 			else
 				throw new ArgumentException("The first block of the markdown document should be a heading block! Please add a header on top of your markdown document!");
 
 			for (int i = 1; i < markdownDocument.Count; ++i)
 			{
 				if (markdownDocument[i] is HeadingBlock hb && hb.Level <= _splitLevel)
-					AddMamlFile(hb);
+					AddMamlFile(hb, headerTitles);
 			}
 		}
 
-		private void AddMamlFile(HeadingBlock headingBlock)
+		private void AddMamlFile(HeadingBlock headingBlock, List<string> headerTitles)
 		{
-			var fileName = _fullPathBaseFileName + _mamlFileList.Count.ToString() + ".aml";
-			var guid = Guid.NewGuid();
+			var fileName = string.Format("{0}{1:D6}.aml", _fullPathBaseFileName, _mamlFileList.Count);
 			var title = ExtractTextContentFrom(headingBlock);
-			_mamlFileList.Add((fileName, guid.ToString(), title, headingBlock.Level, headingBlock.Span.Start));
+			var levelM1 = headingBlock.Level - 1;
+
+			for (int i = headerTitles.Count - 1; i >= 0; --i)
+				headerTitles.RemoveAt(i);
+			headerTitles.Add(title);
+
+			var guid = CreateGuidFromHeaderTitles(headerTitles);
+			_mamlFileList.Add((fileName, guid, title, headingBlock.Level, headingBlock.Span.Start));
+		}
+
+		private string CreateGuidFromHeaderTitles(List<string> headerTitles)
+		{
+			var stb = new System.Text.StringBuilder();
+
+			for (int i = 0; i < headerTitles.Count; ++i)
+			{
+				if (i != 0)
+					stb.Append(" - ");
+				stb.Append(headerTitles[i]);
+			}
+
+			byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(stb.ToString());
+
+			byte[] hash = _md5Hasher.ComputeHash(inputBytes);
+
+			// step 2, convert byte array to hex string
+
+			stb.Length = 0;
+
+			for (int i = 0; i < hash.Length; i++)
+			{
+				stb.Append(hash[i].ToString("X2"));
+			}
+
+			return stb.ToString();
 		}
 
 		public void TryStartNewMamlFile(HeadingBlock headingBlock)
@@ -228,7 +285,7 @@ namespace Altaxo.Text.Renderers
 			}
 		}
 
-		#endregion Maml content file handling
+		#endregion Maml topic file handling
 
 		#region Maml image topic files handling
 
@@ -237,7 +294,7 @@ namespace Altaxo.Text.Renderers
 		/// To include this file helps ensure that all referenced images will be included into the help file.
 		/// </summary>
 		/// <returns>The guid of this .aml file.</returns>
-		public Guid WriteImageTopicFile()
+		public (string fullFileName, Guid guid) WriteImageTopicFile()
 		{
 			var fileName = _fullPathBaseFileName + "_Images.aml";
 			var tw = new System.IO.StreamWriter(fileName, false, Encoding.UTF8, 1024);
@@ -270,63 +327,76 @@ namespace Altaxo.Text.Renderers
 				PopTo(MamlElements.para);
 			}
 
+			// the same again for the formulas
+			foreach (var entry in _imageFileList)
+			{
+				var localUrl = System.IO.Path.GetFileNameWithoutExtension(entry);
+
+				Push(MamlElements.para);
+
+				Push(MamlElements.mediaLinkInline);
+
+				Push(MamlElements.image, new[] { new KeyValuePair<string, string>("xlink:href", localUrl) });
+
+				PopTo(MamlElements.para);
+			}
+
 			PopAll();
 
 			this.Writer.Close();
 			this.Writer.Dispose();
 			this.Writer = StreamWriter.Null;
 
-			return guid;
+			return (fileName, guid);
 		}
 
 		#endregion Maml image topic files handling
 
-		#region Content file creation
+		#region Content layout file creation
 
-		public void WriteContentFile()
+		public void WriteContentLayoutFile()
 		{
 			if (null != this.Writer)
 			{
 				CloseCurrentMamlFile();
 			}
 
-			var imageTopicFileGuid = WriteImageTopicFile();
+			var (imageTopicFileName, imageTopicFileGuid) = WriteImageTopicFile();
+			// Include image topic file at the end of the maml file list with level = 0
+			_mamlFileList.Add((imageTopicFileName, imageTopicFileGuid.ToString(), "Appendix: Images", 1, 0));
 
 			if (0 == _mamlFileList.Count)
 				return;
 
-			var fileName = _fullPathBaseFileName + ".content";
-			var tw = new System.IO.StreamWriter(fileName, false, Encoding.UTF8, 1024);
+			var tw = new System.IO.StreamWriter(ContentLayoutFileName, false, Encoding.UTF8, 1024);
 			this.Writer = tw;
 
 			WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 			WriteLine("<Topics>");
 
-			int startingHeadingLevel = _mamlFileList[0].level;
-			int previousHeadingLevel = startingHeadingLevel - 1;
+			int currentHeadingLevel = 1;
 			for (int i = 0; i < _mamlFileList.Count; ++i)
 			{
-				for (int j = previousHeadingLevel; j >= _mamlFileList[i].level; --j)
+				for (; currentHeadingLevel > _mamlFileList[i].level; --currentHeadingLevel)
+				{
 					WriteLine("</Topic>");
+				}
 
 				if (i == 0)
 					WriteLine(string.Format("<Topic id=\"{0}\" visible=\"True\" title=\"{1}\" isDefault=\"true\" isExpanded=\"true\" isSelected=\"true\">", _mamlFileList[i].guid, _mamlFileList[i].title));
 				else
 					WriteLine(string.Format("<Topic id=\"{0}\" visible=\"True\" title=\"{1}\">", _mamlFileList[i].guid, _mamlFileList[i].title));
 
-				if ((_mamlFileList[i].level - previousHeadingLevel) > 0) // For sublevels increase the heading level at maximum by one
-					++previousHeadingLevel; // because jumping for instance from 1 to 3, i.e. jumping more than one level is not supported
-				else
-					previousHeadingLevel = _mamlFileList[i].level;
+				++currentHeadingLevel;
 			}
 
 			// Close all open topic tags
-			for (int j = previousHeadingLevel; j >= startingHeadingLevel; --j)
+			for (; currentHeadingLevel > 1; --currentHeadingLevel)
 				WriteLine("</Topic>");
 
 			// Add image topic file at the very end
-			WriteLine(string.Format("<Topic id=\"{0}\" visible=\"True\" title=\"{1}\">", imageTopicFileGuid, "Appendix: Images"));
-			WriteLine("</Topic>");
+			//WriteLine(string.Format("<Topic id=\"{0}\" visible=\"True\" title=\"{1}\">", imageTopicFileGuid, "Appendix: Images"));
+			//WriteLine("</Topic>");
 
 			Write("</Topics>");
 
@@ -335,7 +405,7 @@ namespace Altaxo.Text.Renderers
 			this.Writer = StreamWriter.Null;
 		}
 
-		#endregion Content file creation
+		#endregion Content layout file creation
 
 		#region Image file creation
 
@@ -462,7 +532,7 @@ namespace Altaxo.Text.Renderers
 
 			// At the end, write the content file
 
-			WriteContentFile();
+			WriteContentLayoutFile();
 
 			return result;
 		}

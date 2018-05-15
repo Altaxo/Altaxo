@@ -96,6 +96,7 @@ namespace Altaxo.Text
 			var imageStreamProvider = new ImageStreamProvider();
 
 			var oldToNewImageUrl = new Dictionary<string, string>();
+			var listOfReferencedImageFileNames = new HashSet<string>(); // full file names of the images
 
 			// Export images
 			foreach (var (Url, urlSpanStart, urlSpanEnd) in list)
@@ -114,7 +115,8 @@ namespace Altaxo.Text
 							Directory.CreateDirectory(imagePath);
 
 						// Copy stream to FileSystem
-						using (var fileStream = new System.IO.FileStream(Path.Combine(imagePath, imageFileName), FileMode.Create, FileAccess.Write, FileShare.Read))
+						var fullImageFileName = Path.Combine(imagePath, imageFileName);
+						using (var fileStream = new System.IO.FileStream(fullImageFileName, FileMode.Create, FileAccess.Write, FileShare.Read))
 						{
 							stream.Seek(0, SeekOrigin.Begin);
 							stream.CopyTo(fileStream);
@@ -124,6 +126,7 @@ namespace Altaxo.Text
 						var newUrl = ImageDirectoryName + "/" + imageFileName;
 
 						oldToNewImageUrl[Url] = newUrl;
+						listOfReferencedImageFileNames.Add(fullImageFileName);
 					}
 				}
 			}
@@ -144,6 +147,9 @@ namespace Altaxo.Text
 				AutoOutline = true,
 				OldToNewImageUris = oldToNewImageUrl,
 				ContentLayoutFileName = GetContentLayoutFileName(fileName),
+				BodyTextFontFamily = "Segoe UI",
+				BodyTextFontSize = 15,
+				IsIntendedForHelp1File = true,
 			};
 
 			renderer.Render(markdownDocument);
@@ -151,7 +157,7 @@ namespace Altaxo.Text
 			// afterwards: change the shfbproj to include i) all images and ii) all aml files that where created
 			if (Path.GetExtension(fileName).ToLowerInvariant() == ".shfbproj")
 			{
-				var imageFileNames = oldToNewImageUrl.Values.Concat(renderer.ImageFileNames);
+				var imageFileNames = listOfReferencedImageFileNames.Concat(renderer.ImageFileNames);
 				UpdateShfbproj(fileName, GetContentLayoutFileName(fileName), renderer.AmlFileNames, imageFileNames);
 			}
 		}
@@ -280,7 +286,7 @@ namespace Altaxo.Text
 
 				foreach (var amlFileName in amlFileNames)
 				{
-					var noneNode = doc.CreateElement("Node", doc.DocumentElement.NamespaceURI);
+					var noneNode = doc.CreateElement("None", doc.DocumentElement.NamespaceURI);
 					var inclAttr = doc.CreateAttribute("Include");
 					inclAttr.Value = GetFileNameRelativeTo(amlFileName, projectDirectory);
 					noneNode.Attributes.Append(inclAttr);
@@ -315,10 +321,16 @@ namespace Altaxo.Text
 			doc.Save(shfbprojFileName);
 		}
 
+		/// <summary>
+		/// Gets the file name relative to a directory.
+		/// </summary>
+		/// <param name="fullFileName">Full name of the file.</param>
+		/// <param name="baseDirectory">The full name of the directory.</param>
+		/// <returns>The path name relative to the provided directory. Backslashes are replaced with slashes to conform with HTML style.</returns>
 		public static string GetFileNameRelativeTo(string fullFileName, string baseDirectory)
 		{
 			if (!Path.IsPathRooted(fullFileName))
-				return fullFileName;
+				throw new ArgumentException("Path is not rooted", nameof(fullFileName));
 
 			var dir = Path.GetDirectoryName(fullFileName);
 
@@ -327,7 +339,7 @@ namespace Altaxo.Text
 
 			int addLength = baseDirectory.EndsWith("" + Path.DirectorySeparatorChar) ? 0 : 1;
 
-			return fullFileName.Substring(baseDirectory.Length + addLength);
+			return fullFileName.Substring(baseDirectory.Length + addLength).Replace('\\', '/');
 		}
 	}
 }

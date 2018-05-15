@@ -39,9 +39,11 @@ namespace Altaxo.Main.Services
 		/// Parses the specified LaTeX formula text.
 		/// </summary>
 		/// <param name="formulaText">The formula text.</param>
+		/// <param name="fontFamily">The font family of the font in with the formula is embedded.</param>
 		/// <param name="fontSize">Size of the font in which the formula text is embedded.</param>
 		/// <param name="dpiResolution">The resolution of the required image.</param>
-		/// <returns>A tuple consisting of the bitmap stream, and the html attribute how to place the image.</returns>
-		(System.IO.Stream bitmapStream, string placement) Parse(string formulaText, double fontSize, double dpiResolution);
+		/// <param name="isIntendedForHelp1File">Set this argument to true if the image is indended to be used in a Help1 file. In such a file, the placement of images with align="middle" differs from HTML rendering (the text baseline is aligned with the middle of the image, whereas in HTML the middle of the text is aligned with the middle of the image).</param>
+		/// <returns>A tuple consisting of the bitmap stream, and the html attribute how to place the image, the width of the image in pixels (1/96th inch), and the height of the bitmap in the same units.</returns>
+		(System.IO.Stream bitmapStream, string placement, int width96thInch, int height96thInch) Parse(string formulaText, string fontFamily, double fontSize, double dpiResolution, bool isIntendedForHelp1File);
 	}
 }
