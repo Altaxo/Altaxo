@@ -70,6 +70,9 @@ namespace Altaxo.Text.Renderers
 		/// </summary>
 		public IDictionary<string, string> OldToNewImageUris { get; }
 
+		/// <summary>
+		/// Gets all image file names that are used, including the equation images.
+		/// </summary>
 		private HashSet<string> _imageFileNames = new HashSet<string>();
 
 		/// <summary>
@@ -77,7 +80,14 @@ namespace Altaxo.Text.Renderers
 		/// </summary>
 		public IEnumerable<string> ImageFileNames { get { return _imageFileNames; } }
 
+		/// <summary>
+		/// The parsed markdown file.
+		/// </summary>
 		private MarkdownDocument _markdownDocument;
+
+		/// <summary>
+		/// Helper to calculate MD5 hashes.
+		/// </summary>
 		private System.Security.Cryptography.MD5 _md5Hasher = System.Security.Cryptography.MD5.Create();
 
 		/// <summary>
@@ -99,6 +109,16 @@ namespace Altaxo.Text.Renderers
 		public bool EnableHtmlEscape { get; }
 
 		/// <summary>
+		/// If true, a link to the previous section is inserted at the beginning of each maml document.
+		/// </summary>
+		public bool EnableLinkToPreviousSection { get; }
+
+		/// <summary>
+		/// If true, a link to the next section is inserted at the end of each maml document.
+		/// </summary>
+		public bool EnableLinkToNextSection { get; }
+
+		/// <summary>
 		/// Gets the full file name of the content layout file (extension: .content), that is a kind of table of contents for the document.
 		/// </summary>
 		public string ContentLayoutFileName { get; }
@@ -109,19 +129,19 @@ namespace Altaxo.Text.Renderers
 		/// (the text baseline is aligned with the middle of the image,
 		/// whereas in HTML the middle of the text is aligned with the middle of the image).
 		/// </summary>
-		public bool IsIntendedForHelp1File { get; set; }
+		public bool IsIntendedForHelp1File { get; }
 
 		/// <summary>
 		/// Gets or sets the font family of the body text that later on is rendered out of the Maml file.
 		/// We need this here because we have to convert the formulas to images, and need therefore the image size.
 		/// </summary>
-		public string BodyTextFontFamily { get; set; }
+		public string BodyTextFontFamily { get; }
 
 		/// <summary>
 		/// Gets or sets the font size of the body text that later on is rendered out of the Maml file.
 		/// We need this here because we have to convert the formulas to images, and need therefore the image size.
 		/// </summary>
-		public double BodyTextFontSize { get; set; }
+		public double BodyTextFontSize { get; }
 
 		private List<Maml.MamlElement> _currentElementStack = new List<MamlElement>();
 
@@ -130,6 +150,8 @@ namespace Altaxo.Text.Renderers
 			int splitLevel,
 				bool enableHtmlEscape,
 				bool autoOutline,
+				bool enableLinkToPreviousSection,
+				bool enableLinkToNextSection,
 				HashSet<string> imagesFullFileNames,
 				Dictionary<string, string> oldToNewImageUris,
 				string bodyTextFontFamily,
@@ -141,6 +163,8 @@ namespace Altaxo.Text.Renderers
 			SplitLevel = splitLevel;
 			EnableHtmlEscape = enableHtmlEscape;
 			AutoOutline = autoOutline;
+			EnableLinkToPreviousSection = enableLinkToPreviousSection;
+			EnableLinkToNextSection = enableLinkToNextSection;
 			_imageFileNames = new HashSet<string>(imagesFullFileNames);
 			OldToNewImageUris = oldToNewImageUris;
 			BodyTextFontFamily = bodyTextFontFamily;
@@ -251,12 +275,12 @@ namespace Altaxo.Text.Renderers
 		{
 			if (_indexOfAmlFile < 0 || (_indexOfAmlFile + 1 < _amlFileList.Count && _amlFileList[_indexOfAmlFile + 1].spanStart == headingBlock.Span.Start))
 			{
-				++_indexOfAmlFile;
-
 				if (null != this.Writer)
 				{
 					CloseCurrentMamlFile();
 				}
+
+				++_indexOfAmlFile;
 
 				var mamlFile = _amlFileList[_indexOfAmlFile];
 
@@ -271,7 +295,17 @@ namespace Altaxo.Text.Renderers
 				if (AutoOutline)
 					WriteLine("<autoOutline />");
 
-				// TODO here insert introductory text
+				if (EnableLinkToPreviousSection && _indexOfAmlFile > 0)
+				{
+					Push(MamlElements.para);
+					Write("Previous section: ");
+					var prevTopic = _amlFileList[_indexOfAmlFile - 1];
+					Push(MamlElements.link, new[] { new KeyValuePair<string, string>("xlink:href", prevTopic.guid) });
+					Write(prevTopic.title);
+					PopTo(MamlElements.link);
+
+					PopTo(MamlElements.para);
+				}
 
 				PopTo(MamlElements.introduction);
 			}
@@ -281,7 +315,32 @@ namespace Altaxo.Text.Renderers
 		{
 			if (null != this.Writer)
 			{
+				int numberOfContentElementsOnStack = 0;
+				if (EnableLinkToNextSection && (_indexOfAmlFile + 1) < _amlFileList.Count && 0 != (numberOfContentElementsOnStack = NumberOfElementsOnStack(MamlElements.content)))
+				{
+					// Pop all content elements except one
+					for (int i = 1; i < numberOfContentElementsOnStack; ++i)
+						PopTo(MamlElements.content);
+					PopToBefore(MamlElements.content); // now we are right before the last content element
+
+					// now insert a link to the next section
+
+					Push(MamlElements.markup);
+					Write("<hr/>");
+					PopTo(MamlElements.markup);
+
+					Push(MamlElements.para);
+					Write("Next section: ");
+					var nextTopic = _amlFileList[_indexOfAmlFile + 1];
+					Push(MamlElements.link, new[] { new KeyValuePair<string, string>("xlink:href", nextTopic.guid) });
+					Write(nextTopic.title);
+					PopTo(MamlElements.link);
+
+					PopTo(MamlElements.para);
+				}
+
 				PopAll();
+
 				this.Writer.Close();
 				this.Writer.Dispose();
 				this.Writer = TextWriter.Null;
@@ -373,59 +432,6 @@ namespace Altaxo.Text.Renderers
 
 		#endregion Image file creation
 
-		/// <summary>
-		/// Enumerates all objects in a markdown parse tree recursively, starting with the given element.
-		/// </summary>
-		/// <param name="startElement">The start element.</param>
-		/// <returns>All text element (the given text element and all its childs).</returns>
-		public static IEnumerable<Markdig.Syntax.MarkdownObject> EnumerateAllMarkdownObjectsRecursively(Markdig.Syntax.MarkdownObject startElement)
-		{
-			yield return startElement;
-			var childList = GetChildList(startElement);
-			if (null != childList)
-			{
-				foreach (var child in GetChildList(startElement))
-				{
-					foreach (var childAndSub in EnumerateAllMarkdownObjectsRecursively(child))
-						yield return childAndSub;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets the childs of a markdown object. Null is returned if no childs were to be found.
-		/// </summary>
-		/// <param name="parent">The markdown object from which to get the childs.</param>
-		/// <returns>The childs of the given markdown object, or null.</returns>
-		public static IEnumerable<Markdig.Syntax.MarkdownObject> GetChilds(Markdig.Syntax.MarkdownObject parent)
-		{
-			if (parent is Markdig.Syntax.LeafBlock leafBlock)
-				return leafBlock.Inline;
-			else if (parent is Markdig.Syntax.Inlines.ContainerInline containerInline)
-				return containerInline;
-			else if (parent is Markdig.Syntax.ContainerBlock containerBlock)
-				return containerBlock;
-			else
-				return null;
-		}
-
-		/// <summary>
-		/// Gets the childs of a markdown object. Null is returned if no childs were to be found.
-		/// </summary>
-		/// <param name="parent">The markdown object from which to get the childs.</param>
-		/// <returns>The childs of the given markdown object, or null.</returns>
-		public static IReadOnlyList<Markdig.Syntax.MarkdownObject> GetChildList(Markdig.Syntax.MarkdownObject parent)
-		{
-			if (parent is Markdig.Syntax.LeafBlock leafBlock)
-				return leafBlock.Inline?.ToArray<Markdig.Syntax.MarkdownObject>();
-			else if (parent is Markdig.Syntax.Inlines.ContainerInline containerInline)
-				return containerInline.ToArray<Markdig.Syntax.MarkdownObject>();
-			else if (parent is Markdig.Syntax.ContainerBlock containerBlock)
-				return containerBlock;
-			else
-				return null;
-		}
-
 		public (string fileGuid, string address) FindFragmentLink(string url)
 		{
 			if (url.StartsWith("#"))
@@ -434,7 +440,7 @@ namespace Altaxo.Text.Renderers
 			// for now, we have to go through the entire FlowDocument in search for a markdig tag that
 			// (i) contains HtmlAttributes, and (ii) the HtmlAttibutes has the Id that is our url
 
-			foreach (var mdo in EnumerateAllMarkdownObjectsRecursively(_markdownDocument))
+			foreach (var mdo in MarkdownUtilities.EnumerateAllMarkdownObjectsRecursively(_markdownDocument))
 			{
 				var attr = (Markdig.Renderers.Html.HtmlAttributes)mdo.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
 				if (null != attr && attr.Id == url)

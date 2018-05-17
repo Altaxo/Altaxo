@@ -1107,6 +1107,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Gui\Text\MamlExportOptionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Units\UnitEnvironmentControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2145,6 +2149,9 @@
       <DependentUpon>SettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\StringParseExtension.cs" />
+    <Compile Include="Gui\Text\MamlExportOptionsView.xaml.cs">
+      <DependentUpon>MamlExportOptionsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Units\UnitEnvironmentControl.xaml.cs">
       <DependentUpon>UnitEnvironmentControl.xaml</DependentUpon>
     </Compile>

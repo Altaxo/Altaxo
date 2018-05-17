@@ -35,6 +35,13 @@ namespace Altaxo.Text.Renderers
 {
 	public partial class MamlRenderer : TextRendererBase<MamlRenderer>
 	{
+		/// <summary>
+		/// Gets the name of the content layout file, depending on the file name the user has chosen to be the output file.
+		/// If the user has chosen a .content file, then this name is returned. If the user has chosen a SHFBPROJ file, then the name of the .content
+		/// file is extracted from this project file. If all this fails, the name of the content layout file is synthezized from the user chosen file name.
+		/// </summary>
+		/// <param name="userChosenfileName">Name of the user chosenfile.</param>
+		/// <returns></returns>
 		public static string GetContentLayoutFileName(string userChosenfileName)
 		{
 			if (Path.GetExtension(userChosenfileName).ToLowerInvariant() == ".content")
@@ -50,6 +57,10 @@ namespace Altaxo.Text.Renderers
 			return Path.Combine(Path.GetDirectoryName(userChosenfileName), Path.GetFileNameWithoutExtension(userChosenfileName) + ".content");
 		}
 
+		/// <summary>
+		/// Writes the content layout file, i.e. the sections as indicated by the heading levels are written in a XML tree structure to be read
+		/// by Sandcastle help file builder.
+		/// </summary>
 		public void WriteContentLayoutFile()
 		{
 			if (null != this.Writer)

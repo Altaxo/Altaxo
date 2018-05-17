@@ -267,6 +267,7 @@
     <Compile Include="Gui\Settings\IOptionPanelDescriptor.cs" />
     <Compile Include="Gui\Settings\OptionPanelBase.cs" />
     <Compile Include="Gui\SimpleCheckableCommand.cs" />
+    <Compile Include="Gui\Text\MamlExportOptionsController.cs" />
     <Compile Include="Gui\Workbench\IWorkbenchContent.cs" />
     <Compile Include="Gui\Workbench\StartupSettings.cs" />
     <Compile Include="Gui\Workbench\ViewStatesMemento.cs" />
@@ -278,12 +279,14 @@
     <Compile Include="Main\Services\InvokeableThread.cs" />
     <Compile Include="Main\Services\IAutoUpdateInstallationService.cs" />
     <Compile Include="Main\Services\PropertyService\PropertyService.cs" />
+    <Compile Include="Text\ChildDocumentExpander.cs" />
     <Compile Include="Text\GuiModels\TextDocumentViewOptions.cs" />
     <Compile Include="Text\ImagePretext.cs" />
     <Compile Include="Text\ImageStreamProvider.cs" />
     <Compile Include="Text\MamlExportOptions.cs" />
     <Compile Include="Text\MarkdownExportOptions.cs" />
     <Compile Include="Text\MarkdownImportOptions.cs" />
+    <Compile Include="Text\MarkdownUtilities.cs" />
     <Compile Include="Text\Renderers\MamlRenderer.cs" />
     <Compile Include="Text\Renderers\MamlRenderer_ContentLayoutFileHandling.cs" />
     <Compile Include="Text\Renderers\Maml\Extensions\MathBlockRenderer.cs" />

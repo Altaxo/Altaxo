@@ -39,7 +39,7 @@ namespace Altaxo.Text
 	/// <summary>
 	/// Options to export a <see cref="TextDocument"/> into one or multiple Maml file(s), including all the referenced graphs and local images.
 	/// </summary>
-	public class MamlExportOptions
+	public class MamlExportOptions : ICloneable
 	{
 		/// <summary>
 		/// Gets or sets the font family of the body text that later on is rendered out of the Maml file.
@@ -59,14 +59,14 @@ namespace Altaxo.Text
 		/// (the text baseline is aligned with the middle of the image,
 		/// whereas in HTML the middle of the text is aligned with the middle of the image).
 		/// </summary>
-		public bool IsIntendedForHtml1HelpFile { get; set; } = true;
+		public bool IsIntendedForHtmlHelp1File { get; set; } = true;
 
 		public bool EnableHtmlEscape { get; set; } = true;
 
 		/// <summary>
 		/// If true, an outline of the content will be included at the top of every Maml file.
 		/// </summary>
-		public bool AutoOutLine { get; set; } = false;
+		public bool EnableAutoOutline { get; set; } = false;
 
 		/// <summary>
 		/// The header level where to split the output into different MAML files.
@@ -79,7 +79,66 @@ namespace Altaxo.Text
 		/// </summary>
 		protected string _imageFolderName = "Images";
 
+		#region "Serialization"
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MamlExportOptions), 0)]
+		private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				var s = (MamlExportOptions)obj;
+
+				info.AddValue("SplitLevel", s.SplitLevel);
+				info.AddValue("ImageFolderName", s.ImageFolderName);
+				info.AddValue("EnableAutoOutline", s.EnableAutoOutline);
+				info.AddValue("EnableHtmlEscape", s.EnableHtmlEscape);
+				info.AddValue("EnableLinkToPreviousSection", s.EnableLinkToPreviousSection);
+				info.AddValue("EnableLinkToNextSection", s.EnableLinkToNextSection);
+				info.AddValue("ExpandChildDocuments", s.ExpandChildDocuments);
+				info.AddValue("BodyTextFontFamily", s.BodyTextFontFamily);
+				info.AddValue("BodyTextFontSize", s.BodyTextFontSize);
+				info.AddValue("IsIntendedForHtmlHelp1File", s.IsIntendedForHtmlHelp1File);
+				info.AddValue("OpenHelpFileBuilder", s.OpenHelpFileBuilder);
+				info.AddValue("OutputFileName", s.OutputFileName);
+			}
+
+			public void Deserialize(MamlExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				s.SplitLevel = info.GetInt32("SplitLevel");
+				s.ImageFolderName = info.GetString("ImageFolderName");
+				s.EnableAutoOutline = info.GetBoolean("EnableAutoOutline");
+				s.EnableHtmlEscape = info.GetBoolean("EnableHtmlEscape");
+				s.EnableLinkToPreviousSection = info.GetBoolean("EnableLinkToPreviousSection");
+				s.EnableLinkToNextSection = info.GetBoolean("EnableLinkToNextSection");
+				s.ExpandChildDocuments = info.GetBoolean("ExpandChildDocuments");
+				s.BodyTextFontFamily = info.GetString("BodyTextFontFamily");
+				s.BodyTextFontSize = info.GetDouble("BodyTextFontSize");
+				s.IsIntendedForHtmlHelp1File = info.GetBoolean("IsIntendedForHtmlHelp1File");
+				s.OpenHelpFileBuilder = info.GetBoolean("OpenHelpFileBuilder");
+				s.OutputFileName = info.GetString("OutputFileName");
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				var s = (MamlExportOptions)o ?? new MamlExportOptions();
+				Deserialize(s, info, parent);
+				return s;
+			}
+		}
+
+		#endregion "Serialization"
+
+		public object Clone()
+		{
+			return MemberwiseClone();
+		}
+
 		#region Properties
+
+		/// <summary>
+		/// Gets or sets the output file. This is preferably a Sandcastle help file builder project file, but can also be a layout content file (.content) or a Maml file (.aml).
+		/// </summary>
+		public string OutputFileName { get; set; }
 
 		/// <summary>
 		/// Gets or sets the font family of the body text that later on is rendered out of the Maml file.
@@ -88,7 +147,9 @@ namespace Altaxo.Text
 		public string BodyTextFontFamily
 		{
 			get
-			{ return _bodyTextFontFamily; }
+			{
+				return _bodyTextFontFamily;
+			}
 			set
 			{
 				if (string.IsNullOrEmpty(value))
@@ -143,6 +204,26 @@ namespace Altaxo.Text
 			}
 		}
 
+		/// <summary>
+		/// If true, a link to the previous section is inserted at the beginning of each maml document.
+		/// </summary>
+		public bool EnableLinkToPreviousSection { get; set; }
+
+		/// <summary>
+		/// If true, a link to the next section is inserted at the end of each maml document.
+		/// </summary>
+		public bool EnableLinkToNextSection { get; set; }
+
+		/// <summary>
+		/// If true, included child documents are expanded before the markdown document is processed.
+		/// </summary>
+		public bool ExpandChildDocuments { get; set; } = true;
+
+		/// <summary>
+		/// If true, the Help file builder application is opened after the maml files were exported.
+		/// </summary>
+		public bool OpenHelpFileBuilder { get; set; }
+
 		#endregion Properties
 
 		/// <summary>
@@ -156,23 +237,49 @@ namespace Altaxo.Text
 		}
 
 		/// <summary>
+		/// Gets the output file by showing a save file dialog.
+		/// </summary>
+		/// <returns></returns>
+		public static (bool dialogResult, string outputFileName) ShowGetOutputFileDialog()
+		{
+			var dlg = new SaveFileOptions();
+			dlg.AddFilter("*.shfbproj", "Sandcastle help file builder project (*.shfbproj)");
+			dlg.AddFilter("*.content", "Content files (*.content)");
+			dlg.AddFilter("*.*", "All files (*.*)");
+			dlg.AddExtension = true;
+
+			var dialogResult = Current.Gui.ShowSaveFileDialog(dlg);
+
+			return (dialogResult, dlg.FileName);
+		}
+
+		public static readonly Main.Properties.PropertyKey<MamlExportOptions> PropertyKeyMamlExportOptions =
+		new Main.Properties.PropertyKey<MamlExportOptions>(
+		"0E223CE7-2845-48A1-BFB1-7642849F5A3A",
+		"Text\\MamlExportOptions",
+		Main.Properties.PropertyLevel.All,
+		typeof(TextDocument),
+		() => new MamlExportOptions());
+
+		/// <summary>
 		/// Exports the <see cref="TextDocument"/> to a markdown file, showing first the file save dialog.
 		/// </summary>
 		/// <param name="document">The document to export.</param>
 		public static void ExportShowDialog(TextDocument document)
 		{
-			var options = new MamlExportOptions();
-
-			var dlg = new SaveFileOptions();
-			dlg.AddFilter("*.shfbproj", "Sandcastle help file builder project (*.shfbproj)");
-			dlg.AddFilter("*.content", "Content files (*.content)");
-			dlg.AddFilter("*.*", "All files (*.*)");
-
-			dlg.AddExtension = true;
-
-			if (true == Current.Gui.ShowSaveFileDialog(dlg))
+			var exportOptions = document.GetPropertyValue(PropertyKeyMamlExportOptions, () => new MamlExportOptions());
+			if (true == Current.Gui.ShowDialog(ref exportOptions, "Maml export", false))
 			{
-				options.Export(document, dlg.FileName);
+				document.PropertyBagNotNull.SetValue(PropertyKeyMamlExportOptions, (MamlExportOptions)exportOptions.Clone());
+				Current.PropertyService.ApplicationSettings.SetValue(PropertyKeyMamlExportOptions, (MamlExportOptions)exportOptions.Clone());
+
+				exportOptions.Export(document, exportOptions.OutputFileName);
+
+				// Start Sandcastle help file builder
+				if (exportOptions.OpenHelpFileBuilder && System.IO.Path.GetExtension(exportOptions.OutputFileName).ToLowerInvariant() == ".shfbproj")
+				{
+					System.Diagnostics.Process.Start(exportOptions.OutputFileName);
+				}
 			}
 		}
 
@@ -184,6 +291,11 @@ namespace Altaxo.Text
 		/// this is the base file name only; the file names will be derived from this name.</param>
 		public void Export(TextDocument document, string fileName)
 		{
+			if (ExpandChildDocuments)
+			{
+				document = ChildDocumentExpander.ExpandDocumentToNewDocument(document);
+			}
+
 			// First, export the images
 			var (oldToNewImageUrl, listOfReferencedImageFileNames) = ExportImages(document, fileName);
 
@@ -191,7 +303,7 @@ namespace Altaxo.Text
 
 			// first parse it with Markdig
 			var pipeline = new MarkdownPipelineBuilder();
-			pipeline = UseSupportedExtensions(pipeline);
+			pipeline = MarkdownUtilities.UseSupportedExtensions(pipeline);
 
 			var markdownDocument = Markdig.Markdown.Parse(document.SourceText, pipeline.Build());
 
@@ -199,12 +311,14 @@ namespace Altaxo.Text
 				projectOrContentFileName: fileName,
 				splitLevel: SplitLevel,
 				enableHtmlEscape: EnableHtmlEscape,
-				autoOutline: AutoOutLine,
+				autoOutline: EnableAutoOutline,
+				enableLinkToPreviousSection: EnableLinkToPreviousSection,
+				enableLinkToNextSection: EnableLinkToNextSection,
 				imagesFullFileNames: listOfReferencedImageFileNames,
 				oldToNewImageUris: oldToNewImageUrl,
 				bodyTextFontFamily: BodyTextFontFamily,
 				bodyTextFontSize: BodyTextFontSize,
-				isIntendedForHelp1File: IsIntendedForHtml1HelpFile
+				isIntendedForHelp1File: IsIntendedForHtmlHelp1File
 				);
 
 			renderer.Render(markdownDocument);
@@ -259,24 +373,6 @@ namespace Altaxo.Text
 			}
 
 			return (oldToNewImageUrl, listOfReferencedImageFileNames);
-		}
-
-		/// <summary>
-		/// Uses all extensions supported by <c>Markdig.Wpf</c>.
-		/// </summary>
-		/// <param name="pipeline">The pipeline.</param>
-		/// <returns>The modified pipeline</returns>
-		public static MarkdownPipelineBuilder UseSupportedExtensions(MarkdownPipelineBuilder pipeline)
-		{
-			if (pipeline == null) throw new ArgumentNullException(nameof(pipeline));
-			return pipeline
-					.UseEmphasisExtras()
-					.UseGridTables()
-					.UsePipeTables()
-					.UseTaskLists()
-					.UseAutoLinks()
-					.UseMathematics()
-					.UseGenericAttributes();
 		}
 	}
 }

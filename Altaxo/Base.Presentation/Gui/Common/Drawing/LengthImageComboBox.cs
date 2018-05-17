@@ -41,6 +41,7 @@ namespace Altaxo.Gui.Common.Drawing
 			SelectedQuantityProperty.OverrideMetadata(typeof(LengthImageComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, AUL.Point.Instance)));
 		}
 
+		/*
 		public double SelectedQuantityAsValueInPoints
 		{
 			get { return SelectedQuantity.AsValueIn(AUL.Point.Instance); }
@@ -52,5 +53,52 @@ namespace Altaxo.Gui.Common.Drawing
 				SelectedQuantity = quant;
 			}
 		}
+		*/
+
+		#region Dependency property
+
+		/// <summary>
+		/// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+		/// </summary>
+		public double SelectedQuantityAsValueInPoints
+		{
+			get
+			{
+				return SelectedQuantity.AsValueIn(AUL.Point.Instance);
+			}
+			set
+			{
+				SetValue(SelectedQuantityAsValueInPointsProperty, value);
+			}
+		}
+
+		public static readonly DependencyProperty SelectedQuantityAsValueInPointsProperty =
+				DependencyProperty.Register(nameof(SelectedQuantityAsValueInPoints),
+					typeof(double), typeof(LengthImageComboBox),
+				new FrameworkPropertyMetadata(EhSelectedQuantityAsValueInPointsChanged));
+
+		private static void EhSelectedQuantityAsValueInPointsChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+			((LengthImageComboBox)obj).OnSelectedQuantityAsValueInPointsChanged(obj, args);
+		}
+
+		protected override void OnSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+			base.OnSelectedQuantityChanged(obj, args);
+
+			SelectedQuantityAsValueInPoints = SelectedQuantity.AsValueIn(AUL.Point.Instance);
+		}
+
+		protected virtual void OnSelectedQuantityAsValueInPointsChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+		{
+			var value = (double)args.NewValue;
+
+			var quant = new DimensionfulQuantity(value, AUL.Point.Instance);
+			if (null != UnitEnvironment)
+				quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
+			SelectedQuantity = quant;
+		}
+
+		#endregion Dependency property
 	}
 }
