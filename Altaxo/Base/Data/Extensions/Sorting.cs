@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -393,15 +393,17 @@ namespace Altaxo.Data
 			if (!table.ContainsColumn(col))
 				throw new ArgumentException("The sorting column provided must be part of the DataColumnCollection (otherwise the swap algorithm can not sort this column)");
 
-			int columnGroup = table.GetColumnGroup(col);
-
-			if (col is DoubleColumn)
+			using (var token = table.SuspendGetToken())
 			{
-				HeapSort(col.Count, new DoubleColumnComparer((DoubleColumn)col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table, columnGroup).Swap);
-			}
-			else
-			{
-				HeapSort(col.Count, new DataColumnComparer(col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table, columnGroup).Swap);
+				int columnGroup = table.GetColumnGroup(col);
+				if (col is DoubleColumn)
+				{
+					HeapSort(col.Count, new DoubleColumnComparer((DoubleColumn)col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table, columnGroup).Swap);
+				}
+				else
+				{
+					HeapSort(col.Count, new DataColumnComparer(col, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table, columnGroup).Swap);
+				}
 			}
 		}
 
@@ -417,20 +419,23 @@ namespace Altaxo.Data
 			if (cols == null || cols.Length == 0)
 				throw new ArgumentException("cols is null or empty");
 
-			int groupNumber = table.GetColumnGroup(cols[0]);
-			for (int i = 1; i < cols.Length; i++)
+			using (var token = table.SuspendGetToken())
 			{
-				if (groupNumber != table.GetColumnGroup(cols[i]))
-					throw new ArgumentException(string.Format("cols[{0}] has a deviating group number from cols[0]. Only columns belonging to the same group can be sorted", i));
-			}
+				int groupNumber = table.GetColumnGroup(cols[0]);
+				for (int i = 1; i < cols.Length; i++)
+				{
+					if (groupNumber != table.GetColumnGroup(cols[i]))
+						throw new ArgumentException(string.Format("cols[{0}] has a deviating group number from cols[0]. Only columns belonging to the same group can be sorted", i));
+				}
 
-			for (int k = 0; k < cols.Length; k++)
-			{
-				if (!table.ContainsColumn(cols[k]))
-					throw new ArgumentException("The sorting columnd provided must all be part of the DataColumnCollection (otherwise the swap algorithm can not sort this column)");
-			}
+				for (int k = 0; k < cols.Length; k++)
+				{
+					if (!table.ContainsColumn(cols[k]))
+						throw new ArgumentException("The sorting columnd provided must all be part of the DataColumnCollection (otherwise the swap algorithm can not sort this column)");
+				}
 
-			HeapSort(cols[0].Count, new MultipleDataColumnComparer(cols, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table, groupNumber).Swap);
+				HeapSort(cols[0].Count, new MultipleDataColumnComparer(cols, inAscendingOrder).Compare, new DataColumnCollectionRowSwapper(table, groupNumber).Swap);
+			}
 		}
 
 		/// <summary>
@@ -444,13 +449,16 @@ namespace Altaxo.Data
 			if (!table.PropCols.ContainsColumn(propCol))
 				throw new ArgumentException("The sorting column provided must be part of the table.PropertyColumnCollection (otherwise the swap algorithm can not sort this column)");
 
-			if (propCol is DoubleColumn)
+			using (var token = table.SuspendGetToken())
 			{
-				HeapSort(propCol.Count, new DoubleColumnComparer((DoubleColumn)propCol, inAscendingOrder).Compare, new DataTableColumnSwapper(table).Swap);
-			}
-			else
-			{
-				HeapSort(propCol.Count, new DataColumnComparer(propCol, inAscendingOrder).Compare, new DataTableColumnSwapper(table).Swap);
+				if (propCol is DoubleColumn)
+				{
+					HeapSort(propCol.Count, new DoubleColumnComparer((DoubleColumn)propCol, inAscendingOrder).Compare, new DataTableColumnSwapper(table).Swap);
+				}
+				else
+				{
+					HeapSort(propCol.Count, new DataColumnComparer(propCol, inAscendingOrder).Compare, new DataTableColumnSwapper(table).Swap);
+				}
 			}
 		}
 
@@ -466,13 +474,16 @@ namespace Altaxo.Data
 			if (!table.PropCols.ContainsColumn(propCol))
 				throw new ArgumentException("The sorting column provided must be part of the table.PropertyColumnCollection (otherwise the swap algorithm can not sort this column)");
 
-			if (propCol is DoubleColumn)
+			using (var token = table.SuspendGetToken())
 			{
-				HeapSort(selectedDataCols.Count, new SelectedDoubleColumnComparer((DoubleColumn)propCol, selectedDataCols, inAscendingOrder).Compare, new DataTableSelectedColumnSwapper(table, selectedDataCols).Swap);
-			}
-			else
-			{
-				HeapSort(selectedDataCols.Count, new SelectedDataColumnComparer(propCol, selectedDataCols, inAscendingOrder).Compare, new DataTableSelectedColumnSwapper(table, selectedDataCols).Swap);
+				if (propCol is DoubleColumn)
+				{
+					HeapSort(selectedDataCols.Count, new SelectedDoubleColumnComparer((DoubleColumn)propCol, selectedDataCols, inAscendingOrder).Compare, new DataTableSelectedColumnSwapper(table, selectedDataCols).Swap);
+				}
+				else
+				{
+					HeapSort(selectedDataCols.Count, new SelectedDataColumnComparer(propCol, selectedDataCols, inAscendingOrder).Compare, new DataTableSelectedColumnSwapper(table, selectedDataCols).Swap);
+				}
 			}
 		}
 	}
