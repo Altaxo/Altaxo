@@ -93,7 +93,7 @@ namespace Altaxo.Text
 				info.AddValue("EnableAutoOutline", s.EnableAutoOutline);
 				info.AddValue("EnableHtmlEscape", s.EnableHtmlEscape);
 				info.AddValue("EnableLinkToPreviousSection", s.EnableLinkToPreviousSection);
-				info.AddValue("LinkToPreviousSectionLabelText", s.LinkToNextSectionLabelText);
+				info.AddValue("LinkToPreviousSectionLabelText", s.LinkToPreviousSectionLabelText);
 				info.AddValue("EnableLinkToNextSection", s.EnableLinkToNextSection);
 				info.AddValue("LinkToNextSectionLabelText", s.LinkToNextSectionLabelText);
 				info.AddValue("ExpandChildDocuments", s.ExpandChildDocuments);
