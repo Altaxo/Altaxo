@@ -69,6 +69,8 @@ namespace Altaxo.Gui.Text
 		}
 
 		public int SplitLevel { get { return _doc.SplitLevel; } set { _doc.SplitLevel = value; OnPropertyChanged(nameof(SplitLevel)); } }
+		public string ContentFolderName { get { return _doc.ContentFolderName; } set { _doc.ContentFolderName = value; OnPropertyChanged(nameof(ContentFolderName)); } }
+		public string ContentFileNameBase { get { return _doc.ContentFileNameBase; } set { _doc.ContentFileNameBase = value; OnPropertyChanged(nameof(ContentFileNameBase)); } }
 		public string ImageFolderName { get { return _doc.ImageFolderName; } set { _doc.ImageFolderName = value; OnPropertyChanged(nameof(ImageFolderName)); } }
 		public bool EnableHtmlEscape { get { return _doc.EnableHtmlEscape; } set { _doc.EnableHtmlEscape = value; OnPropertyChanged(nameof(EnableHtmlEscape)); } }
 		public bool EnableAutoOutline { get { return _doc.EnableAutoOutline; } set { _doc.EnableAutoOutline = value; OnPropertyChanged(nameof(EnableAutoOutline)); } }

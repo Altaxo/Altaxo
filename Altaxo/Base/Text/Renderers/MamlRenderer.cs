@@ -96,6 +96,17 @@ namespace Altaxo.Text.Renderers
 		public string ProjectOrContentFileName { get; }
 
 		/// <summary>
+		/// Name of the folder relative to the help file builder project, in which the content (.aml and .content) is stored.
+		/// This property is ignored when the <see cref="ProjectOrContentFileName"/> is not a Sandcastle help file builder project file.
+		/// </summary>
+		public string ContentFolderName { get; }
+
+		/// <summary>
+		/// Gets or sets the base name of .aml files. This property is ignored if the <see cref="ProjectOrContentFileName"/> itself is a .aml file.
+		/// </summary>
+		public string ContentFileNameBase { get; }
+
+		/// <summary>
 		/// The header level where to split the output into different MAML files.
 		/// 0 = render in only one file. 1 = Split at header level 1, 2 = split at header level 2, and so on.
 		/// </summary>
@@ -157,6 +168,8 @@ namespace Altaxo.Text.Renderers
 
 		public MamlRenderer(
 			string projectOrContentFileName,
+			string contentFolderName,
+			string contentFileNameBase,
 			int splitLevel,
 				bool enableHtmlEscape,
 				bool autoOutline,
@@ -172,6 +185,8 @@ namespace Altaxo.Text.Renderers
 			) : base(TextWriter.Null)
 		{
 			ProjectOrContentFileName = projectOrContentFileName;
+			ContentFolderName = contentFolderName ?? string.Empty;
+			ContentFileNameBase = contentFileNameBase ?? string.Empty;
 			SplitLevel = splitLevel;
 			EnableHtmlEscape = enableHtmlEscape;
 			AutoOutline = autoOutline;
@@ -186,7 +201,13 @@ namespace Altaxo.Text.Renderers
 			IsIntendedForHelp1File = isIntendedForHelp1File;
 
 			var path = Path.GetDirectoryName(ProjectOrContentFileName);
-			AmlBaseFileName = Path.Combine(path, Path.GetFileNameWithoutExtension(ProjectOrContentFileName));
+
+			// Find a base name for the aml files
+			if (Path.GetExtension(ProjectOrContentFileName).ToLowerInvariant() == ".aml")
+				AmlBaseFileName = Path.Combine(path, Path.GetFileNameWithoutExtension(ProjectOrContentFileName));
+			else
+				AmlBaseFileName = Path.Combine(path, ContentFolderName, string.IsNullOrEmpty(ContentFileNameBase) ? Path.GetFileNameWithoutExtension(ProjectOrContentFileName) : ContentFileNameBase);
+
 			ContentLayoutFileName = GetContentLayoutFileName(ProjectOrContentFileName);
 
 			// Extension renderers that must be registered before the default renders

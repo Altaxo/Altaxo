@@ -102,6 +102,8 @@ namespace Altaxo.Text
 				info.AddValue("IsIntendedForHtmlHelp1File", s.IsIntendedForHtmlHelp1File);
 				info.AddValue("OpenHelpFileBuilder", s.OpenHelpFileBuilder);
 				info.AddValue("OutputFileName", s.OutputFileName);
+				info.AddValue("ContentFolderName", s.ContentFolderName);
+				info.AddValue("ContentFileNameBase", s.ContentFileNameBase);
 			}
 
 			public void Deserialize(MamlExportOptions s, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -120,6 +122,8 @@ namespace Altaxo.Text
 				s.IsIntendedForHtmlHelp1File = info.GetBoolean("IsIntendedForHtmlHelp1File");
 				s.OpenHelpFileBuilder = info.GetBoolean("OpenHelpFileBuilder");
 				s.OutputFileName = info.GetString("OutputFileName");
+				s.ContentFolderName = info.GetString("ContentFolderName");
+				s.ContentFileNameBase = info.GetString("ContentFileNameBase");
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -143,6 +147,17 @@ namespace Altaxo.Text
 		/// Gets or sets the output file. This is preferably a Sandcastle help file builder project file, but can also be a layout content file (.content) or a Maml file (.aml).
 		/// </summary>
 		public string OutputFileName { get; set; }
+
+		/// <summary>
+		/// Name of the folder relative to the help file builder project, in which the content (.aml and .content) is stored.
+		/// This property is ignored when the <see cref="OutputFileName"/> is not a Sandcastle help file builder project file.
+		/// </summary>
+		public string ContentFolderName { get; set; }
+
+		/// <summary>
+		/// Gets or sets the base name of .aml files. This property is ignored if the <see cref="OutputFileName"/> itself is a .aml file.
+		/// </summary>
+		public string ContentFileNameBase { get; set; }
 
 		/// <summary>
 		/// Gets or sets the font family of the body text that later on is rendered out of the Maml file.
@@ -323,6 +338,8 @@ namespace Altaxo.Text
 
 			var renderer = new MamlRenderer(
 				projectOrContentFileName: fileName,
+				contentFolderName: ContentFolderName,
+				contentFileNameBase: ContentFileNameBase,
 				splitLevel: SplitLevel,
 				enableHtmlEscape: EnableHtmlEscape,
 				autoOutline: EnableAutoOutline,
