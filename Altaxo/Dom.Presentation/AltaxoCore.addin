@@ -287,6 +287,10 @@
 				<MenuItem id="TextImportExportSeparator"  type = "Separator" />
 				<MenuItem id="TextExport" label="${res:XML.MainMenu.FileMenu.ExportMarkdown}"
 					description="${res:XML.MainMenu.FileMenu.ExportMarkdown.Description}" class="Altaxo.Main.MenuCommands.Text.ExportMarkdown" />
+				<MenuItem id="ExportMaml"
+										label="${res:XML.MainMenu.TextMenu.ExportMaml}"
+										description="${res:XML.MainMenu.TextMenu.ExportMaml.Description}"
+										class="Altaxo.Main.MenuCommands.Text.ExportMaml" />
 			</Condition>
 
 			<MenuItem id="AfterExportSeparator" type = "Separator" />
@@ -657,10 +661,6 @@
 										description="${res:XML.MainMenu.TextMenu.TabbedEditorAndViewer.Description}"
 										class="Altaxo.Main.MenuCommands.Text.SwitchToConfigurationTabbedEditorAndViewer" />
 				</MenuItem>
-				<MenuItem id="ExportMaml"
-									label="${res:XML.MainMenu.TextMenu.ExportMaml}"
-									description="${res:XML.MainMenu.TextMenu.ExportMaml.Description}"
-									class="Altaxo.Main.MenuCommands.Text.ExportMaml" />
 			</MenuItem>
 		</Condition>
 		<!-- Tools menu -->
