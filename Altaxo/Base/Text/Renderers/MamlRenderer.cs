@@ -45,6 +45,16 @@ namespace Altaxo.Text.Renderers
 	public partial class MamlRenderer : TextRendererBase<MamlRenderer>
 	{
 		/// <summary>
+		/// Gets the directory name (this is an absolute path name) that is the directory on which subdirectories like the content directory and the image directory are based.
+		/// </summary>
+		public string BasePathName { get; }
+
+		/// <summary>
+		/// Gets the name of the image folder. This folder, for instance 'Image', is relative to the <see cref="BasePathName"/>.
+		/// </summary>
+		public string ImageFolderName { get; }
+
+		/// <summary>
 		/// The basic full path file name of the Maml files. To this name there will be appended (i) a number, and (ii) the extension ".aml".
 		/// </summary>
 		public string AmlBaseFileName { get; }
@@ -170,6 +180,7 @@ namespace Altaxo.Text.Renderers
 			string projectOrContentFileName,
 			string contentFolderName,
 			string contentFileNameBase,
+			string imageFolderName,
 			int splitLevel,
 				bool enableHtmlEscape,
 				bool autoOutline,
@@ -187,6 +198,7 @@ namespace Altaxo.Text.Renderers
 			ProjectOrContentFileName = projectOrContentFileName;
 			ContentFolderName = contentFolderName ?? string.Empty;
 			ContentFileNameBase = contentFileNameBase ?? string.Empty;
+			ImageFolderName = imageFolderName ?? string.Empty;
 			SplitLevel = splitLevel;
 			EnableHtmlEscape = enableHtmlEscape;
 			AutoOutline = autoOutline;
@@ -200,13 +212,13 @@ namespace Altaxo.Text.Renderers
 			BodyTextFontSize = bodyTextFontSize;
 			IsIntendedForHelp1File = isIntendedForHelp1File;
 
-			var path = Path.GetDirectoryName(ProjectOrContentFileName);
+			BasePathName = Path.GetDirectoryName(ProjectOrContentFileName);
 
 			// Find a base name for the aml files
 			if (Path.GetExtension(ProjectOrContentFileName).ToLowerInvariant() == ".aml")
-				AmlBaseFileName = Path.Combine(path, Path.GetFileNameWithoutExtension(ProjectOrContentFileName));
+				AmlBaseFileName = Path.Combine(BasePathName, Path.GetFileNameWithoutExtension(ProjectOrContentFileName));
 			else
-				AmlBaseFileName = Path.Combine(path, ContentFolderName, string.IsNullOrEmpty(ContentFileNameBase) ? Path.GetFileNameWithoutExtension(ProjectOrContentFileName) : ContentFileNameBase);
+				AmlBaseFileName = Path.Combine(BasePathName, ContentFolderName, string.IsNullOrEmpty(ContentFileNameBase) ? Path.GetFileNameWithoutExtension(ProjectOrContentFileName) : ContentFileNameBase);
 
 			ContentLayoutFileName = GetContentLayoutFileName(ProjectOrContentFileName);
 
@@ -319,6 +331,7 @@ namespace Altaxo.Text.Renderers
 
 				var mamlFile = _amlFileList[_indexOfAmlFile];
 
+				System.IO.Directory.CreateDirectory(Path.GetDirectoryName(mamlFile.fileName));
 				var tw = new System.IO.StreamWriter(mamlFile.fileName, false, Encoding.UTF8, 1024);
 				this.Writer = tw;
 
@@ -452,8 +465,7 @@ namespace Altaxo.Text.Renderers
 
 		public void StorePngImageFile(Stream imageStream, string contentHash)
 		{
-			var dir = Path.GetDirectoryName(AmlBaseFileName);
-			var fullFileName = Path.Combine(dir, "Images", contentHash + ".png");
+			var fullFileName = Path.Combine(BasePathName, ImageFolderName, contentHash + ".png");
 
 			using (var outStream = new FileStream(fullFileName, FileMode.Create, FileAccess.Write, FileShare.Read))
 			{

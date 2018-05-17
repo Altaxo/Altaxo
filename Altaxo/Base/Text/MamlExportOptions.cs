@@ -340,6 +340,7 @@ namespace Altaxo.Text
 				projectOrContentFileName: fileName,
 				contentFolderName: ContentFolderName,
 				contentFileNameBase: ContentFileNameBase,
+				imageFolderName: ImageFolderName,
 				splitLevel: SplitLevel,
 				enableHtmlEscape: EnableHtmlEscape,
 				autoOutline: EnableAutoOutline,
