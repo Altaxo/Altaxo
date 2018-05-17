@@ -93,7 +93,9 @@ namespace Altaxo.Text
 				info.AddValue("EnableAutoOutline", s.EnableAutoOutline);
 				info.AddValue("EnableHtmlEscape", s.EnableHtmlEscape);
 				info.AddValue("EnableLinkToPreviousSection", s.EnableLinkToPreviousSection);
+				info.AddValue("LinkToPreviousSectionLabelText", s.LinkToNextSectionLabelText);
 				info.AddValue("EnableLinkToNextSection", s.EnableLinkToNextSection);
+				info.AddValue("LinkToNextSectionLabelText", s.LinkToNextSectionLabelText);
 				info.AddValue("ExpandChildDocuments", s.ExpandChildDocuments);
 				info.AddValue("BodyTextFontFamily", s.BodyTextFontFamily);
 				info.AddValue("BodyTextFontSize", s.BodyTextFontSize);
@@ -109,7 +111,9 @@ namespace Altaxo.Text
 				s.EnableAutoOutline = info.GetBoolean("EnableAutoOutline");
 				s.EnableHtmlEscape = info.GetBoolean("EnableHtmlEscape");
 				s.EnableLinkToPreviousSection = info.GetBoolean("EnableLinkToPreviousSection");
+				s.LinkToPreviousSectionLabelText = info.GetString("LinkToPreviousSectionLabelText");
 				s.EnableLinkToNextSection = info.GetBoolean("EnableLinkToNextSection");
+				s.LinkToNextSectionLabelText = info.GetString("LinkToNextSectionLabelText");
 				s.ExpandChildDocuments = info.GetBoolean("ExpandChildDocuments");
 				s.BodyTextFontFamily = info.GetString("BodyTextFontFamily");
 				s.BodyTextFontSize = info.GetDouble("BodyTextFontSize");
@@ -210,9 +214,19 @@ namespace Altaxo.Text
 		public bool EnableLinkToPreviousSection { get; set; }
 
 		/// <summary>
+		/// Gets or sets the text that is inserted immediately before the link to the next section.
+		/// </summary>
+		public string LinkToPreviousSectionLabelText { get; set; } = "Previous section: ";
+
+		/// <summary>
 		/// If true, a link to the next section is inserted at the end of each maml document.
 		/// </summary>
 		public bool EnableLinkToNextSection { get; set; }
+
+		/// <summary>
+		/// Gets or sets the text that is inserted immediately before the link to the next section.
+		/// </summary>
+		public string LinkToNextSectionLabelText { get; set; } = "Next section: ";
 
 		/// <summary>
 		/// If true, included child documents are expanded before the markdown document is processed.
@@ -313,7 +327,9 @@ namespace Altaxo.Text
 				enableHtmlEscape: EnableHtmlEscape,
 				autoOutline: EnableAutoOutline,
 				enableLinkToPreviousSection: EnableLinkToPreviousSection,
+				linkToPreviousSectionLabelText: LinkToPreviousSectionLabelText,
 				enableLinkToNextSection: EnableLinkToNextSection,
+				linkToNextSectionLabelText: LinkToNextSectionLabelText,
 				imagesFullFileNames: listOfReferencedImageFileNames,
 				oldToNewImageUris: oldToNewImageUrl,
 				bodyTextFontFamily: BodyTextFontFamily,

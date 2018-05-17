@@ -114,9 +114,19 @@ namespace Altaxo.Text.Renderers
 		public bool EnableLinkToPreviousSection { get; }
 
 		/// <summary>
+		/// Gets or sets the text that is inserted immediately before the link to the next section.
+		/// </summary>
+		public string LinkToPreviousSectionLabelText { get; }
+
+		/// <summary>
 		/// If true, a link to the next section is inserted at the end of each maml document.
 		/// </summary>
 		public bool EnableLinkToNextSection { get; }
+
+		/// <summary>
+		/// Gets or sets the text that is inserted immediately before the link to the next section.
+		/// </summary>
+		public string LinkToNextSectionLabelText { get; }
 
 		/// <summary>
 		/// Gets the full file name of the content layout file (extension: .content), that is a kind of table of contents for the document.
@@ -151,7 +161,9 @@ namespace Altaxo.Text.Renderers
 				bool enableHtmlEscape,
 				bool autoOutline,
 				bool enableLinkToPreviousSection,
+				string linkToPreviousSectionLabelText,
 				bool enableLinkToNextSection,
+				string linkToNextSectionLabelText,
 				HashSet<string> imagesFullFileNames,
 				Dictionary<string, string> oldToNewImageUris,
 				string bodyTextFontFamily,
@@ -164,7 +176,9 @@ namespace Altaxo.Text.Renderers
 			EnableHtmlEscape = enableHtmlEscape;
 			AutoOutline = autoOutline;
 			EnableLinkToPreviousSection = enableLinkToPreviousSection;
+			LinkToPreviousSectionLabelText = linkToPreviousSectionLabelText ?? string.Empty;
 			EnableLinkToNextSection = enableLinkToNextSection;
+			LinkToNextSectionLabelText = linkToNextSectionLabelText ?? string.Empty;
 			_imageFileNames = new HashSet<string>(imagesFullFileNames);
 			OldToNewImageUris = oldToNewImageUris;
 			BodyTextFontFamily = bodyTextFontFamily;
@@ -298,7 +312,7 @@ namespace Altaxo.Text.Renderers
 				if (EnableLinkToPreviousSection && _indexOfAmlFile > 0)
 				{
 					Push(MamlElements.para);
-					Write("Previous section: ");
+					Write(LinkToPreviousSectionLabelText);
 					var prevTopic = _amlFileList[_indexOfAmlFile - 1];
 					Push(MamlElements.link, new[] { new KeyValuePair<string, string>("xlink:href", prevTopic.guid) });
 					Write(prevTopic.title);
@@ -330,12 +344,11 @@ namespace Altaxo.Text.Renderers
 					PopTo(MamlElements.markup);
 
 					Push(MamlElements.para);
-					Write("Next section: ");
+					Write(LinkToNextSectionLabelText);
 					var nextTopic = _amlFileList[_indexOfAmlFile + 1];
 					Push(MamlElements.link, new[] { new KeyValuePair<string, string>("xlink:href", nextTopic.guid) });
 					Write(nextTopic.title);
 					PopTo(MamlElements.link);
-
 					PopTo(MamlElements.para);
 				}
 
