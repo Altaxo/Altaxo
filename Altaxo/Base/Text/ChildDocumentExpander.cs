@@ -121,6 +121,8 @@ namespace Altaxo.Text
 						// exchange the source text
 						documentAsStringBuilder.Remove(mdo.Span.Start, mdo.Span.Length);
 						documentAsStringBuilder.Insert(mdo.Span.Start, childTextDocument.SourceText);
+						// insert images
+						resultDocument.AddImagesFrom(expandedChild);
 					}
 				}
 			}

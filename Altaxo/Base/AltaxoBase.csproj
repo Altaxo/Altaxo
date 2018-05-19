@@ -288,7 +288,9 @@
     <Compile Include="Text\MarkdownImportOptions.cs" />
     <Compile Include="Text\MarkdownUtilities.cs" />
     <Compile Include="Text\Renderers\MamlRenderer.cs" />
+    <Compile Include="Text\Renderers\MamlRenderer_ContentFileHandling.cs" />
     <Compile Include="Text\Renderers\MamlRenderer_ContentLayoutFileHandling.cs" />
+    <Compile Include="Text\Renderers\MamlRenderer_ImageFileHandling.cs" />
     <Compile Include="Text\Renderers\Maml\Extensions\MathBlockRenderer.cs" />
     <Compile Include="Text\Renderers\Maml\Extensions\MathInlineRenderer.cs" />
     <Compile Include="Text\Renderers\Maml\Extensions\TableRenderer.cs" />

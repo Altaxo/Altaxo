@@ -55,6 +55,19 @@ namespace Altaxo.Gui.Text
 
 			if (initData)
 			{
+				if (_doc.EnableRemoveOldContentsOfContentFolder | _doc.EnableRemoveOldContentsOfImageFolder)
+				{
+					var answer = Current.Gui.YesNoMessageBox("Please note that either the 'Enable remove of old contents of content folder' or 'Enable remove of old contents of image folder' is checked. " +
+						"This can cause unwanted loss of data. Do you want to proceed with this options keeping checked?",
+						"Attention - possible loss of data",
+						false);
+
+					if (!answer)
+					{
+						_doc.EnableRemoveOldContentsOfContentFolder = false;
+						_doc.EnableRemoveOldContentsOfImageFolder = false;
+					}
+				}
 			}
 			if (null != _view)
 			{
@@ -70,8 +83,10 @@ namespace Altaxo.Gui.Text
 
 		public int SplitLevel { get { return _doc.SplitLevel; } set { _doc.SplitLevel = value; OnPropertyChanged(nameof(SplitLevel)); } }
 		public string ContentFolderName { get { return _doc.ContentFolderName; } set { _doc.ContentFolderName = value; OnPropertyChanged(nameof(ContentFolderName)); } }
+		public bool EnableRemoveOldContentsOfContentFolder { get { return _doc.EnableRemoveOldContentsOfContentFolder; } set { _doc.EnableRemoveOldContentsOfContentFolder = value; OnPropertyChanged(nameof(EnableRemoveOldContentsOfContentFolder)); } }
 		public string ContentFileNameBase { get { return _doc.ContentFileNameBase; } set { _doc.ContentFileNameBase = value; OnPropertyChanged(nameof(ContentFileNameBase)); } }
 		public string ImageFolderName { get { return _doc.ImageFolderName; } set { _doc.ImageFolderName = value; OnPropertyChanged(nameof(ImageFolderName)); } }
+		public bool EnableRemoveOldContentsOfImageFolder { get { return _doc.EnableRemoveOldContentsOfImageFolder; } set { _doc.EnableRemoveOldContentsOfImageFolder = value; OnPropertyChanged(nameof(EnableRemoveOldContentsOfImageFolder)); } }
 		public bool EnableHtmlEscape { get { return _doc.EnableHtmlEscape; } set { _doc.EnableHtmlEscape = value; OnPropertyChanged(nameof(EnableHtmlEscape)); } }
 		public bool EnableAutoOutline { get { return _doc.EnableAutoOutline; } set { _doc.EnableAutoOutline = value; OnPropertyChanged(nameof(EnableAutoOutline)); } }
 		public bool EnableLinkToPreviousSection { get { return _doc.EnableLinkToPreviousSection; } set { _doc.EnableLinkToPreviousSection = value; OnPropertyChanged(nameof(EnableLinkToPreviousSection)); } }

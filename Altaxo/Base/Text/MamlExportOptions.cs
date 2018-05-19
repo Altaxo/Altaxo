@@ -90,6 +90,7 @@ namespace Altaxo.Text
 
 				info.AddValue("SplitLevel", s.SplitLevel);
 				info.AddValue("ImageFolderName", s.ImageFolderName);
+				info.AddValue("EnableRemoveOldContentsOfImageFolder", s.EnableRemoveOldContentsOfImageFolder);
 				info.AddValue("EnableAutoOutline", s.EnableAutoOutline);
 				info.AddValue("EnableHtmlEscape", s.EnableHtmlEscape);
 				info.AddValue("EnableLinkToPreviousSection", s.EnableLinkToPreviousSection);
@@ -103,6 +104,7 @@ namespace Altaxo.Text
 				info.AddValue("OpenHelpFileBuilder", s.OpenHelpFileBuilder);
 				info.AddValue("OutputFileName", s.OutputFileName);
 				info.AddValue("ContentFolderName", s.ContentFolderName);
+				info.AddValue("EnableRemoveOldContentsOfContentFolder", s.EnableRemoveOldContentsOfContentFolder);
 				info.AddValue("ContentFileNameBase", s.ContentFileNameBase);
 			}
 
@@ -110,6 +112,7 @@ namespace Altaxo.Text
 			{
 				s.SplitLevel = info.GetInt32("SplitLevel");
 				s.ImageFolderName = info.GetString("ImageFolderName");
+				s.EnableRemoveOldContentsOfImageFolder = info.GetBoolean("EnableRemoveOldContentsOfImageFolder");
 				s.EnableAutoOutline = info.GetBoolean("EnableAutoOutline");
 				s.EnableHtmlEscape = info.GetBoolean("EnableHtmlEscape");
 				s.EnableLinkToPreviousSection = info.GetBoolean("EnableLinkToPreviousSection");
@@ -123,6 +126,7 @@ namespace Altaxo.Text
 				s.OpenHelpFileBuilder = info.GetBoolean("OpenHelpFileBuilder");
 				s.OutputFileName = info.GetString("OutputFileName");
 				s.ContentFolderName = info.GetString("ContentFolderName");
+				s.EnableRemoveOldContentsOfContentFolder = info.GetBoolean("EnableRemoveOldContentsOfContentFolder");
 				s.ContentFileNameBase = info.GetString("ContentFileNameBase");
 			}
 
@@ -153,6 +157,11 @@ namespace Altaxo.Text
 		/// This property is ignored when the <see cref="OutputFileName"/> is not a Sandcastle help file builder project file.
 		/// </summary>
 		public string ContentFolderName { get; set; }
+
+		/// <summary>
+		/// If set to true, all .aml files and all .content files residing in the content folder are deleted before exporting the new image files.
+		/// </summary>
+		public bool EnableRemoveOldContentsOfContentFolder { get; set; }
 
 		/// <summary>
 		/// Gets or sets the base name of .aml files. This property is ignored if the <see cref="OutputFileName"/> itself is a .aml file.
@@ -207,6 +216,11 @@ namespace Altaxo.Text
 				_imageFolderName = value;
 			}
 		}
+
+		/// <summary>
+		/// If set to true, all files residing in the image folder are deleted before exporting the new image files.
+		/// </summary>
+		public bool EnableRemoveOldContentsOfImageFolder { get; set; }
 
 		/// <summary>
 		/// The header level where to split the output into different MAML files.
@@ -339,8 +353,10 @@ namespace Altaxo.Text
 			var renderer = new MamlRenderer(
 				projectOrContentFileName: fileName,
 				contentFolderName: ContentFolderName,
+				enableRemoveOldContentsOfContentFolder: EnableRemoveOldContentsOfContentFolder,
 				contentFileNameBase: ContentFileNameBase,
 				imageFolderName: ImageFolderName,
+				enableRemoveOldContentsOfImageFolder: EnableRemoveOldContentsOfImageFolder,
 				splitLevel: SplitLevel,
 				enableHtmlEscape: EnableHtmlEscape,
 				autoOutline: EnableAutoOutline,

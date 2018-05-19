@@ -40,21 +40,23 @@ namespace Altaxo.Text.Renderers
 		/// If the user has chosen a .content file, then this name is returned. If the user has chosen a SHFBPROJ file, then the name of the .content
 		/// file is extracted from this project file. If all this fails, the name of the content layout file is synthezized from the user chosen file name.
 		/// </summary>
-		/// <param name="userChosenfileName">Name of the user chosenfile.</param>
-		/// <returns></returns>
-		public static string GetContentLayoutFileName(string userChosenfileName)
+		/// <returns>The full name of the content layout file.</returns>
+		public string GetContentLayoutFileName()
 		{
-			if (Path.GetExtension(userChosenfileName).ToLowerInvariant() == ".content")
+			if (Path.GetExtension(ProjectOrContentFileName).ToLowerInvariant() == ".content")
 			{
-				return userChosenfileName;
+				return ProjectOrContentFileName;
 			}
-			else if (Path.GetExtension(userChosenfileName).ToLowerInvariant() == ".shfbproj")
+			else if (Path.GetExtension(ProjectOrContentFileName).ToLowerInvariant() == ".shfbproj")
 			{
-				var contentFileName = ExtractContentLayoutFileNameFromShfbproj(userChosenfileName);
+				var contentFileName = ExtractContentLayoutFileNameFromShfbproj(ProjectOrContentFileName);
 				if (!string.IsNullOrEmpty(contentFileName))
 					return contentFileName;
 			}
-			return Path.Combine(Path.GetDirectoryName(userChosenfileName), Path.GetFileNameWithoutExtension(userChosenfileName) + ".content");
+			if (!string.IsNullOrEmpty(ContentFileNameBase))
+				return Path.Combine(BasePathName, ContentFolderName, ContentFileNameBase + ".content");
+			else
+				return Path.Combine(BasePathName, Path.GetFileNameWithoutExtension(ProjectOrContentFileName) + ".content");
 		}
 
 		/// <summary>

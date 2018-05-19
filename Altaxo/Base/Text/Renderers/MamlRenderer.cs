@@ -55,6 +55,11 @@ namespace Altaxo.Text.Renderers
 		public string ImageFolderName { get; }
 
 		/// <summary>
+		/// If set to true, all files residing in the image folder are deleted before exporting the new image files.
+		/// </summary>
+		public bool EnableRemoveOldContentsOfImageFolder { get; }
+
+		/// <summary>
 		/// The basic full path file name of the Maml files. To this name there will be appended (i) a number, and (ii) the extension ".aml".
 		/// </summary>
 		public string AmlBaseFileName { get; }
@@ -110,6 +115,11 @@ namespace Altaxo.Text.Renderers
 		/// This property is ignored when the <see cref="ProjectOrContentFileName"/> is not a Sandcastle help file builder project file.
 		/// </summary>
 		public string ContentFolderName { get; }
+
+		/// <summary>
+		/// If set to true, all .aml files and all .content files residing in the content folder are deleted before exporting the new image files.
+		/// </summary>
+		public bool EnableRemoveOldContentsOfContentFolder { get; }
 
 		/// <summary>
 		/// Gets or sets the base name of .aml files. This property is ignored if the <see cref="ProjectOrContentFileName"/> itself is a .aml file.
@@ -179,8 +189,10 @@ namespace Altaxo.Text.Renderers
 		public MamlRenderer(
 			string projectOrContentFileName,
 			string contentFolderName,
+			bool enableRemoveOldContentsOfContentFolder,
 			string contentFileNameBase,
 			string imageFolderName,
+			bool enableRemoveOldContentsOfImageFolder,
 			int splitLevel,
 				bool enableHtmlEscape,
 				bool autoOutline,
@@ -220,7 +232,15 @@ namespace Altaxo.Text.Renderers
 			else
 				AmlBaseFileName = Path.Combine(BasePathName, ContentFolderName, string.IsNullOrEmpty(ContentFileNameBase) ? Path.GetFileNameWithoutExtension(ProjectOrContentFileName) : ContentFileNameBase);
 
-			ContentLayoutFileName = GetContentLayoutFileName(ProjectOrContentFileName);
+			ContentLayoutFileName = GetContentLayoutFileName();
+
+			EnableRemoveOldContentsOfContentFolder = enableRemoveOldContentsOfImageFolder;
+			if (enableRemoveOldContentsOfContentFolder)
+				RemoveOldContentsOfContentFolder();
+
+			EnableRemoveOldContentsOfImageFolder = enableRemoveOldContentsOfImageFolder;
+			if (enableRemoveOldContentsOfImageFolder)
+				RemoveOldContentsOfImageFolder();
 
 			// Extension renderers that must be registered before the default renders
 			ObjectRenderers.Add(new MathBlockRenderer()); // since MathBlock derives from CodeBlock, it must be registered before CodeBlockRenderer
@@ -249,152 +269,6 @@ namespace Altaxo.Text.Renderers
 			ObjectRenderers.Add(new TableRenderer());
 			ObjectRenderers.Add(new MathInlineRenderer());
 		}
-
-		#region Maml topic file handling
-
-		/// <summary>
-		/// For the given markdown document, this evaluates all .aml files that are neccessary to store the content.
-		/// </summary>
-		/// <param name="markdownDocument">The markdown document.</param>
-		/// <exception cref="ArgumentException">First block of the markdown document should be a heading block!</exception>
-		private void EvaluateMamlFileNames(MarkdownDocument markdownDocument)
-		{
-			_amlFileList.Clear();
-			_indexOfAmlFile = -1;
-
-			// the header titles, entry 0 is the current title for level1, entry [1] is the current title for level 2 and so on
-			List<string> headerTitles = new List<string>();
-
-			if (markdownDocument[0] is HeadingBlock hbStart)
-				AddMamlFile(hbStart, headerTitles);
-			else
-				throw new ArgumentException("The first block of the markdown document should be a heading block! Please add a header on top of your markdown document!");
-
-			for (int i = 1; i < markdownDocument.Count; ++i)
-			{
-				if (markdownDocument[i] is HeadingBlock hb && hb.Level <= SplitLevel)
-					AddMamlFile(hb, headerTitles);
-			}
-		}
-
-		private void AddMamlFile(HeadingBlock headingBlock, List<string> headerTitles)
-		{
-			var fileName = string.Format("{0}{1:D6}.aml", AmlBaseFileName, _amlFileList.Count);
-			var title = ExtractTextContentFrom(headingBlock);
-			var levelM1 = headingBlock.Level - 1;
-
-			for (int i = headerTitles.Count - 1; i >= 0; --i)
-				headerTitles.RemoveAt(i);
-			headerTitles.Add(title);
-
-			var guid = CreateGuidFromHeaderTitles(headerTitles);
-			_amlFileList.Add((fileName, guid, title, headingBlock.Level, headingBlock.Span.Start));
-		}
-
-		private string CreateGuidFromHeaderTitles(List<string> headerTitles)
-		{
-			var stb = new System.Text.StringBuilder();
-
-			for (int i = 0; i < headerTitles.Count; ++i)
-			{
-				if (i != 0)
-					stb.Append(" - ");
-				stb.Append(headerTitles[i]);
-			}
-
-			byte[] inputBytes = System.Text.Encoding.UTF8.GetBytes(stb.ToString());
-
-			byte[] hash = _md5Hasher.ComputeHash(inputBytes);
-
-			// step 2, convert byte array to hex string
-
-			stb.Length = 0;
-
-			for (int i = 0; i < hash.Length; i++)
-			{
-				stb.Append(hash[i].ToString("X2"));
-			}
-
-			return stb.ToString();
-		}
-
-		public void TryStartNewMamlFile(HeadingBlock headingBlock)
-		{
-			if (_indexOfAmlFile < 0 || (_indexOfAmlFile + 1 < _amlFileList.Count && _amlFileList[_indexOfAmlFile + 1].spanStart == headingBlock.Span.Start))
-			{
-				if (null != this.Writer)
-				{
-					CloseCurrentMamlFile();
-				}
-
-				++_indexOfAmlFile;
-
-				var mamlFile = _amlFileList[_indexOfAmlFile];
-
-				System.IO.Directory.CreateDirectory(Path.GetDirectoryName(mamlFile.fileName));
-				var tw = new System.IO.StreamWriter(mamlFile.fileName, false, Encoding.UTF8, 1024);
-				this.Writer = tw;
-
-				Push(MamlElements.topic, new[] { new KeyValuePair<string, string>("id", mamlFile.guid), new KeyValuePair<string, string>("revisionNumber", "1") });
-				Push(MamlElements.developerConceptualDocument, new[] { new KeyValuePair<string, string>("xmlns", "http://ddue.schemas.microsoft.com/authoring/2003/5"), new KeyValuePair<string, string>("xmlns:xlink", "http://www.w3.org/1999/xlink") });
-
-				Push(MamlElements.introduction);
-
-				if (AutoOutline)
-					WriteLine("<autoOutline />");
-
-				if (EnableLinkToPreviousSection && _indexOfAmlFile > 0)
-				{
-					Push(MamlElements.para);
-					Write(LinkToPreviousSectionLabelText);
-					var prevTopic = _amlFileList[_indexOfAmlFile - 1];
-					Push(MamlElements.link, new[] { new KeyValuePair<string, string>("xlink:href", prevTopic.guid) });
-					Write(prevTopic.title);
-					PopTo(MamlElements.link);
-
-					PopTo(MamlElements.para);
-				}
-
-				PopTo(MamlElements.introduction);
-			}
-		}
-
-		public void CloseCurrentMamlFile()
-		{
-			if (null != this.Writer)
-			{
-				int numberOfContentElementsOnStack = 0;
-				if (EnableLinkToNextSection && (_indexOfAmlFile + 1) < _amlFileList.Count && 0 != (numberOfContentElementsOnStack = NumberOfElementsOnStack(MamlElements.content)))
-				{
-					// Pop all content elements except one
-					for (int i = 1; i < numberOfContentElementsOnStack; ++i)
-						PopTo(MamlElements.content);
-					PopToBefore(MamlElements.content); // now we are right before the last content element
-
-					// now insert a link to the next section
-
-					Push(MamlElements.markup);
-					Write("<hr/>");
-					PopTo(MamlElements.markup);
-
-					Push(MamlElements.para);
-					Write(LinkToNextSectionLabelText);
-					var nextTopic = _amlFileList[_indexOfAmlFile + 1];
-					Push(MamlElements.link, new[] { new KeyValuePair<string, string>("xlink:href", nextTopic.guid) });
-					Write(nextTopic.title);
-					PopTo(MamlElements.link);
-					PopTo(MamlElements.para);
-				}
-
-				PopAll();
-
-				this.Writer.Close();
-				this.Writer.Dispose();
-				this.Writer = TextWriter.Null;
-			}
-		}
-
-		#endregion Maml topic file handling
 
 		#region Maml image topic files handling
 
@@ -461,23 +335,6 @@ namespace Altaxo.Text.Renderers
 
 		#endregion Maml image topic files handling
 
-		#region Image file creation
-
-		public void StorePngImageFile(Stream imageStream, string contentHash)
-		{
-			var fullFileName = Path.Combine(BasePathName, ImageFolderName, contentHash + ".png");
-
-			using (var outStream = new FileStream(fullFileName, FileMode.Create, FileAccess.Write, FileShare.Read))
-			{
-				imageStream.CopyTo(outStream);
-				outStream.Close();
-			}
-
-			_imageFileNames.Add(fullFileName);
-		}
-
-		#endregion Image file creation
-
 		public (string fileGuid, string address) FindFragmentLink(string url)
 		{
 			if (url.StartsWith("#"))
@@ -537,7 +394,7 @@ namespace Altaxo.Text.Renderers
 			// afterwards: change the shfbproj to include i) all images and ii) all aml files that where created
 			if (Path.GetExtension(ProjectOrContentFileName).ToLowerInvariant() == ".shfbproj")
 			{
-				UpdateShfbproj(ProjectOrContentFileName, GetContentLayoutFileName(ProjectOrContentFileName), this.AmlFileNames, this._imageFileNames);
+				UpdateShfbproj(ProjectOrContentFileName, GetContentLayoutFileName(), this.AmlFileNames, this._imageFileNames);
 			}
 
 			return result;
