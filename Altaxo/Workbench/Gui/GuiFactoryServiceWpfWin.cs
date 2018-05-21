@@ -32,6 +32,8 @@ using System.Drawing.Printing;
 using System.Text;
 using System.Threading;
 using System.Windows.Input;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 
 namespace Altaxo.Gui
 {
@@ -193,13 +195,29 @@ namespace Altaxo.Gui
 			if (controller.ViewObject == null)
 				throw new ArgumentException("Can't find a view object for controller of type " + controller.GetType());
 
+			double startLocationLeft, startLocationTop;
+			if (TopmostModalWindow.WindowState == System.Windows.WindowState.Maximized)
+			{
+				// if the topmost window is maximized, then the Top and Left property are nonsense
+				// see https://stackoverflow.com/questions/9812756/window-top-and-left-values-are-not-updated-correctly-when-maximizing-a-window-in
+				// about screen see here: https://social.msdn.microsoft.com/Forums/vstudio/en-US/2ca2fab6-b349-4c08-915f-373c71bd636a/show-and-maximize-wpf-window-on-a-specific-screen?forum=wpf
+				var screen = ScreenHandler.GetCurrentScreen(TopmostModalWindow);
+				startLocationLeft = screen.Bounds.X;
+				startLocationTop = screen.Bounds.Y;
+			}
+			else
+			{
+				startLocationTop = TopmostModalWindow.Top;
+				startLocationLeft = TopmostModalWindow.Left;
+			}
+
 			if (controller.ViewObject is IViewRequiresSpecialShellWindow specialView)
 			{
 				var dlgctrl = (System.Windows.Window)Activator.CreateInstance(specialView.TypeOfShellWindowRequired, controller);
 				dlgctrl.Owner = TopmostModalWindow;
 				dlgctrl.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-				dlgctrl.Top = TopmostModalWindow.Top;
-				dlgctrl.Left = TopmostModalWindow.Left;
+				dlgctrl.Top = startLocationTop;
+				dlgctrl.Left = startLocationLeft;
 				return (true == InternalShowModalWindow(dlgctrl));
 			}
 
@@ -208,8 +226,8 @@ namespace Altaxo.Gui
 				var dlgview = new DialogShellViewWpf((System.Windows.UIElement)controller.ViewObject);
 				dlgview.Owner = TopmostModalWindow;
 				dlgview.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-				dlgview.Top = TopmostModalWindow.Top;
-				dlgview.Left = TopmostModalWindow.Left;
+				dlgview.Top = startLocationTop;
+				dlgview.Left = startLocationLeft;
 
 				var dlgctrl = new DialogShellController(dlgview, controller, title, showApplyButton);
 				return true == InternalShowModalWindow(dlgview);

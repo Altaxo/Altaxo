@@ -65,7 +65,7 @@ namespace WpfMath
 		{
 			var visual = new DrawingVisual();
 			using (var drawingContext = visual.RenderOpen())
-				this.Render(drawingContext, 0, 0);
+				this.Render(drawingContext, x, y);
 
 			var width = (int)Math.Ceiling(this.RenderSize.Width);
 			var height = (int)Math.Ceiling(this.RenderSize.Height);

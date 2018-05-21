@@ -77,6 +77,7 @@
     <Compile Include="Gui\Pads\FileBrowser\FileListController.cs" />
     <Compile Include="Gui\Pads\FileBrowser\FileSystemTreeController.cs" />
     <Compile Include="Gui\Pads\FileBrowser\IndexToImageConverter.cs" />
+    <Compile Include="Gui\ScreenHandler.cs" />
     <Compile Include="Gui\Startup\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>

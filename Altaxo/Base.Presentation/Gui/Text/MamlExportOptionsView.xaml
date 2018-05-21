@@ -1,0 +1,99 @@
+﻿<UserControl x:Class="Altaxo.Gui.Text.MamlExportOptionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Altaxo.Gui.Text"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="500">
+    <Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="4"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="20"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="8"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="4"/>
+		</Grid.RowDefinitions>
+		<Label Grid.Row="0" Grid.Column="0" Content="Header split level (0 for a single file): "/>
+		<axogc:Int32UpDown Grid.Row="0" Grid.Column="2" Minimum="0" Maximum="7" Value="{Binding SplitLevel, Mode=TwoWay}" />
+		<Label Grid.Row="2" Grid.Column="0" Content="Folder name for content: "/>
+		<TextBox Grid.Row="2" Grid.Column="2" Text="{Binding ContentFolderName, Mode=TwoWay}"/>
+		<CheckBox  Grid.Row="4" Grid.Column="2" Content="Remove all old contents of content folder"
+							 Margin="4,0,0,0"
+							 IsChecked="{Binding EnableRemoveOldContentsOfContentFolder, Mode=TwoWay}"
+							 ToolTip="By checking this, all .aml and .content files in the content folder will be deleted prior to export. Use this option with care!"/>
+		<Label Grid.Row="6" Grid.Column="0" Content="Base file name of content files: "/>
+		<TextBox Grid.Row="6" Grid.Column="2" Text="{Binding ContentFileNameBase, Mode=TwoWay}"/>
+		<Label Grid.Row="8" Grid.Column="0" Content="Folder name for images: "/>
+		<TextBox Grid.Row="8" Grid.Column="2" Text="{Binding ImageFolderName, Mode=TwoWay}"/>
+		<CheckBox  Grid.Row="10" Grid.Column="2" Content="Remove all old contents of image folder"
+							 Margin="4,0,0,0"
+							 IsChecked="{Binding EnableRemoveOldContentsOfImageFolder, Mode=TwoWay}"
+							 ToolTip="By checking this, all .png, .jpg, .jpeg, .tif files in the image folder will be deleted prior to export. Use this option with care!"/>
+		<CheckBox  Grid.Row="12" Grid.ColumnSpan="3" Content="Enable auto outline" Margin="4,0,0,0" IsChecked="{Binding EnableAutoOutline, Mode=TwoWay}"/>
+		<CheckBox  Grid.Row="14" Grid.ColumnSpan="3" Content="Enable Html escape" Margin="4,0,0,0" IsChecked="{Binding EnableHtmlEscape, Mode=TwoWay}"/>
+		<CheckBox  Grid.Row="16" Grid.ColumnSpan="3" Content="Link to previous section" Margin="4,0,0,0" IsChecked="{Binding EnableLinkToPreviousSection, Mode=TwoWay}"/>
+		<Label Grid.Row="18" Grid.Column="0" Content="Link to previous section label: "/>
+		<TextBox Grid.Row="18" Grid.Column="2" Text="{Binding LinkToPreviousSectionLabelText, Mode=TwoWay}"/>
+		<CheckBox  Grid.Row="20" Grid.ColumnSpan="3" Content="Link to next section" Margin="4,0,0,0" IsChecked="{Binding EnableLinkToNextSection, Mode=TwoWay}"/>
+		<Label Grid.Row="22" Grid.Column="0" Content="Link to next section label: "/>
+		<TextBox Grid.Row="22" Grid.Column="2" Text="{Binding LinkToNextSectionLabelText, Mode=TwoWay}"/>
+		<CheckBox  Grid.Row="24" Grid.ColumnSpan="3" Content="Expand child documents" Margin="4,0,0,0" IsChecked="{Binding ExpandChildDocuments, Mode=TwoWay}"/>
+
+		<GroupBox Header="Formulas" Grid.Row="25" Grid.RowSpan="7" Grid.ColumnSpan="4" Background="Azure" ToolTip="In order to show formulas with the right size, information about the font family and the font size of the body text is needed. In addition, information about whether or not the Maml files are intended to be used to build a HTML1 Help file is needed."/>
+		<Label Grid.Row="26" Grid.Column="0" Content="Font family of body text: "/>
+		<axogcd:FontFamilyComboBox Grid.Row="26" Grid.Column="2" SelectedFontFamilyName="{Binding BodyTextFontFamilyName, Mode=TwoWay}" />
+		<Label Grid.Row="28" Grid.Column="0" Content="Font size of body text: "/>
+		<axogcd:FontSizeComboBox Grid.Row="28" Grid.Column="2" SelectedQuantityAsValueInPoints="{Binding BodyTextFontSize, Mode=TwoWay}" />
+		<CheckBox  Grid.Row="30" Grid.ColumnSpan="3"  Margin="4,0,0,0" IsChecked="{Binding IsIntendedForHtmlHelp1File}"  Content="The Maml file(s) are intended to be used to build a HTML Help 1 (chm) file"/>
+
+		<GroupBox Header="Output file name:" Grid.Row="32" Grid.ColumnSpan="3">
+			<DockPanel>
+				<Button Content="Select ..." DockPanel.Dock="Right" Margin="4,0,0,0" Command="{Binding CommandSelectOutputFile}"/>
+				<TextBox Text="{Binding OutputFileName, Mode=TwoWay}" />
+			</DockPanel>			
+		</GroupBox>
+		<CheckBox  Grid.Row="34" Grid.ColumnSpan="3"  Margin="4,0,0,0" IsChecked="{Binding OpenHelpFileBuilder, Mode=TwoWay}"  Content="Open Sandcastle help file builder after export"/>
+
+	</Grid>
+</UserControl>
