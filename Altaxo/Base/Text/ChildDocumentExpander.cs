@@ -96,12 +96,13 @@ namespace Altaxo.Text
 					using (var stream = new System.IO.MemoryStream())
 					{
 						var (isStreamImage, extension, errorMessage) = imageStreamProvider.GetImageStream(stream, link.Url, 300, Altaxo.Main.ProjectFolder.GetFolderPart(textDocument.Name), textDocument.Images);
-						if (null != errorMessage)
+						if (null == errorMessage)
 						{
-							var proxy = (MemoryStreamImageProxy)MemoryStreamImageProxy.FromStream(stream);
+							stream.Seek(0, System.IO.SeekOrigin.Begin);
+							var proxy = MemoryStreamImageProxy.FromStream(stream, extension);
 							resultDocument.AddImage(proxy);
 							documentAsStringBuilder.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.Length);
-							documentAsStringBuilder.Insert(link.UrlSpan.Value.Start, "local:" + proxy.Name);
+							documentAsStringBuilder.Insert(link.UrlSpan.Value.Start, "local:" + proxy.ContentHash);
 						}
 					}
 				}
@@ -120,7 +121,7 @@ namespace Altaxo.Text
 						TextDocument expandedChild = ExpandDocumentToNewDocument(childTextDocument, recursionLevel + 1);
 						// exchange the source text
 						documentAsStringBuilder.Remove(mdo.Span.Start, mdo.Span.Length);
-						documentAsStringBuilder.Insert(mdo.Span.Start, childTextDocument.SourceText);
+						documentAsStringBuilder.Insert(mdo.Span.Start, expandedChild.SourceText);
 						// insert images
 						resultDocument.AddImagesFrom(expandedChild);
 					}

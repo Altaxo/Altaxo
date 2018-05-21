@@ -55,11 +55,6 @@ namespace Altaxo.Text.Renderers
 		public string ImageFolderName { get; }
 
 		/// <summary>
-		/// If set to true, all files residing in the image folder are deleted before exporting the new image files.
-		/// </summary>
-		public bool EnableRemoveOldContentsOfImageFolder { get; }
-
-		/// <summary>
 		/// The basic full path file name of the Maml files. To this name there will be appended (i) a number, and (ii) the extension ".aml".
 		/// </summary>
 		public string AmlBaseFileName { get; }
@@ -115,11 +110,6 @@ namespace Altaxo.Text.Renderers
 		/// This property is ignored when the <see cref="ProjectOrContentFileName"/> is not a Sandcastle help file builder project file.
 		/// </summary>
 		public string ContentFolderName { get; }
-
-		/// <summary>
-		/// If set to true, all .aml files and all .content files residing in the content folder are deleted before exporting the new image files.
-		/// </summary>
-		public bool EnableRemoveOldContentsOfContentFolder { get; }
 
 		/// <summary>
 		/// Gets or sets the base name of .aml files. This property is ignored if the <see cref="ProjectOrContentFileName"/> itself is a .aml file.
@@ -189,10 +179,8 @@ namespace Altaxo.Text.Renderers
 		public MamlRenderer(
 			string projectOrContentFileName,
 			string contentFolderName,
-			bool enableRemoveOldContentsOfContentFolder,
 			string contentFileNameBase,
 			string imageFolderName,
-			bool enableRemoveOldContentsOfImageFolder,
 			int splitLevel,
 				bool enableHtmlEscape,
 				bool autoOutline,
@@ -234,13 +222,8 @@ namespace Altaxo.Text.Renderers
 
 			ContentLayoutFileName = GetContentLayoutFileName();
 
-			EnableRemoveOldContentsOfContentFolder = enableRemoveOldContentsOfImageFolder;
-			if (enableRemoveOldContentsOfContentFolder)
-				RemoveOldContentsOfContentFolder();
-
-			EnableRemoveOldContentsOfImageFolder = enableRemoveOldContentsOfImageFolder;
-			if (enableRemoveOldContentsOfImageFolder)
-				RemoveOldContentsOfImageFolder();
+			// Note: the image folder content has to be removed before the images were exported to the file system,
+			// thus already in the MamlExportOptions
 
 			// Extension renderers that must be registered before the default renders
 			ObjectRenderers.Add(new MathBlockRenderer()); // since MathBlock derives from CodeBlock, it must be registered before CodeBlockRenderer
@@ -273,8 +256,9 @@ namespace Altaxo.Text.Renderers
 		#region Maml image topic files handling
 
 		/// <summary>
-		/// Writes a file which contains all referenced images in native resolution (without using width and height attributes).
-		/// To include this file helps ensure that all referenced images will be included into the help file.
+		/// Writes a file which contains all referenced images in native resolution
+		/// (without using width and height attributes).
+		/// Including this file helps to ensure that all referenced images will be included into the help file.
 		/// </summary>
 		/// <returns>The guid of this .aml file.</returns>
 		public (string fullFileName, Guid guid) WriteImageTopicFile()

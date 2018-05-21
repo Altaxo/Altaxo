@@ -69,11 +69,6 @@ namespace Altaxo.Graph
 			return MemoryStreamImageProxy.FromImage(image, name);
 		}
 
-		public static ImageProxy FromStream(Stream istr)
-		{
-			return MemoryStreamImageProxy.FromStream(istr);
-		}
-
 		public static ImageProxy FromStream(Stream istr, string name)
 		{
 			return MemoryStreamImageProxy.FromStream(istr, name);
@@ -501,6 +496,18 @@ namespace Altaxo.Graph
 			return img;
 		}
 
+		/// <summary>
+		/// Creates a <see cref="MemoryStreamImageProxy"/> from a stream. A file name must be provided in order
+		/// to deduce the kind of stream (.png for .png stream, .jpg for jpg stream and so on).
+		/// </summary>
+		/// <param name="istr">The image stream to copy from.</param>
+		/// <param name="name">The name. The kind of image is deduced from the extension of this name.</param>
+		/// <returns>A memory stream image proxy holding the image.</returns>
+		/// <exception cref="ArgumentNullException">
+		/// istr
+		/// or
+		/// name - Name must be provided in order to deduce the file extension
+		/// </exception>
 		public static new MemoryStreamImageProxy FromStream(Stream istr, string name)
 		{
 			if (istr == null)

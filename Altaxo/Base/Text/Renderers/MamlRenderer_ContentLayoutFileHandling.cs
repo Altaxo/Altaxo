@@ -70,9 +70,15 @@ namespace Altaxo.Text.Renderers
 				CloseCurrentMamlFile();
 			}
 
-			var (imageTopicFileName, imageTopicFileGuid) = WriteImageTopicFile();
+			var (imageTopicFileName, imageTopicFileGuid) = WriteImageTopicFile(); // writes the image topic file to disc
+
+			// Note the following convention:
+			// If there are multiple files with a Level 1 header level, then we add the image topic file as Level 1 file, too
+			// But if there is only one Level 1 header level file, then we add the image topic file as Level 2 file, so that is becomes a sub-node of the first level header topic
+			var minimumLevel = _amlFileList.Min(x => x.level);
+			var numberOfMinimumLevelTopics = _amlFileList.Count(x => x.level == minimumLevel);
 			// Include image topic file at the end of the maml file list with level = 0
-			_amlFileList.Add((imageTopicFileName, imageTopicFileGuid.ToString(), "Appendix: Images", 1, 0));
+			_amlFileList.Add((imageTopicFileName, imageTopicFileGuid.ToString(), "Appendix: Images", numberOfMinimumLevelTopics == 1 ? minimumLevel + 1 : minimumLevel, 0));
 
 			if (0 == _amlFileList.Count)
 				return;

@@ -334,13 +334,33 @@ namespace Altaxo.Text
 		/// this is the base file name only; the file names will be derived from this name.</param>
 		public void Export(TextDocument document, string fileName)
 		{
+			if (null == document)
+				throw new ArgumentNullException(nameof(document));
+			if (string.IsNullOrEmpty(fileName))
+				throw new ArgumentNullException(nameof(fileName));
+			var basePathName = Path.GetDirectoryName(fileName);
+
 			if (ExpandChildDocuments)
 			{
 				document = ChildDocumentExpander.ExpandDocumentToNewDocument(document);
 			}
 
+			// remove the old content
+			if (EnableRemoveOldContentsOfContentFolder)
+			{
+				var fullContentFolderName = Path.Combine(basePathName, ContentFolderName);
+				MamlRenderer.RemoveOldContentsOfContentFolder(fullContentFolderName);
+			}
+
+			// remove old images
+			if (EnableRemoveOldContentsOfImageFolder)
+			{
+				var fullImageFolderName = Path.Combine(basePathName, ImageFolderName);
+				MamlRenderer.RemoveOldContentsOfImageFolder(fullImageFolderName);
+			}
+
 			// First, export the images
-			var (oldToNewImageUrl, listOfReferencedImageFileNames) = ExportImages(document, fileName);
+			var (oldToNewImageUrl, listOfReferencedImageFileNames) = ExportImages(document, basePathName);
 
 			// now export the markdown document as Maml file(s)
 
@@ -353,10 +373,8 @@ namespace Altaxo.Text
 			var renderer = new MamlRenderer(
 				projectOrContentFileName: fileName,
 				contentFolderName: ContentFolderName,
-				enableRemoveOldContentsOfContentFolder: EnableRemoveOldContentsOfContentFolder,
 				contentFileNameBase: ContentFileNameBase,
 				imageFolderName: ImageFolderName,
-				enableRemoveOldContentsOfImageFolder: EnableRemoveOldContentsOfImageFolder,
 				splitLevel: SplitLevel,
 				enableHtmlEscape: EnableHtmlEscape,
 				autoOutline: EnableAutoOutline,
@@ -374,11 +392,16 @@ namespace Altaxo.Text
 			renderer.Render(markdownDocument);
 		}
 
-		private (Dictionary<string, string> oldToNewImageUrl, HashSet<string> listOfReferencedImageFileNames) ExportImages(TextDocument document, string fileName)
+		/// <summary>
+		/// Exports the images.
+		/// </summary>
+		/// <param name="document">The text document from which to export the images.</param>
+		/// <param name="basePathName">Full name of the base folder. The base folder is the folder of which the <see cref="ImageFolderName"/> and <see cref="ContentFolderName"/> are subfolders.</param>
+		/// <returns>A tuple consisting of a dictionary which translates old image Urls to new image Urls, and a set of full image file names that were exported.</returns>
+		private (Dictionary<string, string> oldToNewImageUrl, HashSet<string> listOfReferencedImageFileNames)
+					ExportImages(TextDocument document, string basePathName)
 		{
-			var path = Path.GetDirectoryName(fileName);
-
-			var imagePath = GetImagePath(path);
+			var imagePath = GetImagePath(basePathName);
 
 			var list = new List<(string Url, int urlSpanStart, int urlSpanEnd)>(document.ReferencedImageUrls);
 
