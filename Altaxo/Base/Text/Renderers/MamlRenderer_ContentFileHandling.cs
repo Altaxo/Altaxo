@@ -70,6 +70,7 @@ namespace Altaxo.Text.Renderers
 			var title = ExtractTextContentFrom(headingBlock);
 			var levelM1 = headingBlock.Level - 1;
 
+			// List of header titles from level 1 to ... (in order to get Guid)
 			for (int i = headerTitles.Count - 1; i >= 0; --i)
 				headerTitles.RemoveAt(i);
 			headerTitles.Add(title);
@@ -127,8 +128,7 @@ namespace Altaxo.Text.Renderers
 
 				Push(MamlElements.introduction);
 
-				if (AutoOutline)
-					WriteLine("<autoOutline />");
+				
 
 				if (EnableLinkToPreviousSection && _indexOfAmlFile > 0)
 				{
@@ -140,6 +140,11 @@ namespace Altaxo.Text.Renderers
 					PopTo(MamlElements.link);
 
 					PopTo(MamlElements.para);
+				}
+
+				if (AutoOutline)
+				{
+					WriteLine("<autoOutline />");
 				}
 
 				PopTo(MamlElements.introduction);

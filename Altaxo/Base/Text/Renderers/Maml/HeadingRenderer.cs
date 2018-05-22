@@ -57,7 +57,7 @@ namespace Altaxo.Text.Renderers.Maml
 			if (null != attr && !string.IsNullOrEmpty(attr.Id))
 				renderer.Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", attr.Id) });
 			else
-				renderer.Push(MamlElements.section);
+				renderer.Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", Guid.NewGuid().ToString()) });
 
 			renderer.Push(MamlElements.title);
 			renderer.WriteLeafInline(obj);
