@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -2588,5 +2588,48 @@ namespace Altaxo.Data
 		}
 
 		#endregion Apply functions
+
+		/// <summary>
+		/// Searches for an index idx for which the value <paramref name="value"/> lies in the (unordered) interval [this[idx-1], this[idx]]. If
+		/// such an index is found, the fractional index is returned. If no such index is found, the return value is null.
+		/// </summary>
+		/// <param name="value">The value to search.</param>
+		/// <returns></returns>
+		public double? FractionalIndexOf(double value)
+		{
+			for (int i = 1; i < Count; i++)
+			{
+				var frac = Altaxo.Calc.RMath.InFractionOfUnorderedIntervalCC(value, this[i - 1], this[i]);
+				if (frac.HasValue)
+				{
+					return frac.Value == 1 ? i : (i - 1) + frac.Value;
+				}
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Counterpart to <see cref="FractionalIndexOf(double)"/>.
+		/// Gets a linearly interpolated value at a given fractional index.
+		/// If the given index is &lt; 0, the value at index 0 is returned; if the index is &gt;=Count-1, the value at index Count-1 is returned.
+		/// </summary>
+		/// <param name="fractionalIndex">The fractional index.</param>
+		/// <returns>Linearly interpolated value between the values at Floor(fractionalIndex) and Ceiling(fractionalIndex).</returns>
+		public double GetLinearlyInterpolatedValueAt(double fractionalIndex)
+		{
+			if (Count == 0)
+				return double.NaN;
+			else if (fractionalIndex < 0)
+				return this[0];
+			else if (fractionalIndex >= (Count - 1))
+				return this[Count - 1];
+
+			int idxBase = (int)Math.Floor(fractionalIndex);
+			double idxFrac = fractionalIndex - idxBase;
+			if (idxFrac == 0)
+				return this[idxBase];
+			else
+				return (1 - idxFrac) * this[idxBase] + (idxFrac) * this[idxBase + 1];
+		}
 	} // end Altaxo.Data.DoubleColumn
 }

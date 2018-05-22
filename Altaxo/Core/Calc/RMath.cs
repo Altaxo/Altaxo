@@ -149,6 +149,62 @@ namespace Altaxo.Calc
 			return x;
 		}
 
+		/// <summary>
+		/// If x is inside the interval [leftValue, rightValue] or [rightValue, leftValue], then this function returns a value in the range [0,1]
+		/// designating the (linear) position inside that interval. I.e. if rightValue > leftValue, the return value would be (x-leftValue)/(rightValue-leftValue).
+		/// </summary>
+		/// <param name="x">The x value.</param>
+		/// <param name="leftValue">The left value of the interval, might be less than or greater than <paramref name="rightValue"/>.</param>
+		/// <param name="rightValue">The right value of the interval, might be less than or greater han <paramref name="leftValue"/>.</param>
+		/// <returns></returns>
+		public static double? InFractionOfUnorderedIntervalCC(this double x, double leftValue, double rightValue)
+		{
+			bool inverted = false;
+
+			if (x == leftValue)
+				return 0.0;
+			else if (x == rightValue)
+				return 1.0;
+
+			if (rightValue < leftValue)
+			{
+				var h = rightValue;
+				rightValue = leftValue;
+				leftValue = h;
+				inverted = true;
+			}
+
+			if (leftValue <= x && x <= rightValue)
+			{
+				var denom = rightValue - leftValue;
+				var nom = x - leftValue;
+
+				if (denom == 0)
+					return 0.0;
+				else
+					return inverted ? 1 - nom / denom : nom / denom;
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Interpolates linearly between <paramref name="leftValue"/> and <paramref name="rightValue"/>, using the parameter <paramref name="fraction"/>.
+		/// </summary>
+		/// <param name="fraction">The fraction value.</param>
+		/// <param name="leftValue">The left value.</param>
+		/// <param name="rightValue">The right value.</param>
+		/// <returns>(1-fraction)*leftValue + fraction*rightValue. If fraction is either 0 or 1, only the leftValue or the rightValue will be used as return value, respectively.</returns>
+		public static double InterpolateLinear(double fraction, double leftValue, double rightValue)
+		{
+			if (fraction == 0)
+				return leftValue;
+			else if (fraction == 1)
+				return rightValue;
+			else
+				return (1 - fraction) * leftValue + fraction * rightValue;
+		}
+
 		#endregion Number tests
 
 		public static double Log1p(double x)
