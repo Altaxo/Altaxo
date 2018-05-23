@@ -35,35 +35,46 @@ namespace Altaxo.Text.Renderers.Maml
 	{
 		protected override void Write(MamlRenderer renderer, HeadingBlock obj)
 		{
-			renderer.TryStartNewMamlFile(obj);
+			bool newFileWasStarted = renderer.TryStartNewMamlFile(obj);
 
-			// Ensure we have the sections element somewhere down the line ...
-			// we need (obj.Level - renderer.SplitLevel) section elements down the stack
-			int numberOfSectionsElementsRequired = obj.Level - renderer.SplitLevel;
-			int numberOfSectionsElementsOnStack = renderer.NumberOfElementsOnStack(MamlElements.sections);
-
-			// Push sections element if required
-			for (int i = 0; i < numberOfSectionsElementsRequired - numberOfSectionsElementsOnStack; ++i)
-				renderer.Push(MamlElements.sections);
-
-			if (numberOfSectionsElementsOnStack > 0 && numberOfSectionsElementsRequired >= 0)
+			if (newFileWasStarted)
 			{
-				// Or pop sections elements if required
-				for (int i = 0; i <= numberOfSectionsElementsOnStack - numberOfSectionsElementsRequired; ++i)
-					renderer.PopToBefore(MamlElements.sections);
 			}
-
-			var attr = (Markdig.Renderers.Html.HtmlAttributes)obj.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-			if (null != attr && !string.IsNullOrEmpty(attr.Id))
-				renderer.Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", attr.Id) });
 			else
-				renderer.Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", Guid.NewGuid().ToString()) });
+			{
+				// Ensure we have the sections element somewhere down the line ...
+				// we need (obj.Level - renderer.SplitLevel) section elements down the stack
+				int numberOfSectionsElementsRequired = obj.Level - renderer.SplitLevel - 1;
+				int numberOfSectionsElementsOnStack = renderer.NumberOfElementsOnStack(MamlElements.sections);
 
-			renderer.Push(MamlElements.title);
-			renderer.WriteLeafInline(obj);
-			renderer.EnsureLine();
-			renderer.PopTo(MamlElements.title);
-			renderer.Push(MamlElements.content);
+				// Push sections element if required
+				for (int i = 0; i < numberOfSectionsElementsRequired - numberOfSectionsElementsOnStack; ++i)
+					renderer.Push(MamlElements.sections);
+
+				if (numberOfSectionsElementsOnStack > 0 && numberOfSectionsElementsRequired > 0)
+				{
+					// Or pop sections elements if required
+					for (int i = 0; i < numberOfSectionsElementsOnStack - numberOfSectionsElementsRequired; ++i)
+						renderer.PopToBefore(MamlElements.sections);
+				}
+
+				if (numberOfSectionsElementsRequired == 0)
+				{
+					renderer.PopToBefore(MamlElements.developerConceptualDocument);
+				}
+
+				var attr = (Markdig.Renderers.Html.HtmlAttributes)obj.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
+				if (null != attr && !string.IsNullOrEmpty(attr.Id))
+					renderer.Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", attr.Id) });
+				else
+					renderer.Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", Guid.NewGuid().ToString()) });
+
+				renderer.Push(MamlElements.title);
+				renderer.WriteLeafInline(obj);
+				renderer.EnsureLine();
+				renderer.PopTo(MamlElements.title);
+				renderer.Push(MamlElements.content);
+			}
 		}
 	}
 }

@@ -106,7 +106,12 @@ namespace Altaxo.Text.Renderers
 			return stb.ToString();
 		}
 
-		public void TryStartNewMamlFile(HeadingBlock headingBlock)
+		/// <summary>
+		/// Try to start a new maml file.
+		/// </summary>
+		/// <param name="headingBlock">The heading block that might trigger the start of a new maml file..</param>
+		/// <returns>True if a new Maml file was started; otherwise, false.</returns>
+		public bool TryStartNewMamlFile(HeadingBlock headingBlock)
 		{
 			if (_indexOfAmlFile < 0 || (_indexOfAmlFile + 1 < _amlFileList.Count && _amlFileList[_indexOfAmlFile + 1].spanStart == headingBlock.Span.Start))
 			{
@@ -128,8 +133,7 @@ namespace Altaxo.Text.Renderers
 
 				Push(MamlElements.introduction);
 
-				
-
+				bool hasLinkOrOutlineElement = false;
 				if (EnableLinkToPreviousSection && _indexOfAmlFile > 0)
 				{
 					Push(MamlElements.para);
@@ -140,34 +144,64 @@ namespace Altaxo.Text.Renderers
 					PopTo(MamlElements.link);
 
 					PopTo(MamlElements.para);
+
+					hasLinkOrOutlineElement = true;
 				}
 
 				if (AutoOutline)
 				{
 					WriteLine("<autoOutline />");
+					hasLinkOrOutlineElement = true;
 				}
 
-				PopTo(MamlElements.introduction);
+				if(hasLinkOrOutlineElement)
+				{
+					Push(MamlElements.markup);
+					Write("<hr/>");
+					PopTo(MamlElements.markup);
+				}
+
+				return true;
+			}
+			else
+			{
+				return false;
 			}
 		}
 
 		public void CloseCurrentMamlFile()
 		{
-			if (null != this.Writer)
+			if (null != this.Writer && _currentElementStack.Count > 0)
 			{
-				int numberOfContentElementsOnStack = 0;
-				if (EnableLinkToNextSection && (_indexOfAmlFile + 1) < _amlFileList.Count && 0 != (numberOfContentElementsOnStack = NumberOfElementsOnStack(MamlElements.content)))
+				if (EnableLinkToNextSection && (_indexOfAmlFile + 1) < _amlFileList.Count )
 				{
-					// Pop all content elements except one
-					for (int i = 1; i < numberOfContentElementsOnStack; ++i)
-						PopTo(MamlElements.content);
-					PopToBefore(MamlElements.content); // now we are right before the last content element
+					if(NumberOfElementsOnStack(MamlElements.introduction)>0)
+					{
+						// then we are still in the introduction, thus we can place the elements here
+						Push(MamlElements.markup);  // Nasty trick: put a horizontal line outside of the section in order to go from the very left to the very right
+						Write("<hr/>");             // If this trick won't work anymore, put the hr element inside the content as outcommented below
+						PopTo(MamlElements.markup);
 
+					}
+					else
+					{
+						// Pop all content elements except one
+						PopToBefore(MamlElements.developerConceptualDocument);
+
+						Push(MamlElements.markup);  // Nasty trick: put a horizontal line outside of the section in order to go from the very left to the very right
+						Write("<hr/>");             // If this trick won't work anymore, put the hr element inside the content as outcommented below
+						PopTo(MamlElements.markup);
+
+						Push(MamlElements.section);
+						Push(MamlElements.content);
+					}
+
+					
 					// now insert a link to the next section
 
-					Push(MamlElements.markup);
-					Write("<hr/>");
-					PopTo(MamlElements.markup);
+					// Push(MamlElements.markup); // this is the normal place to put the horizontal line element
+					// Write("<hr/>");
+					// PopTo(MamlElements.markup);
 
 					Push(MamlElements.para);
 					Write(LinkToNextSectionLabelText);
