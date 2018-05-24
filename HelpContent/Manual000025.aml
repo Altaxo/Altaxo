@@ -1,0 +1,42 @@
+﻿
+<topic id="0B79795D3EFC95B9976C7C5B933AFCE2" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="2D0D1F25EC20A51E494D4E52B993F67B">Text documents - Markdown in Altaxo</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+You can create text documents in Altaxo in any folder you want, using Markdown syntax with some extensions.
+</para>
+
+<para>
+The really cool feature is that you can include all the 2D and 3D graphs from your Altaxo project, using either absolute path names, or relative path names (relative to the current location of your text document).
+</para>
+
+<para>
+The following graph was created using this markdown:
+</para>
+
+<code>
+![](graph://Foo\GRAPH0)
+</code>
+
+<para>
+Please note that the Url starts with <codeInline>graph://</codeInline>, which means that the name part which follows is considered as the absolute path to the graph in your Altaxo document. To use relative path names, the Url has to start with <codeInline>graph:</codeInline> (i.e. without the two slashes). There are more rules, e.g. if the path contains spaces and special chars, which will be considered <link xlink:href="92E9D6227D5534E7AFC27A11179C808E#SpecifyAltaxoGraphNames">later</link>.
+</para>
+
+<para>
+<markup><img src="../media/BB9FABC6297FBD59A3C367E7A6812F02.png" width="567"></img></markup><lineBreak/>
+Figure 1: This is an example image which is a graph named <codeInline>Foo\Graph0</codeInline> showing the function <markup><img src="../media/231A01EB7C0F4EF681AA2E7FB31E82E1.png" align="middle" width="88" height="43"></img></markup> .
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="948A2E3548AAF7F9941A3192FA607D51">Credits</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Topics>
+<Topic id="1B7FE024E7E614BFA13DAA1FD005CB2E" visible="True" title="Altaxo user manual" isDefault="true" isExpanded="true" isSelected="true">
+<Topic id="B737924397CA9ECFEB00290049FA4577" visible="True" title="Installation of Altaxo">
+<Topic id="5DB731D1AC8ABFECFC4CB3F26230B6F3" visible="True" title="Installation by Copy-and-Paste on Windows 7, 8.1 and 10">
+</Topic>
+<Topic id="35469234B9736747AC16E7A25309BCB6" visible="True" title="Installation by using a Microsoft installer file (.msi) on Windows 7, 8.1 and 10">
+</Topic>
+<Topic id="89B28A4B8177FE45392507A25F72F3C1" visible="True" title="Installation on Linux (using Wine)">
+</Topic>
+</Topic>
+<Topic id="214D236FBB08786D43F7158B9D8342DB" visible="True" title="User interface">
+<Topic id="BF30DC5A673867795B06C48DB0D05189" visible="True" title="Tool windows">
+</Topic>
+<Topic id="78E497EAEA1B15472ACA1A317AD2571B" visible="True" title="Document windows">
+</Topic>
+</Topic>
+<Topic id="F789E4896E9D1F05AEA7EE90EECF7FEE" visible="True" title="Tables and Worksheets">
+<Topic id="1C865FA2F43CEF650A9EFBB91BA608BA" visible="True" title="Data columns and property columns">
+</Topic>
+<Topic id="92176E39F6C4160B94F064157F693AE3" visible="True" title="Column headers">
+</Topic>
+<Topic id="100AE7171F79785F03612B3A22C62800" visible="True" title="Creating a new worksheet">
+</Topic>
+<Topic id="1FE6358D03AFA48B270055D445E2D61C" visible="True" title="Creating additional data columns or property columns">
+</Topic>
+<Topic id="D2217FD15156CD956807180AF789712F" visible="True" title="Selection of columns and/or rows in a worksheet">
+</Topic>
+<Topic id="9D7194D9314A6A78D6A95AE292591E43" visible="True" title="Copy/paste of worksheet data">
+</Topic>
+<Topic id="F41386E7F5D640B522EC16EF83202B06" visible="True" title="Importing ASCII data">
+</Topic>
+<Topic id="719F2DBC67F7BEEACE3D544C813D2132" visible="True" title="Changing the structure of a worksheet">
+</Topic>
+<Topic id="C84BFC3B2596CBBCB64ECB0480BAC090" visible="True" title="Worksheet Notes">
+</Topic>
+<Topic id="DC757195CFE571703E82E0ADD257E85A" visible="True" title="Worksheet Scripts and Column Scripts">
+</Topic>
+</Topic>
+<Topic id="CEA262E1028788E979094EC04926B8A1" visible="True" title="2D-Graphs">
+<Topic id="0460583622F03A52D7693094D6FA2452" visible="True" title="Concepts">
+</Topic>
+<Topic id="4DD8B3BA6CF7CD1B41BC591466CA8833" visible="True" title="Creating a graph">
+</Topic>
+<Topic id="571B1E6DF8B93DDBF91A88FD583BEC80" visible="True" title="Modifying a graph">
+</Topic>
+</Topic>
+<Topic id="43D5E9E90086810E699D1928FF6EBA09" visible="True" title="3D-Graphs">
+</Topic>
+<Topic id="2D0D1F25EC20A51E494D4E52B993F67B" visible="True" title="Text documents - Markdown in Altaxo">
+<Topic id="0B79795D3EFC95B9976C7C5B933AFCE2" visible="True" title="Introduction">
+</Topic>
+<Topic id="948A2E3548AAF7F9941A3192FA607D51" visible="True" title="Credits">
+</Topic>
+<Topic id="92E9D6227D5534E7AFC27A11179C808E" visible="True" title="Syntax">
+</Topic>
+<Topic id="80AD6CD4EE8B084B64DD239E19656C45" visible="True" title="Usage (of the editor and preview window)">
+</Topic>
+<Topic id="6EF260570BC1E76B6FD28D9B1D38E8AB" visible="True" title="Concatenate two text documents">
+</Topic>
+<Topic id="81D5818FCD4F2DCE7BD10D5282D2E263" visible="True" title="Import of existing Markdown files">
+</Topic>
+<Topic id="902F3A73F88A88925262AC3F33389630" visible="True" title="Export of a text document">
+</Topic>
+</Topic>
+<Topic id="55232F21FD92D937FCD391FDA0B40B0E" visible="True" title="Project organization">
+<Topic id="5795D01B5A579520EFA8F9481A3C41AD" visible="True" title="Project items">
+</Topic>
+</Topic>
+<Topic id="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027" visible="True" title="Appendix: Images">
+</Topic>
+</Topic>
+</Topics>

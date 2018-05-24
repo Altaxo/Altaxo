@@ -1,0 +1,74 @@
+﻿
+<topic id="571B1E6DF8B93DDBF91A88FD583BEC80" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="4DD8B3BA6CF7CD1B41BC591466CA8833">Creating a graph</link></para>
+<autoOutline />
+<markup><hr/></markup></introduction>
+
+<section address="3B65CC90635772C99B78DF11FD536B25">
+<title>Modifying the graph size
+</title>
+<content>
+
+<para>
+The graph's size is the size of the root layer of the graph when printed at a scale of 100%. Although it is possible to use an arbitrary size and later scale the graph  according to the desired print size, I strongly encourage to design the graph with the desired size from the beginning. Why this is so?
+</para>
+
+<para>
+Let's say you want to publish a paper in a journal. The journal has a text column width of 6 cm and a font size of 10 pt. Then the natural way to create a graph for that paper is to set the with of the root layer to 6 cm (the height of the graph is still your choice), and to set the default font size of the graph to 10 pt. Then, assuming the graph is published in that paper in its original size, the text in the graph will appear with a size of exactly 10 pt to ensure maximum readability and a smooth blending with the paper text.
+Of course, another way would be to create the graph with a root layer size of 12 cm and to set the default font size to 20 pt. Later on, you then scale the graph down to 50% to get the desired with of 6 cm and font size of 10 pt, but this requires some extra steps and calculations.
+</para>
+
+<para>
+To modify the graph size, click on the root layer button, select the tab named <codeInline>Position</codeInline>, and enter the desired size. The text boxes where you can enter the size are unit aware. That means, by entering <codeInline>6 cm</codeInline> you set the size to 6 cm, even if the size was displayed in units of pt (Point = 1/72 Inch) before.
+</para>
+
+<para>
+If you have changed the graph size, you probably want to change the default font size, too.
+</para>
+</content>
+</section>
+
+<section address="ADC7090ADB36B6CEF99C03DA6982E84E">
+<title>Modifying the default font size
+</title>
+<content>
+
+<para>
+The default font size of the graph is a property that is stored in the property bag of the graph. I will later on explain what a property bag is and how properties are stored in it. For now, it will be sufficient to know that a property has a name and a value, and that multiple properties are stored in a kind of dictionary for every graph.
+To edit the default font size, you have to change that dictionary entry. Right-click on the document tab  of the graph (marker <codeInline>1</codeInline> in the figure below) to open the context menu of the graph, then choose <codeInline>Edit graph properties</codeInline> from that context menu. A dialog box opens, with a window showing available properties in the upper part and existing properties in the lower part. Double click onto <codeInline>Graph\DefaultFont</codeInline> in the lower part with the existing properties (marker <codeInline>2</codeInline> in the figure below). Another dialog box opens, which allows you to choose a default font and the default font size. Enter the font size of your choice (marker <codeInline>3</codeInline> in the figure below) and close this dialog box, then close the property dialog box, too. Now that you have changed the default font size, new text in the graph will be created with the new default font size. The font size of the text that already exists is not changed when changing the default font size.
+</para>
+
+<para>
+<markup><img src="../media/D9153323BF81BCD356BFDF049BD1DF59.png" width="567"></img></markup>
+</para>
+</content>
+</section>
+
+<section address="603E3FB546205ED00977CD436F03956D">
+<title>Graph notes
+</title>
+<content>
+
+<para>
+To every graph belongs notes text. You can view and edit the notes text.
+To do this, make the graph the current document. Then make sure, that the Notes tool window is shown. If it is not shown, make it visible by choosing View→Notes from the main menu or pressing CTRL+ALT+N at the keyboard. You can then visit, add or edit the text in the notes window.
+</para>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="43D5E9E90086810E699D1928FF6EBA09">3D-Graphs</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

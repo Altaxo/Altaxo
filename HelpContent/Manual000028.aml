@@ -1,0 +1,126 @@
+﻿
+<topic id="80AD6CD4EE8B084B64DD239E19656C45" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="92E9D6227D5534E7AFC27A11179C808E">Syntax</link></para>
+<autoOutline />
+<markup><hr/></markup></introduction>
+
+<section address="90D978F62EE75B38995A349B7D82AF5C">
+<title>Editor and Preview window
+</title>
+<content>
+
+<para>
+You will see two windows: the editor window (per default at the left side), and the previewer window (per default at the right side).
+</para>
+
+<para>
+The editor window is the window in which you write your markdown text. The text is then displayed ('rendered') in the preview window. When you scroll your editor window, the preview window is scrolled too, to be as close as possible to the source text.
+</para>
+
+<para>
+If you click into the editor window, the preview window is scrolled so that the corresponding line in the preview window matches horizontally with the line in the editor window (note that sometimes scrolling is not possible because the scroll bar has reached either the top or the bottom).
+</para>
+
+<para>
+Likewise, if you click into the preview window, the editor window is scrolled to match the corresponding line in the source text.
+</para>
+
+<para>
+You can even click in the preview window and start writing. When you start writing, the corresponding location in your source text is searched, and the text you write is then included in the source text at that position. Also, small edits are possible directly in the preview window. For instance, you can mark some text in the preview window, and then press <codeInline>Del</codeInline> to delete this text.
+</para>
+</content>
+</section>
+
+<section address="B6950EF9F53FD1E8BDA20D6B07373599">
+<title>Shortcut keys
+</title>
+<content>
+
+<para>
+When working with Markdown documents, you can use the following shortcut keys:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<codeInline>F5</codeInline> to refresh your preview window, and update all graphs. Additionally, if you have change any property of the document or the editor (spell checking, hyphenation etc.), press <codeInline>F5</codeInline> to apply the new properties.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>F12</codeInline> to switch between the editor window and the preview window. If possible, the position of the caret will also be switched to the corresponding location, or the closest possible location nearby.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="99AD52C3E0E99DAD6C0F8AB74299A774">
+<title>View configuration
+</title>
+<content>
+
+<para>
+You can choose another view configuration using the main menu, <codeInline>Text, View configuration</codeInline>. You can decide whether you want your:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+editor window at the left, preview window to the right (default)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+editor window at the top, preview window at the bottom (might be useful for tablets in portrait mode)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+editor window at the right, preview window at the left
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+editor window at the bottom, preview window at the top (again useful for tablets in portrait mode)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+editor window and preview window in a tab control, i.e. only one of them is displayed at once; you can switch with <codeInline>F12</codeInline>.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="6EF260570BC1E76B6FD28D9B1D38E8AB">Concatenate two text documents</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

@@ -1,0 +1,158 @@
+﻿
+<topic id="5795D01B5A579520EFA8F9481A3C41AD" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="55232F21FD92D937FCD391FDA0B40B0E">Project organization</link></para>
+<autoOutline />
+<markup><hr/></markup></introduction>
+
+<section address="A4187E6D3F147449569E124BAA60CA2C">
+<title>Item types
+</title>
+<content>
+
+<para>
+At the time of writing, there are the following item types in an Altaxo project:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Data tables / worksheets
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+2D graphs
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+3D graphs
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Property bags
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Text (Markdown annotated)
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="94ADEAC610BE5CF502548B89F97B703D">
+<title>Item names
+</title>
+<content>
+
+<para>
+Items (for instance graphs, tables, data columns used by the table) can have arbitrary names. Even the length of the name is unlimited (at least for any practical purpose). But please keep in mind:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+longer names are harder to read and to remember.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+when you refer to an item with a long name inside a script, you have to type more text.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+in the project explorer or in other views, probably only part of such a long name is shown.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+you can use leading or trailing spaces in a name, but then it can be hard to find out the name from the project explorer's list.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+the character <codeInline>\</codeInline> (backslash) is interpreted by the project explorer as directory separator char (but besides this it is a fully valid character for a name). Thus, if your graph is named <codeInline>Foo\Graph1</codeInline>, it is shown in the project explorer in the folder <codeInline>Foo</codeInline>. Many operations in project explorer are based on this naming convention.
+</para>
+</listItem>
+</list>
+
+<para>
+You can use the backslash character for organizing your project items. For example:
+</para>
+
+<para>
+Your data of measurements at 20°C, 30°C and 40°C are put into separate worksheets. Then you can name the worksheets for example:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<codeInline>T=20°C\WData1</codeInline>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>T=20°C\WData2</codeInline>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>T=30°C\WData1</codeInline>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>T=40°C\WData1</codeInline>
+</para>
+</listItem>
+</list>
+
+<para>
+and so on.
+</para>
+
+<para>
+In the project explorer, the worksheets will appear in different folders named <codeInline>T=20°C</codeInline>, <codeInline>T=30°C</codeInline> and <codeInline>T=40°C</codeInline>. If you plot some columns from one of the worksheets, the newly created graph will be placed in the same folder as this worksheet. This is achieved by naming the new graph in such a way that the first part (the folder part) is the same as for the worksheet.
+</para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

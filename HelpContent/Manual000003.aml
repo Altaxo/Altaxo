@@ -1,0 +1,66 @@
+﻿
+<topic id="35469234B9736747AC16E7A25309BCB6" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="5DB731D1AC8ABFECFC4CB3F26230B6F3">Installation by Copy-and-Paste on Windows 7, 8.1 and 10</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Choosing this installation method requires administrative rights.
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Make sure you have the latest version of the .Net-Framework installed on your computer. If you have turned on Windows-Updates on your computer, you should already have the newest .Net-Framework version.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Download the latest Altaxo .msi file. You can either use the latest stable distribution from <externalLink><linkText>this folder</linkText><linkUri>https://sourceforge.net/projects/altaxo/files/Altaxo/Altaxo-Latest-Stable/</linkUri></externalLink>, or the latest unstable distribution from <externalLink><linkText>this folder</linkText><linkUri>https://sourceforge.net/projects/altaxo/files/Altaxo/Altaxo-Latest-Unstable/</linkUri></externalLink>.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Select the file named Altaxo-x.x.xxxx.x.msi (x is the version number), and download it.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Double-click on the downloaded file to install it.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Choose installation location and some options.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+You are done!
+</para>
+</listItem>
+</list>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="89B28A4B8177FE45392507A25F72F3C1">Installation on Linux (using Wine)</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

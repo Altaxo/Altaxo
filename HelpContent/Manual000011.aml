@@ -1,0 +1,79 @@
+﻿
+<topic id="100AE7171F79785F03612B3A22C62800" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="92176E39F6C4160B94F064157F693AE3">Column headers</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+When you create a new worksheet, you can decide either to create an
+empty worksheet or a standard worksheet. The standard worksheet already
+contains two numeric columns, ‘A’ and ‘B’, with ‘A’ being the ‘X’-column
+and ‘B’ the ‘V’-column.
+</para>
+
+<para>
+Note: If you intend to import data into the worksheet, you should instead create
+an empty worksheet and import the data afterwards. If you want to enter
+data manually, and are happy with two numeric columns, you should opt
+for the standard worksheet.
+</para>
+
+<para>
+There are four ways to create a worksheet (either empty or standard)
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+From the ‘<legacyBold>File menu</legacyBold>’: choose File→New→Empty Worksheet to
+create an empty worksheet or File→New→Standard Worksheet to
+create a standard worksheet
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+From the <legacyBold>toolbar</legacyBold>: see Figure below<lineBreak/>
+<markup><img src="../media/E3A358C42F2DA2C8091D5A56D3C46CFC.png" width="567"></img></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+From the <legacyBold>context menu</legacyBold> of the <legacyBold>project explorer</legacyBold>: see Figure
+below<lineBreak/>
+<markup><img src="../media/EC4015BC0143B4D0D1994540B480806E.png" width="567"></img></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+From a <legacyBold>keyboard shortcut</legacyBold>: Ctrl-E to create an empty worksheet,
+Ctrl-W to create a standard worksheet
+</para>
+</listItem>
+</list>
+
+<para>
+If you use the context menu of the project explorer, the new worksheet
+is created in the folder that is currently open, which is the folder
+‘Foo\’ in the figure above. With all other methods, the new worksheet
+is created in the root folder of the project.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="1FE6358D03AFA48B270055D445E2D61C">Creating additional data columns or property columns</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>
