@@ -78,7 +78,7 @@ namespace Altaxo.Text.Renderers
 			var minimumLevel = _amlFileList.Min(x => x.level);
 			var numberOfMinimumLevelTopics = _amlFileList.Count(x => x.level == minimumLevel);
 			// Include image topic file at the end of the maml file list with level = 0
-			_amlFileList.Add((imageTopicFileName, imageTopicFileGuid.ToString(), "Appendix: Images", numberOfMinimumLevelTopics == 1 ? minimumLevel + 1 : minimumLevel, 0));
+			_amlFileList.Add((imageTopicFileName, imageTopicFileGuid, "Appendix: Images", numberOfMinimumLevelTopics == 1 ? minimumLevel + 1 : minimumLevel, 0));
 
 			if (0 == _amlFileList.Count)
 				return;

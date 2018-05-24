@@ -63,11 +63,15 @@ namespace Altaxo.Text.Renderers.Maml
 					renderer.PopToBefore(MamlElements.developerConceptualDocument);
 				}
 
+				// Find a unique address in order for AutoOutline to work
 				var attr = (Markdig.Renderers.Html.HtmlAttributes)obj.GetData(typeof(Markdig.Renderers.Html.HtmlAttributes));
-				if (null != attr && !string.IsNullOrEmpty(attr.Id))
-					renderer.Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", attr.Id) });
-				else
-					renderer.Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", Guid.NewGuid().ToString()) });
+				string uniqueAddress = attr?.Id; // this header has a user defined address
+				if (string.IsNullOrEmpty(uniqueAddress))
+					renderer.HeaderGuids.TryGetValue(obj.Span.Start, out uniqueAddress); // use the guid generated from the hierarchy of titles
+				if (string.IsNullOrEmpty(uniqueAddress))
+					uniqueAddress = Guid.NewGuid().ToString(); // fallback (should not happen): Create Guid
+
+				renderer.Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", uniqueAddress) });
 
 				renderer.Push(MamlElements.title);
 				renderer.WriteLeafInline(obj);

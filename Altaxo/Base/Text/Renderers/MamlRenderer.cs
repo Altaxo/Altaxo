@@ -65,6 +65,22 @@ namespace Altaxo.Text.Renderers
 		private List<(string fileName, string guid, string title, int level, int spanStart)> _amlFileList = new List<(string fileName, string guid, string title, int level, int spanStart)>();
 
 		/// <summary>
+		/// The Guids of all headers.
+		/// Key is the span start of the header block.
+		/// Value is the calculated Guid of the header.
+		/// Guids that will not change with every rendering are essential in order to check in the created files in a version control system.
+		/// By calculating Guids from the header titles we create unique Guids that will only change if the header title change.
+		/// </summary>
+		private Dictionary<int, string> _headerGuids = new Dictionary<int, string>();
+
+		/// The Guids of all headers.
+		/// Key is the span start of the header block.
+		/// Value is the calculated Guid of the header.
+		/// Guids that will not change with every rendering are essential in order to check in the created files in a version control system.
+		/// By calculating Guids from the header titles we create unique Guids that will only change if the header title change.
+		public IDictionary<int, string> HeaderGuids { get { return _headerGuids; } }
+
+		/// <summary>
 		/// The index of the .aml file (in <see cref="_amlFileList"/> that is currently written to.
 		/// </summary>
 		private int _indexOfAmlFile;
@@ -261,14 +277,14 @@ namespace Altaxo.Text.Renderers
 		/// Including this file helps to ensure that all referenced images will be included into the help file.
 		/// </summary>
 		/// <returns>The guid of this .aml file.</returns>
-		public (string fullFileName, Guid guid) WriteImageTopicFile()
+		public (string fullFileName, string guid) WriteImageTopicFile()
 		{
 			var fileName = AmlBaseFileName + "_Images.aml";
 			var tw = new System.IO.StreamWriter(fileName, false, Encoding.UTF8, 1024);
 			this.Writer = tw;
 
-			var guid = Guid.NewGuid();
-			Push(MamlElements.topic, new[] { new KeyValuePair<string, string>("id", guid.ToString()), new KeyValuePair<string, string>("revisionNumber", "1") });
+			var guid = "ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027"; // Guid of image topic file is fixed
+			Push(MamlElements.topic, new[] { new KeyValuePair<string, string>("id", guid), new KeyValuePair<string, string>("revisionNumber", "1") });
 			Push(MamlElements.developerConceptualDocument, new[] { new KeyValuePair<string, string>("xmlns", "http://ddue.schemas.microsoft.com/authoring/2003/5"), new KeyValuePair<string, string>("xmlns:xlink", "http://www.w3.org/1999/xlink") });
 			Push(MamlElements.introduction);
 			Write("This page contains all images used in this help file in native resolution. The ordering of the images is arbitrary.");
@@ -364,7 +380,7 @@ namespace Altaxo.Text.Renderers
 
 				EvaluateMamlFileNames(markdownDocument);
 
-				base.Render(markdownObject);
+				base.Render(markdownDocument);
 			}
 			else
 			{

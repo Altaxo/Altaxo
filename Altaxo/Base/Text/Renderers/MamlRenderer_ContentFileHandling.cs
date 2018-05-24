@@ -53,30 +53,44 @@ namespace Altaxo.Text.Renderers
 			List<string> headerTitles = new List<string>();
 
 			if (markdownDocument[0] is HeadingBlock hbStart)
-				AddMamlFile(hbStart, headerTitles);
+				TryAddMamlFile(hbStart, headerTitles, true);
 			else
 				throw new ArgumentException("The first block of the markdown document should be a heading block! Please add a header on top of your markdown document!");
 
 			for (int i = 1; i < markdownDocument.Count; ++i)
 			{
-				if (markdownDocument[i] is HeadingBlock hb && hb.Level <= SplitLevel)
-					AddMamlFile(hb, headerTitles);
+				if (markdownDocument[i] is HeadingBlock hb)
+				{
+					TryAddMamlFile(hb, headerTitles, false);
+				}
 			}
 		}
 
-		private void AddMamlFile(HeadingBlock headingBlock, List<string> headerTitles)
+		/// <summary>
+		/// Try to add a file name derived from the header. A new file name is added to <see cref="_amlFileList"/> only
+		/// if the level of the heading block is &lt;= SplitLevel.
+		/// Additionally, for all headers a Guid is calculated, which is stored in <see cref="_headerGuids"/>.
+		/// </summary>
+		/// <param name="headingBlock">The heading block.</param>
+		/// <param name="headerTitles">The header titles.</param>
+		/// <param name="forceAddMamlFile">If true, a Maml file entry is added, even if the heading level is &gt; SplitLevel.</param>
+		private void TryAddMamlFile(HeadingBlock headingBlock, List<string> headerTitles, bool forceAddMamlFile)
 		{
-			var fileName = string.Format("{0}{1:D6}.aml", AmlBaseFileName, _amlFileList.Count);
 			var title = ExtractTextContentFrom(headingBlock);
-			var levelM1 = headingBlock.Level - 1;
 
 			// List of header titles from level 1 to ... (in order to get Guid)
 			for (int i = headerTitles.Count - 1; i >= 0; --i)
 				headerTitles.RemoveAt(i);
 			headerTitles.Add(title);
-
 			var guid = CreateGuidFromHeaderTitles(headerTitles);
-			_amlFileList.Add((fileName, guid, title, headingBlock.Level, headingBlock.Span.Start));
+
+			_headerGuids.Add(headingBlock.Span.Start, guid);
+
+			if (headingBlock.Level <= SplitLevel || forceAddMamlFile)
+			{
+				var fileName = string.Format("{0}{1:D6}.aml", AmlBaseFileName, _amlFileList.Count);
+				_amlFileList.Add((fileName, guid, title, headingBlock.Level, headingBlock.Span.Start));
+			}
 		}
 
 		private string CreateGuidFromHeaderTitles(List<string> headerTitles)
@@ -154,7 +168,7 @@ namespace Altaxo.Text.Renderers
 					hasLinkOrOutlineElement = true;
 				}
 
-				if(hasLinkOrOutlineElement)
+				if (hasLinkOrOutlineElement)
 				{
 					Push(MamlElements.markup);
 					Write("<hr/>");
@@ -173,15 +187,14 @@ namespace Altaxo.Text.Renderers
 		{
 			if (null != this.Writer && _currentElementStack.Count > 0)
 			{
-				if (EnableLinkToNextSection && (_indexOfAmlFile + 1) < _amlFileList.Count )
+				if (EnableLinkToNextSection && (_indexOfAmlFile + 1) < _amlFileList.Count)
 				{
-					if(NumberOfElementsOnStack(MamlElements.introduction)>0)
+					if (NumberOfElementsOnStack(MamlElements.introduction) > 0)
 					{
 						// then we are still in the introduction, thus we can place the elements here
 						Push(MamlElements.markup);  // Nasty trick: put a horizontal line outside of the section in order to go from the very left to the very right
 						Write("<hr/>");             // If this trick won't work anymore, put the hr element inside the content as outcommented below
 						PopTo(MamlElements.markup);
-
 					}
 					else
 					{
@@ -196,7 +209,6 @@ namespace Altaxo.Text.Renderers
 						Push(MamlElements.content);
 					}
 
-					
 					// now insert a link to the next section
 
 					// Push(MamlElements.markup); // this is the normal place to put the horizontal line element
