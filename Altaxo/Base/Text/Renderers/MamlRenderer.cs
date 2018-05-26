@@ -81,6 +81,12 @@ namespace Altaxo.Text.Renderers
 		public IDictionary<int, string> HeaderGuids { get { return _headerGuids; } }
 
 		/// <summary>
+		/// Gets a value indicating whether the very first heading block is the parent of all other heading blocks,
+		/// i.e. it has the lowest level, and is the only heading block with that level.
+		/// </summary>
+		public bool FirstHeadingBlockIsParentOfAll { get; private set; }
+
+		/// <summary>
 		/// The index of the .aml file (in <see cref="_amlFileList"/> that is currently written to.
 		/// </summary>
 		private int _indexOfAmlFile;
@@ -232,9 +238,16 @@ namespace Altaxo.Text.Renderers
 
 			// Find a base name for the aml files
 			if (Path.GetExtension(ProjectOrContentFileName).ToLowerInvariant() == ".aml")
+			{
 				AmlBaseFileName = Path.Combine(BasePathName, Path.GetFileNameWithoutExtension(ProjectOrContentFileName));
+			}
 			else
-				AmlBaseFileName = Path.Combine(BasePathName, ContentFolderName, string.IsNullOrEmpty(ContentFileNameBase) ? Path.GetFileNameWithoutExtension(ProjectOrContentFileName) : ContentFileNameBase);
+			{
+				AmlBaseFileName = Path.Combine(BasePathName, ContentFolderName);
+				if (!AmlBaseFileName.EndsWith("" + Path.DirectorySeparatorChar))
+					AmlBaseFileName += Path.DirectorySeparatorChar; // Trick to ensure that is part is recognized as a folder
+				AmlBaseFileName += ContentFileNameBase;
+			}
 
 			ContentLayoutFileName = GetContentLayoutFileName();
 
