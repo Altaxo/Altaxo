@@ -1,0 +1,235 @@
+﻿
+<topic id="9EC02FDB23AEF02047503483B7079F28" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="0F56118543F36CC6A6EB223F48A5B2C2">Creating additional data columns or property columns</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+For plotting commands, you need to select the data columns to plot. For
+copy command, you need to select data columns, data rows and property
+columns that you want to copy. For paste operations, you need to specify
+the place where the data should be pasted.
+</para>
+
+<para>
+For all this, you should be able to select specific data columns, data
+rows or property columns.
+</para>
+
+<para>
+In Altaxo, it is possible to select data columns, property columns and
+data rows, concurrently.
+</para>
+</introduction>
+
+<section address="86BB2E2798FB4203DC002C47F2C86FC9">
+<title>To select data columns:
+</title>
+<content>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Click in the column header of the first data column you want to
+select, without pressing any key on the keyboard. The background
+color of the selected column changes to blue.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+SHIFT-click in the column header of the last data column you want
+to select. All columns between the first selected column and the
+column selected now are selected now, indicated by the blue
+background color. (SHIFT-click means holding the SHIFT key on the
+keyboard pressed while clicking the left mouse button).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Additional columns can be selected by CTRL-click in the column
+header of data columns that are not already selected yet. CTRL-click
+in the column header of an already selected column to deselect it.
+(CTRL-click means holding the CTRL key on the keyboard pressed while
+clicking the left mouse button).
+</para>
+</listItem>
+</list>
+
+<para>
+If you now have only data columns selected, as described above, all data
+rows and all property column cells are affected by the operation.
+</para>
+</content>
+</section>
+
+<section address="A508EE85C601347F8D41A4F7BC174E95">
+<title>To select specific data rows:
+</title>
+<content>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Click in the data row header of the first data row you want
+to select. If data columns or property columns are selected already,
+you should use CTRL-click instead, in order to keep the
+existing selection(s).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+SHIFT-click in the row header of the last data row you want
+to select.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Additional data rows can be selected by using CTRL-click in the row
+header of data rows that are not selected yet. Likewise, CTRL-click
+in the row header of already selected data rows will unselect them.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="6ED85BE6DBAD7774A4EF3CC6B3B9192C">
+<title>To select specific property columns:
+</title>
+<content>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Click in the property column header of the first property column you
+want to select, without pressing any key on the keyboard. The
+background color of the selected column changes to blue. If you
+already have data columns or data rows selected, you should use
+CTRL-click instead, in order to keep the existing selection(s).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+SHIFT-click in the property column header of the last property
+column you want to select. All property columns between the first
+selected property column and the property column selected now are
+selected, indicated by the blue background color.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Additional property columns can be selected by CTRL-click in the
+column header of property columns that are not already selected yet.
+CTRL-click in the property column header of an already selected
+property column to deselect it.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="009360DD1C44007C345033FD1D5C953D">
+<title>Example of a selection
+</title>
+<content>
+
+<para>
+<markup><img src="../media/9BA76B45EEE12F560B8344BB75DE93D6.png" width="567"></img></markup>
+</para>
+
+<para>
+The Figure above shows the result after you:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Clicked on the data column header of data column B
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+SHIFT-clicked on the data column header of data column D (to select
+columns B, C, and D)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+CTRL-clicked on data column header of column F (to additionally
+select data column F)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+CTRL-clicked on the property column header of property column B (to
+select it)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+CTRL-clicked on the data row [2] (to first select data row 2)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+SHIFT-clicked on data row [4] (to selected data rows 2 to 4)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+CTRL-clicked on the data row [7] (to additionally select data
+row 7)
+</para>
+</listItem>
+</list>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="F71D3901373F20479F4C3575F2838494">Copy/paste of worksheet data</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

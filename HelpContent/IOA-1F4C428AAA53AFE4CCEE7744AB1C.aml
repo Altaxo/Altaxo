@@ -1,0 +1,25 @@
+﻿
+<topic id="1F4C428AAA53AFE4CCEE7744AB1CB94F" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="1B7FE024E7E614BFA13DAA1FD005CB2E">Altaxo user manual</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Installation of Altaxo can be a matter of Copy-and-Paste. If you want to use some advanced possibilities, for instance embedding Altaxo graphs into Word-Documents, you will need to execute some additional steps.
+</para>
+
+<para>
+Altaxo requires the .Net framework version 4.6 being installed on your computer. Since it is not possible to install .Net framework 4.6 on Windows XP, it is no longer possible to install Altaxo on Windows XP.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="FB292AFF9A439E8CD0E9A6A6770023DB">Installation by Copy-and-Paste on Windows 7, 8.1 and 10</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

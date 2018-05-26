@@ -1,0 +1,25 @@
+﻿
+<topic id="682F12AAF3087ADE24CCF36B3632B5EF" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="F3F39DE287E6F866C4CE91FCB7269D42">Concepts</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+To plot a line, a scatter or a line-scatter plot, select a V column in the worksheet and press one of the plot buttons in the toolbar or from the menu select <codeInline>Plot</codeInline>→<codeInline>Line</codeInline> (or <codeInline>Plot</codeInline>→<codeInline>Scatter</codeInline> or <codeInline>Plot</codeInline>→<codeInline>Line_Scatter</codeInline> respectively). The data of the selected V column is then plotted versus the corresponding X column. Remember that the corresponding X column is a column with the same group number as the V column, but which is designated as X column.
+</para>
+
+<para>
+To create a graph with multiple plot curves, just select multiple V columns in the worksheet before creating the graph. It is even possible to use V columns with different group numbers.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="AE99705CE5CA5220BF3FC52F74759A97">Modifying a graph</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

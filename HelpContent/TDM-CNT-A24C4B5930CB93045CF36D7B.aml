@@ -1,0 +1,95 @@
+﻿
+<topic id="A24C4B5930CB93045CF36D7BC6CA80FE" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="DDBD66CF333D18EB1803BCA37D9CAA16">Credits</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+You can create a new text document using
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+from the main menu <codeInline>File → New → Note</codeInline>. The new text document is then created in the root folder of the project.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+by right-clicking into a folder in the projects tool window, and choose either <codeInline>New → Note</codeInline> or <codeInline>New → FolderNote</codeInline>. The new text document is then created in the project folder you have chosen.
+</para>
+</listItem>
+</list>
+
+<quote>
+
+<para>
+<legacyBold>Note:</legacyBold><lineBreak/>
+A folder text document has a full name which ends with a backslash. Thus its short name is empty.<lineBreak/>
+<legacyBold>Example:</legacyBold><lineBreak/>
+The text document with the full name <codeInline>Foo\</codeInline> is shown with the name <codeInline>FolderNote</codeInline> in the folder <codeInline>Foo</codeInline>, although its real short name is empty.
+</para>
+</quote>
+
+<para>
+Once you have create a new text document, a new document window is shown, which consists of two sub windows. One of them is the window in which you write the Markdown text. The other window is the preview window, which shows you the formatted text from your parsed markdown document.
+</para>
+
+<para>
+The syntax you can use to influence the text formatting is described <link xlink:href="7AD46D6F6240C74A082EDB8AF75927C2#MarkdownSyntaxInAltaxo">in the next chapter</link>.
+</para>
+
+<para>
+Moreover, you can choose the arrangement of your editor window and your preview window, which is described <link xlink:href="D81BAB079B701CE4975A6890157D3C46#TextDocumentEditorAndPreviewWindow">here</link>.
+</para>
+
+<para>
+Furthermore, other options are available:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+switch on/off line numbering in the editor window
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+switch on/off folding in the editor window
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+switch on/off word wrapping in the editor window
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+switch on/off spell checking in the preview window
+</para>
+</listItem>
+</list>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="7AD46D6F6240C74A082EDB8AF75927C2">Syntax</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

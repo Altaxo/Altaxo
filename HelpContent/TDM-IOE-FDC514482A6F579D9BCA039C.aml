@@ -1,0 +1,21 @@
+﻿
+<topic id="FDC514482A6F579D9BCA039C57ADBCCF" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="847834D0535C024B5119381901BD4B65">Concatenate two text documents</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+It is possible to import markdown files. Choose <codeInline>File → Import → Markdown file..</codeInline> and select the markdown file you want to import. By pressing OK, the Markdown file is imported into a new Text item. Additionally, all images the markdown file refers to are imported as local files into the Text item.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="7029CC1C058EA6FCB5510AA6650B7407">Export of a text document</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

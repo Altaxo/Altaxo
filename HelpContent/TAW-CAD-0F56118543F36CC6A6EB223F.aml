@@ -1,0 +1,37 @@
+﻿
+<topic id="0F56118543F36CC6A6EB223F48A5B2C2" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="6FAC01304D7EC3D8AE1C724CA084256B">Creating a new worksheet</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+New data columns can be added by choosing from the main menu
+Worksheet→Add data columns. A dialog opens (see Figure below).
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="AB6EB7DDBF7AF80F71D68A2A09E3827A"></image></mediaLinkInline>
+</para>
+
+<para>
+Choose the number of columns you want to add, and the type of data
+(numeric, date/time, or text) that the column(s) should store. After you
+click OK, the new column(s) are added with a default name.
+</para>
+
+<para>
+Likewise, you can add new property columns by choosing from the main
+menu Worksheet→Add property columns.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="9EC02FDB23AEF02047503483B7079F28">Selection of columns and/or rows in a worksheet</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

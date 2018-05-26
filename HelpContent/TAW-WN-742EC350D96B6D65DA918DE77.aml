@@ -1,0 +1,35 @@
+﻿
+<topic id="742EC350D96B6D65DA918DE77373E534" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="B09D5D470B8DCF524A698117E51D308B">Changing the structure of a worksheet</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+To every worksheet belongs notes text. You can view and edit the notes
+text.
+</para>
+
+<para>
+To do this, make the worksheet the current document. Then make sure,
+that the Notes tool window is shown. If it is not shown, make it visible
+by choosing View→Notes from the main menu or pressing CTRL+ALT+N at
+the keyboard. You can then visit, add or edit the text in the notes
+window.
+</para>
+
+<para>
+Some operations, for instance importing ASCII text into a worksheet,
+will add some information to the notes text automatically.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="51AB2CB3ECBAFD1DD0F029C0B45B8046">Worksheet Scripts and Column Scripts</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

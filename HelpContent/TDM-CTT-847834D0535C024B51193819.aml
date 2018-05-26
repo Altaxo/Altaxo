@@ -1,0 +1,21 @@
+﻿
+<topic id="847834D0535C024B5119381901BD4B65" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="D81BAB079B701CE4975A6890157D3C46">Usage (of the editor and preview window)</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+To concatenate two text documents, you can always copy-paste markdown text from one text document to another. But in this way you can not copy local images! To copy both the markdown text <legacyBold>and</legacyBold> the local images stored into the text document, use the main menu command <codeInline>Edit → Copy Specific → Copy text with images</codeInline>. Then put your cursor at some place in the other text document, and use <codeInline>CTRL-C</codeInline> or <codeInline>Edit → Paste</codeInline> to paste the markdown text and the local images into this text document.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="FDC514482A6F579D9BCA039C57ADBCCF">Import of existing Markdown files</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

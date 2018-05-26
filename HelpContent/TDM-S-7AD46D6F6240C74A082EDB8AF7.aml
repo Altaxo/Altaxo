@@ -1,0 +1,450 @@
+﻿
+<topic id="7AD46D6F6240C74A082EDB8AF75927C2" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="A24C4B5930CB93045CF36D7BC6CA80FE">Create a new text document</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+There are a lot of good tutorials for Markdown syntax available, so have a look there! A good starting point is <externalLink><linkText>Wikipedia</linkText><linkUri>https://en.wikipedia.org/wiki/Markdown</linkUri></externalLink> and the references therein. In the next sections, only specialties of Markdown in Altaxo is addressed.
+</para>
+</introduction>
+
+<section address="7A98C22B2AA6046882462E6538F0B9E8">
+<title>Including 2D and 3D graphs from Altaxo
+</title>
+<content>
+
+<para>
+You can include graphs (2D and 3D) from your current Altaxo project. The graph is referenced by name, either with the absolute path name, or relative to your markdown document. The Url of an absolute graph name starts with <codeInline>graph://</codeInline>, the Url of a relative path name starts with <codeInline>graph:</codeInline>.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Example:</legacyBold><lineBreak/>
+Assuming your graph is named <codeInline>Foo\Bar\GRAPH0</codeInline> and your Markdown document is named <codeInline>Foo\Note0</codeInline>:<lineBreak/>
+To include the graph with absolute name in your document, use:<lineBreak/>
+<codeInline>![](graph://Foo\Bar\GRAPH0)</codeInline><lineBreak/>
+To include the graph with the relative name (relative to the folder 'Foo', in which your Markdown document is located), use:<lineBreak/>
+<codeInline>![](graph:Bar\GRAPH0)</codeInline>
+</para>
+</quote>
+
+<para>
+At the time of writing, when you change a graph in Altaxo, the included graph in the Markdown document is <legacyBold>not</legacyBold> automatically updated. Press <codeInline>F5</codeInline> to update your document and all included graphs. Also, if you rename a graph, the Urls in the markdown document are not updated automatically.
+</para>
+
+<sections>
+
+<section address="SpecifyAltaxoGraphNames">
+<title>Specifying names of Altaxo graphs
+</title>
+<content>
+
+<para>
+Sometimes, you have to specify graph names that contain special characters. For instance, a graph name may contain a space or a slash. You can specify those names by replacing space with <codeInline>%20</codeInline> and slash with <codeInline>%2F</codeInline>.
+</para>
+
+<para>
+Graphs will be searched in the following order, using the originally specified name and some modifications:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+first of all, the originally specified graph name will be tried
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+the original name is modified by replacing slashes by backslashes, and the modified name is tried then
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+the original specified graph name is modified by decoding sequences such as <codeInline>%20</codeInline> to their corresponding character, and the modified name is tried then
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+the original specified graph name is modified by decoding sequences such as <codeInline>%20</codeInline> to their corresponding character, and then slashes are replaced by backslashes, and the modified name is tried then
+</para>
+</listItem>
+</list>
+
+<quote>
+
+<para>
+<legacyBold>Example 1:</legacyBold>
+</para>
+
+<para>
+You have a graph named <codeInline>Weather yesterday</codeInline> in the Altaxo root folder.  Then you can specify it using:
+</para>
+
+<para>
+<codeInline>![](graph://Weather%20yesterday)</codeInline>
+</para>
+</quote>
+
+<quote>
+
+<para>
+<legacyBold>Example 2:</legacyBold>
+</para>
+
+<para>
+You have a graph named <codeInline>//SomeGraph</codeInline> in the folder <codeInline>Foo</codeInline>, and your text document is located in this folder, too.  Then you can specify the graph using the relative path:
+</para>
+
+<para>
+<codeInline>![](graph:%2F%2FSomeGraph)</codeInline>
+</para>
+
+<para>
+Please note that if you would have used instead:
+<codeInline>![](graph://SomeGraph)</codeInline>
+the graph name would be interpreted as absolute name, and the graph would be searched in the document's root folder instead.
+</para>
+</quote>
+</content>
+</section>
+</sections>
+</content>
+</section>
+
+<section address="267EB012E8F174C0AFDD439197E4BE22">
+<title>Including images from the file system or the clipboard
+</title>
+<content>
+
+<para>
+You can include images either from the file system or from the clipboard. To include images from the file system, select the image in Explorer, select <codeInline>Copy</codeInline> or press <codeInline>Ctrl-C</codeInline>. Then click in the source text of your markdown document, and choose <codeInline>Paste</codeInline> from the edit menu or press <codeInline>Ctrl-V</codeInline>. The image is then stored in the local image store in Altaxo, and is referenced with a long Url, which starts with <codeInline>local:</codeInline>.
+</para>
+
+<para>
+To include an image from the clipboard, click in the source text of your markdown document, and choose <codeInline>Paste</codeInline> from the edit menu or press <codeInline>Ctrl-V</codeInline>. The image is then stored in the local image store in Altaxo, and is referenced with a long Url, which starts with <codeInline>local:</codeInline>.
+</para>
+
+<sections>
+
+<section address="EB45F6EB7F62C24CAC712F1B623C099F">
+<title>Resizing graphs and images
+</title>
+<content>
+
+<para>
+You can give an image the size you want by appending an attribute to the image.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Example:</legacyBold>
+</para>
+
+<para>
+<codeInline>![](graph://Foo\Bar\GRAPH0){width=5cm}</codeInline>
+</para>
+
+<para>
+will resize your graph to a width of 5 cm. Please note that there must be no spaces in the attribute=value assignment, e.g. neither <codeInline>width=5 cm</codeInline> will work, nor <codeInline>width= 5cm</codeInline>.
+</para>
+</quote>
+
+<para>
+To specify a height instead, use <codeInline>height=value</codeInline> likewise. You can even specify <codeInline>width</codeInline> and <codeInline>height</codeInline>, but then the aspect ratio of your image is not preserved.
+</para>
+
+<para>
+Currently, the following units will be recognized: <codeInline>mm</codeInline>, <codeInline>cm</codeInline>, <codeInline>in</codeInline>, <codeInline>pt</codeInline> (1/72<superscript>nd</superscript> inch), and <codeInline>px</codeInline> (1/96<superscript>th</superscript> inch).
+</para>
+</content>
+</section>
+</sections>
+</content>
+</section>
+
+<section address="354F166B74A877BEA2C4EFA29CA8894B">
+<title>Including formulas
+</title>
+<content>
+
+<para>
+You can include formulas, using <externalLink><linkText>LaTeX</linkText><linkUri>https://en.wikibooks.org/wiki/LaTeX/Mathematics</linkUri></externalLink> notation. Formulas can either be included inline, i.e. in a line with other text, or in an extra line.
+</para>
+
+<para>
+To include a formula inline, use a single dollar sign at the start and the end of the formula.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Example:</legacyBold><lineBreak/>
+<codeInline>$f(x) = \frac{\sin(x)}{x}$</codeInline> renders to: <markup><img src="../media/231A01EB7C0F4EF681AA2E7FB31E82E1.png" align="middle" width="88" height="43"></img></markup>
+</para>
+</quote>
+
+<para>
+Note that here we have no space between the dollar sign and the start of the formula text, nor a dollar sign between the end of the formula and the right dollar sign. You can also include spaces on both sides, but you can not mix, i.e. use a space at the start and no space at the end or vice versa. Furthermore, the markdown then might be incompatible with other renderers, e.g. <externalLink><linkText>Pandoc</linkText><linkUri>https://pandoc.org</linkUri></externalLink>.
+</para>
+
+<para>
+Formulas on an extra line start and end with two dollar signs. The dollar signs have to be on separate lines. The formula is then horizontally centered on the page.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Example:</legacyBold>
+</para>
+
+<code>
+$$ 
+f(x) = \sqrt[n]{x+x^2+x^5}
+$$
+</code>
+
+<para>
+renders to:
+</para>
+<markup><img src="../media/ACCACB429D15A747CCEE0850BBB9639B.png" width="139" height="20"></img></markup></quote>
+</content>
+</section>
+
+<section address="BBE2CA19226D038CC768968482F27BD0">
+<title>Special characters
+</title>
+<content>
+
+<para>
+You can include special characters using HTML symbol entities. For instance, <codeInline>&amp;pound;</codeInline> renders to £, <codeInline>&amp;forall;</codeInline> renders to ∀, <codeInline>&amp;frac78;</codeInline> renders to ⅞. A table with such characters can be found in the internet, for instance <externalLink><linkText>here</linkText><linkUri>https://www.w3schools.com/html/html_symbols.asp</linkUri></externalLink>.
+</para>
+
+<para>
+If you don't found here what you want, you can also include any Unicode character. Use the Windows character map to include such a character. Please note that the font that is used to display the preview of your markdown document may not support all Unicode characters.
+</para>
+</content>
+</section>
+
+<section address="1AAEEE4751DAEC3E6ED0E29676090A43">
+<title>Markdown extensions
+</title>
+<content>
+
+<para>
+Some extensions to the standard markdown syntax can be used in Altaxo (in fact, the formulas from the previous section are already such an extension).
+</para>
+
+<sections>
+
+<section address="7E056773A3A1FEAED3B6A973316E48F0">
+<title>Piped table extension
+</title>
+<content>
+
+<para>
+You can write tables using the following syntax (borrowed from  <externalLink><linkText>readme.md of markdig</linkText><linkUri>https://github.com/lunet-io/markdig/blob/master/readme.md</linkUri></externalLink>):
+</para>
+
+<code>
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
+</code>
+
+<para>
+renders to:
+</para>
+
+<table>
+
+<tableHeader>
+
+<row>
+<entry>
+<para>
+Tables
+</para>
+</entry><entry>
+<para>
+Are
+</para>
+</entry><entry>
+<para>
+Cool
+</para>
+</entry></row>
+</tableHeader>
+
+<row>
+<entry>
+<para>
+col 3 is
+</para>
+</entry><entry>
+<para>
+right-aligned
+</para>
+</entry><entry>
+<para>
+$1600
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+col 2 is
+</para>
+</entry><entry>
+<para>
+centered
+</para>
+</entry><entry>
+<para>
+$12
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+zebra stripes
+</para>
+</entry><entry>
+<para>
+are neat
+</para>
+</entry><entry>
+<para>
+$1
+</para>
+</entry></row>
+</table>
+
+<para>
+Note that the actual appearance of the table depends on the rendering device. For instance, in Altaxo's Wpf rendering, and in help files build with the <link xlink:href="7029CC1C058EA6FCB5510AA6650B7407#MamlExportOfMarkdownDocuments">Maml export feature</link>, tables will always take the full width of the document. Additionally, <link xlink:href="7029CC1C058EA6FCB5510AA6650B7407#MamlExportOfMarkdownDocuments">Maml export</link> does not support alignment of table columns.
+</para>
+
+<section address="D21AB19DB1FF38758D04AF5DC7254099">
+<title>Task list extension
+</title>
+<content>
+
+<para>
+Write task lists using the following syntax:
+</para>
+
+<code>
+- [ ] Item1
+- [x] Item2
+	- [x] SubItem21
+- [ ] Item3
+- Item4
+</code>
+
+<para>
+renders to:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+ Item1
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+ Item2
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+ SubItem21
+</para>
+</listItem>
+</list>
+</listItem>
+
+<listItem>
+
+<para>
+ Item3
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Item4
+</para>
+</listItem>
+</list>
+
+<section address="ExtensionToIncludeChildMarkdownDocuments">
+<title>Extension to include child markdown documents
+</title>
+<content>
+
+<para>
+You can include child markdown documents using syntax similar to a code block. The following code will include a child document named <codeInline>Chapter1\Text</codeInline> into the master document:
+</para>
+
+<code>
+```{Altaxo child=&quot;Chapter1\Text&quot;}
+Chapter1 - Title
+```
+</code>
+
+<para>
+The text <codeInline>Chapter1 - Title</codeInline> inside of the code block is optional and is only for the user to visualize what he is including.
+</para>
+
+<para>
+The master document can be expanded later, for instance during export to <link xlink:href="7029CC1C058EA6FCB5510AA6650B7407#MamlExportOfMarkdownDocuments">Maml</link> or to an <link xlink:href="7029CC1C058EA6FCB5510AA6650B7407#MarkdownExportOfMarkdownDocuments">external Markdown document</link>.
+</para>
+</content>
+</section>
+</content>
+</section>
+</content>
+</section>
+</sections>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="D81BAB079B701CE4975A6890157D3C46">Usage (of the editor and preview window)</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>
