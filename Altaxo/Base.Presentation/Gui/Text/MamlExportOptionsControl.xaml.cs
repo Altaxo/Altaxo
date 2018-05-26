@@ -42,9 +42,9 @@ namespace Altaxo.Gui.Text
 	/// <summary>
 	/// Interaction logic for MamlExportOptionsView.xaml
 	/// </summary>
-	public partial class MamlExportOptionsView : UserControl, IMamlExportOptionsView
+	public partial class MamlExportOptionsControl : UserControl, IMamlExportOptionsView
 	{
-		public MamlExportOptionsView()
+		public MamlExportOptionsControl()
 		{
 			InitializeComponent();
 		}
