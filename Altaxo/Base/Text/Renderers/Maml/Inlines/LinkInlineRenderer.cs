@@ -102,7 +102,7 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
 			if (null != renderer.OldToNewImageUris && renderer.OldToNewImageUris.ContainsKey(url))
 				url = renderer.OldToNewImageUris[url];
 
-			if (width == null && height == null)
+			if (width == null && height == null) // if we include the image in its native resolution, we do not need a link to the native resolution image
 			{
 				string localUrl = System.IO.Path.GetFileNameWithoutExtension(url);
 
@@ -127,9 +127,9 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
 
 				renderer.Push(MamlElements.markup);
 
-				renderer.Push(MamlElements.img, attributes);
+				renderer.Push(MamlElements.a, new[] { new KeyValuePair<string, string>("href", "html/" + renderer.ImageTopicFileGuid + ".htm" + "#img" + localUrl) });
 
-				renderer.PopTo(MamlElements.img);
+				renderer.Push(MamlElements.img, attributes);
 
 				renderer.PopTo(MamlElements.markup);
 			}

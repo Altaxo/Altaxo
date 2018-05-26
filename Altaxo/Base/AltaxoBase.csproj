@@ -290,6 +290,7 @@
     <Compile Include="Text\Renderers\MamlRenderer.cs" />
     <Compile Include="Text\Renderers\MamlRenderer_ContentFileHandling.cs" />
     <Compile Include="Text\Renderers\MamlRenderer_ContentLayoutFileHandling.cs" />
+    <Compile Include="Text\Renderers\MamlRenderer_ImageTopicFileHandling.cs" />
     <Compile Include="Text\Renderers\MamlRenderer_ImageFileHandling.cs" />
     <Compile Include="Text\Renderers\Maml\Extensions\MathBlockRenderer.cs" />
     <Compile Include="Text\Renderers\Maml\Extensions\MathInlineRenderer.cs" />

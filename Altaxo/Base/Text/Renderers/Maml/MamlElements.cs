@@ -47,6 +47,7 @@ namespace Altaxo.Text.Renderers.Maml
 	/// </summary>
 	public static class MamlElements
 	{
+		public static MamlElement a { get; private set; } = new MamlElement("a", true);
 		public static MamlElement code { get; private set; } = new MamlElement("code", false);
 		public static MamlElement codeInline { get; private set; } = new MamlElement("codeInline", true);
 		public static MamlElement content { get; private set; } = new MamlElement("content", false);
