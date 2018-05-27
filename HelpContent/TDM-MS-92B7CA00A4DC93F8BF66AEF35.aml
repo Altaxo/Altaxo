@@ -1,12 +1,12 @@
 ﻿
-<topic id="7AD46D6F6240C74A082EDB8AF75927C2" revisionNumber="1">
+<topic id="92B7CA00A4DC93F8BF66AEF350E77316" revisionNumber="1">
 
 <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
 
 <introduction>
 
 <para>
-Previous section: <link xlink:href="A24C4B5930CB93045CF36D7BC6CA80FE">Create a new text document</link></para>
+Previous section: <link xlink:href="48C59E28BE6B00A86532E9BAF2E3867B">Rename a text document</link></para>
 <autoOutline />
 <markup><hr/></markup>
 
@@ -15,7 +15,7 @@ There are a lot of good tutorials for Markdown syntax available, so have a look 
 </para>
 </introduction>
 
-<section address="7A98C22B2AA6046882462E6538F0B9E8">
+<section address="6C9636B5ECE4C7B0B1D9874523682BF8">
 <title>Including 2D and 3D graphs from Altaxo
 </title>
 <content>
@@ -127,7 +127,7 @@ the graph name would be interpreted as absolute name, and the graph would be sea
 </content>
 </section>
 
-<section address="267EB012E8F174C0AFDD439197E4BE22">
+<section address="0972867E70F2ABC0FA0D744AA58109AA">
 <title>Including images from the file system or the clipboard
 </title>
 <content>
@@ -142,7 +142,7 @@ To include an image from the clipboard, click in the source text of your markdow
 
 <sections>
 
-<section address="EB45F6EB7F62C24CAC712F1B623C099F">
+<section address="69C803D858203A91253299E9ED1BDB9C">
 <title>Resizing graphs and images
 </title>
 <content>
@@ -179,7 +179,7 @@ Currently, the following units will be recognized: <codeInline>mm</codeInline>, 
 </content>
 </section>
 
-<section address="354F166B74A877BEA2C4EFA29CA8894B">
+<section address="DBB590EF85CF1397F2E4BDD3D91658A1">
 <title>Including formulas
 </title>
 <content>
@@ -227,7 +227,7 @@ renders to:
 </content>
 </section>
 
-<section address="BBE2CA19226D038CC768968482F27BD0">
+<section address="3D916BB3FE58D60ADF15B281D55E5852">
 <title>Special characters
 </title>
 <content>
@@ -242,7 +242,7 @@ If you don't found here what you want, you can also include any Unicode characte
 </content>
 </section>
 
-<section address="1AAEEE4751DAEC3E6ED0E29676090A43">
+<section address="6A6E755B84FEE2C567A1C4DCB7D11532">
 <title>Markdown extensions
 </title>
 <content>
@@ -253,7 +253,7 @@ Some extensions to the standard markdown syntax can be used in Altaxo (in fact, 
 
 <sections>
 
-<section address="7E056773A3A1FEAED3B6A973316E48F0">
+<section address="13FE656586E264228A72683CCB8654E1">
 <title>Piped table extension
 </title>
 <content>
@@ -344,7 +344,7 @@ $1
 Note that the actual appearance of the table depends on the rendering device. For instance, in Altaxo's Wpf rendering, and in help files build with the <link xlink:href="7029CC1C058EA6FCB5510AA6650B7407#MamlExportOfMarkdownDocuments">Maml export feature</link>, tables will always take the full width of the document. Additionally, <link xlink:href="7029CC1C058EA6FCB5510AA6650B7407#MamlExportOfMarkdownDocuments">Maml export</link> does not support alignment of table columns.
 </para>
 
-<section address="D21AB19DB1FF38758D04AF5DC7254099">
+<section address="FBD8E8331B88E771D2453257CA69F523">
 <title>Task list extension
 </title>
 <content>

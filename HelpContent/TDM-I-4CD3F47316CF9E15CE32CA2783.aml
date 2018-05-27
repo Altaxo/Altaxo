@@ -27,7 +27,7 @@ The following graph was created using this markdown:
 </code>
 
 <para>
-Please note that the Url starts with <codeInline>graph://</codeInline>, which means that the name part which follows is considered as the absolute path to the graph in your Altaxo document. To use relative path names, the Url has to start with <codeInline>graph:</codeInline> (i.e. without the two slashes). There are more rules, e.g. if the path contains spaces and special chars, which will be considered <link xlink:href="7AD46D6F6240C74A082EDB8AF75927C2#SpecifyAltaxoGraphNames">later</link>.
+Please note that the Url starts with <codeInline>graph://</codeInline>, which means that the name part which follows is considered as the absolute path to the graph in your Altaxo document. To use relative path names, the Url has to start with <codeInline>graph:</codeInline> (i.e. without the two slashes). There are more rules, e.g. if the path contains spaces and special chars, which will be considered <link xlink:href="92B7CA00A4DC93F8BF66AEF350E77316#SpecifyAltaxoGraphNames">later</link>.
 </para>
 
 <para>

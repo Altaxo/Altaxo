@@ -1,0 +1,38 @@
+﻿
+<topic id="344B9F731295BD2A097EAF6446E9370C" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="A24C4B5930CB93045CF36D7BC6CA80FE">Create a new text document</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Since pressing the <codeInline>Delete</codeInline> key is a rather frequent operation with text document, I decided not to support the usage of the <codeInline>Delete</codeInline> key in order to delete the text document. Rather, there are two other ways to delete an existing text document:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+In the Project Explorer, click onto the text document item to select it, and then press the <codeInline>Delete</codeInline> key or right-click with the mouse onto the text document item and choose <codeInline>Delete</codeInline> from the context menu.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Right click on the tab header of the text document, and choose <codeInline>Delete</codeInline> from the context menu there.
+</para>
+</listItem>
+</list>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="48C59E28BE6B00A86532E9BAF2E3867B">Rename a text document</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

@@ -46,7 +46,7 @@ Once you have create a new text document, a new document window is shown, which 
 </para>
 
 <para>
-The syntax you can use to influence the text formatting is described <link xlink:href="7AD46D6F6240C74A082EDB8AF75927C2#MarkdownSyntaxInAltaxo">in the next chapter</link>.
+The syntax you can use to influence the text formatting is described <link xlink:href="92B7CA00A4DC93F8BF66AEF350E77316#MarkdownSyntaxInAltaxo">in the next chapter</link>.
 </para>
 
 <para>
@@ -89,7 +89,7 @@ switch on/off spell checking in the preview window
 </list>
 <markup><hr/></markup>
 <para>
-Next section: <link xlink:href="7AD46D6F6240C74A082EDB8AF75927C2">Syntax</link></para>
+Next section: <link xlink:href="344B9F731295BD2A097EAF6446E9370C">Delete an existing text document</link></para>
 </introduction>
 </developerConceptualDocument>
 </topic>

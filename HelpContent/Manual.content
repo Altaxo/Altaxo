@@ -54,7 +54,11 @@
 </Topic>
 <Topic id="A24C4B5930CB93045CF36D7BC6CA80FE" visible="True" title="Create a new text document">
 </Topic>
-<Topic id="7AD46D6F6240C74A082EDB8AF75927C2" visible="True" title="Syntax">
+<Topic id="344B9F731295BD2A097EAF6446E9370C" visible="True" title="Delete an existing text document">
+</Topic>
+<Topic id="48C59E28BE6B00A86532E9BAF2E3867B" visible="True" title="Rename a text document">
+</Topic>
+<Topic id="92B7CA00A4DC93F8BF66AEF350E77316" visible="True" title="Markdown syntax">
 </Topic>
 <Topic id="D81BAB079B701CE4975A6890157D3C46" visible="True" title="Usage (of the editor and preview window)">
 </Topic>

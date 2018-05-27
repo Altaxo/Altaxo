@@ -68,7 +68,35 @@ To export to Maml, choose from the main menu <codeInline>File → Export to Maml
 <listItem>
 
 <para>
+<legacyItalic>Folder name for content</legacyItalic>: folder name relative to the base directory (see below), in which the exported .aml files with the help contents are stored.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Remove all old contents of content folder</legacyItalic>: By checking this, all .aml and .content files in the content folder will be deleted before the export. Use this option with care!&quot;
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Base file name of content files</legacyItalic>: A text string that is set as start for every content (.aml) file name. Can be left empty, because the exporter will generate meaningful file names for the content files.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
 <legacyItalic>Folder name for images</legacyItalic>: folder name relative to the base directory (see below), in which the exported figures and formulas are stored.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Remove all old contents of image folder</legacyItalic>: By checking this, all .png, .jpg, .jpeg, .tif files in the image folder will be deleted prior to export. Use this option with care!
 </para>
 </listItem>
 
@@ -89,7 +117,7 @@ To export to Maml, choose from the main menu <codeInline>File → Export to Maml
 <listItem>
 
 <para>
-<legacyItalic>Link to previous section label text</legacyItalic>: here you can give a text fragment that precede the link to the previous section. Note that you probably want to include a space at the end of the text in order to separate the label from the link.
+<legacyItalic>Link to previous section label text</legacyItalic>: here you can give a text fragment that precedes the link to the previous section. Note that you probably want to include a space at the end of the text in order to separate the label from the link.
 </para>
 </listItem>
 
@@ -103,14 +131,14 @@ To export to Maml, choose from the main menu <codeInline>File → Export to Maml
 <listItem>
 
 <para>
-<legacyItalic>Link to next section label text</legacyItalic>: here you can give a text fragment that precede the link to the next section. Note that you probably want to include a space at the end of the text in order to separate the label from the link.
+<legacyItalic>Link to next section label text</legacyItalic>: here you can give a text fragment that precedes the link to the next section. Note that you probably want to include a space at the end of the text in order to separate the label from the link.
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<legacyItalic>Expand child documents</legacyItalic>: by enabling this option, child documents included with the <link xlink:href="7AD46D6F6240C74A082EDB8AF75927C2#ExtensionToIncludeChildMarkdownDocuments">extension to include child Markdown documents</link> are expanded before export.
+<legacyItalic>Expand child documents</legacyItalic>: by enabling this option, child documents included with the <link xlink:href="92B7CA00A4DC93F8BF66AEF350E77316#ExtensionToIncludeChildMarkdownDocuments">extension to include child Markdown documents</link> are expanded before export.
 </para>
 </listItem>
 
@@ -138,7 +166,7 @@ To export to Maml, choose from the main menu <codeInline>File → Export to Maml
 <listItem>
 
 <para>
-<legacyItalic>Output file name</legacyItalic>: please provide here the name of the Sandcastle help file builder project file. If you don't want the use the Maml files with Sandcastle help file builder, you can specify any other file name. The file name is then used as base to derive the file names for the Maml files, and the file name of the content layout file. Additionally, the directory where the file is located in, is used as base directory for other subdirectories, for instance the Image subdirectory.
+<legacyItalic>Output file name</legacyItalic>: please provide here the name of the Sandcastle help file builder project file. If you don't want the use the Maml files with Sandcastle help file builder, you can specify any other file name. The file name is then used as base to derive the file name of the content layout file. Additionally, the directory where the file is located in, is used as base directory for other subdirectories, for instance the Image subdirectory.
 </para>
 </listItem>
 
@@ -149,6 +177,22 @@ To export to Maml, choose from the main menu <codeInline>File → Export to Maml
 </para>
 </listItem>
 </list>
+
+<quote>
+
+<para>
+<legacyBold>Note:</legacyBold><lineBreak/>
+The generation of the file names of the help content files (.aml) is done as following:
+</para>
+
+<para>
+Use the hierarchy of the first (maximal three) title levels. If there is only one first level header, ignore it. From each title use from the first three words the first alphanumerical letter of each word. To the generated string, a guid string is appended that is generated from the full hierarchy of titles.
+</para>
+
+<para>
+In this way, as long as the title (and the parent titles) do not change, the file name and the Guid of the file will stay the same, which is very important when you use these files with a version control system!
+</para>
+</quote>
 </content>
 </section>
 <markup><hr/></markup>

@@ -1,0 +1,29 @@
+﻿
+<topic id="48C59E28BE6B00A86532E9BAF2E3867B" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="344B9F731295BD2A097EAF6446E9370C">Delete an existing text document</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+A text document can be renamed in the same way as any other <link xlink:href="2783FED4411F72EE01B8906649201D84#ProjectItems">project item</link>.
+</para>
+
+<para>
+If you like to edit the <link xlink:href="2783FED4411F72EE01B8906649201D84#NamesOfProjectItems">full name</link> of the item, right-click on the document tab, and choose <codeInline>Rename ..</codeInline>. The dialog that opens allows to edit the full name of the text document. The same dialog opens if you use the <codeInline>Rename ..</codeInline> command from the context menu of the text document item listed in the Project Explorer.
+</para>
+
+<para>
+If you like to edit the <link xlink:href="2783FED4411F72EE01B8906649201D84#NamesOfProjectItems">short name part</link> of the text document, simply click on the already selected item in the Project Explorer (no double click). Then you can edit the short name directly there.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="92B7CA00A4DC93F8BF66AEF350E77316">Markdown syntax</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

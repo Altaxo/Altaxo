@@ -114,7 +114,9 @@
     <None Include="HelpContent\TDM-I-4CD3F47316CF9E15CE32CA2783.aml" />
     <None Include="HelpContent\TDM-C-DDBD66CF333D18EB1803BCA37D.aml" />
     <None Include="HelpContent\TDM-CNT-A24C4B5930CB93045CF36D7B.aml" />
-    <None Include="HelpContent\TDM-S-7AD46D6F6240C74A082EDB8AF7.aml" />
+    <None Include="HelpContent\TDM-DET-344B9F731295BD2A097EAF64.aml" />
+    <None Include="HelpContent\TDM-RTD-48C59E28BE6B00A86532E9BA.aml" />
+    <None Include="HelpContent\TDM-MS-92B7CA00A4DC93F8BF66AEF35.aml" />
     <None Include="HelpContent\TDM-UOE-D81BAB079B701CE4975A6890.aml" />
     <None Include="HelpContent\TDM-CTT-847834D0535C024B51193819.aml" />
     <None Include="HelpContent\TDM-IOE-FDC514482A6F579D9BCA039C.aml" />
