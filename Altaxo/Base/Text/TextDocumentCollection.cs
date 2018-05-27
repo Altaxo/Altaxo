@@ -51,13 +51,13 @@ namespace Altaxo.Text
 			set
 			{
 				if (null != value)
-					throw new InvalidOperationException("ParentObject of NotesDocumentCollection is fixed and cannot be set");
+					throw new InvalidOperationException("ParentObject of TextDocumentCollection is fixed and cannot be set");
 				base.ParentObject = value; // allow setting to null
 			}
 		}
 
 		/// <inheritdoc/>
-		public override string ItemBaseName { get { return "Note"; } }
+		public override string ItemBaseName { get { return "Text"; } }
 
 		/// <summary>
 		/// Gets the parent NotesDocumentCollection of a child NotesDocument.
