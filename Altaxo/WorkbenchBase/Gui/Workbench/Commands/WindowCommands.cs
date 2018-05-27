@@ -101,4 +101,23 @@ namespace Altaxo.Gui.Workbench.Commands
 			}
 		}
 	}
+
+	public class DeleteThisFileTab : SimpleCommand
+	{
+		public override void Execute(object parameter)
+		{
+			var workbench = Altaxo.Current.GetRequiredService<IWorkbench>();
+
+			if (!(parameter is IViewContent thisWindow))
+				thisWindow = workbench.ActiveViewContent;
+
+			if (null != thisWindow)
+			{
+				if (thisWindow.ModelObject is Altaxo.Main.IProjectItem pi)
+					Current.ProjectService.DeleteDocument(pi, false);
+				else if (thisWindow.ModelObject is Altaxo.Main.IProjectItemPresentationModel pipm)
+					Current.ProjectService.DeleteDocument(pipm.Document, false);
+			}
+		}
+	}
 }

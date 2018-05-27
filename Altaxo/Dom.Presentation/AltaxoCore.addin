@@ -1098,7 +1098,7 @@
 							icon="Icons.16x16.DeleteIcon"
 							label="${res:XML.MainMenu.EditMenu.Delete}"
 							usedatacontext ="true"
-							command="Delete" />
+							class = "Altaxo.Gui.Workbench.Commands.DeleteThisFileTab" />
 	</Path>
 
 	<Path name = "/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu">
