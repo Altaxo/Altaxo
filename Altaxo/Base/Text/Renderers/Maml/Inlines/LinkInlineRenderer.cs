@@ -127,7 +127,7 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
 
 				renderer.Push(MamlElements.markup);
 
-				renderer.Push(MamlElements.a, new[] { new KeyValuePair<string, string>("href", "html/" + renderer.ImageTopicFileGuid + ".htm" + "#img" + localUrl) });
+				renderer.Push(MamlElements.a, new[] { new KeyValuePair<string, string>("href", renderer.ImageTopicFileGuid + ".htm#" + System.IO.Path.GetFileNameWithoutExtension(url)) });
 
 				renderer.Push(MamlElements.img, attributes);
 

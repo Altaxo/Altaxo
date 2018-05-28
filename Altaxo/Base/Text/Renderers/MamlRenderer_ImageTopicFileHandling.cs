@@ -51,7 +51,6 @@ namespace Altaxo.Text.Renderers
 			var tw = new System.IO.StreamWriter(fileName, false, Encoding.UTF8, 1024);
 			this.Writer = tw;
 
-			var guid = "ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027"; // Guid of image topic file is fixed
 			Push(MamlElements.topic, new[] { new KeyValuePair<string, string>("id", ImageTopicFileGuid), new KeyValuePair<string, string>("revisionNumber", "1") });
 			Push(MamlElements.developerConceptualDocument, new[] { new KeyValuePair<string, string>("xmlns", "http://ddue.schemas.microsoft.com/authoring/2003/5"), new KeyValuePair<string, string>("xmlns:xlink", "http://www.w3.org/1999/xlink") });
 			Push(MamlElements.introduction);
@@ -63,11 +62,16 @@ namespace Altaxo.Text.Renderers
 			EnsureLine();
 			PopTo(MamlElements.title);
 			Push(MamlElements.content);
+			Push(MamlElements.sections);
 
 			// all links to all images here
 			foreach (var entry in OldToNewImageUris)
 			{
 				var localUrl = System.IO.Path.GetFileNameWithoutExtension(entry.Value);
+
+				Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", localUrl) });
+
+				Push(MamlElements.content);
 
 				Push(MamlElements.para);
 
@@ -75,7 +79,7 @@ namespace Altaxo.Text.Renderers
 
 				Push(MamlElements.image, new[] { new KeyValuePair<string, string>("xlink:href", localUrl) });
 
-				PopTo(MamlElements.para);
+				PopTo(MamlElements.section);
 			}
 
 			// the same again for the formulas
@@ -83,13 +87,17 @@ namespace Altaxo.Text.Renderers
 			{
 				var localUrl = System.IO.Path.GetFileNameWithoutExtension(entry);
 
+				Push(MamlElements.section, new[] { new KeyValuePair<string, string>("address", localUrl) });
+
+				Push(MamlElements.content);
+
 				Push(MamlElements.para);
 
 				Push(MamlElements.mediaLinkInline);
 
 				Push(MamlElements.image, new[] { new KeyValuePair<string, string>("xlink:href", localUrl) });
 
-				PopTo(MamlElements.para);
+				PopTo(MamlElements.section);
 			}
 
 			PopAll();
@@ -98,7 +106,7 @@ namespace Altaxo.Text.Renderers
 			this.Writer.Dispose();
 			this.Writer = StreamWriter.Null;
 
-			return (fileName, guid);
+			return (fileName, ImageTopicFileGuid);
 		}
 	}
 }

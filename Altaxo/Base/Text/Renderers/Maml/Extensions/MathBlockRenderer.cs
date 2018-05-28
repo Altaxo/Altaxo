@@ -80,9 +80,9 @@ namespace Altaxo.Text.Renderers.Maml.Extensions
 
 			renderer.Push(MamlElements.markup);
 
-			renderer.Push(MamlElements.img, attributes);
+			renderer.Push(MamlElements.a, new[] { new KeyValuePair<string, string>("href", renderer.ImageTopicFileGuid + ".htm#" + streamHash) });
 
-			renderer.PopTo(MamlElements.img);
+			renderer.Push(MamlElements.img, attributes);
 
 			renderer.PopTo(MamlElements.markup);
 		}
