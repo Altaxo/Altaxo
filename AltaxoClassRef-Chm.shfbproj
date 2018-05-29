@@ -52,6 +52,7 @@
     <SdkLinkTarget>Blank</SdkLinkTarget>
     <WarnOnMissingSourceContext>False</WarnOnMissingSourceContext>
     <WorkingPath>C:\Temp\SandCastleTemp\</WorkingPath>
+    <HtmlHelp1xCompilerPath>O:\ToolsProgramming\HTML Help Workshop\</HtmlHelp1xCompilerPath>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
 			 the build.  The others are optional common platform types that may appear. -->
