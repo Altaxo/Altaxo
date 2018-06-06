@@ -185,7 +185,31 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double phir_delta = PhiR_delta_OfReducedVariables(delta, tau); // derivative of PhiR with respect to delta
 			double phir_deltadelta = PhiR_deltadelta_OfReducedVariables(delta, tau); // derivative of PhiR with respect to delta
 
-			return SpecificGasConstant * temperature * ReducingDensity * (1 + 2 * delta * phir_delta + delta * delta * phir_deltadelta);
+			return SpecificGasConstant * temperature * (1 + 2 * delta * phir_delta + delta * delta * phir_deltadelta);
+		}
+
+		/// <summary>
+		/// Gets the isothermal compressibility in 1/Pa from density and temperature.
+		/// </summary>
+		/// <param name="density">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The isothermal compressibility in 1/Pa.</returns>
+		public double IsothermalCompressibility_FromDensityAndTemperature(double density, double temperature)
+		{
+			double dpdrho = IsothermalDerivativePressureByDensity_FromDensityAndTemperature(density, temperature);
+			return 1 / (dpdrho * density);
+		}
+
+		/// <summary>
+		/// Gets the isothermal compressional modulus K in Pa from density and temperature.
+		/// </summary>
+		/// <param name="density">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The isothermal compressional modulus K in Pa.</returns>
+		public double IsothermalCompressionalModulus_FromDensityAndTemperature(double density, double temperature)
+		{
+			double dpdrho = IsothermalDerivativePressureByDensity_FromDensityAndTemperature(density, temperature);
+			return dpdrho * density;
 		}
 
 		/// <summary>
