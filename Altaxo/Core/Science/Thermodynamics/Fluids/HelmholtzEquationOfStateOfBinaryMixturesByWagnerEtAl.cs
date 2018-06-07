@@ -30,6 +30,16 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
+	/// <summary>
+	/// Equation of state of binary mixtures, based on the paper of the group of Bochum University.
+	/// </summary>
+	/// <seealso cref="Altaxo.Science.Thermodynamics.Fluids.HelmholtzEquationOfStateOfBinarySystem" />
+	/// <remarks>
+	/// Reference:
+	/// Johannes Gernert, Roland Span,
+	/// EOS–CG: A Helmholtz energy mixture model for humid gases and CCS	mixtures,
+	/// J. Chem. Thermodynamics 93 (2016) 274–293
+	/// </remarks>
 	public abstract class HelmholtzEquationOfStateOfBinaryMixturesByWagnerEtAl : HelmholtzEquationOfStateOfBinarySystem
 	{
 		protected double _reducingTemperature;
@@ -50,6 +60,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		protected int[] _di2;
 		protected int[] _ci2;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="HelmholtzEquationOfStateOfBinaryMixturesByWagnerEtAl"/> class.
+		/// </summary>
+		/// <param name="moleFraction1">The mole fraction of component 1.</param>
+		/// <param name="component1">The component 1.</param>
+		/// <param name="moleFraction2">The mole fraction of component 2.</param>
+		/// <param name="component2">The component 2.</param>
 		protected HelmholtzEquationOfStateOfBinaryMixturesByWagnerEtAl(double moleFraction1, HelmholtzEquationOfStateOfPureFluids component1, double moleFraction2, HelmholtzEquationOfStateOfPureFluids component2)
 	: base(moleFraction1, component1, moleFraction2, component2)
 		{
@@ -59,6 +76,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			_reducingTemperature = CalculateReducingTemperature();
 		}
 
+		/// <summary>
+		/// Initializes the coefficient arrays with the specific values for this binary mixture.
+		/// </summary>
 		protected abstract void InitializeCoefficientArrays();
 
 		/// <summary>
@@ -81,6 +101,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				throw new InvalidProgramException();
 		}
 
+		/// <summary>
+		/// Calculates the reducing density in dependence of the mole fractions.
+		/// </summary>
+		/// <returns>Reducing density in kg/m³.</returns>
 		protected virtual double CalculateReducingDensity()
 		{
 			double sum = 0;
@@ -90,6 +114,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return 1 / sum;
 		}
 
+		/// <summary>
+		/// Calculates the reducing temperature in dependence of the mole fractions.
+		/// </summary>
+		/// <returns>Reducing temperature in K.</returns>
 		protected virtual double CalculateReducingTemperature()
 		{
 			double sum = 0;
@@ -99,6 +127,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum;
 		}
 
+		/// <inheritdoc/>
 		public override double ReducingDensity
 		{
 			get
@@ -107,6 +136,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			}
 		}
 
+		/// <inheritdoc/>
 		public override double ReducingTemperature
 		{
 			get
@@ -115,6 +145,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			}
 		}
 
+		/// <inheritdoc/>
 		public override double Phi0_OfReducedVariables(double delta, double tau)
 		{
 			// Note we have to calculate back from the reduced variables of this mixture to the reduced variables of the components
@@ -125,6 +156,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return double.IsNaN(sum3) ? sum1 + sum2 : sum1 + sum2 + sum3;
 		}
 
+		/// <inheritdoc/>
 		public override double Phi0_tau_OfReducedVariables(double delta, double tau)
 		{
 			// Note we have to calculate back from the reduced variables of this mixture to the reduced variables of the components
@@ -133,6 +165,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum1 + sum2;
 		}
 
+		/// <inheritdoc/>
 		public override double Phi0_tautau_OfReducedVariables(double delta, double tau)
 		{
 			// Note we have to calculate back from the reduced variables of this mixture to the reduced variables of the components
@@ -141,12 +174,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum1 + sum2;
 		}
 
-		/// <summary>
-		/// Residual part of the dimensionless Helmholtz energy as function of density and temperature. (Page 276 eq. 5).
-		/// </summary>
-		/// <param name="density">The density in kg/m³.</param>
-		/// <param name="tau">The temperature in Kelvin.</param>
-		/// <returns>Ideal part of the dimensionless Helmholtz energy.</returns>
+		/// <inheritdoc/>
 		public override double PhiR_OfReducedVariables(double delta, double tau)
 		{
 			var sum1 = _moleFraction1 * _component1.PhiR_OfReducedVariables(delta, tau);
@@ -156,13 +184,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum1 + sum2 + sum3;
 		}
 
-		/// <summary>
-		/// Residual part of the dimensionless Helmholtz energy as function of density and temperature. (Page 276 eq. 5).
-		/// </summary>
-		/// <param name="moleFractionCO2">The molar fraction of CO2 in the mixture.</param>
-		/// <param name="density">The density in kg/m³.</param>
-		/// <param name="tau">The temperature in Kelvin.</param>
-		/// <returns>Ideal part of the dimensionless Helmholtz energy.</returns>
+		/// <inheritdoc/>
 		public override double PhiR_delta_OfReducedVariables(double delta, double tau)
 		{
 			var sum1 = _moleFraction1 * _component1.PhiR_delta_OfReducedVariables(delta, tau);
@@ -171,6 +193,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum1 + sum2 + sum3;
 		}
 
+		/// <inheritdoc/>
 		public override double PhiR_deltadelta_OfReducedVariables(double delta, double tau)
 		{
 			double sum = 0;
@@ -180,6 +203,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum;
 		}
 
+		/// <inheritdoc/>
 		public override double PhiR_tau_OfReducedVariables(double delta, double tau)
 		{
 			double sum = 0;
@@ -189,6 +213,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum;
 		}
 
+		/// <inheritdoc/>
 		public override double PhiR_tautau_OfReducedVariables(double delta, double tau)
 		{
 			double sum = 0;
@@ -198,6 +223,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum;
 		}
 
+		/// <inheritdoc/>
 		public override double PhiR_deltatau_OfReducedVariables(double delta, double tau)
 		{
 			double sum = 0;
@@ -207,8 +233,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum;
 		}
 
-		#region Alpha12R and derivatives
+		#region Mixture correction function Alpha12R and derivatives
 
+		/// <summary>
+		/// Mixture correction function Alpha12R in dependence of the reduced density and reduced inverse temperature.
+		/// </summary>
+		/// <param name="delta">The reduced density = density / <see cref="ReducingDensity"/>.</param>
+		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
+		/// <returns>Mixture correction function Alpha12R.</returns>
 		public double Alpha12R(double delta, double tau)
 		{
 			var ni1 = _ni1;
@@ -235,6 +267,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum1 + sum2;
 		}
 
+		/// <summary>
+		/// Derivative of the mixture correction function Alpha12R w.r.t. delta in dependence of the reduced density and reduced inverse temperature.
+		/// </summary>
+		/// <param name="delta">The reduced density = density / <see cref="ReducingDensity"/>.</param>
+		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
+		/// <returns>Derivative of the mixture correction function Alpha12R w.r.t. delta.</returns>
 		public double Alpha12R_delta(double delta, double tau)
 		{
 			var ni1 = _ni1;
@@ -261,6 +299,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum1 + sum2;
 		}
 
+		/// <summary>
+		/// 2nd derivative of the mixture correction function Alpha12R w.r.t. delta in dependence of the reduced density and reduced inverse temperature.
+		/// </summary>
+		/// <param name="delta">The reduced density = density / <see cref="ReducingDensity"/>.</param>
+		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
+		/// <returns>2nd derivative of the mixture correction function Alpha12R w.r.t. delta.</returns>
 		public double Alpha12R_deltadelta(double delta, double tau)
 		{
 			var ni1 = _ni1;
@@ -290,6 +334,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum1 + sum2;
 		}
 
+		/// <summary>
+		/// Derivative of the mixture correction function Alpha12R w.r.t. tau in dependence of the reduced density and reduced inverse temperature.
+		/// </summary>
+		/// <param name="delta">The reduced density = density / <see cref="ReducingDensity"/>.</param>
+		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
+		/// <returns>Derivative of the mixture correction function Alpha12R w.r.t. tau.</returns>
 		public double Alpha12R_tau(double delta, double tau)
 		{
 			var ni1 = _ni1;
@@ -315,6 +365,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum1 + sum2;
 		}
 
+		/// <summary>
+		/// 2nd derivative of the mixture correction function Alpha12R w.r.t. tau in dependence of the reduced density and reduced inverse temperature.
+		/// </summary>
+		/// <param name="delta">The reduced density = density / <see cref="ReducingDensity"/>.</param>
+		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
+		/// <returns>2nd derivative of the mixture correction function Alpha12R w.r.t. tau.</returns>
 		public double Alpha12R_tautau(double delta, double tau)
 		{
 			var ni1 = _ni1;
@@ -341,6 +397,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum1 + sum2;
 		}
 
+		/// <summary>
+		/// Derivative of the mixture correction function Alpha12R w.r.t. delta and tau in dependence of the reduced density and reduced inverse temperature.
+		/// </summary>
+		/// <param name="delta">The reduced density = density / <see cref="ReducingDensity"/>.</param>
+		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
+		/// <returns>Derivative of the mixture correction function Alpha12R w.r.t. delta and tau.</returns>
 		public double Alpha12R_deltatau(double delta, double tau)
 		{
 			var ni1 = _ni1;
@@ -367,7 +429,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return sum1 + sum2;
 		}
 
-		#endregion Alpha12R and derivatives
+		#endregion Mixture correction function Alpha12R and derivatives
 
 		#region Helper functions
 

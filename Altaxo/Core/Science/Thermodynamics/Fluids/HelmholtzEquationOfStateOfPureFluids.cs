@@ -30,6 +30,9 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
+	/// <summary>
+	/// Equation of state based on the dimensionless Helmholtz energy, for pure fluids.
+	/// </summary>
 	public abstract class HelmholtzEquationOfStateOfPureFluids : HelmholtzEquationOfState
 	{
 		#region Constants
@@ -90,17 +93,17 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
-		/// Get the temperature of the liquid/vapor interface for a given pressure.
+		/// Get the temperature at the liquid/vapor interface for a given pressure by iteration (Newton-Raphson).
 		/// </summary>
-		/// <param name="pressure">The pressure.</param>
+		/// <param name="pressure">The pressure in Pa.</param>
 		/// <param name="relativeAccuracy">The relative accuracy (of the pressure, that is calculated from the iterated temperature).</param>
-		/// <returns>The temperature of the liquid/vapor interface at the given pressure. <see cref="double.NaN"/> is returned for pressures below the <see cref="TriplePointPressure"/> or above the <see cref="CriticalPointPressure"/>.</returns>
+		/// <returns>The temperature in K of the liquid/vapor interface at the given pressure. <see cref="double.NaN"/> is returned for pressures below the <see cref="TriplePointPressure"/> or above the <see cref="CriticalPointPressure"/>.</returns>
 		public virtual double VaporTemperatureAtPressure(double pressure, double relativeAccuracy = 1E-5)
 		{
 			if (!(pressure >= TriplePointPressure && pressure <= CriticalPointPressure))
 				return double.NaN;
 
-			// calculate a first guess - the pressure / temperatur curve is almost exponential
+			// calculate a first guess - the pressure / temperature curve is almost exponential
 			double rel = (Math.Log(pressure) - Math.Log(TriplePointPressure)) / (Math.Log(CriticalPointPressure) - Math.Log(TriplePointPressure));
 			double temperature = (1 - rel) * TriplePointTemperature + (rel) * CriticalPointTemperature;
 

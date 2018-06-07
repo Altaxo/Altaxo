@@ -36,12 +36,29 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// <seealso cref="Altaxo.Science.Thermodynamics.Fluids.HelmholtzEquationOfState" />
 	public abstract class HelmholtzEquationOfStateOfBinarySystem : HelmholtzEquationOfState
 	{
+		/// <summary>The mole fraction of component 1.</summary>
 		protected double _moleFraction1;
+
+		/// <summary>
+		/// The fluid of component 1.
+		/// </summary>
 		protected HelmholtzEquationOfStateOfPureFluids _component1;
 
+		/// <summary>The mole fraction of component 2.</summary>
 		protected double _moleFraction2;
+
+		/// <summary>
+		/// The fluid of component 2.
+		/// </summary>
 		protected HelmholtzEquationOfStateOfPureFluids _component2;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="HelmholtzEquationOfStateOfBinarySystem"/> class.
+		/// </summary>
+		/// <param name="moleFraction1">The mole fraction of component 1.</param>
+		/// <param name="component1">The fluid of component 1.</param>
+		/// <param name="moleFraction2">The mole fraction of component 2.</param>
+		/// <param name="component2">The fluid of component 2.</param>
 		protected HelmholtzEquationOfStateOfBinarySystem(double moleFraction1, HelmholtzEquationOfStateOfPureFluids component1, double moleFraction2, HelmholtzEquationOfStateOfPureFluids component2)
 		{
 			if (!(moleFraction1 >= 0 && moleFraction1 <= 1))
@@ -57,6 +74,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			_component2 = component2 ?? throw new ArgumentNullException(nameof(component2));
 		}
 
+		/// <summary>
+		/// Gets the resulting molecular weight of the mixture in kg/mol.
+		/// </summary>
 		public virtual double MolecularWeight
 		{
 			get
@@ -65,6 +85,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			}
 		}
 
+		/// <summary>
+		/// Gets the resulting specific gas constant of the mixture in J/(kg K).
+		/// </summary>
 		public override double SpecificGasConstant
 		{
 			get
@@ -96,11 +119,25 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		#region Static molar / mass conversions
 
+		/// <summary>
+		/// Gets the mass fraction of component1 from the mole fraction of component1 in a binary system.
+		/// </summary>
+		/// <param name="moleFraction1">The mole fraction of component1.</param>
+		/// <param name="molarMass1">The molar mass of component1.</param>
+		/// <param name="molarMass2">The molar mass of component2.</param>
+		/// <returns>Mass fraction of component1.</returns>
 		public static double GetMassFractionFromMoleFraction(double moleFraction1, double molarMass1, double molarMass2)
 		{
 			return moleFraction1 * molarMass1 / (moleFraction1 * molarMass1 + (1 - moleFraction1) * molarMass2);
 		}
 
+		/// <summary>
+		/// Gets the mole fraction of component1 from the mass fraction of component1 in a binary system.
+		/// </summary>
+		/// <param name="massFraction1">The mass fraction of component1.</param>
+		/// <param name="molarMass1">The molar mass of component1.</param>
+		/// <param name="molarMass2">The molar mass of component2.</param>
+		/// <returns>Mass fraction of component1.</returns>
 		public static double GetMoleFractionFromMassFraction(double massFraction1, double molarMass1, double molarMass2)
 		{
 			double mol1 = massFraction1 / molarMass1;
@@ -109,6 +146,15 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return mol1 / (mol1 + mol2);
 		}
 
+		/// <summary>
+		/// Gets the mass density from the molar density of a binary system.
+		/// </summary>
+		/// <param name="moleFraction1">The mole fraction of component1.</param>
+		/// <param name="molarMass1">The molar mass of component1.</param>
+		/// <param name="moleFraction2">The mole fraction of component2.</param>
+		/// <param name="molarMass2">The molar mass of component2.</param>
+		/// <param name="molarDensity">The molar density of the mixture.</param>
+		/// <returns>The mass density of the mixture.</returns>
 		public double GetMassDensityFromMolarDensity(double moleFraction1, double molarMass1, double moleFraction2, double molarMass2, double molarDensity)
 		{
 			double massDensity1 = molarDensity * moleFraction1 * molarMass1;

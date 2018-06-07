@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
 	/// <summary>
-	/// State equation based on the dimensionless Helmholtz energy, both for pure fluids and for mixtures of fluids.
+	/// Equation of state based on the dimensionless Helmholtz energy, both for pure fluids and for mixtures of fluids.
 	/// </summary>
 	public abstract class HelmholtzEquationOfState
 	{
