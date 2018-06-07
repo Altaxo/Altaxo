@@ -94,51 +94,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return massDensity / (moleFraction1 * _component1.MolecularWeight + (1 - moleFraction1) * _component2.MolecularWeight);
 		}
 
-		public override double Phi0_OfReducedVariables(double delta, double tau)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override double Phi0_tautau_OfReducedVariables(double delta, double tau)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override double Phi0_tau_OfReducedVariables(double delta, double tau)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override double PhiR_deltadelta_OfReducedVariables(double delta, double tau)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override double PhiR_deltatau_OfReducedVariables(double delta, double tau)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override double PhiR_delta_OfReducedVariables(double delta, double tau)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override double PhiR_OfReducedVariables(double delta, double tau)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override double PhiR_tautau_OfReducedVariables(double delta, double tau)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override double PhiR_tau_OfReducedVariables(double delta, double tau)
-		{
-			throw new NotImplementedException();
-		}
-
 		#region Static molar / mass conversions
 
 		public static double GetMassFractionFromMoleFraction(double moleFraction1, double molarMass1, double molarMass2)

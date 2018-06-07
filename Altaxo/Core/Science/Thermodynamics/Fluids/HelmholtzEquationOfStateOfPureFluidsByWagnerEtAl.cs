@@ -48,16 +48,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// </remarks>
 	public abstract class HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl : HelmholtzEquationOfStateOfPureFluids
 	{
-		#region Reduced density and pressure
-
-		/// <inheritdoc/>
-		public override double ReducingDensity { get { return CriticalPointDensity; } }
-
-		/// <inheritdoc/>
-		public override double ReducingTemperature { get { return CriticalPointTemperature; } }
-
-		#endregion Reduced density and pressure
-
 		/// <summary>
 		/// Helper function to test the length of the coefficient arrays.
 		/// </summary>
@@ -70,11 +60,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			if (_ni1.Length != _ti1.Length)
 				throw new InvalidProgramException();
 
-			if (_ni2.Length != _ci2.Length)
-				throw new InvalidProgramException();
 			if (_ni2.Length != _di2.Length)
 				throw new InvalidProgramException();
 			if (_ni2.Length != _ti2.Length)
+				throw new InvalidProgramException();
+			if (_ni2.Length != _ci2.Length)
 				throw new InvalidProgramException();
 
 			if (_ni3.Length != _di3.Length)

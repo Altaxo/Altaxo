@@ -524,23 +524,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
-		/// Get the vapor pressure at a given temperature.
-		/// </summary>
-		/// <param name="temperature_Kelvin">The temperature in Kelvin.</param>
-		/// <returns>The vapor pressure in Pa.</returns>
-		public double VaporPressureAtTemperature(double temperature_Kelvin)
-		{
-			return VaporPressureAndDerivativeWithRespectToTemperatureAtTemperature(temperature_Kelvin).pressure;
-		}
-
-		/// <summary>
 		/// Gets the vapor pressure and its derivative with respect to temperature (in Pa and Pa/K).
 		/// </summary>
 		/// <param name="temperature_Kelvin">The temperature in Kelvin.</param>
 		/// <returns>Vapor pressure and its derivative with respect to temperature (in Pa and Pa/K)</returns>
-		public (double pressure, double pressureWrtTemperature) VaporPressureAndDerivativeWithRespectToTemperatureAtTemperature(double temperature_Kelvin)
+		public override (double pressure, double pressureWrtTemperature) VaporPressureAndDerivativeWithRespectToTemperatureAtTemperature(double temperature_Kelvin)
 		{
-			if (!(temperature_Kelvin <= CriticalPointTemperature))
+			if (!(TriplePointTemperature <= temperature_Kelvin && temperature_Kelvin <= CriticalPointTemperature))
 				return (double.NaN, double.NaN);
 
 			var Tr = 1 - temperature_Kelvin / CriticalPointTemperature;
@@ -560,46 +550,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			var deriv = (((4 * a4 * Tr + 3 * a3) * Tr + 0) * Tr + a1) + Math.Sqrt(Tr) * (7.5 * a75 * Pow(Tr, 6) + 3.5 * a35 * Pow(Tr, 2) + 1.5 * a15);
 
 			return (pressure, (-pressure / temperature_Kelvin) * (ln_pr + deriv));
-		}
-
-		/// <summary>
-		/// Get the temperature of the liquid/vapor interface for a given pressure.
-		/// </summary>
-		/// <param name="pressure">The pressure.</param>
-		/// <param name="relativeAccuracy">The relative accuracy.</param>
-		/// <returns>The temperature of the liquid/vapor interface at the given pressure. <see cref="double.NaN"/> is returned for pressures below the <see cref="TriplePointPressure"/> or above the <see cref="CriticalPointPressure"/>.</returns>
-		public double VaporTemperatureAtPressure(double pressure, double relativeAccuracy = 1E-5)
-		{
-			if (!(pressure >= TriplePointPressure && pressure <= CriticalPointPressure))
-				return double.NaN;
-
-			// calculate a first guess - the pressure / temperatur curve is almost exponential
-			double rel = (Math.Log(pressure) - Math.Log(TriplePointPressure)) / (Math.Log(CriticalPointPressure) - Math.Log(TriplePointPressure));
-			double temperature = (1 - rel) * TriplePointTemperature + (rel) * CriticalPointTemperature;
-
-			for (int i = 0; i < 10000; ++i)
-			{
-				var (currentPressure, currentPressureDeriv) = VaporPressureAndDerivativeWithRespectToTemperatureAtTemperature(temperature);
-
-				if (double.IsNaN(currentPressure))
-					return double.NaN;
-
-				if (Math.Abs((currentPressure - pressure) / pressure) < relativeAccuracy)
-				{
-					return temperature;
-				}
-
-				var newTemperature = temperature - (currentPressure - pressure) / currentPressureDeriv;
-
-				if (newTemperature > CriticalPointTemperature)
-					newTemperature = 0.5 * (temperature + CriticalPointTemperature);
-				else if (newTemperature < TriplePointTemperature)
-					newTemperature = 0.5 * (temperature + TriplePointTemperature);
-
-				temperature = newTemperature;
-			}
-
-			return double.NaN;
 		}
 
 		/// <summary>

@@ -452,22 +452,29 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
-		/// Get the vapor pressure at a given temperature.
+		/// Gets the vapor pressure and its derivative with respect to temperature (in Pa and Pa/K).
 		/// </summary>
 		/// <param name="temperature_Kelvin">The temperature in Kelvin.</param>
-		/// <returns>The vapor pressure in Pa.</returns>
-		public double VaporPressureAtTemperature(double temperature_Kelvin)
+		/// <returns>Vapor pressure and its derivative with respect to temperature (in Pa and Pa/K)</returns>
+		public override (double pressure, double pressureWrtTemperature) VaporPressureAndDerivativeWithRespectToTemperatureAtTemperature(double temperature_Kelvin)
 		{
-			if (!(temperature_Kelvin <= CriticalPointTemperature))
-				return double.NaN;
+			if (!(TriplePointTemperature <= temperature_Kelvin && temperature_Kelvin <= CriticalPointTemperature))
+				return (double.NaN, double.NaN);
 
 			var Tr = 1 - temperature_Kelvin / CriticalPointTemperature;
 
-			const double a1 = -7.0602087, a1p5 = 1.9391218, a2 = -1.6463597, a4 = -3.2995634;
+			const double
+				a1 = -7.0602087,
+				a15 = 1.9391218,
+				a2 = -1.6463597,
+				a4 = -3.2995634;
 
-			var ln_pr = ((a4 * (Tr) * Tr + a2) * Tr + a1) * Tr + a1p5 * Tr * Math.Sqrt(Tr);
+			var ln_pr = ((a4 * (Tr) * Tr + a2) * Tr + a1) * Tr + a15 * Tr * Math.Sqrt(Tr);
 			ln_pr *= CriticalPointTemperature / temperature_Kelvin;
-			return Math.Exp(ln_pr) * CriticalPointPressure;
+			double pressure = Math.Exp(ln_pr) * CriticalPointPressure;
+			var deriv = (((4 * a4 * Tr) * Tr + 2 * a2) * Tr + a1) + Math.Sqrt(Tr) * (1.5 * a15);
+
+			return (pressure, (-pressure / temperature_Kelvin) * (ln_pr + deriv));
 		}
 
 		/// <summary>

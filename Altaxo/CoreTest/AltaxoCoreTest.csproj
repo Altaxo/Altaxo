@@ -308,6 +308,8 @@
     <Compile Include="Collections\TestPriorityQueue_Key.cs" />
     <Compile Include="Collections\Test_AscendingIntegerRangeCollection.cs" />
     <Compile Include="ResourceKeys.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Water.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Carbondioxide.cs" />
     <Compile Include="WeakEventHandlersTest.cs" />
   </ItemGroup>
   <ItemGroup>
