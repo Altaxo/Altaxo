@@ -378,12 +378,12 @@ new double[]{600000000, 1100, 979.76, 546.3, 1158.69, -0.36856, 1.1749, 1.4216, 
 
 			var methods = new(string colName, Func<double, double, double> call, double scale, int index)[]
 			{
-								("InternalEnergy", material.InternalEnergy_FromDensityAndTemperature, 1E-3, 3),
-								("Enthalpy", material.Enthalpy_FromDensityAndTemperature,1E-3,4),
-								("Entropy", material.Entropy_FromDensityAndTemperature, 1E-3,5),
-								("Cv", material.IsochoricHeatCapacity_FromDensityAndTemperature,1E-3, 6),
-								("Cp", material.IsobaricHeatCapacity_FromDensityAndTemperature,1E-3, 7),
-								("SpeedOfSound", material.SpeedOfSound_FromDensityAndTemperature, 1, 8),
+								("InternalEnergy", material.MassSpecificInternalEnergy_FromMassDensityAndTemperature, 1E-3, 3),
+								("Enthalpy", material.MassSpecificEnthalpy_FromMassDensityAndTemperature,1E-3,4),
+								("Entropy", material.MassSpecificEntropy_FromMassDensityAndTemperature, 1E-3,5),
+								("Cv", material.MassSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature,1E-3, 6),
+								("Cp", material.MassSpecificIsobaricHeatCapacity_FromMassDensityAndTemperature,1E-3, 7),
+								("SpeedOfSound", material.SpeedOfSound_FromMassDensityAndTemperature, 1, 8),
 		};
 
 			for (int i = 0; i < _testData.Length; ++i)
@@ -396,13 +396,13 @@ new double[]{600000000, 1100, 979.76, 546.3, 1158.69, -0.36856, 1.1749, 1.4216, 
 				Assert.IsFalse(!(temperature > 0 && temperature < 2000));
 				Assert.IsFalse(!(density > 0 && density < 10000));
 
-				var densityCalculated = material.Density_FromPressureAndTemperature(pressure, temperature, 1E-6, density);
+				var densityCalculated = material.MassDensity_FromPressureAndTemperature(pressure, temperature, 1E-6, density);
 
 				Assert.IsFalse(!IsDoubleValueMatch(density, densityCalculated), "Density deviation");
 
 				density = densityCalculated;
 
-				var pressureCalculated = material.Pressure_FromDensityAndTemperature(density, temperature);
+				var pressureCalculated = material.Pressure_FromMassDensityAndTemperature(density, temperature);
 
 				var pressureRelDev = Math.Abs((pressureCalculated - pressure) / pressure);
 				Assert.IsFalse(pressureRelDev > pressureRelTolerance, "Pressure deviation, expected: {0}, but is: {1}", pressure, pressureCalculated);
@@ -428,6 +428,22 @@ new double[]{600000000, 1100, 979.76, 546.3, 1158.69, -0.36856, 1.1749, 1.4216, 
 					break;
 
 			return Math.Round(expected, accuracy) == Math.Round(calculated, accuracy);
+		}
+
+		[Test]
+		public void Test_250gmol_450K()
+		{
+			var material = Altaxo.Science.Thermodynamics.Fluids.CarbonDioxide.Instance;
+
+			double temperature = 450;
+			double moleDensity = 250;
+			var massDensity = moleDensity * material.MolecularWeight;
+
+			// These tests fail because the data are from a later paper
+			// on the mixture of CO2 and water (2004)
+			// they use a different offset for tau0
+			// Assert.AreEqual(925424, material.Pressure_FromMassDensityAndTemperature(massDensity, temperature), 1);
+			// Assert.AreEqual(24555.74, material.MolecularWeight * material.MassSpecificInternalEnergy_FromMassDensityAndTemperature(massDensity, temperature), 1E-1);
 		}
 	}
 }

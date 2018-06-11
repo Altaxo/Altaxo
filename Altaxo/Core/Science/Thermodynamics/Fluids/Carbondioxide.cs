@@ -65,7 +65,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double CriticalPointPressure { get; } = 7.3773E6;
 
 		/// <summary>Gets the density at the critical point.</summary>
-		public override double CriticalPointDensity { get; } = 467.6;
+		public override double CriticalPointMassDensity { get; } = 467.6;
+
+		public override double CriticalPointMoleDensity { get; } = 10624.9063;
 
 		/// <summary>
 		/// Gets the molecular weight.
@@ -315,7 +317,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			3.00,
 			};
 
-			_alphai3 = new int[]
+			_alphai3 = new double[]
 			{
 			25,   // Index 35 in table
 			25,
@@ -324,7 +326,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			20,
 			};
 
-			_betai3 = new int[]
+			_betai3 = new double[]
 			{
 			325,   // Index 35 in table
 			300,
@@ -342,7 +344,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			1.22,
 			};
 
-			_epsiloni3 = new int[]
+			_epsiloni3 = new double[]
 			{
 			1,   // Index 35 in table
 			1,
@@ -493,7 +495,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			var Tr = 1 - temperature_Kelvin / CriticalPointTemperature;
 
 			var ln_rhoR = a1 * Math.Pow(Tr, t1) + a2 * Math.Pow(Tr, t2) + a3 * Math.Pow(Tr, t3) + a4 * Math.Pow(Tr, t4);
-			return Math.Exp(ln_rhoR) * CriticalPointDensity;
+			return Math.Exp(ln_rhoR) * CriticalPointMassDensity;
 		}
 
 		/// <summary>
@@ -519,7 +521,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			var Tr = 1 - temperature_Kelvin / CriticalPointTemperature;
 			var ln_rhoR = a1 * Math.Pow(Tr, t1) + a2 * Math.Pow(Tr, t2) + a3 * Math.Pow(Tr, t3) + a4 * Math.Pow(Tr, t4) + a5 * Math.Pow(Tr, t5);
-			return Math.Exp(ln_rhoR) * CriticalPointDensity;
+			return Math.Exp(ln_rhoR) * CriticalPointMassDensity;
 		}
 
 		#endregion Thermodynamic properties by empirical power laws

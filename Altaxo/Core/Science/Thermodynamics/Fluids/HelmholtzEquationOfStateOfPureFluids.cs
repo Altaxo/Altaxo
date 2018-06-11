@@ -55,8 +55,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>Gets the pressure at the critical point in Pa.</summary>
 		public abstract double CriticalPointPressure { get; }
 
-		/// <summary>Gets the density at the critical point in kg/m³.</summary>
-		public abstract double CriticalPointDensity { get; }
+		/// <summary>Gets the mass density at the critical point in kg/m³.</summary>
+		public abstract double CriticalPointMassDensity { get; }
+
+		/// <summary>Gets the mass density at the critical point in kg/m³.</summary>
+		public abstract double CriticalPointMoleDensity { get; }
 
 		/// <summary>Gets the molecular weight in kg/mol.</summary>
 		public abstract double MolecularWeight { get; } // kg/mol
@@ -77,7 +80,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		#region Functions
 
 		/// <inheritdoc/>
-		public override double ReducingDensity => CriticalPointDensity;
+		public override double ReducingMassDensity => CriticalPointMassDensity;
 
 		/// <inheritdoc/>
 		public override double ReducingTemperature => CriticalPointTemperature;

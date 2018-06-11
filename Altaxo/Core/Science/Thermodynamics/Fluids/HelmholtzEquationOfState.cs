@@ -35,13 +35,18 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// </summary>
 	public abstract class HelmholtzEquationOfState
 	{
+		/// <summary>
+		/// The universal gas constant in J/(K mol)
+		/// </summary>
+		public static readonly double UniversalGasConstant = 8.314459848;
+
 		#region Reduced density and pressure
 
 		/// <summary>
 		/// Gets the density (in kg/m³) used to calculate the reduced (dimensionless) density.
 		/// </summary>
-		/// <remarks>The reduced density called delta and is calculated by: delta = density / <see cref="ReducingDensity"/>.</remarks>
-		public abstract double ReducingDensity { get; }
+		/// <remarks>The reduced density called delta and is calculated by: delta = density / <see cref="ReducingMassDensity"/>.</remarks>
+		public abstract double ReducingMassDensity { get; }
 
 		/// <summary>
 		/// Gets the temperature (in Kelvin) that is used to calculate the inverse reduced temperature.
@@ -55,13 +60,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public abstract double SpecificGasConstant { get; }
 
 		/// <summary>
-		/// Gets the reduced density by density / <see cref="ReducingDensity"/>.
+		/// Gets the reduced density by density / <see cref="ReducingMassDensity"/>.
 		/// </summary>
 		/// <param name="massDensity">The mass density in kg/m³.</param>
 		/// <returns>Reduced density.</returns>
 		public virtual double GetDelta(double massDensity)
 		{
-			return massDensity / ReducingDensity;
+			return massDensity / ReducingMassDensity;
 		}
 
 		/// <summary>
@@ -83,7 +88,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Ideal part of the dimensionless Helmholtz energy as function of reduced variables. (Page 1541, Table 28)
 		/// </summary>
-		/// <param name="delta">The reduced density ( = density / <see cref="ReducingDensity"/>)</param>
+		/// <param name="delta">The reduced density ( = density / <see cref="ReducingMassDensity"/>)</param>
 		/// <param name="tau">The reduced inverse temperature (= <see cref="ReducingTemperature"/> / temperature)</param>
 		/// <returns>Ideal part of the dimensionless Helmholtz energy.</returns>
 		public abstract double Phi0_OfReducedVariables(double delta, double tau);
@@ -91,7 +96,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// First derivative of the dimensionless Helmholtz energy as function of reduced variables with respect to the inverse reduced temperature. (Page 1541, Table 28)
 		/// </summary>
-		/// <param name="delta">The reduced density ( = density / <see cref="ReducingDensity"/>)</param>
+		/// <param name="delta">The reduced density ( = density / <see cref="ReducingMassDensity"/>)</param>
 		/// <param name="tau">The reduced inverse temperature (= <see cref="ReducingTemperature"/> / temperature)</param>
 		/// <returns>First derivative of the dimensionless Helmholtz energy as function of reduced variables with respect to the inverse reduced temperature.</returns>
 		public abstract double Phi0_tau_OfReducedVariables(double delta, double tau);
@@ -99,7 +104,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Second derivative of Phi0 the of reduced variables with respect to the inverse reduced temperature. (Page 1541, Table 28)
 		/// </summary>
-		/// <param name="delta">The reduced density ( = density / <see cref="ReducingDensity"/>)</param>
+		/// <param name="delta">The reduced density ( = density / <see cref="ReducingMassDensity"/>)</param>
 		/// <param name="tau">The reduced inverse temperature (= <see cref="ReducingTemperature"/> / temperature)</param>
 		/// <returns>Second derivative the dimensionless Helmholtz energy of reduced variables with respect to the inverse reduced temperature.</returns>
 		public abstract double Phi0_tautau_OfReducedVariables(double delta, double tau);
@@ -111,7 +116,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Calculates the residual part of the dimensionless Helmholtz energy in dependence on reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density ( = density / <see cref="ReducingDensity"/>)</param>
+		/// <param name="delta">The reduced density ( = density / <see cref="ReducingMassDensity"/>)</param>
 		/// <param name="tau">The reduced inverse temperature (= <see cref="ReducingTemperature"/> / temperature)</param>
 		/// <returns>The residual part of the dimensionless Helmholtz energy.</returns>
 		public abstract double PhiR_OfReducedVariables(double delta, double tau);
@@ -119,7 +124,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Calculates the first derivative of the residual part of the dimensionless Helmholtz energy with respect to the reduced density delta.
 		/// </summary>
-		/// <param name="delta">The reduced density ( = density / <see cref="ReducingDensity"/>)</param>
+		/// <param name="delta">The reduced density ( = density / <see cref="ReducingMassDensity"/>)</param>
 		/// <param name="tau">The reduced inverse temperature (= <see cref="ReducingTemperature"/> / temperature)</param>
 		/// <returns>First derivative of the residual part of the dimensionless Helmholtz energy with respect to the reduced density.</returns>
 		public abstract double PhiR_delta_OfReducedVariables(double delta, double tau);
@@ -127,7 +132,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Calculates the second derivative of the residual part of the dimensionless Helmholtz energy with respect to the reduced density delta.
 		/// </summary>
-		/// <param name="delta">The reduced density ( = density / <see cref="ReducingDensity"/>)</param>
+		/// <param name="delta">The reduced density ( = density / <see cref="ReducingMassDensity"/>)</param>
 		/// <param name="tau">The reduced inverse temperature (= <see cref="ReducingTemperature"/> / temperature)</param>
 		/// <returns>Second derivative of the residual part of the dimensionless Helmholtz energy with respect to the reduced density.</returns>
 		public abstract double PhiR_deltadelta_OfReducedVariables(double delta, double tau);
@@ -135,7 +140,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Calculates the first derivative of the residual part of the dimensionless Helmholtz energy with respect to the inverse reduced temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density ( = density / <see cref="ReducingDensity"/>)</param>
+		/// <param name="delta">The reduced density ( = density / <see cref="ReducingMassDensity"/>)</param>
 		/// <param name="tau">The reduced inverse temperature (= <see cref="ReducingTemperature"/> / temperature)</param>
 		/// <returns>First derivative of the residual part of the dimensionless Helmholtz energy with respect to the inverse reduced temperature.</returns>
 		public abstract double PhiR_tau_OfReducedVariables(double delta, double tau);
@@ -143,7 +148,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Calculates the second derivative of the residual part of the dimensionless Helmholtz energy with respect to the inverse reduced temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density ( = density / <see cref="ReducingDensity"/>)</param>
+		/// <param name="delta">The reduced density ( = density / <see cref="ReducingMassDensity"/>)</param>
 		/// <param name="tau">The reduced inverse temperature (= <see cref="ReducingTemperature"/> / temperature)</param>
 		/// <returns>Second derivative of the residual part of the dimensionless Helmholtz energy with respect to the inverse reduced temperature.</returns>
 		public abstract double PhiR_tautau_OfReducedVariables(double delta, double tau);
@@ -151,7 +156,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Calculates the derivative of the residual part of the dimensionless Helmholtz energy with respect to the reduced density delta and the inverse reduced temperature tau.
 		/// </summary>
-		/// <param name="delta">The reduced density ( = density / <see cref="ReducingDensity"/>)</param>
+		/// <param name="delta">The reduced density ( = density / <see cref="ReducingMassDensity"/>)</param>
 		/// <param name="tau">The reduced inverse temperature (= <see cref="ReducingTemperature"/> / temperature)</param>
 		/// <returns>First derivative of the residual part of the dimensionless Helmholtz energy with respect to the reduced density delta and the inverse reduced temperature tau.</returns>
 		public abstract double PhiR_deltatau_OfReducedVariables(double delta, double tau);
@@ -165,20 +170,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Get the pressure from a given density and temperature.
 		/// </summary>
-		/// <param name="density">The density in kg/m³.</param>
+		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The pressure in Pa.</returns>
-		public virtual double Pressure_FromDensityAndTemperature(double density, double temperature)
+		public virtual double Pressure_FromMassDensityAndTemperature(double massDensity, double temperature)
 		{
-			double delta = GetDelta(density); // reduced density
+			double delta = GetDelta(massDensity); // reduced density
 			double tau = GetTau(temperature); // reduced inverse temperature
 
 			double phir_delta = PhiR_delta_OfReducedVariables(delta, tau); // derivative of PhiR with respect to delta
 
-			return density * temperature * SpecificGasConstant * (1 + delta * phir_delta);
+			return massDensity * temperature * SpecificGasConstant * (1 + delta * phir_delta);
 		}
 
-		public double IsothermalDerivativePressureByDensity_FromDensityAndTemperature(double density, double temperature)
+		public double IsothermalDerivativePressureByDensity_FromMassDensityAndTemperature(double density, double temperature)
 		{
 			double delta = GetDelta(density); // reduced density
 			double tau = GetTau(temperature); // reduced inverse temperature
@@ -194,9 +199,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <param name="density">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The isothermal compressibility in 1/Pa.</returns>
-		public double IsothermalCompressibility_FromDensityAndTemperature(double density, double temperature)
+		public double IsothermalCompressibility_FromMassDensityAndTemperature(double density, double temperature)
 		{
-			double dpdrho = IsothermalDerivativePressureByDensity_FromDensityAndTemperature(density, temperature);
+			double dpdrho = IsothermalDerivativePressureByDensity_FromMassDensityAndTemperature(density, temperature);
 			return 1 / (dpdrho * density);
 		}
 
@@ -206,9 +211,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <param name="density">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The isothermal compressional modulus K in Pa.</returns>
-		public double IsothermalCompressionalModulus_FromDensityAndTemperature(double density, double temperature)
+		public double IsothermalCompressionalModulus_FromMassDensityAndTemperature(double density, double temperature)
 		{
-			double dpdrho = IsothermalDerivativePressureByDensity_FromDensityAndTemperature(density, temperature);
+			double dpdrho = IsothermalDerivativePressureByDensity_FromMassDensityAndTemperature(density, temperature);
 			return dpdrho * density;
 		}
 
@@ -225,7 +230,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
 		/// is within the relative accuracy.
 		/// </remarks>
-		public double Density_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy = 1E-4, double densityStartValue = double.NaN)
+		public double MassDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy = 1E-4, double densityStartValue = double.NaN)
 		{
 			if (!(pressure > 0))
 				throw new ArgumentOutOfRangeException(nameof(pressure), "Must be >0");
@@ -236,11 +241,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			double tau = GetTau(temperature); // reduced inverse temperature
 
-			double RTRhoC = SpecificGasConstant * temperature * ReducingDensity;
+			double RTRhoC = SpecificGasConstant * temperature * ReducingMassDensity;
 
 			double delta;
 			if (densityStartValue > 0)
-				delta = densityStartValue / ReducingDensity;
+				delta = densityStartValue / ReducingMassDensity;
 			else
 				delta = 1.5;
 
@@ -263,7 +268,41 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					break;
 			}
 
-			return delta * ReducingDensity;
+			return delta * ReducingMassDensity;
+		}
+
+		/// <summary>
+		/// Get the Helmholtz energy from a given mass density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The Helmholtz energy in J/(kg K).</returns>
+		public double MassSpecificHelmholtzEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			double delta = GetDelta(massDensity); // reduced density
+			double tau = GetTau(temperature); // reduced inverse temperature
+
+			double phi0 = Phi0_OfReducedVariables(delta, tau);
+			double phiR = PhiR_OfReducedVariables(delta, tau);
+
+			return SpecificGasConstant * temperature * (phi0 + phiR);
+		}
+
+		/// <summary>
+		/// Get the Helmholtz energy from a given mass density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The Helmholtz energy in J/(mol K).</returns>
+		public double MoleSpecificHelmholtzEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			double delta = GetDelta(massDensity); // reduced density
+			double tau = GetTau(temperature); // reduced inverse temperature
+
+			double phi0 = Phi0_OfReducedVariables(delta, tau);
+			double phiR = PhiR_OfReducedVariables(delta, tau);
+
+			return UniversalGasConstant * temperature * (phi0 + phiR);
 		}
 
 		/// <summary>
@@ -272,7 +311,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <param name="density">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The entropy in J/(kg K).</returns>
-		public double Entropy_FromDensityAndTemperature(double density, double temperature)
+		public double MassSpecificEntropy_FromMassDensityAndTemperature(double density, double temperature)
 		{
 			double delta = GetDelta(density); // reduced density
 			double tau = GetTau(temperature); // reduced inverse temperature
@@ -292,7 +331,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <param name="density">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The internal energy in J/kg.</returns>
-		public double InternalEnergy_FromDensityAndTemperature(double density, double temperature)
+		public double MassSpecificInternalEnergy_FromMassDensityAndTemperature(double density, double temperature)
 		{
 			double delta = GetDelta(density); // reduced density
 			double tau = GetTau(temperature); // reduced inverse temperature
@@ -308,7 +347,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <param name="density">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The enthalpy in J/kg.</returns>
-		public double Enthalpy_FromDensityAndTemperature(double density, double temperature)
+		public double MassSpecificEnthalpy_FromMassDensityAndTemperature(double density, double temperature)
 		{
 			double delta = GetDelta(density); // reduced density
 			double tau = GetTau(temperature); // reduced inverse temperature
@@ -327,7 +366,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <param name="density">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The isochoric heat capacity in J/(kg K).</returns>
-		public double IsochoricHeatCapacity_FromDensityAndTemperature(double density, double temperature)
+		public double MassSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature(double density, double temperature)
 		{
 			double delta = GetDelta(density); // reduced density
 			double tau = GetTau(temperature); // reduced inverse temperature
@@ -344,7 +383,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <param name="density">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The isobaric heat capacity in J/(kg K).</returns>
-		public double IsobaricHeatCapacity_FromDensityAndTemperature(double density, double temperature)
+		public double MassSpecificIsobaricHeatCapacity_FromMassDensityAndTemperature(double density, double temperature)
 		{
 			double delta = GetDelta(density); // reduced density
 			double tau = GetTau(temperature); // reduced inverse temperature
@@ -369,7 +408,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <param name="density">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The speed of sound in m/s.</returns>
-		public double SpeedOfSound_FromDensityAndTemperature(double density, double temperature)
+		public double SpeedOfSound_FromMassDensityAndTemperature(double density, double temperature)
 		{
 			double delta = GetDelta(density); // reduced density
 			double tau = GetTau(temperature); // reduced inverse temperature

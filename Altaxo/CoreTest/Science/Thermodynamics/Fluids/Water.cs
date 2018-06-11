@@ -622,12 +622,12 @@ new double[]{600000000, 1273, 656.08, 3230.67, 4145.19, 5.4836, 2.5399, 3.5123, 
 
 			var methods = new(string colName, Func<double, double, double> call, double scale, int index)[]
 			{
-								("InternalEnergy", material.InternalEnergy_FromDensityAndTemperature, 1E-3, 3),
-								("Enthalpy", material.Enthalpy_FromDensityAndTemperature,1E-3,4),
-								("Entropy", material.Entropy_FromDensityAndTemperature, 1E-3,5),
-								("Cv", material.IsochoricHeatCapacity_FromDensityAndTemperature,1E-3, 6),
-								("Cp", material.IsobaricHeatCapacity_FromDensityAndTemperature,1E-3, 7),
-								("SpeedOfSound", material.SpeedOfSound_FromDensityAndTemperature, 1, 8),
+								("InternalEnergy", material.MassSpecificInternalEnergy_FromMassDensityAndTemperature, 1E-3, 3),
+								("Enthalpy", material.MassSpecificEnthalpy_FromMassDensityAndTemperature,1E-3,4),
+								("Entropy", material.MassSpecificEntropy_FromMassDensityAndTemperature, 1E-3,5),
+								("Cv", material.MassSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature,1E-3, 6),
+								("Cp", material.MassSpecificIsobaricHeatCapacity_FromMassDensityAndTemperature,1E-3, 7),
+								("SpeedOfSound", material.SpeedOfSound_FromMassDensityAndTemperature, 1, 8),
 		};
 
 			for (int i = 0; i < _testData.Length; ++i)
@@ -640,13 +640,13 @@ new double[]{600000000, 1273, 656.08, 3230.67, 4145.19, 5.4836, 2.5399, 3.5123, 
 				Assert.IsFalse(!(temperature > 0 && temperature < 2000));
 				Assert.IsFalse(!(density > 0 && density < 10000));
 
-				var densityCalculated = material.Density_FromPressureAndTemperature(pressure, temperature, 1E-6, density);
+				var densityCalculated = material.MassDensity_FromPressureAndTemperature(pressure, temperature, 1E-6, density);
 
 				Assert.IsFalse(!IsDoubleValueMatch(density, densityCalculated), "Density deviation");
 
 				density = densityCalculated;
 
-				var pressureCalculated = material.Pressure_FromDensityAndTemperature(density, temperature);
+				var pressureCalculated = material.Pressure_FromMassDensityAndTemperature(density, temperature);
 
 				var pressureRelDev = Math.Abs((pressureCalculated - pressure) / pressure);
 				Assert.IsFalse(pressureRelDev > pressureRelTolerance, "Pressure deviation, expected: {0}, but is: {1}", pressure, pressureCalculated);

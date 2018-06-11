@@ -735,6 +735,8 @@
     <Compile Include="Collections\TreeNodeExtensions.cs" />
     <Compile Include="Collections\WeakCollection.cs" />
     <Compile Include="MatrixNorm.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Decamethyltetrasiloxane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Octamethyltrisiloxane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Carbondioxide.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\HelmholtzEquationOfState.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\HelmholtzEquationOfStateOfBinarySystem.cs" />

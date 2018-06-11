@@ -64,8 +64,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>Gets the pressure at the critical point.</summary>
 		public override double CriticalPointPressure { get; } = 22.064E6;
 
-		/// <summary>Gets the density at the critical point.</summary>
-		public override double CriticalPointDensity { get; } = 322;
+		/// <summary>Gets the mass density at the critical point.</summary>
+		public override double CriticalPointMassDensity { get; } = 322;
+
+		/// <summary>Gets the mole density at the critical point.</summary>
+		public override double CriticalPointMoleDensity { get; } = 17873.7280;
 
 		/// <summary>
 		/// Gets the molecular weight.
@@ -375,14 +378,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			4,
 			};
 
-			_alphai3 = new int[]
+			_alphai3 = new double[]
 			{
 			20, // Index 52 in table
 			20,
 			20,
 			};
 
-			_betai3 = new int[]
+			_betai3 = new double[]
 			{
 			150, // Index 52 in table
 			150,
@@ -396,7 +399,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			1.25,
 			};
 
-			_epsiloni3 = new int[]
+			_epsiloni3 = new double[]
 			{
 			1, // Index 52 in table
 			1,
@@ -568,7 +571,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			var Tr = 1 - temperature_Kelvin / CriticalPointTemperature;
 
 			var ln_rhoR = a1 * Math.Pow(Tr, t1) + a2 * Math.Pow(Tr, t2) + a3 * Math.Pow(Tr, t3) + a4 * Math.Pow(Tr, t4) + a5 * Math.Pow(Tr, t5) + a6 * Math.Pow(Tr, t6);
-			return Math.Exp(ln_rhoR) * CriticalPointDensity;
+			return Math.Exp(ln_rhoR) * CriticalPointMassDensity;
 		}
 
 		/// <summary>
@@ -591,7 +594,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			var Tr = 1 - temperature_Kelvin / CriticalPointTemperature;
 			var ln_rhoR = a1 * Math.Pow(Tr, t1) + a2 * Math.Pow(Tr, t2) + a3 * Math.Pow(Tr, t3) + a4 * Math.Pow(Tr, t4) + a5 * Math.Pow(Tr, t5) + a6 * Math.Pow(Tr, t6);
-			return Math.Exp(ln_rhoR) * CriticalPointDensity;
+			return Math.Exp(ln_rhoR) * CriticalPointMassDensity;
 		}
 
 		#endregion Thermodynamic properties by empirical power laws

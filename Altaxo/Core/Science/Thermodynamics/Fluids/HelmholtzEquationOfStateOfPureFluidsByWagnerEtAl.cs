@@ -120,7 +120,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			var thetai0 = _thetai0;
 
 			double sum = 0;
-			for (int i = 4; i <= 8; ++i)
+			for (int i = 4; i < ai0.Length; ++i)
 				sum += ai0[i] * Math.Log(1 - Math.Exp(-thetai0[i] * tau));
 
 			return sum + Math.Log(delta) + ai0[1] + ai0[2] * tau + ai0[3] * Math.Log(tau);
@@ -138,7 +138,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			var thetai0 = _thetai0;
 
 			double sum = 0;
-			for (int i = 4; i <= 8; ++i)
+			for (int i = 4; i < ai0.Length; ++i)
 			{
 				sum += ai0[i] * thetai0[i] * (1 / (1 - Math.Exp(-thetai0[i] * tau)) - 1);
 			}
@@ -158,7 +158,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			var thetai0 = _thetai0;
 
 			double sum = 0;
-			for (int i = 4; i <= 8; ++i)
+			for (int i = 4; i < ai0.Length; ++i)
 			{
 				sum += ai0[i] * Pow2(thetai0[i]) * Math.Exp(-thetai0[i] * tau) / Pow2(1 - Math.Exp(-thetai0[i] * tau));
 			}
@@ -198,13 +198,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		protected double[] _ti3;
 
-		protected int[] _alphai3;
+		protected double[] _alphai3;
 
-		protected int[] _betai3;
+		protected double[] _betai3;
 
 		protected double[] _gammai3;
 
-		protected int[] _epsiloni3;
+		protected double[] _epsiloni3;
 
 		#endregion 3rd sum term
 

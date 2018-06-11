@@ -43,12 +43,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	public abstract class HelmholtzEquationOfStateOfBinaryMixturesByWagnerEtAl : HelmholtzEquationOfStateOfBinarySystem
 	{
 		protected double _reducingTemperature;
-		protected double _reducingDensity;
+		protected double _reducingMoleDensity;
+		protected double _reducingMassDensity;
 
 		protected double _betaT12;
 		protected double _gammaT12;
-		protected double _betaN12;
-		protected double _gammaN12;
+		protected double _betaV12;
+		protected double _gammaV12;
 		protected double _F12;
 
 		protected double[] _ni1;
@@ -72,8 +73,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		{
 			InitializeCoefficientArrays();
 			TestArrays();
-			_reducingDensity = CalculateReducingDensity();
 			_reducingTemperature = CalculateReducingTemperature();
+			_reducingMoleDensity = CalculateReducingMoleDensity();
+			_reducingMassDensity = _reducingMoleDensity * (_moleFraction1 * _component1.MolecularWeight + _moleFraction2 * _component2.MolecularWeight);
 		}
 
 		/// <summary>
@@ -102,15 +104,15 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
-		/// Calculates the reducing density in dependence of the mole fractions.
+		/// Calculates the reducing mole density in dependence of the mole fractions.
 		/// </summary>
-		/// <returns>Reducing density in kg/m³.</returns>
-		protected virtual double CalculateReducingDensity()
+		/// <returns>Reducing density in mol/m³.</returns>
+		protected virtual double CalculateReducingMoleDensity()
 		{
 			double sum = 0;
-			sum += Pow2(_moleFraction1) / _component1.CriticalPointDensity;
-			sum += Pow2(_moleFraction2) / _component2.CriticalPointDensity;
-			sum += 2 * _moleFraction1 * _moleFraction2 * _betaN12 * _gammaN12 * (_moleFraction1 + _moleFraction2) / (Pow2(_betaN12) * _moleFraction1 + _moleFraction2) * 0.125 * Pow(Math.Pow(_component1.CriticalPointDensity, -1 / 3.0) + Math.Pow(_component2.CriticalPointDensity, -1 / 3.0), 3);
+			sum += Pow2(_moleFraction1) / _component1.CriticalPointMoleDensity;
+			sum += Pow2(_moleFraction2) / _component2.CriticalPointMoleDensity;
+			sum += 2 * _moleFraction1 * _moleFraction2 * _betaV12 * _gammaV12 * (_moleFraction1 + _moleFraction2) / (Pow2(_betaV12) * _moleFraction1 + _moleFraction2) * 0.125 * Pow(Math.Pow(_component1.CriticalPointMoleDensity, -1 / 3.0) + Math.Pow(_component2.CriticalPointMoleDensity, -1 / 3.0), 3);
 			return 1 / sum;
 		}
 
@@ -128,11 +130,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <inheritdoc/>
-		public override double ReducingDensity
+		public override double ReducingMassDensity
 		{
 			get
 			{
-				return _reducingDensity;
+				return _reducingMassDensity;
 			}
 		}
 
@@ -149,8 +151,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double Phi0_OfReducedVariables(double delta, double tau)
 		{
 			// Note we have to calculate back from the reduced variables of this mixture to the reduced variables of the components
-			var sum1 = _moleFraction1 * _component1.Phi0_OfReducedVariables(delta * ReducingDensity / _component1.ReducingDensity, tau / ReducingTemperature * _component1.ReducingTemperature);
-			var sum2 = _moleFraction2 * _component2.Phi0_OfReducedVariables(delta * ReducingDensity / _component2.ReducingDensity, tau / ReducingTemperature * _component2.ReducingTemperature);
+			var sum1 = _moleFraction1 * _component1.Phi0_OfReducedVariables(delta * ReducingMassDensity / _component1.ReducingMassDensity, tau / ReducingTemperature * _component1.ReducingTemperature);
+			var sum2 = _moleFraction2 * _component2.Phi0_OfReducedVariables(delta * ReducingMassDensity / _component2.ReducingMassDensity, tau / ReducingTemperature * _component2.ReducingTemperature);
 			var sum3 = _moleFraction1 * Math.Log(_moleFraction1) + _moleFraction2 * Math.Log(_moleFraction2);
 
 			return double.IsNaN(sum3) ? sum1 + sum2 : sum1 + sum2 + sum3;
@@ -160,8 +162,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double Phi0_tau_OfReducedVariables(double delta, double tau)
 		{
 			// Note we have to calculate back from the reduced variables of this mixture to the reduced variables of the components
-			var sum1 = _moleFraction1 * (_component1.ReducingTemperature / ReducingTemperature) * _component1.Phi0_tau_OfReducedVariables(delta * ReducingDensity / _component1.ReducingDensity, tau / ReducingTemperature * _component1.ReducingTemperature);
-			var sum2 = _moleFraction2 * (_component2.ReducingTemperature / ReducingTemperature) * _component2.Phi0_tau_OfReducedVariables(delta * ReducingDensity / _component2.ReducingDensity, tau / ReducingTemperature * _component2.ReducingTemperature);
+			var sum1 = _moleFraction1 * (_component1.ReducingTemperature / ReducingTemperature) * _component1.Phi0_tau_OfReducedVariables(delta * ReducingMassDensity / _component1.ReducingMassDensity, tau / ReducingTemperature * _component1.ReducingTemperature);
+			var sum2 = _moleFraction2 * (_component2.ReducingTemperature / ReducingTemperature) * _component2.Phi0_tau_OfReducedVariables(delta * ReducingMassDensity / _component2.ReducingMassDensity, tau / ReducingTemperature * _component2.ReducingTemperature);
 			return sum1 + sum2;
 		}
 
@@ -169,8 +171,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double Phi0_tautau_OfReducedVariables(double delta, double tau)
 		{
 			// Note we have to calculate back from the reduced variables of this mixture to the reduced variables of the components
-			var sum1 = _moleFraction1 * Pow2(_component1.ReducingTemperature / ReducingTemperature) * _component1.Phi0_tautau_OfReducedVariables(delta * ReducingDensity / _component1.ReducingDensity, tau / ReducingTemperature * _component1.ReducingTemperature);
-			var sum2 = _moleFraction2 * Pow2(_component2.ReducingTemperature / ReducingTemperature) * _component2.Phi0_tautau_OfReducedVariables(delta * ReducingDensity / _component2.ReducingDensity, tau / ReducingTemperature * _component2.ReducingTemperature);
+			var sum1 = _moleFraction1 * Pow2(_component1.ReducingTemperature / ReducingTemperature) * _component1.Phi0_tautau_OfReducedVariables(delta * ReducingMassDensity / _component1.ReducingMassDensity, tau / ReducingTemperature * _component1.ReducingTemperature);
+			var sum2 = _moleFraction2 * Pow2(_component2.ReducingTemperature / ReducingTemperature) * _component2.Phi0_tautau_OfReducedVariables(delta * ReducingMassDensity / _component2.ReducingMassDensity, tau / ReducingTemperature * _component2.ReducingTemperature);
 			return sum1 + sum2;
 		}
 
@@ -179,7 +181,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		{
 			var sum1 = _moleFraction1 * _component1.PhiR_OfReducedVariables(delta, tau);
 			var sum2 = _moleFraction2 * _component2.PhiR_OfReducedVariables(delta, tau);
-
 			var sum3 = _moleFraction1 * _moleFraction2 * _F12 * Alpha12R(delta, tau);
 			return sum1 + sum2 + sum3;
 		}
@@ -238,7 +239,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Mixture correction function Alpha12R in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = density / <see cref="ReducingDensity"/>.</param>
+		/// <param name="delta">The reduced density = density / <see cref="ReducingMassDensity"/>.</param>
 		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
 		/// <returns>Mixture correction function Alpha12R.</returns>
 		public double Alpha12R(double delta, double tau)
@@ -270,7 +271,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Derivative of the mixture correction function Alpha12R w.r.t. delta in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = density / <see cref="ReducingDensity"/>.</param>
+		/// <param name="delta">The reduced density = density / <see cref="ReducingMassDensity"/>.</param>
 		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
 		/// <returns>Derivative of the mixture correction function Alpha12R w.r.t. delta.</returns>
 		public double Alpha12R_delta(double delta, double tau)
@@ -302,7 +303,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// 2nd derivative of the mixture correction function Alpha12R w.r.t. delta in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = density / <see cref="ReducingDensity"/>.</param>
+		/// <param name="delta">The reduced density = density / <see cref="ReducingMassDensity"/>.</param>
 		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
 		/// <returns>2nd derivative of the mixture correction function Alpha12R w.r.t. delta.</returns>
 		public double Alpha12R_deltadelta(double delta, double tau)
@@ -337,7 +338,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Derivative of the mixture correction function Alpha12R w.r.t. tau in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = density / <see cref="ReducingDensity"/>.</param>
+		/// <param name="delta">The reduced density = density / <see cref="ReducingMassDensity"/>.</param>
 		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
 		/// <returns>Derivative of the mixture correction function Alpha12R w.r.t. tau.</returns>
 		public double Alpha12R_tau(double delta, double tau)
@@ -368,7 +369,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// 2nd derivative of the mixture correction function Alpha12R w.r.t. tau in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = density / <see cref="ReducingDensity"/>.</param>
+		/// <param name="delta">The reduced density = density / <see cref="ReducingMassDensity"/>.</param>
 		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
 		/// <returns>2nd derivative of the mixture correction function Alpha12R w.r.t. tau.</returns>
 		public double Alpha12R_tautau(double delta, double tau)
@@ -400,7 +401,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Derivative of the mixture correction function Alpha12R w.r.t. delta and tau in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = density / <see cref="ReducingDensity"/>.</param>
+		/// <param name="delta">The reduced density = density / <see cref="ReducingMassDensity"/>.</param>
 		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
 		/// <returns>Derivative of the mixture correction function Alpha12R w.r.t. delta and tau.</returns>
 		public double Alpha12R_deltatau(double delta, double tau)

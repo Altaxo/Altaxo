@@ -50,27 +50,33 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		{
 			_betaT12 = 1.030538;
 			_gammaT12 = 0.828472;
-			_betaN12 = 1.021392;
-			_gammaN12 = 0.895156;
+			_betaV12 = 1.021392;
+			_gammaV12 = 0.895156;
 			_F12 = 1;
 
 			_ni1 = new double[]
 			{
+				3.9440467E-1,
+			-1.7634732,
+			1.4620755E-1,
 			};
 
 			_di1 = new int[]
 			{
+				1 ,
+			1 ,
+			3 ,
 			};
 
 			_ti1 = new double[]
 			{
+				0.880,
+			2.932,
+			2.433,
 			};
 
 			_ni2 = new double[]
 			{
-			3.9440467E-1,
-			-1.7634732,
-			1.4620755E-1,
 			8.7522320E-3,
 			2.0349398,
 			-9.0350250E-2,
@@ -80,9 +86,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_ti2 = new double[]
 			{
-			0.880,
-			2.932,
-			2.433,
 			1.330,
 			4.416,
 			5.514,
@@ -92,9 +95,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_di2 = new int[]
 			{
-			1 ,
-			1 ,
-			3 ,
 			0 ,
 			2 ,
 			3,
@@ -104,9 +104,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_ci2 = new int[]
 			{
-			0,
-			0,
-			0,
 			1 ,
 			1 ,
 			1,
