@@ -306,6 +306,35 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
+		/// Get the mole specific Gibbs energy from a given mass density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The Gibbs energy in J/(mol K).</returns>
+		public double MoleSpecificGibbsEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			double delta = GetDelta(massDensity); // reduced density
+			double tau = GetTau(temperature); // reduced inverse temperature
+
+			double phi0 = Phi0_OfReducedVariables(delta, tau);
+			double phiR = PhiR_OfReducedVariables(delta, tau);
+			double phiR_delta = PhiR_delta_OfReducedVariables(delta, tau);
+
+			return UniversalGasConstant * temperature * ((1 + delta * phiR_delta) + (phi0 + phiR));
+		}
+
+		/// <summary>
+		/// Get the mass specific Gibbs energy from a given mass density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The Gibbs energy in J/(kg K).</returns>
+		public double MassSpecificGibbsEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			return (SpecificGasConstant / UniversalGasConstant) * MoleSpecificGibbsEnergy_FromMassDensityAndTemperature(massDensity, temperature);
+		}
+
+		/// <summary>
 		/// Get the entropy from a given density and temperature.
 		/// </summary>
 		/// <param name="density">The density in kg/m³.</param>
