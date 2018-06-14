@@ -85,36 +85,34 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		{
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
+			_workingUniversalGasConstant = 8.31451;
+
+			_alpha0_n_const = -6.12487573474031;
+			_alpha0_n_tau = 5.1155908041805942;
+			_alpha0_n_lntau = 2.50000000;
+
 			/// <summary>
 			/// Page 1540 Table 27
 			/// </summary>
-			_ai0 = new double[]
+			_alpha0_n_Exp = new double[]
 			{
-			double.NaN,
-			8.37304456,
-		 -3.70454304,
-			2.50000000,
 			1.99427042,
-			0.62105248,
-			0.41195293,
+			0.621052475,
+			0.411952928,
 			1.04028922,
-			0.08327678,
+			0.0832767753,
 			};
 
 			/// <summary>
 			/// Page 1540 Table 27
 			/// </summary>
-			_thetai0 = new double[]
+			_alpha0_theta_Exp = new double[]
 			{
-			double.NaN,
-			double.NaN,
-			double.NaN,
-			double.NaN,
-			3.15163,
-			6.11190,
-			6.77708,
-			11.32384,
-			27.08792,
+			958.49956/CriticalPointTemperature,
+			1858.80115/CriticalPointTemperature,
+			2061.10114/CriticalPointTemperature,
+			3443.89908/CriticalPointTemperature,
+			8238.20035/CriticalPointTemperature,
 			};
 
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives

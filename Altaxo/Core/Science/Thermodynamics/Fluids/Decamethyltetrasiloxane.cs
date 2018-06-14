@@ -67,8 +67,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>Gets the density at the critical point.</summary>
 		public override double CriticalPointMassDensity { get; } = 268.4321856;
 
-		/// <summary>Gets the density at the critical point.</summary>
-		public override double CriticalPointMoleDensity { get; } = 268.4321856 / 310.6854E-3;
+		/// <summary>Gets the mole density at the critical point in mol/m³.</summary>
+		public override double CriticalPointMoleDensity { get; } = 864;
 
 		/// <summary>
 		/// Gets the molecular weight.
@@ -89,7 +89,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			/// <summary>
 			/// Page 1540 Table 27
 			/// </summary>
-			_ai0 = new double[]
+			_alpha0_n_Exp = new double[]
 			{
 			double.NaN,
 			131.089725,
@@ -103,7 +103,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			/// <summary>
 			/// Page 1540 Table 27
 			/// </summary>
-			_thetai0 = new double[]
+			_alpha0_theta_Exp = new double[]
 			{
 			double.NaN,
 			double.NaN,
@@ -113,6 +113,30 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			1180/599.4,
 			4240/599.4,
 			};
+
+			/// <summary>The Universal Gas Constant R at the time the model was developed.</summary>
+			_workingUniversalGasConstant = 8.3144621;
+
+			// <summary>The constant term in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+			_alpha0_n_const = 117.994606;
+
+			// <summary>The term with the factor tau in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+			_alpha0_n_tau = -19.6600754;
+
+			// <summary>The term with the factor ln(tau) in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+			_alpha0_n_lntau = 3;
+
+			/// <summary>The prefactors of the Sinh and Cosh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+			_alpha0_n_Cosh = new double[] { };
+
+			/// <summary>The prefactors of tau in the arguments of the Sinh and Cosh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+			_alpha0_theta_Cosh = new double[] { };
+
+			/// <summary>The prefactors of the Sinh and Cosh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+			_alpha0_n_Sinh = new double[] { };
+
+			/// <summary>The prefactors of tau in the arguments of the Sinh and Cosh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+			_alpha0_theta_Sinh = new double[] { };
 
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
@@ -131,6 +155,15 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				8.606129E-1,
 				};
 
+			_ti1 = new double[]
+		{
+			1.000,
+			0.319,
+			0.829,
+			0.780,
+			0.687,
+		};
+
 			_di1 = new int[]
 			{
 				4,
@@ -138,15 +171,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				1,
 				2,
 				3,
-			};
-
-			_ti1 = new double[]
-			{
-			1.000,
-			0.319,
-			0.829,
-			0.780,
-			0.687,
 			};
 
 			#endregion Index 1..5 of Table 6
@@ -162,6 +186,15 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				-6.383507E-2,
 			};
 
+			_ti2 = new double[]
+		{
+			1.290,
+			3.910,
+			0.770,
+			3.055,
+			1.013,
+		};
+
 			_di2 = new int[]
 			{
 			1,
@@ -169,15 +202,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			2,
 			2,
 			7,
-			};
-
-			_ti2 = new double[]
-			{
-			1.290,
-			3.910,
-			0.770,
-			3.055,
-			1.013,
 			};
 
 			_ci2 = new int[]
@@ -197,9 +221,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			{
 			2.674255,
 			4.662529E-2,
-			3.835361E-1,
-			4.273462E-1,
-			1.148009,
+			-3.835361E-1,
+			-4.273462E-1,
+			-1.148009,
 			};
 
 			_di3 = new int[]

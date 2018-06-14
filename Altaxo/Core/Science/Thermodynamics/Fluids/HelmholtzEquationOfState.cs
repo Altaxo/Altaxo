@@ -390,14 +390,31 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
-		/// Get the isochoric heat capacity from a given density and temperature.
+		/// Get the mole specific isochoric heat capacity from a given density and temperature.
 		/// </summary>
-		/// <param name="density">The density in kg/m³.</param>
+		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The isochoric heat capacity in J/(kg K).</returns>
-		public double MassSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature(double density, double temperature)
+		public double MoleSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature(double massDensity, double temperature)
 		{
-			double delta = GetDelta(density); // reduced density
+			double delta = GetDelta(massDensity); // reduced density
+			double tau = GetTau(temperature); // reduced inverse temperature
+
+			double phi0_tautau = Phi0_tautau_OfReducedVariables(delta, tau);
+			double phiR_tautau = PhiR_tautau_OfReducedVariables(delta, tau);
+
+			return -Pow2(tau) * (phi0_tautau + phiR_tautau) * UniversalGasConstant;
+		}
+
+		/// <summary>
+		/// Get the isochoric heat capacity from a given density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The isochoric heat capacity in J/(kg K).</returns>
+		public double MassSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			double delta = GetDelta(massDensity); // reduced density
 			double tau = GetTau(temperature); // reduced inverse temperature
 
 			double phi0_tautau = Phi0_tautau_OfReducedVariables(delta, tau);

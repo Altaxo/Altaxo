@@ -87,7 +87,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
 			// Table 4 (mi there is _ai0 here)
-			_ai0 = new double[]
+			_alpha0_n_Exp = new double[]
 			{
 					double.NaN,
 					117.994606,
@@ -99,7 +99,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			};
 
 			// Table 4
-			_thetai0 = new double[]
+			_alpha0_theta_Exp = new double[]
 			{
 				double.NaN,
 				double.NaN,
