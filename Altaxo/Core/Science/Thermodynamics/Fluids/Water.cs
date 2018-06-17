@@ -46,39 +46,36 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		#region Constants for water
 
+		/// <summary>
+		/// The Universal Gas Constant R at the time the model was developed.
+		/// </summary>
+		public override double WorkingUniversalGasConstant => 8.314371357587;
+
+		/// <summary>
+		/// Gets the molecular weight in kg/m³.
+		/// </summary>
+		public override double MolecularWeight { get; } = 18.015268E-3; // kg/mol
+
 		/// <summary>Gets the triple point temperature.</summary>
 		public override double TriplePointTemperature { get; } = 273.16;
 
 		/// <summary>Gets the triple point pressure.</summary>
 		public override double TriplePointPressure { get; } = 611.657;
 
-		/// <summary>Gets the saturated liquid density at the triple point.</summary>
-		public override double TriplePointSaturatedLiquidDensity { get; } = 999.793;
+		/// <summary>Gets the saturated liquid density in kg/m³ at the triple point.</summary>
+		public override double TriplePointSaturatedLiquidMassDensity { get; } = 999.793;
 
-		/// <summary>Gets the saturated vapor density at the triple point.</summary>
-		public override double TriplePointSaturatedVaporDensity { get; } = 0.00485458;
+		/// <summary>Gets the saturated vapor density in kg/m³ at the triple point.</summary>
+		public override double TriplePointSaturatedVaporMassDensity { get; } = 0.00485458;
 
-		/// <summary>Gets the temperature at the critical point.</summary>
+		/// <summary>Gets the temperature at the critical point in K.</summary>
 		public override double CriticalPointTemperature { get; } = 647.096;
 
 		/// <summary>Gets the pressure at the critical point.</summary>
 		public override double CriticalPointPressure { get; } = 22.064E6;
 
-		/// <summary>Gets the mass density at the critical point.</summary>
-		public override double CriticalPointMassDensity { get; } = 322;
-
-		/// <summary>Gets the mole density at the critical point.</summary>
-		public override double CriticalPointMoleDensity { get; } = 17873.7280;
-
-		/// <summary>
-		/// Gets the molecular weight.
-		/// </summary>
-		public override double MolecularWeight { get; } = 18.015268E-3; // kg/mol
-
-		/// <summary>
-		/// Gets the specific gas constant.
-		/// </summary>
-		public override double SpecificGasConstant { get; } = 461.51805; // J/(kg K)
+		/// <summary>Gets the mole density at the critical point in mol/m³.</summary>
+		public override double CriticalPointMoleDensity { get; } = 17.8737279956E3;
 
 		#endregion Constants for water
 
@@ -86,8 +83,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		{
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			_alpha0_n_const = -8.32044648201;
-			_alpha0_n_tau = 6.6832105268;
+			_alpha0_n_const = -8.32044648201 + 1.33035341566473E-09;
+			_alpha0_n_tau = 6.6832105268 + 8.50747903433851E-10;
 			_alpha0_n_lntau = 3.00632;
 
 			/// <summary>

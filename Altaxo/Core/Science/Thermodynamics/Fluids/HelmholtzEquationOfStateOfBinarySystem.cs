@@ -77,23 +77,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Gets the resulting molecular weight of the mixture in kg/mol.
 		/// </summary>
-		public virtual double MolecularWeight
+		public override double MolecularWeight
 		{
 			get
 			{
 				return _moleFraction1 * _component1.MolecularWeight + _moleFraction2 * _component2.MolecularWeight;
-			}
-		}
-
-		/// <summary>
-		/// Gets the resulting specific gas constant of the mixture in J/(kg K).
-		/// </summary>
-		public override double SpecificGasConstant
-		{
-			get
-			{
-				double inv = _moleFraction1 / _component1.SpecificGasConstant + _moleFraction2 / _component2.SpecificGasConstant;
-				return 1 / inv;
 			}
 		}
 

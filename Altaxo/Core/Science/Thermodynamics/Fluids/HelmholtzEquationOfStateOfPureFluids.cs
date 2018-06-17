@@ -44,10 +44,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public abstract double TriplePointPressure { get; }
 
 		/// <summary>Gets the saturated liquid density at the triple point in kg/m³.</summary>
-		public abstract double TriplePointSaturatedLiquidDensity { get; }
+		public abstract double TriplePointSaturatedLiquidMassDensity { get; }
 
 		/// <summary>Gets the saturated vapor density at the triple point in kg/m³.</summary>
-		public abstract double TriplePointSaturatedVaporDensity { get; }
+		public abstract double TriplePointSaturatedVaporMassDensity { get; }
 
 		/// <summary>Gets the temperature at the critical point in Kelvin.</summary>
 		public abstract double CriticalPointTemperature { get; }
@@ -55,16 +55,17 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>Gets the pressure at the critical point in Pa.</summary>
 		public abstract double CriticalPointPressure { get; }
 
-		/// <summary>Gets the mass density at the critical point in kg/m³.</summary>
-		public abstract double CriticalPointMassDensity { get; }
-
-		/// <summary>Gets the mass density at the critical point in kg/m³.</summary>
+		/// <summary>Gets the mole density at the critical point in mol/m³.</summary>
 		public abstract double CriticalPointMoleDensity { get; }
 
-		/// <summary>Gets the molecular weight in kg/mol.</summary>
-		public abstract double MolecularWeight { get; } // kg/mol
-
 		#endregion Constants
+
+		#region Derived constants
+
+		/// <summary>Gets the mass density at the critical point in kg/m³.</summary>
+		public double CriticalPointMassDensity => CriticalPointMoleDensity * MolecularWeight;
+
+		#endregion Derived constants
 
 		#region Abstract Functions
 
@@ -80,7 +81,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		#region Functions
 
 		/// <inheritdoc/>
-		public override double ReducingMassDensity => CriticalPointMassDensity;
+		public override double ReducingMoleDensity => CriticalPointMoleDensity;
 
 		/// <inheritdoc/>
 		public override double ReducingTemperature => CriticalPointTemperature;

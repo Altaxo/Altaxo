@@ -44,6 +44,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// </summary>
 		public static CarbonDioxide Instance { get; } = new CarbonDioxide();
 
+		public override double WorkingUniversalGasConstant => 8.31451;
+
 		#region Constants for carbon dioxide
 
 		/// <summary>Gets the triple point temperature.</summary>
@@ -53,19 +55,16 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointPressure { get; } = 517950;
 
 		/// <summary>Gets the saturated liquid density at the triple point.</summary>
-		public override double TriplePointSaturatedLiquidDensity { get; } = 1178.53;
+		public override double TriplePointSaturatedLiquidMassDensity { get; } = 1178.53;
 
 		/// <summary>Gets the saturated vapor density at the triple point.</summary>
-		public override double TriplePointSaturatedVaporDensity { get; } = 13.7614;
+		public override double TriplePointSaturatedVaporMassDensity { get; } = 13.7614;
 
 		/// <summary>Gets the temperature at the critical point.</summary>
 		public override double CriticalPointTemperature { get; } = 304.1282;
 
 		/// <summary>Gets the pressure at the critical point.</summary>
 		public override double CriticalPointPressure { get; } = 7.3773E6;
-
-		/// <summary>Gets the density at the critical point.</summary>
-		public override double CriticalPointMassDensity { get; } = 467.6;
 
 		public override double CriticalPointMoleDensity { get; } = 10624.9063;
 
@@ -74,21 +73,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// </summary>
 		public override double MolecularWeight { get; } = 44.0098E-3; // kg/mol
 
-		/// <summary>
-		/// Gets the specific gas constant.
-		/// </summary>
-		public override double SpecificGasConstant { get; } = 188.9241; // J/(kg K)
-
 		#endregion Constants for carbon dioxide
 
 		private CarbonDioxide()
 		{
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			_workingUniversalGasConstant = 8.31451;
-
-			_alpha0_n_const = -6.12487573474031;
-			_alpha0_n_tau = 5.1155908041805942;
+			_alpha0_n_const = -6.1248710633532329122805;
+			_alpha0_n_tau = 5.11559631859617732106;
 			_alpha0_n_lntau = 2.50000000;
 
 			/// <summary>
@@ -125,14 +117,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_ni1 = new double[]
 			{
-			0.38856823203161E0, // Index 1 in table
-			0.29385475942740E1,
-		 -0.55867188534934E1,
-		 -0.76753199592477E0,
-			0.31729005580416E0,
-			0.54803315897767E0,
-			0.12279411220335E0,
-				};
+			0.388568232032e00 ,
+			0.293854759427e01,
+			-0.558671885349e01,
+			-0.767531995925e00,
+			 0.317290055804e00,
+			 0.548033158978e00,
+			 0.122794112203e00,
+			};
 
 			_di1 = new int[]
 			{
@@ -162,33 +154,33 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_ni2 = new double[]
 			{
-			0.21658961543220E1, // Index 8 in table
-			0.15841735109724E1,
-			-0.23132705405503E0,
-			0.58116916431436E-1,
-		 -0.55369137205382E0,
-			0.48946615909422E0,
-		 -0.24275739843501E-1,
-			0.62494790501678E-1,
-		 -0.12175860225246E0,
-		 -0.37055685270086E0,
-		 -0.16775879700426E-1,
-		 -0.11960736637987E0,
-		 -0.45619362508778E-1, // Index 20
-			0.35612789270346E-1,
-		 -0.74427727132052E-2,
-		 -0.17395704902432E-2,
-		 -0.21810121289527E-1,
-			0.24332166559236E-1,
-		 -0.37440133423463E-1,
-			0.14338715756878,
-		 -0.1349196908328,
-		 -0.23151225053480E-1,
-			0.12363125492901E-1, // Index 30
-			0.21058321972940E-2,
-		 -0.33958519026368E-3,
-			0.55993651771592E-2,
-		 -0.30335118055646E-3,
+			 0.216589615432e01,
+			 0.158417351097e01 ,
+			-0.231327054055e00 ,
+			 0.581169164314e-01 ,
+			-0.553691372054e00 ,
+			 0.489466159094e00 ,
+			-0.242757398435e-01 ,
+			 0.624947905017e-01 ,
+			-0.121758602252e00 ,
+			-0.370556852701e00 ,
+			-0.167758797004e-01 ,
+			-0.119607366380e00 ,
+			-0.456193625088e-01 ,
+			 0.356127892703e-01 ,
+			-0.744277271321e-02 ,
+			-0.173957049024e-02 ,
+			-0.218101212895e-01 ,
+			 0.243321665592e-01 ,
+			-0.374401334235e-01 ,
+			 0.143387157569e00 ,
+			-0.134919690833e00 ,
+			-0.231512250535e-01 ,
+			 0.123631254929e-01 ,
+			 0.210583219729e-02 ,
+			-0.339585190264e-03 ,
+			 0.559936517716e-02 ,
+			-0.303351180556e-03 ,
 			};
 
 			_di2 = new int[]
@@ -290,11 +282,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_ni3 = new double[]
 			{
-		 -0.21365488688320E3,  // Index 35 in table
-			0.26641569149272E5,
-		 -0.24027212204557E5,
-		 -0.28341603423999E3,
-			0.21247284400179E3,
+			-0.213654886883e03 ,
+			 0.266415691493e05 ,
+			-0.240272122046e05 ,
+			-0.283416034240e03 ,
+			 0.212472844002e03 ,
 			};
 
 			_di3 = new int[]
@@ -357,9 +349,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_ni4 = new double[]
 			{
-		 -0.66642276540751E0, // Index 40 in table
-			0.72608632349897E0,
-			0.55068668612842E-1,
+			-0.666422765408e00 , // Index 40 in table
+			 0.726086323499e00 ,
+			 0.550686686128e-01 ,
 			};
 
 			_ai4 = new double[]

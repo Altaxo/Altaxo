@@ -46,6 +46,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		#region Constants
 
+		public override double WorkingUniversalGasConstant => 8.3144621;
+
 		/// <summary>Gets the triple point temperature.</summary>
 		public override double TriplePointTemperature { get; } = 187.2; // Table 8
 
@@ -53,10 +55,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointPressure { get; } = double.NaN;
 
 		/// <summary>Gets the saturated liquid density at the triple point.</summary>
-		public override double TriplePointSaturatedLiquidDensity { get; } = 924.1285705;
+		public override double TriplePointSaturatedLiquidMassDensity { get; } = 924.1285705;
 
 		/// <summary>Gets the saturated vapor density at the triple point.</summary>
-		public override double TriplePointSaturatedVaporDensity { get; } = double.NaN;
+		public override double TriplePointSaturatedVaporMassDensity { get; } = double.NaN;
 
 		/// <summary>Gets the temperature at the critical point.</summary>
 		public override double CriticalPointTemperature { get; } = 565.3609;
@@ -65,20 +67,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double CriticalPointPressure { get; } = 1.4375E6;
 
 		/// <summary>Gets the density at the critical point.</summary>
-		public override double CriticalPointMassDensity { get; } = 268.226721;
-
-		/// <summary>Gets the density at the critical point.</summary>
-		public override double CriticalPointMoleDensity { get; } = 268.226721 / 236.5315E-3;
+		public override double CriticalPointMoleDensity { get; } = 1.134E3;
 
 		/// <summary>
 		/// Gets the molecular weight.
 		/// </summary>
-		public override double MolecularWeight { get; } = 236.5315E-3; // kg/mol
-
-		/// <summary>
-		/// Gets the specific gas constant.
-		/// </summary>
-		public override double SpecificGasConstant { get; } = 35.5159650194583; // J/(kg K)
+		public override double MolecularWeight { get; } = 236.531E-3; // kg/mol
 
 		#endregion Constants
 

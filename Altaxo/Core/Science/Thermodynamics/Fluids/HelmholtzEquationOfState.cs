@@ -43,10 +43,15 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		#region Reduced density and pressure
 
 		/// <summary>
-		/// Gets the density (in kg/m³) used to calculate the reduced (dimensionless) density.
+		/// Gets the (typical) molecular weight of the fluid.
+		/// </summary>
+		public abstract double MolecularWeight { get; }
+
+		/// <summary>
+		/// Gets the molar density (in mol/m³) used to calculate the reduced (dimensionless) density.
 		/// </summary>
 		/// <remarks>The reduced density called delta and is calculated by: delta = density / <see cref="ReducingMassDensity"/>.</remarks>
-		public abstract double ReducingMassDensity { get; }
+		public abstract double ReducingMoleDensity { get; }
 
 		/// <summary>
 		/// Gets the temperature (in Kelvin) that is used to calculate the inverse reduced temperature.
@@ -55,18 +60,36 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public abstract double ReducingTemperature { get; }
 
 		/// <summary>
-		/// Gets the specific gas constant of the pure fluid or the mixture in J/(kg K).
+		/// Gets the universal gas constant that was used at the time this model was developed.
 		/// </summary>
-		public abstract double SpecificGasConstant { get; }
+		public abstract double WorkingUniversalGasConstant { get; }
+
+		/// <summary>
+		/// Gets the density (in kg/m³) used to calculate the reduced (dimensionless) density.
+		/// </summary>
+		/// <remarks>The reduced density called delta and is calculated by: delta = density / <see cref="ReducingMassDensity"/>.</remarks>
+		public double ReducingMassDensity => ReducingMoleDensity * MolecularWeight;
+
+		public double WorkingSpecificGasConstant => WorkingUniversalGasConstant / MolecularWeight;
+
+		/// <summary>
+		/// Gets the reduced density by density / <see cref="ReducingMassDensity"/>.
+		/// </summary>
+		/// <param name="moleDensity">The mass density in kg/m³.</param>
+		/// <returns>Reduced density.</returns>
+		public virtual double GetDeltaFromMoleDensity(double moleDensity)
+		{
+			return moleDensity / ReducingMoleDensity;
+		}
 
 		/// <summary>
 		/// Gets the reduced density by density / <see cref="ReducingMassDensity"/>.
 		/// </summary>
 		/// <param name="massDensity">The mass density in kg/m³.</param>
 		/// <returns>Reduced density.</returns>
-		public virtual double GetDelta(double massDensity)
+		public virtual double GetDeltaFromMassDensity(double massDensity)
 		{
-			return massDensity / ReducingMassDensity;
+			return massDensity / (ReducingMoleDensity * MolecularWeight);
 		}
 
 		/// <summary>
@@ -74,7 +97,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// </summary>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The inverse reduced temperature.</returns>
-		public virtual double GetTau(double temperature)
+		public virtual double GetTauFromTemperature(double temperature)
 		{
 			return ReducingTemperature / temperature;
 		}
@@ -168,6 +191,22 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		#region Thermodynamic properties derived from dimensionless Helmholtz energy
 
 		/// <summary>
+		/// Get the pressure from a given molar density and temperature.
+		/// </summary>
+		/// <param name="moleDensity">The density in mol/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The pressure in Pa.</returns>
+		public virtual double Pressure_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+		{
+			double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
+			double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
+
+			double phir_delta = PhiR_delta_OfReducedVariables(delta, tau); // derivative of PhiR with respect to delta
+
+			return moleDensity * temperature * WorkingUniversalGasConstant * (1 + delta * phir_delta);
+		}
+
+		/// <summary>
 		/// Get the pressure from a given density and temperature.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
@@ -175,46 +214,68 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <returns>The pressure in Pa.</returns>
 		public virtual double Pressure_FromMassDensityAndTemperature(double massDensity, double temperature)
 		{
-			double delta = GetDelta(massDensity); // reduced density
-			double tau = GetTau(temperature); // reduced inverse temperature
-
-			double phir_delta = PhiR_delta_OfReducedVariables(delta, tau); // derivative of PhiR with respect to delta
-
-			return massDensity * temperature * SpecificGasConstant * (1 + delta * phir_delta);
+			return Pressure_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
 		}
 
-		public double IsothermalDerivativePressureByDensity_FromMassDensityAndTemperature(double density, double temperature)
+		public double IsothermalDerivativePressureWrtMoleDensity_FromMoleDensityAndTemperature(double moleDensity, double temperature)
 		{
-			double delta = GetDelta(density); // reduced density
-			double tau = GetTau(temperature); // reduced inverse temperature
+			double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
+			double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
 			double phir_delta = PhiR_delta_OfReducedVariables(delta, tau); // derivative of PhiR with respect to delta
 			double phir_deltadelta = PhiR_deltadelta_OfReducedVariables(delta, tau); // derivative of PhiR with respect to delta
 
-			return SpecificGasConstant * temperature * (1 + 2 * delta * phir_delta + delta * delta * phir_deltadelta);
+			return WorkingUniversalGasConstant * temperature * (1 + 2 * delta * phir_delta + delta * delta * phir_deltadelta);
+		}
+
+		public double IsothermalDerivativePressureByMassDensity_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			return IsothermalDerivativePressureWrtMoleDensity_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
 		}
 
 		/// <summary>
-		/// Gets the isothermal compressibility in 1/Pa from density and temperature.
+		/// Gets the isothermal compressibility in 1/Pa from mole density (mol/m³) and temperature (K).
 		/// </summary>
-		/// <param name="density">The density in kg/m³.</param>
+		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The isothermal compressibility in 1/Pa.</returns>
-		public double IsothermalCompressibility_FromMassDensityAndTemperature(double density, double temperature)
+		public double IsothermalCompressibility_FromMoleDensityAndTemperature(double moleDensity, double temperature)
 		{
-			double dpdrho = IsothermalDerivativePressureByDensity_FromMassDensityAndTemperature(density, temperature);
-			return 1 / (dpdrho * density);
+			double dpdrho = IsothermalDerivativePressureWrtMoleDensity_FromMoleDensityAndTemperature(moleDensity, temperature);
+			return 1 / (dpdrho * moleDensity);
+		}
+
+		/// <summary>
+		/// Gets the isothermal compressibility in 1/Pa from mass density (kg/m³) and temperature (K).
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The isothermal compressibility in 1/Pa.</returns>
+		public double IsothermalCompressibility_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			return IsothermalDerivativePressureWrtMoleDensity_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+		}
+
+		/// <summary>
+		/// Gets the isothermal compressional modulus in Pa from density and temperature.
+		/// </summary>
+		/// <param name="moleDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The isothermal compressional modulus K in Pa.</returns>
+		public double IsothermalCompressionalModulus_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+		{
+			double dpdrho = IsothermalDerivativePressureWrtMoleDensity_FromMoleDensityAndTemperature(moleDensity, temperature);
+			return dpdrho * moleDensity;
 		}
 
 		/// <summary>
 		/// Gets the isothermal compressional modulus K in Pa from density and temperature.
 		/// </summary>
-		/// <param name="density">The density in kg/m³.</param>
+		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The isothermal compressional modulus K in Pa.</returns>
-		public double IsothermalCompressionalModulus_FromMassDensityAndTemperature(double density, double temperature)
+		public double IsothermalCompressionalModulus_FromMassDensityAndTemperature(double massDensity, double temperature)
 		{
-			double dpdrho = IsothermalDerivativePressureByDensity_FromMassDensityAndTemperature(density, temperature);
-			return dpdrho * density;
+			return IsothermalCompressionalModulus_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
 		}
 
 		/// <summary>
@@ -239,9 +300,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			if (!(relativeAccuracy > 0))
 				throw new ArgumentOutOfRangeException(nameof(relativeAccuracy), "Must be >0");
 
-			double tau = GetTau(temperature); // reduced inverse temperature
+			double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
 
-			double RTRhoC = SpecificGasConstant * temperature * ReducingMassDensity;
+			double RTRhoC = WorkingSpecificGasConstant * temperature * ReducingMassDensity;
 
 			double delta;
 			if (densityStartValue > 0)
@@ -272,20 +333,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
-		/// Get the Helmholtz energy from a given mass density and temperature.
+		/// Get the Helmholtz energy from a given mole density and temperature.
 		/// </summary>
-		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
-		/// <returns>The Helmholtz energy in J/(kg K).</returns>
-		public double MassSpecificHelmholtzEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
+		/// <returns>The Helmholtz energy in J/(mol K).</returns>
+		public double MoleSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
 		{
-			double delta = GetDelta(massDensity); // reduced density
-			double tau = GetTau(temperature); // reduced inverse temperature
+			double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
+			double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
 
 			double phi0 = Phi0_OfReducedVariables(delta, tau);
 			double phiR = PhiR_OfReducedVariables(delta, tau);
 
-			return SpecificGasConstant * temperature * (phi0 + phiR);
+			return WorkingUniversalGasConstant * temperature * (phi0 + phiR);
 		}
 
 		/// <summary>
@@ -296,13 +357,47 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <returns>The Helmholtz energy in J/(mol K).</returns>
 		public double MoleSpecificHelmholtzEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
 		{
-			double delta = GetDelta(massDensity); // reduced density
-			double tau = GetTau(temperature); // reduced inverse temperature
+			return MoleSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+		}
+
+		/// <summary>
+		/// Get the mass specific Helmholtz energy from a given mass density and temperature.
+		/// </summary>
+		/// <param name="moleDensity">The density in mol/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The Helmholtz energy in J/(kg K).</returns>
+		public double MassSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+		{
+			return MoleSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(moleDensity, temperature) / MolecularWeight;
+		}
+
+		/// <summary>
+		/// Get the Helmholtz energy from a given mass density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The Helmholtz energy in J/(kg K).</returns>
+		public double MassSpecificHelmholtzEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			return MoleSpecificHelmholtzEnergy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
+		}
+
+		/// <summary>
+		/// Get the mole specific Gibbs energy from a given mass density and temperature.
+		/// </summary>
+		/// <param name="moleDensity">The density in mol/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The Gibbs energy in J/(mol K).</returns>
+		public double MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+		{
+			double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
+			double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
 
 			double phi0 = Phi0_OfReducedVariables(delta, tau);
 			double phiR = PhiR_OfReducedVariables(delta, tau);
+			double phiR_delta = PhiR_delta_OfReducedVariables(delta, tau);
 
-			return UniversalGasConstant * temperature * (phi0 + phiR);
+			return WorkingUniversalGasConstant * temperature * ((1 + delta * phiR_delta) + (phi0 + phiR));
 		}
 
 		/// <summary>
@@ -313,14 +408,18 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <returns>The Gibbs energy in J/(mol K).</returns>
 		public double MoleSpecificGibbsEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
 		{
-			double delta = GetDelta(massDensity); // reduced density
-			double tau = GetTau(temperature); // reduced inverse temperature
+			return MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+		}
 
-			double phi0 = Phi0_OfReducedVariables(delta, tau);
-			double phiR = PhiR_OfReducedVariables(delta, tau);
-			double phiR_delta = PhiR_delta_OfReducedVariables(delta, tau);
-
-			return UniversalGasConstant * temperature * ((1 + delta * phiR_delta) + (phi0 + phiR));
+		/// <summary>
+		/// Get the mass specific Gibbs energy from a given mass density and temperature.
+		/// </summary>
+		/// <param name="moleDensity">The density in mol/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The Gibbs energy in J/(kg K).</returns>
+		public double MassSpecificGibbsEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+		{
+			return MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(moleDensity, temperature) / MolecularWeight;
 		}
 
 		/// <summary>
@@ -331,19 +430,19 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <returns>The Gibbs energy in J/(kg K).</returns>
 		public double MassSpecificGibbsEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
 		{
-			return (SpecificGasConstant / UniversalGasConstant) * MoleSpecificGibbsEnergy_FromMassDensityAndTemperature(massDensity, temperature);
+			return MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
 		}
 
 		/// <summary>
-		/// Get the entropy from a given density and temperature.
+		/// Get the entropy from a given mole density and temperature.
 		/// </summary>
-		/// <param name="density">The density in kg/m³.</param>
+		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
-		/// <returns>The entropy in J/(kg K).</returns>
-		public double MassSpecificEntropy_FromMassDensityAndTemperature(double density, double temperature)
+		/// <returns>The entropy in J/(mol K).</returns>
+		public double MoleSpecificEntropy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
 		{
-			double delta = GetDelta(density); // reduced density
-			double tau = GetTau(temperature); // reduced inverse temperature
+			double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
+			double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
 
 			double phi0 = Phi0_OfReducedVariables(delta, tau);
 			double phiR = PhiR_OfReducedVariables(delta, tau);
@@ -351,42 +450,158 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double phi0_tau = Phi0_tau_OfReducedVariables(delta, tau);
 			double phiR_tau = PhiR_tau_OfReducedVariables(delta, tau);
 
-			return SpecificGasConstant * (tau * (phi0_tau + phiR_tau) - phi0 - phiR);
+			return WorkingUniversalGasConstant * (tau * (phi0_tau + phiR_tau) - phi0 - phiR);
+		}
+
+		/// <summary>
+		/// Get the entropy from a given mole density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The entropy in J/(mol K).</returns>
+		public double MoleSpecificEntropy_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			return MoleSpecificEntropy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+		}
+
+		/// <summary>
+		/// Get the entropy from a given mole density and temperature.
+		/// </summary>
+		/// <param name="moleDensity">The density in mol/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The entropy in J/(kg K).</returns>
+		public double MassSpecificEntropy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+		{
+			return MoleSpecificEntropy_FromMoleDensityAndTemperature(moleDensity, temperature) / MolecularWeight; ;
+		}
+
+		/// <summary>
+		/// Get the entropy from a given mole density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The entropy in J/(kg K).</returns>
+		public double MassSpecificEntropy_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			return MoleSpecificEntropy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight; ;
 		}
 
 		/// <summary>
 		/// Get the internal energy from a given density and temperature.
 		/// </summary>
-		/// <param name="density">The density in kg/m³.</param>
+		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
-		/// <returns>The internal energy in J/kg.</returns>
-		public double MassSpecificInternalEnergy_FromMassDensityAndTemperature(double density, double temperature)
+		/// <returns>The internal energy in J/mol.</returns>
+		public double MoleSpecificInternalEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
 		{
-			double delta = GetDelta(density); // reduced density
-			double tau = GetTau(temperature); // reduced inverse temperature
+			double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
+			double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
 			double phi0_tau = Phi0_tau_OfReducedVariables(delta, tau);
 			double phiR_tau = PhiR_tau_OfReducedVariables(delta, tau);
 
-			return SpecificGasConstant * ReducingTemperature * (phi0_tau + phiR_tau);
+			return WorkingUniversalGasConstant * ReducingTemperature * (phi0_tau + phiR_tau);
+		}
+
+		/// <summary>
+		/// Get the internal energy from a given density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The internal energy in J/mol.</returns>
+		public double MoleSpecificInternalEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			return MoleSpecificInternalEnergy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+		}
+
+		/// <summary>
+		/// Get the internal energy from a given density and temperature.
+		/// </summary>
+		/// <param name="moleDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The internal energy in J/mol.</returns>
+		public double MassSpecificInternalEnergy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+		{
+			return MoleSpecificInternalEnergy_FromMoleDensityAndTemperature(moleDensity, temperature) / MolecularWeight;
+		}
+
+		/// <summary>
+		/// Get the internal energy from a given density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The internal energy in J/kg.</returns>
+		public double MassSpecificInternalEnergy_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			return MoleSpecificInternalEnergy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
 		}
 
 		/// <summary>
 		/// Get the enthalpy from a given density and temperature.
 		/// </summary>
-		/// <param name="density">The density in kg/m³.</param>
+		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
-		/// <returns>The enthalpy in J/kg.</returns>
-		public double MassSpecificEnthalpy_FromMassDensityAndTemperature(double density, double temperature)
+		/// <returns>The enthalpy in J/mol.</returns>
+		public double MoleSpecificEnthalpy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
 		{
-			double delta = GetDelta(density); // reduced density
-			double tau = GetTau(temperature); // reduced inverse temperature
+			double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
+			double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
 
 			double phi0_tau = Phi0_tau_OfReducedVariables(delta, tau);
 			double phiR_tau = PhiR_tau_OfReducedVariables(delta, tau);
 			double phiR_delta = PhiR_delta_OfReducedVariables(delta, tau);
 
-			return SpecificGasConstant * temperature *
+			return WorkingUniversalGasConstant * temperature *
 				(1 + tau * (phi0_tau + phiR_tau) + delta * phiR_delta);
+		}
+
+		/// <summary>
+		/// Get the enthalpy from a given density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The enthalpy in J/mol.</returns>
+		public double MoleSpecificEnthalpy_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			return MoleSpecificEnthalpy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+		}
+
+		/// <summary>
+		/// Get the enthalpy from a given density and temperature.
+		/// </summary>
+		/// <param name="moleDensity">The density in mol/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The enthalpy in J/kg.</returns>
+		public double MassSpecificEnthalpy_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+		{
+			return MoleSpecificEnthalpy_FromMoleDensityAndTemperature(moleDensity, temperature) / MolecularWeight;
+		}
+
+		/// <summary>
+		/// Get the enthalpy from a given density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The enthalpy in J/kg.</returns>
+		public double MassSpecificEnthalpy_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			return MoleSpecificEnthalpy_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
+		}
+
+		/// <summary>
+		/// Get the mole specific isochoric heat capacity from a given density and temperature.
+		/// </summary>
+		/// <param name="moleDensity">The density in mol/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The isochoric heat capacity in J/(mol K).</returns>
+		public double MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+		{
+			double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
+			double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
+
+			double phi0_tautau = Phi0_tautau_OfReducedVariables(delta, tau);
+			double phiR_tautau = PhiR_tautau_OfReducedVariables(delta, tau);
+
+			return -Pow2(tau) * (phi0_tautau + phiR_tautau) * WorkingUniversalGasConstant;
 		}
 
 		/// <summary>
@@ -394,16 +609,21 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
-		/// <returns>The isochoric heat capacity in J/(kg K).</returns>
+		/// <returns>The isochoric heat capacity in J/(mol K).</returns>
 		public double MoleSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature(double massDensity, double temperature)
 		{
-			double delta = GetDelta(massDensity); // reduced density
-			double tau = GetTau(temperature); // reduced inverse temperature
+			return MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+		}
 
-			double phi0_tautau = Phi0_tautau_OfReducedVariables(delta, tau);
-			double phiR_tautau = PhiR_tautau_OfReducedVariables(delta, tau);
-
-			return -Pow2(tau) * (phi0_tautau + phiR_tautau) * UniversalGasConstant;
+		/// <summary>
+		/// Get the isochoric heat capacity from a given density and temperature.
+		/// </summary>
+		/// <param name="moleDensity">The density in mol/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The isochoric heat capacity in J/(kg K).</returns>
+		public double MassSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+		{
+			return MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(moleDensity, temperature) / MolecularWeight;
 		}
 
 		/// <summary>
@@ -414,25 +634,19 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <returns>The isochoric heat capacity in J/(kg K).</returns>
 		public double MassSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature(double massDensity, double temperature)
 		{
-			double delta = GetDelta(massDensity); // reduced density
-			double tau = GetTau(temperature); // reduced inverse temperature
-
-			double phi0_tautau = Phi0_tautau_OfReducedVariables(delta, tau);
-			double phiR_tautau = PhiR_tautau_OfReducedVariables(delta, tau);
-
-			return -Pow2(tau) * (phi0_tautau + phiR_tautau) * SpecificGasConstant;
+			return MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
 		}
 
 		/// <summary>
 		/// Gets the isobaric heat capacity from a given density and temperature.
 		/// </summary>
-		/// <param name="density">The density in kg/m³.</param>
+		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
-		/// <returns>The isobaric heat capacity in J/(kg K).</returns>
-		public double MassSpecificIsobaricHeatCapacity_FromMassDensityAndTemperature(double density, double temperature)
+		/// <returns>The isobaric heat capacity in J/(mol K).</returns>
+		public double MoleSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature(double moleDensity, double temperature)
 		{
-			double delta = GetDelta(density); // reduced density
-			double tau = GetTau(temperature); // reduced inverse temperature
+			double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
+			double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
 
 			double phi0_tautau = Phi0_tautau_OfReducedVariables(delta, tau);
 			double phiR_delta = PhiR_delta_OfReducedVariables(delta, tau);
@@ -440,7 +654,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double phiR_deltatau = PhiR_deltatau_OfReducedVariables(delta, tau);
 			double phiR_tautau = PhiR_tautau_OfReducedVariables(delta, tau);
 
-			return SpecificGasConstant *
+			return WorkingUniversalGasConstant *
 							(-Pow2(tau) * (phi0_tautau + phiR_tautau) // isochoric heat capacity
 							+
 							Pow2(1 + delta * phiR_delta - delta * tau * phiR_deltatau) /
@@ -449,15 +663,48 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
+		/// Gets the isobaric heat capacity from a given density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The isobaric heat capacity in J/(mol K).</returns>
+		public double MoleSpecificIsobaricHeatCapacity_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			return MoleSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
+		}
+
+		/// <summary>
+		/// Gets the isobaric heat capacity from a given density and temperature.
+		/// </summary>
+		/// <param name="moleDensity">The density in mol/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The isobaric heat capacity in J/(kg K).</returns>
+		public double MassSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature(double moleDensity, double temperature)
+		{
+			return MoleSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature(moleDensity, temperature) / MolecularWeight;
+		}
+
+		/// <summary>
+		/// Gets the isobaric heat capacity from a given density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The isobaric heat capacity in J/(kg K).</returns>
+		public double MassSpecificIsobaricHeatCapacity_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			return MoleSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
+		}
+
+		/// <summary>
 		/// Get the speed of sound from a given density and temperature.
 		/// </summary>
-		/// <param name="density">The density in kg/m³.</param>
+		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <returns>The speed of sound in m/s.</returns>
-		public double SpeedOfSound_FromMassDensityAndTemperature(double density, double temperature)
+		public double SpeedOfSound_FromMoleDensityAndTemperature(double moleDensity, double temperature)
 		{
-			double delta = GetDelta(density); // reduced density
-			double tau = GetTau(temperature); // reduced inverse temperature
+			double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
+			double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
 
 			double phir_delta = PhiR_delta_OfReducedVariables(delta, tau); // 1st derivative of PhiR with respect to delta
 			double phir_deltadelta = PhiR_deltadelta_OfReducedVariables(delta, tau); // 2nd derivative of PhiR with respect to delta
@@ -467,7 +714,18 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double w2_RT = 1 + 2 * delta * phir_delta + Pow2(delta) * phir_deltadelta -
 											Pow2(1 + delta * phir_delta - delta * tau * phir_deltatau) / (Pow2(tau) * (phi0_tautau + phir_tautau));
 
-			return Math.Sqrt(w2_RT * SpecificGasConstant * temperature);
+			return Math.Sqrt(w2_RT * WorkingUniversalGasConstant * temperature);
+		}
+
+		/// <summary>
+		/// Get the speed of sound from a given density and temperature.
+		/// </summary>
+		/// <param name="massDensity">The density in kg/m³.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>The speed of sound in m/s.</returns>
+		public double SpeedOfSound_FromMassDensityAndTemperature(double massDensity, double temperature)
+		{
+			return SpeedOfSound_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
 		}
 
 		#endregion Thermodynamic properties derived from dimensionless Helmholtz energy

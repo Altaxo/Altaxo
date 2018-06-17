@@ -99,7 +99,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		#region Ideal part of dimensionless Helmholtz energy and derivatives
 
 		/// <summary>The Universal Gas Constant R at the time the model was developed.</summary>
-		protected double _workingUniversalGasConstant = UniversalGasConstant;
+		public override double WorkingUniversalGasConstant => UniversalGasConstant;
 
 		/// <summary>The constant term in the equation of the ideal part of the reduced Helmholtz energy.</summary>
 		protected double _alpha0_n_const;
@@ -169,7 +169,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				sum += n[i] * Math.Log(Math.Abs(Math.Sinh(theta[i] * tau)));
 
 			return Math.Log(delta) +
-				(_workingUniversalGasConstant / UniversalGasConstant) *
+
 				(
 				sum +
 				_alpha0_n_const +
@@ -214,8 +214,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				sum += n[i] * theta[i] * Coth(theta[i] * tau);
 			}
 
-			return (_workingUniversalGasConstant / UniversalGasConstant) *
-				(sum + _alpha0_n_tau + _alpha0_n_lntau / tau);
+			return (sum + _alpha0_n_tau + _alpha0_n_lntau / tau);
 		}
 
 		/// <summary>
@@ -251,8 +250,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				sum += -n[i] * Pow2(theta[i] * Csch(theta[i] * tau));
 			}
 
-			return (_workingUniversalGasConstant / UniversalGasConstant) *
-				(sum - _alpha0_n_lntau / Pow2(tau));
+			return (sum - _alpha0_n_lntau / Pow2(tau));
 		}
 
 		#endregion Ideal part of dimensionless Helmholtz energy and derivatives

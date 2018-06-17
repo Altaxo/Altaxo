@@ -46,6 +46,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		#region Constants
 
+		/// <summary>The Universal Gas Constant R at the time the model was developed.</summary>
+		public override double WorkingUniversalGasConstant => 8.3144621;
+
 		/// <summary>Gets the triple point temperature.</summary>
 		public override double TriplePointTemperature { get; } = 205.2; // Table 8 page 16
 
@@ -53,19 +56,16 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointPressure { get; } = double.NaN;
 
 		/// <summary>Gets the saturated liquid density at the triple point.</summary>
-		public override double TriplePointSaturatedLiquidDensity { get; } = 941.9981328;
+		public override double TriplePointSaturatedLiquidMassDensity { get; } = 941.9981328;
 
 		/// <summary>Gets the saturated vapor density at the triple point.</summary>
-		public override double TriplePointSaturatedVaporDensity { get; } = double.NaN;
+		public override double TriplePointSaturatedVaporMassDensity { get; } = double.NaN;
 
 		/// <summary>Gets the temperature at the critical point.</summary>
 		public override double CriticalPointTemperature { get; } = 599.4;
 
 		/// <summary>Gets the pressure at the critical point.</summary>
 		public override double CriticalPointPressure { get; } = 1.144E6;
-
-		/// <summary>Gets the density at the critical point.</summary>
-		public override double CriticalPointMassDensity { get; } = 268.4321856;
 
 		/// <summary>Gets the mole density at the critical point in mol/m³.</summary>
 		public override double CriticalPointMoleDensity { get; } = 864;
@@ -74,11 +74,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// Gets the molecular weight.
 		/// </summary>
 		public override double MolecularWeight { get; } = 310.6854E-3; // kg/mol
-
-		/// <summary>
-		/// Gets the specific gas constant.
-		/// </summary>
-		public override double SpecificGasConstant { get; } = 26.761669032403841; // J/(kg K)
 
 		#endregion Constants
 
@@ -113,9 +108,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			1180/599.4,
 			4240/599.4,
 			};
-
-			/// <summary>The Universal Gas Constant R at the time the model was developed.</summary>
-			_workingUniversalGasConstant = 8.3144621;
 
 			// <summary>The constant term in the equation of the ideal part of the reduced Helmholtz energy.</summary>
 			_alpha0_n_const = 117.994606;

@@ -44,7 +44,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	{
 		protected double _reducingTemperature;
 		protected double _reducingMoleDensity;
-		protected double _reducingMassDensity;
 
 		protected double _betaT12;
 		protected double _gammaT12;
@@ -75,7 +74,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			TestArrays();
 			_reducingTemperature = CalculateReducingTemperature();
 			_reducingMoleDensity = CalculateReducingMoleDensity();
-			_reducingMassDensity = _reducingMoleDensity * (_moleFraction1 * _component1.MolecularWeight + _moleFraction2 * _component2.MolecularWeight);
 		}
 
 		/// <summary>
@@ -130,15 +128,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <inheritdoc/>
-		public override double ReducingMassDensity
-		{
-			get
-			{
-				return _reducingMassDensity;
-			}
-		}
-
-		/// <inheritdoc/>
 		public override double ReducingTemperature
 		{
 			get
@@ -146,6 +135,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				return _reducingTemperature;
 			}
 		}
+
+		/// <inheritdoc/>
+		public override double ReducingMoleDensity => _reducingMoleDensity;
 
 		/// <inheritdoc/>
 		public override double Phi0_OfReducedVariables(double delta, double tau)
