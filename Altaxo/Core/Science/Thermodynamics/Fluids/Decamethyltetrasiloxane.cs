@@ -49,11 +49,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>The Universal Gas Constant R at the time the model was developed.</summary>
 		public override double WorkingUniversalGasConstant => 8.3144621;
 
+		/// <summary>Gets the molecular weight in kg/mol.</summary>
+		public override double MolecularWeight { get; } = 310.6854E-3; // kg/mol
+
 		/// <summary>Gets the triple point temperature.</summary>
 		public override double TriplePointTemperature { get; } = 205.2; // Table 8 page 16
 
 		/// <summary>Gets the triple point pressure.</summary>
-		public override double TriplePointPressure { get; } = double.NaN;
+		public override double TriplePointPressure { get; } = 0.0003127;
 
 		/// <summary>Gets the saturated liquid density at the triple point.</summary>
 		public override double TriplePointSaturatedLiquidMassDensity { get; } = 941.9981328;
@@ -70,44 +73,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>Gets the mole density at the critical point in mol/m³.</summary>
 		public override double CriticalPointMoleDensity { get; } = 864;
 
-		/// <summary>
-		/// Gets the molecular weight.
-		/// </summary>
-		public override double MolecularWeight { get; } = 310.6854E-3; // kg/mol
-
 		#endregion Constants
 
 		private Decamethyltetrasiloxane()
 		{
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
-
-			/// <summary>
-			/// Page 1540 Table 27
-			/// </summary>
-			_alpha0_n_Exp = new double[]
-			{
-			double.NaN,
-			131.089725,
-		 -26.3839138,
-			3,
-			28.59,
-			56.42,
-			50.12,
-			};
-
-			/// <summary>
-			/// Page 1540 Table 27
-			/// </summary>
-			_alpha0_theta_Exp = new double[]
-			{
-			double.NaN,
-			double.NaN,
-			double.NaN,
-			double.NaN,
-			20/599.4,
-			1180/599.4,
-			4240/599.4,
-			};
 
 			// <summary>The constant term in the equation of the ideal part of the reduced Helmholtz energy.</summary>
 			_alpha0_n_const = 117.994606;
@@ -118,17 +88,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			// <summary>The term with the factor ln(tau) in the equation of the ideal part of the reduced Helmholtz energy.</summary>
 			_alpha0_n_lntau = 3;
 
-			/// <summary>The prefactors of the Sinh and Cosh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-			_alpha0_n_Cosh = new double[] { };
-
-			/// <summary>The prefactors of tau in the arguments of the Sinh and Cosh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-			_alpha0_theta_Cosh = new double[] { };
-
-			/// <summary>The prefactors of the Sinh and Cosh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-			_alpha0_n_Sinh = new double[] { };
-
-			/// <summary>The prefactors of tau in the arguments of the Sinh and Cosh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-			_alpha0_theta_Sinh = new double[] { };
+			_alpha0_Exp = new(double ni, double thetai)[]
+				{
+( 28.59,     20.0),
+( 56.42,   1180.0),
+( 50.12,   4240.0),
+				};
+			RecaleAlpha0ExpThetaWithCriticalTemperature();
 
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 

@@ -65,30 +65,25 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		// Exponential terms
 
 		/// <summary>
-		/// Prefactor of the exponential terms in the ideal part of the residual Helmholtz energy.
-		/// Page 429 Table 6.1 in [2] (n_i there is ai0 here)
+		/// Prefactor and exponent of the exponential terms in the ideal part of the residual Helmholtz energy.
+		/// Page 429 Table 6.1 in [2]
 		/// </summary>
-		protected double[] _alpha0_n_Exp = _emptyDoubleArray;
+		protected (double ni, double thetai)[] _alpha0_Exp = _emptyDoubleDoubleArray;
 
-		/// <summary>
-		/// Prefactor of tau in the argument of the exponential terms in the ideal part of the residual Helmholtz energy.
-		/// Page 429 Table 6.1 in [2] (gamma_i there is thetai0 here)
-		/// </summary>
-		protected double[] _alpha0_theta_Exp = _emptyDoubleArray;
+		protected void RecaleAlpha0ExpThetaWithCriticalTemperature()
+		{
+			for (int i = 0; i < _alpha0_Exp.Length; ++i)
+			{
+				var (ni, thetai) = _alpha0_Exp[i];
+				_alpha0_Exp[i] = (ni, thetai / CriticalPointTemperature);
+			}
+		}
 
-		// Cosh and Sinh terms
+		/// <summary>The prefactors outside and inside the argument of the  Cosh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+		protected (double ni, double thetai)[] _alpha0__Cosh = _emptyDoubleDoubleArray;
 
-		/// <summary>The prefactors of the Cosh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-		protected double[] _alpha0_n_Cosh = _emptyDoubleArray;
-
-		/// <summary>The prefactors of tau in the arguments of the Sinh and Cosh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-		protected double[] _alpha0_theta_Cosh = _emptyDoubleArray;
-
-		/// <summary>The prefactors of the Sinh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-		protected double[] _alpha0_n_Sinh = _emptyDoubleArray;
-
-		/// <summary>The prefactors of tau in the arguments of the Sinh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-		protected double[] _alpha0_theta_Sinh = _emptyDoubleArray;
+		/// <summary>The prefactors outside and inside the argument of the  Sinh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+		protected (double ni, double thetai)[] _alpha0__Sinh = _emptyDoubleDoubleArray;
 
 		/// <summary>
 		/// Phi0s the of reduced variables. (Page 1541, Table 28 in [2])
@@ -98,27 +93,37 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <returns></returns>
 		public override double Phi0_OfReducedVariables(double delta, double tau)
 		{
-			double[] n, theta;
-
 			double sum = 0;
 
-			// Exponential terms
-			n = _alpha0_n_Exp;
-			theta = _alpha0_theta_Exp;
-			for (int i = n.Length - 1; i >= 0; --i)
-				sum += n[i] * Math.Log(1 - Math.Exp(-theta[i] * tau));
+			{
+				// Exponential terms
+				var alpha0_Exp = _alpha0_Exp;
+				for (int i = 0; i < alpha0_Exp.Length; ++i)
+				{
+					var (n, theta) = alpha0_Exp[i];
+					sum += n * Math.Log(1 - Math.Exp(-theta * tau));
+				}
+			}
 
-			// Cosh terms
-			n = _alpha0_n_Cosh;
-			theta = _alpha0_theta_Cosh;
-			for (int i = n.Length - 1; i >= 0; --i)
-				sum += n[i] * Math.Log(Math.Cosh(theta[i] * tau));
+			{
+				// Cosh terms
+				var alpha0_Cosh = _alpha0__Cosh;
+				for (int i = 0; i < alpha0_Cosh.Length; ++i)
+				{
+					var (n, theta) = alpha0_Cosh[i];
+					sum += n * Math.Log(Math.Cosh(theta * tau));
+				}
+			}
 
-			// Sinh terms
-			n = _alpha0_n_Sinh;
-			theta = _alpha0_theta_Sinh;
-			for (int i = n.Length - 1; i >= 0; --i)
-				sum += n[i] * Math.Log(Math.Abs(Math.Sinh(theta[i] * tau)));
+			{
+				// Sinh terms
+				var alpha0_Sinh = _alpha0__Sinh;
+				for (int i = 0; i < alpha0_Sinh.Length; ++i)
+				{
+					var (n, theta) = alpha0_Sinh[i];
+					sum += n * Math.Log(Math.Abs(Math.Sinh(theta * tau)));
+				}
+			}
 
 			return Math.Log(delta) +
 
@@ -138,34 +143,35 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <returns>First derivative of Phi0 the of reduced variables with respect to the inverse reduced temperature.</returns>
 		public override double Phi0_tau_OfReducedVariables(double delta, double tau)
 		{
-			double[] n, theta;
-
 			double sum = 0;
 
-			// Exponential terms
-			n = _alpha0_n_Exp;
-			theta = _alpha0_theta_Exp;
-			for (int i = 0; i < n.Length; ++i)
 			{
-				sum += n[i] * theta[i] * (1 / (1 - Math.Exp(-theta[i] * tau)) - 1);
+				// Exponential terms
+				var alpha0_Exp = _alpha0_Exp;
+				for (int i = 0; i < alpha0_Exp.Length; ++i)
+				{
+					var (n, theta) = alpha0_Exp[i];
+					sum += n * theta * (1 / (1 - Math.Exp(-theta * tau)) - 1);
+				}
 			}
-
-			// Cosh terms
-			n = _alpha0_n_Cosh;
-			theta = _alpha0_theta_Cosh;
-			for (int i = n.Length - 1; i >= 0; --i)
 			{
-				sum += n[i] * theta[i] * Math.Tanh(theta[i] * tau);
+				// Cosh terms
+				var alpha0_Cosh = _alpha0__Cosh;
+				for (int i = 0; i < alpha0_Cosh.Length; ++i)
+				{
+					var (n, theta) = alpha0_Cosh[i];
+					sum += n * theta * Math.Tanh(theta * tau);
+				}
 			}
-
-			// Sinh terms
-			n = _alpha0_n_Sinh;
-			theta = _alpha0_theta_Sinh;
-			for (int i = n.Length - 1; i >= 0; --i)
 			{
-				sum += n[i] * theta[i] * Coth(theta[i] * tau);
+				// Sinh terms
+				var alpha0_Sinh = _alpha0__Sinh;
+				for (int i = 0; i < alpha0_Sinh.Length; ++i)
+				{
+					var (n, theta) = alpha0_Sinh[i];
+					sum += n * theta * Coth(theta * tau);
+				}
 			}
-
 			return (sum + _alpha0_n_tau + _alpha0_n_lntau / tau);
 		}
 
@@ -177,31 +183,35 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <returns>Second derivative of Phi0 the of reduced variables with respect to the inverse reduced temperature.</returns>
 		public override double Phi0_tautau_OfReducedVariables(double delta, double tau)
 		{
-			var n = _alpha0_n_Exp;
-			var theta = _alpha0_theta_Exp;
-
 			double sum = 0;
-			for (int i = 0; i < n.Length; ++i)
 			{
-				sum += -n[i] * Pow2(theta[i]) * Math.Exp(-theta[i] * tau) / Pow2(1 - Math.Exp(-theta[i] * tau));
+				// Exponential terms
+				var alpha0_Exp = _alpha0_Exp;
+				for (int i = 0; i < alpha0_Exp.Length; ++i)
+				{
+					var (n, theta) = alpha0_Exp[i];
+					sum += -n * Pow2(theta) * Math.Exp(-theta * tau) / Pow2(1 - Math.Exp(-theta * tau));
+				}
+			}
+			{
+				// Cosh terms
+				var alpha0_Cosh = _alpha0__Cosh;
+				for (int i = 0; i < alpha0_Cosh.Length; ++i)
+				{
+					var (n, theta) = alpha0_Cosh[i];
+					sum += n * Pow2(theta * Sech(theta * tau));
+				}
 			}
 
-			// Cosh terms
-			n = _alpha0_n_Cosh;
-			theta = _alpha0_theta_Cosh;
-			for (int i = n.Length - 1; i >= 0; --i)
 			{
-				sum += n[i] * Pow2(theta[i] * Sech(theta[i] * tau));
+				// Sinh terms
+				var alpha0_Sinh = _alpha0__Sinh;
+				for (int i = 0; i < alpha0_Sinh.Length; ++i)
+				{
+					var (n, theta) = alpha0_Sinh[i];
+					sum += -n * Pow2(theta * Csch(theta * tau));
+				}
 			}
-
-			// Sinh terms
-			n = _alpha0_n_Sinh;
-			theta = _alpha0_theta_Sinh;
-			for (int i = n.Length - 1; i >= 0; --i)
-			{
-				sum += -n[i] * Pow2(theta[i] * Csch(theta[i] * tau));
-			}
-
 			return (sum - _alpha0_n_lntau / Pow2(tau));
 		}
 
@@ -667,6 +677,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		#region Helper functions
 
 		protected static readonly double[] _emptyDoubleArray = new double[0];
+
+		protected static readonly (double, double)[] _emptyDoubleDoubleArray = new(double, double)[] { };
 
 		private static double Coth(double x)
 		{

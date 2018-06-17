@@ -48,11 +48,16 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		public override double WorkingUniversalGasConstant => 8.3144621;
 
+		/// <summary>
+		/// Gets the molecular weight.
+		/// </summary>
+		public override double MolecularWeight { get; } = 236.53146E-3; // kg/mol
+
 		/// <summary>Gets the triple point temperature.</summary>
 		public override double TriplePointTemperature { get; } = 187.2; // Table 8
 
 		/// <summary>Gets the triple point pressure.</summary>
-		public override double TriplePointPressure { get; } = double.NaN;
+		public override double TriplePointPressure { get; } = 0.0010815;
 
 		/// <summary>Gets the saturated liquid density at the triple point.</summary>
 		public override double TriplePointSaturatedLiquidMassDensity { get; } = 924.1285705;
@@ -69,40 +74,28 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>Gets the density at the critical point.</summary>
 		public override double CriticalPointMoleDensity { get; } = 1.134E3;
 
-		/// <summary>
-		/// Gets the molecular weight.
-		/// </summary>
-		public override double MolecularWeight { get; } = 236.531E-3; // kg/mol
-
 		#endregion Constants
 
 		private Octamethyltrisiloxane()
 		{
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			// Table 4 (mi there is _ai0 here)
-			_alpha0_n_Exp = new double[]
-			{
-					double.NaN,
-					117.994606,
-					-19.6600754,
-					3,
-					28.817,
-					46.951,
-					31.054,
-			};
+			// <summary>The constant term in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+			_alpha0_n_const = 117.994606;
 
-			// Table 4
-			_alpha0_theta_Exp = new double[]
-			{
-				double.NaN,
-				double.NaN,
-				double.NaN,
-				double.NaN,
-				20/565.3609,
-				1570/565.3609,
-				4700/565.3609,
-			};
+			// <summary>The term with the factor tau in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+			_alpha0_n_tau = -19.6600754;
+
+			// <summary>The term with the factor ln(tau) in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+			_alpha0_n_lntau = 3;
+
+			_alpha0_Exp = new(double ni, double thetai)[]
+							{
+ (28.817,     20.0),
+ (46.951,   1570.0),
+ (31.054,   4700.0),
+							};
+			RecaleAlpha0ExpThetaWithCriticalTemperature();
 
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 

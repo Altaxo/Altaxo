@@ -87,26 +87,16 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			/// Page 1540 Table 27
 			/// </summary>
 
-			_alpha0_n_Exp = new double[]
+			_alpha0_Exp = new(double ni, double thetai)[]
 			{
-			1.99427042,
-			0.621052475,
-			0.411952928,
-			1.04028922,
-			0.0832767753,
+(1.99427042  ,        958.49956),
+(0.621052475 ,       1858.80115),
+(0.411952928 ,       2061.10114),
+(1.04028922  ,       3443.89908),
+(0.0832767753,       8238.20035),
 			};
 
-			/// <summary>
-			/// Page 1540 Table 27
-			/// </summary>
-			_alpha0_theta_Exp = new double[]
-			{
-			958.49956/CriticalPointTemperature,
-			1858.80115/CriticalPointTemperature,
-			2061.10114/CriticalPointTemperature,
-			3443.89908/CriticalPointTemperature,
-			8238.20035/CriticalPointTemperature,
-			};
+			RecaleAlpha0ExpThetaWithCriticalTemperature();
 
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
