@@ -138,173 +138,46 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			#region Index 1..5 of Table 6
 
-			_ni1 = new double[]
-			{
-				1.458333E-2,
-				3.227554,
-				-3.503565,
-				-2.017391,
-				8.606129E-1,
-				};
-
-			_ti1 = new double[]
-		{
-			1.000,
-			0.319,
-			0.829,
-			0.780,
-			0.687,
-		};
-
-			_di1 = new int[]
-			{
-				4,
-				1,
-				1,
-				2,
-				3,
-			};
+			_pr1 = new(double ni, double ti, int di)[]
+{
+( 0.01458333,   1    ,   4),
+( 3.227554  ,   0.319,   1),
+( -3.503565 ,   0.829,   1),
+( -2.017391 ,   0.78 ,   2),
+( 0.8606129 ,   0.687,   3),
+};
 
 			#endregion Index 1..5 of Table 6
 
 			#region Index 7..10 of Table 6
 
-			_ni2 = new double[]
-			{
-				-2.196015,
-				-9.289014E-1,
-				2.027740,
-				-9.168439E-1,
-				-6.383507E-2,
-			};
-
-			_ti2 = new double[]
-		{
-			1.290,
-			3.910,
-			0.770,
-			3.055,
-			1.013,
-		};
-
-			_di2 = new int[]
-			{
-			1,
-			3,
-			2,
-			2,
-			7,
-			};
-
-			_ci2 = new int[]
-			{
-			2,
-			2,
-			1,
-			2,
-			1,
-			};
+			_pr2 = new(double ni, double ti, int di, int li)[]
+{
+( -2.196015  ,   1.29 ,   1,  2),
+( -0.9289014 ,   3.91 ,   3,  2),
+( 2.02774    ,   0.77 ,   2,  1),
+( -0.9168439 ,   3.055,   2,  2),
+( -0.06383507,   1.013,   7,  1),
+};
 
 			#endregion Index 7..10 of Table 6
 
 			#region Index 11..15 of Table 6
 
-			_ni3 = new double[]
-			{
-			2.674255,
-			4.662529E-2,
-			-3.835361E-1,
-			-4.273462E-1,
-			-1.148009,
-			};
-
-			_di3 = new int[]
-			{
-			1,
-			1,
-			3,
-			2,
-			2,
-			};
-
-			_ti3 = new double[]
-			{
-			1.070,
-			1.890,
-			1.133,
-			0.826,
-			0.830,
-			};
-
-			_alphai3 = new double[]
-			{
-			0.982,
-			2.700,
-			1.347,
-			0.864,
-			1.149,
-			};
-
-			_betai3 = new double[]
-			{
-			0.7323,
-			0.5430,
-			1.2600,
-			0.8780,
-			2.2200,
-			};
-
-			_gammai3 = new double[]
-			{
-			1.0420,
-			1.1000,
-			1.1460,
-			1.0850,
-			0.6844,
-			};
-
-			_epsiloni3 = new double[]
-			{
-			0.874,
-			1.430,
-			0.855,
-			0.815,
-			0.491,
-			};
+			_pr3 = new(double ni, double ti, int di, int aux1, int aux2, double alpha, double beta, double gamma, double epsilon)[]
+{
+( 2.674255  ,   1.07 ,   1,  2, 2,   -0.982,   -0.7323,  1.042 ,  0.874),
+( 0.04662529,   1.89 ,   1,  2, 2,   -2.7  ,   -0.543 ,  1.1   ,  1.43 ),
+( -0.3835361,   1.133,   3,  2, 2,   -1.347,   -1.26  ,  1.146 ,  0.855),
+( -0.4273462,   0.826,   2,  2, 2,   -0.864,   -0.878 ,  1.085 ,  0.815),
+( -1.148009 ,   0.83 ,   2,  2, 2,   -1.149,   -2.22  ,  0.6844,  0.491),
+};
 
 			#endregion Index 11..15 of Table 6
 
 			#region Empty term 4
 
-			_ni4 = new double[]
-			{
-			};
-
-			_ai4 = new double[]
-			{
-			};
-
-			_bi4 = new double[]
-			{
-			};
-
-			_betai4 = new double[]
-			{
-			};
-
-			_Ai4 = new double[]
-			{
-			};
-
-			_Bi4 = new double[]
-			{
-			};
-
-			_Ci4 = new double[]
-			{
-			};
-
-			_Di4 = new double[]
+			_pr4 = new(double ni, double ti, int di, int aux1, int aux2, double b, double beta, double A, double C, double D, double B, double a)[]
 			{
 			};
 
@@ -313,8 +186,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			#endregion Parameter from Table 6
 
 			#endregion Residual part of dimensionless Helmholtz energy and derivatives
-
-			TestArrays();
 		}
 
 		#region Thermodynamic properties by empirical power laws

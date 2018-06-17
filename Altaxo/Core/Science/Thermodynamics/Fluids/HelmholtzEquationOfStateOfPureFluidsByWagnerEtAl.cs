@@ -48,54 +48,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// </remarks>
 	public abstract class HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl : HelmholtzEquationOfStateOfPureFluids
 	{
-		/// <summary>
-		/// Helper function to test the length of the coefficient arrays.
-		/// </summary>
-		/// <exception cref="InvalidProgramException">
-		/// </exception>
-		protected void TestArrays()
-		{
-			if (_ni1.Length != _di1.Length)
-				throw new InvalidProgramException();
-			if (_ni1.Length != _ti1.Length)
-				throw new InvalidProgramException();
-
-			if (_ni2.Length != _di2.Length)
-				throw new InvalidProgramException();
-			if (_ni2.Length != _ti2.Length)
-				throw new InvalidProgramException();
-			if (_ni2.Length != _ci2.Length)
-				throw new InvalidProgramException();
-
-			if (_ni3.Length != _di3.Length)
-				throw new InvalidProgramException();
-			if (_ni3.Length != _ti3.Length)
-				throw new InvalidProgramException();
-			if (_ni3.Length != _alphai3.Length)
-				throw new InvalidProgramException();
-			if (_ni3.Length != _betai3.Length)
-				throw new InvalidProgramException();
-			if (_ni3.Length != _gammai3.Length)
-				throw new InvalidProgramException();
-			if (_ni3.Length != _epsiloni3.Length)
-				throw new InvalidProgramException();
-
-			if (_ni4.Length != _ai4.Length)
-				throw new InvalidProgramException();
-			if (_ni4.Length != _bi4.Length)
-				throw new InvalidProgramException();
-			if (_ni4.Length != _Bi4.Length)
-				throw new InvalidProgramException();
-			if (_ni4.Length != _Ci4.Length)
-				throw new InvalidProgramException();
-			if (_ni4.Length != _Di4.Length)
-				throw new InvalidProgramException();
-			if (_ni4.Length != _Ai4.Length)
-				throw new InvalidProgramException();
-			if (_ni4.Length != _betai4.Length)
-				throw new InvalidProgramException();
-		}
-
 		#region Ideal part of dimensionless Helmholtz energy and derivatives
 
 		/// <summary>The Universal Gas Constant R at the time the model was developed.</summary>
@@ -261,57 +213,31 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		#region 1st sum term
 
-		protected double[] _ni1;
-		protected int[] _di1;
-		protected double[] _ti1;
+		/// <summary>
+		/// Parameter for the polynomial terms of the reduced Helmholtz energy.
+		/// </summary>
+		protected (double ni, double ti, int di)[] _pr1;
 
 		#endregion 1st sum term
 
 		#region 2nd sum term
 
-		protected double[] _ni2;
-		protected int[] _di2;
-		protected double[] _ti2;
-
-		protected int[] _ci2;
+		/// <summary>
+		/// Parameter for the exponential terms of the reduced Helmholtz energy.
+		/// </summary>
+		protected (double ni, double ti, int di, int li)[] _pr2;
 
 		#endregion 2nd sum term
 
 		#region 3rd sum term
 
-		protected double[] _ni3;
-
-		protected int[] _di3;
-
-		protected double[] _ti3;
-
-		protected double[] _alphai3;
-
-		protected double[] _betai3;
-
-		protected double[] _gammai3;
-
-		protected double[] _epsiloni3;
+		protected (double ni, double ti, int di, int aux4, int aux5, double alpha, double beta, double gamma, double epsilon)[] _pr3;
 
 		#endregion 3rd sum term
 
 		#region 4th sum term
 
-		protected double[] _ni4;
-
-		protected double[] _ai4;
-
-		protected double[] _bi4;
-
-		protected double[] _betai4;
-
-		protected double[] _Ai4;
-
-		protected double[] _Bi4;
-
-		protected double[] _Ci4;
-
-		protected double[] _Di4;
+		protected (double ni, double aux2, int aux3, int aux4, int aux5, double b, double beta, double A, double C, double D, double B, double a)[] _pr4;
 
 		#endregion 4th sum term
 
@@ -326,54 +252,40 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double PhiR_OfReducedVariables(double delta, double tau)
 		{
 			// Make local variables to improve speed
-			var ni1 = _ni1;
-			var di1 = _di1;
-			var ti1 = _ti1;
-			var ni2 = _ni2;
-			var ci2 = _ci2;
-			var di2 = _di2;
-			var ti2 = _ti2;
-			var ni3 = _ni3;
-			var di3 = _di3;
-			var ti3 = _ti3;
-			var alphai3 = _alphai3;
-			var betai3 = _betai3;
-			var gammai3 = _gammai3;
-			var epsiloni3 = _epsiloni3;
-			var ni4 = _ni4;
-			var ai4 = _ai4;
-			var Ai4 = _Ai4;
-			var bi4 = _bi4;
-			var Bi4 = _Bi4;
-			var Ci4 = _Ci4;
-			var Di4 = _Di4;
-			var betai4 = _betai4;
+			var pr1 = _pr1;
+			var pr2 = _pr2;
+			var pr3 = _pr3;
+			var pr4 = _pr4;
 
 			double sum1 = 0;
-			for (int i = 0; i < ni1.Length; ++i)
+			for (int i = 0; i < pr1.Length; ++i)
 			{
-				sum1 += ni1[i] * Pow(delta, di1[i]) * Math.Pow(tau, ti1[i]);
+				var (ni, ti, di) = pr1[i];
+				sum1 += ni * Pow(delta, di) * Math.Pow(tau, ti);
 			}
 
 			double sum2 = 0;
-			for (int i = 0; i < ni2.Length; ++i)
+			for (int i = 0; i < pr2.Length; ++i)
 			{
-				sum2 += ni2[i] * Pow(delta, di2[i]) * Math.Pow(tau, ti2[i]) * Math.Exp(-Pow(delta, ci2[i]));
+				var (ni, ti, di, li) = pr2[i];
+				sum2 += ni * Pow(delta, di) * Math.Pow(tau, ti) * Math.Exp(-Pow(delta, li));
 			}
 
 			double sum3 = 0;
-			for (int i = 0; i < ni3.Length; ++i)
+			for (int i = 0; i < pr3.Length; ++i)
 			{
-				sum3 += ni3[i] * Pow(delta, di3[i]) * Math.Pow(tau, ti3[i]) * Math.Exp(-alphai3[i] * Pow2(delta - epsiloni3[i]) - betai3[i] * Pow2(tau - gammai3[i]));
+				var (ni, ti, di, _, _, alphai, betai, gammai, epsiloni) = pr3[i];
+				sum3 += ni * Pow(delta, di) * Math.Pow(tau, ti) * Math.Exp(alphai * Pow2(delta - epsiloni) + betai * Pow2(tau - gammai));
 			}
 
 			double sum4 = 0;
-			for (int i = 0; i < ni4.Length; ++i)
+			for (int i = 0; i < pr4.Length; ++i)
 			{
-				double theta = (1 - tau) + Ai4[i] * Math.Pow(Pow2(delta - 1), 1 / (2 * betai4[i]));
-				double Delta = Pow2(theta) + Bi4[i] * Math.Pow(Pow2(delta - 1), ai4[i]);
-				double Psi = Math.Exp(-Ci4[i] * Pow2(delta - 1) - Di4[i] * Pow2(tau - 1));
-				sum4 += ni4[i] * Math.Pow(Delta, bi4[i]) * delta * Psi;
+				var (ni, _, _, _, _, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
+				double theta = (1 - tau) + Ai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai));
+				double Delta = Pow2(theta) + Bi * Math.Pow(Pow2(delta - 1), ai);
+				double Psi = Math.Exp(-Ci * Pow2(delta - 1) - Di * Pow2(tau - 1));
+				sum4 += ni * Math.Pow(Delta, bi) * delta * Psi;
 			}
 
 			return sum1 + sum2 + sum3 + sum4;
@@ -388,62 +300,48 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double PhiR_delta_OfReducedVariables(double delta, double tau)
 		{
 			// Make local variables to improve speed
-			var ni1 = _ni1;
-			var di1 = _di1;
-			var ti1 = _ti1;
-			var ni2 = _ni2;
-			var ci2 = _ci2;
-			var di2 = _di2;
-			var ti2 = _ti2;
-			var ni3 = _ni3;
-			var di3 = _di3;
-			var ti3 = _ti3;
-			var alphai3 = _alphai3;
-			var betai3 = _betai3;
-			var gammai3 = _gammai3;
-			var epsiloni3 = _epsiloni3;
-			var ni4 = _ni4;
-			var ai4 = _ai4;
-			var Ai4 = _Ai4;
-			var bi4 = _bi4;
-			var Bi4 = _Bi4;
-			var Ci4 = _Ci4;
-			var Di4 = _Di4;
-			var betai4 = _betai4;
+			var pr1 = _pr1;
+			var pr2 = _pr2;
+			var pr3 = _pr3;
+			var pr4 = _pr4;
 
 			double sum1 = 0;
-			for (int i = 0; i < ni1.Length; ++i)
+			for (int i = 0; i < pr1.Length; ++i)
 			{
-				sum1 += ni1[i] * di1[i] * Pow(delta, di1[i] - 1) * Math.Pow(tau, ti1[i]);
+				var (ni, ti, di) = pr1[i];
+				sum1 += ni * di * Pow(delta, di - 1) * Math.Pow(tau, ti);
 			}
 
 			double sum2 = 0;
-			for (int i = 0; i < ni2.Length; ++i)
+			for (int i = 0; i < pr2.Length; ++i)
 			{
-				sum2 += ni2[i] * Math.Exp(-Pow(delta, ci2[i])) * (Pow(delta, di2[i] - 1) * Math.Pow(tau, ti2[i]) * (di2[i] - ci2[i] * Pow(delta, ci2[i])));
+				var (ni, ti, di, ci) = pr2[i];
+				sum2 += ni * Math.Exp(-Pow(delta, ci)) * (Pow(delta, di - 1) * Math.Pow(tau, ti) * (di - ci * Pow(delta, ci)));
 			}
 
 			double sum3 = 0;
-			for (int i = 0; i < ni3.Length; ++i)
+			for (int i = 0; i < pr3.Length; ++i)
 			{
-				sum3 += ni3[i] * Pow(delta, di3[i]) * Math.Pow(tau, ti3[i]) * Math.Exp(-alphai3[i] * Pow2(delta - epsiloni3[i]) - betai3[i] * Pow2(tau - gammai3[i])) * (di3[i] / delta - 2 * alphai3[i] * (delta - epsiloni3[i]));
+				var (ni, ti, di, _, _, alphai, betai, gammai, epsiloni) = pr3[i];
+				sum3 += ni * Pow(delta, di) * Math.Pow(tau, ti) * Math.Exp(alphai * Pow2(delta - epsiloni) + betai * Pow2(tau - gammai)) * (di / delta + 2 * alphai * (delta - epsiloni));
 			}
 
 			double sum4 = 0;
-			for (int i = 0; i < ni4.Length; ++i)
+			for (int i = 0; i < pr4.Length; ++i)
 			{
-				double theta = (1 - tau) + Ai4[i] * Math.Pow(Pow2(delta - 1), 1 / (2 * betai4[i]));
-				double Delta = Pow2(theta) + Bi4[i] * Math.Pow(Pow2(delta - 1), ai4[i]);
-				double Psi = Math.Exp(-Ci4[i] * Pow2(delta - 1) - Di4[i] * Pow2(tau - 1));
-				double Psi_delta = -2 * Ci4[i] * (delta - 1) * Psi;
+				var (ni, _, _, _, _, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
+				double theta = (1 - tau) + Ai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai));
+				double Delta = Pow2(theta) + Bi * Math.Pow(Pow2(delta - 1), ai);
+				double Psi = Math.Exp(-Ci * Pow2(delta - 1) - Di * Pow2(tau - 1));
+				double Psi_delta = -2 * Ci * (delta - 1) * Psi;
 
 				// Derivative of Delta with respect to delta
-				double Delta_delta = (delta - 1) * (Ai4[i] * theta * 2 / betai4[i] * Math.Pow(Pow2(delta - 1), 1 / (2 * betai4[i]) - 1) + 2 * Bi4[i] * ai4[i] * Math.Pow(Pow2(delta - 1), ai4[i] - 1));
+				double Delta_delta = (delta - 1) * (Ai * theta * 2 / betai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai) - 1) + 2 * Bi * ai * Math.Pow(Pow2(delta - 1), ai - 1));
 
 				// Derivative of Delta^bi with respect to delta
-				double Deltabi_delta = bi4[i] * Math.Pow(Delta, bi4[i] - 1) * Delta_delta;
+				double Deltabi_delta = bi * Math.Pow(Delta, bi - 1) * Delta_delta;
 
-				sum4 += ni4[i] * (Math.Pow(Delta, bi4[i]) * (Psi + delta * Psi_delta) + Deltabi_delta * delta * Psi);
+				sum4 += ni * (Math.Pow(Delta, bi) * (Psi + delta * Psi_delta) + Deltabi_delta * delta * Psi);
 			}
 
 			return sum1 + sum2 + sum3 + sum4;
@@ -458,98 +356,88 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double PhiR_deltadelta_OfReducedVariables(double delta, double tau)
 		{
 			// Make local variables to improve speed
-			var ni1 = _ni1;
-			var di1 = _di1;
-			var ti1 = _ti1;
-			var ni2 = _ni2;
-			var ci2 = _ci2;
-			var di2 = _di2;
-			var ti2 = _ti2;
-			var ni3 = _ni3;
-			var di3 = _di3;
-			var ti3 = _ti3;
-			var alphai3 = _alphai3;
-			var betai3 = _betai3;
-			var gammai3 = _gammai3;
-			var epsiloni3 = _epsiloni3;
-			var ni4 = _ni4;
-			var ai4 = _ai4;
-			var Ai4 = _Ai4;
-			var bi4 = _bi4;
-			var Bi4 = _Bi4;
-			var Ci4 = _Ci4;
-			var Di4 = _Di4;
-			var betai4 = _betai4;
+			var pr1 = _pr1;
+			var pr2 = _pr2;
+			var pr3 = _pr3;
+			var pr4 = _pr4;
 
 			double sum1 = 0;
-			for (int i = 0; i < ni1.Length; ++i)
+			for (int i = 0; i < pr1.Length; ++i)
 			{
-				sum1 += ni1[i] * di1[i] * (di1[i] - 1) * Pow(delta, di1[i] - 2) * Math.Pow(tau, ti1[i]);
+				var (ni, ti, di) = pr1[i];
+				sum1 += ni * di * (di - 1) * Pow(delta, di - 2) * Math.Pow(tau, ti);
 			}
 
 			double sum2 = 0;
-			for (int i = 0; i < ni2.Length; ++i)
+			for (int i = 0; i < pr2.Length; ++i)
 			{
-				sum2 += ni2[i] * Math.Exp(-Pow(delta, ci2[i])) *
+				var (ni, ti, di, li) = pr2[i];
+				sum2 += ni * Math.Exp(-Pow(delta, li)) *
 								(
-								Pow(delta, di2[i] - 2) * Math.Pow(tau, ti2[i]) *
-								((di2[i] - ci2[i] * Pow(delta, ci2[i])) * (di2[i] - 1 - ci2[i] * Pow(delta, ci2[i])) - Pow2(ci2[i]) * Pow(delta, ci2[i]))
+								Pow(delta, di - 2) * Math.Pow(tau, ti) *
+								((di - li * Pow(delta, li)) * (di - 1 - li * Pow(delta, li)) - Pow2(li) * Pow(delta, li))
 								);
 			}
 
 			double sum3 = 0;
-			for (int i = 0; i < ni3.Length; ++i)
+			for (int i = 0; i < pr3.Length; ++i)
 			{
-				sum3 += ni3[i] * Math.Pow(tau, ti3[i]) * Math.Exp(-alphai3[i] * Pow2(delta - epsiloni3[i]) - betai3[i] * Pow2(tau - gammai3[i])) *
+				var (ni, ti, di, _, _, alphai, betai, gammai, epsiloni) = pr3[i];
+				sum3 += ni * Math.Pow(tau, ti) * Math.Exp(alphai * Pow2(delta - epsiloni) + betai * Pow2(tau - gammai)) *
 					(
-					-2 * alphai3[i] * Pow(delta, di3[i]) +
-					4 * Pow2(alphai3[i]) * Pow(delta, di3[i]) * Pow2(delta - epsiloni3[i]) -
-					4 * di3[i] * alphai3[i] * Pow(delta, di3[i] - 1) * (delta - epsiloni3[i]) +
-					di3[i] * (di3[i] - 1) * Pow(delta, di3[i] - 2)
+					2 * alphai * Pow(delta, di) +
+					4 * Pow2(alphai) * Pow(delta, di) * Pow2(delta - epsiloni) +
+					4 * di * alphai * Pow(delta, di - 1) * (delta - epsiloni) +
+					di * (di - 1) * Pow(delta, di - 2)
 					);
 			}
 
 			double sum4 = 0;
-			for (int i = 0; i < ni4.Length; ++i)
+			for (int i = 0; i < pr4.Length; ++i)
 			{
-				double theta = (1 - tau) + Ai4[i] * Math.Pow(Pow2(delta - 1), 1 / (2 * betai4[i]));
-				double Psi = Math.Exp(-Ci4[i] * Pow2(delta - 1) - Di4[i] * Pow2(tau - 1));
-				double Psi_delta = -2 * Ci4[i] * (delta - 1) * Psi;
-				double Psi_deltadelta = (2 * Ci4[i] * Pow2(delta - 1) - 1) * (2 * Ci4[i] * Psi); // 2nd derivative of Psi with respect to delta
+				var (ni, _, _, _, _, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
 
-				double Delta = Pow2(theta) + Bi4[i] * Math.Pow(Pow2(delta - 1), ai4[i]);
+				double theta = (1 - tau) + Ai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai));
+				double Psi = Math.Exp(-Ci * Pow2(delta - 1) - Di * Pow2(tau - 1));
+				double Psi_delta = -2 * Ci * (delta - 1) * Psi;
+				double Psi_deltadelta = (2 * Ci * Pow2(delta - 1) - 1) * (2 * Ci * Psi); // 2nd derivative of Psi with respect to delta
+
+				double Delta = Pow2(theta) + Bi * Math.Pow(Pow2(delta - 1), ai);
 
 				// 1st derivative of Delta with respect to delta
 				double Delta_delta = (delta - 1) *
-					(
-					Ai4[i] * theta * 2 / betai4[i] * Math.Pow(Pow2(delta - 1), 1 / (2 * betai4[i]) - 1) +
-					2 * Bi4[i] * ai4[i] * Math.Pow(Pow2(delta - 1), ai4[i] - 1)
-					);
+				 (
+				 Ai * theta * 2 / betai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai) - 1) +
+				 2 * Bi * ai * Math.Pow(Pow2(delta - 1), ai - 1)
+				 );
 
 				// 2nd derivative of Delta with respect to delta
 				double Delta_deltadelta = Delta_delta / (delta - 1) + Pow2(delta - 1) *
-					(
-						4 * Bi4[i] * ai4[i] * (ai4[i] - 1) * Math.Pow(Pow2(delta - 1), ai4[i] - 2) +
-						2 * Pow2(Ai4[i] / betai4[i]) * Pow2(Math.Pow(Pow2(delta - 1), 1 / (2 * betai4[i]) - 1)) +
-						Ai4[i] * theta * 4 / betai4[i] * (1 / (2 * betai4[i]) - 1) * Math.Pow(Pow2(delta - 1), 1 / (2 * betai4[i]) - 2)
-					);
+				 (
+					 4 * Bi * ai * (ai - 1) * Math.Pow(Pow2(delta - 1), ai - 2) +
+					 2 * Pow2(Ai / betai) * Pow2(Math.Pow(Pow2(delta - 1), 1 / (2 * betai) - 1)) +
+					 Ai * theta * 4 / betai * (1 / (2 * betai) - 1) * Math.Pow(Pow2(delta - 1), 1 / (2 * betai) - 2)
+				 );
 
 				// 1st derivative of Delta^bi with respect to delta
-				double Deltabi_delta = bi4[i] * Math.Pow(Delta, bi4[i] - 1) * Delta_delta;
+				double Deltabi_delta = bi * Math.Pow(Delta, bi - 1) * Delta_delta;
 
 				// 2nd derivative of Delta^bi with respect to delta
-				double Deltabi_deltadelta = bi4[i] *
-					(
-						Math.Pow(Delta, bi4[i] - 1) * Delta_deltadelta +
-						(bi4[i] - 1) * Math.Pow(Delta, bi4[i] - 2) * Pow2(Delta_delta)
-					);
+				double Deltabi_deltadelta = bi *
+				 (
+					 Math.Pow(Delta, bi - 1) * Delta_deltadelta +
+					 (bi - 1) * Math.Pow(Delta, bi - 2) * Pow2(Delta_delta)
+				 );
 
-				sum4 += ni4[i] *
-					(
-						Math.Pow(Delta, bi4[i]) * (2 * Psi_delta + delta * Psi_deltadelta) +
-						2 * Deltabi_delta * (Psi + delta * Psi_delta) +
-						Deltabi_deltadelta * delta * Psi
-						);
+				sum4 += ni *
+							(
+
+								Math.Pow(Delta, bi) * (2 * Psi_delta + delta * Psi_deltadelta) +
+
+								2 * Deltabi_delta * (Psi + delta * Psi_delta) +
+
+								 Deltabi_deltadelta * delta * Psi
+								);
 			}
 
 			return sum1 + sum2 + sum3 + sum4;
@@ -564,65 +452,51 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double PhiR_tau_OfReducedVariables(double delta, double tau)
 		{
 			// Make local variables to improve speed
-			var ni1 = _ni1;
-			var di1 = _di1;
-			var ti1 = _ti1;
-			var ni2 = _ni2;
-			var ci2 = _ci2;
-			var di2 = _di2;
-			var ti2 = _ti2;
-			var ni3 = _ni3;
-			var di3 = _di3;
-			var ti3 = _ti3;
-			var alphai3 = _alphai3;
-			var betai3 = _betai3;
-			var gammai3 = _gammai3;
-			var epsiloni3 = _epsiloni3;
-			var ni4 = _ni4;
-			var ai4 = _ai4;
-			var Ai4 = _Ai4;
-			var bi4 = _bi4;
-			var Bi4 = _Bi4;
-			var Ci4 = _Ci4;
-			var Di4 = _Di4;
-			var betai4 = _betai4;
+			var pr1 = _pr1;
+			var pr2 = _pr2;
+			var pr3 = _pr3;
+			var pr4 = _pr4;
 
 			double sum1 = 0;
-			for (int i = 0; i < ni1.Length; ++i)
+			for (int i = 0; i < pr1.Length; ++i)
 			{
-				sum1 += ni1[i] * ti1[i] * Pow(delta, di1[i]) * Math.Pow(tau, ti1[i] - 1);
+				var (ni, ti, di) = pr1[i];
+				sum1 += ni * ti * Pow(delta, di) * Math.Pow(tau, ti - 1);
 			}
 
 			double sum2 = 0;
-			for (int i = 0; i < ni2.Length; ++i)
+			for (int i = 0; i < pr2.Length; ++i)
 			{
-				sum2 += ni2[i] * ti2[i] * Pow(delta, di2[i]) * Math.Pow(tau, ti2[i] - 1) * Math.Exp(-Pow(delta, ci2[i]));
+				var (ni, ti, di, ci) = pr2[i];
+				sum2 += ni * ti * Pow(delta, di) * Math.Pow(tau, ti - 1) * Math.Exp(-Pow(delta, ci));
 			}
 
 			double sum3 = 0;
-			for (int i = 0; i < ni3.Length; ++i)
+			for (int i = 0; i < pr3.Length; ++i)
 			{
-				sum3 += ni3[i] * Pow(delta, di3[i]) * Math.Pow(tau, ti3[i]) *
-								Math.Exp(-alphai3[i] * Pow2(delta - epsiloni3[i]) - betai3[i] * Pow2(tau - gammai3[i])) *
-								(ti3[i] / tau - 2 * betai3[i] * (tau - gammai3[i]));
+				var (ni, ti, di, _, _, alphai, betai, gammai, epsiloni) = pr3[i];
+				sum3 += ni * Pow(delta, di) * Math.Pow(tau, ti) *
+								Math.Exp(alphai * Pow2(delta - epsiloni) + betai * Pow2(tau - gammai)) *
+								(ti / tau + 2 * betai * (tau - gammai));
 			}
 
 			double sum4 = 0;
-			for (int i = 0; i < ni4.Length; ++i)
+			for (int i = 0; i < pr4.Length; ++i)
 			{
-				double theta = (1 - tau) + Ai4[i] * Math.Pow(Pow2(delta - 1), 1 / (2 * betai4[i]));
-				double Delta = Pow2(theta) + Bi4[i] * Math.Pow(Pow2(delta - 1), ai4[i]);
-				double Psi = Math.Exp(-Ci4[i] * Pow2(delta - 1) - Di4[i] * Pow2(tau - 1));
+				var (ni, _, _, _, _, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
+				double theta = (1 - tau) + Ai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai));
+				double Delta = Pow2(theta) + Bi * Math.Pow(Pow2(delta - 1), ai);
+				double Psi = Math.Exp(-Ci * Pow2(delta - 1) - Di * Pow2(tau - 1));
 
 				// 1st derivative of Psi with respect to tau
-				double Psi_tau = -2 * Di4[i] * (tau - 1) * Psi;
+				double Psi_tau = -2 * Di * (tau - 1) * Psi;
 
 				// Derivative of Delta^bi with respect to delta
-				double Deltabi_tau = -2 * theta * bi4[i] * Math.Pow(Delta, bi4[i] - 1);
+				double Deltabi_tau = -2 * theta * bi * Math.Pow(Delta, bi - 1);
 
-				sum4 += ni4[i] * delta * (
+				sum4 += ni * delta * (
 									Deltabi_tau * Psi +
-									Math.Pow(Delta, bi4[i]) * Psi_tau
+									Math.Pow(Delta, bi) * Psi_tau
 									);
 			}
 
@@ -638,78 +512,64 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double PhiR_tautau_OfReducedVariables(double delta, double tau)
 		{
 			// Make local variables to improve speed
-			var ni1 = _ni1;
-			var di1 = _di1;
-			var ti1 = _ti1;
-			var ni2 = _ni2;
-			var ci2 = _ci2;
-			var di2 = _di2;
-			var ti2 = _ti2;
-			var ni3 = _ni3;
-			var di3 = _di3;
-			var ti3 = _ti3;
-			var alphai3 = _alphai3;
-			var betai3 = _betai3;
-			var gammai3 = _gammai3;
-			var epsiloni3 = _epsiloni3;
-			var ni4 = _ni4;
-			var ai4 = _ai4;
-			var Ai4 = _Ai4;
-			var bi4 = _bi4;
-			var Bi4 = _Bi4;
-			var Ci4 = _Ci4;
-			var Di4 = _Di4;
-			var betai4 = _betai4;
+			var pr1 = _pr1;
+			var pr2 = _pr2;
+			var pr3 = _pr3;
+			var pr4 = _pr4;
 
 			double sum1 = 0;
-			for (int i = 0; i < ni1.Length; ++i)
+			for (int i = 0; i < pr1.Length; ++i)
 			{
-				sum1 += ni1[i] * ti1[i] * (ti1[i] - 1) * Pow(delta, di1[i]) * Math.Pow(tau, ti1[i] - 2);
+				var (ni, ti, di) = pr1[i];
+				sum1 += ni * ti * (ti - 1) * Pow(delta, di) * Math.Pow(tau, ti - 2);
 			}
 
 			double sum2 = 0;
-			for (int i = 0; i < ni2.Length; ++i)
+			for (int i = 0; i < pr2.Length; ++i)
 			{
-				sum2 += ni2[i] * ti2[i] * (ti2[i] - 1) * Pow(delta, di2[i]) * Math.Pow(tau, ti2[i] - 2) *
-								Math.Exp(-Pow(delta, ci2[i]));
+				var (ni, ti, di, ci) = pr2[i];
+				sum2 += ni * ti * (ti - 1) * Pow(delta, di) * Math.Pow(tau, ti - 2) *
+								Math.Exp(-Pow(delta, ci));
 			}
 
 			double sum3 = 0;
-			for (int i = 0; i < ni3.Length; ++i)
+			for (int i = 0; i < pr3.Length; ++i)
 			{
-				sum3 += ni3[i] * Pow(delta, di3[i]) * Math.Pow(tau, ti3[i]) *
-								Math.Exp(-alphai3[i] * Pow2(delta - epsiloni3[i]) - betai3[i] * Pow2(tau - gammai3[i])) *
+				var (ni, ti, di, _, _, alphai, betai, gammai, epsiloni) = pr3[i];
+				sum3 += ni * Pow(delta, di) * Math.Pow(tau, ti) *
+								Math.Exp(alphai * Pow2(delta - epsiloni) + betai * Pow2(tau - gammai)) *
 								(
-								Pow2(ti3[i] / tau - 2 * betai3[i] * (tau - gammai3[i])) -
-								ti3[i] / Pow2(tau) -
-								2 * betai3[i]
+								Pow2(ti / tau + 2 * betai * (tau - gammai)) -
+								ti / Pow2(tau) +
+								2 * betai
 								);
 			}
 
 			double sum4 = 0;
-			for (int i = 0; i < ni4.Length; ++i)
+			for (int i = 0; i < pr4.Length; ++i)
 			{
-				double theta = (1 - tau) + Ai4[i] * Math.Pow(Pow2(delta - 1), 1 / (2 * betai4[i]));
-				double Delta = Pow2(theta) + Bi4[i] * Math.Pow(Pow2(delta - 1), ai4[i]);
-				double Psi = Math.Exp(-Ci4[i] * Pow2(delta - 1) - Di4[i] * Pow2(tau - 1));
+				var (ni, _, _, _, _, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
+				double theta = (1 - tau) + Ai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai));
+				double Delta = Pow2(theta) + Bi * Math.Pow(Pow2(delta - 1), ai);
+				double Psi = Math.Exp(-Ci * Pow2(delta - 1) - Di * Pow2(tau - 1));
 
 				// 1st derivative of Psi with respect to tau
-				double Psi_tau = -2 * Di4[i] * (tau - 1) * Psi;
+				double Psi_tau = -2 * Di * (tau - 1) * Psi;
 
 				// 2nd derivative of Psi with respect to tau
-				double Psi_tautau = (2 * Di4[i] * Pow2(tau - 1) - 1) * 2 * Di4[i] * Psi;
+				double Psi_tautau = (2 * Di * Pow2(tau - 1) - 1) * 2 * Di * Psi;
 
 				// 1st derivative of Delta^bi with respect to tau
-				double Deltabi_tau = -2 * theta * bi4[i] * Math.Pow(Delta, bi4[i] - 1);
+				double Deltabi_tau = -2 * theta * bi * Math.Pow(Delta, bi - 1);
 
 				// 2nd derivative of Delta^bi with respect to tau
-				double Deltabi_tautau = 2 * bi4[i] * Math.Pow(Delta, bi4[i] - 1) + 4 * Pow2(theta) * bi4[i] * (bi4[i] - 1) * Math.Pow(Delta, bi4[i] - 2);
+				double Deltabi_tautau = 2 * bi * Math.Pow(Delta, bi - 1) + 4 * Pow2(theta) * bi * (bi - 1) * Math.Pow(Delta, bi - 2);
 
-				sum4 += ni4[i] * delta *
+				sum4 += ni * delta *
 								(
 									Deltabi_tautau * Psi +
 									2 * Deltabi_tau * Psi_tau +
-									Math.Pow(Delta, bi4[i]) * Psi_tautau
+									Math.Pow(Delta, bi) * Psi_tautau
 								);
 			}
 
@@ -725,88 +585,74 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double PhiR_deltatau_OfReducedVariables(double delta, double tau)
 		{
 			// Make local variables to improve speed
-			var ni1 = _ni1;
-			var di1 = _di1;
-			var ti1 = _ti1;
-			var ni2 = _ni2;
-			var ci2 = _ci2;
-			var di2 = _di2;
-			var ti2 = _ti2;
-			var ni3 = _ni3;
-			var di3 = _di3;
-			var ti3 = _ti3;
-			var alphai3 = _alphai3;
-			var betai3 = _betai3;
-			var gammai3 = _gammai3;
-			var epsiloni3 = _epsiloni3;
-			var ni4 = _ni4;
-			var ai4 = _ai4;
-			var Ai4 = _Ai4;
-			var bi4 = _bi4;
-			var Bi4 = _Bi4;
-			var Ci4 = _Ci4;
-			var Di4 = _Di4;
-			var betai4 = _betai4;
+			var pr1 = _pr1;
+			var pr2 = _pr2;
+			var pr3 = _pr3;
+			var pr4 = _pr4;
 
 			double sum1 = 0;
-			for (int i = 0; i < ni1.Length; ++i)
+			for (int i = 0; i < pr1.Length; ++i)
 			{
-				sum1 += ni1[i] * di1[i] * ti1[i] * Pow(delta, di1[i] - 1) * Math.Pow(tau, ti1[i] - 1);
+				var (ni, ti, di) = pr1[i];
+				sum1 += ni * di * ti * Pow(delta, di - 1) * Math.Pow(tau, ti - 1);
 			}
 
 			double sum2 = 0;
-			for (int i = 0; i < ni2.Length; ++i)
+			for (int i = 0; i < pr2.Length; ++i)
 			{
-				sum2 += ni2[i] * ti2[i] * (Pow(delta, di2[i] - 1) * Math.Pow(tau, ti2[i] - 1) * Math.Exp(-Pow(delta, ci2[i])) *
-					(di2[i] - ci2[i] * Pow(delta, ci2[i])));
+				var (ni, ti, di, ci) = pr2[i];
+				sum2 += ni * ti * (Pow(delta, di - 1) * Math.Pow(tau, ti - 1) * Math.Exp(-Pow(delta, ci)) *
+					(di - ci * Pow(delta, ci)));
 			}
 
 			double sum3 = 0;
-			for (int i = 0; i < ni3.Length; ++i)
+			for (int i = 0; i < pr3.Length; ++i)
 			{
-				sum3 += ni3[i] * Pow(delta, di3[i]) * Math.Pow(tau, ti3[i]) *
-								Math.Exp(-alphai3[i] * Pow2(delta - epsiloni3[i]) - betai3[i] * Pow2(tau - gammai3[i])) *
+				var (ni, ti, di, _, _, alphai, betai, gammai, epsiloni) = pr3[i];
+				sum3 += ni * Pow(delta, di) * Math.Pow(tau, ti) *
+								Math.Exp(alphai * Pow2(delta - epsiloni) + betai * Pow2(tau - gammai)) *
 								(
-									di3[i] / delta -
-									2 * alphai3[i] * (delta - epsiloni3[i])
+									di / delta +
+									2 * alphai * (delta - epsiloni)
 								) *
 								(
-									ti3[i] / tau -
-									2 * betai3[i] * (tau - gammai3[i])
+									ti / tau +
+									2 * betai * (tau - gammai)
 								);
 			}
 
 			double sum4 = 0;
-			for (int i = 0; i < ni4.Length; ++i)
+			for (int i = 0; i < pr4.Length; ++i)
 			{
-				double theta = (1 - tau) + Ai4[i] * Math.Pow(Pow2(delta - 1), 1 / (2 * betai4[i]));
-				double Delta = Pow2(theta) + Bi4[i] * Math.Pow(Pow2(delta - 1), ai4[i]);
-				double Psi = Math.Exp(-Ci4[i] * Pow2(delta - 1) - Di4[i] * Pow2(tau - 1));
-				double Psi_delta = -2 * Ci4[i] * (delta - 1) * Psi;
+				var (ni, _, _, _, _, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
+				double theta = (1 - tau) + Ai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai));
+				double Delta = Pow2(theta) + Bi * Math.Pow(Pow2(delta - 1), ai);
+				double Psi = Math.Exp(-Ci * Pow2(delta - 1) - Di * Pow2(tau - 1));
+				double Psi_delta = -2 * Ci * (delta - 1) * Psi;
 
 				// 1st derivative of Psi with respect to tau
-				double Psi_tau = -2 * Di4[i] * (tau - 1) * Psi;
+				double Psi_tau = -2 * Di * (tau - 1) * Psi;
 
 				// derivative of Psi with respect to delta and tau
-				double Psi_deltatau = 4 * Ci4[i] * Di4[i] * (delta - 1) * (tau - 1) * Psi;
+				double Psi_deltatau = 4 * Ci * Di * (delta - 1) * (tau - 1) * Psi;
 
 				// Derivative of Delta with respect to delta
-				double Delta_delta = (delta - 1) * (Ai4[i] * theta * 2 / betai4[i] * Math.Pow(Pow2(delta - 1), 1 / (2 * betai4[i]) - 1) + 2 * Bi4[i] * ai4[i] * Math.Pow(Pow2(delta - 1), ai4[i] - 1));
+				double Delta_delta = (delta - 1) * (Ai * theta * 2 / betai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai) - 1) + 2 * Bi * ai * Math.Pow(Pow2(delta - 1), ai - 1));
 
 				// 1st derivative of Delta^bi with respect to delta
-				double Deltabi_delta = bi4[i] * Math.Pow(Delta, bi4[i] - 1) * Delta_delta;
+				double Deltabi_delta = bi * Math.Pow(Delta, bi - 1) * Delta_delta;
 
 				// 1st derivative of Delta^bi with respect to tau
-				double Deltabi_tau = -2 * theta * bi4[i] * Math.Pow(Delta, bi4[i] - 1);
+				double Deltabi_tau = -2 * theta * bi * Math.Pow(Delta, bi - 1);
 
 				// derivative of Delta ^ bi with respect to delta and tau
-				double Deltabi_deltatau = -Ai4[i] * bi4[i] * 2 / betai4[i] * Math.Pow(Delta, bi4[i] - 1) * (delta - 1) *
-																	Math.Pow(Pow2(delta - 1), 1 / (2 * betai4[i]) - 1) -
-																	2 * theta * bi4[i] * (bi4[i] - 1) * Math.Pow(Delta, bi4[i] - 2) * Delta_delta;
+				double Deltabi_deltatau = -Ai * bi * 2 / betai * Math.Pow(Delta, bi - 1) * (delta - 1) *
+																	Math.Pow(Pow2(delta - 1), 1 / (2 * betai) - 1) -
+																	2 * theta * bi * (bi - 1) * Math.Pow(Delta, bi - 2) * Delta_delta;
 
-				sum4 += ni4[i] *
+				sum4 += ni *
 								(
-									Math.Pow(Delta, bi4[i]) * (Psi_tau + delta * Psi_deltatau) +
+									Math.Pow(Delta, bi) * (Psi_tau + delta * Psi_deltatau) +
 									delta * Deltabi_delta * Psi_tau +
 									Deltabi_tau * (Psi + delta * Psi_delta) +
 									Deltabi_deltatau * delta * Psi
