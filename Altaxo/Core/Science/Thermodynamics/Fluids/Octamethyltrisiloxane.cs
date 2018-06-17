@@ -81,10 +81,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
 			// <summary>The constant term in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-			_alpha0_n_const = 117.994606;
+			_alpha0_n_const = 117.994606421838;
 
 			// <summary>The term with the factor tau in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-			_alpha0_n_tau = -19.6600754;
+			_alpha0_n_tau = -19.6600754237831;
 
 			// <summary>The term with the factor ln(tau) in the equation of the ideal part of the reduced Helmholtz energy.</summary>
 			_alpha0_n_lntau = 3;
