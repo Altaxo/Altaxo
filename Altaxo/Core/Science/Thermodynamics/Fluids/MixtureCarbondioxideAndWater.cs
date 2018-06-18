@@ -56,62 +56,21 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			_gammaV12 = 0.895156;
 			_F12 = 1;
 
-			_ni1 = new double[]
+			_pr1 = new(double ni, double ti, int di)[]
 			{
-				3.9440467E-1,
-			-1.7634732,
-			1.4620755E-1,
+( 0.39440467e+00,   0.880,   1),
+(-0.17634732e+01,   2.932,   1),
+( 0.14620755e+00,   2.433,   3),
 			};
 
-			_di1 = new int[]
-			{
-				1 ,
-			1 ,
-			3 ,
-			};
-
-			_ti1 = new double[]
-			{
-				0.880,
-			2.932,
-			2.433,
-			};
-
-			_ni2 = new double[]
-			{
-			8.7522320E-3,
-			2.0349398,
-			-9.0350250E-2,
-			-2.1638854E-1,
-			3.9612170E-2,
-			};
-
-			_ti2 = new double[]
-			{
-			1.330,
-			4.416,
-			5.514,
- 			5.203,
- 			1.000,
-			};
-
-			_di2 = new int[]
-			{
-			0 ,
-			2 ,
-			3,
-			1 ,
-			5 ,
-			};
-
-			_ci2 = new int[]
-			{
-			1 ,
-			1 ,
-			1,
-			2 ,
-			2 ,
-			};
+			_pr2 = new(double ni, double ti, int di, int ci)[]
+{
+( 0.87522320e-02,   1.330,   0,   1),
+( 0.20349398e+01,   4.416,   2,   1),
+(-0.90350250e-01,   5.514,   3,   1),
+(-0.21638854e+00,   5.203,   1,   2),
+( 0.39612170e-01,   1.000,   5,   2),
+};
 		}
 
 		public static MixtureCarbondioxideAndWater FromMoleFractionCO2(double moleFractionCO2)

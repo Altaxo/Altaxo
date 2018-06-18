@@ -51,14 +51,15 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		protected double _gammaV12;
 		protected double _F12;
 
-		protected double[] _ni1;
-		protected double[] _ti1;
-		protected int[] _di1;
+		/// <summary>
+		/// Parameter for the polynomial terms of the reduced Helmholtz energy.
+		/// </summary>
+		protected (double ni, double ti, int di)[] _pr1;
 
-		protected double[] _ni2;
-		protected double[] _ti2;
-		protected int[] _di2;
-		protected int[] _ci2;
+		/// <summary>
+		/// Parameter for the exponential terms of the reduced Helmholtz energy.
+		/// </summary>
+		protected (double ni, double ti, int di, int li)[] _pr2;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HelmholtzEquationOfStateOfBinaryMixturesByWagnerEtAl"/> class.
@@ -71,7 +72,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	: base(moleFraction1, component1, moleFraction2, component2)
 		{
 			InitializeCoefficientArrays();
-			TestArrays();
 			_reducingTemperature = CalculateReducingTemperature();
 			_reducingMoleDensity = CalculateReducingMoleDensity();
 		}
@@ -80,26 +80,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// Initializes the coefficient arrays with the specific values for this binary mixture.
 		/// </summary>
 		protected abstract void InitializeCoefficientArrays();
-
-		/// <summary>
-		/// Helper function to test the length of the coefficient arrays.
-		/// </summary>
-		/// <exception cref="InvalidProgramException">
-		/// </exception>
-		protected virtual void TestArrays()
-		{
-			if (_ni1.Length != _di1.Length)
-				throw new InvalidProgramException();
-			if (_ni1.Length != _ti1.Length)
-				throw new InvalidProgramException();
-
-			if (_ni2.Length != _di2.Length)
-				throw new InvalidProgramException();
-			if (_ni2.Length != _ti2.Length)
-				throw new InvalidProgramException();
-			if (_ni2.Length != _ci2.Length)
-				throw new InvalidProgramException();
-		}
 
 		/// <summary>
 		/// Calculates the reducing mole density in dependence of the mole fractions.
@@ -128,13 +108,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <inheritdoc/>
-		public override double ReducingTemperature
-		{
-			get
-			{
-				return _reducingTemperature;
-			}
-		}
+		public override double ReducingTemperature => _reducingTemperature;
 
 		/// <inheritdoc/>
 		public override double ReducingMoleDensity => _reducingMoleDensity;
@@ -143,8 +117,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double Phi0_OfReducedVariables(double delta, double tau)
 		{
 			// Note we have to calculate back from the reduced variables of this mixture to the reduced variables of the components
-			var sum1 = _moleFraction1 * _component1.Phi0_OfReducedVariables(delta * ReducingMassDensity / _component1.ReducingMassDensity, tau / ReducingTemperature * _component1.ReducingTemperature);
-			var sum2 = _moleFraction2 * _component2.Phi0_OfReducedVariables(delta * ReducingMassDensity / _component2.ReducingMassDensity, tau / ReducingTemperature * _component2.ReducingTemperature);
+			var sum1 = _moleFraction1 * _component1.Phi0_OfReducedVariables(delta * ReducingMoleDensity / _component1.ReducingMoleDensity, tau / ReducingTemperature * _component1.ReducingTemperature);
+			var sum2 = _moleFraction2 * _component2.Phi0_OfReducedVariables(delta * ReducingMoleDensity / _component2.ReducingMoleDensity, tau / ReducingTemperature * _component2.ReducingTemperature);
 			var sum3 = _moleFraction1 * Math.Log(_moleFraction1) + _moleFraction2 * Math.Log(_moleFraction2);
 
 			return double.IsNaN(sum3) ? sum1 + sum2 : sum1 + sum2 + sum3;
@@ -173,7 +147,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		{
 			var sum1 = _moleFraction1 * _component1.PhiR_OfReducedVariables(delta, tau);
 			var sum2 = _moleFraction2 * _component2.PhiR_OfReducedVariables(delta, tau);
-			var sum3 = _moleFraction1 * _moleFraction2 * _F12 * Alpha12R(delta, tau);
+			var sum3 = _moleFraction1 * _moleFraction2 * _F12 * DepartureFunction(delta, tau);
 			return sum1 + sum2 + sum3;
 		}
 
@@ -182,7 +156,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		{
 			var sum1 = _moleFraction1 * _component1.PhiR_delta_OfReducedVariables(delta, tau);
 			var sum2 = _moleFraction2 * _component2.PhiR_delta_OfReducedVariables(delta, tau);
-			var sum3 = _moleFraction1 * _moleFraction2 * _F12 * Alpha12R_delta(delta, tau);
+			var sum3 = _moleFraction1 * _moleFraction2 * _F12 * DepartureFunction_delta(delta, tau);
 			return sum1 + sum2 + sum3;
 		}
 
@@ -192,7 +166,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum = 0;
 			sum += _moleFraction1 * _component1.PhiR_deltadelta_OfReducedVariables(delta, tau);
 			sum += _moleFraction2 * _component2.PhiR_deltadelta_OfReducedVariables(delta, tau);
-			sum += _moleFraction1 * _moleFraction2 * _F12 * Alpha12R_deltadelta(delta, tau);
+			sum += _moleFraction1 * _moleFraction2 * _F12 * DepartureFunction_deltadelta(delta, tau);
 			return sum;
 		}
 
@@ -202,7 +176,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum = 0;
 			sum += _moleFraction1 * _component1.PhiR_tau_OfReducedVariables(delta, tau);
 			sum += _moleFraction2 * _component2.PhiR_tau_OfReducedVariables(delta, tau);
-			sum += _moleFraction1 * _moleFraction2 * _F12 * Alpha12R_tau(delta, tau);
+			sum += _moleFraction1 * _moleFraction2 * _F12 * DepartureFunction_tau(delta, tau);
 			return sum;
 		}
 
@@ -212,7 +186,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum = 0;
 			sum += _moleFraction1 * _component1.PhiR_tautau_OfReducedVariables(delta, tau);
 			sum += _moleFraction2 * _component2.PhiR_tautau_OfReducedVariables(delta, tau);
-			sum += _moleFraction1 * _moleFraction2 * _F12 * Alpha12R_tautau(delta, tau);
+			sum += _moleFraction1 * _moleFraction2 * _F12 * DepartureFunction_tautau(delta, tau);
 			return sum;
 		}
 
@@ -222,39 +196,39 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum = 0;
 			sum += _moleFraction1 * _component1.PhiR_deltatau_OfReducedVariables(delta, tau);
 			sum += _moleFraction2 * _component2.PhiR_deltatau_OfReducedVariables(delta, tau);
-			sum += _moleFraction1 * _moleFraction2 * _F12 * Alpha12R_deltatau(delta, tau);
+			sum += _moleFraction1 * _moleFraction2 * _F12 * DepartureFunction_deltatau(delta, tau);
 			return sum;
 		}
 
 		#region Mixture correction function Alpha12R and derivatives
 
 		/// <summary>
-		/// Mixture correction function Alpha12R in dependence of the reduced density and reduced inverse temperature.
+		/// The Departure function is a mixture correction function for the residual part of the reduced Helmholtz energy in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = density / <see cref="ReducingMassDensity"/>.</param>
+		/// <param name="delta">The reduced density = mole density / <see cref="ReducingMoleDensity"/>.</param>
 		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
 		/// <returns>Mixture correction function Alpha12R.</returns>
-		public double Alpha12R(double delta, double tau)
+		public double DepartureFunction(double delta, double tau)
 		{
-			var ni1 = _ni1;
-			var di1 = _di1;
-			var ti1 = _ti1;
-
-			var ni2 = _ni2;
-			var di2 = _di2;
-			var ti2 = _ti2;
-			var ci2 = _ci2;
-
 			double sum1 = 0;
-			for (int i = 0; i < ni1.Length; ++i)
+			double sum2 = 0;
+
 			{
-				sum1 += ni1[i] * Pow(delta, di1[i]) * Math.Pow(tau, ti1[i]);
+				var ppoly = _pr1;
+				for (int i = 0; i < ppoly.Length; ++i)
+				{
+					var (ni, ti, di) = ppoly[i];
+					sum1 += ni * Pow(delta, di) * Math.Pow(tau, ti);
+				}
 			}
 
-			double sum2 = 0;
-			for (int i = 0; i < ni2.Length; ++i)
 			{
-				sum2 += ni2[i] * Pow(delta, di2[i]) * Math.Pow(tau, ti2[i]) * Math.Exp(-Pow(delta, ci2[i]));
+				var pexp = _pr2;
+				for (int i = 0; i < pexp.Length; ++i)
+				{
+					var (ni, ti, di, ci) = pexp[i];
+					sum2 += ni * Pow(delta, di) * Math.Pow(tau, ti) * Math.Exp(-Pow(delta, ci));
+				}
 			}
 
 			return sum1 + sum2;
@@ -263,65 +237,58 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Derivative of the mixture correction function Alpha12R w.r.t. delta in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = density / <see cref="ReducingMassDensity"/>.</param>
+		/// <param name="delta">The reduced density = mole density / <see cref="ReducingMoleDensity"/>.</param>
 		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
 		/// <returns>Derivative of the mixture correction function Alpha12R w.r.t. delta.</returns>
-		public double Alpha12R_delta(double delta, double tau)
+		public double DepartureFunction_delta(double delta, double tau)
 		{
-			var ni1 = _ni1;
-			var di1 = _di1;
-			var ti1 = _ti1;
-
-			var ni2 = _ni2;
-			var di2 = _di2;
-			var ti2 = _ti2;
-			var ci2 = _ci2;
-
 			double sum1 = 0;
-			for (int i = 0; i < ni1.Length; ++i)
+			double sum2 = 0;
+
+			var ppoly = _pr1;
+			for (int i = 0; i < ppoly.Length; ++i)
 			{
-				sum1 += ni1[i] * di1[i] * Pow(delta, di1[i] - 1) * Math.Pow(tau, ti1[i]);
+				var (ni, ti, di) = ppoly[i];
+				sum1 += ni * di * Pow(delta, di - 1) * Math.Pow(tau, ti);
 			}
 
-			double sum2 = 0;
-			for (int i = 0; i < ni2.Length; ++i)
+			var pexp = _pr2;
+			for (int i = 0; i < pexp.Length; ++i)
 			{
-				sum2 += ni2[i] * Math.Exp(-Pow(delta, ci2[i])) *
-								(Pow(delta, di2[i] - 1) * Math.Pow(tau, ti2[i]) * (di2[i] - ci2[i] * Pow(delta, ci2[i])));
+				var (ni, ti, di, ci) = pexp[i];
+				sum2 += ni * Math.Exp(-Pow(delta, ci)) *
+								(Pow(delta, di - 1) * Math.Pow(tau, ti) * (di - ci * Pow(delta, ci)));
 			}
+
 			return sum1 + sum2;
 		}
 
 		/// <summary>
 		/// 2nd derivative of the mixture correction function Alpha12R w.r.t. delta in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = density / <see cref="ReducingMassDensity"/>.</param>
+		/// <param name="delta">The reduced density = mole density / <see cref="ReducingMoleDensity"/>.</param>
 		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
 		/// <returns>2nd derivative of the mixture correction function Alpha12R w.r.t. delta.</returns>
-		public double Alpha12R_deltadelta(double delta, double tau)
+		public double DepartureFunction_deltadelta(double delta, double tau)
 		{
-			var ni1 = _ni1;
-			var di1 = _di1;
-			var ti1 = _ti1;
-
-			var ni2 = _ni2;
-			var di2 = _di2;
-			var ti2 = _ti2;
-			var ci2 = _ci2;
-
 			double sum1 = 0;
-			for (int i = 0; i < ni1.Length; ++i)
+			double sum2 = 0;
+
+			var ppoly = _pr1;
+			for (int i = 0; i < ppoly.Length; ++i)
 			{
-				sum1 += ni1[i] * di1[i] * (di1[i] - 1) * Pow(delta, di1[i] - 2) * Math.Pow(tau, ti1[i]);
+				var (ni, ti, di) = ppoly[i];
+				sum1 += ni * di * (di - 1) * Pow(delta, di - 2) * Math.Pow(tau, ti);
 			}
 
-			double sum2 = 0;
-			for (int i = 0; i < ni2.Length; ++i)
+			var pexp = _pr2;
+			for (int i = 0; i < pexp.Length; ++i)
 			{
-				sum2 += ni2[i] * Math.Exp(-Pow(delta, ci2[i])) *
+				var (ni, ti, di, ci) = pexp[i];
+				sum2 += ni * Math.Exp(-Pow(delta, ci)) *
 								(
-								Pow(delta, di2[i] - 2) * Math.Pow(tau, ti2[i]) *
-								((di2[i] - ci2[i] * Pow(delta, ci2[i])) * (di2[i] - 1 - ci2[i] * Pow(delta, ci2[i])) - Pow2(ci2[i]) * Pow(delta, ci2[i]))
+								Pow(delta, di - 2) * Math.Pow(tau, ti) *
+								((di - ci * Pow(delta, ci)) * (di - 1 - ci * Pow(delta, ci)) - Pow2(ci) * Pow(delta, ci))
 								);
 			}
 			return sum1 + sum2;
@@ -330,30 +297,26 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Derivative of the mixture correction function Alpha12R w.r.t. tau in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = density / <see cref="ReducingMassDensity"/>.</param>
+		/// <param name="delta">The reduced density = mole density / <see cref="ReducingMoleDensity"/>.</param>
 		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
 		/// <returns>Derivative of the mixture correction function Alpha12R w.r.t. tau.</returns>
-		public double Alpha12R_tau(double delta, double tau)
+		public double DepartureFunction_tau(double delta, double tau)
 		{
-			var ni1 = _ni1;
-			var di1 = _di1;
-			var ti1 = _ti1;
-
-			var ni2 = _ni2;
-			var di2 = _di2;
-			var ti2 = _ti2;
-			var ci2 = _ci2;
-
 			double sum1 = 0;
-			for (int i = 0; i < ni1.Length; ++i)
+			double sum2 = 0;
+
+			var ppoly = _pr1;
+			for (int i = 0; i < ppoly.Length; ++i)
 			{
-				sum1 += ni1[i] * ti1[i] * Pow(delta, di1[i]) * Math.Pow(tau, ti1[i] - 1);
+				var (ni, ti, di) = ppoly[i];
+				sum1 += ni * ti * Pow(delta, di) * Math.Pow(tau, ti - 1);
 			}
 
-			double sum2 = 0;
-			for (int i = 0; i < ni2.Length; ++i)
+			var pexp = _pr2;
+			for (int i = 0; i < pexp.Length; ++i)
 			{
-				sum2 += ni2[i] * ti2[i] * Pow(delta, di2[i]) * Math.Pow(tau, ti2[i] - 1) * Math.Exp(-Pow(delta, ci2[i]));
+				var (ni, ti, di, ci) = pexp[i];
+				sum2 += ni * ti * Pow(delta, di) * Math.Pow(tau, ti - 1) * Math.Exp(-Pow(delta, ci));
 			}
 			return sum1 + sum2;
 		}
@@ -361,31 +324,27 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// 2nd derivative of the mixture correction function Alpha12R w.r.t. tau in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = density / <see cref="ReducingMassDensity"/>.</param>
+		/// <param name="delta">The reduced density = mole density / <see cref="ReducingMoleDensity"/>.</param>
 		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
 		/// <returns>2nd derivative of the mixture correction function Alpha12R w.r.t. tau.</returns>
-		public double Alpha12R_tautau(double delta, double tau)
+		public double DepartureFunction_tautau(double delta, double tau)
 		{
-			var ni1 = _ni1;
-			var di1 = _di1;
-			var ti1 = _ti1;
-
-			var ni2 = _ni2;
-			var di2 = _di2;
-			var ti2 = _ti2;
-			var ci2 = _ci2;
-
 			double sum1 = 0;
-			for (int i = 0; i < ni1.Length; ++i)
+			double sum2 = 0;
+
+			var ppoly = _pr1;
+			for (int i = 0; i < ppoly.Length; ++i)
 			{
-				sum1 += ni1[i] * ti1[i] * (ti1[i] - 1) * Pow(delta, di1[i]) * Math.Pow(tau, ti1[i] - 2);
+				var (ni, ti, di) = ppoly[i];
+				sum1 += ni * ti * (ti - 1) * Pow(delta, di) * Math.Pow(tau, ti - 2);
 			}
 
-			double sum2 = 0;
-			for (int i = 0; i < ni2.Length; ++i)
+			var pexp = _pr2;
+			for (int i = 0; i < pexp.Length; ++i)
 			{
-				sum2 += ni2[i] * ti2[i] * (ti2[i] - 1) * Pow(delta, di2[i]) * Math.Pow(tau, ti2[i] - 2) *
-								Math.Exp(-Pow(delta, ci2[i]));
+				var (ni, ti, di, ci) = pexp[i];
+				sum2 += ni * ti * (ti - 1) * Pow(delta, di) * Math.Pow(tau, ti - 2) *
+								Math.Exp(-Pow(delta, ci));
 			}
 			return sum1 + sum2;
 		}
@@ -393,31 +352,27 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Derivative of the mixture correction function Alpha12R w.r.t. delta and tau in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = density / <see cref="ReducingMassDensity"/>.</param>
+		/// <param name="delta">The reduced density = mole density / <see cref="ReducingMoleDensity"/>.</param>
 		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
 		/// <returns>Derivative of the mixture correction function Alpha12R w.r.t. delta and tau.</returns>
-		public double Alpha12R_deltatau(double delta, double tau)
+		public double DepartureFunction_deltatau(double delta, double tau)
 		{
-			var ni1 = _ni1;
-			var di1 = _di1;
-			var ti1 = _ti1;
-
-			var ni2 = _ni2;
-			var di2 = _di2;
-			var ti2 = _ti2;
-			var ci2 = _ci2;
-
 			double sum1 = 0;
-			for (int i = 0; i < ni1.Length; ++i)
+			double sum2 = 0;
+
+			var ppoly = _pr1;
+			for (int i = 0; i < ppoly.Length; ++i)
 			{
-				sum1 += ni1[i] * di1[i] * ti1[i] * Pow(delta, di1[i] - 1) * Math.Pow(tau, ti1[i] - 1);
+				var (ni, ti, di) = ppoly[i];
+				sum1 += ni * di * ti * Pow(delta, di - 1) * Math.Pow(tau, ti - 1);
 			}
 
-			double sum2 = 0;
-			for (int i = 0; i < ni2.Length; ++i)
+			var pexp = _pr2;
+			for (int i = 0; i < pexp.Length; ++i)
 			{
-				sum2 += ni2[i] * ti2[i] * (Pow(delta, di2[i] - 1) * Math.Pow(tau, ti2[i] - 1) * Math.Exp(-Pow(delta, ci2[i])) *
-					(di2[i] - ci2[i] * Pow(delta, ci2[i])));
+				var (ni, ti, di, ci) = pexp[i];
+				sum2 += ni * ti * (Pow(delta, di - 1) * Math.Pow(tau, ti - 1) * Math.Exp(-Pow(delta, ci)) *
+					(di - ci * Pow(delta, ci)));
 			}
 			return sum1 + sum2;
 		}
