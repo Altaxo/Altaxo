@@ -663,6 +663,23 @@ new double[]{600000000, 1273, 656.08, 3230.67, 4145.19, 5.4836, 2.5399, 3.5123, 
 			}
 		}
 
+		[Test]
+		public void TestSpecificDeltaTau()
+		{
+			var material = Altaxo.Science.Thermodynamics.Fluids.Water.Instance;
+
+			double delta = 0.171;
+			double tau = 1.106;
+
+			var phiR = material.PhiR_OfReducedVariables(delta, tau);
+			var phiRtau = material.PhiR_tau_OfReducedVariables(delta, tau);
+			var phiRtautau = material.PhiR_tautau_OfReducedVariables(delta, tau);
+
+			Assert.AreEqual(-0.332129707234793558023183953963, phiR, 1E-8);
+			Assert.AreEqual(-0.939707035086532815634033227007, phiRtau, 1E-8);
+			Assert.AreEqual(-2.68812406143321375235180969169, phiRtautau, 1e-8);
+		}
+
 		private bool IsDoubleValueMatch(double expected, double calculated)
 		{
 			const int maxAccuracy = 6;

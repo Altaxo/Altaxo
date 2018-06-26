@@ -284,6 +284,60 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <param name="pressure">The pressure in Pa.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
+		/// <param name="moleDensityStartValue">The start value for the density to search for.</param>
+		/// <returns>The density in kg/m³</returns>
+		/// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
+		/// Therefore we need the target accuracy.
+		/// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
+		/// is within the relative accuracy.
+		/// </remarks>
+		public double MoleDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy = 1E-4, double moleDensityStartValue = double.NaN)
+		{
+			if (!(pressure > 0))
+				throw new ArgumentOutOfRangeException(nameof(pressure), "Must be >0");
+			if (!(temperature > 0))
+				throw new ArgumentOutOfRangeException(nameof(temperature), "Must be >0");
+			if (!(relativeAccuracy > 0))
+				throw new ArgumentOutOfRangeException(nameof(relativeAccuracy), "Must be >0");
+
+			double tau = GetTauFromTemperature(temperature); // reduced inverse temperature
+
+			double RTRhoC = WorkingUniversalGasConstant * temperature * ReducingMoleDensity;
+
+			double delta;
+			if (moleDensityStartValue > 0)
+				delta = moleDensityStartValue / ReducingMoleDensity;
+			else
+				delta = 1.5;
+
+			for (int i = 0; i < 100000; ++i)
+			{
+				double phir_delta = PhiR_delta_OfReducedVariables(delta, tau); // derivative of PhiR with respect to delta
+				double phir_deltadelta = PhiR_deltadelta_OfReducedVariables(delta, tau);
+
+				double press = RTRhoC * (delta + delta * delta * phir_delta);
+				double press_delta = RTRhoC * (1 + 2 * delta * phir_delta + delta * delta * phir_deltadelta);
+
+				double delta_new = delta - (press - pressure) / press_delta;
+
+				if (delta_new > 0 && press_delta > 0)    // if density remains positive and volume stability
+					delta = delta_new;  // then use that new value
+				else                  // otherwise, if it goes into the negative region
+					delta = delta / 2;  // then make it simply smaller
+
+				if (Math.Abs((press - pressure) / pressure) < relativeAccuracy)
+					break;
+			}
+
+			return delta * ReducingMoleDensity;
+		}
+
+		/// <summary>
+		/// Get the densities from a given pressure and temperature.
+		/// </summary>
+		/// <param name="pressure">The pressure in Pa.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
 		/// <param name="densityStartValue">The start value for the density to search for.</param>
 		/// <returns>The density in kg/m³</returns>
 		/// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
@@ -714,7 +768,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double w2_RT = 1 + 2 * delta * phir_delta + Pow2(delta) * phir_deltadelta -
 											Pow2(1 + delta * phir_delta - delta * tau * phir_deltatau) / (Pow2(tau) * (phi0_tautau + phir_tautau));
 
-			return Math.Sqrt(w2_RT * WorkingUniversalGasConstant * temperature);
+			return Math.Sqrt(w2_RT * temperature * WorkingUniversalGasConstant / MolecularWeight);
 		}
 
 		/// <summary>

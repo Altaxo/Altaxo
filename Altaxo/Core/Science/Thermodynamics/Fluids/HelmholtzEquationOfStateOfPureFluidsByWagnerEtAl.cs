@@ -70,7 +70,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// </summary>
 		protected (double ni, double thetai)[] _alpha0_Exp = _emptyDoubleDoubleArray;
 
-		protected void RecaleAlpha0ExpThetaWithCriticalTemperature()
+		protected void RescaleAlpha0ExpThetaWithCriticalTemperature()
 		{
 			for (int i = 0; i < _alpha0_Exp.Length; ++i)
 			{
@@ -241,13 +241,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		#region 3rd sum term
 
-		protected (double ni, double ti, int di, int aux4, int aux5, double alpha, double beta, double gamma, double epsilon)[] _pr3;
+		protected (double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[] _pr3;
 
 		#endregion 3rd sum term
 
 		#region 4th sum term
 
-		protected (double ni, double aux2, int aux3, int aux4, int aux5, double b, double beta, double A, double C, double D, double B, double a)[] _pr4;
+		protected (double ni, double b, double beta, double A, double C, double D, double B, double a)[] _pr4;
 
 		#endregion 4th sum term
 
@@ -284,14 +284,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum3 = 0;
 			for (int i = 0; i < pr3.Length; ++i)
 			{
-				var (ni, ti, di, _, _, alphai, betai, gammai, epsiloni) = pr3[i];
+				var (ni, ti, di, alphai, betai, gammai, epsiloni) = pr3[i];
 				sum3 += ni * Pow(delta, di) * Math.Pow(tau, ti) * Math.Exp(alphai * Pow2(delta - epsiloni) + betai * Pow2(tau - gammai));
 			}
 
 			double sum4 = 0;
 			for (int i = 0; i < pr4.Length; ++i)
 			{
-				var (ni, _, _, _, _, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
+				var (ni, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
 				double theta = (1 - tau) + Ai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai));
 				double Delta = Pow2(theta) + Bi * Math.Pow(Pow2(delta - 1), ai);
 				double Psi = Math.Exp(-Ci * Pow2(delta - 1) - Di * Pow2(tau - 1));
@@ -332,14 +332,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum3 = 0;
 			for (int i = 0; i < pr3.Length; ++i)
 			{
-				var (ni, ti, di, _, _, alphai, betai, gammai, epsiloni) = pr3[i];
+				var (ni, ti, di, alphai, betai, gammai, epsiloni) = pr3[i];
 				sum3 += ni * Pow(delta, di) * Math.Pow(tau, ti) * Math.Exp(alphai * Pow2(delta - epsiloni) + betai * Pow2(tau - gammai)) * (di / delta + 2 * alphai * (delta - epsiloni));
 			}
 
 			double sum4 = 0;
 			for (int i = 0; i < pr4.Length; ++i)
 			{
-				var (ni, _, _, _, _, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
+				var (ni, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
 				double theta = (1 - tau) + Ai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai));
 				double Delta = Pow2(theta) + Bi * Math.Pow(Pow2(delta - 1), ai);
 				double Psi = Math.Exp(-Ci * Pow2(delta - 1) - Di * Pow2(tau - 1));
@@ -392,7 +392,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum3 = 0;
 			for (int i = 0; i < pr3.Length; ++i)
 			{
-				var (ni, ti, di, _, _, alphai, betai, gammai, epsiloni) = pr3[i];
+				var (ni, ti, di, alphai, betai, gammai, epsiloni) = pr3[i];
 				sum3 += ni * Math.Pow(tau, ti) * Math.Exp(alphai * Pow2(delta - epsiloni) + betai * Pow2(tau - gammai)) *
 					(
 					2 * alphai * Pow(delta, di) +
@@ -405,7 +405,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum4 = 0;
 			for (int i = 0; i < pr4.Length; ++i)
 			{
-				var (ni, _, _, _, _, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
+				var (ni, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
 
 				double theta = (1 - tau) + Ai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai));
 				double Psi = Math.Exp(-Ci * Pow2(delta - 1) - Di * Pow2(tau - 1));
@@ -484,7 +484,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum3 = 0;
 			for (int i = 0; i < pr3.Length; ++i)
 			{
-				var (ni, ti, di, _, _, alphai, betai, gammai, epsiloni) = pr3[i];
+				var (ni, ti, di, alphai, betai, gammai, epsiloni) = pr3[i];
 				sum3 += ni * Pow(delta, di) * Math.Pow(tau, ti) *
 								Math.Exp(alphai * Pow2(delta - epsiloni) + betai * Pow2(tau - gammai)) *
 								(ti / tau + 2 * betai * (tau - gammai));
@@ -493,7 +493,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum4 = 0;
 			for (int i = 0; i < pr4.Length; ++i)
 			{
-				var (ni, _, _, _, _, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
+				var (ni, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
 				double theta = (1 - tau) + Ai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai));
 				double Delta = Pow2(theta) + Bi * Math.Pow(Pow2(delta - 1), ai);
 				double Psi = Math.Exp(-Ci * Pow2(delta - 1) - Di * Pow2(tau - 1));
@@ -545,7 +545,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum3 = 0;
 			for (int i = 0; i < pr3.Length; ++i)
 			{
-				var (ni, ti, di, _, _, alphai, betai, gammai, epsiloni) = pr3[i];
+				var (ni, ti, di, alphai, betai, gammai, epsiloni) = pr3[i];
 				sum3 += ni * Pow(delta, di) * Math.Pow(tau, ti) *
 								Math.Exp(alphai * Pow2(delta - epsiloni) + betai * Pow2(tau - gammai)) *
 								(
@@ -558,7 +558,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum4 = 0;
 			for (int i = 0; i < pr4.Length; ++i)
 			{
-				var (ni, _, _, _, _, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
+				var (ni, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
 				double theta = (1 - tau) + Ai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai));
 				double Delta = Pow2(theta) + Bi * Math.Pow(Pow2(delta - 1), ai);
 				double Psi = Math.Exp(-Ci * Pow2(delta - 1) - Di * Pow2(tau - 1));
@@ -618,7 +618,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum3 = 0;
 			for (int i = 0; i < pr3.Length; ++i)
 			{
-				var (ni, ti, di, _, _, alphai, betai, gammai, epsiloni) = pr3[i];
+				var (ni, ti, di, alphai, betai, gammai, epsiloni) = pr3[i];
 				sum3 += ni * Pow(delta, di) * Math.Pow(tau, ti) *
 								Math.Exp(alphai * Pow2(delta - epsiloni) + betai * Pow2(tau - gammai)) *
 								(
@@ -634,7 +634,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum4 = 0;
 			for (int i = 0; i < pr4.Length; ++i)
 			{
-				var (ni, _, _, _, _, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
+				var (ni, bi, betai, Ai, Ci, Di, Bi, ai) = pr4[i];
 				double theta = (1 - tau) + Ai * Math.Pow(Pow2(delta - 1), 1 / (2 * betai));
 				double Delta = Pow2(theta) + Bi * Math.Pow(Pow2(delta - 1), ai);
 				double Psi = Math.Exp(-Ci * Pow2(delta - 1) - Di * Pow2(tau - 1));
@@ -724,5 +724,174 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		#endregion Helper functions
+
+		#region Functions to calculate the saturated vapor and liquid density
+
+		protected (double factor, double exponent)[] _saturatedVaporDensity_Coefficients;
+		protected (double factor, double exponent)[] _saturatedLiquidDensity_Coefficients;
+
+		protected double SaturatedMoleDensity_Type1(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = 1 - temperature / CriticalPointTemperature;
+
+			double sum = 0;
+			for (int i = 0; i < coefficients.Length; ++i)
+			{
+				var (n, e) = coefficients[i];
+				sum += n * Math.Pow(TR, e);
+			}
+
+			return CriticalPointMoleDensity * (sum + 1);
+		}
+
+		protected double SaturatedMoleDensity_Type2(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = Math.Pow(1 - temperature / CriticalPointTemperature, 1 / 3.0);
+			double sum = 0;
+			for (int i = 0; i < coefficients.Length; ++i)
+			{
+				var (n, e) = coefficients[i];
+				sum += n * Math.Pow(TR, e);
+			}
+			return CriticalPointMoleDensity * (sum + 1);
+		}
+
+		protected double SaturatedMoleDensity_Type3(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = 1 - temperature / CriticalPointTemperature;
+
+			double sum = 0;
+			for (int i = 0; i < coefficients.Length; ++i)
+			{
+				var (n, e) = coefficients[i];
+				sum += n * Math.Pow(TR, e);
+			}
+
+			return CriticalPointMoleDensity * Math.Exp(sum);
+		}
+
+		protected double SaturatedMoleDensity_Type4(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = Math.Pow(1 - temperature / CriticalPointTemperature, 1 / 3.0);
+			double sum = 0;
+			for (int i = 0; i < coefficients.Length; ++i)
+			{
+				var (n, e) = coefficients[i];
+				sum += n * Math.Pow(TR, e);
+			}
+			return CriticalPointMoleDensity * Math.Exp(sum);
+		}
+
+		protected double SaturatedMoleDensity_Type5(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = 1 - temperature / CriticalPointTemperature;
+
+			double sum = 0;
+			for (int i = 0; i < coefficients.Length; ++i)
+			{
+				var (n, e) = coefficients[i];
+				sum += n * Math.Pow(TR, e);
+			}
+
+			return CriticalPointMoleDensity * Math.Exp(sum * CriticalPointTemperature / temperature);
+		}
+
+		protected double SaturatedMoleDensity_Type6(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = Math.Pow(1 - temperature / CriticalPointTemperature, 1 / 3.0);
+			double sum = 0;
+			for (int i = 0; i < _saturatedVaporDensity_Coefficients.Length; ++i)
+			{
+				var (n, e) = _saturatedVaporDensity_Coefficients[i];
+				sum += n * Math.Pow(TR, e);
+			}
+			return CriticalPointMoleDensity * Math.Exp(sum * CriticalPointTemperature / temperature);
+		}
+
+		#endregion Functions to calculate the saturated vapor and liquid density
+
+		#region Functions to calculate the saturated vapor and liquid density
+
+		protected (double factor, double exponent)[] _saturatedVaporPressure_Coefficients;
+
+		protected double SaturatedVaporPressure_Type1(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = 1 - temperature / CriticalPointTemperature;
+
+			double sum = 0;
+			for (int i = 0; i < coefficients.Length; ++i)
+			{
+				var (n, e) = coefficients[i];
+				sum += n * Math.Pow(TR, e);
+			}
+
+			return CriticalPointPressure * (sum + 1);
+		}
+
+		protected double SaturatedVaporPressure_Type2(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = Math.Pow(1 - temperature / CriticalPointTemperature, 1 / 2.0);
+			double sum = 0;
+			for (int i = 0; i < coefficients.Length; ++i)
+			{
+				var (n, e) = coefficients[i];
+				sum += n * Math.Pow(TR, e);
+			}
+			return CriticalPointPressure * (sum + 1);
+		}
+
+		protected double SaturatedVaporPressure_Type3(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = 1 - temperature / CriticalPointTemperature;
+
+			double sum = 0;
+			for (int i = 0; i < coefficients.Length; ++i)
+			{
+				var (n, e) = coefficients[i];
+				sum += n * Math.Pow(TR, e);
+			}
+
+			return CriticalPointPressure * Math.Exp(sum);
+		}
+
+		protected double SaturatedVaporPressure_Type4(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = Math.Pow(1 - temperature / CriticalPointTemperature, 1 / 2.0);
+			double sum = 0;
+			for (int i = 0; i < coefficients.Length; ++i)
+			{
+				var (n, e) = coefficients[i];
+				sum += n * Math.Pow(TR, e);
+			}
+			return CriticalPointPressure * Math.Exp(sum);
+		}
+
+		protected double SaturatedVaporPressure_Type5(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = 1 - temperature / CriticalPointTemperature;
+
+			double sum = 0;
+			for (int i = 0; i < coefficients.Length; ++i)
+			{
+				var (n, e) = coefficients[i];
+				sum += n * Math.Pow(TR, e);
+			}
+
+			return CriticalPointPressure * Math.Exp(sum * CriticalPointTemperature / temperature);
+		}
+
+		protected double SaturatedVaporPressure_Type6(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = Math.Pow(1 - temperature / CriticalPointTemperature, 1 / 2.0);
+			double sum = 0;
+			for (int i = 0; i < _saturatedVaporDensity_Coefficients.Length; ++i)
+			{
+				var (n, e) = _saturatedVaporDensity_Coefficients[i];
+				sum += n * Math.Pow(TR, e);
+			}
+			return CriticalPointPressure * Math.Exp(sum * CriticalPointTemperature / temperature);
+		}
+
+		#endregion Functions to calculate the saturated vapor and liquid density
 	}
 }

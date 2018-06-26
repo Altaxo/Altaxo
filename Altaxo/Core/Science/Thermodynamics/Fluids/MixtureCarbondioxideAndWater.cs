@@ -46,7 +46,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		{
 		}
 
-		public override double WorkingUniversalGasConstant => UniversalGasConstant;
+		public override double WorkingUniversalGasConstant => 8.314472;
 
 		protected override void InitializeCoefficientArrays()
 		{

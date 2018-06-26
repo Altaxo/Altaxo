@@ -96,7 +96,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 (0.0832767753,       8238.20035),
 			};
 
-			RecaleAlpha0ExpThetaWithCriticalTemperature();
+			RescaleAlpha0ExpThetaWithCriticalTemperature();
 
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
@@ -156,31 +156,60 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			#region Index 35..39 of Table 31, page 1544
 
-			_pr3 = new(double ni, double ti, int di, int aux1, int aux2, double alpha, double beta, double gamma, double epsilon)[]
-				{
-(-0.213654886883e+03,  1,   2,    2, 2,  -25,  -325,  1.16, 1),
-( 0.266415691493e+05,  0,   2,    2, 2,  -25,  -300,  1.19, 1),
-(-0.240272122046e+05,  1,   2,    2, 2,  -25,  -300,  1.19, 1),
-(-0.283416034240e+03,  3,   3,    2, 2,  -15,  -275,  1.25, 1),
-( 0.212472844002e+03,  3,   3,    2, 2,  -20,  -275,  1.22, 1),
-	};
+			_pr3 = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
+			{
+					(      -213.654886883,                    1,                    2,                  -25,                 -325,                 1.16,                    1),
+					(       26641.5691493,                    0,                    2,                  -25,                 -300,                 1.19,                    1),
+					(      -24027.2122046,                    1,                    2,                  -25,                 -300,                 1.19,                    1),
+					(       -283.41603424,                    3,                    3,                  -15,                 -275,                 1.25,                    1),
+					(       212.472844002,                    3,                    3,                  -20,                 -275,                 1.22,                    1),
+			};
 
 			#endregion Index 35..39 of Table 31, page 1544
 
 			#region Index 40..42 of Table 31, page 1544
 
-			_pr4 = new(double ni, double ti, int di, int aux1, int aux2, double b, double beta, double A, double C, double D, double B, double a)[]
-								{
-(-0.666422765408e+00,  0,   1,    2, 2,  0.875,  0.3, 0.7, 10.0, 275, 0.3, 3.5),
-( 0.726086323499e+00,  0,   1,    2, 2,  0.925,  0.3, 0.7, 10.0, 275, 0.3, 3.5),
-( 0.550686686128e-01,  0,   1,    2, 2,  0.875,  0.3, 0.7, 12.5, 275, 1.0, 3.0),
-								};
+			_pr4 = new(double ni, double b, double beta, double A, double C, double D, double B, double a)[]
+			{
+					(     -0.666422765408,                0.875,                  0.3,                  0.7,                   10,                  275,                  0.3,                  3.5),
+					(      0.726086323499,                0.925,                  0.3,                  0.7,                   10,                  275,                  0.3,                  3.5),
+					(     0.0550686686128,                0.875,                  0.3,                  0.7,                 12.5,                  275,                    1,                    3),
+			};
 
 			#endregion Index 40..42 of Table 31, page 1544
 
 			#endregion Parameter from Table 31, page 1544
 
 			#endregion Residual part of dimensionless Helmholtz energy and derivatives
+
+			#region Saturated densities and pressure
+
+			_saturatedLiquidDensity_Coefficients = new(double factor, double exponent)[]
+			{
+					(           1.9245108,                 1.02),
+					(         -0.62385555,                  1.5),
+					(         -0.32731127,                    5),
+					(          0.39245142,                  5.5),
+			};
+
+			_saturatedVaporDensity_Coefficients = new(double factor, double exponent)[]
+			{
+					(          -1.7074879,                 1.02),
+					(          -0.8227467,                  1.5),
+					(          -4.6008549,                    3),
+					(          -10.111178,                    7),
+					(          -29.742252,                   14),
+			};
+
+			_saturatedVaporPressure_Coefficients = new(double factor, double exponent)[]
+			{
+					(          -7.0602087,                    1),
+					(           1.9391218,                  1.5),
+					(          -1.6463597,                    2),
+					(          -3.2995634,                    4),
+			};
+
+			#endregion Saturated densities and pressure
 		}
 
 		#region Thermodynamic properties by empirical power laws
@@ -283,6 +312,30 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			var Tr = 1 - temperature_Kelvin / CriticalPointTemperature;
 			var ln_rhoR = a1 * Math.Pow(Tr, t1) + a2 * Math.Pow(Tr, t2) + a3 * Math.Pow(Tr, t3) + a4 * Math.Pow(Tr, t4) + a5 * Math.Pow(Tr, t5);
 			return Math.Exp(ln_rhoR) * CriticalPointMassDensity;
+		}
+
+		/// <summary>Get the saturated liquid density at a given temperature.</summary>
+		/// <param name="temperature_Kelvin">The temperature in Kelvin.</param>
+		/// <returns>The saturated liquid density in kg/m³.</returns>
+		public double SaturatedLiquidMoleDensityAtTemperature(double temperature_Kelvin)
+		{
+			return SaturatedMoleDensity_Type4(temperature_Kelvin, _saturatedLiquidDensity_Coefficients);
+		}
+
+		/// <summary>Get the saturated vapor density at a given temperature.</summary>
+		/// <param name="temperature_Kelvin">The temperature in Kelvin.</param>
+		/// <returns>The saturated vapor density in kg/m³.</returns>
+		public double SaturatedVaporMoleDensityAtTemperature(double temperature_Kelvin)
+		{
+			return SaturatedMoleDensity_Type4(temperature_Kelvin, _saturatedVaporDensity_Coefficients);
+		}
+
+		/// <summary>Get the saturated vapor pressure at a given temperature.</summary>
+		/// <param name="temperature_Kelvin">The temperature in Kelvin.</param>
+		/// <returns>The saturated vapor pressure in Pa.</returns>
+		public double SaturatedVaporPressureAtTemperature(double temperature_Kelvin)
+		{
+			return SaturatedVaporPressure_Type5(temperature_Kelvin, _saturatedVaporPressure_Coefficients);
 		}
 
 		#endregion Thermodynamic properties by empirical power laws

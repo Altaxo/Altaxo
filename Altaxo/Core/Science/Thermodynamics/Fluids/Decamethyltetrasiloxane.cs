@@ -89,12 +89,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			_alpha0_n_lntau = 3;
 
 			_alpha0_Exp = new(double ni, double thetai)[]
-				{
-( 28.59,     20.0),
-( 56.42,   1180.0),
-( 50.12,   4240.0),
-				};
-			RecaleAlpha0ExpThetaWithCriticalTemperature();
+			{
+					(               28.59,                   20),
+					(               56.42,                 1180),
+					(               50.12,                 4240),
+			};
+			RescaleAlpha0ExpThetaWithCriticalTemperature();
 
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
@@ -105,47 +105,47 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			#region Index 1..5 of Table 6
 
 			_pr1 = new(double ni, double ti, int di)[]
-{
-( 0.01458333,   1    ,   4),
-( 3.227554  ,   0.319,   1),
-( -3.503565 ,   0.829,   1),
-( -2.017391 ,   0.78 ,   2),
-( 0.8606129 ,   0.687,   3),
-};
+			{
+					(          0.01458333,                    1,                    4),
+					(            3.227554,                0.319,                    1),
+					(           -3.503565,                0.829,                    1),
+					(           -2.017391,                 0.78,                    2),
+					(           0.8606129,                0.687,                    3),
+			};
 
 			#endregion Index 1..5 of Table 6
 
 			#region Index 7..10 of Table 6
 
 			_pr2 = new(double ni, double ti, int di, int li)[]
-{
-( -2.196015  ,   1.29 ,   1,  2),
-( -0.9289014 ,   3.91 ,   3,  2),
-( 2.02774    ,   0.77 ,   2,  1),
-( -0.9168439 ,   3.055,   2,  2),
-( -0.06383507,   1.013,   7,  1),
-};
+			{
+					(           -2.196015,                 1.29,                    1,                    2),
+					(          -0.9289014,                 3.91,                    3,                    2),
+					(             2.02774,                 0.77,                    2,                    1),
+					(          -0.9168439,                3.055,                    2,                    2),
+					(         -0.06383507,                1.013,                    7,                    1),
+			};
 
 			#endregion Index 7..10 of Table 6
 
 			#region Index 11..15 of Table 6
 
-			_pr3 = new(double ni, double ti, int di, int aux1, int aux2, double alpha, double beta, double gamma, double epsilon)[]
-{
-( 2.674255  ,   1.07 ,   1,  2, 2,   -0.982,   -0.7323,  1.042 ,  0.874),
-( 0.04662529,   1.89 ,   1,  2, 2,   -2.7  ,   -0.543 ,  1.1   ,  1.43 ),
-( -0.3835361,   1.133,   3,  2, 2,   -1.347,   -1.26  ,  1.146 ,  0.855),
-( -0.4273462,   0.826,   2,  2, 2,   -0.864,   -0.878 ,  1.085 ,  0.815),
-( -1.148009 ,   0.83 ,   2,  2, 2,   -1.149,   -2.22  ,  0.6844,  0.491),
-};
+			_pr3 = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
+			{
+					(            2.674255,                 1.07,                    1,               -0.982,              -0.7323,                1.042,                0.874),
+					(          0.04662529,                 1.89,                    1,                 -2.7,               -0.543,                  1.1,                 1.43),
+					(          -0.3835361,                1.133,                    3,               -1.347,                -1.26,                1.146,                0.855),
+					(          -0.4273462,                0.826,                    2,               -0.864,               -0.878,                1.085,                0.815),
+					(           -1.148009,                 0.83,                    2,               -1.149,                -2.22,               0.6844,                0.491),
+			};
 
 			#endregion Index 11..15 of Table 6
 
 			#region Empty term 4
 
-			_pr4 = new(double ni, double ti, int di, int aux1, int aux2, double b, double beta, double A, double C, double D, double B, double a)[]
-			{
-			};
+			_pr4 = new(double ni, double b, double beta, double A, double C, double D, double B, double a)[]
+				{
+				};
 
 			#endregion Empty term 4
 
