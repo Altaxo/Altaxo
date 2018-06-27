@@ -30,63 +30,109 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
+
 	/// <summary>
-	/// State equations and constants for Decamethyltetrasiloxane
-	/// Reference:
-	/// Monika Thol, Frithjof H. Dubberke, Elmar Baumhögger, Jadran Vrabec, Roland Span,
-	/// Speed of Sound Measurements and Fundamental Equations of State for Octamethyltrisiloxane and Decamethyltetrasiloxane,
-	/// J. Chem. Eng. Data, 2017, 62 (9), pp 2633–2648
+	/// State equations and constants of decamethyltetrasiloxane.
 	/// </summary>
+	/// <remarks>
+	/// <para>References:</para>
+  /// <para>The source code was created automatically using the fluid file 'md2m.fld' from the following software:</para>
+  /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
+  /// <para>Further references (extracted from the fluid file):</para>
+	/// <para>EquationOfState (EOS): Thol, M., Dubberke, F.H, Vrabec, J., Span, R."Thermodynamic Properties of Octamethyltrisiloxane and Decamethyltetrasiloxane" to be submitted to J. Chem. Eng. Data, 2017</para>
+	/// <para>HeatCapacity (CPP): see EOS of Toris and Thol (2016).</para>
+	/// <para>Saturated vapor pressure: see EOS of Thol et al. (2017).</para>
+	/// <para>Saturated liquid density: see EOS of Thol et al. (2017).</para>
+	/// <para>Saturated vapor density: see EOS of Thol et al. (2017).</para>
+	/// </remarks>
 	public class Decamethyltetrasiloxane : HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl
 	{
-		/// <summary>
-		/// Gets the (only) instance of this class.
-		/// </summary>
+
+		/// <summary>Gets the (only) instance of this class.</summary>
 		public static Decamethyltetrasiloxane Instance { get; } = new Decamethyltetrasiloxane();
 
-		#region Constants
+    #region Constants for decamethyltetrasiloxane
+
+		/// <summary>The full name of the fluid.</summary>
+    public override string FullName => "decamethyltetrasiloxane";
+
+		/// <summary>The short name of the fluid.</summary>
+    public override string ShortName => "MD2M";
+
+		/// <summary>The synonym of the name of the fluid.</summary>
+    public override string Synonym => "MD2M";
+
+		/// <summary>The chemical formula of the fluid.</summary>
+    public override string ChemicalFormula => "C10H30Si4O3";
+
+		/// <summary>The chemical formula of the fluid.</summary>
+    public override string FluidFamily => "other";
+
+    /// <summary>Gets the CAS number.</summary>
+    public override string CASNumber { get; } = "141-62-8";
+
+		/// <summary>The UN number of the fluid.</summary>
+    public override int UN_Number => 0;
 
 		/// <summary>The Universal Gas Constant R at the time the model was developed.</summary>
-		public override double WorkingUniversalGasConstant => 8.3144621;
+    public override double WorkingUniversalGasConstant => 8.3144621;
 
-		/// <summary>Gets the molecular weight in kg/mol.</summary>
-		public override double MolecularWeight { get; } = 310.6854E-3; // kg/mol
+    /// <summary>Gets the molecular weight in kg/mol.</summary>
+    public override double MolecularWeight { get; } = 0.3106854; // kg/mol
 
-		/// <summary>Gets the triple point temperature.</summary>
-		public override double TriplePointTemperature { get; } = 205.2; // Table 8 page 16
+		/// <summary>Gets the temperature at the critical point in K.</summary>
+    public override double CriticalPointTemperature { get; } = 599.4;
 
-		/// <summary>Gets the triple point pressure.</summary>
-		public override double TriplePointPressure { get; } = 0.0003127;
-
-		/// <summary>Gets the saturated liquid density at the triple point.</summary>
-		public override double TriplePointSaturatedLiquidMassDensity { get; } = 941.9981328;
-
-		/// <summary>Gets the saturated vapor density at the triple point.</summary>
-		public override double TriplePointSaturatedVaporMassDensity { get; } = double.NaN;
-
-		/// <summary>Gets the temperature at the critical point.</summary>
-		public override double CriticalPointTemperature { get; } = 599.4;
-
-		/// <summary>Gets the pressure at the critical point.</summary>
-		public override double CriticalPointPressure { get; } = 1.144E6;
+    /// <summary>Gets the pressure at the critical point in Pa.</summary>);
+    public override double CriticalPointPressure { get; } = 1144000;
 
 		/// <summary>Gets the mole density at the critical point in mol/m³.</summary>
 		public override double CriticalPointMoleDensity { get; } = 864;
 
-		#endregion Constants
+		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K.</summary>
+		public override double NormalBoilingPointTemperature { get; } = 467.59;
+
+		/// <summary>Gets the triple point temperature in K.</summary>
+		public override double TriplePointTemperature { get; } = 205.2;
+
+		/// <summary>Gets the triple point pressure in Pa.</summary>
+		public override double TriplePointPressure { get; } = 0.000312727446056556;
+
+		/// <summary>Gets the triple point liquid mole density in mol/m³.</summary>
+		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 3038.15568104603;
+
+		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 1.83296631904887E-07;
+
+		/// <summary>Gets the acentric factor.</summary>
+		public override double AcentricFactor { get; } = 0.635;
+
+		/// <summary>Gets the dipole moment in Debye.</summary>
+		public override double DipoleMoment { get; } = 1.12;
+
+		/// <summary>Gets the lower temperature limit of this model in K.</summary>
+		public override double LowerTemperatureLimit { get; } = 205.2;
+
+		/// <summary>Gets the upper temperature limit of this model in K.</summary>
+		public override double UpperTemperatureLimit { get; } = 600;
+
+		/// <summary>Gets the upper density limit of this model in mol/m³.</summary>
+		public override double UpperMoleDensityLimit { get; } = 3039;
+
+		/// <summary>Gets the upper pressure limit of this model in Pa.</summary>
+		public override double UpperPressureLimit { get; } = 130000000;
+
+    #endregion Constants for decamethyltetrasiloxane
 
 		private Decamethyltetrasiloxane()
-		{
+    {
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			// <summary>The constant term in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-			_alpha0_n_const = 131.089725009572;
-
-			// <summary>The term with the factor tau in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-			_alpha0_n_tau = -26.3839137983442;
-
-			// <summary>The term with the factor ln(tau) in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+			_alpha0_n_const = 131.089637705774;
+			_alpha0_n_tau = -26.3838456928961;
 			_alpha0_n_lntau = 3;
+
+
 
 			_alpha0_Exp = new(double ni, double thetai)[]
 			{
@@ -98,11 +144,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
-			#region Residual part of dimensionless Helmholtz energy and derivatives
-
-			#region Parameter from Table 6
-
-			#region Index 1..5 of Table 6
+			#region Residual part(s) of dimensionless Helmholtz energy and derivatives
 
 			_pr1 = new(double ni, double ti, int di)[]
 			{
@@ -113,10 +155,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(           0.8606129,                0.687,                    3),
 			};
 
-			#endregion Index 1..5 of Table 6
-
-			#region Index 7..10 of Table 6
-
 			_pr2 = new(double ni, double ti, int di, int li)[]
 			{
 					(           -2.196015,                 1.29,                    1,                    2),
@@ -125,10 +163,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(          -0.9168439,                3.055,                    2,                    2),
 					(         -0.06383507,                1.013,                    7,                    1),
 			};
-
-			#endregion Index 7..10 of Table 6
-
-			#region Index 11..15 of Table 6
 
 			_pr3 = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
 			{
@@ -139,101 +173,47 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(           -1.148009,                 0.83,                    2,               -1.149,                -2.22,               0.6844,                0.491),
 			};
 
-			#endregion Index 11..15 of Table 6
-
-			#region Empty term 4
-
 			_pr4 = new(double ni, double b, double beta, double A, double C, double D, double B, double a)[]
-				{
-				};
+			{
+			};
 
-			#endregion Empty term 4
+      #endregion
 
-			#endregion Parameter from Table 6
+			#region Saturated densities and pressure
 
-			#endregion Residual part of dimensionless Helmholtz energy and derivatives
-		}
+      _saturatedLiquidDensity_Type = 1;
+			_saturatedLiquidDensity_Coefficients = new(double factor, double exponent)[]
+			{
+					(               8.215,                0.498),
+					(              -24.65,                0.855),
+					(               47.23,                 1.22),
+					(              -42.44,                  1.6),
+					(               15.18,                 2.04),
+			};
 
-		#region Thermodynamic properties by empirical power laws
+      _saturatedVaporDensity_Type = 3;
+			_saturatedVaporDensity_Coefficients = new(double factor, double exponent)[]
+			{
+					(             -4.5483,                0.428),
+					(            -101.989,                 2.32),
+					(              224.06,                  2.8),
+					(             -182.79,                  3.3),
+					(             -110.45,                  8.5),
+					(             -330.87,                 17.5),
+			};
 
-		/// <summary>
-		/// Gets the vapor pressure and its derivative with respect to temperature (in Pa and Pa/K).
-		/// </summary>
-		/// <param name="temperature_Kelvin">The temperature in Kelvin.</param>
-		/// <returns>Vapor pressure and its derivative with respect to temperature (in Pa and Pa/K)</returns>
-		public override (double pressure, double pressureWrtTemperature) VaporPressureAndDerivativeWithRespectToTemperatureAtTemperature(double temperature_Kelvin)
-		{
-			if (!(TriplePointTemperature <= temperature_Kelvin && temperature_Kelvin <= CriticalPointTemperature))
-				return (double.NaN, double.NaN);
+      _saturatedVaporPressure_Type = 5;
+			_saturatedVaporPressure_Coefficients = new(double factor, double exponent)[]
+			{
+					(             -10.174,                    1),
+					(               9.607,                  1.5),
+					(              -10.08,                 1.83),
+					(              -7.242,                 4.15),
+					(              -30.56,                 17.8),
+			};
 
-			var Tr = 1 - temperature_Kelvin / CriticalPointTemperature;
+			#endregion Saturated densities and pressure
 
-			const double
-				a1 = -10.174, a2 = 9.607, a3 = -10.08, a4 = -7.242, a5 = -30.56;
-			const double
-				t2 = 1.50, t3 = 1.83, t4 = 4.15, t5 = 17.8;
-			var ln_pr = a1 * Tr +
-									a2 * Math.Pow(Tr, t2) +
-									a3 * Math.Pow(Tr, t3) +
-									a4 * Math.Pow(Tr, t4) +
-									a5 * Math.Pow(Tr, t5);
-			ln_pr *= CriticalPointTemperature / temperature_Kelvin;
-			double pressure = Math.Exp(ln_pr) * CriticalPointPressure;
-			var deriv = a1 +
-									a2 * t2 * Math.Pow(Tr, t2 - 1) +
-									a3 * t3 * Math.Pow(Tr, t3 - 1) +
-									a4 * t4 * Math.Pow(Tr, t4 - 1) +
-									a5 * t5 * Math.Pow(Tr, t5 - 1);
-
-			return (pressure, (-pressure / temperature_Kelvin) * (ln_pr + deriv));
-		}
-
-		/// <summary>
-		/// Get the saturated liquid density at a given temperature.
-		/// </summary>
-		/// <param name="temperature_Kelvin">The temperature in Kelvin.</param>
-		/// <returns>The saturated liquid density in kg/m³.</returns>
-		public double SaturatedLiquidDensityAtTemperature(double temperature_Kelvin)
-		{
-			const double a1 = 8.215, a2 = -24.65, a3 = 47.23, a4 = -42.44, a5 = 15.18;
-			const double t1 = 0.498, t2 = 0.855, t3 = 1.220, t4 = 1.600, t5 = 2.040;
-
-			if (!(temperature_Kelvin <= CriticalPointTemperature))
-				return double.NaN;
-
-			var Tr = 1 - temperature_Kelvin / CriticalPointTemperature;
-
-			var rhoR = a1 * Math.Pow(Tr, t1) +
-										a2 * Math.Pow(Tr, t2) +
-										a3 * Math.Pow(Tr, t3) +
-										a4 * Math.Pow(Tr, t4) +
-										a5 * Math.Pow(Tr, t5);
-			return CriticalPointMassDensity * (rhoR + 1);
-		}
-
-		/// <summary>
-		/// Get the saturated vapor density at a given temperature.
-		/// </summary>
-		/// <param name="temperature_Kelvin">The temperature in Kelvin.</param>
-		/// <returns>The saturated liquid density in kg/m³.</returns>
-		public double SaturatedVaporDensityAtTemperature(double temperature_Kelvin)
-		{
-			const double a1 = -4.5483, a2 = -101.989, a3 = 224.06, a4 = -182.79, a5 = -110.45, a6 = -330.87;
-			const double t1 = 0.428, t2 = 2.320, t3 = 2.800, t4 = 3.300, t5 = 8.500, t6 = 17.50;
-
-			if (!(temperature_Kelvin <= CriticalPointTemperature))
-				return double.NaN;
-
-			var Tr = 1 - temperature_Kelvin / CriticalPointTemperature;
-			var ln_rhoR = a1 * Math.Pow(Tr, t1) +
-										a2 * Math.Pow(Tr, t2) +
-										a3 * Math.Pow(Tr, t3) +
-										a4 * Math.Pow(Tr, t4) +
-										a5 * Math.Pow(Tr, t5) +
-										a6 * Math.Pow(Tr, t6);
-			return Math.Exp(ln_rhoR) * CriticalPointMassDensity;
-		}
-
-		#endregion Thermodynamic properties by empirical power laws
-	}
+    }
+  }
 }

@@ -48,6 +48,46 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// </remarks>
 	public abstract class HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl : HelmholtzEquationOfStateOfPureFluids
 	{
+		#region Constants
+
+		/// <summary>The full name of the fluid.</summary>
+		public abstract string FullName { get; }
+
+		/// <summary>The short name of the fluid.</summary>
+		public abstract string ShortName { get; }
+
+		/// <summary>The synonym of the name of the fluid.</summary>
+		public abstract string Synonym { get; }
+
+		/// <summary>The chemical formula of the fluid.</summary>
+		public abstract string ChemicalFormula { get; }
+
+		/// <summary>The chemical formula of the fluid.</summary>
+		public abstract string FluidFamily { get; }
+
+		/// <summary>Gets the CAS number.</summary>
+		public abstract string CASNumber { get; }
+
+		/// <summary>The UN number of the fluid.</summary>
+		public abstract int UN_Number { get; }
+
+		/// <summary>Gets the dipole moment in Debye.</summary>
+		public abstract double DipoleMoment { get; }
+
+		/// <summary>Gets the lower temperature limit of this model in K.</summary>
+		public abstract double LowerTemperatureLimit { get; }
+
+		/// <summary>Gets the upper temperature limit of this model in K.</summary>
+		public abstract double UpperTemperatureLimit { get; }
+
+		/// <summary>Gets the upper density limit of this model in mol/m³.</summary>
+		public abstract double UpperMoleDensityLimit { get; }
+
+		/// <summary>Gets the upper pressure limit of this model in Pa.</summary>
+		public abstract double UpperPressureLimit { get; }
+
+		#endregion Constants
+
 		#region Ideal part of dimensionless Helmholtz energy and derivatives
 
 		/// <summary>The Universal Gas Constant R at the time the model was developed.</summary>
@@ -728,7 +768,87 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		#region Functions to calculate the saturated vapor and liquid density
 
 		protected (double factor, double exponent)[] _saturatedVaporDensity_Coefficients;
+		protected int _saturatedVaporDensity_Type;
 		protected (double factor, double exponent)[] _saturatedLiquidDensity_Coefficients;
+		protected int _saturatedLiquidDensity_Type;
+
+		/// <summary>
+		/// Gets an estimate for the saturated vapor mole density in dependence on the temperature.
+		/// </summary>
+		/// <param name="temperature">The temperature in K.</param>
+		/// <returns>An estimate for the saturated vapor mole density in mol/m³ at the given temperature.
+		/// If the temperature is outside [TriplePointTemperature, CriticalPointTemperature], double.NaN is returned.
+		/// </returns>
+		public double SaturatedVaporMoleDensityEstimate_FromTemperature(double temperature)
+		{
+			if (!(temperature >= TriplePointTemperature && temperature <= CriticalPointTemperature))
+				return double.NaN;
+
+			switch (_saturatedVaporDensity_Type)
+			{
+				case 0:
+					throw new NotImplementedException("This fluid does not contain an equation for the estimated saturated vapor mole density");
+				case 1:
+					return SaturatedMoleDensity_Type1(temperature, _saturatedVaporDensity_Coefficients);
+
+				case 2:
+					return SaturatedMoleDensity_Type2(temperature, _saturatedVaporDensity_Coefficients);
+
+				case 3:
+					return SaturatedMoleDensity_Type3(temperature, _saturatedVaporDensity_Coefficients);
+
+				case 4:
+					return SaturatedMoleDensity_Type4(temperature, _saturatedVaporDensity_Coefficients);
+
+				case 5:
+					return SaturatedMoleDensity_Type5(temperature, _saturatedVaporDensity_Coefficients);
+
+				case 6:
+					return SaturatedMoleDensity_Type6(temperature, _saturatedVaporDensity_Coefficients);
+
+				default:
+					throw new NotImplementedException(string.Format("Sorry, the saturated vapor mole density equation of type {0} is not implemented yet!", _saturatedVaporDensity_Type));
+			}
+		}
+
+		/// <summary>
+		/// Gets an estimate for the saturated liquid mole density in dependence on the temperature.
+		/// </summary>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>An estimate for the saturated liquid mole density in mol/m³ at the given temperature.
+		/// If the temperature is outside [TriplePointTemperature, CriticalPointTemperature], double.NaN is returned.
+		/// </returns>
+		public double SaturatedLiquidMoleDensityEstimate_FromTemperature(double temperature)
+		{
+			if (!(temperature >= TriplePointTemperature && temperature <= CriticalPointTemperature))
+				return double.NaN;
+
+			switch (_saturatedLiquidDensity_Type)
+			{
+				case 0:
+					throw new NotImplementedException("This fluid does not contain an equation for the estimated saturated liquid mole density");
+				case 1:
+					return SaturatedMoleDensity_Type1(temperature, _saturatedLiquidDensity_Coefficients);
+
+				case 2:
+					return SaturatedMoleDensity_Type2(temperature, _saturatedLiquidDensity_Coefficients);
+
+				case 3:
+					return SaturatedMoleDensity_Type3(temperature, _saturatedLiquidDensity_Coefficients);
+
+				case 4:
+					return SaturatedMoleDensity_Type4(temperature, _saturatedLiquidDensity_Coefficients);
+
+				case 5:
+					return SaturatedMoleDensity_Type5(temperature, _saturatedLiquidDensity_Coefficients);
+
+				case 6:
+					return SaturatedMoleDensity_Type6(temperature, _saturatedLiquidDensity_Coefficients);
+
+				default:
+					throw new NotImplementedException(string.Format("Sorry, the saturated liquid mole density equation of type {0} is not implemented yet!", _saturatedLiquidDensity_Type));
+			}
+		}
 
 		protected double SaturatedMoleDensity_Type1(double temperature, (double factor, double exponent)[] coefficients)
 		{
@@ -813,85 +933,241 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		#region Functions to calculate the saturated vapor and liquid density
 
 		protected (double factor, double exponent)[] _saturatedVaporPressure_Coefficients;
+		protected int _saturatedVaporPressure_Type;
 
-		protected double SaturatedVaporPressure_Type1(double temperature, (double factor, double exponent)[] coefficients)
+		/// <summary>
+		/// Gets an estimate for the saturated vapor pressure in dependence on the temperature.
+		/// </summary>
+		/// <param name="temperature">The temperature in K.</param>
+		/// <returns>An estimate for the saturated vapor pressure in Pa at the given temperature.
+		/// If the temperature is outside [TriplePointTemperature, CriticalPointTemperature], double.NaN is returned.
+		/// </returns>
+		public override double SaturatedVaporPressureEstimate_FromTemperature(double temperature)
+		{
+			if (!(temperature >= TriplePointTemperature && temperature <= CriticalPointTemperature))
+				return double.NaN;
+
+			switch (_saturatedVaporPressure_Type)
+			{
+				case 0:
+					throw new NotImplementedException("This fluid does not contain an equation for the estimated saturated vapor pressure");
+				case 1:
+					return SaturatedVaporPressure_Type1(temperature, _saturatedVaporPressure_Coefficients).pressure;
+
+				case 2:
+					return SaturatedVaporPressure_Type2(temperature, _saturatedVaporPressure_Coefficients).pressure;
+
+				case 3:
+					return SaturatedVaporPressure_Type3(temperature, _saturatedVaporPressure_Coefficients).pressure;
+
+				case 4:
+					return SaturatedVaporPressure_Type4(temperature, _saturatedVaporPressure_Coefficients).pressure;
+
+				case 5:
+					return SaturatedVaporPressure_Type5(temperature, _saturatedVaporPressure_Coefficients).pressure;
+
+				case 6:
+					return SaturatedVaporPressure_Type6(temperature, _saturatedVaporPressure_Coefficients).pressure;
+
+				default:
+					throw new NotImplementedException(string.Format("Sorry, the vapor pressure equation of type {0} is not implemented yet!", _saturatedVaporPressure_Type));
+			}
+		}
+
+		/// <summary>
+		/// Gets an estimate for the saturated vapor pressure in dependence on the temperature as well as for the derivative of the saturated vapor pressure with respect to the temperature.
+		/// </summary>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>An estimate for the saturated vapor pressure in Pa and the derivative w.r.t. temperature in Pa/K at the given temperature.
+		/// If the temperature is outside [TriplePointTemperature, CriticalPointTemperature], (double.NaN, double.NaN) is returned.
+		/// </returns>
+		public override (double pressure, double pressureWrtTemperature) SaturatedVaporPressureEstimateAndDerivativeWrtTemperature_FromTemperature(double temperature)
+		{
+			if (!(temperature >= TriplePointTemperature && temperature <= CriticalPointTemperature))
+				return (double.NaN, double.NaN);
+
+			switch (_saturatedVaporPressure_Type)
+			{
+				case 0:
+					throw new NotImplementedException("This fluid does not contain an equation for the estimated saturated vapor pressure");
+				case 1:
+					return SaturatedVaporPressure_Type1(temperature, _saturatedVaporPressure_Coefficients);
+
+				case 2:
+					return SaturatedVaporPressure_Type2(temperature, _saturatedVaporPressure_Coefficients);
+
+				case 3:
+					return SaturatedVaporPressure_Type3(temperature, _saturatedVaporPressure_Coefficients);
+
+				case 4:
+					return SaturatedVaporPressure_Type4(temperature, _saturatedVaporPressure_Coefficients);
+
+				case 5:
+					return SaturatedVaporPressure_Type5(temperature, _saturatedVaporPressure_Coefficients);
+
+				case 6:
+					return SaturatedVaporPressure_Type6(temperature, _saturatedVaporPressure_Coefficients);
+
+				default:
+					throw new NotImplementedException(string.Format("Sorry, the vapor pressure equation of type {0} is not implemented yet!", _saturatedVaporPressure_Type));
+			}
+		}
+
+		protected (double pressure, double dpdT) SaturatedVaporPressure_Type1(double temperature, (double factor, double exponent)[] coefficients)
 		{
 			double TR = 1 - temperature / CriticalPointTemperature;
 
 			double sum = 0;
+			double sum_dT = 0; // for derivative of pressure wrt temperature
 			for (int i = 0; i < coefficients.Length; ++i)
 			{
 				var (n, e) = coefficients[i];
 				sum += n * Math.Pow(TR, e);
+				sum_dT += n * e * Math.Pow(TR, e - 1);
 			}
 
-			return CriticalPointPressure * (sum + 1);
+			var pressure = CriticalPointPressure * (sum + 1);
+			var dpdT = (-CriticalPointPressure / CriticalPointTemperature) * sum_dT;
+			return (pressure, dpdT);
 		}
 
-		protected double SaturatedVaporPressure_Type2(double temperature, (double factor, double exponent)[] coefficients)
+		protected (double pressure, double dpdT) SaturatedVaporPressure_Type2(double temperature, (double factor, double exponent)[] coefficients)
 		{
-			double TR = Math.Pow(1 - temperature / CriticalPointTemperature, 1 / 2.0);
+			double TR = Math.Sqrt(1 - temperature / CriticalPointTemperature);
 			double sum = 0;
+			double sum_dT = 0; // for derivative of pressure wrt temperature
 			for (int i = 0; i < coefficients.Length; ++i)
 			{
 				var (n, e) = coefficients[i];
 				sum += n * Math.Pow(TR, e);
-			}
-			return CriticalPointPressure * (sum + 1);
-		}
-
-		protected double SaturatedVaporPressure_Type3(double temperature, (double factor, double exponent)[] coefficients)
-		{
-			double TR = 1 - temperature / CriticalPointTemperature;
-
-			double sum = 0;
-			for (int i = 0; i < coefficients.Length; ++i)
-			{
-				var (n, e) = coefficients[i];
-				sum += n * Math.Pow(TR, e);
+				sum_dT += n * e * Math.Pow(TR, e - 2);
 			}
 
-			return CriticalPointPressure * Math.Exp(sum);
+			var pressure = CriticalPointPressure * (sum + 1);
+			var dpdT = (-0.5 * CriticalPointPressure / CriticalPointTemperature) * sum_dT;
+			return (pressure, dpdT);
 		}
 
-		protected double SaturatedVaporPressure_Type4(double temperature, (double factor, double exponent)[] coefficients)
-		{
-			double TR = Math.Pow(1 - temperature / CriticalPointTemperature, 1 / 2.0);
-			double sum = 0;
-			for (int i = 0; i < coefficients.Length; ++i)
-			{
-				var (n, e) = coefficients[i];
-				sum += n * Math.Pow(TR, e);
-			}
-			return CriticalPointPressure * Math.Exp(sum);
-		}
-
-		protected double SaturatedVaporPressure_Type5(double temperature, (double factor, double exponent)[] coefficients)
+		protected (double pressure, double dpdT) SaturatedVaporPressure_Type3(double temperature, (double factor, double exponent)[] coefficients)
 		{
 			double TR = 1 - temperature / CriticalPointTemperature;
 
 			double sum = 0;
+			double sum_dT = 0; // for derivative of pressure wrt temperature
 			for (int i = 0; i < coefficients.Length; ++i)
 			{
 				var (n, e) = coefficients[i];
 				sum += n * Math.Pow(TR, e);
+				sum_dT += n * e * Math.Pow(TR, e - 1);
 			}
 
-			return CriticalPointPressure * Math.Exp(sum * CriticalPointTemperature / temperature);
+			var pressure = CriticalPointPressure * Math.Exp(sum);
+			return (pressure, -sum_dT * pressure / CriticalPointTemperature);
 		}
 
-		protected double SaturatedVaporPressure_Type6(double temperature, (double factor, double exponent)[] coefficients)
+		protected (double pressure, double dpdT) SaturatedVaporPressure_Type4(double temperature, (double factor, double exponent)[] coefficients)
 		{
-			double TR = Math.Pow(1 - temperature / CriticalPointTemperature, 1 / 2.0);
+			double TR = Math.Sqrt(1 - temperature / CriticalPointTemperature);
 			double sum = 0;
-			for (int i = 0; i < _saturatedVaporDensity_Coefficients.Length; ++i)
+			double sum_dT = 0; // for derivative of pressure wrt temperature
+			for (int i = 0; i < coefficients.Length; ++i)
 			{
-				var (n, e) = _saturatedVaporDensity_Coefficients[i];
+				var (n, e) = coefficients[i];
 				sum += n * Math.Pow(TR, e);
+				sum_dT += n * e * Math.Pow(TR, e - 2);
 			}
-			return CriticalPointPressure * Math.Exp(sum * CriticalPointTemperature / temperature);
+			var pressure = CriticalPointPressure * Math.Exp(sum);
+			return (pressure, -0.5 * sum_dT * pressure / CriticalPointTemperature);
+		}
+
+		protected (double pressure, double dpdT) SaturatedVaporPressure_Type5(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = 1 - temperature / CriticalPointTemperature;
+
+			double sum = 0;
+			double sum_dT = 0; // for derivative of pressure wrt temperature
+			for (int i = 0; i < coefficients.Length; ++i)
+			{
+				var (n, e) = coefficients[i];
+				sum += n * Math.Pow(TR, e);
+				sum_dT += n * e * Math.Pow(TR, e - 1);
+			}
+
+			var pressure = CriticalPointPressure * Math.Exp(sum * CriticalPointTemperature / temperature);
+			var dpdT = -(CriticalPointTemperature / temperature) * (sum_dT + sum / temperature);
+			return (pressure, dpdT);
+		}
+
+		protected (double pressure, double dpdT) SaturatedVaporPressure_Type6(double temperature, (double factor, double exponent)[] coefficients)
+		{
+			double TR = Math.Sqrt(1 - temperature / CriticalPointTemperature);
+			double sum = 0;
+			double sum_dT = 0; // for derivative of pressure wrt temperature
+			for (int i = 0; i < coefficients.Length; ++i)
+			{
+				var (n, e) = coefficients[i];
+				sum += n * Math.Pow(TR, e);
+				sum_dT += n * e * Math.Pow(TR, e - 2);
+			}
+			var pressure = CriticalPointPressure * Math.Exp(sum * CriticalPointTemperature / temperature);
+			var dpdT = -(CriticalPointTemperature / temperature) * (0.5 * sum_dT + sum / temperature);
+			return (pressure, dpdT);
 		}
 
 		#endregion Functions to calculate the saturated vapor and liquid density
+
+		#region Functions to calculate sublimation pressure
+
+		protected int _sublimationPressure_Type;
+		protected (double factor, double exponent)[] _sublimationPressure_PolynomialCoefficients1;
+		protected (double factor, double exponent)[] _sublimationPressure_PolynomialCoefficients2;
+		protected (double factor, double exponent)[] _sublimationPressure_PolynomialCoefficients3;
+
+		protected (double pressure, double dpdT) SublimationPressure_Type1(double temperature)
+		{
+			var coefficientsP = _sublimationPressure_PolynomialCoefficients1;
+			var coefficientsQ = _sublimationPressure_PolynomialCoefficients2;
+			var coefficientsL = _sublimationPressure_PolynomialCoefficients3;
+
+			double TRP = temperature / TriplePointTemperature;
+
+			double sum = 0;
+			double sum_dT = 0; // for derivative of pressure wrt temperature
+			for (int i = 0; i < coefficientsP.Length; ++i)
+			{
+				var (n, e) = coefficientsP[i];
+				sum += n * Math.Pow(TRP, e);
+				sum_dT += n * e * Math.Pow(TRP, e - 1);
+			}
+
+			var TRQ = 1 - TRP;
+			for (int i = 0; i < coefficientsQ.Length; ++i)
+			{
+				var (n, e) = coefficientsQ[i];
+				sum += n * Math.Pow(TRQ, e);
+				sum_dT += -n * e * Math.Pow(TRQ, e - 1);
+			}
+
+			var TRL = Math.Log(TRP);
+			for (int i = 0; i < coefficientsL.Length; ++i)
+			{
+				var (n, e) = coefficientsL[i];
+				sum += n * Math.Pow(TRL, e);
+				sum_dT += n * e * Math.Pow(TRL, e - 1) / temperature;
+			}
+
+			var pressure = CriticalPointPressure * (sum + 1);
+			var dpdT = (-CriticalPointPressure / CriticalPointTemperature) * sum_dT;
+			return (pressure, dpdT);
+		}
+
+		#endregion Functions to calculate sublimation pressure
+
+		#region Functions to calculate melting pressure
+
+		protected int _meltingPressure_Type;
+		protected (double factor, double exponent)[][] _meltingPressure_PolynomialCoefficients;
+
+		#endregion Functions to calculate melting pressure
 	}
 }

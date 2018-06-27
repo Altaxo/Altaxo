@@ -43,11 +43,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>Gets the triple point pressure in Pa.</summary>
 		public abstract double TriplePointPressure { get; }
 
-		/// <summary>Gets the saturated liquid density at the triple point in kg/m³.</summary>
-		public abstract double TriplePointSaturatedLiquidMassDensity { get; }
+		/// <summary>Gets the saturated liquid density at the triple point in mol/m³.</summary>
+		public abstract double TriplePointSaturatedLiquidMoleDensity { get; }
 
-		/// <summary>Gets the saturated vapor density at the triple point in kg/m³.</summary>
-		public abstract double TriplePointSaturatedVaporMassDensity { get; }
+		/// <summary>Gets the saturated vapor density at the triple point in mol/m³.</summary>
+		public abstract double TriplePointSaturatedVaporMoleDensity { get; }
 
 		/// <summary>Gets the temperature at the critical point in Kelvin.</summary>
 		public abstract double CriticalPointTemperature { get; }
@@ -58,9 +58,21 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>Gets the mole density at the critical point in mol/m³.</summary>
 		public abstract double CriticalPointMoleDensity { get; }
 
+		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K.</summary>
+		public abstract double NormalBoilingPointTemperature { get; }
+
+		/// <summary>Gets the acentric factor.</summary>
+		public abstract double AcentricFactor { get; }
+
 		#endregion Constants
 
 		#region Derived constants
+
+		/// <summary>Gets the saturated liquid density at the triple point in kg/m³.</summary>
+		public virtual double TriplePointSaturatedLiquidMassDensity { get { return TriplePointSaturatedLiquidMoleDensity * MolecularWeight; } }
+
+		/// <summary>Gets the saturated vapor density at the triple point in kg/m³.</summary>
+		public virtual double TriplePointSaturatedVaporMassDensity { get { return TriplePointSaturatedVaporMoleDensity * MolecularWeight; } }
 
 		/// <summary>Gets the mass density at the critical point in kg/m³.</summary>
 		public double CriticalPointMassDensity => CriticalPointMoleDensity * MolecularWeight;
@@ -70,11 +82,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		#region Abstract Functions
 
 		/// <summary>
-		/// Gets the vapor pressure and its derivative with respect to temperature (in Pa and Pa/K).
+		/// Gets an estimate for the saturated vapor pressure in dependence on the temperature as well as for the derivative of the saturated vapor pressure with respect to the temperature.
 		/// </summary>
-		/// <param name="temperature_Kelvin">The temperature in Kelvin.</param>
-		/// <returns>Vapor pressure and its derivative with respect to temperature (in Pa and Pa/K)</returns>
-		public abstract (double pressure, double pressureWrtTemperature) VaporPressureAndDerivativeWithRespectToTemperatureAtTemperature(double temperature_Kelvin);
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <returns>An estimate for the saturated vapor pressure in Pa and the derivative w.r.t. temperature in Pa/K at the given temperature.
+		/// If the temperature is outside [TriplePointTemperature, CriticalPointTemperature], (double.NaN, double.NaN) is returned.
+		/// </returns>
+		public abstract (double pressure, double pressureWrtTemperature) SaturatedVaporPressureEstimateAndDerivativeWrtTemperature_FromTemperature(double temperature);
 
 		#endregion Abstract Functions
 
@@ -87,22 +101,27 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double ReducingTemperature => CriticalPointTemperature;
 
 		/// <summary>
-		/// Get the vapor pressure at a given temperature.
+		/// Gets an estimate for the saturated vapor pressure in dependence on the temperature.
 		/// </summary>
-		/// <param name="temperature_Kelvin">The temperature in Kelvin.</param>
-		/// <returns>The vapor pressure in Pa.</returns>
-		public double VaporPressureAtTemperature(double temperature_Kelvin)
+		/// <param name="temperature">The temperature in K.</param>
+		/// <returns>An estimate for the saturated vapor pressure in Pa at the given temperature.
+		/// If the temperature is outside [TriplePointTemperature, CriticalPointTemperature], double.NaN is returned.
+		/// </returns>
+		public virtual double SaturatedVaporPressureEstimate_FromTemperature(double temperature)
 		{
-			return VaporPressureAndDerivativeWithRespectToTemperatureAtTemperature(temperature_Kelvin).pressure;
+			if (!(temperature >= TriplePointTemperature && temperature <= CriticalPointTemperature))
+				return double.NaN;
+
+			return SaturatedVaporPressureEstimateAndDerivativeWrtTemperature_FromTemperature(temperature).pressure;
 		}
 
 		/// <summary>
 		/// Get the temperature at the liquid/vapor interface for a given pressure by iteration (Newton-Raphson).
 		/// </summary>
 		/// <param name="pressure">The pressure in Pa.</param>
-		/// <param name="relativeAccuracy">The relative accuracy (of the pressure, that is calculated from the iterated temperature).</param>
-		/// <returns>The temperature in K of the liquid/vapor interface at the given pressure. <see cref="double.NaN"/> is returned for pressures below the <see cref="TriplePointPressure"/> or above the <see cref="CriticalPointPressure"/>.</returns>
-		public virtual double VaporTemperatureAtPressure(double pressure, double relativeAccuracy = 1E-5)
+		/// <param name="relativeAccuracy">The relative accuracy (of the pressure, that is calculated back from the iterated temperature).</param>
+		/// <returns>The temperature in Kelvin of the liquid/vapor interface at the given pressure in Pa. See <see cref="double.NaN"/> is returned for pressures below the <see cref="TriplePointPressure"/> or above the <see cref="CriticalPointPressure"/>.</returns>
+		public virtual double SaturatedVaporTemperature_FromPressure(double pressure, double relativeAccuracy = 1E-6)
 		{
 			if (!(pressure >= TriplePointPressure && pressure <= CriticalPointPressure))
 				return double.NaN;
@@ -111,9 +130,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double rel = (Math.Log(pressure) - Math.Log(TriplePointPressure)) / (Math.Log(CriticalPointPressure) - Math.Log(TriplePointPressure));
 			double temperature = (1 - rel) * TriplePointTemperature + (rel) * CriticalPointTemperature;
 
-			for (int i = 0; i < 10000; ++i)
+			for (int i = 0; i < 100; ++i)
 			{
-				var (currentPressure, currentPressureDeriv) = VaporPressureAndDerivativeWithRespectToTemperatureAtTemperature(temperature);
+				var (currentPressure, currentPressureDeriv) = SaturatedVaporPressureEstimateAndDerivativeWrtTemperature_FromTemperature(temperature);
 
 				if (double.IsNaN(currentPressure))
 					return double.NaN;

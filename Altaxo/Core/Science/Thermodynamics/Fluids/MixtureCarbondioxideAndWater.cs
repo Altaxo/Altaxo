@@ -42,7 +42,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	public class MixtureCarbondioxideAndWater : HelmholtzEquationOfStateOfBinaryMixturesByWagnerEtAl
 	{
 		public MixtureCarbondioxideAndWater(double moleFractionCarbondioxide)
-				: base(moleFractionCarbondioxide, CarbonDioxide.Instance, (1 - moleFractionCarbondioxide), Water.Instance)
+				: base(moleFractionCarbondioxide, Carbondioxide.Instance, (1 - moleFractionCarbondioxide), Water.Instance)
 		{
 		}
 
@@ -80,7 +80,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		public static MixtureCarbondioxideAndWater FromMassFractionCO2(double massFractionCO2)
 		{
-			var moleFraction = GetMoleFractionFromMassFraction(massFractionCO2, CarbonDioxide.Instance.MolecularWeight, Water.Instance.MolecularWeight);
+			var moleFraction = GetMoleFractionFromMassFraction(massFractionCO2, Carbondioxide.Instance.MolecularWeight, Water.Instance.MolecularWeight);
 			return new MixtureCarbondioxideAndWater(moleFraction);
 		}
 	}

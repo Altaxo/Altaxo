@@ -373,7 +373,7 @@ new double[]{600000000, 1100, 979.76, 546.3, 1158.69, -0.36856, 1.1749, 1.4216, 
 		[Test]
 		public void TestAllData()
 		{
-			var material = Altaxo.Science.Thermodynamics.Fluids.CarbonDioxide.Instance;
+			var material = Altaxo.Science.Thermodynamics.Fluids.Carbondioxide.Instance;
 			double pressureRelTolerance = 1E-3;
 
 			var methods = new(string colName, Func<double, double, double> call, double scale, int index)[]
@@ -433,7 +433,7 @@ new double[]{600000000, 1100, 979.76, 546.3, 1158.69, -0.36856, 1.1749, 1.4216, 
 		[Test]
 		public void Test_250gmol_450K()
 		{
-			var material = Altaxo.Science.Thermodynamics.Fluids.CarbonDioxide.Instance;
+			var material = Altaxo.Science.Thermodynamics.Fluids.Carbondioxide.Instance;
 
 			double temperature = 450;
 			double moleDensity = 250;
