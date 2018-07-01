@@ -309,10 +309,12 @@
     <Compile Include="Collections\Test_AscendingIntegerRangeCollection.cs" />
     <Compile Include="ResourceKeys.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\AssertHelper.cs" />
-    <Compile Include="Science\Thermodynamics\Fluids\Decamethyltetrasiloxane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Carbondioxide.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Decamethyltetrasiloxane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Octamethyltrisiloxane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Water.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\FluidTestBase.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\MixtureCarbondioxideAndWater.cs" />
-    <Compile Include="Science\Thermodynamics\Fluids\Water.cs" />
-    <Compile Include="Science\Thermodynamics\Fluids\Carbondioxide.cs" />
     <Compile Include="WeakEventHandlersTest.cs" />
   </ItemGroup>
   <ItemGroup>

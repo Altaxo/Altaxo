@@ -78,31 +78,34 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public override double WorkingUniversalGasConstant => 8.3144621;
 
     /// <summary>Gets the molecular weight in kg/mol.</summary>
-    public override double MolecularWeight { get; } = 0.236531; // kg/mol
+    public override double MolecularWeight { get; } = 0.23653146; // kg/mol
 
 		/// <summary>Gets the temperature at the critical point in K.</summary>
-    public override double CriticalPointTemperature { get; } = 564.09;
+    public override double CriticalPointTemperature { get; } = 565.3609;
 
     /// <summary>Gets the pressure at the critical point in Pa.</summary>);
-    public override double CriticalPointPressure { get; } = 1415000;
+    public override double CriticalPointPressure { get; } = 1437500;
 
 		/// <summary>Gets the mole density at the critical point in mol/m³.</summary>
-		public override double CriticalPointMoleDensity { get; } = 1085.4366214;
-
-		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K.</summary>
-		public override double NormalBoilingPointTemperature { get; } = 425.66;
+		public override double CriticalPointMoleDensity { get; } = 1134;
 
 		/// <summary>Gets the triple point temperature in K.</summary>
 		public override double TriplePointTemperature { get; } = 187.2;
 
 		/// <summary>Gets the triple point pressure in Pa.</summary>
-		public override double TriplePointPressure { get; } = 0.00112528059353827;
+		public override double TriplePointPressure { get; } = 0.00108154447718215;
 
 		/// <summary>Gets the triple point liquid mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 3738.19411712892;
+		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 3907.20135047451;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 7.22970925800867E-07;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 6.94871319793325E-07;
+
+		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
+		public override double? NormalBoilingPointTemperature { get; } = 425.630478469736;
+
+		/// <summary>Gets the sublimation temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
+		public override double? NormalSublimationPointTemperature { get; } = null;
 
 		/// <summary>Gets the acentric factor.</summary>
 		public override double AcentricFactor { get; } = 0.529;
@@ -128,8 +131,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			_alpha0_n_const = 118.030828221437;
-			_alpha0_n_tau = -19.7430176587483;
+			_alpha0_n_const = 117.994606421838;
+			_alpha0_n_tau = -19.6600754237831;
 			_alpha0_n_lntau = 3;
 
 

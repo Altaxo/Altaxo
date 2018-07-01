@@ -89,20 +89,23 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>Gets the mole density at the critical point in mol/m³.</summary>
 		public override double CriticalPointMoleDensity { get; } = 864;
 
-		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K.</summary>
-		public override double NormalBoilingPointTemperature { get; } = 467.59;
-
 		/// <summary>Gets the triple point temperature in K.</summary>
 		public override double TriplePointTemperature { get; } = 205.2;
 
 		/// <summary>Gets the triple point pressure in Pa.</summary>
-		public override double TriplePointPressure { get; } = 0.000312727446056556;
+		public override double TriplePointPressure { get; } = 0.000312727446056659;
 
 		/// <summary>Gets the triple point liquid mole density in mol/m³.</summary>
 		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 3038.15568104603;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 1.83296631904887E-07;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 1.83296631905013E-07;
+
+		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
+		public override double? NormalBoilingPointTemperature { get; } = 467.590516735181;
+
+		/// <summary>Gets the sublimation temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
+		public override double? NormalSublimationPointTemperature { get; } = null;
 
 		/// <summary>Gets the acentric factor.</summary>
 		public override double AcentricFactor { get; } = 0.635;
@@ -128,8 +131,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			_alpha0_n_const = 131.089637705774;
-			_alpha0_n_tau = -26.3838456928961;
+			_alpha0_n_const = 131.089725009572;
+			_alpha0_n_tau = -26.3839137983443;
 			_alpha0_n_lntau = 3;
 
 

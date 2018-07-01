@@ -91,20 +91,23 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>Gets the mole density at the critical point in mol/m³.</summary>
 		public override double CriticalPointMoleDensity { get; } = 17873.7279956;
 
-		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K.</summary>
-		public override double NormalBoilingPointTemperature { get; } = 373.1243;
-
 		/// <summary>Gets the triple point temperature in K.</summary>
 		public override double TriplePointTemperature { get; } = 273.16;
 
 		/// <summary>Gets the triple point pressure in Pa.</summary>
-		public override double TriplePointPressure { get; } = 611.654771007417;
+		public override double TriplePointPressure { get; } = 611.654771008972;
 
 		/// <summary>Gets the triple point liquid mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 55496.955140002;
+		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 55496.9551400086;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.269470080865481;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.269470080866262;
+
+		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
+		public override double? NormalBoilingPointTemperature { get; } = 373.124295847699;
+
+		/// <summary>Gets the sublimation temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
+		public override double? NormalSublimationPointTemperature { get; } = null;
 
 		/// <summary>Gets the acentric factor.</summary>
 		public override double AcentricFactor { get; } = 0.3443;

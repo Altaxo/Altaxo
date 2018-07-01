@@ -779,7 +779,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <returns>An estimate for the saturated vapor mole density in mol/m³ at the given temperature.
 		/// If the temperature is outside [TriplePointTemperature, CriticalPointTemperature], double.NaN is returned.
 		/// </returns>
-		public double SaturatedVaporMoleDensityEstimate_FromTemperature(double temperature)
+		public override double SaturatedVaporMoleDensityEstimate_FromTemperature(double temperature)
 		{
 			if (!(temperature >= TriplePointTemperature && temperature <= CriticalPointTemperature))
 				return double.NaN;
@@ -818,7 +818,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <returns>An estimate for the saturated liquid mole density in mol/m³ at the given temperature.
 		/// If the temperature is outside [TriplePointTemperature, CriticalPointTemperature], double.NaN is returned.
 		/// </returns>
-		public double SaturatedLiquidMoleDensityEstimate_FromTemperature(double temperature)
+		public override double SaturatedLiquidMoleDensityEstimate_FromTemperature(double temperature)
 		{
 			if (!(temperature >= TriplePointTemperature && temperature <= CriticalPointTemperature))
 				return double.NaN;
@@ -930,7 +930,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		#endregion Functions to calculate the saturated vapor and liquid density
 
-		#region Functions to calculate the saturated vapor and liquid density
+		#region Functions to calculate the saturated vapor pressure
 
 		protected (double factor, double exponent)[] _saturatedVaporPressure_Coefficients;
 		protected int _saturatedVaporPressure_Type;
@@ -1062,7 +1062,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			}
 
 			var pressure = CriticalPointPressure * Math.Exp(sum);
-			return (pressure, -sum_dT * pressure / CriticalPointTemperature);
+			return (pressure, -pressure * sum_dT / CriticalPointTemperature);
 		}
 
 		protected (double pressure, double dpdT) SaturatedVaporPressure_Type4(double temperature, (double factor, double exponent)[] coefficients)
@@ -1077,7 +1077,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				sum_dT += n * e * Math.Pow(TR, e - 2);
 			}
 			var pressure = CriticalPointPressure * Math.Exp(sum);
-			return (pressure, -0.5 * sum_dT * pressure / CriticalPointTemperature);
+			return (pressure, -pressure * 0.5 * sum_dT / CriticalPointTemperature);
 		}
 
 		protected (double pressure, double dpdT) SaturatedVaporPressure_Type5(double temperature, (double factor, double exponent)[] coefficients)
@@ -1094,7 +1094,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			}
 
 			var pressure = CriticalPointPressure * Math.Exp(sum * CriticalPointTemperature / temperature);
-			var dpdT = -(CriticalPointTemperature / temperature) * (sum_dT + sum / temperature);
+			var dpdT = -pressure * (CriticalPointTemperature / temperature) * (sum_dT / CriticalPointTemperature + sum / temperature);
 			return (pressure, dpdT);
 		}
 
@@ -1110,11 +1110,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				sum_dT += n * e * Math.Pow(TR, e - 2);
 			}
 			var pressure = CriticalPointPressure * Math.Exp(sum * CriticalPointTemperature / temperature);
-			var dpdT = -(CriticalPointTemperature / temperature) * (0.5 * sum_dT + sum / temperature);
+			var dpdT = -pressure * (CriticalPointTemperature / temperature) * (0.5 * sum_dT / CriticalPointTemperature + sum / temperature);
 			return (pressure, dpdT);
 		}
 
-		#endregion Functions to calculate the saturated vapor and liquid density
+		#endregion Functions to calculate the saturated vapor pressure
 
 		#region Functions to calculate sublimation pressure
 

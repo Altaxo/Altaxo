@@ -89,22 +89,25 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public override double CriticalPointPressure { get; } = 7377300;
 
 		/// <summary>Gets the mole density at the critical point in mol/m³.</summary>
-		public override double CriticalPointMoleDensity { get; } = 10624.9;
-
-		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K.</summary>
-		public override double NormalBoilingPointTemperature { get; } = 194.686;
+		public override double CriticalPointMoleDensity { get; } = 10624.9063;
 
 		/// <summary>Gets the triple point temperature in K.</summary>
 		public override double TriplePointTemperature { get; } = 216.592;
 
 		/// <summary>Gets the triple point pressure in Pa.</summary>
-		public override double TriplePointPressure { get; } = 517964.036229571;
+		public override double TriplePointPressure { get; } = 517964.34335484;
 
 		/// <summary>Gets the triple point liquid mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 26777.2619826408;
+		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 26777.2778601315;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 312.677559300911;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 312.677744702293;
+
+		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
+		public override double? NormalBoilingPointTemperature { get; } = null;
+
+		/// <summary>Gets the sublimation temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
+		public override double? NormalSublimationPointTemperature { get; } = 194.658572335143;
 
 		/// <summary>Gets the acentric factor.</summary>
 		public override double AcentricFactor { get; } = 0.22394;
@@ -130,8 +133,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			_alpha0_n_const = -6.12487106335326;
-			_alpha0_n_tau = 5.1155963185962;
+			_alpha0_n_const = -6.12487106335333;
+			_alpha0_n_tau = 5.11559631859623;
 			_alpha0_n_lntau = 2.5;
 
 
