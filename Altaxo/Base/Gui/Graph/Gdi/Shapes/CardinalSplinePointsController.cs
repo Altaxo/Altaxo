@@ -47,6 +47,10 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 		event Action CurvePointsCopyAsLogicalTriggered;
 
 		event Action CurvePointsPasteTriggered;
+
+		event Action CurvePointsPastePhysicalTriggered;
+
+		event Action CurvePointsPasteLogicalTriggered;
 	}
 
 	public class CardinalSplinePointsController
@@ -63,6 +67,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 			_view.CurvePointsCopyAsPhysicalTriggered += new Action(EhCurvePointsCopyPhysicalTriggered);
 			_view.CurvePointsCopyAsLogicalTriggered += new Action(EhCurvePointsCopyLogicalTriggered);
 			_view.CurvePointsPasteTriggered += new Action(EhCurvePointsPasteTriggered);
+			_view.CurvePointsPastePhysicalTriggered += new Action(EhCurvePointsPastePhysicalTriggered);
+			_view.CurvePointsPasteLogicalTriggered += new Action(EhCurvePointsPasteLogicalTriggered);
 
 			_view.Tension = tension;
 			_view.CurvePoints = curvePoints;
@@ -112,6 +118,126 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 					new DimensionfulQuantity(xcol[i], PositionEnvironment.Instance.DefaultUnit).AsValueIn(AUL.Point.Instance),
 					new DimensionfulQuantity(ycol[i], PositionEnvironment.Instance.DefaultUnit).AsValueIn(AUL.Point.Instance)
 					));
+			}
+
+			_view.CurvePoints = list;
+		}
+
+		private void EhCurvePointsPastePhysicalTriggered()
+		{
+			var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_doc);
+
+			if (null == layer)
+			{
+				Current.Gui.ErrorMessageBox("Could not find a parent X-Y layer. Thus, the calculation of physical coordinates is not possible!");
+				return;
+			}
+
+			var cachedTransformation = _doc.TransformationFromHereToParent(layer);
+
+			Altaxo.Data.DataTable table = Altaxo.Worksheet.Commands.EditCommands.GetTableFromClipboard();
+			if (null == table)
+				return;
+			Altaxo.Data.DoubleColumn xcol = null;
+			Altaxo.Data.DoubleColumn ycol = null;
+			// Find the first column that contains numeric values
+			int i;
+			for (i = 0; i < table.DataColumnCount; i++)
+			{
+				if (table[i] is Altaxo.Data.DoubleColumn)
+				{
+					xcol = table[i] as Altaxo.Data.DoubleColumn;
+					break;
+				}
+			}
+			for (i = i + 1; i < table.DataColumnCount; i++)
+			{
+				if (table[i] is Altaxo.Data.DoubleColumn)
+				{
+					ycol = table[i] as Altaxo.Data.DoubleColumn;
+					break;
+				}
+			}
+
+			if (!(xcol != null && ycol != null))
+				return;
+
+			int len = Math.Min(xcol.Count, ycol.Count);
+			var list = new List<PointD2D>();
+			for (i = 0; i < len; i++)
+			{
+				// calculate position
+				var lx = layer.XAxis.PhysicalVariantToNormal(xcol[i]);
+				var ly = layer.YAxis.PhysicalVariantToNormal(ycol[i]);
+
+				if (layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(lx, ly), out var xpos, out var ypos))
+				{
+					var pt = cachedTransformation.InverseTransformPoint(new PointD2D(xpos, ypos));
+					list.Add(new PointD2D(
+						new DimensionfulQuantity(pt.X, PositionEnvironment.Instance.DefaultUnit).AsValueIn(AUL.Point.Instance),
+						new DimensionfulQuantity(pt.Y, PositionEnvironment.Instance.DefaultUnit).AsValueIn(AUL.Point.Instance)
+						));
+				}
+			}
+
+			_view.CurvePoints = list;
+		}
+
+		private void EhCurvePointsPasteLogicalTriggered()
+		{
+			var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_doc);
+
+			if (null == layer)
+			{
+				Current.Gui.ErrorMessageBox("Could not find a parent X-Y layer. Thus, the calculation of physical coordinates is not possible!");
+				return;
+			}
+
+			var cachedTransformation = _doc.TransformationFromHereToParent(layer);
+
+			Altaxo.Data.DataTable table = Altaxo.Worksheet.Commands.EditCommands.GetTableFromClipboard();
+			if (null == table)
+				return;
+			Altaxo.Data.DoubleColumn xcol = null;
+			Altaxo.Data.DoubleColumn ycol = null;
+			// Find the first column that contains numeric values
+			int i;
+			for (i = 0; i < table.DataColumnCount; i++)
+			{
+				if (table[i] is Altaxo.Data.DoubleColumn)
+				{
+					xcol = table[i] as Altaxo.Data.DoubleColumn;
+					break;
+				}
+			}
+			for (i = i + 1; i < table.DataColumnCount; i++)
+			{
+				if (table[i] is Altaxo.Data.DoubleColumn)
+				{
+					ycol = table[i] as Altaxo.Data.DoubleColumn;
+					break;
+				}
+			}
+
+			if (!(xcol != null && ycol != null))
+				return;
+
+			int len = Math.Min(xcol.Count, ycol.Count);
+			var list = new List<PointD2D>();
+			for (i = 0; i < len; i++)
+			{
+				// calculate position
+				var lx = xcol[i];
+				var ly = ycol[i];
+
+				if (layer.CoordinateSystem.LogicalToLayerCoordinates(new Logical3D(lx, ly), out var xpos, out var ypos))
+				{
+					var pt = cachedTransformation.InverseTransformPoint(new PointD2D(xpos, ypos));
+					list.Add(new PointD2D(
+						new DimensionfulQuantity(pt.X, PositionEnvironment.Instance.DefaultUnit).AsValueIn(AUL.Point.Instance),
+						new DimensionfulQuantity(pt.Y, PositionEnvironment.Instance.DefaultUnit).AsValueIn(AUL.Point.Instance)
+						));
+				}
 			}
 
 			_view.CurvePoints = list;
