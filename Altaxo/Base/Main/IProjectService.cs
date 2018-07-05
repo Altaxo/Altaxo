@@ -229,6 +229,13 @@ namespace Altaxo.Main
 		void ShowDocumentView(object document);
 
 		/// <summary>
+		/// This function will delete a project document and close all corresponding views.
+		/// </summary>
+		/// <param name="document">The document (project item) to delete.</param>
+		/// <param name="force">If true, the document is deleted without safety question; otherwise, the user is ask before the graph document is deleted.</param>
+		void DeleteDocument(IProjectItem document, bool force);
+
+		/// <summary>
 		/// Fired when a project is opened or a new empty project is created.
 		/// </summary>
 		event ProjectEventHandler ProjectOpened;

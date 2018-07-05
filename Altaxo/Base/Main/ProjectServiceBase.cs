@@ -558,6 +558,13 @@ namespace Altaxo.Dom
 		}
 
 		/// <summary>
+		/// This function will delete a project document and close all corresponding views.
+		/// </summary>
+		/// <param name="document">The document (project item) to delete.</param>
+		/// <param name="force">If true, the document is deleted without safety question; otherwise, the user is ask before the graph document is deleted.</param>
+		public abstract void DeleteDocument(IProjectItem document, bool force);
+
+		/// <summary>
 		/// Returns all currently open views that show the given document object <code>document</code>, either directly (<see cref="IMVCController.ModelObject"/> is the document),
 		/// or indirectly, if <see cref="IMVCController.ModelObject"/> is of type <see cref="Main.IProjectItemPresentationModel"/>, by comparing with
 		/// <see cref="Main.IProjectItemPresentationModel.Document"/>.

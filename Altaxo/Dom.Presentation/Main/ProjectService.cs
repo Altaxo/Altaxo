@@ -508,7 +508,7 @@ namespace Altaxo.Main
 		/// <param name="document">The project item to delete</param>
 		/// <param name="force">If true, the document is deleted without safety question,
 		/// if false, the user is ask before the document is deleted.</param>
-		public void DeleteDocument(Main.IProjectItem document, bool force)
+		public override void DeleteDocument(Main.IProjectItem document, bool force)
 		{
 			if (null == document)
 				throw new ArgumentNullException(nameof(document));

@@ -19,6 +19,7 @@
 using System;
 using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Workbench;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Workbench.Commands
 {
@@ -113,10 +114,12 @@ namespace Altaxo.Gui.Workbench.Commands
 
 			if (null != thisWindow)
 			{
+				var currentProjectService = Current.GetRequiredService<IProjectService>();
+
 				if (thisWindow.ModelObject is Altaxo.Main.IProjectItem pi)
-					Current.ProjectService.DeleteDocument(pi, false);
+					currentProjectService.DeleteDocument(pi, false);
 				else if (thisWindow.ModelObject is Altaxo.Main.IProjectItemPresentationModel pipm)
-					Current.ProjectService.DeleteDocument(pipm.Document, false);
+					currentProjectService.DeleteDocument(pipm.Document, false);
 			}
 		}
 	}
