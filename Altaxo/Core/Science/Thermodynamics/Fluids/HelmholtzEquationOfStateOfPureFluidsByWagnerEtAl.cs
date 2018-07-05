@@ -65,8 +65,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>The chemical formula of the fluid.</summary>
 		public abstract string FluidFamily { get; }
 
-		/// <summary>Gets the CAS number.</summary>
-		public abstract string CASNumber { get; }
+		/// <summary>Gets the CAS registry number.</summary>
+		public abstract string CASRegistryNumber { get; }
 
 		/// <summary>The UN number of the fluid.</summary>
 		public abstract int UN_Number { get; }
@@ -266,7 +266,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Parameter for the polynomial terms of the reduced Helmholtz energy.
 		/// </summary>
-		protected (double ni, double ti, int di)[] _pr1;
+		protected (double ni, double ti, int di)[] _alphaR_Poly;
 
 		#endregion 1st sum term
 
@@ -275,19 +275,19 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>
 		/// Parameter for the exponential terms of the reduced Helmholtz energy.
 		/// </summary>
-		protected (double ni, double ti, int di, int li)[] _pr2;
+		protected (double ni, double ti, int di, int li)[] _alphaR_Exp;
 
 		#endregion 2nd sum term
 
 		#region 3rd sum term
 
-		protected (double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[] _pr3;
+		protected (double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[] _alphaR_Gauss;
 
 		#endregion 3rd sum term
 
 		#region 4th sum term
 
-		protected (double ni, double b, double beta, double A, double C, double D, double B, double a)[] _pr4;
+		protected (double ni, double b, double beta, double A, double C, double D, double B, double a)[] _alphaR_Nonanalytical;
 
 		#endregion 4th sum term
 
@@ -302,10 +302,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double PhiR_OfReducedVariables(double delta, double tau)
 		{
 			// Make local variables to improve speed
-			var pr1 = _pr1;
-			var pr2 = _pr2;
-			var pr3 = _pr3;
-			var pr4 = _pr4;
+			var pr1 = _alphaR_Poly;
+			var pr2 = _alphaR_Exp;
+			var pr3 = _alphaR_Gauss;
+			var pr4 = _alphaR_Nonanalytical;
 
 			double sum1 = 0;
 			for (int i = 0; i < pr1.Length; ++i)
@@ -350,10 +350,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double PhiR_delta_OfReducedVariables(double delta, double tau)
 		{
 			// Make local variables to improve speed
-			var pr1 = _pr1;
-			var pr2 = _pr2;
-			var pr3 = _pr3;
-			var pr4 = _pr4;
+			var pr1 = _alphaR_Poly;
+			var pr2 = _alphaR_Exp;
+			var pr3 = _alphaR_Gauss;
+			var pr4 = _alphaR_Nonanalytical;
 
 			double sum1 = 0;
 			for (int i = 0; i < pr1.Length; ++i)
@@ -406,10 +406,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double PhiR_deltadelta_OfReducedVariables(double delta, double tau)
 		{
 			// Make local variables to improve speed
-			var pr1 = _pr1;
-			var pr2 = _pr2;
-			var pr3 = _pr3;
-			var pr4 = _pr4;
+			var pr1 = _alphaR_Poly;
+			var pr2 = _alphaR_Exp;
+			var pr3 = _alphaR_Gauss;
+			var pr4 = _alphaR_Nonanalytical;
 
 			double sum1 = 0;
 			for (int i = 0; i < pr1.Length; ++i)
@@ -502,10 +502,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double PhiR_tau_OfReducedVariables(double delta, double tau)
 		{
 			// Make local variables to improve speed
-			var pr1 = _pr1;
-			var pr2 = _pr2;
-			var pr3 = _pr3;
-			var pr4 = _pr4;
+			var pr1 = _alphaR_Poly;
+			var pr2 = _alphaR_Exp;
+			var pr3 = _alphaR_Gauss;
+			var pr4 = _alphaR_Nonanalytical;
 
 			double sum1 = 0;
 			for (int i = 0; i < pr1.Length; ++i)
@@ -562,10 +562,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double PhiR_tautau_OfReducedVariables(double delta, double tau)
 		{
 			// Make local variables to improve speed
-			var pr1 = _pr1;
-			var pr2 = _pr2;
-			var pr3 = _pr3;
-			var pr4 = _pr4;
+			var pr1 = _alphaR_Poly;
+			var pr2 = _alphaR_Exp;
+			var pr3 = _alphaR_Gauss;
+			var pr4 = _alphaR_Nonanalytical;
 
 			double sum1 = 0;
 			for (int i = 0; i < pr1.Length; ++i)
@@ -635,10 +635,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double PhiR_deltatau_OfReducedVariables(double delta, double tau)
 		{
 			// Make local variables to improve speed
-			var pr1 = _pr1;
-			var pr2 = _pr2;
-			var pr3 = _pr3;
-			var pr4 = _pr4;
+			var pr1 = _alphaR_Poly;
+			var pr2 = _alphaR_Exp;
+			var pr3 = _alphaR_Gauss;
+			var pr4 = _alphaR_Nonanalytical;
 
 			double sum1 = 0;
 			for (int i = 0; i < pr1.Length; ++i)
@@ -767,9 +767,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		#region Functions to calculate the saturated vapor and liquid density
 
-		protected (double factor, double exponent)[] _saturatedVaporDensity_Coefficients;
+		protected (double factor, double exponent)[] _saturatedVaporDensity_Coefficients = _emptyDoubleDoubleArray;
 		protected int _saturatedVaporDensity_Type;
-		protected (double factor, double exponent)[] _saturatedLiquidDensity_Coefficients;
+		protected (double factor, double exponent)[] _saturatedLiquidDensity_Coefficients = _emptyDoubleDoubleArray;
 		protected int _saturatedLiquidDensity_Type;
 
 		/// <summary>
@@ -1119,9 +1119,116 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		#region Functions to calculate sublimation pressure
 
 		protected int _sublimationPressure_Type;
-		protected (double factor, double exponent)[] _sublimationPressure_PolynomialCoefficients1;
-		protected (double factor, double exponent)[] _sublimationPressure_PolynomialCoefficients2;
-		protected (double factor, double exponent)[] _sublimationPressure_PolynomialCoefficients3;
+		protected double _sublimationPressure_ReducingTemperature;
+		protected double _sublimationPressure_ReducingPressure;
+
+		protected (double factor, double exponent)[] _sublimationPressure_PolynomialCoefficients1 = _emptyDoubleDoubleArray;
+		protected (double factor, double exponent)[] _sublimationPressure_PolynomialCoefficients2 = _emptyDoubleDoubleArray;
+		protected (double factor, double exponent)[] _sublimationPressure_PolynomialCoefficients3 = _emptyDoubleDoubleArray;
+
+		public bool IsSublimationPressureCurveImplemented { get { return _sublimationPressure_Type != 0; } }
+
+		public double SublimationPressureEstimate_FromTemperature(double temperature)
+		{
+			if (temperature > TriplePointTemperature)
+				return double.NaN;
+
+			switch (_sublimationPressure_Type)
+			{
+				case 0:
+					throw new NotImplementedException(string.Format("Sublimation pressure curve not implemented in this fluid. To avoid this exception, check with {0} beforehand whether it is implemented for this fluid or not.", nameof(IsSublimationPressureCurveImplemented)));
+				case 1:
+					return SublimationPressure_Type1(temperature).pressure;
+
+				case 2:
+					return SublimationPressure_Type2(temperature).pressure;
+
+				case 3:
+					return SublimationPressure_Type3(temperature).pressure;
+
+				default:
+					throw new NotImplementedException(string.Format("Sublimation pressure equation type {0} not implemented yet!", _sublimationPressure_Type));
+			}
+		}
+
+		public (double pressure, double dpdT) SublimationPressureEstimateAndDerivativeWrtTemperature_FromTemperature(double temperature)
+
+		{
+			if (temperature > TriplePointTemperature)
+				return (double.NaN, double.NaN);
+
+			switch (_sublimationPressure_Type)
+			{
+				case 0:
+					throw new NotImplementedException(string.Format("Sublimation pressure curve not implemented in this fluid. To avoid this exception, check with {0} beforehand whether it is implemented for this fluid or not.", nameof(IsSublimationPressureCurveImplemented)));
+				case 1:
+					return SublimationPressure_Type1(temperature);
+
+				case 2:
+					return SublimationPressure_Type2(temperature);
+
+				case 3:
+					return SublimationPressure_Type3(temperature);
+
+				default:
+					throw new NotImplementedException(string.Format("Sublimation pressure equation type {0} not implemented yet!", _sublimationPressure_Type));
+			}
+		}
+
+		/// <summary>
+		/// Gets an estimate of the sublimation temperature for a given pressure, using Newton-Raphson iteration.
+		/// </summary>
+		/// <param name="pressure">The pressure in Pa.</param>
+		/// <param name="relativeAccuracy">The relative accuracy of the pressure back-calculated for the returned temperature.</param>
+		/// <returns>An estimate of the sublimation temperature. Should have about  +-1 K accuracy down to TriplePointTemperature/2. For lower temperatures the deviation is higher..</returns>
+		public double SublimationTemperatureEstimate_FromPressure(double pressure, double relativeAccuracy = 1e-6)
+		{
+			if (!(pressure <= TriplePointPressure * (1 + 1E-4)))
+				return double.NaN;
+
+			Func<double, (double pressure, double dpdT)> pressureFromTemperature = null;
+
+			switch (_sublimationPressure_Type)
+			{
+				case 0:
+					throw new NotImplementedException(string.Format("Sublimation pressure curve not implemented in this fluid. To avoid this exception, check beforehand with {0} whether it is implemented for this fluid or not.", nameof(IsSublimationPressureCurveImplemented)));
+				case 1:
+					pressureFromTemperature = SublimationPressure_Type1;
+					break;
+
+				case 2:
+					pressureFromTemperature = SublimationPressure_Type2;
+					break;
+
+				case 3:
+					pressureFromTemperature = SublimationPressure_Type3;
+					break;
+
+				default:
+					throw new NotImplementedException(string.Format("Melting pressure equation type {0} not implemented yet!", _meltingPressure_Type));
+			}
+
+			// Now iterate with Newton-Raphson
+			double temperature = _sublimationPressure_ReducingTemperature;
+			for (int i = 0; i < 100; ++i)
+			{
+				var (p, dpdT) = pressureFromTemperature(temperature);
+
+				if (GetRelativeErrorBetween(p, pressure) < relativeAccuracy)
+					return temperature;
+
+				var temperatureNew = temperature - (p - pressure) / dpdT;
+
+				if (temperatureNew <= 0)
+					temperature = temperature / 2;
+				else if (temperatureNew > _sublimationPressure_ReducingTemperature)
+					temperature = 0.5 * (temperature + _sublimationPressure_ReducingTemperature);
+				else
+					temperature = temperatureNew;
+			}
+
+			return double.NaN; // not converged
+		}
 
 		protected (double pressure, double dpdT) SublimationPressure_Type1(double temperature)
 		{
@@ -1129,7 +1236,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			var coefficientsQ = _sublimationPressure_PolynomialCoefficients2;
 			var coefficientsL = _sublimationPressure_PolynomialCoefficients3;
 
-			double TRP = temperature / TriplePointTemperature;
+			double TRP = temperature / _sublimationPressure_ReducingTemperature;
 
 			double sum = 0;
 			double sum_dT = 0; // for derivative of pressure wrt temperature
@@ -1145,7 +1252,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			{
 				var (n, e) = coefficientsQ[i];
 				sum += n * Math.Pow(TRQ, e);
-				sum_dT += -n * e * Math.Pow(TRQ, e - 1);
+				sum_dT -= n * e * Math.Pow(TRQ, e - 1);
 			}
 
 			var TRL = Math.Log(TRP);
@@ -1153,11 +1260,89 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			{
 				var (n, e) = coefficientsL[i];
 				sum += n * Math.Pow(TRL, e);
-				sum_dT += n * e * Math.Pow(TRL, e - 1) / temperature;
+				sum_dT += n * e * Math.Pow(TRL, e - 1) / TRP;
 			}
 
-			var pressure = CriticalPointPressure * (sum + 1);
-			var dpdT = (-CriticalPointPressure / CriticalPointTemperature) * sum_dT;
+			var pressure = _sublimationPressure_ReducingPressure * sum;
+			var dpdT = (_sublimationPressure_ReducingPressure / _sublimationPressure_ReducingTemperature) * sum_dT;
+			return (pressure, dpdT);
+		}
+
+		protected (double pressure, double dpdT) SublimationPressure_Type2(double temperature)
+		{
+			var coefficientsP = _sublimationPressure_PolynomialCoefficients1;
+			var coefficientsQ = _sublimationPressure_PolynomialCoefficients2;
+			var coefficientsL = _sublimationPressure_PolynomialCoefficients3;
+
+			double TRP = temperature / _sublimationPressure_ReducingTemperature;
+
+			double sum = 0;
+			double sum_dT = 0; // for derivative of pressure wrt temperature
+			for (int i = 0; i < coefficientsP.Length; ++i)
+			{
+				var (n, e) = coefficientsP[i];
+				sum += n * Math.Pow(TRP, e);
+				sum_dT += n * e * Math.Pow(TRP, e - 1);
+			}
+
+			var TRQ = 1 - TRP;
+			for (int i = 0; i < coefficientsQ.Length; ++i)
+			{
+				var (n, e) = coefficientsQ[i];
+				sum += n * Math.Pow(TRQ, e);
+				sum_dT -= n * e * Math.Pow(TRQ, e - 1);
+			}
+
+			var TRL = Math.Log(TRP);
+			for (int i = 0; i < coefficientsL.Length; ++i)
+			{
+				var (n, e) = coefficientsL[i];
+				sum += n * Math.Pow(TRL, e);
+				sum_dT += n * e * Math.Pow(TRL, e - 1) / TRP;
+			}
+
+			var pressure = _sublimationPressure_ReducingPressure * Math.Exp(sum);
+			var dpdT = pressure * sum_dT / _sublimationPressure_ReducingTemperature;
+			return (pressure, dpdT);
+		}
+
+		protected (double pressure, double dpdT) SublimationPressure_Type3(double temperature)
+		{
+			var coefficientsP = _sublimationPressure_PolynomialCoefficients1;
+			var coefficientsQ = _sublimationPressure_PolynomialCoefficients2;
+			var coefficientsL = _sublimationPressure_PolynomialCoefficients3;
+
+			double TRP = temperature / _sublimationPressure_ReducingTemperature;
+
+			double sum = 0;
+			double sum_dT = 0; // for derivative of pressure wrt temperature
+			for (int i = 0; i < coefficientsP.Length; ++i)
+			{
+				var (n, e) = coefficientsP[i];
+				sum += n * Math.Pow(TRP, e);
+				sum_dT += n * e * Math.Pow(TRP, e - 1);
+			}
+
+			var TRQ = 1 - TRP;
+			for (int i = 0; i < coefficientsQ.Length; ++i)
+			{
+				var (n, e) = coefficientsQ[i];
+				sum += n * Math.Pow(TRQ, e);
+				sum_dT -= n * e * Math.Pow(TRQ, e - 1);
+			}
+
+			var TRL = Math.Log(TRP);
+			for (int i = 0; i < coefficientsL.Length; ++i)
+			{
+				var (n, e) = coefficientsL[i];
+				sum += n * Math.Pow(TRL, e);
+				sum_dT += n * e * Math.Pow(TRL, e - 1) / TRP;
+			}
+
+			sum *= _sublimationPressure_ReducingTemperature / temperature;
+
+			var pressure = _sublimationPressure_ReducingPressure * Math.Exp(sum);
+			var dpdT = pressure * (sum_dT - sum) / temperature;
 			return (pressure, dpdT);
 		}
 
@@ -1165,8 +1350,266 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		#region Functions to calculate melting pressure
 
-		protected int _meltingPressure_Type;
-		protected (double factor, double exponent)[][] _meltingPressure_PolynomialCoefficients;
+		protected char _meltingPressure_Type;
+		protected double _meltingPressure_ReducingTemperature;
+		protected double _meltingPressure_ReducingPressure;
+		protected (double factor, double exponent)[][] _meltingPressure_Coefficients = Enumerable.Repeat(new(double, double)[0], 3).ToArray();
+
+		public bool IsMeltingPressureCurveImplemented { get { return _sublimationPressure_Type != 0; } }
+
+		public double MeltingPressureEstimate_FromTemperature(double temperature)
+		{
+			switch (_meltingPressure_Type)
+			{
+				case '\0':
+					throw new NotImplementedException(string.Format("Melting pressure curve not implemented in this fluid. To avoid this exception, check with {0} beforehand whether it is implemented for this fluid or not.", nameof(IsMeltingPressureCurveImplemented)));
+				case '1':
+					return MeltingPressure_Type1(temperature).pressure;
+
+				case '2':
+					return MeltingPressure_Type2(temperature).pressure;
+
+				case 'H': // H2O Water
+					return MeltingPressure_TypeH(temperature).pressure;
+
+				default:
+					throw new NotImplementedException(string.Format("Melting pressure equation type {0} not implemented yet!", _meltingPressure_Type));
+			}
+		}
+
+		/// <summary>
+		/// Gets an estimate value of the melting  pressure and the derivative of the pressure w.r.t. temperature for a given temperature.
+		/// The estimated value should have an relative accuracy of 5% plus an absolute error of about 100 Pa.
+		/// </summary>
+		/// <param name="temperature">The temperature in K.</param>
+		/// <returns>An estimate of the melting pressure in Pa and the derivative dp/dT in Pa/K. For water, the lowest melting pressure is returned.</returns>
+		public (double pressure, double dpdT) MeltingPressureEstimateAndDerivativeWrtTemperature_FromTemperature(double temperature)
+		{
+			switch (_meltingPressure_Type)
+			{
+				case '\0':
+					throw new NotImplementedException(string.Format("Melting pressure curve not implemented in this fluid. To avoid this exception, check with {0} beforehand whether it is implemented for this fluid or not.", nameof(IsMeltingPressureCurveImplemented)));
+				case '1':
+					return MeltingPressure_Type1(temperature);
+
+				case '2':
+					return MeltingPressure_Type2(temperature);
+
+				case 'H':
+					return MeltingPressure_TypeH(temperature);
+
+				default:
+					throw new NotImplementedException(string.Format("Melting pressure equation type {0} not implemented yet!", _meltingPressure_Type));
+			}
+		}
+
+		/// <summary>
+		/// Gets an estimate of the melting temperature for a given pressure, using Newton-Raphson iteration.
+		/// </summary>
+		/// <param name="pressure">The pressure in Pa.</param>
+		/// <param name="relativeAccuracy">The relative accuracy of the pressure back-calculated for the returned temperature.</param>
+		/// <returns>An estimate of the melting temperature. Should have about  +-0.5 K accuracy.</returns>
+		public double MeltingTemperatureEstimate_FromPressure(double pressure, double relativeAccuracy = 1e-6)
+		{
+			if (!(pressure >= TriplePointPressure * 0.9999))
+				return double.NaN;
+
+			Func<double, (double pressure, double dpdT)> pressureFromTemperature = null;
+
+			switch (_meltingPressure_Type)
+			{
+				case '\0':
+					throw new NotImplementedException(string.Format("Melting pressure curve not implemented in this fluid. To avoid this exception, check with {0} beforehand whether it is implemented for this fluid or not.", nameof(IsMeltingPressureCurveImplemented)));
+				case '1':
+					pressureFromTemperature = MeltingPressure_Type1;
+					break;
+
+				case '2':
+					pressureFromTemperature = MeltingPressure_Type2;
+					break;
+
+				case 'H': // H2O Water
+					{
+						for (int i = 0; i < _triplePointsOfWater.Length - 1; ++i)
+						{
+							if (IsInbetweenCC(pressure, _triplePointsOfWater[i].pressure, _triplePointsOfWater[i + 1].pressure))
+							{
+								int equationType = _triplePointsOfWater[i].equationType;
+								pressureFromTemperature = (temp => MeltingPressure_TypeH(temp, equationType));
+								break;
+							}
+						}
+						if (null == pressureFromTemperature)
+							throw new NotImplementedException(string.Format("Could not find a melting pressure equation for water at a pressure of {0} Pa", pressure));
+					}
+					break;
+
+				default:
+					throw new NotImplementedException(string.Format("Melting pressure equation type {0} not implemented yet!", _meltingPressure_Type));
+			}
+
+			// Now iterate with Newton-Raphson
+			double temperature = TriplePointTemperature;
+			for (int i = 0; i < 100; ++i)
+			{
+				var (p, dpdT) = pressureFromTemperature(temperature);
+
+				if (GetRelativeErrorBetween(p, pressure) < relativeAccuracy)
+					return temperature;
+
+				temperature -= (p - pressure) / dpdT;
+			}
+
+			return double.NaN; // not converged
+		}
+
+		protected (double pressure, double dpdT) MeltingPressure_Type1(double temperature)
+		{
+			if (!(temperature >= TriplePointTemperature))
+				return (double.NaN, double.NaN);
+
+			var coefficientsP = _meltingPressure_Coefficients[0];
+			var coefficientsQ = _meltingPressure_Coefficients[1];
+			var coefficientsL = _meltingPressure_Coefficients[2];
+
+			double TRP = temperature / _meltingPressure_ReducingTemperature;
+
+			double sum = 0;
+			double sum_dT = 0; // for derivative of pressure wrt temperature
+			for (int i = 0; i < coefficientsP.Length; ++i)
+			{
+				var (n, e) = coefficientsP[i];
+				sum += n * Math.Pow(TRP, e);
+				sum_dT += n * e * Math.Pow(TRP, e - 1);
+			}
+
+			var TRQ = TRP - 1;
+			for (int i = 0; i < coefficientsQ.Length; ++i)
+			{
+				var (n, e) = coefficientsQ[i];
+				sum += n * Math.Pow(TRQ, e);
+				sum_dT += n * e * Math.Pow(TRQ, e - 1);
+			}
+
+			var TRL = Math.Log(TRP);
+			for (int i = 0; i < coefficientsL.Length; ++i)
+			{
+				var (n, e) = coefficientsL[i];
+				sum += n * Math.Pow(TRL, e);
+				sum_dT += n * e * Math.Pow(TRL, e - 1) / TRP;
+			}
+
+			var pressure = _meltingPressure_ReducingPressure * sum;
+			var dpdT = (_meltingPressure_ReducingPressure / _meltingPressure_ReducingTemperature) * sum_dT;
+			return (pressure, dpdT);
+		}
+
+		protected (double pressure, double dpdT) MeltingPressure_Type2(double temperature)
+		{
+			if (!(temperature >= TriplePointTemperature))
+				return (double.NaN, double.NaN);
+
+			var coefficientsP = _meltingPressure_Coefficients[0];
+			var coefficientsQ = _meltingPressure_Coefficients[1];
+			var coefficientsL = _meltingPressure_Coefficients[2];
+
+			double TRP = temperature / _meltingPressure_ReducingTemperature;
+
+			double sum = 0;
+			double sum_dT = 0; // for derivative of pressure wrt temperature
+			for (int i = 0; i < coefficientsP.Length; ++i)
+			{
+				var (n, e) = coefficientsP[i];
+				sum += n * Math.Pow(TRP, e);
+				sum_dT += n * e * Math.Pow(TRP, e - 1);
+			}
+
+			var TRQ = TRP - 1;
+			for (int i = 0; i < coefficientsQ.Length; ++i)
+			{
+				var (n, e) = coefficientsQ[i];
+				sum += n * Math.Pow(TRQ, e);
+				sum_dT += n * e * Math.Pow(TRQ, e - 1);
+			}
+
+			var TRL = Math.Log(TRP);
+			for (int i = 0; i < coefficientsL.Length; ++i)
+			{
+				var (n, e) = coefficientsL[i];
+				sum += n * Math.Pow(TRL, e);
+				sum_dT += n * e * Math.Pow(TRL, e - 1) / TRP;
+			}
+
+			var pressure = _meltingPressure_ReducingPressure * Math.Exp(sum);
+			var dpdT = pressure * sum_dT / _meltingPressure_ReducingTemperature;
+			return (pressure, dpdT);
+		}
+
+		/// <summary>
+		/// The triple points of water. Index 0 is the normal triple point; the other indices are triple points of two ice types and the liquid.
+		/// </summary>
+		private static readonly (double temperature, double pressure, int equationType)[] _triplePointsOfWater = new(double temperature, double pressure, int equationType)[]
+			{
+				(273.16,  611.657, 0),
+				(251.165, 209.9E6, 0),
+				(256.164, 350.1E6, 0),
+				(273.31,  632.4E6, 0),
+				(355,     2216E6,  1),
+			};
+
+		private static bool IsInbetweenCC(double x, double bound1, double bound2)
+		{
+			return Math.Min(bound1, bound2) <= x && x <= Math.Max(bound1, bound2);
+		}
+
+		/// <summary>
+		/// Melting pressure for water. Note that more than one pressure value is possible for a given temperature.
+		/// If in doubt, the lowest pressure solution is returned.
+		/// </summary>
+		/// <param name="temperature">The temperature in K</param>
+		/// <returns></returns>
+		protected (double pressure, double dpdT) MeltingPressure_TypeH(double temperature)
+		{
+			for (int eqidx = 0; eqidx < _triplePointsOfWater.Length - 1; ++eqidx)
+			{
+				if (IsInbetweenCC(temperature, _triplePointsOfWater[eqidx].temperature, _triplePointsOfWater[eqidx + 1].temperature))
+				{
+					return MeltingPressure_TypeH(temperature, eqidx);
+				}
+			}
+			return (double.NaN, double.NaN);
+		}
+
+		protected (double pressure, double dpdT) MeltingPressure_TypeH(double temperature, int eqidx)
+		{
+			var reducingTemperature = _triplePointsOfWater[eqidx].temperature;
+			var reducingPressure = _triplePointsOfWater[eqidx].pressure;
+			var coefficients = _meltingPressure_Coefficients[eqidx];
+			double TRP = temperature / reducingTemperature;
+
+			double sum = 0;
+			double sum_dT = 0;
+
+			for (int i = 0; i < coefficients.Length; ++i)
+			{
+				var (n, e) = coefficients[i];
+				sum += n * (1 - Math.Pow(TRP, e));
+				sum_dT -= n * e * Math.Pow(TRP, e - 1);
+			}
+
+			switch (_triplePointsOfWater[eqidx].equationType)
+			{
+				case 0:
+					return ((sum + 1) * reducingPressure, sum_dT * reducingPressure / reducingTemperature);
+
+				case 1:
+					var pressure = reducingPressure * Math.Exp(sum);
+					return (pressure, pressure * sum_dT / reducingTemperature);
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
 
 		#endregion Functions to calculate melting pressure
 	}

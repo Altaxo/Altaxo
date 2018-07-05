@@ -735,8 +735,10 @@
     <Compile Include="Collections\TreeNodeExtensions.cs" />
     <Compile Include="Collections\WeakCollection.cs" />
     <Compile Include="MatrixNorm.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\CASRegistryNumberAttribute.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Carbondioxide.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Decamethyltetrasiloxane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Decane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Octamethyltrisiloxane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Water.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\HelmholtzEquationOfState.cs" />

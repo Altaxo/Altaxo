@@ -69,7 +69,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public override string FluidFamily => "other";
 
     /// <summary>Gets the CAS number.</summary>
-    public override string CASNumber { get; } = "141-62-8";
+    public override string CASRegistryNumber { get; } = "141-62-8";
 
 		/// <summary>The UN number of the fluid.</summary>
     public override int UN_Number => 0;
@@ -93,13 +93,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointTemperature { get; } = 205.2;
 
 		/// <summary>Gets the triple point pressure in Pa.</summary>
-		public override double TriplePointPressure { get; } = 0.000312727446056659;
+		public override double TriplePointPressure { get; } = 0.0003127;
 
 		/// <summary>Gets the triple point liquid mole density in mol/m³.</summary>
 		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 3038.15568104603;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 1.83296631905013E-07;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 1.83280545150168E-07;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 467.590516735181;
@@ -149,7 +149,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			#region Residual part(s) of dimensionless Helmholtz energy and derivatives
 
-			_pr1 = new(double ni, double ti, int di)[]
+			_alphaR_Poly = new(double ni, double ti, int di)[]
 			{
 					(          0.01458333,                    1,                    4),
 					(            3.227554,                0.319,                    1),
@@ -158,7 +158,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(           0.8606129,                0.687,                    3),
 			};
 
-			_pr2 = new(double ni, double ti, int di, int li)[]
+			_alphaR_Exp = new(double ni, double ti, int di, int li)[]
 			{
 					(           -2.196015,                 1.29,                    1,                    2),
 					(          -0.9289014,                 3.91,                    3,                    2),
@@ -167,7 +167,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(         -0.06383507,                1.013,                    7,                    1),
 			};
 
-			_pr3 = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
+			_alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
 			{
 					(            2.674255,                 1.07,                    1,               -0.982,              -0.7323,                1.042,                0.874),
 					(          0.04662529,                 1.89,                    1,                 -2.7,               -0.543,                  1.1,                 1.43),
@@ -176,7 +176,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(           -1.148009,                 0.83,                    2,               -1.149,                -2.22,               0.6844,                0.491),
 			};
 
-			_pr4 = new(double ni, double b, double beta, double A, double C, double D, double B, double a)[]
+			_alphaR_Nonanalytical = new(double ni, double b, double beta, double A, double C, double D, double B, double a)[]
 			{
 			};
 

@@ -47,6 +47,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// <para>Saturated liquid density: See EOS</para>
 	/// <para>Saturated vapor density: See EOS</para>
 	/// </remarks>
+  [CASRegistryNumber("7732-18-5")]
 	public class Water : HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl
 	{
 
@@ -70,8 +71,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>The chemical formula of the fluid.</summary>
     public override string FluidFamily => "other";
 
-    /// <summary>Gets the CAS number.</summary>
-    public override string CASNumber { get; } = "7732-18-5";
+    /// <summary>Gets the CAS registry number.</summary>
+    public override string CASRegistryNumber { get; } = "7732-18-5";
 
 		/// <summary>The UN number of the fluid.</summary>
     public override int UN_Number => 0;
@@ -95,16 +96,16 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointTemperature { get; } = 273.16;
 
 		/// <summary>Gets the triple point pressure in Pa.</summary>
-		public override double TriplePointPressure { get; } = 611.654771008972;
+		public override double TriplePointPressure { get; } = 612.48;
 
 		/// <summary>Gets the triple point liquid mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 55496.9551400086;
+		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 55496.9551400021;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.269470080866262;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.269470080865642;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
-		public override double? NormalBoilingPointTemperature { get; } = 373.124295847699;
+		public override double? NormalBoilingPointTemperature { get; } = 373.124295864882;
 
 		/// <summary>Gets the sublimation temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalSublimationPointTemperature { get; } = null;
@@ -153,7 +154,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			#region Residual part(s) of dimensionless Helmholtz energy and derivatives
 
-			_pr1 = new(double ni, double ti, int di)[]
+			_alphaR_Poly = new(double ni, double ti, int di)[]
 			{
 					(   0.012533547935523,                 -0.5,                    1),
 					(     7.8957634722828,                0.875,                    1),
@@ -164,7 +165,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(  0.0088089493102134,                    1,                    4),
 			};
 
-			_pr2 = new(double ni, double ti, int di, int li)[]
+			_alphaR_Exp = new(double ni, double ti, int di, int li)[]
 			{
 					(   -0.66856572307965,                    4,                    1,                    1),
 					(    0.20433810950965,                    6,                    1,                    1),
@@ -212,14 +213,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(   -0.11841182425981,                   50,                    6,                    6),
 			};
 
-			_pr3 = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
+			_alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
 			{
 					(    -31.306260323435,                    0,                    3,                  -20,                 -150,                 1.21,                    1),
 					(     31.546140237781,                    1,                    3,                  -20,                 -150,                 1.21,                    1),
 					(    -2521.3154341695,                    4,                    3,                  -20,                 -250,                 1.25,                    1),
 			};
 
-			_pr4 = new(double ni, double b, double beta, double A, double C, double D, double B, double a)[]
+			_alphaR_Nonanalytical = new(double ni, double b, double beta, double A, double C, double D, double B, double a)[]
 			{
 					(   -0.14874640856724,                 0.85,                  0.3,                 0.32,                   28,                  700,                  0.2,                  3.5),
 					(    0.31806110878444,                 0.95,                  0.3,                 0.32,                   32,                  800,                  0.2,                  3.5),
@@ -267,6 +268,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			#region Sublimation pressure
 
       _sublimationPressure_Type = 2;
+      _sublimationPressure_ReducingTemperature = 273.16;
+      _sublimationPressure_ReducingPressure = 611.657;
 			_sublimationPressure_PolynomialCoefficients1 = new(double factor, double exponent)[]
 			{
 					(         -21.2144006,       -0.99666666667),
@@ -278,8 +281,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			#region Melting pressure
 
-      _meltingPressure_Type = 1000000;
-			_meltingPressure_PolynomialCoefficients = new (double factor, double exponent)[][]
+      _meltingPressure_Type = 'H';
+      _meltingPressure_ReducingTemperature = 273.16;
+      _meltingPressure_ReducingPressure = 611657;
+			_meltingPressure_Coefficients = new (double factor, double exponent)[][]
 			{
 			new (double factor, double exponent)[]
 			  {

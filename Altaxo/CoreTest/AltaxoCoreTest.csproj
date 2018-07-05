@@ -311,6 +311,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\AssertHelper.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Carbondioxide.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Decamethyltetrasiloxane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Decane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Octamethyltrisiloxane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Water.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\FluidTestBase.cs" />
