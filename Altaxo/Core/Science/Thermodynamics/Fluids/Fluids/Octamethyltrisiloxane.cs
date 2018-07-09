@@ -45,6 +45,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// <para>Saturated liquid density: see EOS of Thol et al. (2017).</para>
 	/// <para>Saturated vapor density: see EOS of Thol et al. (2017).</para>
 	/// </remarks>
+  [CASRegistryNumber("107-51-7")]
 	public class Octamethyltrisiloxane : HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl
 	{
 
@@ -68,11 +69,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>The chemical formula of the fluid.</summary>
     public override string FluidFamily => "other";
 
-    /// <summary>Gets the CAS number.</summary>
+    /// <summary>Gets the CAS registry number.</summary>
     public override string CASRegistryNumber { get; } = "107-51-7";
 
-		/// <summary>The UN number of the fluid.</summary>
-    public override int UN_Number => 0;
+    private int[] _unNumbers = new int[]{};
+    /// <summary>The UN number of the fluid.</summary>
+     public override IReadOnlyList<int> UN_Numbers => _unNumbers;
 
 		/// <summary>The Universal Gas Constant R at the time the model was developed.</summary>
     public override double WorkingUniversalGasConstant => 8.3144621;
@@ -99,7 +101,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 3907.2013504745;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 6.94842744067318E-07;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 6.94871319793357E-07;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 425.630478469736;
@@ -108,7 +110,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double? NormalSublimationPointTemperature { get; } = null;
 
 		/// <summary>Gets the acentric factor.</summary>
-		public override double AcentricFactor { get; } = 0.529;
+		public override double AcentricFactor { get; } = 0.524;
 
 		/// <summary>Gets the dipole moment in Debye.</summary>
 		public override double DipoleMoment { get; } = 1.079;
@@ -135,9 +137,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			_alpha0_n_tau = -19.6600754237831;
 			_alpha0_n_lntau = 3;
 
+			_alpha0_Poly = new (double ni, double thetai)[]
+			{
+			};
 
-
-			_alpha0_Exp = new(double ni, double thetai)[]
+			_alpha0_Exp = new (double ni, double thetai)[]
 			{
 					(              28.817,                   20),
 					(              46.951,                 1570),

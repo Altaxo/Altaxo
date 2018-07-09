@@ -279,6 +279,19 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
+		/// Gets an estimate of the mole densities at a given pressure and temperature.
+		/// </summary>
+		/// <param name="pressure">The pressure in Pa.</param>
+		/// <param name="temperature">The temperature in K.</param>
+		/// <returns>A tuple, consisting of the estimate of the mole density. If there is a second guess, it always has a lower value. In this case the second value of the tuple contains this second guess.</returns>
+		protected virtual (double, double?) MoleDensityEstimates_FromPressureAndTemperature(double pressure, double temperature)
+		{
+			// Since we don't have all the information here, we use the ideal gas equation for an estimate
+			// in derived classes, we override this function to get more precise guesses
+			return (pressure / (UniversalGasConstant * temperature), null);
+		}
+
+		/// <summary>
 		/// Get the densities from a given pressure and temperature.
 		/// </summary>
 		/// <param name="pressure">The pressure in Pa.</param>
@@ -291,7 +304,52 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
 		/// is within the relative accuracy.
 		/// </remarks>
-		public double MoleDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy = 1E-4, double moleDensityStartValue = double.NaN)
+		public virtual double MoleDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy = 1E-6)
+		{
+			if (!(pressure > 0))
+				throw new ArgumentOutOfRangeException(nameof(pressure), "Must be >0");
+			if (!(temperature > 0))
+				throw new ArgumentOutOfRangeException(nameof(temperature), "Must be >0");
+			if (!(relativeAccuracy > 0))
+				throw new ArgumentOutOfRangeException(nameof(relativeAccuracy), "Must be >0");
+
+			var (moleDensityGuess, moleDensityGuessAlt) = MoleDensityEstimates_FromPressureAndTemperature(pressure, temperature);
+
+			double moleDensity1 = MoleDensity_FromPressureAndTemperature(pressure, temperature, relativeAccuracy, moleDensityGuess);
+
+			double moleDensity2 = double.NaN;
+			if (moleDensityGuessAlt.HasValue)
+			{
+				moleDensity2 = MoleDensity_FromPressureAndTemperature(pressure, temperature, relativeAccuracy, moleDensityGuessAlt.Value);
+			}
+
+			if (!double.IsNaN(moleDensity1) && !double.IsNaN(moleDensity2) && moleDensity1 != moleDensity2)
+			{
+				var gibbs1 = MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(moleDensity1, temperature);
+				var gibbs2 = MoleSpecificGibbsEnergy_FromMoleDensityAndTemperature(moleDensity2, temperature);
+
+				return gibbs1 < gibbs2 ? moleDensity1 : moleDensity2;
+			}
+			else
+			{
+				return double.IsNaN(moleDensity1) ? moleDensity2 : moleDensity1;
+			}
+		}
+
+		/// <summary>
+		/// Get the densities from a given pressure and temperature.
+		/// </summary>
+		/// <param name="pressure">The pressure in Pa.</param>
+		/// <param name="temperature">The temperature in Kelvin.</param>
+		/// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
+		/// <param name="moleDensityStartValue">The start value for the density to search for.</param>
+		/// <returns>The density in kg/m³</returns>
+		/// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
+		/// Therefore we need the target accuracy.
+		/// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
+		/// is within the relative accuracy.
+		/// </remarks>
+		public double MoleDensity_FromPressureAndTemperature(double pressure, double temperature, double relativeAccuracy, double moleDensityStartValue)
 		{
 			if (!(pressure > 0))
 				throw new ArgumentOutOfRangeException(nameof(pressure), "Must be >0");

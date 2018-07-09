@@ -260,12 +260,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     Assert.AreEqual(0.3106854,_fluid.MolecularWeight, "MolecularWeight");
     Assert.IsTrue(IsInToleranceLevel(205.2, _fluid.TriplePointTemperature, 1E-4, 0.01),"TriplePointTemperature");
-    Assert.IsTrue(IsInToleranceLevel(0.000312727446056659, _fluid.TriplePointPressure, 1E-4, 0),"TriplePointPressure");
+    Assert.IsTrue(IsInToleranceLevel(0.0003127, _fluid.TriplePointPressure, 1E-4, 0),"TriplePointPressure");
     Assert.IsTrue(IsInToleranceLevel(3038.15568104603, _fluid.TriplePointSaturatedLiquidMoleDensity, 1E-4, 0),"TriplePointSaturatedLiquidMoleDensity");
     Assert.IsTrue(IsInToleranceLevel(1.83296631905013E-07, _fluid.TriplePointSaturatedVaporMoleDensity, 1E-4, 0),"TriplePointSaturatedVaporMoleDensity");
     Assert.IsTrue(IsInToleranceLevel(599.4, _fluid.CriticalPointTemperature, 1E-4, 0.01),"CriticalPointTemperature");
-    Assert.IsTrue(IsInToleranceLevel(1144024.61282446, _fluid.CriticalPointPressure, 1E-4, 0),"CriticalPointPressure");
-    Assert.IsTrue(IsInToleranceLevel(864, _fluid.CriticalPointMoleDensity, 1E-4, 0),"CriticalPointLiquidMoleDensity");
+    Assert.IsTrue(IsInToleranceLevel(1144024.61282446, _fluid.CriticalPointPressure, 1E-2, 0),"CriticalPointPressure");
+    Assert.IsTrue(IsInToleranceLevel(864, _fluid.CriticalPointMoleDensity, 1E-2, 0),"CriticalPointLiquidMoleDensity");
     Assert.IsTrue(IsInToleranceLevel(467.590516735181, _fluid.NormalBoilingPointTemperature.Value, 1E-4, 0.01),"NormalBoilingPointTemperature");
     Assert.IsTrue(_fluid.NormalSublimationPointTemperature is null,"NormalSublimationPointTemperature");
     }

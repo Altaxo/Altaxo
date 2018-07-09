@@ -45,6 +45,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// <para>Saturated liquid density: see EOS of Thol et al. (2017).</para>
 	/// <para>Saturated vapor density: see EOS of Thol et al. (2017).</para>
 	/// </remarks>
+  [CASRegistryNumber("141-62-8")]
 	public class Decamethyltetrasiloxane : HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl
 	{
 
@@ -68,11 +69,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>The chemical formula of the fluid.</summary>
     public override string FluidFamily => "other";
 
-    /// <summary>Gets the CAS number.</summary>
+    /// <summary>Gets the CAS registry number.</summary>
     public override string CASRegistryNumber { get; } = "141-62-8";
 
-		/// <summary>The UN number of the fluid.</summary>
-    public override int UN_Number => 0;
+    private int[] _unNumbers = new int[]{};
+    /// <summary>The UN number of the fluid.</summary>
+     public override IReadOnlyList<int> UN_Numbers => _unNumbers;
 
 		/// <summary>The Universal Gas Constant R at the time the model was developed.</summary>
     public override double WorkingUniversalGasConstant => 8.3144621;
@@ -99,7 +101,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 3038.15568104603;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 1.83280545150168E-07;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 1.83296631905014E-07;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 467.590516735181;
@@ -135,9 +137,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			_alpha0_n_tau = -26.3839137983443;
 			_alpha0_n_lntau = 3;
 
+			_alpha0_Poly = new (double ni, double thetai)[]
+			{
+			};
 
-
-			_alpha0_Exp = new(double ni, double thetai)[]
+			_alpha0_Exp = new (double ni, double thetai)[]
 			{
 					(               28.59,                   20),
 					(               56.42,                 1180),

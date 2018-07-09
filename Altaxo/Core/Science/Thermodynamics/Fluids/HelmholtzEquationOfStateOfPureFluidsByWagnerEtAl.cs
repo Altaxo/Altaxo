@@ -69,7 +69,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public abstract string CASRegistryNumber { get; }
 
 		/// <summary>The UN number of the fluid.</summary>
-		public abstract int UN_Number { get; }
+		public abstract IReadOnlyList<int> UN_Numbers { get; }
 
 		/// <summary>Gets the dipole moment in Debye.</summary>
 		public abstract double DipoleMoment { get; }
@@ -101,6 +101,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>The term with the factor ln(tau) in the equation of the ideal part of the reduced Helmholtz energy.</summary>
 		protected double _alpha0_n_lntau;
+
+		protected (double ni, double thetai)[] _alpha0_Poly = _emptyDoubleDoubleArray;
 
 		// Exponential terms
 
@@ -134,6 +136,16 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double Phi0_OfReducedVariables(double delta, double tau)
 		{
 			double sum = 0;
+
+			{
+				// Polynomial terms
+				var alpha0_Poly = _alpha0_Poly;
+				for (int i = 0; i < alpha0_Poly.Length; ++i)
+				{
+					var (n, e) = alpha0_Poly[i];
+					sum += n * Math.Pow(tau, e);
+				}
+			}
 
 			{
 				// Exponential terms
@@ -186,6 +198,16 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum = 0;
 
 			{
+				// Polynomial terms
+				var alpha0_Poly = _alpha0_Poly;
+				for (int i = 0; i < alpha0_Poly.Length; ++i)
+				{
+					var (n, e) = alpha0_Poly[i];
+					sum += n * e * Math.Pow(tau, e - 1);
+				}
+			}
+
+			{
 				// Exponential terms
 				var alpha0_Exp = _alpha0_Exp;
 				for (int i = 0; i < alpha0_Exp.Length; ++i)
@@ -224,6 +246,17 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double Phi0_tautau_OfReducedVariables(double delta, double tau)
 		{
 			double sum = 0;
+
+			{
+				// Polynomial terms
+				var alpha0_Poly = _alpha0_Poly;
+				for (int i = 0; i < alpha0_Poly.Length; ++i)
+				{
+					var (n, e) = alpha0_Poly[i];
+					sum += n * e * (e - 1) * Math.Pow(tau, e - 2);
+				}
+			}
+
 			{
 				// Exponential terms
 				var alpha0_Exp = _alpha0_Exp;
@@ -1414,7 +1447,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			if (!(pressure >= TriplePointPressure * 0.9999))
 				return double.NaN;
 
+			// Function temperature -> pressure and derivative
 			Func<double, (double pressure, double dpdT)> pressureFromTemperature = null;
+
+			// Default start temperature for iteration;
+			double temperature = TriplePointTemperature * (1 + 1E-1); // we don't start exactly at TriplePointTemperature, since the pressure derivative there can be undefined
+																																// Default temperature boundaries for iteration
+			double lowerTemperatureBoundary = TriplePointTemperature;
+			double upperTemperatureBoundary = UpperTemperatureLimit;
 
 			switch (_meltingPressure_Type)
 			{
@@ -1430,18 +1470,34 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 				case 'H': // H2O Water
 					{
-						for (int i = 0; i < _triplePointsOfWater.Length - 1; ++i)
+						int lastIndex = _triplePointsOfWater.Length - 1;
+						if (pressure >= _triplePointsOfWater[lastIndex].pressure)
 						{
-							if (IsInbetweenCC(pressure, _triplePointsOfWater[i].pressure, _triplePointsOfWater[i + 1].pressure))
+							int equationType = _triplePointsOfWater[lastIndex].equationType;
+							pressureFromTemperature = (temp => MeltingPressure_TypeH(temp, equationType));
+							temperature = _triplePointsOfWater[lastIndex].temperature + 1; // start temperature somewhat above the last triple point
+							lowerTemperatureBoundary = _triplePointsOfWater[lastIndex].temperature;
+							upperTemperatureBoundary = UpperTemperatureLimit; ;
+						}
+						else
+						{
+							for (int i = 0; i < lastIndex; ++i)
 							{
-								int equationType = _triplePointsOfWater[i].equationType;
-								pressureFromTemperature = (temp => MeltingPressure_TypeH(temp, equationType));
-								break;
+								if (IsInbetweenCC(pressure, _triplePointsOfWater[i].pressure, _triplePointsOfWater[i + 1].pressure))
+								{
+									int equationType = _triplePointsOfWater[i].equationType;
+									pressureFromTemperature = (temp => MeltingPressure_TypeH(temp, equationType));
+									temperature = 0.5 * (_triplePointsOfWater[i].temperature + _triplePointsOfWater[i + 1].temperature); // Start temperature inbetween the triple points
+									lowerTemperatureBoundary = Math.Min(_triplePointsOfWater[i].temperature, _triplePointsOfWater[i + 1].temperature);
+									upperTemperatureBoundary = Math.Max(_triplePointsOfWater[i].temperature, _triplePointsOfWater[i + 1].temperature);
+									break;
+								}
 							}
 						}
 						if (null == pressureFromTemperature)
 							throw new NotImplementedException(string.Format("Could not find a melting pressure equation for water at a pressure of {0} Pa", pressure));
 					}
+
 					break;
 
 				default:
@@ -1449,7 +1505,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			}
 
 			// Now iterate with Newton-Raphson
-			double temperature = TriplePointTemperature;
 			for (int i = 0; i < 100; ++i)
 			{
 				var (p, dpdT) = pressureFromTemperature(temperature);
@@ -1457,7 +1512,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				if (GetRelativeErrorBetween(p, pressure) < relativeAccuracy)
 					return temperature;
 
-				temperature -= (p - pressure) / dpdT;
+				double newTemperature = temperature - (p - pressure) / dpdT;
+
+				if (newTemperature < lowerTemperatureBoundary)
+					temperature = 0.5 * (temperature + lowerTemperatureBoundary);
+				else if (newTemperature > upperTemperatureBoundary)
+					temperature = 0.5 * (temperature + upperTemperatureBoundary);
+				else
+					temperature = newTemperature;
 			}
 
 			return double.NaN; // not converged

@@ -74,8 +74,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     /// <summary>Gets the CAS registry number.</summary>
     public override string CASRegistryNumber { get; } = "7732-18-5";
 
-		/// <summary>The UN number of the fluid.</summary>
-    public override int UN_Number => 0;
+    private int[] _unNumbers = new int[]{};
+    /// <summary>The UN number of the fluid.</summary>
+     public override IReadOnlyList<int> UN_Numbers => _unNumbers;
 
 		/// <summary>The Universal Gas Constant R at the time the model was developed.</summary>
     public override double WorkingUniversalGasConstant => 8.314371357587;
@@ -138,9 +139,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			_alpha0_n_tau = 6.68321052759772;
 			_alpha0_n_lntau = 3.00632;
 
+			_alpha0_Poly = new (double ni, double thetai)[]
+			{
+			};
 
-
-			_alpha0_Exp = new(double ni, double thetai)[]
+			_alpha0_Exp = new (double ni, double thetai)[]
 			{
 					(            0.012436,                  833),
 					(             0.97315,                 2289),
