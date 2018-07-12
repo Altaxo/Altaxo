@@ -33,6 +33,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 	/// <summary>
 	/// State equations and constants of decamethyltetrasiloxane.
+	/// Short name: MD2M.
+	/// Synomym: MD2M.
+	/// Chemical formula: C10H30Si4O3.
 	/// </summary>
 	/// <remarks>
 	/// <para>References:</para>
@@ -46,7 +49,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// <para>Saturated vapor density: see EOS of Thol et al. (2017).</para>
 	/// </remarks>
   [CASRegistryNumber("141-62-8")]
-	public class Decamethyltetrasiloxane : HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl
+	public class Decamethyltetrasiloxane : HelmholtzEquationOfStateOfPureFluidsBySpanEtAl
 	{
 
 		/// <summary>Gets the (only) instance of this class.</summary>
@@ -101,7 +104,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 3038.15568104603;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 1.83296631905014E-07;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 1.83296631905013E-07;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 467.590516735181;
@@ -143,12 +146,18 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_alpha0_Exp = new (double ni, double thetai)[]
 			{
-					(               28.59,                   20),
-					(               56.42,                 1180),
-					(               50.12,                 4240),
+					(               28.59,   0.0333667000333667),
+					(               56.42,     1.96863530196864),
+					(               50.12,     7.07374040707374),
 			};
-			RescaleAlpha0ExpThetaWithCriticalTemperature();
 
+			_alpha0_Cosh = new (double ni, double thetai)[]
+			{
+			};
+
+			_alpha0_Sinh = new (double ni, double thetai)[]
+			{
+			};
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
 			#region Residual part(s) of dimensionless Helmholtz energy and derivatives

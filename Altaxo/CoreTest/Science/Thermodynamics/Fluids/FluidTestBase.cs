@@ -1,4 +1,28 @@
-﻿using NUnit.Framework;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using NUnit.Framework;
 
 using Altaxo.Science.Thermodynamics.Fluids;
 using System;
@@ -11,7 +35,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 {
 	public class FluidTestBase
 	{
-		protected HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl _fluid;
+		protected HelmholtzEquationOfStateOfPureFluidsBySpanEtAl _fluid;
 
 		/// <summary>
 		// TestData contains:
@@ -39,6 +63,19 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// 8. Speed of sound (m/s)
 		/// </summary>
 		protected (double temperature, double moleDensity, double pressure, double internalEnergy, double enthalpy, double entropy, double isochoricHeatCapacity, double isobaricHeatCapacity, double speedOfSound)[] _testDataEquationOfState;
+
+		public virtual void CASNumberAttribute_Test()
+		{
+			var casNumber = _fluid.CASRegistryNumber;
+			Assert.IsFalse(string.IsNullOrEmpty(casNumber));
+
+			var type = _fluid.GetType();
+			var attr = type.GetCustomAttributes(typeof(CASRegistryNumberAttribute), false);
+			Assert.AreEqual(1, attr.Length, "Exactly one CASAttribute must be assigned");
+			Assert.IsTrue(attr[0] is CASRegistryNumberAttribute);
+			var casNumberAttribute = attr[0] as CASRegistryNumberAttribute;
+			Assert.AreEqual(casNumber, casNumberAttribute.CASRegistryNumber, "The CAS registry number as returned by the instance must be equal to that stored inside the CASRegistryNumberAttribute");
+		}
 
 		public virtual void SaturatedVaporPressure_TestMonotony()
 		{
@@ -116,7 +153,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			}
 		}
 
-		public virtual void SaturatedData_Test()
+		public virtual void SaturatedVaporProperties_TestData()
 		{
 			for (int i = 0; i < _testDataSaturatedProperties.Length; ++i)
 			{
@@ -135,6 +172,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				Assert.IsTrue(IsInToleranceLevel(satLiquidMoleDensity, satLiquidMoleDensityCalc, 5E-2, 0));
 				Assert.IsTrue(IsInToleranceLevel(satVaporMoleDensity, satVaporMoleDensityCalc, 5E-2, 0));
 			}
+		}
+
+		public virtual void SublimationPressure_TestImplemented()
+		{
+			Assert.AreEqual(_testDataIsSublimationCurveImplemented, _fluid.IsSublimationPressureCurveImplemented);
 		}
 
 		public virtual void SublimationLineData_Test()
@@ -267,22 +309,25 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		public virtual void MeltingLineData_Test()
 		{
-			if (_fluid.CASRegistryNumber != "7732-18-5")
-			{
-				MeltingPressure_TestMonotony();
-				MeltingPressure_TestDerivative();
-			}
-
+			MeltingPressure_TestMonotony();
+			MeltingPressure_TestDerivative();
 			MeltingPressure_TestData();
 			MeltingTemperature_TestData();
+		}
+
+		public virtual void MeltingPressure_TestImplemented()
+		{
+			Assert.AreEqual(_testDataIsMeltingCurveImplemented, _fluid.IsMeltingPressureCurveImplemented);
 		}
 
 		public virtual void MeltingPressure_TestMonotony()
 		{
 			const double relativePressureErrorAllowed = 5E-2;
-			double pressure;
 
-			pressure = _fluid.MeltingPressureEstimate_FromTemperature(_fluid.TriplePointTemperature);
+			if (_fluid.CASRegistryNumber == "7732-18-5") // for water don't test monotony
+				return;
+
+			var pressure = _fluid.MeltingPressureEstimate_FromTemperature(_fluid.TriplePointTemperature);
 			Assert.Less(GetRelativeErrorBetween(pressure, _fluid.TriplePointPressure), relativePressureErrorAllowed, "Deviation of triple point pressure of {0}", _fluid.GetType().ToString());
 
 			// now test monotony
@@ -291,7 +336,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double temperatureStep = 1 / 8.0;
 
 			double previousTemperature = _fluid.TriplePointTemperature;
-			double previousPressure = _fluid.SublimationPressureEstimate_FromTemperature(previousTemperature);
+			double previousPressure = _fluid.MeltingPressureEstimate_FromTemperature(previousTemperature);
 			for (double temperature = startTemperature; temperature <= endTemperature; temperature += temperatureStep)
 			{
 				pressure = _fluid.MeltingPressureEstimate_FromTemperature(temperature);
@@ -310,14 +355,16 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		{
 			const double relativeErrorAllowed = 5E-1;
 			const double absErrorAllowed = 0;
-			double pressure;
+
+			if (_fluid.CASRegistryNumber == "7732-18-5") // for water don't test derivative
+				return;
 
 			// now test derivative
 
 			double startTemperature = Math.Ceiling(_fluid.TriplePointTemperature);
 			double endTemperature = Math.Floor(_fluid.CriticalPointTemperature);
 			double temperatureStep = 1 / 8.0;
-			double pressureDerivative;
+			double pressure, pressureDerivative;
 
 			double previousTemperature = _fluid.TriplePointTemperature;
 			double previousPressure = _fluid.MeltingPressureEstimate_FromTemperature(previousTemperature);
@@ -367,37 +414,85 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			var methods = new(string colName, Func<double, double, double> call, int index, double relTol, double absTol)[]
 			{
-								("Pressure", material.Pressure_FromMoleDensityAndTemperature, 2, 1E-6, 1E-3),
-								("InternalEnergy", material.MoleSpecificInternalEnergy_FromMoleDensityAndTemperature, 3, 1E-7, 1E-5),
-								("Enthalpy", material.MoleSpecificEnthalpy_FromMoleDensityAndTemperature,4, 1E-7, 1E-7 ),
-								("Entropy", material.MoleSpecificEntropy_FromMoleDensityAndTemperature, 5, 1E-7, 1E-7),
-								("Cv", material.MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature, 6, 1E-7, 1E-7),
-								("Cp", material.MoleSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature, 7, 1E-7, 1E-7),
-								("SpeedOfSound", material.SpeedOfSound_FromMoleDensityAndTemperature,  8, 1E-7, 0.01),
+								("Pressure", material.Pressure_FromMoleDensityAndTemperature, 0, 1E-6, 1E-3),
+								("Cv", material.MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature, 4, 1E-7, 1E-7),
+								("SpeedOfSound", material.SpeedOfSound_FromMoleDensityAndTemperature,  6, 1E-7, 0.01),
+								("InternalEnergy", material.MoleSpecificInternalEnergy_FromMoleDensityAndTemperature, 1, 1E-7, 1E-5),
+								("Enthalpy", material.MoleSpecificEnthalpy_FromMoleDensityAndTemperature, 2, 1E-7, 1E-7 ),
+								("Entropy", material.MoleSpecificEntropy_FromMoleDensityAndTemperature, 3, 1E-7, 1E-7),
+								("Cp", material.MoleSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature, 5, 1E-7, 1E-7),
 		};
 
-			for (int i = 0; i < _testDataEquationOfState.Length; ++i)
+			for (int methodIndex = 0; methodIndex < methods.Length; ++methodIndex)
 			{
-				var item = _testDataEquationOfState[i];
-				var temperature = item.temperature;
-				var moleDensity = item.moleDensity;
-
-				Assert.IsFalse(!(temperature > 0 && temperature <= _fluid.UpperTemperatureLimit));
-				Assert.IsFalse(!(moleDensity > 0 && moleDensity <= _fluid.UpperMoleDensityLimit));
-				// var densityCalculatedBack = material.MoleDensity_FromPressureAndTemperature(pressure, temperature, 1E-7, density);
-				// Assert.IsTrue(IsInToleranceLevel(density, densityCalculatedBack, 1E-6, 0), "Density deviation, expected: {0} but was {1}", density, densityCalculatedBack);
-
-				int methodIndex = 0;
-				foreach (double valueStored in new[] { item.pressure, item.internalEnergy, item.enthalpy, item.entropy, item.isochoricHeatCapacity, item.isobaricHeatCapacity, item.speedOfSound })
+				var method = methods[methodIndex];
+				for (int i = 0; i < _testDataEquationOfState.Length; ++i)
 				{
-					var method = methods[methodIndex];
+					var item = _testDataEquationOfState[i];
+					var temperature = item.temperature;
+					var moleDensity = item.moleDensity;
+					Assert.IsFalse(!(temperature > 0 && temperature <= _fluid.UpperTemperatureLimit));
+					Assert.IsFalse(!(moleDensity > 0 && moleDensity <= _fluid.UpperMoleDensityLimit));
+					var testValues = new[] { item.pressure, item.internalEnergy, item.enthalpy, item.entropy, item.isochoricHeatCapacity, item.isobaricHeatCapacity, item.speedOfSound };
+					double valueStored = testValues[method.index];
 					double valueCalculated = method.call(moleDensity, temperature);
 					Assert.IsFalse(double.IsNaN(valueStored), "Row[{0}] : {1} defect", i, method.colName);
 					Assert.IsTrue(IsInToleranceLevel(valueStored, valueCalculated, method.relTol, method.absTol), "Row[{0}, T={1} K, d={2} mol/m³]: {3} deviation, expected {4}, current {5}", i, temperature, moleDensity, method.colName, valueStored, valueCalculated);
-					++methodIndex;
 				}
 			}
 		}
+
+		#region Fluid constants
+
+		protected double _testDataMolecularWeight;
+		protected double _testDataTriplePointTemperature;
+		protected double _testDataTriplePointPressure;
+		protected double _testDataTriplePointLiquidMoleDensity;
+		protected double _testDataTriplePointVaporMoleDensity;
+
+		protected double _testDataCriticalPointTemperature;
+		protected double _testDataCriticalPointPressure;
+		protected double _testDataCriticalPointMoleDensity;
+
+		protected double? _testDataNormalBoilingPointTemperature;
+		protected double? _testDataNormalSublimationPointTemperature;
+
+		protected bool _testDataIsMeltingCurveImplemented;
+
+		protected bool _testDataIsSublimationCurveImplemented;
+
+		public virtual void ConstantsAndCharacteristicPoints_Test()
+		{
+			Assert.IsFalse(string.IsNullOrEmpty(_fluid.CASRegistryNumber));
+			Assert.IsFalse(string.IsNullOrEmpty(_fluid.ShortName));
+			Assert.IsFalse(string.IsNullOrEmpty(_fluid.FullName));
+
+			Assert.GreaterOrEqual(_fluid.LowerTemperatureLimit, 0);
+			Assert.Greater(_fluid.UpperTemperatureLimit, _fluid.LowerTemperatureLimit);
+			Assert.Greater(_fluid.UpperPressureLimit, 0);
+			Assert.Greater(_fluid.UpperMoleDensityLimit, 0);
+
+			Assert.AreEqual(_testDataMolecularWeight, _fluid.MolecularWeight, GetAllowedError(_testDataMolecularWeight, 1E-14, 0), "MolecularWeight");
+			Assert.AreEqual(_testDataTriplePointTemperature, _fluid.TriplePointTemperature, GetAllowedError(_testDataTriplePointTemperature, 1E-4, 0.01), "TriplePointTemperature");
+			Assert.AreEqual(_testDataTriplePointPressure, _fluid.TriplePointPressure, GetAllowedError(_testDataTriplePointPressure, 1E-4, 0), "TriplePointPressure");
+			Assert.AreEqual(_testDataTriplePointLiquidMoleDensity, _fluid.TriplePointSaturatedLiquidMoleDensity, GetAllowedError(_testDataTriplePointLiquidMoleDensity, 1E-4, 0), "TriplePointSaturatedLiquidMoleDensity");
+			Assert.AreEqual(_testDataTriplePointVaporMoleDensity, _fluid.TriplePointSaturatedVaporMoleDensity, GetAllowedError(_testDataTriplePointVaporMoleDensity, 1E-4, 0), "TriplePointSaturatedVaporMoleDensity");
+			Assert.AreEqual(_testDataCriticalPointTemperature, _fluid.CriticalPointTemperature, GetAllowedError(_testDataCriticalPointTemperature, 1E-4, 0.01), "CriticalPointTemperature");
+			Assert.AreEqual(_testDataCriticalPointPressure, _fluid.CriticalPointPressure, GetAllowedError(_testDataCriticalPointPressure, 1E-2, 0), "CriticalPointPressure");
+			Assert.AreEqual(_testDataCriticalPointMoleDensity, _fluid.CriticalPointMoleDensity, GetAllowedError(_testDataCriticalPointMoleDensity, 1E-2, 0), "CriticalPointLiquidMoleDensity");
+
+			if (_testDataNormalBoilingPointTemperature.HasValue)
+				Assert.IsTrue(IsInToleranceLevel(_testDataNormalBoilingPointTemperature.Value, _fluid.NormalBoilingPointTemperature.Value, 1E-4, 0.01), "NormalSublimationPointTemperature");
+			else
+				Assert.IsTrue(_fluid.NormalBoilingPointTemperature is null, "NormalBoilingPointTemperature");
+
+			if (_testDataNormalSublimationPointTemperature.HasValue)
+				Assert.IsTrue(IsInToleranceLevel(_testDataNormalSublimationPointTemperature.Value, _fluid.NormalSublimationPointTemperature.Value, 1E-4, 0.01), "NormalSublimationPointTemperature");
+			else
+				Assert.IsTrue(_fluid.NormalSublimationPointTemperature is null, "NormalSublimationPointTemperature");
+		}
+
+		#endregion Fluid constants
 
 		public static bool IsInToleranceLevel(double expected, double actual, double relativeError, double absoluteError)
 		{

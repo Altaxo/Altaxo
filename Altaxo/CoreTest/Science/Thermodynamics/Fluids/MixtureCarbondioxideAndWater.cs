@@ -29,10 +29,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Science.Thermodynamics.Fluids
+namespace Altaxo.Science.Thermodynamics.Fluids
 {
 	[TestFixture]
-	internal class MixtureCarbondioxideAndWater
+	internal class Test_MixtureCarbondioxideAndWater
 	{
 		[Test]
 		public void TestTable8_1()
@@ -71,6 +71,39 @@ namespace Science.Thermodynamics.Fluids
 		}
 
 		[Test]
+		public void TestTable8_1a()
+		{
+			var mix = new MixtureOfFluids(new(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl, double)[] { (CarbonDioxide.Instance, 0.95), (Water.Instance, 0.05) });
+
+			var moleDensity = 250; // mol/m³
+			var temperature = 450;
+
+			var delta = moleDensity / mix.ReducingMoleDensity;
+			var tau = mix.ReducingTemperature / temperature;
+
+			Assert_AreEqual(-1.1118412E-02, mix.PhiR_OfReducedVariables(delta, tau), 0, 1E-7);
+			Assert_AreEqual(-1.1280889E-02, delta * mix.PhiR_delta_OfReducedVariables(delta, tau), 0, 1E-7);
+			Assert_AreEqual(-3.4064003E-02, tau * mix.PhiR_tau_OfReducedVariables(delta, tau), 0, 1E-7);
+			Assert_AreEqual(1.8012251E-04, delta * delta * mix.PhiR_deltadelta_OfReducedVariables(delta, tau), 0, 1E-7);
+			Assert_AreEqual(-2.8066041E-02, tau * tau * mix.PhiR_tautau_OfReducedVariables(delta, tau), 0, 1E-7);
+			Assert_AreEqual(-3.4262128E-02, delta * tau * mix.PhiR_deltatau_OfReducedVariables(delta, tau), 0, 1E-7);
+
+			Assert_AreEqual(-4.1299125E+00, tau * tau * mix.Phi0_tautau_OfReducedVariables(delta, tau), 0, 1E-4);
+
+			Assert_AreEqual(0.924830E6, mix.Pressure_FromMoleDensityAndTemperature(moleDensity, temperature), 0, 1E-6);
+			Assert_AreEqual(34.5713453, mix.MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(moleDensity, temperature), 0, 1E-6);
+			Assert_AreEqual(43.4715971, mix.MoleSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature(moleDensity, temperature), 0, 1E-6);
+			Assert_AreEqual(328.16, mix.SpeedOfSound_FromMoleDensityAndTemperature(moleDensity, temperature), 0.01, 1E-6);
+
+			// Tests that depend on the absolute value (offset) of Tau0 are
+			// not fullfilled currently, because the zero point is set differently
+			// from the papers of CO2 and water
+			// Assert.AreEqual(6.8982972E+00, tau * mix.Phi0_tau_OfReducedVariables(delta, tau), 1E-6);
+			// Assert.AreEqual(-7.5738019E+00, mix.Phi0_OfReducedVariables(delta, tau), 1E-6);
+			// Assert.AreEqual(25682.58, mix.MassSpecificInternalEnergy_FromMassDensityAndTemperature(massDensity, temperature) * mix.MolecularWeight, 1E-4);
+		}
+
+		[Test]
 		public void TestTable8_2()
 		{
 			var mix = Altaxo.Science.Thermodynamics.Fluids.MixtureCarbondioxideAndWater.FromMoleFractionCO2(0.95);
@@ -97,6 +130,35 @@ namespace Science.Thermodynamics.Fluids
 			Assert_AreEqual(63.2707867, mix.MassSpecificIsobaricHeatCapacity_FromMassDensityAndTemperature(massDensity, temperature) * mix.MolecularWeight, 0, 1E-6);
 			Assert_AreEqual(40.7875533, mix.MassSpecificIsochoricHeatCapacity_FromMassDensityAndTemperature(massDensity, temperature) * mix.MolecularWeight, 0, 1E-6);
 			Assert_AreEqual(453.46, mix.SpeedOfSound_FromMassDensityAndTemperature(massDensity, temperature), 0.01, 1e-6);
+		}
+
+		[Test]
+		public void TestTable8_2a()
+		{
+			var mix = new MixtureOfFluids(new(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl, double)[] { (CarbonDioxide.Instance, 0.95), (Water.Instance, 0.05) });
+
+			var moleDensity = 10000; // mol/m³
+			var temperature = 550;
+
+			//var massDensity = mix.GetMassDensityFromMolarDensity(moleDensity);
+			//var moleDensity3 = mix.GetMolarDensityFromMoleFraction1AndTotalMassDensity(0.95, massDensity);
+
+			var delta = moleDensity / mix.ReducingMoleDensity;
+			var tau = mix.ReducingTemperature / temperature;
+
+			Assert_AreEqual(-1.2167537E-01, mix.PhiR_OfReducedVariables(delta, tau), 0, 1E-7);
+			Assert_AreEqual(-1.0102150E-02, delta * mix.PhiR_delta_OfReducedVariables(delta, tau), 0, 1E-7);
+			Assert_AreEqual(-8.8492294E-01, tau * mix.PhiR_tau_OfReducedVariables(delta, tau), 0, 1E-7);
+			Assert_AreEqual(2.5822994E-01, delta * delta * mix.PhiR_deltadelta_OfReducedVariables(delta, tau), 0, 1E-7);
+			Assert_AreEqual(-4.2942636E-01, tau * tau * mix.PhiR_tautau_OfReducedVariables(delta, tau), 0, 1E-7);
+			Assert_AreEqual(-8.3978601E-01, delta * tau * mix.PhiR_deltatau_OfReducedVariables(delta, tau), 0, 1E-7);
+
+			Assert_AreEqual(-4.4761904E+00, tau * tau * mix.Phi0_tautau_OfReducedVariables(delta, tau), 0, 1E-4);
+
+			Assert_AreEqual(45.267798E6, mix.Pressure_FromMoleDensityAndTemperature(moleDensity, temperature), 0, 1E-6);
+			Assert_AreEqual(63.2707867, mix.MoleSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature(moleDensity, temperature), 0, 1E-6);
+			Assert_AreEqual(40.7875533, mix.MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature(moleDensity, temperature), 0, 1E-6);
+			Assert_AreEqual(453.46, mix.SpeedOfSound_FromMoleDensityAndTemperature(moleDensity, temperature), 0.01, 1e-6);
 		}
 
 		[Test]

@@ -33,6 +33,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 	/// <summary>
 	/// State equations and constants of carbon dioxide.
+	/// Short name: carbon dioxide.
+	/// Synomym: R-744.
+	/// Chemical formula: CO2.
 	/// </summary>
 	/// <remarks>
 	/// <para>References:</para>
@@ -48,11 +51,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// <para>Saturated vapor density: See EOS</para>
 	/// </remarks>
   [CASRegistryNumber("124-38-9")]
-	public class Carbondioxide : HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl
+	public class CarbonDioxide : HelmholtzEquationOfStateOfPureFluidsBySpanEtAl
 	{
 
 		/// <summary>Gets the (only) instance of this class.</summary>
-		public static Carbondioxide Instance { get; } = new Carbondioxide();
+		public static CarbonDioxide Instance { get; } = new CarbonDioxide();
 
     #region Constants for carbon dioxide
 
@@ -131,7 +134,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     #endregion Constants for carbon dioxide
 
-		private Carbondioxide()
+		private CarbonDioxide()
     {
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
@@ -145,14 +148,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_alpha0_Exp = new (double ni, double thetai)[]
 			{
-					(          1.99427042,            958.49956),
-					(         0.621052475,           1858.80115),
-					(         0.411952928,           2061.10114),
-					(          1.04028922,           3443.89908),
-					(        0.0832767753,           8238.20035),
+					(          1.99427042,     3.15163000339988),
+					(         0.621052475,     6.11190001453334),
+					(         0.411952928,     6.77707999455493),
+					(          1.04028922,     11.3238400122054),
+					(        0.0832767753,     27.0879199955808),
 			};
-			RescaleAlpha0ExpThetaWithCriticalTemperature();
 
+			_alpha0_Cosh = new (double ni, double thetai)[]
+			{
+			};
+
+			_alpha0_Sinh = new (double ni, double thetai)[]
+			{
+			};
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
 			#region Residual part(s) of dimensionless Helmholtz energy and derivatives

@@ -39,14 +39,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// EOS–CG: A Helmholtz energy mixture model for humid gases and CCS	mixtures,
 	/// J. Chem. Thermodynamics 93 (2016) 274–293
 	/// </remarks>
-	public class MixtureCarbondioxideAndWater : HelmholtzEquationOfStateOfBinaryMixturesByWagnerEtAl
+	public class MixtureCarbondioxideAndWater : HelmholtzEquationOfStateOfBinaryMixturesBySpanEtAl
 	{
+		private double _workingUniversalGasConstant;
+
 		public MixtureCarbondioxideAndWater(double moleFractionCarbondioxide)
-				: base(moleFractionCarbondioxide, Carbondioxide.Instance, (1 - moleFractionCarbondioxide), Water.Instance)
+				: base(moleFractionCarbondioxide, CarbonDioxide.Instance, (1 - moleFractionCarbondioxide), Water.Instance)
 		{
+			double sum = 0;
+			sum += moleFractionCarbondioxide * CarbonDioxide.Instance.WorkingUniversalGasConstant;
+			sum += (1 - moleFractionCarbondioxide) * Water.Instance.WorkingUniversalGasConstant;
+			_workingUniversalGasConstant = sum;
 		}
 
-		public override double WorkingUniversalGasConstant => 8.314472;
+		public override double WorkingUniversalGasConstant => _workingUniversalGasConstant;
 
 		protected override void InitializeCoefficientArrays()
 		{
@@ -80,7 +86,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		public static MixtureCarbondioxideAndWater FromMassFractionCO2(double massFractionCO2)
 		{
-			var moleFraction = GetMoleFractionFromMassFraction(massFractionCO2, Carbondioxide.Instance.MolecularWeight, Water.Instance.MolecularWeight);
+			var moleFraction = GetMoleFractionFromMassFraction(massFractionCO2, CarbonDioxide.Instance.MolecularWeight, Water.Instance.MolecularWeight);
 			return new MixtureCarbondioxideAndWater(moleFraction);
 		}
 	}

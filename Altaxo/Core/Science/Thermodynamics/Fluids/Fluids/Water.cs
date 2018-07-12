@@ -33,6 +33,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 	/// <summary>
 	/// State equations and constants of water.
+	/// Short name: water.
+	/// Synomym: R-718.
+	/// Chemical formula: H2O.
 	/// </summary>
 	/// <remarks>
 	/// <para>References:</para>
@@ -48,7 +51,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// <para>Saturated vapor density: See EOS</para>
 	/// </remarks>
   [CASRegistryNumber("7732-18-5")]
-	public class Water : HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl
+	public class Water : HelmholtzEquationOfStateOfPureFluidsBySpanEtAl
 	{
 
 		/// <summary>Gets the (only) instance of this class.</summary>
@@ -100,10 +103,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointPressure { get; } = 612.48;
 
 		/// <summary>Gets the triple point liquid mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 55496.9551400021;
+		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 55496.9551400086;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.269470080865642;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.269470080866262;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 373.124295864882;
@@ -145,14 +148,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_alpha0_Exp = new (double ni, double thetai)[]
 			{
-					(            0.012436,                  833),
-					(             0.97315,                 2289),
-					(              1.2795,                 5009),
-					(             0.96956,                 5982),
-					(             0.24873,                17800),
+					(            0.012436,     1.28728967572045),
+					(             0.97315,     3.53734221815619),
+					(              1.2795,     7.74073707765154),
+					(             0.96956,     9.24437795937543),
+					(             0.24873,     27.5075104775798),
 			};
-			RescaleAlpha0ExpThetaWithCriticalTemperature();
 
+			_alpha0_Cosh = new (double ni, double thetai)[]
+			{
+			};
+
+			_alpha0_Sinh = new (double ni, double thetai)[]
+			{
+			};
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
 			#region Residual part(s) of dimensionless Helmholtz energy and derivatives

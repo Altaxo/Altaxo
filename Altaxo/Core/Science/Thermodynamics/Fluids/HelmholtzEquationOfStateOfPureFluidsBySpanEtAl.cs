@@ -46,7 +46,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// J. Phys. Chem. Ref. Data, Vol. 31, No. 2, 2002
 	/// </para>
 	/// </remarks>
-	public abstract class HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl : HelmholtzEquationOfStateOfPureFluids
+	public abstract class HelmholtzEquationOfStateOfPureFluidsBySpanEtAl : HelmholtzEquationOfStateOfPureFluids
 	{
 		#region Constants
 
@@ -122,10 +122,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>The prefactors outside and inside the argument of the  Cosh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-		protected (double ni, double thetai)[] _alpha0__Cosh = _emptyDoubleDoubleArray;
+		protected (double ni, double thetai)[] _alpha0_Cosh = _emptyDoubleDoubleArray;
 
 		/// <summary>The prefactors outside and inside the argument of the  Sinh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
-		protected (double ni, double thetai)[] _alpha0__Sinh = _emptyDoubleDoubleArray;
+		protected (double ni, double thetai)[] _alpha0_Sinh = _emptyDoubleDoubleArray;
 
 		/// <summary>
 		/// Phi0s the of reduced variables. (Page 1541, Table 28 in [2])
@@ -159,7 +159,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			{
 				// Cosh terms
-				var alpha0_Cosh = _alpha0__Cosh;
+				var alpha0_Cosh = _alpha0_Cosh;
 				for (int i = 0; i < alpha0_Cosh.Length; ++i)
 				{
 					var (n, theta) = alpha0_Cosh[i];
@@ -169,7 +169,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			{
 				// Sinh terms
-				var alpha0_Sinh = _alpha0__Sinh;
+				var alpha0_Sinh = _alpha0_Sinh;
 				for (int i = 0; i < alpha0_Sinh.Length; ++i)
 				{
 					var (n, theta) = alpha0_Sinh[i];
@@ -218,7 +218,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			}
 			{
 				// Cosh terms
-				var alpha0_Cosh = _alpha0__Cosh;
+				var alpha0_Cosh = _alpha0_Cosh;
 				for (int i = 0; i < alpha0_Cosh.Length; ++i)
 				{
 					var (n, theta) = alpha0_Cosh[i];
@@ -227,7 +227,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			}
 			{
 				// Sinh terms
-				var alpha0_Sinh = _alpha0__Sinh;
+				var alpha0_Sinh = _alpha0_Sinh;
 				for (int i = 0; i < alpha0_Sinh.Length; ++i)
 				{
 					var (n, theta) = alpha0_Sinh[i];
@@ -268,7 +268,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			}
 			{
 				// Cosh terms
-				var alpha0_Cosh = _alpha0__Cosh;
+				var alpha0_Cosh = _alpha0_Cosh;
 				for (int i = 0; i < alpha0_Cosh.Length; ++i)
 				{
 					var (n, theta) = alpha0_Cosh[i];
@@ -278,7 +278,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			{
 				// Sinh terms
-				var alpha0_Sinh = _alpha0__Sinh;
+				var alpha0_Sinh = _alpha0_Sinh;
 				for (int i = 0; i < alpha0_Sinh.Length; ++i)
 				{
 					var (n, theta) = alpha0_Sinh[i];
@@ -1388,7 +1388,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		protected double _meltingPressure_ReducingPressure;
 		protected (double factor, double exponent)[][] _meltingPressure_Coefficients = Enumerable.Repeat(new(double, double)[0], 3).ToArray();
 
-		public bool IsMeltingPressureCurveImplemented { get { return _sublimationPressure_Type != 0; } }
+		public bool IsMeltingPressureCurveImplemented { get { return _meltingPressure_Type != '\0'; } }
 
 		public double MeltingPressureEstimate_FromTemperature(double temperature)
 		{
@@ -1504,22 +1504,45 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					throw new NotImplementedException(string.Format("Melting pressure equation type {0} not implemented yet!", _meltingPressure_Type));
 			}
 
+			double previousError = double.MaxValue;
+			double previousTemperature = temperature;
+			int numberOfNewtonRaphsonSteps = 0;
+
 			// Now iterate with Newton-Raphson
 			for (int i = 0; i < 100; ++i)
 			{
 				var (p, dpdT) = pressureFromTemperature(temperature);
 
-				if (GetRelativeErrorBetween(p, pressure) < relativeAccuracy)
+				var currentError = GetRelativeErrorBetween(p, pressure);
+
+				if (currentError < relativeAccuracy)
 					return temperature;
+
+				if (currentError >= previousError && numberOfNewtonRaphsonSteps > 5)
+				{
+					return previousTemperature;
+				}
+
+				previousError = currentError;
+				previousTemperature = temperature;
 
 				double newTemperature = temperature - (p - pressure) / dpdT;
 
 				if (newTemperature < lowerTemperatureBoundary)
+				{
 					temperature = 0.5 * (temperature + lowerTemperatureBoundary);
+					numberOfNewtonRaphsonSteps = 0;
+				}
 				else if (newTemperature > upperTemperatureBoundary)
+				{
 					temperature = 0.5 * (temperature + upperTemperatureBoundary);
+					numberOfNewtonRaphsonSteps = 0;
+				}
 				else
+				{
 					temperature = newTemperature;
+					++numberOfNewtonRaphsonSteps;
+				}
 			}
 
 			return double.NaN; // not converged

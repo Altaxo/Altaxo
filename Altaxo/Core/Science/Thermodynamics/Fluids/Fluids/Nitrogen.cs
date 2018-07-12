@@ -33,6 +33,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 	/// <summary>
 	/// State equations and constants of nitrogen.
+	/// Short name: nitrogen.
+	/// Synomym: R-728.
+	/// Chemical formula: N2.
 	/// </summary>
 	/// <remarks>
 	/// <para>References:</para>
@@ -48,7 +51,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// <para>Saturated vapor density: See EOS</para>
 	/// </remarks>
   [CASRegistryNumber("7727-37-9")]
-	public class Nitrogen : HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl
+	public class Nitrogen : HelmholtzEquationOfStateOfPureFluidsBySpanEtAl
 	{
 
 		/// <summary>Gets the (only) instance of this class.</summary>
@@ -103,7 +106,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 30957.3062207036;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 24.06956131607;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 24.0695613160699;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 77.3549950205423;
@@ -148,10 +151,16 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_alpha0_Exp = new (double ni, double thetai)[]
 			{
-					(            1.012941,             3364.011),
+					(            1.012941,     26.6578784709015),
 			};
-			RescaleAlpha0ExpThetaWithCriticalTemperature();
 
+			_alpha0_Cosh = new (double ni, double thetai)[]
+			{
+			};
+
+			_alpha0_Sinh = new (double ni, double thetai)[]
+			{
+			};
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
 			#region Residual part(s) of dimensionless Helmholtz energy and derivatives

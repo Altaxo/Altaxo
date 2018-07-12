@@ -33,6 +33,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 	/// <summary>
 	/// State equations and constants of argon.
+	/// Short name: argon.
+	/// Synomym: R-740.
+	/// Chemical formula: Ar.
 	/// </summary>
 	/// <remarks>
 	/// <para>References:</para>
@@ -48,7 +51,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// <para>Saturated vapor density: Equation of Tegeler appears to be wrong, and new equation was fitted here.</para>
 	/// </remarks>
   [CASRegistryNumber("7440-37-1")]
-	public class Argon : HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl
+	public class Argon : HelmholtzEquationOfStateOfPureFluidsBySpanEtAl
 	{
 
 		/// <summary>Gets the (only) instance of this class.</summary>
@@ -146,8 +149,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			_alpha0_Exp = new (double ni, double thetai)[]
 			{
 			};
-			RescaleAlpha0ExpThetaWithCriticalTemperature();
 
+			_alpha0_Cosh = new (double ni, double thetai)[]
+			{
+			};
+
+			_alpha0_Sinh = new (double ni, double thetai)[]
+			{
+			};
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
 			#region Residual part(s) of dimensionless Helmholtz energy and derivatives

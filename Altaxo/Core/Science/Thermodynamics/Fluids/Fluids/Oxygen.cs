@@ -33,6 +33,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 	/// <summary>
 	/// State equations and constants of oxygen.
+	/// Short name: oxygen.
+	/// Synomym: R-732.
+	/// Chemical formula: O2.
 	/// </summary>
 	/// <remarks>
 	/// <para>References:</para>
@@ -48,7 +51,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// <para>Saturated vapor density: Cullimore, I.D., 2010.</para>
 	/// </remarks>
   [CASRegistryNumber("7782-44-7")]
-	public class Oxygen : HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl
+	public class Oxygen : HelmholtzEquationOfStateOfPureFluidsBySpanEtAl
 	{
 
 		/// <summary>Gets the (only) instance of this class.</summary>
@@ -103,7 +106,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 40816.4308177384;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.323703170090919;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.323703170090916;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 90.1878078804554;
@@ -145,14 +148,20 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_alpha0_Exp = new (double ni, double thetai)[]
 			{
-					(          1.02323928,            2246.3244),
-					(         0.784357918,           11259.9763),
-					(       0.00337183363,           1201.26209),
-					(       -0.0170864084,           69.0089445),
-					(        0.0463751562,           5328.05445),
+					(          1.02323928,     14.5316979447668),
+					(         0.784357918,     72.8419165356674),
+					(       0.00337183363,      7.7710849975094),
+					(       -0.0170864084,    0.446425786480874),
+					(        0.0463751562,     34.4677188658373),
 			};
-			RescaleAlpha0ExpThetaWithCriticalTemperature();
 
+			_alpha0_Cosh = new (double ni, double thetai)[]
+			{
+			};
+
+			_alpha0_Sinh = new (double ni, double thetai)[]
+			{
+			};
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
 			#region Residual part(s) of dimensionless Helmholtz energy and derivatives

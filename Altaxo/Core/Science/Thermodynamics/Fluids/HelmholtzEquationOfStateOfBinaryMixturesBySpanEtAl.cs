@@ -40,7 +40,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// EOS–CG: A Helmholtz energy mixture model for humid gases and CCS	mixtures,
 	/// J. Chem. Thermodynamics 93 (2016) 274–293
 	/// </remarks>
-	public abstract class HelmholtzEquationOfStateOfBinaryMixturesByWagnerEtAl : HelmholtzEquationOfStateOfBinarySystem
+	public abstract class HelmholtzEquationOfStateOfBinaryMixturesBySpanEtAl : HelmholtzEquationOfStateOfBinarySystem
 	{
 		protected double _reducingTemperature;
 		protected double _reducingMoleDensity;
@@ -62,13 +62,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		protected (double ni, double ti, int di, int li)[] _pr2;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="HelmholtzEquationOfStateOfBinaryMixturesByWagnerEtAl"/> class.
+		/// Initializes a new instance of the <see cref="HelmholtzEquationOfStateOfBinaryMixturesBySpanEtAl"/> class.
 		/// </summary>
 		/// <param name="moleFraction1">The mole fraction of component 1.</param>
 		/// <param name="component1">The component 1.</param>
 		/// <param name="moleFraction2">The mole fraction of component 2.</param>
 		/// <param name="component2">The component 2.</param>
-		protected HelmholtzEquationOfStateOfBinaryMixturesByWagnerEtAl(double moleFraction1, HelmholtzEquationOfStateOfPureFluids component1, double moleFraction2, HelmholtzEquationOfStateOfPureFluids component2)
+		protected HelmholtzEquationOfStateOfBinaryMixturesBySpanEtAl(double moleFraction1, HelmholtzEquationOfStateOfPureFluids component1, double moleFraction2, HelmholtzEquationOfStateOfPureFluids component2)
 	: base(moleFraction1, component1, moleFraction2, component2)
 		{
 			InitializeCoefficientArrays();

@@ -33,6 +33,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 	/// <summary>
 	/// State equations and constants of octamethyltrisiloxane.
+	/// Short name: MDM.
+	/// Synomym: MDM.
+	/// Chemical formula: C8H24O2Si3.
 	/// </summary>
 	/// <remarks>
 	/// <para>References:</para>
@@ -46,7 +49,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// <para>Saturated vapor density: see EOS of Thol et al. (2017).</para>
 	/// </remarks>
   [CASRegistryNumber("107-51-7")]
-	public class Octamethyltrisiloxane : HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl
+	public class Octamethyltrisiloxane : HelmholtzEquationOfStateOfPureFluidsBySpanEtAl
 	{
 
 		/// <summary>Gets the (only) instance of this class.</summary>
@@ -98,10 +101,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointPressure { get; } = 0.0010815;
 
 		/// <summary>Gets the triple point liquid mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 3907.2013504745;
+		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 3907.20135047451;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 6.94871319793357E-07;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 6.94871319793325E-07;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 425.630478469736;
@@ -143,12 +146,18 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_alpha0_Exp = new (double ni, double thetai)[]
 			{
-					(              28.817,                   20),
-					(              46.951,                 1570),
-					(              31.054,                 4700),
+					(              28.817,   0.0353756335112669),
+					(              46.951,     2.77698723063445),
+					(              31.054,     8.31327387514771),
 			};
-			RescaleAlpha0ExpThetaWithCriticalTemperature();
 
+			_alpha0_Cosh = new (double ni, double thetai)[]
+			{
+			};
+
+			_alpha0_Sinh = new (double ni, double thetai)[]
+			{
+			};
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
 			#region Residual part(s) of dimensionless Helmholtz energy and derivatives

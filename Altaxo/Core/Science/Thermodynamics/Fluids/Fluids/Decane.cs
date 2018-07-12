@@ -33,6 +33,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 	/// <summary>
 	/// State equations and constants of decane.
+	/// Short name: decane.
+	/// Synomym: n-decane.
+	/// Chemical formula: CH3-8(CH2)-CH3.
 	/// </summary>
 	/// <remarks>
 	/// <para>References:</para>
@@ -46,7 +49,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	/// <para>Saturated vapor density: Lemmon, C.K. and Lemmon, E.W., 2010.</para>
 	/// </remarks>
   [CASRegistryNumber("124-18-5")]
-	public class Decane : HelmholtzEquationOfStateOfPureFluidsByWagnerEtAl
+	public class Decane : HelmholtzEquationOfStateOfPureFluidsBySpanEtAl
 	{
 
 		/// <summary>Gets the (only) instance of this class.</summary>
@@ -101,7 +104,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 5406.41690617915;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.000693577057215229;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.000693577057215176;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 447.270171672062;
@@ -143,13 +146,19 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_alpha0_Exp = new (double ni, double thetai)[]
 			{
-					(              25.685,                 1193),
-					(              28.233,                 2140),
-					(              12.417,                 4763),
-					(              10.035,                10862),
+					(              25.685,     1.93135826452971),
+					(              28.233,     3.46446495062328),
+					(              12.417,     7.71086287841994),
+					(              10.035,     17.5845879876963),
 			};
-			RescaleAlpha0ExpThetaWithCriticalTemperature();
 
+			_alpha0_Cosh = new (double ni, double thetai)[]
+			{
+			};
+
+			_alpha0_Sinh = new (double ni, double thetai)[]
+			{
+			};
 			#endregion Ideal part of dimensionless Helmholtz energy and derivatives
 
 			#region Residual part(s) of dimensionless Helmholtz energy and derivatives
