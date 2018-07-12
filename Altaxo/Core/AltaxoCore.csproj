@@ -792,6 +792,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Neon.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Nitrogen.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Nonane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\N_butane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Octafluoropropane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Octamethylcyclotetrasiloxane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Octamethyltrisiloxane.cs" />
