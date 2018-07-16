@@ -309,6 +309,7 @@
     <Compile Include="Collections\Test_AscendingIntegerRangeCollection.cs" />
     <Compile Include="ResourceKeys.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\AssertHelper.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Test_Mixture_CO2_Water.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Argon.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Benzene.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_CarbonDioxide.cs" />
@@ -379,6 +380,8 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Water.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\FluidTestBase.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\MixtureCarbondioxideAndWater.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\MixtureTestBase.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\TestBase.cs" />
     <Compile Include="WeakEventHandlersTest.cs" />
   </ItemGroup>
   <ItemGroup>

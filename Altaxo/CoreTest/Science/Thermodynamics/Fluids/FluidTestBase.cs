@@ -33,7 +33,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
-	public class FluidTestBase
+	public class FluidTestBase : TestBase
 	{
 		protected HelmholtzEquationOfStateOfPureFluidsBySpanEtAl _fluid;
 
@@ -493,28 +493,5 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		#endregion Fluid constants
-
-		public static bool IsInToleranceLevel(double expected, double actual, double relativeError, double absoluteError)
-		{
-			var diff = Math.Abs(expected * relativeError) + Math.Abs(absoluteError);
-			return Math.Abs(expected - actual) <= diff;
-		}
-
-		public static double GetAllowedError(double expected, double relativeError, double absoluteError)
-		{
-			return Math.Abs(expected * relativeError) + Math.Abs(absoluteError);
-		}
-
-		public static double GetRelativeErrorBetween(double x, double y)
-		{
-			var min = Math.Min(Math.Abs(x), Math.Abs(y));
-
-			if (double.IsNaN(min) || double.IsInfinity(min))
-				return double.PositiveInfinity;
-			else if (min == 0)
-				return x == y ? 0 : double.PositiveInfinity;
-			else
-				return Math.Abs(x - y) / min;
-		}
 	}
 }

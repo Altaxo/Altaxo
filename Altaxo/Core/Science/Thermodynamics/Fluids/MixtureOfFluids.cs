@@ -15,6 +15,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 	{
 		private static Dictionary<(string cas1, string cas2), Type> _binaryMixtureDefinitions = new Dictionary<(string cas1, string cas2), Type>();
 
+		private static Dictionary<string, Type> _fluidDefinitions = new Dictionary<string, Type>();
+
 		private (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl pureFluid, double moleFraction)[] _fluidsAndMoleFractions;
 
 		private (BinaryMixtureDefinitionBase definition, bool reverse)[,] _mixtureDefinitions;
@@ -27,6 +29,28 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		static MixtureOfFluids()
 		{
 			CollectAllBinaryMixDefinitions();
+			CollectAllFluidDefinitions();
+		}
+
+		public static MixtureOfFluids FromCASRegistryNumbersAndMoleFractions(IEnumerable<(string casNumber, double moleFraction)> casNumbersAndMoleFractions)
+		{
+			var list = new List<(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl fluid, double moleFraction)>();
+
+			foreach (var (casNumber, moleFraction) in casNumbersAndMoleFractions)
+			{
+				if (_fluidDefinitions.TryGetValue(casNumber, out var fluidType))
+				{
+					var pd = fluidType.GetProperty("Instance").GetGetMethod();
+					var definition = (HelmholtzEquationOfStateOfPureFluidsBySpanEtAl)pd.Invoke(null, null);
+					list.Add((definition, moleFraction));
+				}
+				else
+				{
+					throw new ArgumentException(string.Format("A fluid with CAS registry number {0} could not be found!", casNumber));
+				}
+			}
+
+			return new MixtureOfFluids(list);
 		}
 
 		public MixtureOfFluids(
@@ -89,10 +113,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		{
 		}
 
-		public MixtureOfFluids((HelmholtzEquationOfStateOfPureFluidsBySpanEtAl pureFluid, double moleFraction)[] fluidsAndMoleFractions, bool checkForSumEqualToOne = true)
+		public MixtureOfFluids(IReadOnlyList<(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl pureFluid, double moleFraction)> fluidsAndMoleFractions, bool checkForSumEqualToOne = true)
 		{
 			// Parameter check and copy of the provided array
-			_fluidsAndMoleFractions = new(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl pureFluid, double moleFraction)[fluidsAndMoleFractions.Length];
+			_fluidsAndMoleFractions = new(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl pureFluid, double moleFraction)[fluidsAndMoleFractions.Count];
 
 			for (int i = 0; i < _fluidsAndMoleFractions.Length; ++i)
 			{
@@ -136,6 +160,16 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			CalculateReducingDensityAndTemperature();
 			// Molecular weight
 			CalculateMolecularWeight();
+		}
+
+		/// <summary>
+		/// Returns the same mixture of fluids, but with other mole fractions.
+		/// </summary>
+		/// <param name="moleFractions">The mole fractions of the components.</param>
+		/// <returns>A mixture with the same components, but different mole fractions. The sum of mole fractions has to be equal to 1.</returns>
+		public MixtureOfFluids WithMoleFractions(params double[] moleFractions)
+		{
+			return WithMoleFractions(moleFractions, true);
 		}
 
 		/// <summary>
@@ -251,6 +285,26 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			}
 		}
 
+		protected static void CollectAllFluidDefinitions()
+		{
+			var ass = Assembly.GetCallingAssembly();
+
+			var baseType = typeof(HelmholtzEquationOfStateOfPureFluidsBySpanEtAl);
+			foreach (var type in ass.DefinedTypes)
+			{
+				if (!baseType.IsAssignableFrom(type))
+					continue;
+
+				var casNumberAttributes = type.GetCustomAttributes(typeof(CASRegistryNumberAttribute)).ToArray();
+				if (1 != casNumberAttributes.Length)
+					continue;
+
+				string casNumber = ((CASRegistryNumberAttribute)casNumberAttributes[0]).CASRegistryNumber;
+
+				_fluidDefinitions[casNumber] = type;
+			}
+		}
+
 		#region Helmholtz equation of state
 
 		/// <inheritdoc/>
@@ -333,7 +387,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				{
 					var (_, xj) = _fluidsAndMoleFractions[j];
 					var (mixture, isReverse) = _mixtureDefinitions[i, j];
-					sum += xi * xj * mixture.DepartureFunction_OfReducedVariables(delta, tau);
+					if (mixture.F != 0)
+						sum += xi * xj * mixture.F * mixture.DepartureFunction_OfReducedVariables(delta, tau);
 				}
 			}
 
@@ -360,7 +415,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				{
 					var (_, xj) = _fluidsAndMoleFractions[j];
 					var (mixture, isReverse) = _mixtureDefinitions[i, j];
-					sum += xi * xj * mixture.DepartureFunction_delta_OfReducedVariables(delta, tau);
+					if (mixture.F != 0)
+						sum += xi * xj * mixture.F * mixture.DepartureFunction_delta_OfReducedVariables(delta, tau);
 				}
 			}
 
@@ -387,7 +443,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				{
 					var (_, xj) = _fluidsAndMoleFractions[j];
 					var (mixture, isReverse) = _mixtureDefinitions[i, j];
-					sum += xi * xj * mixture.DepartureFunction_deltadelta_OfReducedVariables(delta, tau);
+					if (mixture.F != 0)
+						sum += xi * xj * mixture.F * mixture.DepartureFunction_deltadelta_OfReducedVariables(delta, tau);
 				}
 			}
 
@@ -414,7 +471,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				{
 					var (_, xj) = _fluidsAndMoleFractions[j];
 					var (mixture, isReverse) = _mixtureDefinitions[i, j];
-					sum += xi * xj * mixture.DepartureFunction_tau_OfReducedVariables(delta, tau);
+					if (mixture.F != 0)
+						sum += xi * xj * mixture.F * mixture.DepartureFunction_tau_OfReducedVariables(delta, tau);
 				}
 			}
 
@@ -441,7 +499,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				{
 					var (_, xj) = _fluidsAndMoleFractions[j];
 					var (mixture, isReverse) = _mixtureDefinitions[i, j];
-					sum += xi * xj * mixture.DepartureFunction_tautau_OfReducedVariables(delta, tau);
+					if (mixture.F != 0)
+						sum += xi * xj * mixture.F * mixture.DepartureFunction_tautau_OfReducedVariables(delta, tau);
 				}
 			}
 
@@ -468,7 +527,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				{
 					var (_, xj) = _fluidsAndMoleFractions[j];
 					var (mixture, isReverse) = _mixtureDefinitions[i, j];
-					sum += xi * xj * mixture.DepartureFunction_deltatau_OfReducedVariables(delta, tau);
+					if (mixture.F != 0)
+						sum += xi * xj * mixture.F * mixture.DepartureFunction_deltatau_OfReducedVariables(delta, tau);
 				}
 			}
 

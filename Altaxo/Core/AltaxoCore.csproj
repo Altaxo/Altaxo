@@ -736,6 +736,7 @@
     <Compile Include="Collections\WeakCollection.cs" />
     <Compile Include="MatrixNorm.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtureDefinitionBase.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_Butane_Argon.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_CO2_Octane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_CO2_Water.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\CASRegistryNumberAttribute.cs" />
