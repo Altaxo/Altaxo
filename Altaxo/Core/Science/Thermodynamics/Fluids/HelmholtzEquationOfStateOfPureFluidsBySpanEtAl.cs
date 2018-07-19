@@ -102,6 +102,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>The term with the factor ln(tau) in the equation of the ideal part of the reduced Helmholtz energy.</summary>
 		protected double _alpha0_n_lntau;
 
+		/// <summary>The term with the factor tau*ln(tau) in the equation of the ideal part of the reduced Helmholtz energy.</summary>
+		protected double _alpha0_n_taulntau;
+
 		protected (double ni, double thetai)[] _alpha0_Poly = _emptyDoubleDoubleArray;
 
 		// Exponential terms
@@ -183,7 +186,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				sum +
 				_alpha0_n_const +
 				_alpha0_n_tau * tau +
-				_alpha0_n_lntau * Math.Log(tau)
+				(_alpha0_n_lntau + _alpha0_n_taulntau * tau) * Math.Log(tau)
 				);
 		}
 
@@ -234,7 +237,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					sum += n * theta * Coth(theta * tau);
 				}
 			}
-			return (sum + _alpha0_n_tau + _alpha0_n_lntau / tau);
+			return (sum + _alpha0_n_tau + _alpha0_n_lntau / tau + _alpha0_n_taulntau + _alpha0_n_taulntau * Math.Log(tau));
 		}
 
 		/// <summary>
@@ -285,7 +288,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					sum += -n * Pow2(theta * Csch(theta * tau));
 				}
 			}
-			return (sum - _alpha0_n_lntau / Pow2(tau));
+			return (sum - _alpha0_n_lntau / Pow2(tau) + _alpha0_n_taulntau / tau);
 		}
 
 		#endregion Ideal part of dimensionless Helmholtz energy and derivatives

@@ -32,50 +32,50 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 {
 
 	/// <summary>
-	/// State equations and constants of hexafluoroethane.
-	/// Short name: R116.
-	/// Synomym: FC-116.
-	/// Chemical formula: CF3CF3.
+	/// State equations and constants of 1,1,1-trifluoroethane.
+	/// Short name: R143a.
+	/// Synomym: HFC-143a.
+	/// Chemical formula: CF3CH3.
 	/// </summary>
 	/// <remarks>
 	/// <para>References:</para>
-  /// <para>The source code was created automatically using the fluid file 'r116.fld' from the following software:</para>
+  /// <para>The source code was created automatically using the fluid file 'r143a.fld' from the following software:</para>
   /// <para>TREND 3.0.: Span, R.; Eckermann, T.; Herrig, S.; Hielscher, S.; Jäger, A.; Thol, M. (2016): TREND.Thermodynamic Reference and Engineering Data 3.0.Lehrstuhl für Thermodynamik, Ruhr-Universität Bochum.</para>
   /// <para>Further references (extracted from the fluid file):</para>
-	/// <para>EquationOfState (EOS): Lemmon, E.W. and Span, R., "Short Fundamental Equations of State for 20 Industrial Fluids," J. Chem. Eng. Data, 51:785-850, 2006.</para>
-	/// <para>HeatCapacity (CPP): Lemmon, E.W. and Span, R. (see eos for reference)</para>
+	/// <para>EquationOfState (EOS): Lemmon, E.W. and Jacobsen, R.T, "An International Standard Formulation for the Thermodynamic Properties of 1,1,1-Trifluoroethane (HFC-143a) for Temperatures from 161 to 450 K and Pressures to 50 MPa," J. Phys. Chem. Ref. Data, 29(4):521-552, 2000.</para>
+	/// <para>HeatCapacity (CPP): Lemmon, E.W. and Jacobsen, R.T, "An International Standard Formulation for the Thermodynamic Properties of 1,1,1-Trifluoroethane (HFC-143a) for Temperatures from 161 to 450 K and Pressures to 50 MPa," J. Phys. Chem. Ref. Data, 29(4):521-552, 2000.</para>
 	/// <para>Saturated vapor pressure: Cullimore, I.D., 2010.</para>
 	/// <para>Saturated liquid density: Cullimore, I.D., 2010.</para>
 	/// <para>Saturated vapor density: Cullimore, I.D., 2010.</para>
 	/// </remarks>
-  [CASRegistryNumber("76-16-4")]
-	public class Hexafluoroethane : HelmholtzEquationOfStateOfPureFluidsBySpanEtAl
+  [CASRegistryNumber("420-46-2")]
+	public class Fluid_1_1_1_trifluoroethane : HelmholtzEquationOfStateOfPureFluidsBySpanEtAl
 	{
 
 		/// <summary>Gets the (only) instance of this class.</summary>
-		public static Hexafluoroethane Instance { get; } = new Hexafluoroethane();
+		public static Fluid_1_1_1_trifluoroethane Instance { get; } = new Fluid_1_1_1_trifluoroethane();
 
-    #region Constants for hexafluoroethane
+    #region Constants for 1,1,1-trifluoroethane
 
 		/// <summary>The full name of the fluid.</summary>
-    public override string FullName => "hexafluoroethane";
+    public override string FullName => "1,1,1-trifluoroethane";
 
 		/// <summary>The short name of the fluid.</summary>
-    public override string ShortName => "R116";
+    public override string ShortName => "R143a";
 
 		/// <summary>The synonym of the name of the fluid.</summary>
-    public override string Synonym => "FC-116";
+    public override string Synonym => "HFC-143a";
 
 		/// <summary>The chemical formula of the fluid.</summary>
-    public override string ChemicalFormula => "CF3CF3";
+    public override string ChemicalFormula => "CF3CH3";
 
 		/// <summary>The chemical formula of the fluid.</summary>
     public override string FluidFamily => "halocb";
 
     /// <summary>Gets the CAS registry number.</summary>
-    public override string CASRegistryNumber { get; } = "76-16-4";
+    public override string CASRegistryNumber { get; } = "420-46-2";
 
-    private int[] _unNumbers = new int[]{2193,};
+    private int[] _unNumbers = new int[]{2035,};
     /// <summary>The UN number of the fluid.</summary>
      public override IReadOnlyList<int> UN_Numbers => _unNumbers;
 
@@ -83,73 +83,73 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     public override double WorkingUniversalGasConstant => 8.314472;
 
     /// <summary>Gets the molecular weight in kg/mol.</summary>
-    public override double MolecularWeight { get; } = 0.13801182; // kg/mol
+    public override double MolecularWeight { get; } = 0.084041; // kg/mol
 
 		/// <summary>Gets the temperature at the critical point in K.</summary>
-    public override double CriticalPointTemperature { get; } = 293.03;
+    public override double CriticalPointTemperature { get; } = 345.857;
 
     /// <summary>Gets the pressure at the critical point in Pa.</summary>);
-    public override double CriticalPointPressure { get; } = 3048000;
+    public override double CriticalPointPressure { get; } = 3761000;
 
 		/// <summary>Gets the mole density at the critical point in mol/m³.</summary>
-		public override double CriticalPointMoleDensity { get; } = 4444;
+		public override double CriticalPointMoleDensity { get; } = 5128.45;
 
 		/// <summary>Gets the triple point temperature in K.</summary>
-		public override double TriplePointTemperature { get; } = 173.1;
+		public override double TriplePointTemperature { get; } = 161.34;
 
 		/// <summary>Gets the triple point pressure in Pa.</summary>
-		public override double TriplePointPressure { get; } = 26080;
+		public override double TriplePointPressure { get; } = 1074.9;
 
 		/// <summary>Gets the triple point liquid mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 12304.0140233306;
+		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 15832.1046985111;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 18.4372956442827;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.803616507488138;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
-		public override double? NormalBoilingPointTemperature { get; } = 195.058373468651;
+		public override double? NormalBoilingPointTemperature { get; } = 225.909433850125;
 
 		/// <summary>Gets the sublimation temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalSublimationPointTemperature { get; } = null;
 
 		/// <summary>Gets the acentric factor.</summary>
-		public override double AcentricFactor { get; } = 0.2566;
+		public override double AcentricFactor { get; } = 0.2615;
 
 		/// <summary>Gets the dipole moment in Debye.</summary>
-		public override double DipoleMoment { get; } = 0;
+		public override double DipoleMoment { get; } = 2.34;
 
 		/// <summary>Gets the lower temperature limit of this model in K.</summary>
-		public override double LowerTemperatureLimit { get; } = 173.1;
+		public override double LowerTemperatureLimit { get; } = 161.34;
 
 		/// <summary>Gets the upper temperature limit of this model in K.</summary>
-		public override double UpperTemperatureLimit { get; } = 425;
+		public override double UpperTemperatureLimit { get; } = 650;
 
 		/// <summary>Gets the upper density limit of this model in mol/m³.</summary>
-		public override double UpperMoleDensityLimit { get; } = 12310;
+		public override double UpperMoleDensityLimit { get; } = 15850;
 
 		/// <summary>Gets the upper pressure limit of this model in Pa.</summary>
-		public override double UpperPressureLimit { get; } = 50000000;
+		public override double UpperPressureLimit { get; } = 100000000;
 
-    #endregion Constants for hexafluoroethane
+    #endregion Constants for 1,1,1-trifluoroethane
 
-		private Hexafluoroethane()
+		private Fluid_1_1_1_trifluoroethane()
     {
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			_alpha0_n_const = -10.7088650330539;
-			_alpha0_n_tau = 8.91489790558779;
-			_alpha0_n_lntau = 3;
+			_alpha0_n_const = 5.90304811943165;
+			_alpha0_n_tau = 7.30725062149164;
+			_alpha0_n_lntau = -1;
 			_alpha0_n_taulntau = 0;
 
 			_alpha0_Poly = new (double ni, double thetai)[]
 			{
+					(    -16.591049152079,                -0.33),
 			};
 
 			_alpha0_Exp = new (double ni, double thetai)[]
 			{
-					(              2.4818,    0.648397774971846),
-					(              7.0622,     2.12264955806573),
-					(              7.9951,     5.01655120636112),
+					(              4.4402,     5.17844080067774),
+					(              3.7515,     2.37959619148955),
 			};
 
 			_alpha0_Cosh = new (double ni, double thetai)[]
@@ -165,22 +165,27 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 			_alphaR_Poly = new(double ni, double ti, int di)[]
 			{
-					(              1.1632,                 0.25,                    1),
-					(             -2.8123,                1.125,                    1),
-					(             0.77202,                  1.5,                    1),
-					(            -0.14331,                1.375,                    2),
-					(             0.10227,                 0.25,                    3),
-					(          0.00024629,                0.875,                    7),
+					(           7.7736443,                 0.67,                    1),
+					(            -8.70185,                0.833,                    1),
+					(         -0.27779799,                  1.7,                    1),
+					(           0.1460922,                 1.82,                    2),
+					(        0.0089581616,                 0.35,                    5),
 			};
 
 			_alphaR_Exp = new(double ni, double ti, int di, int li)[]
 			{
-					(             0.30893,                0.625,                    2,                    1),
-					(           -0.028499,                 1.75,                    5,                    1),
-					(            -0.30343,                3.625,                    1,                    2),
-					(           -0.068793,                3.625,                    4,                    2),
-					(           -0.027218,                 14.5,                    3,                    3),
-					(            0.010665,                   12,                    4,                    3),
+					(         -0.20552116,                  3.9,                    1,                    1),
+					(          0.10653258,                 0.95,                    3,                    1),
+					(         0.023270816,                    0,                    5,                    1),
+					(        -0.013247542,                 1.19,                    7,                    1),
+					(         -0.04279387,                  7.2,                    1,                    2),
+					(          0.36221685,                  5.9,                    2,                    2),
+					(         -0.25671899,                 7.65,                    2,                    2),
+					(        -0.092326113,                  7.5,                    3,                    2),
+					(         0.083774837,                 7.45,                    4,                    2),
+					(         0.017128445,                 15.5,                    2,                    3),
+					(         -0.01725611,                   22,                    3,                    3),
+					(        0.0049080492,                   19,                    5,                    3),
 			};
 
 			_alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
@@ -198,32 +203,32 @@ namespace Altaxo.Science.Thermodynamics.Fluids
       _saturatedLiquidDensity_Type = 1;
 			_saturatedLiquidDensity_Coefficients = new(double factor, double exponent)[]
 			{
-					(               68.49,                 0.64),
-					(             -247.72,                 0.79),
-					(              358.24,                 0.95),
-					(              -252.9,                 1.14),
-					(               76.88,                 1.33),
+					(              2.1135,                0.348),
+					(                10.2,                  1.6),
+					(             -30.836,                    2),
+					(              39.909,                  2.4),
+					(             -18.557,                  2.7),
 			};
 
       _saturatedVaporDensity_Type = 3;
 			_saturatedVaporDensity_Coefficients = new(double factor, double exponent)[]
 			{
-					(             -3.4135,                0.428),
-					(             -145.29,                    2),
-					(              236.51,                 2.24),
-					(             -222.76,                    3),
-					(              231.03,                    4),
-					(             -174.33,                    5),
+					(             -2.8673,                0.384),
+					(             -6.3818,                 1.17),
+					(             -16.314,                    3),
+					(             -45.947,                  6.2),
+					(             -1.3956,                    7),
+					(             -246.71,                   15),
 			};
 
       _saturatedVaporPressure_Type = 5;
 			_saturatedVaporPressure_Coefficients = new(double factor, double exponent)[]
 			{
-					(             -7.3997,                    1),
-					(              2.2554,                  1.5),
-					(             -2.3385,                  2.2),
-					(             -3.5244,                  4.8),
-					(              0.4035,                  6.2),
+					(             -7.3938,                    1),
+					(              1.9948,                  1.5),
+					(             -1.8487,                  2.2),
+					(             -4.1927,                  4.8),
+					(              1.4862,                  6.2),
 			};
 
 			#endregion Saturated densities and pressure

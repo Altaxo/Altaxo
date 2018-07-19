@@ -140,6 +140,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			_alpha0_n_const = -3.09382097259394;
 			_alpha0_n_tau = 3.25030211006367;
 			_alpha0_n_lntau = 3.003039265;
+			_alpha0_n_taulntau = 0;
 
 			_alpha0_Poly = new (double ni, double thetai)[]
 			{
