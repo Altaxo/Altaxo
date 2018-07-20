@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -400,7 +400,9 @@ namespace Altaxo.Gui.Scripting
 			if (successI && successD && successP)
 			{
 				m_TempScript.IndependentVariablesNames = independentNames;
+
 				m_TempScript.DependentVariablesNames = dependentNames;
+
 				m_TempScript.IsUsingUserDefinedParameterNames = _tempIsUsingUserDefinedParameters;
 				if (_tempIsUsingUserDefinedParameters)
 					m_TempScript.UserDefinedParameterNames = parameterNames;

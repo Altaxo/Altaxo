@@ -1,4 +1,4 @@
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -518,28 +518,108 @@ namespace Altaxo.Scripting
 						"\t{\r\n" +
 						"\t\tpublic MyFitFunction()\r\n" +
 						"\t\t{\r\n" +
-						this.IndependentDefinitionRegionStart +
+						this.DefinitionRegionIndentation + this.IndependentDefinitionRegionStart +
 						this.IndependentDefinitionRegionCore +
-						this.IndependentDefinitionRegionEnd +
-						this.DependentDefinitionRegionStart +
+						this.DefinitionRegionIndentation + this.IndependentDefinitionRegionEnd +
+						"\r\n" +
+						this.DefinitionRegionIndentation + this.DependentDefinitionRegionStart +
 						this.DependentDefinitionRegionCore +
-						this.DependentDefinitionRegionEnd +
-						this.ParameterDefinitionRegionStart +
+						this.DefinitionRegionIndentation + this.DependentDefinitionRegionEnd +
+						"\r\n" +
+						this.DefinitionRegionIndentation + this.ParameterDefinitionRegionStart +
 						this.ParameterDefinitionRegionCore +
-						this.ParameterDefinitionRegionEnd +
+						this.DefinitionRegionIndentation + this.ParameterDefinitionRegionEnd +
 						"\t\t}\r\n" +
 						"\r\n" +
 						"\t\tpublic override void Evaluate(double[] X, double[] P, double[] Y)\r\n" +
 						"\t\t{\r\n" +
-						IndependentAssignmentRegionStart +
+						AssignmentRegionIndentation + IndependentAssignmentRegionStart +
 						IndependentAssignmentRegionCore +
-						IndependentAssignmentRegionEnd +
-						ParameterAssignmentRegionStart +
+						AssignmentRegionIndentation + IndependentAssignmentRegionEnd +
+						"\r\n" +
+						AssignmentRegionIndentation + ParameterAssignmentRegionStart +
 						ParameterAssignmentRegionCore +
-						ParameterAssignmentRegionEnd +
-						DependentDeclarationRegionStart +
+						AssignmentRegionIndentation + ParameterAssignmentRegionEnd +
+						"\r\n" +
+						AssignmentRegionIndentation + DependentDeclarationRegionStart +
 						DependentDeclarationRegionCore +
-						DependentDeclarationRegionEnd;
+						AssignmentRegionIndentation + DependentDeclarationRegionEnd;
+			}
+		}
+
+		public string DefinitionRegionIndentation { get => "\t\t\t"; }
+
+		public string IndependentDefinitionRegionStart
+		{
+			get
+			{
+				return "#region Independent Variable Definition\r\n";
+			}
+		}
+
+		public string IndependentDefinitionRegionCore
+		{
+			get
+			{
+				var stb = new System.Text.StringBuilder();
+				stb.Append(DefinitionRegionIndentation);
+				stb.Append("_independentVariableNames = new string[]{");
+
+				for (int i = 0; i < this._IndependentVariablesNames.Length; i++)
+				{
+					stb.Append("\"" + this._IndependentVariablesNames[i] + "\"");
+					if ((i + 1) == this._IndependentVariablesNames.Length)
+						stb.Append("};\r\n");
+					else
+						stb.Append(",");
+				}
+
+				return stb.ToString();
+			}
+		}
+
+		public string IndependentDefinitionRegionEnd
+		{
+			get
+			{
+				return "#endregion //  Independent Variable Definition\r\n";
+			}
+		}
+
+		public string DependentDefinitionRegionStart
+		{
+			get
+			{
+				return "#region Dependent Variable Definition\r\n";
+			}
+		}
+
+		public string DependentDefinitionRegionCore
+		{
+			get
+			{
+				var stb = new System.Text.StringBuilder();
+				stb.Append(DefinitionRegionIndentation);
+				stb.Append("_dependentVariableNames = new string[]{");
+
+				for (int i = 0; i < this._DependentVariablesNames.Length; i++)
+				{
+					stb.Append("\"" + this._DependentVariablesNames[i] + "\"");
+					if ((i + 1) == this._DependentVariablesNames.Length)
+						stb.Append("};\r\n");
+					else
+						stb.Append(",");
+				}
+
+				return stb.ToString();
+			}
+		}
+
+		public string DependentDefinitionRegionEnd
+		{
+			get
+			{
+				return "#endregion //  Dependent Variable Definition\r\n";
 			}
 		}
 
@@ -547,7 +627,7 @@ namespace Altaxo.Scripting
 		{
 			get
 			{
-				return "\t\t#region Parameter Definition\r\n";
+				return "#region Parameter Definition\r\n";
 			}
 		}
 
@@ -555,9 +635,9 @@ namespace Altaxo.Scripting
 		{
 			get
 			{
-				System.Text.StringBuilder stb = new System.Text.StringBuilder();
-				stb.Append(
-						"\t\t_parameterNames = new string[]{");
+				var stb = new System.Text.StringBuilder();
+				stb.Append(DefinitionRegionIndentation);
+				stb.Append("_parameterNames = new string[]{");
 
 				for (int i = 0; i < this.NumberOfParameters; i++)
 				{
@@ -567,22 +647,6 @@ namespace Altaxo.Scripting
 				}
 				stb.Append("};\r\n");
 
-				/*
-stb.Append(
-	"\t\tpublic int NumberOfParameters\r\n" +
-	"\t\t{\r\n"+
-	"\t\t\tget\r\n"+
-	"\t\t\t{\r\n"+
-	"\t\t\t\treturn _parameterName.Length;\r\n"+
-	"\t\t\t}\r\n"+
-	"\t\t}\r\n"+
-	"\t\tpublic string ParameterName(int i)\r\n"+
-	"\t\t{\r\n"+
-	"\t\t\treturn _parameterName[i];\r\n"+
-	"\t\t}\r\n"
-	);
-	*/
-
 				return stb.ToString();
 			}
 		}
@@ -591,7 +655,43 @@ stb.Append(
 		{
 			get
 			{
-				return "\t\t#endregion // Parameter Definition\r\n\r\n";
+				return "#endregion // Parameter Definition\r\n";
+			}
+		}
+
+		public string AssignmentRegionIndentation { get => "\t\t\t"; }
+
+		public string IndependentAssignmentRegionStart
+		{
+			get
+			{
+				return "#region Independent Variable Assignment\r\n";
+			}
+		}
+
+		public string IndependentAssignmentRegionCore
+		{
+			get
+			{
+				System.Text.StringBuilder stb = new System.Text.StringBuilder();
+				for (int i = 0; i < this._IndependentVariablesNames.Length; i++)
+				{
+					stb.Append(AssignmentRegionIndentation);
+					stb.Append("double ");
+					stb.Append(this._IndependentVariablesNames[i]);
+					stb.Append(" = X[");
+					stb.Append(i.ToString());
+					stb.Append("];\r\n");
+				}
+				return stb.ToString();
+			}
+		}
+
+		public string IndependentAssignmentRegionEnd
+		{
+			get
+			{
+				return "#endregion //  Independent Variable Assignment\r\n";
 			}
 		}
 
@@ -599,7 +699,7 @@ stb.Append(
 		{
 			get
 			{
-				return "\t\t\t#region Parameter Assignment\r\n";
+				return "#region Parameter Assignment\r\n";
 			}
 		}
 
@@ -612,7 +712,7 @@ stb.Append(
 				{
 					for (int i = 0; i < this.NumberOfParameters; i++)
 					{
-						stb.Append("\t\t\t");
+						stb.Append(AssignmentRegionIndentation);
 						stb.Append("double ");
 						stb.Append(this.ParameterName(i));
 						stb.Append(" = P[");
@@ -628,59 +728,7 @@ stb.Append(
 		{
 			get
 			{
-				return "\t\t\t#endregion // Parameter Assignment\r\n\r\n";
-			}
-		}
-
-		public string DependentDefinitionRegionStart
-		{
-			get
-			{
-				return "\t\t#region Dependent Variable Definition\r\n";
-			}
-		}
-
-		public string DependentDefinitionRegionCore
-		{
-			get
-			{
-				System.Text.StringBuilder stb = new System.Text.StringBuilder();
-				stb.Append(
-						"\t\t_dependentVariableNames = new string[]{");
-
-				for (int i = 0; i < this._DependentVariablesNames.Length; i++)
-				{
-					stb.Append("\"" + this._DependentVariablesNames[i] + "\"");
-					if ((i + 1) == this._DependentVariablesNames.Length)
-						stb.Append("};\r\n");
-					else
-						stb.Append(",");
-				}
-
-				/*
-				stb.Append(
-					"\t\tpublic int NumberOfDependentVariables\r\n" +
-					"\t\t{\r\n"+
-					"\t\t\tget\r\n"+
-					"\t\t\t{\r\n"+
-					"\t\t\t\treturn _dependentVariableName.Length;\r\n"+
-					"\t\t\t}\r\n"+
-					"\t\t}\r\n"+
-					"\t\tpublic string DependentVariableName(int i)\r\n"+
-					"\t\t{\r\n"+
-					"\t\t\treturn _dependentVariableName[i];\r\n"+
-					"\t\t}\r\n"
-					);
-*/
-				return stb.ToString();
-			}
-		}
-
-		public string DependentDefinitionRegionEnd
-		{
-			get
-			{
-				return "\t\t#endregion //  Dependent Variable Definition\r\n\r\n";
+				return "#endregion // Parameter Assignment\r\n";
 			}
 		}
 
@@ -688,7 +736,7 @@ stb.Append(
 		{
 			get
 			{
-				return "\t\t\t#region ExpertsOnly - Dependent Variable Declaration\r\n";
+				return "#region ExpertsOnly - Dependent Variable Declaration\r\n";
 			}
 		}
 
@@ -696,10 +744,11 @@ stb.Append(
 		{
 			get
 			{
-				System.Text.StringBuilder stb = new System.Text.StringBuilder();
+				var stb = new System.Text.StringBuilder();
 				for (int i = 0; i < this._DependentVariablesNames.Length; i++)
 				{
-					stb.Append("\t\t\tdouble ");
+					stb.Append(AssignmentRegionIndentation);
+					stb.Append("double ");
 					stb.Append(this._DependentVariablesNames[i]);
 					stb.Append(";\r\n");
 				}
@@ -711,7 +760,7 @@ stb.Append(
 		{
 			get
 			{
-				return "\t\t\t#endregion // Dependent Variable Declaration\r\n\r\n";
+				return "#endregion // Dependent Variable Declaration\r\n";
 			}
 		}
 
@@ -719,7 +768,7 @@ stb.Append(
 		{
 			get
 			{
-				return "\t\t\t#region Dependent Variable Assignment\r\n";
+				return "#region Dependent Variable Assignment\r\n";
 			}
 		}
 
@@ -730,7 +779,7 @@ stb.Append(
 				System.Text.StringBuilder stb = new System.Text.StringBuilder();
 				for (int i = 0; i < this._DependentVariablesNames.Length; i++)
 				{
-					stb.Append("\t\t\t");
+					stb.Append(AssignmentRegionIndentation);
 					stb.Append("Y[" + i.ToString() + "] = ");
 					stb.Append(this._DependentVariablesNames[i]);
 					stb.Append(";\r\n");
@@ -743,93 +792,7 @@ stb.Append(
 		{
 			get
 			{
-				return "\t\t\t#endregion // Dependent Variable Assignment\r\n\r\n";
-			}
-		}
-
-		public string IndependentDefinitionRegionStart
-		{
-			get
-			{
-				return "\t\t#region Independent Variable Definition\r\n";
-			}
-		}
-
-		public string IndependentDefinitionRegionCore
-		{
-			get
-			{
-				System.Text.StringBuilder stb = new System.Text.StringBuilder();
-				stb.Append(
-						"\t\t_independentVariableNames = new string[]{");
-
-				for (int i = 0; i < this._IndependentVariablesNames.Length; i++)
-				{
-					stb.Append("\"" + this._IndependentVariablesNames[i] + "\"");
-					if ((i + 1) == this._IndependentVariablesNames.Length)
-						stb.Append("};\r\n");
-					else
-						stb.Append(",");
-				}
-
-				/*
-				stb.Append(
-					"\t\tpublic int NumberOfIndependentVariables\r\n" +
-					"\t\t{\r\n"+
-					"\t\t\tget\r\n"+
-					"\t\t\t{\r\n"+
-					"\t\t\t\treturn _independentVariableName.Length;\r\n"+
-					"\t\t\t}\r\n"+
-					"\t\t}\r\n"+
-					"\t\tpublic string IndependentVariableName(int i)\r\n"+
-					"\t\t{\r\n"+
-					"\t\t\treturn _independentVariableName[i];\r\n"+
-					"\t\t}\r\n"
-					);
-*/
-				return stb.ToString();
-			}
-		}
-
-		public string IndependentDefinitionRegionEnd
-		{
-			get
-			{
-				return "\t\t#endregion //  Independent Variable Definition\r\n\r\n";
-			}
-		}
-
-		public string IndependentAssignmentRegionStart
-		{
-			get
-			{
-				return "\t\t\t#region Independent Variable Assignment\r\n";
-			}
-		}
-
-		public string IndependentAssignmentRegionCore
-		{
-			get
-			{
-				System.Text.StringBuilder stb = new System.Text.StringBuilder();
-				for (int i = 0; i < this._IndependentVariablesNames.Length; i++)
-				{
-					stb.Append("\t\t\t");
-					stb.Append("double ");
-					stb.Append(this._IndependentVariablesNames[i]);
-					stb.Append(" = X[");
-					stb.Append(i.ToString());
-					stb.Append("];\r\n");
-				}
-				return stb.ToString();
-			}
-		}
-
-		public string IndependentAssignmentRegionEnd
-		{
-			get
-			{
-				return "\t\t\t#endregion //  Independent Variable Assignment\r\n\r\n";
+				return "#endregion // Dependent Variable Assignment\r\n";
 			}
 		}
 
@@ -873,9 +836,10 @@ stb.Append(
 			get
 			{
 				return
-						DependentAssignmentRegionStart +
+
+						AssignmentRegionIndentation + DependentAssignmentRegionStart +
 						DependentAssignmentRegionCore +
-						DependentAssignmentRegionEnd +
+						AssignmentRegionIndentation + DependentAssignmentRegionEnd +
 						"\t\t} // method\r\n" +
 						"\t} // class\r\n" +
 						"} //namespace\r\n" +
@@ -914,6 +878,7 @@ stb.Append(
 				sb = new System.Text.StringBuilder();
 				sb.Append(this.ScriptText.Substring(0, first));
 				sb.Append(this.DependentDefinitionRegionCore);
+				sb.Append(this.DefinitionRegionIndentation);
 				sb.Append(this.ScriptText.Substring(last));
 				this.ScriptText = sb.ToString();
 
@@ -928,6 +893,7 @@ stb.Append(
 				sb = new System.Text.StringBuilder();
 				sb.Append(this.ScriptText.Substring(0, first));
 				sb.Append(this.DependentDeclarationRegionCore);
+				sb.Append(this.DefinitionRegionIndentation);
 				sb.Append(this.ScriptText.Substring(last));
 				this.ScriptText = sb.ToString();
 
@@ -941,6 +907,7 @@ stb.Append(
 				sb = new System.Text.StringBuilder();
 				sb.Append(this.ScriptText.Substring(0, first));
 				sb.Append(this.DependentAssignmentRegionCore);
+				sb.Append(this.AssignmentRegionIndentation);
 				sb.Append(this.ScriptText.Substring(last));
 				this.ScriptText = sb.ToString();
 			}
@@ -967,6 +934,7 @@ stb.Append(
 				sb = new System.Text.StringBuilder();
 				sb.Append(this.ScriptText.Substring(0, first));
 				sb.Append(this.IndependentDefinitionRegionCore);
+				sb.Append(this.DefinitionRegionIndentation);
 				sb.Append(this.ScriptText.Substring(last));
 				this.ScriptText = sb.ToString();
 
@@ -981,6 +949,7 @@ stb.Append(
 				sb = new System.Text.StringBuilder();
 				sb.Append(this.ScriptText.Substring(0, first));
 				sb.Append(this.IndependentAssignmentRegionCore);
+				sb.Append(this.AssignmentRegionIndentation);
 				sb.Append(this.ScriptText.Substring(last));
 				this.ScriptText = sb.ToString();
 			}
@@ -1031,6 +1000,7 @@ stb.Append(
 			sb = new System.Text.StringBuilder();
 			sb.Append(this.ScriptText.Substring(0, first));
 			sb.Append(this.ParameterDefinitionRegionCore);
+			sb.Append(this.DefinitionRegionIndentation);
 			sb.Append(this.ScriptText.Substring(last));
 			this.ScriptText = sb.ToString();
 
@@ -1044,6 +1014,7 @@ stb.Append(
 			sb = new System.Text.StringBuilder();
 			sb.Append(this.ScriptText.Substring(0, first));
 			sb.Append(this.ParameterAssignmentRegionCore);
+			sb.Append(this.AssignmentRegionIndentation);
 			sb.Append(this.ScriptText.Substring(last));
 			this.ScriptText = sb.ToString();
 		}
