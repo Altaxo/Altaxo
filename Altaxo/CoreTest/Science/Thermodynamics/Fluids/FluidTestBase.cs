@@ -140,8 +140,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			// for each point between triple point and critical point,
 			// the iteration of pressure must work!
 
-			double startTemperature = Math.Ceiling(_fluid.TriplePointTemperature);
-			double endTemperature = Math.Floor(_fluid.CriticalPointTemperature);
+			double startTemperature = Math.Max(Math.Ceiling(_fluid.TriplePointTemperature), _fluid.LowerTemperatureLimit);
+			double endTemperature = Math.Min(Math.Floor(_fluid.CriticalPointTemperature), _fluid.UpperTemperatureLimit);
 
 			for (double temperature = startTemperature; temperature <= endTemperature; temperature += 0.25)
 			{

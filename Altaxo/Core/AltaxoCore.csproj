@@ -802,6 +802,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Cis_2_butene.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Cyclohexane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Cyclopentane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Decamethylcyclopentasiloxane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Decamethyltetrasiloxane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Decane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Deuterium.cs" />
@@ -810,6 +811,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Diethanolamine.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Difluoromethane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\DimethylEsterCarbonicAcid.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Dodecamethylcyclohexasiloxane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Dodecane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Ethane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Ethene.cs" />
@@ -850,6 +852,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Nitrogen.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Nonane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\N_butane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\N_propylcyclohexane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Octafluoropropane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Octamethylcyclotetrasiloxane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Octamethyltrisiloxane.cs" />

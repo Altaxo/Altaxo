@@ -372,6 +372,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Cis_2_butene.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Cyclohexane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Cyclopentane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Decamethylcyclopentasiloxane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Decamethyltetrasiloxane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Decane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Deuterium.cs" />
@@ -380,6 +381,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Diethanolamine.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Difluoromethane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_DimethylEsterCarbonicAcid.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Dodecamethylcyclohexasiloxane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Dodecane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Ethane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Ethene.cs" />
@@ -420,6 +422,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Nitrogen.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Nonane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_N_butane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_N_propylcyclohexane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Octafluoropropane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Octamethylcyclotetrasiloxane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Octamethyltrisiloxane.cs" />
