@@ -62,11 +62,11 @@ namespace Altaxo.Graph.Graph2D
 		public void InitializeOldValues(Altaxo.Graph.Gdi.GraphDocument doc)
 		{
 			OldRootLayerSize = doc.RootLayer.Size;
-			var oldFont = doc.PropertyBagNotNull.GetValue(Altaxo.Graph.Gdi.GraphDocument.PropertyKeyDefaultFont, null);
-			OldStandardFontFamily = oldFont?.FontFamilyName;
-			OldStandardFontSize = oldFont?.Size;
-			OldLineThickness = Altaxo.Graph.Gdi.GraphDocument.GetDefaultPenWidth(doc.PropertyBagNotNull);
-			OldMajorTickLength = Altaxo.Graph.Gdi.GraphDocument.GetDefaultMajorTickLength(doc.PropertyBagNotNull);
+			var oldFont = Altaxo.Graph.Gdi.GraphDocument.GetDefaultFont(doc.GetPropertyContext());
+			OldStandardFontFamily = oldFont.FontFamilyName;
+			OldStandardFontSize = oldFont.Size;
+			OldLineThickness = Altaxo.Graph.Gdi.GraphDocument.GetDefaultPenWidth(doc.GetPropertyContext());
+			OldMajorTickLength = Altaxo.Graph.Gdi.GraphDocument.GetDefaultMajorTickLength(doc.GetPropertyContext());
 		}
 
 		/// <summary>
