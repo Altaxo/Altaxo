@@ -814,6 +814,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\DeuteriumOxide.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Dichlorodifluoromethane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Dichloroethane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Dichlorofluoromethane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Diethanolamine.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\DiethylEther.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Difluoromethane.cs" />
@@ -841,6 +842,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Fluid_1_4_dimethylbenzene.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Fluid_1_butene.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Fluid_1_chloro_1_1_difluoroethane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Fluid_1_chloro_1_2_2_2_tetrafluoroethane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Fluid_1_chloro_3_3_3_trifluoroprop_1_ene.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Fluid_2_2_2_trifluoroethyl_difluoromethyl_ether.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Fluid_2_2_4_trimethylpentane.cs" />
@@ -865,11 +867,15 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Methane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Methoxymethane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Methylbenzene.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\MethylCis_9_octadecenoate.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Methylcyclohexane.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\MethylHexadecanoate.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\MethylOctadecanoate.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\MethylTrifluoromethylEther.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Methyl_heptafluoropropyl_ether.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Methyl_pentafluoroethyl_ether.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Methyl_Z_Z_Z__9_12_15_octadecatrienoate.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Methyl_Z_Z__9_12_octadecadienoate.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Neon.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Nitrogen.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Nonane.cs" />
@@ -887,6 +893,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Propane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Propanone.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Propene.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\Fluids\Propyne.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\SulfurDioxide.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Tetradecamethylhexasiloxane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Tetrafluoromethane.cs" />
