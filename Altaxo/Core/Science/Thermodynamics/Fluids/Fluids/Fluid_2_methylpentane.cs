@@ -107,7 +107,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointSaturatedVaporMoleDensity { get; } = 7.71710650450453E-09;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
-		public override double? NormalBoilingPointTemperature { get; } = 333.362052534715;
+		public override double? NormalBoilingPointTemperature { get; } = 333.362052536146;
 
 		/// <summary>Gets the sublimation temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalSublimationPointTemperature { get; } = null;
@@ -136,8 +136,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			_alpha0_n_const = 6.92591239190469;
-			_alpha0_n_tau = -0.312862967900902;
+			_alpha0_n_const = 6.92591239201021;
+			_alpha0_n_tau = -0.312862967973723;
 			_alpha0_n_lntau = 3;
 			_alpha0_n_taulntau = 0;
 

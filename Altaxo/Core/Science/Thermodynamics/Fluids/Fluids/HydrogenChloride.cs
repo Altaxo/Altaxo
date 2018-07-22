@@ -135,7 +135,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
 			_alpha0_n_const = -4.07986174025576;
-			_alpha0_n_tau = 4.03177000030705;
+			_alpha0_n_tau = 4.03177000030704;
 			_alpha0_n_lntau = 2.5;
 			_alpha0_n_taulntau = 0;
 

@@ -373,6 +373,9 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double reducingPressure = (WorkingUniversalGasConstant * ReducingTemperature * ReducingMoleDensity); // we calculate everything with reduced pressure prL and prV. This is the reducing pressure.
 			double prL = 0, prV = 0; // reduced pressures for liquid and vapor.
 
+			double previousError = double.PositiveInfinity;
+			double previousDeltaL = 0, previousDeltaV = 0, previousPrL = 0, previousPrV = 0;
+
 			for (int i = 0; i < 20; ++i)
 			{
 				var PhiRL = PhiR_OfReducedVariables(deltaL, tau);
@@ -394,7 +397,19 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				var relativeError = GetRelativeErrorBetween(prL, prV) + GetRelativeErrorBetween(fugrL, fugrV);
 				if (relativeError < relativeAccuracy)
 				{
-					break;
+					return (deltaL * ReducingMoleDensity, deltaV * ReducingMoleDensity, 0.5 * (prL + prV) * reducingPressure);
+				}
+				else if (relativeError < 1E-6 && relativeError >= previousError)
+				{
+					return (previousDeltaL * ReducingMoleDensity, previousDeltaV * ReducingMoleDensity, 0.5 * (previousPrL + previousPrV) * reducingPressure);
+				}
+				else
+				{
+					previousDeltaL = deltaL;
+					previousDeltaV = deltaV;
+					previousPrL = prL;
+					previousPrV = prV;
+					previousError = relativeError;
 				}
 
 				var deltaLdeltaLPhiR_deltaLdeltaL = deltaL * deltaL * PhiR_deltadelta_OfReducedVariables(deltaL, tau);
@@ -436,7 +451,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				deltaV -= deltaVDiff;
 			} // iteration
 
-			return (deltaL * ReducingMoleDensity, deltaV * ReducingMoleDensity, 0.5 * (prL + prV) * reducingPressure);
+			return (double.NaN, double.NaN, double.NaN);
 		}
 
 		public static double GetRelativeErrorBetween(double x, double y)

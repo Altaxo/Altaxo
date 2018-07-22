@@ -112,7 +112,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double? NormalBoilingPointTemperature { get; } = null;
 
 		/// <summary>Gets the sublimation temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
-		public override double? NormalSublimationPointTemperature { get; } = 194.658572335143;
+		public override double? NormalSublimationPointTemperature { get; } = 194.686;
 
 		/// <summary>Gets the acentric factor.</summary>
 		public override double AcentricFactor { get; } = 0.22394;
