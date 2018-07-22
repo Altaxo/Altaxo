@@ -136,8 +136,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			_alpha0_n_const = 5.98152412733288;
-			_alpha0_n_tau = -0.524778348984634;
+			_alpha0_n_const = 5.98152412733287;
+			_alpha0_n_tau = -0.524778348984639;
 			_alpha0_n_lntau = 4.2430504;
 			_alpha0_n_taulntau = 0;
 
@@ -175,13 +175,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(         0.190290995,                0.443,                    3),
 			};
 
-			_alphaR_Exp = new(double ni, double ti, int di, int li)[]
+			_alphaR_Exp = new(double ni, double ti, int di, double gi, int li)[]
 			{
-					(         -1.06376565,                 2.62,                    1,                    2),
-					(        -0.209934069,                  2.5,                    3,                    2),
-					(          1.25159879,                  1.2,                    2,                    1),
-					(        -0.951328356,                    3,                    2,                    2),
-					(       -0.0269980032,                0.778,                    7,                    1),
+					(         -1.06376565,                 2.62,                    1,                   -1,                    2),
+					(        -0.209934069,                  2.5,                    3,                   -1,                    2),
+					(          1.25159879,                  1.2,                    2,                   -1,                    1),
+					(        -0.951328356,                    3,                    2,                   -1,                    2),
+					(       -0.0269980032,                0.778,                    7,                   -1,                    1),
 			};
 
 			_alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]

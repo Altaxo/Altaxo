@@ -426,7 +426,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 								("Cv", material.MoleSpecificIsochoricHeatCapacity_FromMoleDensityAndTemperature, 4, 1E-7, 1E-7),
 								("SpeedOfSound", material.SpeedOfSound_FromMoleDensityAndTemperature,  6, 1E-7, 0.01),
 								("InternalEnergy", material.MoleSpecificInternalEnergy_FromMoleDensityAndTemperature, 1, 5E-7, 1E-5),
-								("Enthalpy", material.MoleSpecificEnthalpy_FromMoleDensityAndTemperature, 2, 5E-7, 1E-7 ),
+								("Enthalpy", material.MoleSpecificEnthalpy_FromMoleDensityAndTemperature, 2, 5E-7, 1E-5 ),
 								("Entropy", material.MoleSpecificEntropy_FromMoleDensityAndTemperature, 3, 5E-7, 1E-7),
 								("Cp", material.MoleSpecificIsobaricHeatCapacity_FromMoleDensityAndTemperature, 5, 1E-7, 1E-7),
 		};

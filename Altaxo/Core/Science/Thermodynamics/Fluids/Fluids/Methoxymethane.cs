@@ -101,7 +101,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 19149.5234686767;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.00201953171982852;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.00201953171982851;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 248.367804166716;
@@ -133,7 +133,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			_alpha0_n_const = -1.98097043050851;
+			_alpha0_n_const = -1.9809704305085;
 			_alpha0_n_tau = 3.17121661024589;
 			_alpha0_n_lntau = 3.039;
 			_alpha0_n_taulntau = 0;
@@ -170,14 +170,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(          0.17035607,                 0.45,                    3),
 			};
 
-			_alphaR_Exp = new(double ni, double ti, int di, int li)[]
+			_alphaR_Exp = new(double ni, double ti, int di, double gi, int li)[]
 			{
-					(         -0.94642918,                 2.83,                    1,                    2),
-					(        -0.099250514,                  1.5,                    3,                    2),
-					(           1.1264071,                1.235,                    2,                    1),
-					(         -0.76936548,                2.675,                    2,                    2),
-					(        -0.020717696,               0.7272,                    7,                    1),
-					(          0.24527037,                1.816,                    1,                    1),
+					(         -0.94642918,                 2.83,                    1,                   -1,                    2),
+					(        -0.099250514,                  1.5,                    3,                   -1,                    2),
+					(           1.1264071,                1.235,                    2,                   -1,                    1),
+					(         -0.76936548,                2.675,                    2,                   -1,                    2),
+					(        -0.020717696,               0.7272,                    7,                   -1,                    1),
+					(          0.24527037,                1.816,                    1,                   -1,                    1),
 			};
 
 			_alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]

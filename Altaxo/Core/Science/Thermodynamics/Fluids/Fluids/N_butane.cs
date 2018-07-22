@@ -105,7 +105,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 12645.0621333144;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.000593502699823472;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.000593502699823465;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 272.659861908891;
@@ -137,8 +137,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			_alpha0_n_const = -5.42495953152438;
-			_alpha0_n_tau = 4.91949511155668;
+			_alpha0_n_const = -5.42495953152439;
+			_alpha0_n_tau = 4.91949511155669;
 			_alpha0_n_lntau = 3.24680487;
 			_alpha0_n_taulntau = 0;
 
@@ -176,24 +176,24 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(   0.032734072508724,                 0.75,                    4),
 			};
 
-			_alphaR_Exp = new(double ni, double ti, int di, int li)[]
+			_alphaR_Exp = new(double ni, double ti, int di, double gi, int li)[]
 			{
-					(    0.95571232982005,                    2,                    1,                    1),
-					(    -1.0003385753419,                  2.5,                    1,                    1),
-					(   0.085581548803855,                  2.5,                    2,                    1),
-					(  -0.025147918369616,                  1.5,                    7,                    1),
-					( -0.0015202958578918,                    1,                    8,                    1),
-					(   0.004706068232642,                  1.5,                    8,                    1),
-					(  -0.097845414174006,                    4,                    1,                    2),
-					(   -0.04831790415876,                    7,                    2,                    2),
-					(    0.17841271865468,                    3,                    3,                    2),
-					(   0.018173836739334,                    7,                    3,                    2),
-					(   -0.11399068074953,                    3,                    4,                    2),
-					(   0.019329896666669,                    1,                    5,                    2),
-					(   0.001157587740101,                    6,                    5,                    2),
-					( 0.00015253808698116,                    0,                   10,                    2),
-					(  -0.043688558458471,                    6,                    2,                    3),
-					( -0.0082403190629989,                   13,                    6,                    3),
+					(    0.95571232982005,                    2,                    1,                   -1,                    1),
+					(    -1.0003385753419,                  2.5,                    1,                   -1,                    1),
+					(   0.085581548803855,                  2.5,                    2,                   -1,                    1),
+					(  -0.025147918369616,                  1.5,                    7,                   -1,                    1),
+					( -0.0015202958578918,                    1,                    8,                   -1,                    1),
+					(   0.004706068232642,                  1.5,                    8,                   -1,                    1),
+					(  -0.097845414174006,                    4,                    1,                   -1,                    2),
+					(   -0.04831790415876,                    7,                    2,                   -1,                    2),
+					(    0.17841271865468,                    3,                    3,                   -1,                    2),
+					(   0.018173836739334,                    7,                    3,                   -1,                    2),
+					(   -0.11399068074953,                    3,                    4,                   -1,                    2),
+					(   0.019329896666669,                    1,                    5,                   -1,                    2),
+					(   0.001157587740101,                    6,                    5,                   -1,                    2),
+					( 0.00015253808698116,                    0,                   10,                   -1,                    2),
+					(  -0.043688558458471,                    6,                    2,                   -1,                    3),
+					( -0.0082403190629989,                   13,                    6,                   -1,                    3),
 			};
 
 			_alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]

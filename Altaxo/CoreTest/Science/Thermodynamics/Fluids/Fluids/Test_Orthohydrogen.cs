@@ -56,7 +56,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
     _testDataTriplePointLiquidMoleDensity = 38200.3216488919;
 
-    _testDataTriplePointVaporMoleDensity = 65.841641572708;
+    _testDataTriplePointVaporMoleDensity = 65.8416415727076;
 
     _testDataCriticalPointTemperature = 33.22;
 

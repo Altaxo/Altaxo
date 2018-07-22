@@ -115,15 +115,6 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// </summary>
 		protected (double ni, double thetai)[] _alpha0_Exp = _emptyDoubleDoubleArray;
 
-		protected void RescaleAlpha0ExpThetaWithCriticalTemperature()
-		{
-			for (int i = 0; i < _alpha0_Exp.Length; ++i)
-			{
-				var (ni, thetai) = _alpha0_Exp[i];
-				_alpha0_Exp[i] = (ni, thetai / CriticalPointTemperature);
-			}
-		}
-
 		/// <summary>The prefactors outside and inside the argument of the  Cosh terms in the equation of the ideal part of the reduced Helmholtz energy.</summary>
 		protected (double ni, double thetai)[] _alpha0_Cosh = _emptyDoubleDoubleArray;
 
@@ -310,8 +301,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Parameter for the exponential terms of the reduced Helmholtz energy.
+		/// term = ni * tau^ti * delta^di * Exp(gi * delta^li)
+		/// with gi normally equal to -1.
 		/// </summary>
-		protected (double ni, double ti, int di, int li)[] _alphaR_Exp;
+		protected (double ni, double ti, int di, double gi, int li)[] _alphaR_Exp;
 
 		#endregion 2nd sum term
 
@@ -353,8 +346,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum2 = 0;
 			for (int i = 0; i < pr2.Length; ++i)
 			{
-				var (ni, ti, di, li) = pr2[i];
-				sum2 += ni * Pow(delta, di) * Math.Pow(tau, ti) * Math.Exp(-Pow(delta, li));
+				var (ni, ti, di, gi, li) = pr2[i];
+				sum2 += ni * Pow(delta, di) * Math.Pow(tau, ti) * Math.Exp(gi * Pow(delta, li));
 			}
 
 			double sum3 = 0;
@@ -401,8 +394,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum2 = 0;
 			for (int i = 0; i < pr2.Length; ++i)
 			{
-				var (ni, ti, di, ci) = pr2[i];
-				sum2 += ni * Math.Exp(-Pow(delta, ci)) * (Pow(delta, di - 1) * Math.Pow(tau, ti) * (di - ci * Pow(delta, ci)));
+				var (ni, ti, di, gi, li) = pr2[i];
+				sum2 += ni * Math.Pow(tau, ti) * Pow(delta, di - 1) * Math.Exp(gi * Pow(delta, li)) *
+					(
+					di + Pow(delta, li) * gi * li
+					);
 			}
 
 			double sum3 = 0;
@@ -457,12 +453,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum2 = 0;
 			for (int i = 0; i < pr2.Length; ++i)
 			{
-				var (ni, ti, di, li) = pr2[i];
-				sum2 += ni * Math.Exp(-Pow(delta, li)) *
-								(
-								Pow(delta, di - 2) * Math.Pow(tau, ti) *
-								((di - li * Pow(delta, li)) * (di - 1 - li * Pow(delta, li)) - Pow2(li) * Pow(delta, li))
-								);
+				var (ni, ti, di, gi, li) = pr2[i];
+				sum2 += ni * Math.Pow(tau, ti) * Pow(delta, di - 2) * Math.Exp(gi * Pow(delta, li)) *
+					(
+					Pow2(di) + Pow(delta, li) * gi * li * (-1 + li + Pow(delta, li) * gi * li) +
+					di * (-1 + 2 * Pow(delta, li) * gi * li)
+					);
 			}
 
 			double sum3 = 0;
@@ -553,8 +549,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum2 = 0;
 			for (int i = 0; i < pr2.Length; ++i)
 			{
-				var (ni, ti, di, ci) = pr2[i];
-				sum2 += ni * ti * Pow(delta, di) * Math.Pow(tau, ti - 1) * Math.Exp(-Pow(delta, ci));
+				var (ni, ti, di, gi, li) = pr2[i];
+				sum2 += ni * Math.Pow(tau, ti - 1) * Pow(delta, di) * Math.Exp(gi * Pow(delta, li)) *
+					(
+					ti
+					);
 			}
 
 			double sum3 = 0;
@@ -613,9 +612,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum2 = 0;
 			for (int i = 0; i < pr2.Length; ++i)
 			{
-				var (ni, ti, di, ci) = pr2[i];
-				sum2 += ni * ti * (ti - 1) * Pow(delta, di) * Math.Pow(tau, ti - 2) *
-								Math.Exp(-Pow(delta, ci));
+				var (ni, ti, di, gi, li) = pr2[i];
+				sum2 += ni * Math.Pow(tau, ti - 2) * Pow(delta, di) * Math.Exp(gi * Pow(delta, li)) *
+					(
+					ti * (ti - 1)
+					);
 			}
 
 			double sum3 = 0;
@@ -686,9 +687,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			double sum2 = 0;
 			for (int i = 0; i < pr2.Length; ++i)
 			{
-				var (ni, ti, di, ci) = pr2[i];
-				sum2 += ni * ti * (Pow(delta, di - 1) * Math.Pow(tau, ti - 1) * Math.Exp(-Pow(delta, ci)) *
-					(di - ci * Pow(delta, ci)));
+				var (ni, ti, di, gi, li) = pr2[i];
+				sum2 += ni * Math.Pow(tau, ti - 1) * Pow(delta, di - 1) * Math.Exp(gi * Pow(delta, li)) *
+					(
+					(di + Pow(delta, li) * gi * li) * ti
+					);
 			}
 
 			double sum3 = 0;

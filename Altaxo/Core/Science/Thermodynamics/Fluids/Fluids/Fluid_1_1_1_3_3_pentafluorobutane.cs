@@ -171,14 +171,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(           0.0665967,                    1,                    4),
 			};
 
-			_alphaR_Exp = new(double ni, double ti, int di, int li)[]
+			_alphaR_Exp = new(double ni, double ti, int di, double gi, int li)[]
 			{
-					(            -1.19383,                 3.35,                    1,                    1),
-					(            0.635935,                  2.5,                    3,                    1),
-					(            0.461728,                 0.96,                    6,                    1),
-					(           -0.533472,                 1.07,                    6,                    1),
-					(            -1.07101,                  5.6,                    2,                    2),
-					(             0.13929,                  6.9,                    3,                    2),
+					(            -1.19383,                 3.35,                    1,                   -1,                    1),
+					(            0.635935,                  2.5,                    3,                   -1,                    1),
+					(            0.461728,                 0.96,                    6,                   -1,                    1),
+					(           -0.533472,                 1.07,                    6,                   -1,                    1),
+					(            -1.07101,                  5.6,                    2,                   -1,                    2),
+					(             0.13929,                  6.9,                    3,                   -1,                    2),
 			};
 
 			_alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]

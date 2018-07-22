@@ -136,8 +136,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			_alpha0_n_const = 38.9947884868701;
-			_alpha0_n_tau = -103.445172991678;
+			_alpha0_n_const = 38.994788490953;
+			_alpha0_n_tau = -103.44517299462;
 			_alpha0_n_lntau = 3;
 			_alpha0_n_taulntau = 0;
 
@@ -173,14 +173,14 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(       0.00030713573,                0.875,                    7),
 			};
 
-			_alphaR_Exp = new(double ni, double ti, int di, int li)[]
+			_alphaR_Exp = new(double ni, double ti, int di, double gi, int li)[]
 			{
-					(          0.52656857,                0.625,                    2,                    1),
-					(         0.019362863,                 1.75,                    5,                    1),
-					(         -0.58939427,                3.625,                    1,                    2),
-					(         -0.14069964,                3.625,                    4,                    2),
-					(       -0.0078966331,                 14.5,                    3,                    3),
-					(        0.0033036598,                   12,                    4,                    3),
+					(          0.52656857,                0.625,                    2,                   -1,                    1),
+					(         0.019362863,                 1.75,                    5,                   -1,                    1),
+					(         -0.58939427,                3.625,                    1,                   -1,                    2),
+					(         -0.14069964,                3.625,                    4,                   -1,                    2),
+					(       -0.0078966331,                 14.5,                    3,                   -1,                    3),
+					(        0.0033036598,                   12,                    4,                   -1,                    3),
 			};
 
 			_alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]

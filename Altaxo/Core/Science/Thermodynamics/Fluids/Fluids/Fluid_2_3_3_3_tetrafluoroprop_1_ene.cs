@@ -103,7 +103,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 11633.1073088325;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 17.5835255519605;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 17.5835255519606;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 243.664873779363;
@@ -172,13 +172,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(           0.1758022,                 0.38,                    3),
 			};
 
-			_alphaR_Exp = new(double ni, double ti, int di, int li)[]
+			_alphaR_Exp = new(double ni, double ti, int di, double gi, int li)[]
 			{
-					(           -1.210006,                 2.28,                    1,                    2),
-					(          -0.6177084,                 1.76,                    3,                    2),
-					(           0.6805262,                 0.97,                    2,                    1),
-					(          -0.6968555,                 2.44,                    2,                    2),
-					(         -0.02695779,                 1.05,                    7,                    1),
+					(           -1.210006,                 2.28,                    1,                   -1,                    2),
+					(          -0.6177084,                 1.76,                    3,                   -1,                    2),
+					(           0.6805262,                 0.97,                    2,                   -1,                    1),
+					(          -0.6968555,                 2.44,                    2,                   -1,                    2),
+					(         -0.02695779,                 1.05,                    7,                   -1,                    1),
 			};
 
 			_alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]

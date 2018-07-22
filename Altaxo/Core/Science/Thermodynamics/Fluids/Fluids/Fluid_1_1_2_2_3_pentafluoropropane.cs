@@ -104,7 +104,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 12207.0077842969;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.0444733878192058;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 0.0444733878192057;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 298.412168948695;
@@ -172,13 +172,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(          0.18222346,                 0.67,                    3),
 			};
 
-			_alphaR_Exp = new(double ni, double ti, int di, int li)[]
+			_alphaR_Exp = new(double ni, double ti, int di, double gi, int li)[]
 			{
-					(           -1.063228,                 1.92,                    1,                    2),
-					(           -0.223149,                    2,                    3,                    2),
-					(             1.18738,                  1.5,                    2,                    1),
-					(          -0.9772383,                 1.93,                    2,                    2),
-					(         -0.02296938,                 1.06,                    7,                    1),
+					(           -1.063228,                 1.92,                    1,                   -1,                    2),
+					(           -0.223149,                    2,                    3,                   -1,                    2),
+					(             1.18738,                  1.5,                    2,                   -1,                    1),
+					(          -0.9772383,                 1.93,                    2,                   -1,                    2),
+					(         -0.02296938,                 1.06,                    7,                   -1,                    1),
 			};
 
 			_alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]

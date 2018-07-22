@@ -174,16 +174,16 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(         0.049587209,                1.375,                    2),
 			};
 
-			_alphaR_Exp = new(double ni, double ti, int di, int li)[]
+			_alphaR_Exp = new(double ni, double ti, int di, double gi, int li)[]
 			{
-					(       5.5407101E-08,                    0,                    1,                    1),
-					(          0.99754712,                2.375,                    1,                    1),
-					(           1.5774025,                    2,                    2,                    1),
-					(        0.0013108354,                2.125,                    5,                    1),
-					(         -0.59326961,                  3.5,                    1,                    2),
-					(        -0.093001876,                  6.5,                    1,                    2),
-					(         -0.17960228,                 4.75,                    4,                    2),
-					(        -0.022560853,                 12.5,                    2,                    3),
+					(       5.5407101E-08,                    0,                    1,                   -1,                    1),
+					(          0.99754712,                2.375,                    1,                   -1,                    1),
+					(           1.5774025,                    2,                    2,                   -1,                    1),
+					(        0.0013108354,                2.125,                    5,                   -1,                    1),
+					(         -0.59326961,                  3.5,                    1,                   -1,                    2),
+					(        -0.093001876,                  6.5,                    1,                   -1,                    2),
+					(         -0.17960228,                 4.75,                    4,                   -1,                    2),
+					(        -0.022560853,                 12.5,                    2,                   -1,                    3),
 			};
 
 			_alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]

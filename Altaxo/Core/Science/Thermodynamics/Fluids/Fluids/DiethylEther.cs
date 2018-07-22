@@ -136,8 +136,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			_alpha0_n_const = 7.03041163432811;
-			_alpha0_n_tau = 0.509524787276231;
+			_alpha0_n_const = 7.03041163432812;
+			_alpha0_n_tau = 0.509524787276232;
 			_alpha0_n_lntau = 3.362810483;
 			_alpha0_n_taulntau = 0;
 
@@ -174,17 +174,17 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(  0.0044161890982677,                 1.25,                    5),
 			};
 
-			_alphaR_Exp = new(double ni, double ti, int di, int li)[]
+			_alphaR_Exp = new(double ni, double ti, int di, double gi, int li)[]
 			{
-					(    -1.5395161186826,                2.375,                    1,                    1),
-					(     1.1560605212975,                    3,                    1,                    1),
-					(  -0.018450401885875,                2.625,                    2,                    1),
-					(   -0.10180059922897,                1.875,                    5,                    1),
-					(   -0.40359870380574,                  4.5,                    1,                    2),
-					(  0.0021305557123223,                 5.75,                    3,                    2),
-					(   -0.15474197558782,                5.375,                    4,                    2),
-					(   0.012095055234488,                 2.75,                    5,                    2),
-					(   -0.01431063712021,                 14.5,                    2,                    3),
+					(    -1.5395161186826,                2.375,                    1,                   -1,                    1),
+					(     1.1560605212975,                    3,                    1,                   -1,                    1),
+					(  -0.018450401885875,                2.625,                    2,                   -1,                    1),
+					(   -0.10180059922897,                1.875,                    5,                   -1,                    1),
+					(   -0.40359870380574,                  4.5,                    1,                   -1,                    2),
+					(  0.0021305557123223,                 5.75,                    3,                   -1,                    2),
+					(   -0.15474197558782,                5.375,                    4,                   -1,                    2),
+					(   0.012095055234488,                 2.75,                    5,                   -1,                    2),
+					(   -0.01431063712021,                 14.5,                    2,                   -1,                    3),
 			};
 
 			_alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]

@@ -104,7 +104,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		public override double TriplePointSaturatedLiquidMoleDensity { get; } = 38200.3216488919;
 
 		/// <summary>Gets the triple point vapor mole density in mol/m³.</summary>
-		public override double TriplePointSaturatedVaporMoleDensity { get; } = 65.841641572708;
+		public override double TriplePointSaturatedVaporMoleDensity { get; } = 65.8416415727076;
 
 		/// <summary>Gets the boiling temperature at normal pressure (101325 Pa) in K (if existent). If not existent, the return value is null.</summary>
 		public override double? NormalBoilingPointTemperature { get; } = 20.379968058644;
@@ -136,8 +136,8 @@ namespace Altaxo.Science.Thermodynamics.Fluids
     {
 			#region Ideal part of dimensionless Helmholtz energy and derivatives
 
-			_alpha0_n_const = -1.46754423359214;
-			_alpha0_n_tau = 1.88450688616283;
+			_alpha0_n_const = -1.46754423359213;
+			_alpha0_n_tau = 1.88450688616282;
 			_alpha0_n_lntau = 1.5;
 			_alpha0_n_taulntau = 0;
 
@@ -175,10 +175,10 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 					(            0.142086,                1.829,                    3),
 			};
 
-			_alphaR_Exp = new(double ni, double ti, int di, int li)[]
+			_alphaR_Exp = new(double ni, double ti, int di, double gi, int li)[]
 			{
-					(            -0.87696,                2.404,                    1,                    1),
-					(            0.804927,                2.105,                    3,                    1),
+					(            -0.87696,                2.404,                    1,                   -1,                    1),
+					(            0.804927,                2.105,                    3,                   -1,                    1),
 			};
 
 			_alphaR_Gauss = new(double ni, double ti, int di, double alpha, double beta, double gamma, double epsilon)[]
