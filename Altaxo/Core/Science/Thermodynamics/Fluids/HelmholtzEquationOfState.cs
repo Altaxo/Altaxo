@@ -70,6 +70,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <remarks>The reduced density called delta and is calculated by: delta = density / <see cref="ReducingMassDensity"/>.</remarks>
 		public double ReducingMassDensity => ReducingMoleDensity * MolecularWeight;
 
+		/// <summary>
+		/// Gets the specific gas constant of the fluid. Is calculated from <see cref="WorkingUniversalGasConstant"/> and <see cref="MolecularWeight"/>.
+		/// </summary>
+		/// <value>
+		/// The working specific gas constant.
+		/// </value>
 		public double WorkingSpecificGasConstant => WorkingUniversalGasConstant / MolecularWeight;
 
 		/// <summary>
@@ -191,7 +197,28 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		#region Thermodynamic properties derived from dimensionless Helmholtz energy
 
 		/// <summary>
-		/// Get the pressure from a given molar density and temperature.
+		/// Gets the mass density (in kg/m³) from mole density (in mol/m³).
+		/// </summary>
+		/// <param name="moleDensity">The mole density in mol/m³.</param>
+		/// <returns>The mass density in kg/m³.</returns>
+		public virtual double MassDensity_FromMoleDensity(double moleDensity)
+		{
+			return moleDensity * MolecularWeight;
+		}
+
+		/// <summary>
+		/// Gets the mole density (in mol/m³) from mass density (in kg/m³).
+		/// </summary>
+		/// <param name="massDensity">The mass density in kg/m³.</param>
+		/// <returns>The mole density in mol/m³.</returns>
+		public virtual double MoleDensity_FromMassDensity(double massDensity)
+		{
+			return massDensity / MolecularWeight;
+		}
+
+		/// <summary>
+		/// Gets the pressure from a given molar density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -208,6 +235,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the pressure from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -217,6 +245,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return Pressure_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature);
 		}
 
+		/// <summary>
+		/// Gets the derivative of pressure w.r.t. the mole density at isothermal conditions.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+		/// </summary>
+		/// <param name="moleDensity">The mole density.</param>
+		/// <param name="temperature">The temperature.</param>
+		/// <returns>Derivative of pressure w.r.t. the mole density at isothermal conditions.</returns>
 		public double IsothermalDerivativePressureWrtMoleDensity_FromMoleDensityAndTemperature(double moleDensity, double temperature)
 		{
 			double delta = GetDeltaFromMoleDensity(moleDensity); // reduced density
@@ -227,6 +262,13 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 			return WorkingUniversalGasConstant * temperature * (1 + 2 * delta * phir_delta + delta * delta * phir_deltadelta);
 		}
 
+		/// <summary>
+		/// Gets the derivative of pressure w.r.t. the mass density at isothermal conditions.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
+		/// </summary>
+		/// <param name="massDensity">The mass density.</param>
+		/// <param name="temperature">The temperature.</param>
+		/// <returns>Derivative of pressure w.r.t. the mass density at isothermal conditions.</returns>
 		public double IsothermalDerivativePressureByMassDensity_FromMassDensityAndTemperature(double massDensity, double temperature)
 		{
 			return IsothermalDerivativePressureWrtMoleDensity_FromMoleDensityAndTemperature(massDensity / MolecularWeight, temperature) / MolecularWeight;
@@ -234,6 +276,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Gets the isothermal compressibility in 1/Pa from mole density (mol/m³) and temperature (K).
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -246,6 +289,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Gets the isothermal compressibility in 1/Pa from mass density (kg/m³) and temperature (K).
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -257,6 +301,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Gets the isothermal compressional modulus in Pa from density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -269,6 +314,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Gets the isothermal compressional modulus K in Pa from density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -297,8 +343,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <param name="pressure">The pressure in Pa.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
 		/// <param name="relativeAccuracy">The target relative accuracy of the result.</param>
-		/// <param name="moleDensityStartValue">The start value for the density to search for.</param>
-		/// <returns>The density in kg/m³</returns>
+		/// <returns>The density in mol/m³</returns>
 		/// <remarks>The density has to be calculated iteratively, using Newton-Raphson.
 		/// Therefore we need the target accuracy.
 		/// The iteration is ended if the pressure calculated back from the density compared with the pressure given in the argument
@@ -446,6 +491,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the Helmholtz energy from a given mole density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -463,6 +509,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the Helmholtz energy from a given mass density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -474,6 +521,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the mass specific Helmholtz energy from a given mass density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -485,6 +533,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the Helmholtz energy from a given mass density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -496,6 +545,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the mole specific Gibbs energy from a given mass density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -514,6 +564,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the mole specific Gibbs energy from a given mass density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -525,6 +576,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the mass specific Gibbs energy from a given mass density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -536,6 +588,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the mass specific Gibbs energy from a given mass density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -547,6 +600,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the entropy from a given mole density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -567,6 +621,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the entropy from a given mole density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -578,6 +633,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the entropy from a given mole density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -589,6 +645,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the entropy from a given mole density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -600,6 +657,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the internal energy from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -616,6 +674,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the internal energy from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -627,6 +686,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the internal energy from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -638,6 +698,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the internal energy from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -649,6 +710,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the enthalpy from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -668,6 +730,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the enthalpy from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -690,6 +753,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the enthalpy from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -701,6 +765,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the mole specific isochoric heat capacity from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -718,6 +783,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the mole specific isochoric heat capacity from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -729,6 +795,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the isochoric heat capacity from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -740,6 +807,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the isochoric heat capacity from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -751,6 +819,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Gets the isobaric heat capacity from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -776,6 +845,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Gets the isobaric heat capacity from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -787,6 +857,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Gets the isobaric heat capacity from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -798,6 +869,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Gets the isobaric heat capacity from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -809,6 +881,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the speed of sound from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="moleDensity">The density in mol/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>
@@ -831,6 +904,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 
 		/// <summary>
 		/// Get the speed of sound from a given density and temperature.
+		/// Attention - unchecked function: it is presumed, but not checked (!), that the given parameter combination describes a single phase fluid!.
 		/// </summary>
 		/// <param name="massDensity">The density in kg/m³.</param>
 		/// <param name="temperature">The temperature in Kelvin.</param>

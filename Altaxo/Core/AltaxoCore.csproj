@@ -906,11 +906,8 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Water.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Xenon.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\HelmholtzEquationOfState.cs" />
-    <Compile Include="Science\Thermodynamics\Fluids\HelmholtzEquationOfStateOfBinarySystem.cs" />
-    <Compile Include="Science\Thermodynamics\Fluids\HelmholtzEquationOfStateOfBinaryMixturesBySpanEtAl.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\HelmholtzEquationOfStateOfPureFluids.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\HelmholtzEquationOfStateOfPureFluidsBySpanEtAl.cs" />
-    <Compile Include="Science\Thermodynamics\Fluids\MixtureCarbondioxideAndWater.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\MixtureOfFluids.cs" />
     <Compile Include="StringResources.cs" />
     <Compile Include="Science\Energy.cs" />

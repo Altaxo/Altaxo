@@ -476,7 +476,6 @@
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Water.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Xenon.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\FluidTestBase.cs" />
-    <Compile Include="Science\Thermodynamics\Fluids\MixtureCarbondioxideAndWater.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\MixtureTestBase.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\TestBase.cs" />
     <Compile Include="WeakEventHandlersTest.cs" />
