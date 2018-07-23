@@ -70,7 +70,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				{
 					var (n, t, d, eta, epsilon, beta, gamma) = pspec[i];
 					// Note that we work with changed sign of the prefactors in the Exp function
-					sum3 += n * Math.Pow(delta, d) * Math.Pow(tau, t) * Math.Exp(eta * Pow2(delta - epsilon) + beta * (tau - gamma));
+					sum3 += n * Math.Pow(delta, d) * Math.Pow(tau, t) * Math.Exp(eta * Pow2(delta - epsilon) + beta * (delta - gamma));
 				}
 			}
 
@@ -110,7 +110,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				{
 					var (n, t, d, eta, epsilon, beta, gamma) = pspec[i];
 					// Note that we work with changed sign of the prefactors in the Exp function
-					sum3 += n * Math.Pow(delta, d - 1) * Math.Pow(tau, t) * Math.Exp(eta * Pow2(delta - epsilon) + beta * (tau - gamma)) *
+					sum3 += n * Math.Pow(delta, d - 1) * Math.Pow(tau, t) * Math.Exp(eta * Pow2(delta - epsilon) + beta * (delta - gamma)) *
 						(d + delta * (beta + 2 * (delta - epsilon) * eta));
 				}
 			}
@@ -154,7 +154,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				{
 					var (n, t, d, eta, epsilon, beta, gamma) = pspec[i];
 					// Note that we work with changed sign of the prefactors in the Exp function
-					sum3 += n * Math.Pow(delta, d - 2) * Math.Pow(tau, t) * Math.Exp(eta * Pow2(delta - epsilon) + beta * (tau - gamma)) *
+					sum3 += n * Math.Pow(delta, d - 2) * Math.Pow(tau, t) * Math.Exp(eta * Pow2(delta - epsilon) + beta * (delta - gamma)) *
 						(Pow2(d) + d * (-1 + 2 * beta * delta + 4 * delta * (delta - epsilon) * eta) +
 						Pow2(delta) * (2 * eta + Pow2(beta + 2 * (delta - epsilon) * eta)));
 				}
@@ -195,7 +195,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				{
 					var (n, t, d, eta, epsilon, beta, gamma) = pspec[i];
 					// Note that we work with changed sign of the prefactors in the Exp function
-					sum3 += n * Math.Pow(delta, d) * Math.Pow(tau, t - 1) * Math.Exp(eta * Pow2(delta - epsilon) + beta * (tau - gamma)) *
+					sum3 += n * Math.Pow(delta, d) * Math.Pow(tau, t - 1) * Math.Exp(eta * Pow2(delta - epsilon) + beta * (delta - gamma)) *
 									(t);
 				}
 			}
@@ -236,12 +236,12 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				{
 					var (n, t, d, eta, epsilon, beta, gamma) = pspec[i];
 					// Note that we work with changed sign of the prefactors in the Exp function
-					sum3 += n * Math.Pow(delta, d) * Math.Pow(tau, t - 2) * Math.Exp(eta * Pow2(delta - epsilon) + beta * (tau - gamma)) *
+					sum3 += n * Math.Pow(delta, d) * Math.Pow(tau, t - 2) * Math.Exp(eta * Pow2(delta - epsilon) + beta * (delta - gamma)) *
 									(t * (t - 1));
 				}
 			}
 
-			return sum1 + sum2;
+			return sum1 + sum2 + sum3;
 		}
 
 		/// <summary>
@@ -277,7 +277,7 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 				{
 					var (n, t, d, eta, epsilon, beta, gamma) = pspec[i];
 					// Note that we work with changed sign of the prefactors in the Exp function
-					sum3 += n * Math.Pow(delta, d - 1) * Math.Pow(tau, t - 1) * Math.Exp(eta * Pow2(delta - epsilon) + beta * (tau - gamma)) *
+					sum3 += n * Math.Pow(delta, d - 1) * Math.Pow(tau, t - 1) * Math.Exp(eta * Pow2(delta - epsilon) + beta * (delta - gamma)) *
 									((d + delta * (beta + 2 * (delta - epsilon) * eta)) * t);
 				}
 			}
