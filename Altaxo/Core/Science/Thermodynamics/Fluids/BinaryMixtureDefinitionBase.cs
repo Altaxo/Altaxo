@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Science.Thermodynamics.Fluids
 {
+	/// <summary>
+	/// Base class for binary mixtures,  consisting of a component 1 and a component 2.
+	/// The components are indentified by their CAS registry numbers. Derived classes should have two <see cref="CASRegistryNumberAttribute" />s associated with the class.
+	/// </summary>
 	public abstract class BinaryMixtureDefinitionBase
 	{
 		/// <summary>Gets the CAS registry number of component 1.</summary>
@@ -14,32 +18,67 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		/// <summary>Gets the CAS registry number of component 2.</summary>
 		public abstract string CASRegistryNumber2 { get; }
 
+		/// <summary>The beta parameter used to calculate the reducing temperatur of the mixture.</summary>
 		protected double _beta_T;
+
+		/// <summary>The gamma parameter used to calculate the reducing temperature of the mixture.</summary>
 		protected double _gamma_T;
+
+		/// <summary>The beta parameter used to calculate the reducing mole density of the mixture.</summary>
 		protected double _beta_v;
+
+		/// <summary>The gamma parameter used to calculate the reducing mole density of the mixture.</summary>
 		protected double _gamma_v;
+
+		/// <summary>The F parameter (prefactor of the departure function, see <see cref="DepartureFunction_OfReducedVariables(double, double)"/>).</summary>
 		protected double _F;
 
+		/// <summary>The beta parameter used to calculate the reducing temperatur of the mixture.</summary>
 		public double Beta_T { get { return _beta_T; } }
+
+		/// <summary>The gamma parameter used to calculate the reducing temperature of the mixture.</summary>
 		public double Gamma_T { get { return _gamma_T; } }
+
+		/// <summary>The beta parameter used to calculate the reducing mole density of the mixture.</summary>
 		public double Beta_v { get { return _beta_v; } }
+
+		/// <summary>The gamma parameter used to calculate the reducing mole density of the mixture.</summary>
 		public double Gamma_v { get { return _gamma_v; } }
+
+		/// <summary>The F parameter (prefactor of the departure function, see <see cref="DepartureFunction_OfReducedVariables(double, double)"/>).</summary>
 		public double F { get { return _F; } }
 
 		protected static readonly (double, double, double)[] _emptyArrayOfThreeDoubles = new(double, double, double)[0];
 		protected static readonly (double, double, double, double)[] _emptyArrayOfFourDoubles = new(double, double, double, double)[0];
 		protected static readonly (double, double, double, double, double, double, double)[] _emptyArrayOfSevenDoubles = new(double, double, double, double, double, double, double)[0];
 
+		/// <summary>
+		/// The coefficients of the departure function describing the polynomial terms:
+		/// term = ai * tau^ti * delta^di
+		/// where tau and delta are reduced temperature and density, respectively.
+		/// </summary>
 		protected (double ai, double ti, double di)[] _departureCoefficients_Polynomial = _emptyArrayOfThreeDoubles;
+
+		/// <summary>
+		/// The coefficients of the departure function describing the exponential terms:
+		/// term = ai * tau^ti * delta^di * Exp(-delta^ci)
+		/// where tau and delta are reduced temperature and density, respectively.
+		/// </summary>
 		protected (double ai, double ti, double di, double ci)[] _departureCoefficients_Exponential = _emptyArrayOfFourDoubles;
+
+		/// <summary>
+		/// The coefficients of the departure function describing the special terms:
+		/// term = n * tau^t * delta^d  * Exp(eta (delta - epsilon)^2 + beta * (delta - gamma))
+		/// where tau and delta are reduced temperature and density, respectively.
+		/// </summary>
 		protected (double n, double t, double d, double eta, double epsilon, double beta, double gamma)[] _departureCoefficients_Special = _emptyArrayOfSevenDoubles;
 
 		/// <summary>
-		/// The Departure function is a mixture correction function for the residual part of the reduced Helmholtz energy in dependence of the reduced density and reduced inverse temperature.
+		/// The Departure function is a correction function for the residual part of the reduced Helmholtz energy in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = mole density / <see cref="ReducingMoleDensity"/>.</param>
-		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
-		/// <returns>Mixture correction function Alpha12R.</returns>
+		/// <param name="delta">The reduced density = mole density / ReducingMoleDensity. The ReducingMoleDensity depends on the mole fractions of the components.</param>
+		/// <param name="tau">The reduced inverse temperature = ReducingTemperature / temperature. The ReducingTemperature depends on the mole fractions of the components.</param>
+		/// <returns>Value of the departure function.</returns>
 		public double DepartureFunction_OfReducedVariables(double delta, double tau)
 		{
 			double sum1 = 0;
@@ -78,11 +117,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
-		/// Derivative of the mixture correction function Alpha12R w.r.t. delta in dependence of the reduced density and reduced inverse temperature.
+		/// Derivative of the departure function w.r.t. delta in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = mole density / <see cref="ReducingMoleDensity"/>.</param>
-		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
-		/// <returns>Derivative of the mixture correction function Alpha12R w.r.t. delta.</returns>
+		/// <param name="delta">The reduced density = mole density / ReducingMoleDensity. The ReducingMoleDensity depends on the mole fractions of the components.</param>
+		/// <param name="tau">The reduced inverse temperature = ReducingTemperature / temperature. The ReducingTemperature depends on the mole fractions of the components.</param>
+		/// <returns>Derivative of the departure function w.r.t. delta.</returns>
 		public double DepartureFunction_delta_OfReducedVariables(double delta, double tau)
 		{
 			double sum1 = 0;
@@ -119,11 +158,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
-		/// 2nd derivative of the mixture correction function Alpha12R w.r.t. delta in dependence of the reduced density and reduced inverse temperature.
+		/// 2nd derivative of the departure function w.r.t. delta in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = mole density / <see cref="ReducingMoleDensity"/>.</param>
-		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
-		/// <returns>2nd derivative of the mixture correction function Alpha12R w.r.t. delta.</returns>
+		/// <param name="delta">The reduced density = mole density / ReducingMoleDensity. The ReducingMoleDensity depends on the mole fractions of the components.</param>
+		/// <param name="tau">The reduced inverse temperature = ReducingTemperature / temperature. The ReducingTemperature depends on the mole fractions of the components.</param>
+		/// <returns>2nd derivative of the departure function w.r.t. delta.</returns>
 		public double DepartureFunction_deltadelta_OfReducedVariables(double delta, double tau)
 		{
 			double sum1 = 0;
@@ -164,11 +203,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
-		/// Derivative of the mixture correction function Alpha12R w.r.t. tau in dependence of the reduced density and reduced inverse temperature.
+		/// Derivative of the departure function w.r.t. tau in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = mole density / <see cref="ReducingMoleDensity"/>.</param>
-		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
-		/// <returns>Derivative of the mixture correction function Alpha12R w.r.t. tau.</returns>
+		/// <param name="delta">The reduced density = mole density / ReducingMoleDensity. The ReducingMoleDensity depends on the mole fractions of the components.</param>
+		/// <param name="tau">The reduced inverse temperature = ReducingTemperature / temperature. The ReducingTemperature depends on the mole fractions of the components.</param>
+		/// <returns>Derivative of the departure function w.r.t. tau.</returns>
 		public double DepartureFunction_tau_OfReducedVariables(double delta, double tau)
 		{
 			double sum1 = 0;
@@ -204,11 +243,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
-		/// 2nd derivative of the mixture correction function Alpha12R w.r.t. tau in dependence of the reduced density and reduced inverse temperature.
+		/// 2nd derivative of the departure function w.r.t. tau in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = mole density / <see cref="ReducingMoleDensity"/>.</param>
-		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
-		/// <returns>2nd derivative of the mixture correction function Alpha12R w.r.t. tau.</returns>
+		/// <param name="delta">The reduced density = mole density / ReducingMoleDensity. The ReducingMoleDensity depends on the mole fractions of the components.</param>
+		/// <param name="tau">The reduced inverse temperature = ReducingTemperature / temperature. The ReducingTemperature depends on the mole fractions of the components.</param>
+		/// <returns>2nd derivative of the departure function w.r.t. tau.</returns>
 		public double DepartureFunction_tautau_OfReducedVariables(double delta, double tau)
 		{
 			double sum1 = 0;
@@ -245,11 +284,11 @@ namespace Altaxo.Science.Thermodynamics.Fluids
 		}
 
 		/// <summary>
-		/// Derivative of the mixture correction function Alpha12R w.r.t. delta and tau in dependence of the reduced density and reduced inverse temperature.
+		/// Derivative of the departure function w.r.t. delta and tau in dependence of the reduced density and reduced inverse temperature.
 		/// </summary>
-		/// <param name="delta">The reduced density = mole density / <see cref="ReducingMoleDensity"/>.</param>
-		/// <param name="tau">The reduced inverse temperature = <see cref="ReducingTemperature"/> / temperature.</param>
-		/// <returns>Derivative of the mixture correction function Alpha12R w.r.t. delta and tau.</returns>
+		/// <param name="delta">The reduced density = mole density / ReducingMoleDensity. The ReducingMoleDensity depends on the mole fractions of the components.</param>
+		/// <param name="tau">The reduced inverse temperature = ReducingTemperature / temperature. The ReducingTemperature depends on the mole fractions of the components.</param>
+		/// <returns>Derivative of the departure function w.r.t. delta and tau.</returns>
 		public double DepartureFunction_deltatau_OfReducedVariables(double delta, double tau)
 		{
 			double sum1 = 0;
