@@ -17,7 +17,7 @@ namespace Altaxo.Gui.Behaviors
 		public static readonly DependencyProperty IsHandledProperty = DependencyProperty.RegisterAttached(
 				"IsHandled",
 				typeof(bool),
-				typeof(DoubleClickTriggersCommand),
+				typeof(Event1TriggersCommand),
 				new FrameworkPropertyMetadata(true));
 
 		public static bool GetIsHandled(FrameworkElement frameworkElement)

@@ -1311,7 +1311,7 @@
       <DependentUpon>LinearBinningControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Behaviors\DoubleClickTriggersCommand.cs" />
-    <Compile Include="Gui\Behaviors\EventTriggersCommand.cs" />
+    <Compile Include="Gui\Behaviors\Event1TriggersCommand.cs" />
     <Compile Include="Gui\Behaviors\SelectedItemsExBehavior.cs" />
     <Compile Include="Gui\BindingProxy.cs" />
     <Compile Include="Gui\Common\Converters\BindingConverter.cs" />
