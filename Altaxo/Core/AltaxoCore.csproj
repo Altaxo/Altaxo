@@ -786,6 +786,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_CO_Helium.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_CO_Water.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_DEA_Argon.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_DEA_Cl2.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_DEA_CO.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_DEA_CO2.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_DEA_H2S.cs" />
@@ -953,6 +954,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_Pentane_CO.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_Pentane_Decane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_Pentane_H2S.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_Pentane_Helium.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_Pentane_Heptane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_Pentane_Hexane.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Mixture_Pentane_Hydrogen.cs" />
