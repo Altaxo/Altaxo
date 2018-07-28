@@ -47,14 +47,12 @@ namespace Altaxo.Gui.Units
 
       if (initData)
       {
-        _unitController = new UnitEnvironmentController();
-        _unitController.InitializeDocument(_doc.Environment ?? new QuantityWithUnitGuiEnvironment());
-        Current.Gui.FindAndAttachControlTo(_unitController);
+        // ------- Set the environment name --------------
+        this.EnvironmentName = _doc.Name;
 
-        _unitController.SetQuantity(_doc.Quantity);
-
+        // ------- Set available quantities --------------
         _quantities.Clear();
-        if (string.IsNullOrEmpty(_doc.Quantity))
+        if (string.IsNullOrEmpty(_doc.Quantity)) // if doc has not quantitie still, then all quantities will be shown
         {
           foreach (var quantity in UnitsExtensions.GetAllDefinedQuantities())
           {
@@ -64,12 +62,17 @@ namespace Altaxo.Gui.Units
               _selectedQuantity = node;
           }
         }
-        else
+        else // else if doc already has a quantity, then we do not allow to change this quantity
         {
           var node = new SelectableListNode(_doc.Quantity, _doc.Quantity, true);
           _quantities.Add(node);
           _selectedQuantity = node;
         }
+
+        // -------- Set up the unit environment controller -------
+        _unitController = new UnitEnvironmentController(quantity: _doc.Quantity);
+        _unitController.InitializeDocument(_doc.Environment ?? new QuantityWithUnitGuiEnvironment());
+        Current.Gui.FindAndAttachControlTo(_unitController);
       }
     }
 

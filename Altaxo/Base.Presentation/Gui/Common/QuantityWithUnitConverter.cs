@@ -453,9 +453,9 @@ namespace Altaxo.Gui.Common
     public void OnContextMenuOpening()
     {
       BindingExpression.UpdateSource();
-      MenuItem convertTo = null;
-      MenuItem changeUnitTo = null;
-      MenuItem setNoOfDigits = null;
+      MenuItem menuItem_ConvertTo = null;
+      MenuItem menuItem_ChangeUnitTo = null;
+      MenuItem menuItem_SetNumberOfDigitsDisplayed = null;
       if (null == _parent)
         return;
 
@@ -467,22 +467,22 @@ namespace Altaxo.Gui.Common
             continue;
           var tag = ((FrameworkElement)item).Tag as string;
 
-          if (tag == "TagConvertTo")
-            convertTo = item as MenuItem;
+          if (tag == "TagConvertTo") // The root of the "Convert to.." submenu
+            menuItem_ConvertTo = item as MenuItem;
           if (tag == "TagChangeUnitTo")
-            changeUnitTo = item as MenuItem;
-          if (tag == "TagSetDigits")
-            setNoOfDigits = item as MenuItem;
+            menuItem_ChangeUnitTo = item as MenuItem;
+          if (tag == "TagSetDigits") // The root of the "Set digits displayed .." submenu
+            menuItem_SetNumberOfDigitsDisplayed = item as MenuItem;
         }
       }
 
       // Clear all previous menu items
-      if (null != convertTo)
-        convertTo.Items.Clear();
-      if (null != changeUnitTo)
-        changeUnitTo.Items.Clear();
-      if (null != setNoOfDigits)
-        setNoOfDigits.Items.Clear();
+      if (null != menuItem_ConvertTo)
+        menuItem_ConvertTo.Items.Clear();
+      if (null != menuItem_ChangeUnitTo)
+        menuItem_ChangeUnitTo.Items.Clear();
+      if (null != menuItem_SetNumberOfDigitsDisplayed)
+        menuItem_SetNumberOfDigitsDisplayed.Items.Clear();
 
       // make menues only when there is no validation error
       if (!(bool)_parent.GetValue(Validation.HasErrorProperty))
@@ -494,18 +494,23 @@ namespace Altaxo.Gui.Common
 
         bool makeSubMenusForEachUnit = count > 10;
 
-        if (null != convertTo)
-          MakeConvertToSubMenus(convertTo, makeSubMenusForEachUnit);
+        if (null != menuItem_ConvertTo)
+          CreateSubmenuItems_ConvertTo(menuItem_ConvertTo, makeSubMenusForEachUnit);
 
-        if (null != changeUnitTo)
-          MakeChangeUnitToSubMenus(changeUnitTo, makeSubMenusForEachUnit);
+        if (null != menuItem_ChangeUnitTo)
+          CreateSubmenuItems_ChangeUnitTo(menuItem_ChangeUnitTo, makeSubMenusForEachUnit);
 
-        if (null != setNoOfDigits)
-          MakeSetDigitsSubMenus(setNoOfDigits);
+        if (null != menuItem_SetNumberOfDigitsDisplayed)
+          CreateSubmenuItems_SetNumberOfDigitsDisplayed(menuItem_SetNumberOfDigitsDisplayed);
       }
     }
 
-    private void MakeConvertToSubMenus(MenuItem rootMenuItem, bool makeSubMenusForEachUnit)
+    /// <summary>
+    /// Creates the submenu items for the "Convert to..." submenu.
+    /// </summary>
+    /// <param name="rootMenuItem">The root menu item.</param>
+    /// <param name="makeSubMenusForEachUnit">If set to <c>true</c>, make sub menus for each unit.</param>
+    private void CreateSubmenuItems_ConvertTo(MenuItem rootMenuItem, bool makeSubMenusForEachUnit)
     {
       if (makeSubMenusForEachUnit)
       {
@@ -548,7 +553,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private void MakeChangeUnitToSubMenus(MenuItem rootMenuItem, bool makeSubMenusForEachUnit)
+    private void CreateSubmenuItems_ChangeUnitTo(MenuItem rootMenuItem, bool makeSubMenusForEachUnit)
     {
       if (makeSubMenusForEachUnit)
       {
@@ -591,7 +596,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private void MakeSetDigitsSubMenus(MenuItem rootMenuItem)
+    private void CreateSubmenuItems_SetNumberOfDigitsDisplayed(MenuItem rootMenuItem)
     {
       for (int i = 3; i <= 15; i++)
       {

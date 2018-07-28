@@ -37,6 +37,15 @@ namespace Altaxo.Gui.Units
 
     private Dictionary<IUnit, List<SIPrefix>> _prefixesForUnit = new Dictionary<IUnit, List<SIPrefix>>();
 
+    public UnitEnvironmentController()
+    {
+    }
+
+    public UnitEnvironmentController(string quantity)
+    {
+      _quantity = quantity;
+    }
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -45,6 +54,24 @@ namespace Altaxo.Gui.Units
       {
         FillAvailableUnitsDictionary();
         GetAvailableUnitsForQuantity(_quantity, _availableUnits);
+
+        _includedUnits.Clear();
+        foreach (var unit in _doc.FixedUnits)
+        {
+          if (unit is UnitWithLimitedPrefixes lpUnit)
+          {
+            _prefixesForUnit[lpUnit.Unit] = new List<SIPrefix>(lpUnit.Prefixes);
+            _includedUnits.Add(new SelectableListNode(lpUnit.Unit.Name, lpUnit.Unit, false));
+          }
+          else
+          {
+            _prefixesForUnit[unit] = new List<SIPrefix>(new[] { SIPrefix.None });
+            _includedUnits.Add(new SelectableListNode(unit.Name, unit, false));
+          }
+        }
+
+        UpdateAllPrefixedUnits(_allChoosenPrefixedUnits);
+
         AddToIncludedUnits = Current.Gui.NewRelayCommand(EhAddToIncludedUnits);
         RemoveFromIncludedUnits = Current.Gui.NewRelayCommand(EhRemoveFromIncludedUnits);
         SelectedPrefixesChangedCommand = Current.Gui.NewRelayCommand(EhSelectedPrefixesChangedCommand);
@@ -120,8 +147,7 @@ namespace Altaxo.Gui.Units
     {
       var types = ReflectionService.GetSortedClassTypesHavingAttribute(typeof(UnitDescriptionAttribute), false);
 
-      var list = new HashSet<string>();
-
+      _listOfUnits.Clear();
       foreach (var ty in types)
       {
         var attribute = (UnitDescriptionAttribute)ty.GetCustomAttributes(typeof(UnitDescriptionAttribute), false).First();
