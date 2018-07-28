@@ -561,6 +561,7 @@
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Test_Mixture_Water_Argon.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Test_Mixture_Water_H2S.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\BinaryMixtures\Test_Mixture_Water_Helium.cs" />
+    <Compile Include="Science\Thermodynamics\Fluids\FluidConsistencyTests.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Ammonia.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Argon.cs" />
     <Compile Include="Science\Thermodynamics\Fluids\Fluids\Test_Benzene.cs" />
